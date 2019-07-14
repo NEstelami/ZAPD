@@ -1,5 +1,6 @@
 #include "ZFile.h"
 #include "ZBlob.h"
+#include "ZDisplayList.h"
 #include "ZTexture.h"
 #include "Path.h"
 #include "File.h"
@@ -25,22 +26,24 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 	name = reader->Attribute("Name");
 
 	string folderName = basePath + "/" + Path::GetFileNameWithoutExtension(name);
-
+	
 	vector<uint8_t> rawData;
 
 	if (mode == ZFileMode::Extract)
-		rawData = File::ReadAllBytes(name);
+		rawData = File::ReadAllBytes(basePath + "/" + name);
 
 	int rawDataIndex = 0;
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
+		printf("%s: %08X\n", child->Attribute("Name"), rawDataIndex);
+
 		if (string(child->Name()) == "Texture")
 		{
 			ZTexture* tex = NULL;
 
 			if (mode == ZFileMode::Extract)
-				tex = new ZTexture(child, rawData, rawDataIndex);
+				tex = new ZTexture(child, rawData, rawDataIndex, folderName);
 			else
 				tex = new ZTexture(child, folderName);
 
@@ -52,13 +55,26 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 			ZBlob* blob = NULL;
 
 			if (mode == ZFileMode::Extract)
-				blob = new ZBlob(child, rawData, rawDataIndex);
+				blob = new ZBlob(child, rawData, rawDataIndex, folderName);
 			else
 				blob = new ZBlob(child, folderName);
 
 			resources.push_back(blob);
 
 			rawDataIndex += blob->GetRawDataSize();
+		}
+		else if (string(child->Name()) == "DisplayList")
+		{
+			ZDisplayList* dList = NULL;
+
+			if (mode == ZFileMode::Extract)
+				dList = new ZDisplayList(child, rawData, rawDataIndex, folderName);
+			//else
+				//dList = new ZBlob(child, folderName);
+
+			resources.push_back(dList);
+
+			rawDataIndex += dList->GetRawDataSize();
 		}
 	}
 }
@@ -104,4 +120,39 @@ void ZFile::ExtractResources()
 		//Console.WriteLine("Saving resource " + res.GetName());
 		res->Save(folderName);
 	}
+
+	GenerateSourceFiles();
+}
+
+void ZFile::GenerateSourceFiles()
+{
+	char* buffer = new char[1024 * 1024];
+
+	// Generate Header
+	//sourceOutput = "";
+
+	//for (ZResource* res : resources)
+	//{
+	//	string resSrc = res->GetSourceOutputHeader();
+
+	//	//sprintf(buffer, "const char ", 0);
+
+	//	sourceOutput += resSrc + "\n";
+	//}
+
+	//File::WriteAllText(name + ".h", sourceOutput);
+
+	//sourceOutput = ".section .rodata\n.include \"macros.inc\"\n\n";
+	sourceOutput = ".section .rodata\n\n";
+
+	// Generate Code
+	for (ZResource* res : resources)
+	{
+		string resSrc = res->GetSourceOutputCode();
+		sourceOutput += resSrc + "\n";
+	}
+
+	File::WriteAllText(Path::GetFileNameWithoutExtension(name) + ".s", sourceOutput);
+
+	delete buffer;
 }

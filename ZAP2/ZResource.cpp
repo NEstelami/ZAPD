@@ -12,6 +12,11 @@ string ZResource::GetName()
 	return name;
 }
 
+string ZResource::GetRelativePath()
+{
+	return relativePath;
+}
+
 vector<uint8_t> ZResource::GetRawData()
 {
 	return rawData;
@@ -20,4 +25,14 @@ vector<uint8_t> ZResource::GetRawData()
 int ZResource::GetRawDataSize()
 {
 	return rawData.size();
+}
+
+string ZResource::GetSourceOutputCode()
+{
+	return "";
+}
+
+string ZResource::GetSourceOutputHeader()
+{
+	return "";
 }

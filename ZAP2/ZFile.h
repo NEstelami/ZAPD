@@ -8,7 +8,9 @@
 enum ZFileMode
 {
 	Build,
-	Extract
+	BuildTexture,
+	Extract,
+	Invalid
 };
 
 class ZFile
@@ -22,7 +24,9 @@ public:
 protected:
 	std::string name;
 	std::string basePath;
+	std::string sourceOutput;
 	std::vector<ZResource*> resources;
 
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader);
+	void GenerateSourceFiles();
 };

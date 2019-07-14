@@ -1,5 +1,7 @@
 #include "ZFile.h"
+#include "ZTexture.h"
 #include "Path.h"
+#include "File.h"
 
 #include <string>
 #include "tinyxml2.h"
@@ -8,25 +10,50 @@ using namespace tinyxml2;
 using namespace std;
 
 bool Parse(string xmlFilePath, ZFileMode fileMode);
+void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath);
 
 int main(int argc, char* argv[])
 {
-	if (argc != 3)
+	if (argc != 3 && argc != 5)
 	{
 		cout << "ZAP2: Zelda Asset Processor (2)" << "\n";
-		cout << "Usage: ZAP2.exe [Input XML/Bin File] [mode (b/e)]" << "\n";
+		cout << "Usage: ZAP2.exe [mode (b/btex/e)] [Input XML/Texture File/Bin File] " << "\n";
 		return 1;
 	}
 
-	char buildMode = argv[2][0];
+	//char buildMode = argv[2][0];
+	string buildMode = argv[1];
+	ZFileMode fileMode = ZFileMode::Invalid;
 
-	if (buildMode != 'b' && buildMode != 'c')
+	if (buildMode == "b")
+		fileMode = ZFileMode::Build;
+	else if (buildMode == "btex")
+		fileMode = ZFileMode::BuildTexture;
+	else
+		fileMode = ZFileMode::Extract;
+
+	if (fileMode == ZFileMode::Invalid)
 	{
 		cout << "Invalid build mode.\n";
 		return 1;
 	}
 
-	Parse(argv[1], buildMode == 'b' ? ZFileMode::Build : ZFileMode::Extract);
+	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract)
+		Parse(argv[2], fileMode);
+	else if (fileMode == ZFileMode::BuildTexture)
+	{
+		// Syntax: ZAP2.exe btex [texType] [pngFilePath] [outFilePath]
+		string texTypeStr = argv[2];
+		string pngFilePath = argv[3];
+		string outFilePath = argv[4];
+
+		TextureType texType = ZTexture::GetTextureTypeFromString(texTypeStr);
+
+		BuildAssetTexture(pngFilePath, texType, outFilePath);
+	}
+
+	//Parse(argv[1], buildMode == 'b' ? ZFileMode::Build : ZFileMode::Extract);
+	
 	return 0;
 }
 
@@ -62,4 +89,12 @@ bool Parse(string xmlFilePath, ZFileMode fileMode)
 	if (element == nullptr)
 		return false;
 
+}
+
+void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath)
+{
+	ZTexture* tex = ZTexture::FromPNG(pngFilePath, texType);
+	File::WriteAllBytes(outPath, tex->GetRawData());
+	
+	delete tex;
 }
