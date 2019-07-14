@@ -15,7 +15,8 @@ enum TextureType
 	Grayscale8bpp,
 	GrayscaleAlpha4bpp,
 	GrayscaleAlpha8bpp,
-	GrayscaleAlpha16bpp
+	GrayscaleAlpha16bpp,
+	Error
 };
 
 class ZTexture : public ZResource
@@ -23,8 +24,9 @@ class ZTexture : public ZResource
 protected:
 	TextureType type;
 	int width, height;
+
 	uint8_t* bmpRgb;
-	uint8_t* bmpAlpha;
+	uint8_t* bmpRgba;
 
 	void ParseXML(tinyxml2::XMLElement* reader);
 	void FixRawData();
@@ -39,21 +41,27 @@ protected:
 	void PrepareBitmapPalette4();
 	void PrepareBitmapPalette8();
 	void PrepareRawData(std::string inFolder);
-	void PrepareRawDataRGBA32(std::string inFolder);
-	void PrepareRawDataRGBA16(std::string inFolder);
-	void PrepareRawDataGrayscale8(std::string inFolder);
-	void PrepareRawDataGrayscaleAlpha8(std::string inFolder);
-	void PrepareRawDataGrayscale4(std::string inFolder);
-	void PrepareRawDataGrayscaleAlpha4(std::string inFolder);
-	void PrepareRawDataGrayscaleAlpha16(std::string inFolder);
-	void PrepareRawDataPalette4(std::string inFolder);
-	void PrepareRawDataPalette8(std::string inFolder);
+	void PrepareRawDataRGBA16(std::string rgbaPath);
+	void PrepareRawDataRGBA32(std::string rgbaPath);
+	void PrepareRawDataGrayscale4(std::string grayPath);
+	void PrepareRawDataGrayscale8(std::string grayPath);
+	void PrepareRawDataGrayscaleAlpha4(std::string grayAlphaPath);
+	void PrepareRawDataGrayscaleAlpha8(std::string grayAlphaPath);
+	void PrepareRawDataGrayscaleAlpha16(std::string grayAlphaPath);
+	void PrepareRawDataPalette4(std::string palPath);
+	void PrepareRawDataPalette8(std::string palPath);
 	float GetPixelMultiplyer();
+	std::string GetSourceOutputHeader();
+	std::string GetSourceOutputCode();
 
 public:
-	ZTexture(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex);
+	ZTexture();
+	ZTexture(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
 	ZTexture(tinyxml2::XMLElement* reader, std::string inFolder);
 	ZTexture(TextureType nType, std::vector<uint8_t> rawData, std::string nName, int nWidth, int nHeight);
+
+	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
+	static TextureType GetTextureTypeFromString(std::string str);
 
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();

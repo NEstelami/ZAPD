@@ -23,4 +23,10 @@ public:
 		std::ofstream file(filePath, std::ios::binary);
 		file.write((char*)data.data(), data.size());
 	};
+
+	static void WriteAllText(std::string filePath, std::string text)
+	{
+		std::ofstream file(filePath, std::ios::out);
+		file.write(text.c_str(), text.size());
+	}
 };

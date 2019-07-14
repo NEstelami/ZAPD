@@ -86,6 +86,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,6 +121,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="ZBlob.cpp" />
+    <ClCompile Include="ZDisplayList.cpp" />
     <ClCompile Include="ZFile.cpp" />
     <ClCompile Include="ZResource.cpp" />
     <ClCompile Include="ZTexture.cpp" />
@@ -132,6 +134,7 @@
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="ZBlob.h" />
+    <ClInclude Include="ZDisplayList.h" />
     <ClInclude Include="ZFile.h" />
     <ClInclude Include="ZResource.h" />
     <ClInclude Include="ZTexture.h" />

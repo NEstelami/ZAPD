@@ -9,21 +9,55 @@
 using namespace std;
 using namespace tinyxml2;
 
+ZTexture::ZTexture()
+{
+
+}
+
 // EXTRACT MODE
-ZTexture::ZTexture(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex)
+ZTexture::ZTexture(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath)
 {
 	ParseXML(reader);
-	rawData = vector<uint8_t>(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + GetRawDataSize());
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
+
+	relativePath = nRelPath;
 
 	FixRawData();
 	PrepareBitmap();
 }
 
+// BUILD MODE
 ZTexture::ZTexture(XMLElement* reader, string inFolder)
 {
 	ParseXML(reader);
 
 	PrepareRawData(inFolder);
+}
+
+ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
+{
+	int comp;
+	ZTexture* tex = new ZTexture();
+	tex->type = texType;
+
+	tex->bmpRgb = (uint8_t*)stbi_load((pngFilePath).c_str(), &tex->width, &tex->height, &comp, STBI_rgb);
+	stbi_image_free(tex->bmpRgb);
+	tex->rawData = vector<uint8_t>(tex->GetRawDataSize());
+
+	switch (texType)
+	{
+	case TextureType::RGBA16bpp: tex->PrepareRawDataRGBA16(pngFilePath); break;
+	case TextureType::RGBA32bpp: tex->PrepareRawDataRGBA32(pngFilePath); break;
+	case TextureType::Grayscale4bpp: tex->PrepareRawDataGrayscale4(pngFilePath); break;
+	case TextureType::Grayscale8bpp: tex->PrepareRawDataGrayscale8(pngFilePath); break;
+	case TextureType::GrayscaleAlpha4bpp: tex->PrepareRawDataGrayscaleAlpha4(pngFilePath); break;
+	case TextureType::GrayscaleAlpha8bpp: tex->PrepareRawDataGrayscaleAlpha8(pngFilePath); break;
+	case TextureType::GrayscaleAlpha16bpp: tex->PrepareRawDataGrayscaleAlpha16(pngFilePath); break;
+	case TextureType::Palette4bpp: tex->PrepareRawDataPalette4(pngFilePath); break;
+	case TextureType::Palette8bpp: tex->PrepareRawDataPalette8(pngFilePath); break;
+	}
+
+	return tex;
 }
 
 void ZTexture::ParseXML(XMLElement* reader)
@@ -34,25 +68,9 @@ void ZTexture::ParseXML(XMLElement* reader)
 
 	string formatStr = reader->Attribute("Format");
 
-	if (formatStr == "rgba32")
-		type = TextureType::RGBA32bpp;
-	else if (formatStr == "rgb5a1")
-		type = TextureType::RGBA16bpp;
-	else if (formatStr == "i4")
-		type = TextureType::Grayscale4bpp;
-	else if (formatStr == "i8")
-		type = TextureType::Grayscale8bpp;
-	else if (formatStr == "ia4")
-		type = TextureType::GrayscaleAlpha4bpp;
-	else if (formatStr == "ia8")
-		type = TextureType::GrayscaleAlpha8bpp;
-	else if (formatStr == "ia16")
-		type = TextureType::GrayscaleAlpha16bpp;
-	else if (formatStr == "ci4")
-		type = TextureType::Palette4bpp;
-	else if (formatStr == "ci8")
-		type = TextureType::Palette8bpp;
-	else
+	type = GetTextureTypeFromString(formatStr);
+	
+	if (type == TextureType::Error)
 		throw "Format " + formatStr + " is not supported!";
 }
 
@@ -81,7 +99,7 @@ void ZTexture::FixRawData()
 void ZTexture::PrepareBitmap()
 {
 	bmpRgb = new uint8_t[width * height * 3];
-	bmpAlpha = new uint8_t[width * height * 3];
+	bmpRgba = new uint8_t[width * height * 4];
 
 	switch (type)
 	{
@@ -109,13 +127,11 @@ void ZTexture::PrepareBitmapRGBA16()
 			uint8_t g = (uint8_t)((data & 0x07C0) >> 6);
 			uint8_t b = (uint8_t)((data & 0x003E) >> 1);
 			uint8_t alpha = (uint8_t)(data & 0x01);
-			bmpRgb[(((y * width) + x) * 3) + 0] = r * 8;
-			bmpRgb[(((y * width) + x) * 3) + 1] = g * 8;
-			bmpRgb[(((y * width) + x) * 3) + 2] = b * 8;
-			
-			bmpAlpha[(((y * width) + x) * 3) + 0] = alpha * 255;
-			bmpAlpha[(((y * width) + x) * 3) + 1] = alpha * 255;
-			bmpAlpha[(((y * width) + x) * 3) + 2] = alpha * 255;
+
+			bmpRgba[(((y * width) + x) * 4) + 0] = r * 8;
+			bmpRgba[(((y * width) + x) * 4) + 1] = g * 8;
+			bmpRgba[(((y * width) + x) * 4) + 2] = b * 8;
+			bmpRgba[(((y * width) + x) * 4) + 3] = alpha * 255;
 
 			//Color c = Color.FromArgb(255, r * 8, g * 8, b * 8);
 			//Color a = Color.FromArgb(255, alpha * 255, alpha * 255, alpha * 255);
@@ -133,62 +149,13 @@ void ZTexture::PrepareBitmapRGBA32()
 		{
 			int pos = ((y * width) + x) * 4;
 
-			bmpRgb[(((y * width) + x) * 3) + 0] = rawData[pos + 2];
-			bmpRgb[(((y * width) + x) * 3) + 1] = rawData[pos + 1];
-			bmpRgb[(((y * width) + x) * 3) + 2] = rawData[pos + 0];
+			bmpRgba[(((y * width) + x) * 4) + 0] = rawData[pos + 2];
+			bmpRgba[(((y * width) + x) * 4) + 1] = rawData[pos + 1];
+			bmpRgba[(((y * width) + x) * 4) + 2] = rawData[pos + 0];
+			bmpRgba[(((y * width) + x) * 4) + 3] = rawData[pos + 3];
 
-			bmpAlpha[(((y * width) + x) * 3) + 0] = rawData[pos + 3];
-			bmpAlpha[(((y * width) + x) * 3) + 1] = rawData[pos + 3];
-			bmpAlpha[(((y * width) + x) * 3) + 2] = rawData[pos + 3];
-
-			
-			
 			//Color c = Color.FromArgb(255, rawData[pos + 2], rawData[pos + 1], rawData[pos + 0]);
 			//Color a = Color.FromArgb(255, rawData[pos + 3], rawData[pos + 3], rawData[pos + 3]);
-			//bmpRgb.SetPixel(x, y, c);
-			//bmpAlpha.SetPixel(x, y, a);
-		}
-	}
-}
-
-void ZTexture::PrepareBitmapGrayscale8()
-{
-	for (int y = 0; y < height; y++)
-	{
-		for (int x = 0; x < width; x++)
-		{
-			int pos = ((y * width) + x) * 1;
-			
-			bmpRgb[(((y * width) + x) * 3) + 0] = rawData[pos];
-			bmpRgb[(((y * width) + x) * 3) + 1] = rawData[pos];
-			bmpRgb[(((y * width) + x) * 3) + 2] = rawData[pos];
-			
-			//Color c = Color.FromArgb(255, rawData[pos], rawData[pos], rawData[pos]);
-			//bmpRgb.SetPixel(x, y, c);
-		}
-	}
-}
-
-void ZTexture::PrepareBitmapGrayscaleAlpha8()
-{
-	for (int y = 0; y < height; y++)
-	{
-		for (int x = 0; x < width; x++)
-		{
-			int pos = ((y * width) + x) * 1;
-			uint8_t grayscale = (uint8_t)(rawData[pos] & 0xF0);
-			uint8_t alpha = (uint8_t)((rawData[pos] & 0x0F) << 4);
-			
-			bmpRgb[(((y * width) + x) * 3) + 0] = grayscale;
-			bmpRgb[(((y * width) + x) * 3) + 1] = grayscale;
-			bmpRgb[(((y * width) + x) * 3) + 2] = grayscale;
-
-			bmpAlpha[(((y * width) + x) * 3) + 0] = alpha;
-			bmpAlpha[(((y * width) + x) * 3) + 1] = alpha;
-			bmpAlpha[(((y * width) + x) * 3) + 2] = alpha;
-			
-			//Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
-			//Color a = Color.FromArgb(255, alpha, alpha, alpha);
 			//bmpRgb.SetPixel(x, y, c);
 			//bmpAlpha.SetPixel(x, y, a);
 		}
@@ -214,10 +181,22 @@ void ZTexture::PrepareBitmapGrayscale4()
 				bmpRgb[(((y * width) + x + i) * 3) + 0] = grayscale;
 				bmpRgb[(((y * width) + x + i) * 3) + 1] = grayscale;
 				bmpRgb[(((y * width) + x + i) * 3) + 2] = grayscale;
-
-				//Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
-				//bmpRgb.SetPixel(x + i, y, c);
 			}
+		}
+	}
+}
+
+void ZTexture::PrepareBitmapGrayscale8()
+{
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			int pos = ((y * width) + x) * 1;
+			
+			bmpRgb[(((y * width) + x) * 3) + 0] = rawData[pos];
+			bmpRgb[(((y * width) + x) * 3) + 1] = rawData[pos];
+			bmpRgb[(((y * width) + x) * 3) + 2] = rawData[pos];
 		}
 	}
 }
@@ -241,19 +220,37 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 				uint8_t grayscale = (uint8_t)(((data & 0x0E) >> 1) * 32);
 				uint8_t alpha = (uint8_t)((data & 0x01) * 255);
 
-				bmpRgb[(((y * width) + x + i) * 3) + 0] = grayscale;
-				bmpRgb[(((y * width) + x + i) * 3) + 1] = grayscale;
-				bmpRgb[(((y * width) + x + i) * 3) + 2] = grayscale;
-
-				bmpAlpha[(((y * width) + x + i) * 3) + 0] = alpha;
-				bmpAlpha[(((y * width) + x + i) * 3) + 1] = alpha;
-				bmpAlpha[(((y * width) + x + i) * 3) + 2] = alpha;
-
-				//Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
-				//Color a = Color.FromArgb(255, alpha, alpha, alpha);
-				//bmpRgb.SetPixel(x + i, y, c);
-				//bmpAlpha.SetPixel(x + i, y, a);
+				bmpRgba[(((y * width) + x + i) * 4) + 0] = grayscale;
+				bmpRgba[(((y * width) + x + i) * 4) + 1] = grayscale;
+				bmpRgba[(((y * width) + x + i) * 4) + 2] = grayscale;
+				bmpRgba[(((y * width) + x + i) * 4) + 3] = alpha;
 			}
+		}
+	}
+}
+
+void ZTexture::PrepareBitmapGrayscaleAlpha8()
+{
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			int pos = ((y * width) + x) * 1;
+			uint8_t grayscale = (uint8_t)(rawData[pos] & 0xF0);
+			uint8_t alpha = (uint8_t)((rawData[pos] & 0x0F) << 4);
+			
+			/*bmpRgb[(((y * width) + x) * 3) + 0] = grayscale;
+			bmpRgb[(((y * width) + x) * 3) + 1] = grayscale;
+			bmpRgb[(((y * width) + x) * 3) + 2] = grayscale;
+
+			bmpAlpha[(((y * width) + x) * 3) + 0] = alpha;
+			bmpAlpha[(((y * width) + x) * 3) + 1] = alpha;
+			bmpAlpha[(((y * width) + x) * 3) + 2] = alpha;*/
+
+			bmpRgba[(((y * width) + x) * 4) + 0] = grayscale;
+			bmpRgba[(((y * width) + x) * 4) + 1] = grayscale;
+			bmpRgba[(((y * width) + x) * 4) + 2] = grayscale;
+			bmpRgba[(((y * width) + x) * 4) + 3] = alpha;
 		}
 	}
 }
@@ -268,19 +265,18 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 			uint8_t grayscale = rawData[pos];
 			uint8_t alpha = rawData[pos + 1];
 
-			bmpRgb[(((y * width) + x) * 3) + 0] = grayscale;
+			/*bmpRgb[(((y * width) + x) * 3) + 0] = grayscale;
 			bmpRgb[(((y * width) + x) * 3) + 1] = grayscale;
 			bmpRgb[(((y * width) + x) * 3) + 2] = grayscale;
 
 			bmpAlpha[(((y * width) + x) * 3) + 0] = alpha;
 			bmpAlpha[(((y * width) + x) * 3) + 1] = alpha;
-			bmpAlpha[(((y * width) + x) * 3) + 2] = alpha;
+			bmpAlpha[(((y * width) + x) * 3) + 2] = alpha;*/
 			
-			
-			//Color c = Color.FromArgb(255, grayscale, grayscale, grayscale);
-			//Color a = Color.FromArgb(255, alpha, alpha, alpha);
-			//bmpRgb.SetPixel(x, y, c);
-			//bmpAlpha.SetPixel(x, y, a);
+			bmpRgba[(((y * width) + x) * 4) + 0] = grayscale;
+			bmpRgba[(((y * width) + x) * 4) + 1] = grayscale;
+			bmpRgba[(((y * width) + x) * 4) + 2] = grayscale;
+			bmpRgba[(((y * width) + x) * 4) + 3] = alpha;
 		}
 	}
 }
@@ -336,53 +332,30 @@ void ZTexture::PrepareRawData(string inFolder)
 
 	switch (type)
 	{
-	case TextureType::RGBA16bpp: PrepareRawDataRGBA16(inFolder); break;
-	case TextureType::RGBA32bpp: PrepareRawDataRGBA32(inFolder); break;
-	case TextureType::Grayscale8bpp: PrepareRawDataGrayscale8(inFolder); break;
-	case TextureType::GrayscaleAlpha8bpp: PrepareRawDataGrayscaleAlpha8(inFolder); break;
-	case TextureType::Grayscale4bpp: PrepareRawDataGrayscale4(inFolder); break;
-	case TextureType::GrayscaleAlpha4bpp: PrepareRawDataGrayscaleAlpha4(inFolder); break;
-	case TextureType::GrayscaleAlpha16bpp: PrepareRawDataGrayscaleAlpha16(inFolder); break;
-	case TextureType::Palette4bpp: PrepareRawDataPalette4(inFolder); break;
-	case TextureType::Palette8bpp: PrepareRawDataPalette8(inFolder); break;
+	case TextureType::RGBA16bpp: PrepareRawDataRGBA16(inFolder + "/" + name + ".rgba5a1.png"); break;
+	case TextureType::RGBA32bpp: PrepareRawDataRGBA32(inFolder + "/" + name + ".rgba32.png"); break;
+	case TextureType::Grayscale4bpp: PrepareRawDataGrayscale4(inFolder + "/" + name + ".i4.png"); break;
+	case TextureType::Grayscale8bpp: PrepareRawDataGrayscale8(inFolder + "/" + name + ".i8.png"); break;
+	case TextureType::GrayscaleAlpha4bpp: PrepareRawDataGrayscaleAlpha4(inFolder + "/" + name + ".ia4.png"); break;
+	case TextureType::GrayscaleAlpha8bpp: PrepareRawDataGrayscaleAlpha8(inFolder + "/" + name + ".ia8.png"); break;
+	case TextureType::GrayscaleAlpha16bpp: PrepareRawDataGrayscaleAlpha16(inFolder + "/" + name + ".ia16.png"); break;
+	case TextureType::Palette4bpp: PrepareRawDataPalette4(inFolder + "/" + name + ".ci4.png"); break;
+	case TextureType::Palette8bpp: PrepareRawDataPalette8(inFolder + "/" + name + ".ci8.png"); break;
 	default:
 		throw "Build Mode: Format is not supported!";
 	}
 }
 
-void ZTexture::PrepareRawDataRGBA32(string inFolder)
+void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 {
 	int width;
 	int height;
 	int comp;
 
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".rgb.png").c_str(), &width, &height, &comp, STBI_rgb);
-	bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".rgb.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
 
-	for (int y = 0; y < height; y++)
-	{
-		for (int x = 0; x < width; x++)
-		{
-			int pos = ((y * width) + x) * 4;
-			//Color c = bmpRgb.GetPixel(x, y);
-			//Color a = bmpAlpha.GetPixel(x, y);
-
-			rawData[pos + 0] = bmpRgb[(((y * width) + x) * 3) + 0];
-			rawData[pos + 1] = bmpRgb[(((y * width) + x) * 3) + 1];
-			rawData[pos + 2] = bmpRgb[(((y * width) + x) * 3) + 2];
-			rawData[pos + 3] = bmpAlpha[(((y * width) + x) * 3) + 0];
-		}
-	}
-}
-
-void ZTexture::PrepareRawDataRGBA16(string inFolder)
-{
-	int width;
-	int height;
-	int comp;
-
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".rgb.png").c_str(), &width, &height, &comp, STBI_rgb);
-	bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
+	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
 	for (int y = 0; y < height; y++)
 	{
@@ -390,11 +363,11 @@ void ZTexture::PrepareRawDataRGBA16(string inFolder)
 		{
 			int pos = ((y * width) + x) * 2;
 
-			uint8_t r = (uint8_t)(bmpRgb[(((y * width) + x) * 3) + 0] / 8);
-			uint8_t g = (uint8_t)(bmpRgb[(((y * width) + x) * 3) + 1] / 8);
-			uint8_t b = (uint8_t)(bmpRgb[(((y * width) + x) * 3) + 2] / 8);
+			uint8_t r = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 0] / 8);
+			uint8_t g = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 1] / 8);
+			uint8_t b = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 2] / 8);
 
-			uint8_t alphaBit = (bmpAlpha[(((y * width) + x) * 3) + 0] != 0);
+			uint8_t alphaBit = (bmpRgba[(((y * width) + x) * 4) + 3] != 0);
 
 			short data = (short)((r << 11) + (g << 6) + (b << 1) + alphaBit);
 
@@ -404,55 +377,41 @@ void ZTexture::PrepareRawDataRGBA16(string inFolder)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscale8(string inFolder)
+void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 {
 	int width;
 	int height;
 	int comp;
 
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".rgb.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
 
+	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
+	
 	for (int y = 0; y < height; y++)
 	{
 		for (int x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x);
+			int pos = ((y * width) + x) * 4;
+			//Color c = bmpRgb.GetPixel(x, y);
+			//Color a = bmpAlpha.GetPixel(x, y);
 
-			rawData[pos] = bmpRgb[(((y * width) + x) * 3) + 0];
+			rawData[pos + 0] = bmpRgba[(((y * width) + x) * 4) + 0];
+			rawData[pos + 1] = bmpRgba[(((y * width) + x) * 4) + 1];
+			rawData[pos + 2] = bmpRgba[(((y * width) + x) * 4) + 2];
+			rawData[pos + 3] = bmpRgba[(((y * width) + x) * 4) + 3];
 		}
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha8(string inFolder)
+void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 {
 	int width;
 	int height;
 	int comp;
 
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
-	bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
-
-	for (int y = 0; y < height; y++)
-	{
-		for (int x = 0; x < width; x++)
-		{
-			int pos = ((y * width) + x) * 1;
-
-			uint8_t r = (uint8_t)(bmpRgb[(((y * width) + x) * 3) + 0]);
-			uint8_t a = (uint8_t)(bmpAlpha[(((y * width) + x) * 3) + 0]);
-
-			rawData[pos] = (uint8_t)(((r / 16) << 4) + (a / 16));
-		}
-	}
-}
-
-void ZTexture::PrepareRawDataGrayscale4(string inFolder)
-{
-	int width;
-	int height;
-	int comp;
-
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
+	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
 
 	for (int y = 0; y < height; y++)
 	{
@@ -467,14 +426,36 @@ void ZTexture::PrepareRawDataGrayscale4(string inFolder)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha4(string inFolder)
+void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 {
 	int width;
 	int height;
 	int comp;
 
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
-	bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
+	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
+
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			int pos = ((y * width) + x);
+
+			rawData[pos] = bmpRgb[(((y * width) + x) * 3) + 0];
+		}
+	}
+}
+
+void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
+{
+	int width;
+	int height;
+	int comp;
+
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
+	
+	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
 	for (int y = 0; y < height; y++)
 	{
@@ -485,9 +466,8 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string inFolder)
 
 			for (int i = 0; i < 2; i++)
 			{
-				uint8_t cR = bmpRgb[(((y * width) + x + i) * 3) + 0];
-
-				uint8_t alphaBit = (bmpAlpha[(((y * width) + x + i) * 3) + 0] != 0);
+				uint8_t cR = bmpRgba[(((y * width) + x + i) * 4) + 0];
+				uint8_t alphaBit = (bmpRgba[(((y * width) + x + i) * 4) + 3] != 0);
 
 				if (i == 0)
 					data += (uint8_t)((((cR / 32) << 1) + alphaBit) << 4);
@@ -500,14 +480,41 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string inFolder)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha16(string inFolder)
+void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 {
 	int width;
 	int height;
 	int comp;
 
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
-	bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
+
+	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
+	
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			int pos = ((y * width) + x) * 1;
+
+			uint8_t r = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 0]);
+			uint8_t a = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 3]);
+
+			rawData[pos] = (uint8_t)(((r / 16) << 4) + (a / 16));
+		}
+	}
+}
+
+void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
+{
+	int width;
+	int height;
+	int comp;
+
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
+
+	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
 	for (int y = 0; y < height; y++)
 	{
@@ -515,8 +522,8 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string inFolder)
 		{
 			int pos = ((y * width) + x) * 2;
 
-			uint8_t cR = bmpRgb[(((y * width) + x) * 3) + 0];
-			uint8_t aR = bmpAlpha[(((y * width) + x) * 3) + 0];
+			uint8_t cR = bmpRgba[(((y * width) + x) * 4) + 0];
+			uint8_t aR = bmpRgba[(((y * width) + x) * 4) + 3];
 
 			rawData[pos] = (uint8_t)(cR);
 			rawData[pos + 1] = (uint8_t)(aR);
@@ -524,13 +531,14 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string inFolder)
 	}
 }
 
-void ZTexture::PrepareRawDataPalette4(string inFolder)
+void ZTexture::PrepareRawDataPalette4(string palPath)
 {
 	int width;
 	int height;
 	int comp;
 
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".ci4.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".ci4.png").c_str(), &width, &height, &comp, STBI_rgb);
+	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
 
 	for (int y = 0; y < height; y++)
 	{
@@ -546,13 +554,14 @@ void ZTexture::PrepareRawDataPalette4(string inFolder)
 	}
 }
 
-void ZTexture::PrepareRawDataPalette8(string inFolder)
+void ZTexture::PrepareRawDataPalette8(string palPath)
 {
 	int width;
 	int height;
 	int comp;
 
-	bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".ci8.png").c_str(), &width, &height, &comp, STBI_rgb);
+	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".ci8.png").c_str(), &width, &height, &comp, STBI_rgb);
+	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
 
 	for (int y = 0; y < height; y++)
 	{
@@ -592,26 +601,117 @@ int ZTexture::GetRawDataSize()
 
 void ZTexture::Save(string outFolder)
 {
-	if (type == TextureType::RGBA32bpp || type == TextureType::RGBA16bpp)
+	if (type == TextureType::RGBA32bpp)
 	{
-		stbi_write_png((outFolder + "/" + name + ".rgb.png").c_str(), width, height, 24, bmpRgb, 1);
-		stbi_write_png((outFolder + "/" + name + ".a.png").c_str(), width, height, 24, bmpAlpha, 1);
+		//stbi_write_png((outFolder + "/" + name + ".rgb.png").c_str(), width, height, 3, bmpRgb, width * 3);
+		//stbi_write_png((outFolder + "/" + name + ".a.png").c_str(), width, height, 3, bmpAlpha, width * 3);
+
+		stbi_write_png((outFolder + "/" + name + ".rgba32.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	}
-	/*else if (type == TextureType::Grayscale8bpp || type == TextureType::Grayscale4bpp)
+	else if (type == TextureType::RGBA16bpp)
 	{
-		bmpRgb.Save(outFolder + "/" + name + ".gray.png");
+		stbi_write_png((outFolder + "/" + name + ".rgb5a1.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	}
-	else if (type == TextureType::GrayscaleAlpha8bpp || type == TextureType::GrayscaleAlpha4bpp)
+	else if (type == TextureType::Grayscale8bpp)
 	{
-		bmpRgb.Save(outFolder + "/" + name + ".gray.png");
-		bmpAlpha.Save(outFolder + "/" + name + ".a.png");
+		stbi_write_png((outFolder + "/" + name + ".i8.png").c_str(), width, height, 3, bmpRgb, width * 3);
+	}
+	else if (type == TextureType::Grayscale4bpp)
+	{
+		stbi_write_png((outFolder + "/" + name + ".i4.png").c_str(), width, height, 3, bmpRgb, width * 3);
+	}
+	else if (type == TextureType::GrayscaleAlpha8bpp)
+	{
+		//stbi_write_png((outFolder + "/" + name + ".gray.png").c_str(), width, height, 3, bmpRgb, width * 3);
+		//stbi_write_png((outFolder + "/" + name + ".a.png").c_str(), width, height, 3, bmpAlpha, width * 3);
+
+		stbi_write_png((outFolder + "/" + name + ".ia8.png").c_str(), width, height, 4, bmpRgba, width * 4);
+	}
+	else if (type == TextureType::GrayscaleAlpha4bpp)
+	{
+		stbi_write_png((outFolder + "/" + name + ".ia4.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	}
 	else if (type == TextureType::Palette4bpp)
 	{
-		bmpRgb.Save(outFolder + "/" + name + ".ci4.png");
+		stbi_write_png((outFolder + "/" + name + ".ci4.png").c_str(), width, height, 3, bmpRgb, width * 3);
 	}
 	else if (type == TextureType::Palette8bpp)
 	{
-		bmpRgb.Save(outFolder + "/" + name + ".ci8.png");
-	}*/
+		stbi_write_png((outFolder + "/" + name + ".ci8.png").c_str(), width, height, 3, bmpRgb, width * 3);
+	}
+}
+
+string ZTexture::GetSourceOutputHeader()
+{
+	char line[2048];
+	sourceOutput = "";
+
+	sprintf(line, "extern char %s[];\n", name.c_str());
+
+	sourceOutput += line;
+
+	return sourceOutput;
+}
+
+string ZTexture::GetSourceOutputCode()
+{
+	char line[2048];
+	sourceOutput = "";
+
+	sprintf(line, "_%s:\n", name.c_str());
+	sourceOutput += line;
+
+	// TODO: TEMP
+	relativePath = "build/assets/" + relativePath;
+
+	if (type == TextureType::RGBA16bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".rgb5a1").c_str());
+	else if (type == TextureType::RGBA32bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".rgba32").c_str());
+	else if (type == TextureType::GrayscaleAlpha16bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".ia16").c_str());
+	else if (type == TextureType::GrayscaleAlpha8bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".ia8").c_str());
+	else if (type == TextureType::GrayscaleAlpha4bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".ia4").c_str());
+	else if (type == TextureType::Grayscale4bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".i4").c_str());
+	else if (type == TextureType::Grayscale8bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".i8").c_str());
+	else if (type == TextureType::Palette4bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".ci8").c_str());
+	else if (type == TextureType::Palette8bpp)
+		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".ci8").c_str());
+	else
+		strcpy(line, "# UNIMPLEMENTED!");
+	
+	sourceOutput += line;
+
+	return sourceOutput;
+}
+
+TextureType ZTexture::GetTextureTypeFromString(string str)
+{
+	TextureType texType = TextureType::Error;
+
+	if (str == "rgba32")
+		texType = TextureType::RGBA32bpp;
+	else if (str == "rgb5a1")
+		texType = TextureType::RGBA16bpp;
+	else if (str == "i4")
+		texType = TextureType::Grayscale4bpp;
+	else if (str == "i8")
+		texType = TextureType::Grayscale8bpp;
+	else if (str == "ia4")
+		texType = TextureType::GrayscaleAlpha4bpp;
+	else if (str == "ia8")
+		texType = TextureType::GrayscaleAlpha8bpp;
+	else if (str == "ia16")
+		texType = TextureType::GrayscaleAlpha16bpp;
+	else if (str == "ci4")
+		texType = TextureType::Palette4bpp;
+	else if (str == "ci8")
+		texType = TextureType::Palette8bpp;
+
+	return texType;
 }
