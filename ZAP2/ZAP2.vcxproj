@@ -124,9 +124,24 @@
     <ClCompile Include="ZDisplayList.cpp" />
     <ClCompile Include="ZFile.cpp" />
     <ClCompile Include="ZResource.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetActorList.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetCameraSettings.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetEchoSettings.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetEntranceList.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetRoomBehavior.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetSkyboxModifier.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetSkyboxSettings.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetSoundSettings.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetSpecialObjects.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetStartPositionList.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetTimeSettings.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetWind.cpp" />
+    <ClCompile Include="ZRoom\ZRoom.cpp" />
+    <ClCompile Include="ZRoom\ZRoomCommand.cpp" />
     <ClCompile Include="ZTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BitConverter.h" />
     <ClInclude Include="Directory.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="Path.h" />
@@ -137,6 +152,20 @@
     <ClInclude Include="ZDisplayList.h" />
     <ClInclude Include="ZFile.h" />
     <ClInclude Include="ZResource.h" />
+    <ClInclude Include="ZRoom\Commands\SetActorList.h" />
+    <ClInclude Include="ZRoom\Commands\SetCameraSettings.h" />
+    <ClInclude Include="ZRoom\Commands\SetEchoSettings.h" />
+    <ClInclude Include="ZRoom\Commands\SetEntranceList.h" />
+    <ClInclude Include="ZRoom\Commands\SetRoomBehavior.h" />
+    <ClInclude Include="ZRoom\Commands\SetSkyboxModifier.h" />
+    <ClInclude Include="ZRoom\Commands\SetSkyboxSettings.h" />
+    <ClInclude Include="ZRoom\Commands\SetSoundSettings.h" />
+    <ClInclude Include="ZRoom\Commands\SetSpecialObjects.h" />
+    <ClInclude Include="ZRoom\Commands\SetStartPositionList.h" />
+    <ClInclude Include="ZRoom\Commands\SetTimeSettings.h" />
+    <ClInclude Include="ZRoom\Commands\SetWind.h" />
+    <ClInclude Include="ZRoom\ZRoom.h" />
+    <ClInclude Include="ZRoom\ZRoomCommand.h" />
     <ClInclude Include="ZTexture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

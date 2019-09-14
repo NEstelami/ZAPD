@@ -132,11 +132,6 @@ void ZTexture::PrepareBitmapRGBA16()
 			bmpRgba[(((y * width) + x) * 4) + 1] = g * 8;
 			bmpRgba[(((y * width) + x) * 4) + 2] = b * 8;
 			bmpRgba[(((y * width) + x) * 4) + 3] = alpha * 255;
-
-			//Color c = Color.FromArgb(255, r * 8, g * 8, b * 8);
-			//Color a = Color.FromArgb(255, alpha * 255, alpha * 255, alpha * 255);
-			//bmpRgb.SetPixel(x, y, c);
-			//bmpAlpha.SetPixel(x, y, a);
 		}
 	}
 }
@@ -153,11 +148,6 @@ void ZTexture::PrepareBitmapRGBA32()
 			bmpRgba[(((y * width) + x) * 4) + 1] = rawData[pos + 1];
 			bmpRgba[(((y * width) + x) * 4) + 2] = rawData[pos + 0];
 			bmpRgba[(((y * width) + x) * 4) + 3] = rawData[pos + 3];
-
-			//Color c = Color.FromArgb(255, rawData[pos + 2], rawData[pos + 1], rawData[pos + 0]);
-			//Color a = Color.FromArgb(255, rawData[pos + 3], rawData[pos + 3], rawData[pos + 3]);
-			//bmpRgb.SetPixel(x, y, c);
-			//bmpAlpha.SetPixel(x, y, a);
 		}
 	}
 }
@@ -238,14 +228,6 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 			int pos = ((y * width) + x) * 1;
 			uint8_t grayscale = (uint8_t)(rawData[pos] & 0xF0);
 			uint8_t alpha = (uint8_t)((rawData[pos] & 0x0F) << 4);
-			
-			/*bmpRgb[(((y * width) + x) * 3) + 0] = grayscale;
-			bmpRgb[(((y * width) + x) * 3) + 1] = grayscale;
-			bmpRgb[(((y * width) + x) * 3) + 2] = grayscale;
-
-			bmpAlpha[(((y * width) + x) * 3) + 0] = alpha;
-			bmpAlpha[(((y * width) + x) * 3) + 1] = alpha;
-			bmpAlpha[(((y * width) + x) * 3) + 2] = alpha;*/
 
 			bmpRgba[(((y * width) + x) * 4) + 0] = grayscale;
 			bmpRgba[(((y * width) + x) * 4) + 1] = grayscale;
@@ -265,14 +247,6 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 			uint8_t grayscale = rawData[pos];
 			uint8_t alpha = rawData[pos + 1];
 
-			/*bmpRgb[(((y * width) + x) * 3) + 0] = grayscale;
-			bmpRgb[(((y * width) + x) * 3) + 1] = grayscale;
-			bmpRgb[(((y * width) + x) * 3) + 2] = grayscale;
-
-			bmpAlpha[(((y * width) + x) * 3) + 0] = alpha;
-			bmpAlpha[(((y * width) + x) * 3) + 1] = alpha;
-			bmpAlpha[(((y * width) + x) * 3) + 2] = alpha;*/
-			
 			bmpRgba[(((y * width) + x) * 4) + 0] = grayscale;
 			bmpRgba[(((y * width) + x) * 4) + 1] = grayscale;
 			bmpRgba[(((y * width) + x) * 4) + 2] = grayscale;
@@ -352,9 +326,6 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".rgb.png").c_str(), &width, &height, &comp, STBI_rgb);
-	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
-
 	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
 	for (int y = 0; y < height; y++)
@@ -383,9 +354,6 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".rgb.png").c_str(), &width, &height, &comp, STBI_rgb);
-	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
-
 	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 	
 	for (int y = 0; y < height; y++)
@@ -393,8 +361,6 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 		for (int x = 0; x < width; x++)
 		{
 			int pos = ((y * width) + x) * 4;
-			//Color c = bmpRgb.GetPixel(x, y);
-			//Color a = bmpAlpha.GetPixel(x, y);
 
 			rawData[pos + 0] = bmpRgba[(((y * width) + x) * 4) + 0];
 			rawData[pos + 1] = bmpRgba[(((y * width) + x) * 4) + 1];
@@ -410,7 +376,6 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
 	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
 
 	for (int y = 0; y < height; y++)
@@ -432,7 +397,6 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
 	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
 
 	for (int y = 0; y < height; y++)
@@ -452,9 +416,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
-	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
-	
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
 	for (int y = 0; y < height; y++)
@@ -486,9 +447,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
-	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
-
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 	
 	for (int y = 0; y < height; y++)
@@ -510,9 +468,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 	int width;
 	int height;
 	int comp;
-
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".gray.png").c_str(), &width, &height, &comp, STBI_rgb);
-	//bmpAlpha = (uint8_t*)stbi_load((inFolder + "/" + name + ".a.png").c_str(), &width, &height, &comp, STBI_rgb);
 
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
@@ -537,7 +492,6 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".ci4.png").c_str(), &width, &height, &comp, STBI_rgb);
 	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
 
 	for (int y = 0; y < height; y++)
@@ -560,7 +514,6 @@ void ZTexture::PrepareRawDataPalette8(string palPath)
 	int height;
 	int comp;
 
-	//bmpRgb = (uint8_t*)stbi_load((inFolder + "/" + name + ".ci8.png").c_str(), &width, &height, &comp, STBI_rgb);
 	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
 
 	for (int y = 0; y < height; y++)
@@ -603,9 +556,6 @@ void ZTexture::Save(string outFolder)
 {
 	if (type == TextureType::RGBA32bpp)
 	{
-		//stbi_write_png((outFolder + "/" + name + ".rgb.png").c_str(), width, height, 3, bmpRgb, width * 3);
-		//stbi_write_png((outFolder + "/" + name + ".a.png").c_str(), width, height, 3, bmpAlpha, width * 3);
-
 		stbi_write_png((outFolder + "/" + name + ".rgba32.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	}
 	else if (type == TextureType::RGBA16bpp)
@@ -622,9 +572,6 @@ void ZTexture::Save(string outFolder)
 	}
 	else if (type == TextureType::GrayscaleAlpha8bpp)
 	{
-		//stbi_write_png((outFolder + "/" + name + ".gray.png").c_str(), width, height, 3, bmpRgb, width * 3);
-		//stbi_write_png((outFolder + "/" + name + ".a.png").c_str(), width, height, 3, bmpAlpha, width * 3);
-
 		stbi_write_png((outFolder + "/" + name + ".ia8.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	}
 	else if (type == TextureType::GrayscaleAlpha4bpp)

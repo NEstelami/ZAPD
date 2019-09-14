@@ -13,15 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\ZRoom">
+      <UniqueIdentifier>{490e3a08-047b-48d3-ab53-3a860a3b92aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ZRoom">
+      <UniqueIdentifier>{03cc56a2-e0e8-4167-80a0-98fb900a959a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ZRoom\Commands">
+      <UniqueIdentifier>{73db0879-6df8-4f6a-8cc2-a1f836e9e796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ZRoom\Commands">
+      <UniqueIdentifier>{26c06845-8e8e-4b79-ad18-07c4f9c0f801}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZBlob.cpp">
@@ -35,6 +44,51 @@
     </ClCompile>
     <ClCompile Include="ZDisplayList.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\ZRoom.cpp">
+      <Filter>Source Files\ZRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetEchoSettings.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\ZRoomCommand.cpp">
+      <Filter>Source Files\ZRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetSoundSettings.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetWind.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetTimeSettings.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetSpecialObjects.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetRoomBehavior.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetSkyboxSettings.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetCameraSettings.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetSkyboxModifier.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetActorList.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetEntranceList.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetStartPositionList.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +124,51 @@
     </ClInclude>
     <ClInclude Include="ZDisplayList.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\ZRoom.h">
+      <Filter>Header Files\ZRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\ZRoomCommand.h">
+      <Filter>Header Files\ZRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetEchoSettings.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetSoundSettings.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetWind.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetTimeSettings.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="BitConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetSpecialObjects.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetRoomBehavior.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetSkyboxSettings.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetCameraSettings.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetSkyboxModifier.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetActorList.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetEntranceList.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetStartPositionList.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
