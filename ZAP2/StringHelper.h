@@ -25,4 +25,18 @@ public:
 
 		return result;
 	}
+
+	static std::string Strip(std::string s, std::string delimiter)
+	{
+		size_t pos = 0;
+		std::string token;
+
+		while ((pos = s.find(delimiter)) != std::string::npos)
+		{
+			token = s.substr(0, pos);
+			s.erase(pos, pos + delimiter.length());
+		}
+
+		return s;
+	}
 };
