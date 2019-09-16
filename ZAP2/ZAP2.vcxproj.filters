@@ -25,6 +25,15 @@
     <Filter Include="Source Files\ZRoom\Commands">
       <UniqueIdentifier>{26c06845-8e8e-4b79-ad18-07c4f9c0f801}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Overlays">
+      <UniqueIdentifier>{c0ddbe35-c49c-44be-8239-4e402cbd190d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Overlays">
+      <UniqueIdentifier>{34bbe531-7182-4f45-988e-fe08c6091f86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\elfio">
+      <UniqueIdentifier>{dc06ed84-f6fe-4277-80f3-d62bd5cdbb98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -89,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="ZRoom\Commands\SetStartPositionList.cpp">
       <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Overlays\ZOverlay.cpp">
+      <Filter>Source Files\Overlays</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +181,48 @@
     </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetStartPositionList.h">
       <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elf_types.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_dump.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_dynamic.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_header.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_note.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_relocation.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_section.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_segment.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_strings.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_symbols.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="elfio\elfio_utils.hpp">
+      <Filter>Header Files\elfio</Filter>
+    </ClInclude>
+    <ClInclude Include="Overlays\ZOverlay.h">
+      <Filter>Header Files\Overlays</Filter>
+    </ClInclude>
+    <ClInclude Include="StringHelper.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

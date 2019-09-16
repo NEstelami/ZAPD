@@ -9,6 +9,7 @@ enum ZFileMode
 {
 	Build,
 	BuildTexture,
+	BuildOverlay,
 	Extract,
 	Invalid
 };

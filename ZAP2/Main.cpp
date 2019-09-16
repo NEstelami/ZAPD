@@ -1,5 +1,6 @@
 #include "ZFile.h"
 #include "ZTexture.h"
+#include "Overlays/ZOverlay.h"
 #include "Path.h"
 #include "File.h"
 
@@ -14,10 +15,10 @@ void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath);
 
 int main(int argc, char* argv[])
 {
-	if (argc != 3 && argc != 5)
+	if (argc != 3 && argc != 4 && argc != 5)
 	{
 		cout << "ZAP2: Zelda Asset Processor (2)" << "\n";
-		cout << "Usage: ZAP2.exe [mode (b/btex/e)] [Input XML/Texture File/Bin File] " << "\n";
+		cout << "Usage: ZAP2.exe [mode (b/btex/bovl/e)] [Input XML/Texture File/Bin File] " << "\n";
 		return 1;
 	}
 
@@ -29,6 +30,8 @@ int main(int argc, char* argv[])
 		fileMode = ZFileMode::Build;
 	else if (buildMode == "btex")
 		fileMode = ZFileMode::BuildTexture;
+	else if (buildMode == "bovl")
+		fileMode = ZFileMode::BuildOverlay;
 	else
 		fileMode = ZFileMode::Extract;
 
@@ -50,6 +53,13 @@ int main(int argc, char* argv[])
 		TextureType texType = ZTexture::GetTextureTypeFromString(texTypeStr);
 
 		BuildAssetTexture(pngFilePath, texType, outFilePath);
+	}
+	else if (fileMode == ZFileMode::BuildOverlay)
+	{
+		// Syntax: ZAP2.exe bovl [elfFilePath] [cfgFolderPath] [outputFilePath]
+		ZOverlay* overlay = ZOverlay::FromELF(argv[2], Path::GetDirectoryName(argv[3]));
+		string source = overlay->GetSourceOutputCode();
+		File::WriteAllText(argv[4], source);
 	}
 
 	//Parse(argv[1], buildMode == 'b' ? ZFileMode::Build : ZFileMode::Extract);

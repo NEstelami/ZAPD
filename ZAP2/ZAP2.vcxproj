@@ -69,7 +69,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\Jack\Documents\GitHub\ZAP2\ZAP2\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -119,6 +121,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="ZBlob.cpp" />
     <ClCompile Include="ZDisplayList.cpp" />
@@ -143,10 +146,24 @@
   <ItemGroup>
     <ClInclude Include="BitConverter.h" />
     <ClInclude Include="Directory.h" />
+    <ClInclude Include="elfio\elfio.hpp" />
+    <ClInclude Include="elfio\elfio_dump.hpp" />
+    <ClInclude Include="elfio\elfio_dynamic.hpp" />
+    <ClInclude Include="elfio\elfio_header.hpp" />
+    <ClInclude Include="elfio\elfio_note.hpp" />
+    <ClInclude Include="elfio\elfio_relocation.hpp" />
+    <ClInclude Include="elfio\elfio_section.hpp" />
+    <ClInclude Include="elfio\elfio_segment.hpp" />
+    <ClInclude Include="elfio\elfio_strings.hpp" />
+    <ClInclude Include="elfio\elfio_symbols.hpp" />
+    <ClInclude Include="elfio\elfio_utils.hpp" />
+    <ClInclude Include="elfio\elf_types.hpp" />
     <ClInclude Include="File.h" />
+    <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
+    <ClInclude Include="StringHelper.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="ZBlob.h" />
     <ClInclude Include="ZDisplayList.h" />
