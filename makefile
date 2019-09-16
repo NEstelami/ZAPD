@@ -1,7 +1,7 @@
 CC := g++
-CFLAGS := -std=c++17
+CFLAGS := -std=c++17 -I ZAP2
 
-SRC_DIRS := ZAP2
+SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays
 
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 O_FILES := $(foreach file,$(CPP_FILES),$(BUILD_DIR)/$(file:.cpp=.o))

@@ -18,6 +18,17 @@ public:
 		return std::vector<uint8_t>(data, data + fileSize);
 	};
 
+	static std::string ReadAllText(std::string filePath)
+	{
+		std::ifstream file(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+		int fileSize = file.tellg();
+		file.seekg(0);
+		char* data = new char[fileSize+1];
+		memset(data, 0, fileSize + 1);
+		file.read(data, fileSize);
+		return std::string((const char*)data);
+	};
+
 	static void WriteAllBytes(std::string filePath, std::vector<uint8_t> data)
 	{
 		std::ofstream file(filePath, std::ios::binary);
