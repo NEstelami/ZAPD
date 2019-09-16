@@ -21,9 +21,9 @@ ZOverlay* ZOverlay::FromELF(string elfFilePath, string cfgFolderPath)
 		basePath = Directory::GetCurrentDirectory();*/
 
 	string cfgText = File::ReadAllText(cfgFolderPath + "/overlay.cfg");
-	vector<string> cfgLines = StringHelper::Split(cfgText, "\r\n");
+	vector<string> cfgLines = StringHelper::Split(cfgText, "\n");
 
-	ZOverlay* ovl = new ZOverlay(cfgLines[0]);
+	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
 	elfio reader;
 
 	if (!reader.load(elfFilePath))
