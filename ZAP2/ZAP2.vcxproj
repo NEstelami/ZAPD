@@ -120,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Globals.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="elfio\elfio_utils.hpp" />
     <ClInclude Include="elfio\elf_types.hpp" />
     <ClInclude Include="File.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="stb_image.h" />

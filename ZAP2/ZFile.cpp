@@ -5,11 +5,12 @@
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
+#include "Globals.h"
 
 using namespace tinyxml2;
 using namespace std;
 
-ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath)
+ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath)
 {
 	resources = vector<ZResource*>();
 
@@ -17,6 +18,11 @@ ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath)
 		basePath = Directory::GetCurrentDirectory();
 	else
 		basePath = nBasePath;
+
+	if (nOutPath == "")
+		outputPath = Directory::GetCurrentDirectory();
+	else
+		outputPath = nOutPath;
 
 	ParseXML(mode, reader);
 }
@@ -110,7 +116,8 @@ void ZFile::BuildResources()
 
 void ZFile::ExtractResources()
 {
-	string folderName = Path::GetFileNameWithoutExtension(name);
+	//string folderName = Path::GetFileNameWithoutExtension(name);
+	string folderName = Path::GetFileNameWithoutExtension(outputPath);
 
 	if (!Directory::Exists(folderName))
 		Directory::CreateDirectory(folderName);
@@ -118,10 +125,11 @@ void ZFile::ExtractResources()
 	for (ZResource* res : resources)
 	{
 		//Console.WriteLine("Saving resource " + res.GetName());
-		res->Save(folderName);
+		res->Save(outputPath);
 	}
 
-	GenerateSourceFiles();
+	if (Globals::Instance->genSourceFile)
+		GenerateSourceFiles();
 }
 
 void ZFile::GenerateSourceFiles()
