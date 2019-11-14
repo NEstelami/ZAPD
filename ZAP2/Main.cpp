@@ -1,28 +1,34 @@
+// TODO: Instead of having a fixed number of arguments for each build mode, allow parameters to be modified with a set of "commands"
+
 #include "ZFile.h"
 #include "ZTexture.h"
 #include "Overlays/ZOverlay.h"
 #include "Path.h"
 #include "File.h"
+#include "Globals.h"
 
 #include <string>
 #include "tinyxml2.h"
 
+
 using namespace tinyxml2;
 using namespace std;
 
-bool Parse(string xmlFilePath, ZFileMode fileMode);
+bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMode);
 void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath);
 
 int main(int argc, char* argv[])
 {
-	if (argc != 3 && argc != 4 && argc != 5)
+	Globals* g = new Globals();
+
+	if (argc != 3 && argc != 4 && argc != 5 && argc != 6)
 	{
 		cout << "ZAP2: Zelda Asset Processor (2)" << "\n";
-		cout << "Usage: ZAP2.exe [mode (b/btex/bovl/e)] [Input XML/Texture File/Bin File] " << "\n";
+		cout << "Usage: ZAP2.exe [mode (b/btex/bovl/e)] [Input XML/Texture File/Bin File] [outputPath]" << "\n";
 		return 1;
 	}
 
-	//char buildMode = argv[2][0];
+	// Parse File Mode
 	string buildMode = argv[1];
 	ZFileMode fileMode = ZFileMode::Invalid;
 
@@ -42,7 +48,13 @@ int main(int argc, char* argv[])
 	}
 
 	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract)
-		Parse(argv[2], fileMode);
+	{
+		// Syntax: ZAP2.exe e [input xml file] [baseromPath] [outputPath] [(OPTIONAL) shouldGenerateSourceFile (0/1)]
+		if (fileMode == ZFileMode::Extract && argc == 6)
+			Globals::Instance->genSourceFile = (bool)argv[5];
+		
+		Parse(argv[2], argv[3], argv[4], fileMode);
+	}
 	else if (fileMode == ZFileMode::BuildTexture)
 	{
 		// Syntax: ZAP2.exe btex [texType] [pngFilePath] [outFilePath]
@@ -61,13 +73,11 @@ int main(int argc, char* argv[])
 		string source = overlay->GetSourceOutputCode();
 		File::WriteAllText(argv[4], source);
 	}
-
-	//Parse(argv[1], buildMode == 'b' ? ZFileMode::Build : ZFileMode::Extract);
 	
 	return 0;
 }
 
-bool Parse(string xmlFilePath, ZFileMode fileMode)
+bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMode)
 {
 	XMLDocument doc;
 
@@ -85,7 +95,8 @@ bool Parse(string xmlFilePath, ZFileMode fileMode)
 	{
 		if (string(child->Name()) == "File")
 		{
-			ZFile* file = new ZFile(fileMode, child, Path::GetDirectoryName(xmlFilePath));
+			//ZFile* file = new ZFile(fileMode, child, Path::GetDirectoryName(xmlFilePath));
+			ZFile* file = new ZFile(fileMode, child, basePath, outPath);
 
 			if (fileMode == ZFileMode::Build)
 				file->BuildResources();

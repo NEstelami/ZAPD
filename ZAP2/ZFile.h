@@ -17,7 +17,7 @@ enum ZFileMode
 class ZFile
 {
 public:
-	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath);
+	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath);
 
 	void ExtractResources();
 	void BuildResources();
@@ -25,6 +25,7 @@ public:
 protected:
 	std::string name;
 	std::string basePath;
+	std::string outputPath;
 	std::string sourceOutput;
 	std::vector<ZResource*> resources;
 
