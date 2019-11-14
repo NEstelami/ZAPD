@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 	{
 		// Syntax: ZAP2.exe e [input xml file] [baseromPath] [outputPath] [(OPTIONAL) shouldGenerateSourceFile (0/1)]
 		if (fileMode == ZFileMode::Extract && argc == 6)
-			Globals::Instance->genSourceFile = (bool)argv[5];
+			Globals::Instance->genSourceFile = argv[5][0] == '1';
 		
 		Parse(argv[2], argv[3], argv[4], fileMode);
 	}
