@@ -1,46 +1,82 @@
-//#include "SetEntranceList.h"
-//#include "../../BitConverter.h"
-//
-//using namespace std;
-//
-//SetEntranceList::SetEntranceList(std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(rawData, rawDataIndex)
-//{
-//	int numEntrances = rawData[rawDataIndex + 1];
-//	int actorListPtr = BitConverter::ToInt32BE(rawData, rawDataIndex + 3) & 0x00FFFFFF;
-//
-//	entrances = vector<EntranceEntry*>();
-//
-//	for (int i = 0; i < numActors; i++)
-//	{
-//		ActorSpawnEntry* entry = new ActorSpawnEntry(rawData, (rawDataIndex + actorListPtr) + (i * 16));
-//		actors.push_back(entry);
-//	}
-//}
-//
-//string SetEntranceList::GenerateSourceCode()
-//{
-//	string sourceOutput = "";
-//	char line[2048];
-//
-//	//sprintf(line, "SetActorList 0x%08X, 0x%08X\n", cameraMovement, mapHighlight);
-//	sourceOutput = line;
-//
-//	return sourceOutput;
-//}
-//
-//RoomCommand SetEntranceList::GetRoomCommand()
-//{
-//	return RoomCommand::SetEntranceList;
-//}
-//
-//SetEntranceList::SetEntranceList(std::vector<uint8_t> rawData, int rawDataIndex)
-//{
-//	actorNum = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-//	posX = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-//	posY = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-//	posZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-//	rotX = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-//	rotY = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-//	rotZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
-//	initVar = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
-//}
+#include "SetEntranceList.h"
+#include "SetStartPositionList.h"
+#include "../ZRoom.h"
+#include "../../BitConverter.h"
+
+using namespace std;
+
+SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
+{
+	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+	entrances = vector<EntranceEntry*>();
+
+	_rawData = rawData;
+	_rawDataIndex = rawDataIndex;
+}
+
+string SetEntranceList::GenerateSourceCodePass1(string roomName)
+{
+	string sourceOutput = "";
+	char line[2048];
+
+	sprintf(line, "%s 0x00, (u32)&entranceList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), segmentOffset);
+	sourceOutput = line;
+
+	// Parse Entrances and Generate Declaration
+	//int numEntrances = ((SetStartPositionList*)zRoom->FindCommandOfType(RoomCommand::SetStartPositionList))->actors.size();
+	zRoom->declarations[segmentOffset] = "";
+	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
+	uint32_t currentPtr = segmentOffset;
+
+	for (int i = 0; i < numEntrances; i++)
+	{
+		EntranceEntry* entry = new EntranceEntry(_rawData, currentPtr);
+		entrances.push_back(entry);
+
+		currentPtr += 2;
+	}
+
+	string declaration = "";
+
+	sprintf(line, "EntranceEntry entranceList_%08X[] = \n{\n", segmentOffset);
+	declaration += line;
+
+	for (EntranceEntry* entry : entrances)
+	{
+		sprintf(line, "\t{ %02X, %02X },\n", entry->startPositionIndex, entry->roomToLoad);
+		declaration += line;
+	}
+
+	declaration += "};\n";
+
+	zRoom->declarations[segmentOffset] = declaration;
+
+	return sourceOutput;
+}
+
+string SetEntranceList::GenerateExterns()
+{
+	string sourceOutput = "";
+	char line[2048];
+
+	sprintf(line, "extern EntranceEntry entranceList_%08X[];\n", segmentOffset);
+	sourceOutput = line;
+
+	return sourceOutput;
+}
+
+string SetEntranceList::GetCommandCName()
+{
+	return "SCmdEntranceList";
+}
+
+RoomCommand SetEntranceList::GetRoomCommand()
+{
+	return RoomCommand::SetEntranceList;
+}
+
+EntranceEntry::EntranceEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+{
+	startPositionIndex = rawData[rawDataIndex + 0];
+	roomToLoad = rawData[rawDataIndex + 1];
+}

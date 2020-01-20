@@ -105,6 +105,33 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetAlternateHeaders.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetExitList.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\EndMarker.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetCollisionHeader.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetRoomList.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetObjectList.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetMesh.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\Unused09.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetLightingSettings.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tinyxml2.h">
@@ -229,6 +256,42 @@
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetAlternateHeaders.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetExitList.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\EndMarker.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetCollisionHeader.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetRoomList.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetObjectList.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetMesh.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\Unused09.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\ObjectList.h">
+      <Filter>Header Files\ZRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\ActorList.h">
+      <Filter>Header Files\ZRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetLightingSettings.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\RoomList.h">
+      <Filter>Header Files\ZRoom</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

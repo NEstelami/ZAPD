@@ -605,13 +605,13 @@ string ZTexture::GetSourceOutputCode()
 	char line[2048];
 	sourceOutput = "";
 
-	sprintf(line, "_%s:\n", name.c_str());
-	sourceOutput += line;
+	//sprintf(line, "_%s:\n", name.c_str());
+	//sourceOutput += line;
 
 	// TODO: TEMP
 	relativePath = "build/assets/" + relativePath;
 
-	if (type == TextureType::RGBA16bpp)
+	/*if (type == TextureType::RGBA16bpp)
 		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".rgb5a1").c_str());
 	else if (type == TextureType::RGBA32bpp)
 		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".rgba32").c_str());
@@ -630,9 +630,32 @@ string ZTexture::GetSourceOutputCode()
 	else if (type == TextureType::Palette8bpp)
 		sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".ci8").c_str());
 	else
-		strcpy(line, "# UNIMPLEMENTED!");
-	
+		strcpy(line, "# UNIMPLEMENTED!");*/
+
+	FixRawData();
+
+	//sprintf(line, "const u64 _%s[] = \n{\n", name.c_str());
+	sprintf(line, "const u8 _%s[] = \n{\n", name.c_str());
 	sourceOutput += line;
+
+	for (int i = 0; i < rawData.size(); i += 1)
+	{
+		//uint64_t data;
+
+		//memcpy(&data, &rawData[i], 8);
+
+		//sprintf(line, "0x%016llX, ", data);
+		sprintf(line, "0x%02X, ", rawData[i]);
+		sourceOutput += line;
+
+		//if ((i / 8) % 8 == 7)
+			//sourceOutput += "\n";
+
+		if (i % 16 == 15)
+			sourceOutput += "\n";
+	}
+
+	sourceOutput += "};\n";
 
 	return sourceOutput;
 }
@@ -662,3 +685,8 @@ TextureType ZTexture::GetTextureTypeFromString(string str)
 
 	return texType;
 }
+
+//SourceType ZTexture::GetSourceType()
+//{
+//	return SourceType::ASM;
+//}

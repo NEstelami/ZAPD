@@ -2,22 +2,27 @@
 
 using namespace std;
 
-SetSoundSettings::SetSoundSettings(std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(rawData, rawDataIndex)
+SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	reverb = rawData[rawDataIndex + 0x01];
 	nightTimeSFX = rawData[rawDataIndex + 0x06];
 	musicSequence = rawData[rawDataIndex + 0x07];
 }
 
-string SetSoundSettings::GenerateSourceCode()
+string SetSoundSettings::GenerateSourceCodePass1(string roomName)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetSoundSettings 0x%08X, 0x%08X, 0x%08X\n", reverb, nightTimeSFX, musicSequence);
+	sprintf(line, "%s 0x%02X, 0x00, 0x00, 0x00, 0x00, 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), reverb, nightTimeSFX, musicSequence);
 	sourceOutput = line;
 
 	return sourceOutput;
+}
+
+string SetSoundSettings::GetCommandCName()
+{
+	return "SCmdSoundSettings";
 }
 
 RoomCommand SetSoundSettings::GetRoomCommand()

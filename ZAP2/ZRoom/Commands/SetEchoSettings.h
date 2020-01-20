@@ -5,9 +5,10 @@
 class SetEchoSettings : public ZRoomCommand
 {
 public:
-	SetEchoSettings(std::vector<uint8_t> rawData, int rawDataIndex);
+	SetEchoSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
-	virtual std::string GenerateSourceCode();
+	virtual std::string GenerateSourceCodePass1(std::string roomName);
+	virtual std::string GetCommandCName();
 	virtual RoomCommand GetRoomCommand();
 
 private:

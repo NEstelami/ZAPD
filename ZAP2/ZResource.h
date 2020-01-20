@@ -4,6 +4,12 @@
 #include <vector>
 #include <stdint.h>
 
+enum class SourceType
+{
+	C,
+	ASM
+};
+
 class ZResource
 {
 public:
@@ -14,6 +20,7 @@ public:
 	virtual int GetRawDataSize();
 	virtual std::string GetSourceOutputHeader();
 	virtual std::string GetSourceOutputCode();
+	virtual SourceType GetSourceType();
 
 protected:
 	std::string name;

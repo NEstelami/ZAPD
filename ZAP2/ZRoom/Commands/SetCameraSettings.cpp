@@ -2,21 +2,26 @@
 
 using namespace std;
 
-SetCameraSettings::SetCameraSettings(std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(rawData, rawDataIndex)
+SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	cameraMovement = rawData[rawDataIndex + 0x01];
 	mapHighlight = rawData[rawDataIndex + 0x07];
 }
 
-string SetCameraSettings::GenerateSourceCode()
+string SetCameraSettings::GenerateSourceCodePass1(string roomName)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetCameraSettings 0x%08X, 0x%08X\n", cameraMovement, mapHighlight);
+	sprintf(line, "%s 0x%02X, 0x00, 0x00, 0x00, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), cameraMovement, mapHighlight);
 	sourceOutput = line;
 
 	return sourceOutput;
+}
+
+string SetCameraSettings::GetCommandCName()
+{
+	return "SCmdCameraMapSettings";
 }
 
 RoomCommand SetCameraSettings::GetRoomCommand()

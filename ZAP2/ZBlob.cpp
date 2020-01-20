@@ -29,15 +29,38 @@ string ZBlob::GetSourceOutputCode()
 	char line[2048];
 	sourceOutput = "";
 
-	sprintf(line, "_%s:\n", name.c_str());
+	//sprintf(line, "_%s:\n", name.c_str());
+	//sourceOutput += line;
+
+	//// TODO: TEMP
+	//relativePath = "assets/" + relativePath;
+
+	//sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".bin").c_str());
+
+	//sourceOutput += line;
+
+		//sprintf(line, "const u64 _%s[] = \n{\n", name.c_str());
+	sprintf(line, "const u8 _%s[] = \n{\n", name.c_str());
 	sourceOutput += line;
 
-	// TODO: TEMP
-	relativePath = "assets/" + relativePath;
+	for (int i = 0; i < rawData.size(); i += 1)
+	{
+		//uint64_t data;
 
-	sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".bin").c_str());
+		//memcpy(&data, &rawData[i], 8);
 
-	sourceOutput += line;
+		//sprintf(line, "0x%016llX, ", data);
+		sprintf(line, "0x%02X, ", rawData[i]);
+		sourceOutput += line;
+
+		//if ((i / 8) % 8 == 7)
+			//sourceOutput += "\n";
+
+		if (i % 16 == 15)
+			sourceOutput += "\n";
+	}
+
+	sourceOutput += "};\n";
 
 	return sourceOutput;
 }

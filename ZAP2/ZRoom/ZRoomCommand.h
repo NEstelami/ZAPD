@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+class ZRoom;
+
 enum class RoomCommand : uint8_t
 {
 	SetStartPositionList = 0x00,
@@ -34,16 +36,26 @@ enum class RoomCommand : uint8_t
 	SetAlternateHeaders = 0x18,
 	SetCameraSettings = 0x19,
 
-
 	Error = 0xFF
 };
 
 class ZRoomCommand
 {
 public:
-	ZRoomCommand(std::vector<uint8_t> rawData, int rawDataIndex);
+	RoomCommand cmdID;
+	int32_t cmdAddress;
+	int32_t cmdIndex;
 
-	virtual std::string GenerateSourceCode();
-	virtual std::string GenerateSourceCodeDeferred();
+	ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+
+	virtual std::string GenerateSourceCodePass1(std::string roomName);
+	virtual std::string GenerateSourceCodePass2(std::string roomName);
+	virtual std::string GenerateSourceCodePass3(std::string roomName);
 	virtual RoomCommand GetRoomCommand();
+	virtual int32_t GetRawDataSize();
+	virtual std::string GetCommandCName();
+	virtual std::string GenerateExterns();
+
+protected:
+	ZRoom* zRoom;
 };
