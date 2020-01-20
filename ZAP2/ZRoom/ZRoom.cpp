@@ -222,7 +222,7 @@ void ZRoom::GenDefinitions()
 		sourceOutput += line;
 	}
 
-	File::WriteAllText("objectlist.inc", sourceOutput);
+	//File::WriteAllText("objectlist.inc", sourceOutput);
 }
 
 vector<uint8_t> ZRoom::GetRawData()
