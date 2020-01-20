@@ -13,7 +13,7 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 	string declaration = "";
 	char line[2048];
 
-	sprintf(line, "ColHeader collisionHeader_%08X = { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, vertices_%08X, 0x%04X, polygons_%08X, polygonTypes_%08X, &camData_%08X, 0x%04X, waterBoxes_%08X };",
+	sprintf(line, "CollisionHeader collisionHeader_%08X = { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, vertices_%08X, 0x%04X, polygons_%08X, polygonTypes_%08X, &camData_%08X, 0x%04X, waterBoxes_%08X };",
 		segmentOffset,
 		(uint16_t)collisionHeader.absMinX, (uint16_t)collisionHeader.absMinY, (uint16_t)collisionHeader.absMinZ,
 		(uint16_t)collisionHeader.absMaxX, (uint16_t)collisionHeader.absMaxY, (uint16_t)collisionHeader.absMaxZ,
@@ -55,7 +55,7 @@ string SetCollisionHeader::GenerateExterns()
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "extern ColHeader collisionHeader_%08X;\n", segmentOffset);
+	sprintf(line, "extern CollisionHeader collisionHeader_%08X;\n", segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;

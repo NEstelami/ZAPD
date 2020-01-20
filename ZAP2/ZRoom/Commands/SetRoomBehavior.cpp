@@ -15,7 +15,7 @@ string SetRoomBehavior::GenerateSourceCodePass1(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetRoomBehavior 0x%02X, 0x%02X, 0x%02X\n", gameplayFlags, gameplayFlags2, gameplayFlags3);
+	sprintf(line, "%s 0x%02X, 0x0000, 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), gameplayFlags, gameplayFlags2, gameplayFlags3);
 	sourceOutput = line;
 
 	return sourceOutput;

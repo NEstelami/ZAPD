@@ -33,7 +33,7 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName)
 
 	string declaration = "";
 
-	sprintf(line, "ActorSpawnEntry startPositionList_%08X[] = \n{\n", segmentOffset);
+	sprintf(line, "ActorEntry startPositionList_%08X[] = \n{\n", segmentOffset);
 	declaration += line;
 
 	for (ActorSpawnEntry* entry : actors)
@@ -63,7 +63,7 @@ string SetStartPositionList::GenerateExterns()
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "extern ActorSpawnEntry startPositionList_%08X[];\n", segmentOffset);
+	sprintf(line, "extern ActorEntry startPositionList_%08X[];\n", segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;

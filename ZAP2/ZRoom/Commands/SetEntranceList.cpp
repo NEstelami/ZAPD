@@ -23,8 +23,7 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName)
 	sourceOutput = line;
 
 	// Parse Entrances and Generate Declaration
-	//int numEntrances = ((SetStartPositionList*)zRoom->FindCommandOfType(RoomCommand::SetStartPositionList))->actors.size();
-	zRoom->declarations[segmentOffset] = "";
+	zRoom->declarations[segmentOffset] = ""; // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
