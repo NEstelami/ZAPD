@@ -27,7 +27,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetObjectList 0x%02X ObjectList_%08X\n", objects.size(), segmentOffset);
+	sprintf(line, "%s 0x%02X objectList_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), objects.size(), segmentOffset);
 	sourceOutput += line;
 
 	return sourceOutput;
@@ -38,15 +38,16 @@ string SetObjectList::GenerateSourceCodePass2(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "ObjectList_%08X:\n", segmentOffset);
+	sprintf(line, "s16 objectList_%08X[] = \n{\n", segmentOffset);
 	sourceOutput += line;
 	
 	for (uint16_t objectIndex : objects)
 	{
-		//sprintf(line, ".short 0x%04X\n", objectIndex);
-		sprintf(line, ".short %s\n", ObjectList[objectIndex].c_str());
+		sprintf(line, "\t%s,\n", ObjectList[objectIndex].c_str());
 		sourceOutput += line;
 	}
+
+	sourceOutput += "\n};\n";
 
 	return sourceOutput;
 }

@@ -21,7 +21,7 @@ string SetCameraSettings::GenerateSourceCodePass1(string roomName)
 
 string SetCameraSettings::GetCommandCName()
 {
-	return "SCmdCameraMapSettings";
+	return "SCmdMiscSettings";
 }
 
 RoomCommand SetCameraSettings::GetRoomCommand()

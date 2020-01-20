@@ -1,12 +1,15 @@
 #include "SetMesh.h"
+#include "../ZRoom.h"
 #include "../../BitConverter.h"
 
 using namespace std;
 
 SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numActors = rawData[rawDataIndex + 1];
-	uint32_t segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+
+	string declaration = "";
+	char line[2048];
 
 	int8_t meshHeaderType = rawData[segmentOffset + 0];
 
@@ -33,6 +36,26 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 
 			currentPtr += 8;
 		}
+
+		
+		sprintf(line, "MeshHeader0 meshHeader_%08X = { { 0 }, 0x%02X, ", segmentOffset, meshHeader0->entries.size());
+		declaration += line;
+
+		if (meshHeader0->dListStart != 0)
+			sprintf(line, "meshDListStart_%08X, ", meshHeader0->dListStart);
+		else
+			sprintf(line, "0, ");
+
+		declaration += line;
+
+		if (meshHeader0->dListStart != 0)
+			sprintf(line, "meshDListEnd_%08X };", meshHeader0->dListEnd);
+		else
+			sprintf(line, "0 };");
+
+		declaration += line;
+
+		zRoom->declarations[segmentOffset] = declaration;
 
 		meshHeader = meshHeader0;
 	}
@@ -61,72 +84,56 @@ string SetMesh::GenerateSourceCodePass1(string roomName)
 	{
 		MeshHeader0* meshHeader0 = (MeshHeader0*)meshHeader;
 
-		sprintf(line, "SetMesh0 0x%02X, ", meshHeader0->entries.size());
-		sourceOutput += line;
-
-		if (meshHeader0->dListStart != 0)
-			sprintf(line, "MeshDListStart_%08X, ", meshHeader0->dListStart);
-		else
-			sprintf(line, "0, ");
-
-		sourceOutput += line;
-
-		if (meshHeader0->dListStart != 0)
-			sprintf(line, "MeshDListEnd_%08X\n", meshHeader0->dListEnd);
-		else
-			sprintf(line, "0\n");
-
-		sourceOutput += line;
 	}
 	else
 	{
-		sourceOutput += "; SetMesh UNIMPLEMENTED HEADER TYPE!\n";
+		sourceOutput += "// SetMesh UNIMPLEMENTED HEADER TYPE!\n";
 	}
 
 	return sourceOutput;
 }
 
 
-string SetMesh::GenerateSourceCodePass2(string roomName)
-{
-	string sourceOutput = "";
-	char line[2048];
+//string SetMesh::GenerateSourceCodePass2(string roomName)
+//{
+//	string sourceOutput = "";
+//	char line[2048];
+//
+//	if (meshHeader->headerType == 0)
+//	{
+//		MeshHeader0* meshHeader0 = (MeshHeader0*)meshHeader;
+//
+//		if (meshHeader0->dListStart != 0)
+//		{
+//			sprintf(line, "MeshDListStart_%08X:\n", meshHeader0->dListStart);
+//			sourceOutput += line;
+//		}
+//
+//		for (int i = 0; i < meshHeader0->entries.size(); i++)
+//		{
+//			MeshEntry0* entry = meshHeader0->entries[i];
+//
+//			sprintf(line, ".word MeshOpaque_%08X\n.word MeshTranslucent_%08X\n", entry->opaqueDList, entry->translucentDList);
+//			sourceOutput += line;
+//		}
+//	}
+//
+//	return sourceOutput;
+//}
 
-	if (meshHeader->headerType == 0)
-	{
-		MeshHeader0* meshHeader0 = (MeshHeader0*)meshHeader;
-
-		if (meshHeader0->dListStart != 0)
-		{
-			sprintf(line, "MeshDListStart_%08X:\n", meshHeader0->dListStart);
-			sourceOutput += line;
-		}
-
-		for (int i = 0; i < meshHeader0->entries.size(); i++)
-		{
-			MeshEntry0* entry = meshHeader0->entries[i];
-
-			sprintf(line, ".word MeshOpaque_%08X\n.word MeshTranslucent_%08X\n", entry->opaqueDList, entry->translucentDList);
-			sourceOutput += line;
-		}
-	}
-
-	return sourceOutput;
-}
-
-string SetMesh::GenerateSourceCodePass3(string roomName)
-{
-	string sourceOutput = "";
-	char line[2048];
-
-	if (meshHeader->headerType == 0)
-	{
-		MeshHeader0* meshHeader0 = (MeshHeader0*)meshHeader;
-
-	}
-
-	return sourceOutput;
-}
+//string SetMesh::GenerateSourceCodePass3(string roomName)
+//{
+//	string sourceOutput = "";
+//	char line[2048];
+//
+//	if (meshHeader->headerType == 0)
+//	{
+//		MeshHeader0* meshHeader0 = (MeshHeader0*)meshHeader;
+//
+//	}
+//
+//	return sourceOutput;
+//}
 
 int32_t SetMesh::GetRawDataSize()
 {

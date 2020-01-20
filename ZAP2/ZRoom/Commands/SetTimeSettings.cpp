@@ -15,7 +15,7 @@ string SetTimeSettings::GenerateSourceCodePass1(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetTimeSettings 0x%04X, 0x%02X\n", time, speed);
+	sprintf(line, "%s 0x00, 0x00, 0x00, 0x%04X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), time, speed);
 	sourceOutput = line;
 
 	return sourceOutput;
