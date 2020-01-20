@@ -2,21 +2,27 @@
 
 using namespace std;
 
-SetEchoSettings::SetEchoSettings(std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(rawData, rawDataIndex)
+SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	echo = rawData[rawDataIndex + 0x07];
 }
 
-string SetEchoSettings::GenerateSourceCode()
+string SetEchoSettings::GenerateSourceCodePass1(string roomName)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetEchoSettings 0x%08X\n", echo);
+	sprintf(line, "%s 0x%02X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), echo);
 	sourceOutput = line;
 
 	return sourceOutput;
 }
+
+string SetEchoSettings::GetCommandCName()
+{
+	return "SCmdEchoSettings";
+}
+
 
 RoomCommand SetEchoSettings::GetRoomCommand()
 {

@@ -19,7 +19,7 @@ class ZFile
 public:
 	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath);
 
-	void ExtractResources();
+	void ExtractResources(std::string outputDir);
 	void BuildResources();
 
 protected:
@@ -30,5 +30,5 @@ protected:
 	std::vector<ZResource*> resources;
 
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader);
-	void GenerateSourceFiles();
+	void GenerateSourceFiles(std::string outputDir);
 };

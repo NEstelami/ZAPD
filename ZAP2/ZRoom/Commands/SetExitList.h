@@ -2,17 +2,15 @@
 
 #include "../ZRoomCommand.h"
 
-class SetSoundSettings : public ZRoomCommand
+class SetExitList : public ZRoomCommand
 {
 public:
-	SetSoundSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
 	virtual std::string GenerateSourceCodePass1(std::string roomName);
 	virtual std::string GetCommandCName();
 	virtual RoomCommand GetRoomCommand();
 
 private:
-	uint8_t reverb;
-	uint8_t nightTimeSFX;
-	uint8_t musicSequence;
+	std::vector<uint16_t> exits;
 };

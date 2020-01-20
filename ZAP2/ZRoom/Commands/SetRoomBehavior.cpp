@@ -3,22 +3,27 @@
 
 using namespace std;
 
-SetRoomBehavior::SetRoomBehavior(std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(rawData, rawDataIndex)
+SetRoomBehavior::SetRoomBehavior(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	gameplayFlags = rawData[rawDataIndex + 0x01];
 	gameplayFlags2 = rawData[rawDataIndex + 0x06];
 	gameplayFlags3 = rawData[rawDataIndex + 0x07];
 }
 
-string SetRoomBehavior::GenerateSourceCode()
+string SetRoomBehavior::GenerateSourceCodePass1(string roomName)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetRoomBehavior 0x%08X, 0x%08X, 0x%08X\n", gameplayFlags, gameplayFlags2, gameplayFlags3);
+	sprintf(line, "SetRoomBehavior 0x%02X, 0x%02X, 0x%02X\n", gameplayFlags, gameplayFlags2, gameplayFlags3);
 	sourceOutput = line;
 
 	return sourceOutput;
+}
+
+string SetRoomBehavior::GetCommandCName()
+{
+	return "SCmdRoomBehavior";
 }
 
 RoomCommand SetRoomBehavior::GetRoomCommand()

@@ -20,11 +20,16 @@ public:
 class SetActorList : public ZRoomCommand
 {
 public:
-	SetActorList(std::vector<uint8_t> rawData, int rawDataIndex);
+	SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
-	virtual std::string GenerateSourceCode();
+	virtual std::string GenerateSourceCodePass1(std::string roomName);
+	virtual std::string GenerateSourceCodePass2(std::string roomName);
 	virtual RoomCommand GetRoomCommand();
+	virtual int32_t GetRawDataSize();
+	virtual std::string GetCommandCName();
+	virtual std::string GenerateExterns();
 
 private:
 	std::vector<ActorSpawnEntry*> actors;
+	uint32_t segmentOffset;
 };

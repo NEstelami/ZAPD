@@ -36,3 +36,8 @@ string ZResource::GetSourceOutputHeader()
 {
 	return "";
 }
+
+SourceType ZResource::GetSourceType()
+{
+	return SourceType::C;
+}

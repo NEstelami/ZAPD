@@ -2,18 +2,46 @@
 
 using namespace std;
 
-ZRoomCommand::ZRoomCommand(std::vector<uint8_t> rawData, int rawDataIndex)
+ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 {
+	cmdID = (RoomCommand)rawData[rawDataIndex];
+	cmdAddress = rawDataIndex;
+	zRoom = nZRoom;
 }
 
-string ZRoomCommand::GenerateSourceCode()
+string ZRoomCommand::GenerateSourceCodePass1(string roomName)
+{
+	char line[2048];
+
+	//sprintf(line, "; UNIMPLEMENTED ROOM COMMAND %02X at %08X\n", cmdID, cmdAddress);
+	sprintf(line, "%s _%s_cmd%02X = { 0x%02X,", GetCommandCName().c_str(), roomName.c_str(), cmdIndex, cmdID);
+
+	return string(line);
+}
+
+string ZRoomCommand::GenerateSourceCodePass2(string roomName)
 {
 	return "";
 }
 
-string ZRoomCommand::GenerateSourceCodeDeferred()
+string ZRoomCommand::GenerateSourceCodePass3(string roomName)
 {
 	return "";
+}
+
+string ZRoomCommand::GenerateExterns()
+{
+	return "";
+}
+
+int32_t ZRoomCommand::GetRawDataSize()
+{
+	return 8;
+}
+
+string ZRoomCommand::GetCommandCName()
+{
+	return "SCmdBase";
 }
 
 RoomCommand ZRoomCommand::GetRoomCommand()

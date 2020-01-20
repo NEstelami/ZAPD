@@ -3,21 +3,26 @@
 
 using namespace std;
 
-SetSpecialObjects::SetSpecialObjects(std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(rawData, rawDataIndex)
+SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	elfMessage = rawData[rawDataIndex + 0x01];
 	globalObject = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
 }
 
-string SetSpecialObjects::GenerateSourceCode()
+string SetSpecialObjects::GenerateSourceCodePass1(string roomName)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetSpecialObjects 0x%08X, 0x%16X\n", elfMessage, globalObject);
+	sprintf(line, "%s 0x%02X, 0x%04X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), elfMessage, globalObject);
 	sourceOutput = line;
 
 	return sourceOutput;
+}
+
+string SetSpecialObjects::GetCommandCName()
+{
+	return "SCmdSpecialFiles";
 }
 
 RoomCommand SetSpecialObjects::GetRoomCommand()

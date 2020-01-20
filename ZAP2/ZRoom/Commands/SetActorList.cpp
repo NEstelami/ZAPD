@@ -1,31 +1,75 @@
 #include "SetActorList.h"
+#include "../ActorList.h"
 #include "../../BitConverter.h"
 
 using namespace std;
 
-SetActorList::SetActorList(std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(rawData, rawDataIndex)
+SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	int numActors = rawData[rawDataIndex + 1];
-	int actorListPtr = BitConverter::ToInt32BE(rawData, rawDataIndex + 3) & 0x00FFFFFF;
+	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
 	actors = vector<ActorSpawnEntry*>();
 
+	uint32_t currentPtr = segmentOffset;
+
 	for (int i = 0; i < numActors; i++)
 	{
-		ActorSpawnEntry* entry = new ActorSpawnEntry(rawData, (rawDataIndex + actorListPtr) + (i * 16));
+		ActorSpawnEntry* entry = new ActorSpawnEntry(rawData, currentPtr);
 		actors.push_back(entry);
+
+		currentPtr += 16;
 	}
 }
 
-string SetActorList::GenerateSourceCode()
+string SetActorList::GenerateSourceCodePass1(string roomName)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	//sprintf(line, "SetActorList 0x%08X, 0x%08X\n", cameraMovement, mapHighlight);
+	sprintf(line, "SetActorList 0x%02X ActorList_%08X\n", actors.size(), segmentOffset);
+	sourceOutput += line;
+
+	return sourceOutput;
+}
+
+
+string SetActorList::GenerateSourceCodePass2(string roomName)
+{
+	string sourceOutput = "";
+	char line[2048];
+
+	sprintf(line, "ActorList_%08X:\n", segmentOffset);
+	sourceOutput += line;
+
+	for (ActorSpawnEntry* entry : actors)
+	{
+		sprintf(line, "ActorSpawnEntry %s, %i, %i, %i, %i, %i, %i, 0x%04X\n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar);
+		sourceOutput += line;
+	}
+
+	return sourceOutput;
+}
+
+int32_t SetActorList::GetRawDataSize()
+{
+	return ZRoomCommand::GetRawDataSize() + (actors.size() * 16);
+}
+
+string SetActorList::GenerateExterns()
+{
+	string sourceOutput = "";
+	char line[2048];
+
+	sprintf(line, "const ActorSpawnEntry ActorList_%08X[];\n", segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;
+}
+
+string SetActorList::GetCommandCName()
+{
+	return "SCmdActorList";
 }
 
 RoomCommand SetActorList::GetRoomCommand()
