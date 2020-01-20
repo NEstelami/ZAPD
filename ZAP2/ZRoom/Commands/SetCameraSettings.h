@@ -13,5 +13,5 @@ public:
 
 private:
 	uint8_t cameraMovement;
-	uint8_t mapHighlight;
+	uint32_t mapHighlight;
 };
