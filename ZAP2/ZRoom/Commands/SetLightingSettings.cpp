@@ -19,26 +19,40 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 		char line[2048];
 		string declaration = "";
 
-		sprintf(line, "LightSettings lightSettings_%08X[] = \n{\n", segmentOffset);
+		sprintf(line, "LightSettings _%s_lightSettings_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
 		declaration += line;
 
 		for (int i = 0; i < numLights; i++)
 		{
-			sprintf(line, "\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X },\n",
+			sprintf(line, "\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X }, // 0x%08X \n",
 				settings[i]->ambientClrR, settings[i]->ambientClrG, settings[i]->ambientClrB,
 				settings[i]->diffuseClrA_R, settings[i]->diffuseClrA_G, settings[i]->diffuseClrA_B,
 				settings[i]->diffuseDirA_X, settings[i]->diffuseDirA_Y, settings[i]->diffuseDirA_Z,
 				settings[i]->diffuseClrB_R, settings[i]->diffuseClrB_G, settings[i]->diffuseClrB_B,
 				settings[i]->diffuseDirB_X, settings[i]->diffuseDirB_Y, settings[i]->diffuseDirB_Z,
 				settings[i]->fogClrR, settings[i]->fogClrG, settings[i]->fogClrB,
-				settings[i]->unk, settings[i]->drawDistance);
+				settings[i]->unk, settings[i]->drawDistance, segmentOffset + (i * 22));
 
 			declaration += line;
 		}
 
 		declaration += "};\n";
 
-		zRoom->declarations[segmentOffset] = declaration;
+		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, numLights * 22, declaration);
+
+		/*int curPtr = segmentOffset + (numLights * 22);
+
+		while (curPtr % 16 != 0)
+		{
+			declaration = "";
+
+			sprintf(line, "static u32 padding%02X = 0;\n", curPtr);
+			declaration += line;
+
+			zRoom->declarations[curPtr] = new Declaration(DeclarationAlignment::None, 4, declaration);
+
+			curPtr += 4;
+		}*/
 	}
 }
 
@@ -47,7 +61,7 @@ string SetLightingSettings::GenerateSourceCodePass1(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s %i, (u32)&lightSettings_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), settings.size(), segmentOffset);
+	sprintf(line, "%s %i, (u32)&_%s_lightSettings_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;
@@ -71,7 +85,7 @@ string SetLightingSettings::GenerateExterns()
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "extern LightSettings lightSettings_%08X[];\n", segmentOffset);
+	sprintf(line, "extern LightSettings _%s_lightSettings_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;

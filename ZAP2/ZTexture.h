@@ -51,17 +51,19 @@ protected:
 	void PrepareRawDataPalette4(std::string palPath);
 	void PrepareRawDataPalette8(std::string palPath);
 	float GetPixelMultiplyer();
-	std::string GetSourceOutputHeader();
-	std::string GetSourceOutputCode();
 
 public:
 	ZTexture();
 	ZTexture(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
 	ZTexture(tinyxml2::XMLElement* reader, std::string inFolder);
 	ZTexture(TextureType nType, std::vector<uint8_t> rawData, std::string nName, int nWidth, int nHeight);
+	ZTexture(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nName, int nWidth, int nHeight);
 
 	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
 	static TextureType GetTextureTypeFromString(std::string str);
+
+	std::string GetSourceOutputHeader(std::string prefix);
+	std::string GetSourceOutputCode(std::string prefix);
 
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();

@@ -104,7 +104,7 @@ int NewMain(int argc, char* argv[])
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
 		ZOverlay* overlay = ZOverlay::FromELF(Globals::Instance->inputPath, Path::GetDirectoryName(Globals::Instance->cfgPath));
-		string source = overlay->GetSourceOutputCode();
+		string source = overlay->GetSourceOutputCode("");
 		File::WriteAllText(Globals::Instance->outputPath, source);
 	}
 }
@@ -160,7 +160,7 @@ int OldMain(int argc, char* argv[])
 	{
 		// Syntax: ZAP2.exe bovl [elfFilePath] [cfgFolderPath] [outputFilePath]
 		ZOverlay* overlay = ZOverlay::FromELF(argv[2], Path::GetDirectoryName(argv[3]));
-		string source = overlay->GetSourceOutputCode();
+		string source = overlay->GetSourceOutputCode("");
 		File::WriteAllText(argv[4], source);
 	}
 
@@ -181,6 +181,8 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 	if (root == nullptr)
 		return false;
 
+	vector<ZFile*> files = vector<ZFile*>();
+
 	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "File")
@@ -188,11 +190,16 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 			//ZFile* file = new ZFile(fileMode, child, Path::GetDirectoryName(xmlFilePath));
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath);
 
-			if (fileMode == ZFileMode::Build)
-				file->BuildResources();
-			else
-				file->ExtractResources(outPath);
+			files.push_back(file);
 		}
+	}
+
+	for (ZFile* file : files)
+	{
+		if (fileMode == ZFileMode::Build)
+			file->BuildResources();
+		else
+			file->ExtractResources(outPath);
 	}
 
 	XMLElement* element = root->FirstChildElement("File");

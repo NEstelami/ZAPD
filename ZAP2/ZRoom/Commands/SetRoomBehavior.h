@@ -13,6 +13,5 @@ public:
 
 private:
 	uint8_t gameplayFlags;
-	uint8_t gameplayFlags2;
-	uint8_t gameplayFlags3;
+	uint32_t gameplayFlags2;
 };

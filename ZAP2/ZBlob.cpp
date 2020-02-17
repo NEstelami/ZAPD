@@ -24,7 +24,7 @@ ZBlob::ZBlob(XMLElement* reader, string inFolder)
 	rawData = File::ReadAllBytes(inFolder + "/" + name + ".bin");
 }
 
-string ZBlob::GetSourceOutputCode()
+string ZBlob::GetSourceOutputCode(std::string prefix)
 {
 	char line[2048];
 	sourceOutput = "";
@@ -39,8 +39,8 @@ string ZBlob::GetSourceOutputCode()
 
 	//sourceOutput += line;
 
-		//sprintf(line, "const u64 _%s[] = \n{\n", name.c_str());
-	sprintf(line, "const u8 _%s[] = \n{\n", name.c_str());
+	//sprintf(line, "u64 _%s[] = \n{\n", name.c_str());
+	sprintf(line, "u8 _%s[] = \n{\n", name.c_str());
 	sourceOutput += line;
 
 	for (int i = 0; i < rawData.size(); i += 1)

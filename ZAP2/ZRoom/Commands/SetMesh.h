@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ZRoomCommand.h"
+#include "../../ZDisplayList.h"
 
 class MeshHeaderBase
 {
@@ -11,8 +12,11 @@ public:
 class MeshEntry0
 {
 public:
-	int32_t opaqueDList;
-	int32_t translucentDList;
+	int32_t opaqueDListAddr;
+	int32_t translucentDListAddr;
+
+	ZDisplayList* opaqueDList;
+	ZDisplayList* translucentDList;
 };
 
 class MeshHeader0 : public MeshHeaderBase
@@ -79,14 +83,17 @@ public:
 	int16_t playerXMax, playerZMax;
 	int16_t playerXMin, playerZMin;
 
-	int32_t opaqueDList;
-	int32_t translucentDList;
+	int32_t opaqueDListAddr;
+	int32_t translucentDListAddr;
+
+	ZDisplayList* opaqueDList;
+	ZDisplayList* translucentDList;
 };
 
 class MeshHeader2 : public MeshHeaderBase
 {
 public:
-	std::vector<MeshEntry2> entries;
+	std::vector<MeshEntry2*> entries;
 	uint32_t dListStart;
 	uint32_t dListEnd;
 };
@@ -99,6 +106,7 @@ public:
 	virtual std::string GenerateSourceCodePass1(std::string roomName);
 	//virtual std::string GenerateSourceCodePass2(std::string roomName);
 	//virtual std::string GenerateSourceCodePass3(std::string roomName);
+	virtual std::string GenerateExterns();
 	virtual std::string GetCommandCName();
 	virtual RoomCommand GetRoomCommand();
 	virtual int32_t GetRawDataSize();
@@ -106,4 +114,8 @@ public:
 private:
 	MeshHeaderBase* meshHeader;
 	uint32_t segmentOffset;
+	uint8_t data;
+
+	void GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList);
+	std::string GenDListExterns(ZDisplayList* dList);
 };

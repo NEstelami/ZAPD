@@ -12,6 +12,7 @@ public:
 	virtual std::string GetCommandCName();
 	virtual RoomCommand GetRoomCommand();
 	virtual int32_t GetRawDataSize();
+	virtual std::string GenerateExterns();
 
 private:
 	std::vector<uint16_t> objects;

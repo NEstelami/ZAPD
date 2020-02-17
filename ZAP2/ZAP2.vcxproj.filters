@@ -132,6 +132,9 @@
     <ClCompile Include="ZRoom\Commands\SetLightingSettings.cpp">
       <Filter>Source Files\ZRoom\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetTransitionActorList.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tinyxml2.h">
@@ -292,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="ZRoom\RoomList.h">
       <Filter>Header Files\ZRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetTransitionActorList.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

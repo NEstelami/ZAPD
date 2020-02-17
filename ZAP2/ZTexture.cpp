@@ -26,6 +26,18 @@ ZTexture::ZTexture(XMLElement* reader, vector<uint8_t> nRawData, int rawDataInde
 	PrepareBitmap();
 }
 
+ZTexture::ZTexture(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nName, int nWidth, int nHeight)
+{
+	width = nWidth;
+	height = nHeight;
+	type = nType;
+	name = nName;
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
+
+	FixRawData();
+	PrepareBitmap();
+}
+
 // BUILD MODE
 ZTexture::ZTexture(XMLElement* reader, string inFolder)
 {
@@ -588,19 +600,19 @@ void ZTexture::Save(string outFolder)
 	}
 }
 
-string ZTexture::GetSourceOutputHeader()
+string ZTexture::GetSourceOutputHeader(std::string prefix)
 {
 	char line[2048];
 	sourceOutput = "";
 
-	sprintf(line, "extern char %s[];\n", name.c_str());
+	sprintf(line, "extern u8 %s[];\n", name.c_str());
 
 	sourceOutput += line;
 
 	return sourceOutput;
 }
 
-string ZTexture::GetSourceOutputCode()
+string ZTexture::GetSourceOutputCode(std::string prefix)
 {
 	char line[2048];
 	sourceOutput = "";
@@ -634,8 +646,8 @@ string ZTexture::GetSourceOutputCode()
 
 	FixRawData();
 
-	//sprintf(line, "const u64 _%s[] = \n{\n", name.c_str());
-	sprintf(line, "const u8 _%s[] = \n{\n", name.c_str());
+	//sprintf(line, "u64 _%s[] = \n{\n", name.c_str());
+	sprintf(line, "u8 %s[] = \n{\n", name.c_str());
 	sourceOutput += line;
 
 	for (int i = 0; i < rawData.size(); i += 1)
@@ -643,6 +655,9 @@ string ZTexture::GetSourceOutputCode()
 		//uint64_t data;
 
 		//memcpy(&data, &rawData[i], 8);
+
+		if (i % 16 == 0)
+			sourceOutput += "\t";
 
 		//sprintf(line, "0x%016llX, ", data);
 		sprintf(line, "0x%02X, ", rawData[i]);
@@ -652,7 +667,10 @@ string ZTexture::GetSourceOutputCode()
 			//sourceOutput += "\n";
 
 		if (i % 16 == 15)
+		{
+			//sprintf(line, " // 0x\n");
 			sourceOutput += "\n";
+		}
 	}
 
 	sourceOutput += "};\n";

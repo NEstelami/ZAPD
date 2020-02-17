@@ -27,12 +27,12 @@ int ZResource::GetRawDataSize()
 	return rawData.size();
 }
 
-string ZResource::GetSourceOutputCode()
+string ZResource::GetSourceOutputCode(std::string prefix)
 {
 	return "";
 }
 
-string ZResource::GetSourceOutputHeader()
+string ZResource::GetSourceOutputHeader(std::string prefix)
 {
 	return "";
 }

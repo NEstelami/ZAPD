@@ -83,15 +83,18 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 
 			rawDataIndex += dList->GetRawDataSize();
 		}
-		else if (string(child->Name()) == "Room")
+		else if (string(child->Name()) == "Scene" || string(child->Name()) == "Room")
 		{
 			ZRoom* room = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				room = new ZRoom(child, rawData, rawDataIndex, folderName);
+				room = new ZRoom(child, rawData, rawDataIndex, folderName, Globals::Instance->lastScene);
 			//else
 				//blob = new ZBlob(child, folderName);
 
+			if (string(child->Name()) == "Scene")
+				Globals::Instance->lastScene = room;
+			
 			resources.push_back(room);
 
 			rawDataIndex += room->GetRawDataSize();
@@ -155,17 +158,13 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 	for (ZResource* res : resources)
 	{
-		string resSrc = res->GetSourceOutputHeader();
-
-		//sprintf(buffer, "const char ", 0);
+		string resSrc = res->GetSourceOutputHeader("");
 
 		sourceOutput += resSrc + "\n";
 	}
 
 	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h", sourceOutput);
 
-	//sourceOutput = ".section .rodata\n.include \"macros.inc\"\n\n";
-	//sourceOutput = ".section .rodata\n\n";
 	sourceOutput = "";
 
 	sourceOutput += "#include <ultra64.h>\n";
@@ -173,7 +172,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	// Generate Code
 	for (ZResource* res : resources)
 	{
-		string resSrc = res->GetSourceOutputCode();
+		string resSrc = res->GetSourceOutputCode(res->GetName());
 		sourceOutput += resSrc + "\n";
 	}
 
