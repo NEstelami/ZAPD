@@ -255,14 +255,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			string sizTbl[] = { "G_IM_SIZ_4b", "G_IM_SIZ_8b", "G_IM_SIZ_16b", "G_IM_SIZ_32b" };
 
 			if (fff == (int)F3DZEXTexFormats::G_IM_FMT_CI)
-			{
-				if (ii == 1)
-				{
-					int bp = 0;
-				}
-
 				lastCISiz = (F3DZEXTexSizes)ii;
-			}
 
 			lastTexSizTest = (F3DZEXTexSizes)ii;
 
@@ -511,14 +504,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 
 	if (texAddr != 0 && texWidth != 0 && texHeight != 0 && texLoaded)
 	{
-		// TODO: HACK
-		if (texFmt == F3DZEXTexFormats::G_IM_FMT_I || texFmt == F3DZEXTexFormats::G_IM_FMT_CI)
-		{
-			//int bp = 0;
-			//texWidth *= 2;
-			//texHeight *= 2;
-		}
-
 		if (segmentNumber != 2)
 		{
 			sprintf(buffer, "_%s_tex_%08X", prefix.c_str(), texAddr);
