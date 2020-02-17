@@ -28,12 +28,12 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, (u32)&startPositionList_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), actors.size(), segmentOffset);
+	sprintf(line, "%s 0x%02X, (u32)&_%s_startPositionList_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), actors.size(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	string declaration = "";
-
-	sprintf(line, "ActorEntry startPositionList_%08X[] = \n{\n", segmentOffset);
+	
+	sprintf(line, "ActorEntry _%s_startPositionList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
 	declaration += line;
 
 	for (ActorSpawnEntry* entry : actors)
@@ -45,7 +45,7 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName)
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = declaration;
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, actors.size() * 16, declaration);
 
 	return sourceOutput;
 }
@@ -63,7 +63,7 @@ string SetStartPositionList::GenerateExterns()
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "extern ActorEntry startPositionList_%08X[];\n", segmentOffset);
+	sprintf(line, "extern ActorEntry _%s_startPositionList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;

@@ -2,25 +2,25 @@
 
 #include "../ZRoomCommand.h"
 
-class ActorSpawnEntry
+class TransitionActorEntry
 {
 public:
+	uint8_t frontObjectRoom;
+	uint8_t frontTransitionReaction;
+	uint8_t backObjectRoom;
+	uint8_t backTransitionReaction;
 	uint16_t actorNum;
-	int16_t posX;
-	int16_t posY;
-	int16_t posZ;
-	int16_t rotX;
+	int16_t posX, posY, posZ;
 	int16_t rotY;
-	int16_t rotZ;
 	uint16_t initVar;
 
-	ActorSpawnEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	TransitionActorEntry(std::vector<uint8_t> rawData, int rawDataIndex);
 };
 
-class SetActorList : public ZRoomCommand
+class SetTransitionActorList : public ZRoomCommand
 {
 public:
-	SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetTransitionActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
 	std::string GetSourceOutputCode(std::string prefix);
 	virtual std::string GenerateSourceCodePass1(std::string roomName);
@@ -31,6 +31,6 @@ public:
 	virtual std::string GenerateExterns();
 
 private:
-	std::vector<ActorSpawnEntry*> actors;
+	std::vector<TransitionActorEntry*> transitionActors;
 	uint32_t segmentOffset;
 };

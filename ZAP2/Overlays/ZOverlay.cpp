@@ -69,7 +69,7 @@ ZOverlay* ZOverlay::FromELF(string elfFilePath, string cfgFolderPath)
 	return ovl;
 }
 
-string ZOverlay::GetSourceOutputCode()
+string ZOverlay::GetSourceOutputCode(std::string prefix)
 {
 	string output = "";
 	char buffer[4096];

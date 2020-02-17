@@ -13,7 +13,7 @@ string SetSkyboxModifier::GenerateSourceCodePass1(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), disableSky, disableSunMoon);
+	sprintf(line, "%s 0, 0, 0, 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), disableSky, disableSunMoon);
 	sourceOutput = line;
 
 	return sourceOutput;

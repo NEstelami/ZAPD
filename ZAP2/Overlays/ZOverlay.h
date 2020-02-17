@@ -53,7 +53,7 @@ public:
 
 	ZOverlay(std::string nName);
 	static ZOverlay* FromELF(std::string elfFilePath, std::string cfgFolderPath);
-	std::string GetSourceOutputCode();
+	std::string GetSourceOutputCode(std::string prefix);
 
 private:
 	std::vector<RelocationEntry*> entries;

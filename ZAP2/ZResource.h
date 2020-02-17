@@ -18,8 +18,8 @@ public:
 	std::string GetRelativePath();
 	virtual std::vector<uint8_t> GetRawData();
 	virtual int GetRawDataSize();
-	virtual std::string GetSourceOutputHeader();
-	virtual std::string GetSourceOutputCode();
+	virtual std::string GetSourceOutputHeader(std::string prefix);
+	virtual std::string GetSourceOutputCode(std::string prefix);
 	virtual SourceType GetSourceType();
 
 protected:

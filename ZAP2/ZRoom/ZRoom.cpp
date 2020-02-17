@@ -2,6 +2,7 @@
 #include "ZRoom.h"
 #include "ObjectList.h"
 #include "../File.h"
+#include "../StringHelper.h"
 #include "Commands/SetRoomList.h"
 #include "Commands/SetEchoSettings.h"
 #include "Commands/SetSoundSettings.h"
@@ -14,6 +15,7 @@
 #include "Commands/SetCameraSettings.h"
 #include "Commands/SetStartPositionList.h"
 #include "Commands/SetActorList.h"
+#include "Commands/SetTransitionActorList.h"
 #include "Commands/SetEntranceList.h"
 #include "Commands/SetExitList.h"
 #include "Commands/SetAlternateHeaders.h"
@@ -27,14 +29,35 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath)
+ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZRoom* nScene)
 {
 	commands = vector<ZRoomCommand*>();
-	declarations = map<int32_t, string>();
+	declarations = map<int32_t, Declaration*>();
 	rawData = nRawData;
 	name = reader->Attribute("Name");
 
-	GenDefinitions();
+	//printf("ZRoom: %s\n", name.c_str());
+
+	scene = nScene;
+
+	//GenDefinitions();
+
+	for (XMLElement* child = reader->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
+	{
+		if (string(child->Name()) == "DListHint")
+		{
+			string comment = "";
+			
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Address");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			ZDisplayList* dList = new ZDisplayList(rawData, address, ZDisplayList::GetDListLength(rawData, address));
+			declarations[address] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), comment + dList->GetSourceOutputCode(name));
+		}
+	}
 
 	bool shouldContinue = true;
 
@@ -59,10 +82,12 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			case RoomCommand::Unused09: cmd = new Unused09(this, rawData, rawDataIndex); break; // 0x09
 			case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex); break; // 0x0A
 			case RoomCommand::SetObjectList: cmd = new SetObjectList(this, rawData, rawDataIndex); break; // 0x0B
+			case RoomCommand::SetTransitionActorList: cmd = new SetTransitionActorList(this, rawData, rawDataIndex); break; // 0x0E
 			case RoomCommand::SetLightingSettings: cmd = new SetLightingSettings(this, rawData, rawDataIndex); break; // 0x0F
 			case RoomCommand::SetTimeSettings: cmd = new SetTimeSettings(this, rawData, rawDataIndex); break; // 0x10
 			case RoomCommand::SetSkyboxSettings: cmd = new SetSkyboxSettings(this, rawData, rawDataIndex); break; // 0x11
 			case RoomCommand::SetSkyboxModifier: cmd = new SetSkyboxModifier(this, rawData, rawDataIndex); break; // 0x12
+			case RoomCommand::SetExitList: cmd = new SetExitList(this, rawData, rawDataIndex); break; // 0x13
 			case RoomCommand::EndMarker: cmd = new EndMarker(this, rawData, rawDataIndex); break; // 0x14
 			case RoomCommand::SetSoundSettings: cmd = new SetSoundSettings(this, rawData, rawDataIndex); break; // 0x15
 			case RoomCommand::SetEchoSettings: cmd = new SetEchoSettings(this, rawData, rawDataIndex); break; // 0x16
@@ -70,6 +95,8 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			case RoomCommand::SetCameraSettings: cmd = new SetCameraSettings(this, rawData, rawDataIndex); break; // 0x19
 			default: cmd = new ZRoomCommand(this, rawData, rawDataIndex);
 		}
+
+		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
 		
 		cmd->cmdIndex = currentIndex;
 
@@ -99,7 +126,7 @@ int32_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 	int declarationIndex = -1;
 
 	// Copy it into a vector.
-	vector<pair<int32_t, string>> declarationKeysSorted(declarations.begin(), declarations.end());
+	vector<pair<int32_t, Declaration*>> declarationKeysSorted(declarations.begin(), declarations.end());
 
 	// Sort the vector according to the word count in descending order.
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
@@ -148,25 +175,55 @@ int32_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 	return 0;
 }
 
-string ZRoom::GetSourceOutputHeader()
+string ZRoom::GetSourceOutputHeader(string prefix)
 {
-	return "";
+	char line[2048];
+	sourceOutput = "";
+	
+	for (ZRoomCommand* cmd : commands)
+		sourceOutput += cmd->GenerateExterns();
+
+	sourceOutput += "\n";
+
+	// Copy it into a vector.
+	vector<pair<int32_t, string>> externsKeysSorted(externs.begin(), externs.end());
+
+	// Sort the vector according to the word count in descending order.
+	sort(externsKeysSorted.begin(), externsKeysSorted.end(), [](const auto& lhs, const auto& rhs)
+	{
+		return lhs.first < rhs.first;
+	});
+
+	// Print out the vector.
+	for (pair<int32_t, string> item : externsKeysSorted)
+	{
+		sourceOutput += item.second;
+	}
+
+	sourceOutput += "\n";
+
+	return sourceOutput;
 }
 
-string ZRoom::GetSourceOutputCode()
+string ZRoom::GetSourceOutputCode(std::string prefix)
 {
 	char line[2048];
 	sourceOutput = "";
 
+	sourceOutput += "#include <z64.h>\n";
 	sourceOutput += "#include <segment_symbols.h>\n";
-	sourceOutput += "#include <z64scene.h>\n";
-	sourceOutput += "#include <z64actor.h>\n\n";
 
-	//sourceOutput += "_" + name + ":\n";
-	//sourceOutput += "const SceneCmd _" + name + "[] = \n{\n";
+	sprintf(line, "#include \"%s.h\"\n", name.c_str());
+	sourceOutput += line;
 
-	for (ZRoomCommand* cmd : commands)
-		sourceOutput += cmd->GenerateExterns();
+	if (scene != nullptr)
+	{
+		sprintf(line, "#include \"%s.h\"\n", scene->GetName().c_str());
+		sourceOutput += line;
+	}
+
+	//for (ZRoomCommand* cmd : commands)
+		//sourceOutput += cmd->GenerateExterns();
 
 	sourceOutput += "\n";
 
@@ -184,7 +241,7 @@ string ZRoom::GetSourceOutputCode()
 
 
 	// Copy it into a vector.
-	vector<pair<int32_t, string>> declarationKeysSorted(declarations.begin(), declarations.end());
+	vector<pair<int32_t, Declaration*>> declarationKeysSorted(declarations.begin(), declarations.end());
 
 	// Sort the vector according to the word count in descending order.
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs) 
@@ -192,10 +249,72 @@ string ZRoom::GetSourceOutputCode()
 		return lhs.first < rhs.first;
 	});
 
+	int lastPtr = 0;
+
 	// Print out the vector.
-	for (pair<int32_t, string> item : declarationKeysSorted)
+	int lastAddr = 0;
+
+	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
 	{
-		sourceOutput += item.second + "\n";
+		if (lastAddr != 0)
+		{
+			if (item.second->alignment == DeclarationAlignment::Align16)
+			{
+				int curPtr = lastAddr + declarations[lastAddr]->size;
+
+				while (curPtr % 4 != 0)
+					curPtr++;
+
+				while (curPtr % 16 != 0)
+				{
+					char buffer[2048];
+
+					sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
+					sourceOutput += buffer;
+
+					curPtr += 4;
+				}
+			}
+			else if (item.second->alignment == DeclarationAlignment::Align8)
+				{
+					int curPtr = lastAddr + declarations[lastAddr]->size;
+
+					while (curPtr % 4 != 0)
+						curPtr++;
+
+					while (curPtr % 8 != 0)
+					{
+						char buffer[2048];
+
+						sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
+						sourceOutput += buffer;
+
+						curPtr += 4;
+					}
+				}
+		}
+
+		sourceOutput += item.second->text + "\n";
+
+		if (item.second->padding == DeclarationPadding::Pad16)
+		{
+			int curPtr = item.first + item.second->size;
+
+			while (curPtr % 4 != 0)
+				curPtr++;
+
+			while (curPtr % 16 != 0)
+			{
+				char buffer[2048];
+
+				sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
+				sourceOutput += buffer;
+
+				curPtr += 4;
+			}
+		}
+
+		lastAddr = item.first;
 	}
 
 	sourceOutput += "\n";
@@ -238,4 +357,19 @@ int ZRoom::GetRawDataSize()
 		size += cmd->GetRawDataSize();
 
 	return size;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nText)
+{
+	alignment = nAlignment;
+	size = nSize;
+	text = nText;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nText)
+{
+	alignment = nAlignment;
+	padding = nPadding;
+	size = nSize;
+	text = nText;
 }

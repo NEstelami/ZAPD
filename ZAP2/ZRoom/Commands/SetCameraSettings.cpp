@@ -15,7 +15,7 @@ string SetCameraSettings::GenerateSourceCodePass1(string roomName)
 	char line[2048];
 
 	sprintf(line, "%s 0x%02X, 0x%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), cameraMovement, mapHighlight);
-	sourceOutput = line;
+	sourceOutput += line;
 
 	return sourceOutput;
 }

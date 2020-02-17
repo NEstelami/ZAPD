@@ -1,4 +1,5 @@
 #include "SetActorList.h"
+#include "../ZRoom.h"
 #include "../ActorList.h"
 #include "../../BitConverter.h"
 
@@ -22,13 +23,36 @@ SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	}
 }
 
+string SetActorList::GetSourceOutputCode(std::string prefix)
+{
+	string sourceOutput = "";
+	char line[2048];
+
+
+	return "";
+}
+
 string SetActorList::GenerateSourceCodePass1(string roomName)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "SetActorList 0x%02X ActorList_%08X\n", actors.size(), segmentOffset);
+	sprintf(line, "%s 0x%02X, (u32)_%s_actorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), actors.size(), roomName.c_str(), segmentOffset);
 	sourceOutput += line;
+
+	string declaration = "";
+	sprintf(line, "ActorEntry _%s_actorList_%08X[] = \n{\n", roomName.c_str(), segmentOffset);
+	declaration += line;
+
+	for (ActorSpawnEntry* entry : actors)
+	{
+		sprintf(line, "\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, \n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar);
+		declaration += line;
+	}
+
+	declaration += "};\n\n";
+
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, actors.size() * 16, declaration);
 
 	return sourceOutput;
 }
@@ -36,19 +60,7 @@ string SetActorList::GenerateSourceCodePass1(string roomName)
 
 string SetActorList::GenerateSourceCodePass2(string roomName)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "ActorList_%08X:\n", segmentOffset);
-	sourceOutput += line;
-
-	for (ActorSpawnEntry* entry : actors)
-	{
-		sprintf(line, "ActorSpawnEntry %s, %i, %i, %i, %i, %i, %i, 0x%04X\n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar);
-		sourceOutput += line;
-	}
-
-	return sourceOutput;
+	return "";
 }
 
 int32_t SetActorList::GetRawDataSize()
@@ -61,7 +73,7 @@ string SetActorList::GenerateExterns()
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "const ActorSpawnEntry ActorList_%08X[];\n", segmentOffset);
+	sprintf(line, "ActorEntry _%s_actorList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;

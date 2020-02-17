@@ -19,11 +19,11 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, (u32)&entranceList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), segmentOffset);
+	sprintf(line, "%s 0x00, (u32)&_%s_entranceList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	// Parse Entrances and Generate Declaration
-	zRoom->declarations[segmentOffset] = ""; // Make sure this segment is defined
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, ""); // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
@@ -37,18 +37,22 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName)
 
 	string declaration = "";
 
-	sprintf(line, "EntranceEntry entranceList_%08X[] = \n{\n", segmentOffset);
+	sprintf(line, "EntranceEntry _%s_entranceList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
 	declaration += line;
+
+	int index = 0;
 
 	for (EntranceEntry* entry : entrances)
 	{
-		sprintf(line, "\t{ %02X, %02X },\n", entry->startPositionIndex, entry->roomToLoad);
+		sprintf(line, "\t{ 0x%02X, 0x%02X }, //0x%08X \n", entry->startPositionIndex, entry->roomToLoad, segmentOffset + (index * 2));
 		declaration += line;
+
+		index++;
 	}
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = declaration;
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, entrances.size() * 4, declaration);
 
 	return sourceOutput;
 }
@@ -58,7 +62,7 @@ string SetEntranceList::GenerateExterns()
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "extern EntranceEntry entranceList_%08X[];\n", segmentOffset);
+	sprintf(line, "extern EntranceEntry _%s_entranceList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;

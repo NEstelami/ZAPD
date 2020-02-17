@@ -46,15 +46,24 @@ public:
 	CameraPositionData(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 };
 
+class CameraPosDataEntry
+{
+public:
+	uint32_t cameraPosDataSeg;
+	uint32_t unknown;
+};
+
 class CameraData
 {
 public:
 	int16_t cameraSType;
 	int16_t numCameras;
-	int32_t cameraPositionDataSeg;
-	uint32_t unknown;
+	int32_t cameraPosDataSeg;
+	std::vector<CameraPosDataEntry*> entries;
+	//uint32_t unknown;
 
-	CameraPositionData* cameraPositionData;
+
+	std::vector<CameraPositionData*> cameraPositionData;
 
 	CameraData(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 };

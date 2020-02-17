@@ -147,6 +147,7 @@
     <ClCompile Include="ZRoom\Commands\SetSpecialObjects.cpp" />
     <ClCompile Include="ZRoom\Commands\SetStartPositionList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetTimeSettings.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetTransitionActorList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetWind.cpp" />
     <ClCompile Include="ZRoom\Commands\Unused09.cpp" />
     <ClCompile Include="ZRoom\ZRoom.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="ZRoom\Commands\SetSpecialObjects.h" />
     <ClInclude Include="ZRoom\Commands\SetStartPositionList.h" />
     <ClInclude Include="ZRoom\Commands\SetTimeSettings.h" />
+    <ClInclude Include="ZRoom\Commands\SetTransitionActorList.h" />
     <ClInclude Include="ZRoom\Commands\SetWind.h" />
     <ClInclude Include="ZRoom\Commands\Unused09.h" />
     <ClInclude Include="ZRoom\ObjectList.h" />
