@@ -192,7 +192,20 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			int segmentNumber = (data >> 24) & 0xFF;
 
 			if (segmentNumber != 2)
-				sprintf(line, "gsDPSetTextureImage(%s, %s, %i, _%s_tex_%08X),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, prefix.c_str(), data & 0x00FFFFFF);
+			{
+				char texStr[2048];
+
+				int32_t texAddress = data & 0x00FFFFFF;
+
+				if (texAddress != 0)
+					sprintf(texStr, "_%s_tex_%08X", prefix.c_str(), texAddress);
+				else if (segmentNumber != 3)
+					sprintf(texStr, "0x%08X", data);
+				else
+					sprintf(texStr, "0");
+
+				sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, texStr);
+			}
 			else
 			{
 				//sprintf(line, "gsDPSetTextureImage(%s, %s, %i, 0x%08X),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, data & 0xFFFFFFFF);
@@ -270,16 +283,21 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			int vvv = (data & 0x0000000000000FFF);
 			int i = (data & 0x000000000F000000) >> 24;
 
-			int shiftAmt = 2;
+			int shiftAmtW = 2;
+			int shiftAmtH = 2;
+
+			if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_8b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
+			{
+				shiftAmtW = 3;
+			}
 
 			//if (lastTexFmt == F3DZEXTexFormats::G_IM_FMT_I || lastTexFmt == F3DZEXTexFormats::G_IM_FMT_CI)
 			if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b)
-				shiftAmt = 3;
+				shiftAmtW = 3;
 
-			lastTexWidth = (uuu >> shiftAmt) + 1;
-			lastTexHeight = (vvv >> 2) + 1;
+			lastTexWidth = (uuu >> shiftAmtW) + 1;
+			lastTexHeight = (vvv >> shiftAmtH) + 1;
 			//printf("lastTexWidth: %i lastTexHeight: %i\n", lastTexWidth, lastTexHeight);
-
 
 			//TextureGenCheck(prefix);
 

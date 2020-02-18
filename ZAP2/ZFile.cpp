@@ -153,18 +153,6 @@ void ZFile::GenerateSourceFiles(string outputDir)
 {
 	char* buffer = new char[1024 * 1024];
 
-	// Generate Header
-	sourceOutput = "";
-
-	for (ZResource* res : resources)
-	{
-		string resSrc = res->GetSourceOutputHeader("");
-
-		sourceOutput += resSrc + "\n";
-	}
-
-	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h", sourceOutput);
-
 	sourceOutput = "";
 
 	sourceOutput += "#include <ultra64.h>\n";
@@ -177,6 +165,18 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	}
 
 	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".c", sourceOutput);
+
+	// Generate Header
+	sourceOutput = "";
+
+	for (ZResource* res : resources)
+	{
+		string resSrc = res->GetSourceOutputHeader("");
+
+		sourceOutput += resSrc + "\n";
+	}
+
+	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h", sourceOutput);
 
 	delete buffer;
 }

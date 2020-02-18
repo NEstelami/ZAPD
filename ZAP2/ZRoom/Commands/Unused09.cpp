@@ -6,12 +6,12 @@ Unused09::Unused09(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex
 {
 }
 
-string Unused09::GenerateSourceCodePass1(string roomName)
+string Unused09::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, 0x00};", ZRoomCommand::GenerateSourceCodePass1(roomName));
+	sprintf(line, "%s 0x00, 0x00};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress));
 	sourceOutput = line;
 
 	return sourceOutput;

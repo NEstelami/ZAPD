@@ -7,20 +7,14 @@ using namespace std;
 
 SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numActors = rawData[rawDataIndex + 1];
+	numActors = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
-	actors = vector<ActorSpawnEntry*>();
+	_rawData = rawData;
+	_rawDataIndex = rawDataIndex;
 
-	uint32_t currentPtr = segmentOffset;
-
-	for (int i = 0; i < numActors; i++)
-	{
-		ActorSpawnEntry* entry = new ActorSpawnEntry(rawData, currentPtr);
-		actors.push_back(entry);
-
-		currentPtr += 16;
-	}
+	if (segmentOffset != 0)
+		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 }
 
 string SetActorList::GetSourceOutputCode(std::string prefix)
@@ -32,27 +26,43 @@ string SetActorList::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-string SetActorList::GenerateSourceCodePass1(string roomName)
+string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, (u32)_%s_actorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), actors.size(), roomName.c_str(), segmentOffset);
+	int numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
+
+	actors = vector<ActorSpawnEntry*>();
+
+	uint32_t currentPtr = segmentOffset;
+
+	for (int i = 0; i < numActorsReal; i++)
+	{
+		ActorSpawnEntry* entry = new ActorSpawnEntry(_rawData, currentPtr);
+		actors.push_back(entry);
+
+		currentPtr += 16;
+	}
+
+	sprintf(line, "%s 0x%02X, (u32)_%s_actorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), numActors, roomName.c_str(), segmentOffset);
 	sourceOutput += line;
 
 	string declaration = "";
 	sprintf(line, "ActorEntry _%s_actorList_%08X[] = \n{\n", roomName.c_str(), segmentOffset);
 	declaration += line;
 
+	int index = 0;
 	for (ActorSpawnEntry* entry : actors)
 	{
-		sprintf(line, "\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, \n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar);
+		sprintf(line, "\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
 		declaration += line;
+		index++;
 	}
 
 	declaration += "};\n\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, actors.size() * 16, declaration);
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, actors.size() * 16, declaration);
 
 	return sourceOutput;
 }

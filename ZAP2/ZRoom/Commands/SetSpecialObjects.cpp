@@ -9,12 +9,12 @@ SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, std::vector<uint8_t> rawData
 	globalObject = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
 }
 
-string SetSpecialObjects::GenerateSourceCodePass1(string roomName)
+string SetSpecialObjects::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, 0x%04X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), elfMessage, globalObject);
+	sprintf(line, "%s 0x%02X, 0x%04X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), elfMessage, globalObject);
 	sourceOutput = line;
 
 	return sourceOutput;

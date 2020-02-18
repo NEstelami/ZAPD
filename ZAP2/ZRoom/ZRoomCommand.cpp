@@ -9,12 +9,11 @@ ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	zRoom = nZRoom;
 }
 
-string ZRoomCommand::GenerateSourceCodePass1(string roomName)
+string ZRoomCommand::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	char line[2048];
 
-	//sprintf(line, "; UNIMPLEMENTED ROOM COMMAND %02X at %08X\n", cmdID, cmdAddress);
-	sprintf(line, "%s _%s_cmd%02X = { 0x%02X,", GetCommandCName().c_str(), roomName.c_str(), cmdIndex, cmdID);
+	sprintf(line, "%s _%s_set%04X_cmd%02X = { 0x%02X,", GetCommandCName().c_str(), roomName.c_str(), baseAddress, cmdIndex, cmdID);
 
 	return string(line);
 }

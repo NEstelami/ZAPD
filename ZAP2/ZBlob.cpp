@@ -16,6 +16,12 @@ ZBlob::ZBlob(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 	//Array.Copy(nRawData, rawDataIndex, rawData, 0, rawData.Length);
 }
 
+ZBlob::ZBlob(std::vector<uint8_t> nRawData, int rawDataIndex, int size, std::string nName)
+{
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
+	name = nName;
+}
+
 // BUILD MODE
 ZBlob::ZBlob(XMLElement* reader, string inFolder)
 {
@@ -48,6 +54,9 @@ string ZBlob::GetSourceOutputCode(std::string prefix)
 		//uint64_t data;
 
 		//memcpy(&data, &rawData[i], 8);
+
+		if (i % 16 == 0)
+			sourceOutput += "\t";
 
 		//sprintf(line, "0x%016llX, ", data);
 		sprintf(line, "0x%02X, ", rawData[i]);

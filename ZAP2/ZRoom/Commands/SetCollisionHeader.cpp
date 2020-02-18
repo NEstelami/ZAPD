@@ -29,15 +29,15 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 
 	declaration += line;
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 44, declaration);
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 44, declaration);
 }
 
-string SetCollisionHeader::GenerateSourceCodePass1(string roomName)
+string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, (u32)&_%s_collisionHeader_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s 0x00, (u32)&_%s_collisionHeader_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;
@@ -138,7 +138,8 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 		declaration += "};\n";
 	}
 
-	zRoom->declarations[waterBoxSegmentOffset] = new Declaration(DeclarationAlignment::None, 16 * waterBoxes.size(), declaration);
+	if (waterBoxSegmentOffset != 0)
+		zRoom->declarations[waterBoxSegmentOffset] = new Declaration(DeclarationAlignment::None, 16 * waterBoxes.size(), declaration);
 
 	if (polygons.size() > 0)
 	{
@@ -157,7 +158,8 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 
 		declaration += "};\n";
 
-		zRoom->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, declaration);
+		if (polySegmentOffset != 0)
+			zRoom->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, declaration);
 
 		declaration = "";
 	}
@@ -176,7 +178,8 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 
 	declaration += "};\n";
 
-	zRoom->declarations[polyTypeDefSegmentOffset] = new Declaration(DeclarationAlignment::None, polygonTypes.size() * 8, declaration);
+	if (polyTypeDefSegmentOffset != 0)
+		zRoom->declarations[polyTypeDefSegmentOffset] = new Declaration(DeclarationAlignment::None, polygonTypes.size() * 8, declaration);
 
 	declaration = "";
 
@@ -195,7 +198,8 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 
 		declaration += "};\n";
 
-		zRoom->declarations[vtxSegmentOffset] = new Declaration(DeclarationAlignment::None, vertices.size() * 6, declaration);
+		if (vtxSegmentOffset != 0)
+			zRoom->declarations[vtxSegmentOffset] = new Declaration(DeclarationAlignment::None, vertices.size() * 6, declaration);
 
 		declaration = "";
 	}
