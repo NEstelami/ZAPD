@@ -9,6 +9,9 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
 {
 	int numActors = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+	
+	if (segmentOffset != 0)
+		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 
 	actors = vector<ActorSpawnEntry*>();
 
@@ -23,12 +26,12 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
 	}
 }
 
-string SetStartPositionList::GenerateSourceCodePass1(string roomName)
+string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, (u32)&_%s_startPositionList_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), actors.size(), zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s 0x%02X, (u32)&_%s_startPositionList_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), actors.size(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	string declaration = "";

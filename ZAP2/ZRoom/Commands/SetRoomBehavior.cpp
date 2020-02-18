@@ -9,12 +9,12 @@ SetRoomBehavior::SetRoomBehavior(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 	gameplayFlags2 = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x04);
 }
 
-string SetRoomBehavior::GenerateSourceCodePass1(string roomName)
+string SetRoomBehavior::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, 0x%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), gameplayFlags, gameplayFlags2);
+	sprintf(line, "%s 0x%02X, 0x%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), gameplayFlags, gameplayFlags2);
 	sourceOutput = line;
 
 	return sourceOutput;

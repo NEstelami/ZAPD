@@ -23,7 +23,7 @@ public:
 	SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
 	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
 	virtual std::string GenerateSourceCodePass2(std::string roomName);
 	virtual RoomCommand GetRoomCommand();
 	virtual int32_t GetRawDataSize();
@@ -31,6 +31,9 @@ public:
 	virtual std::string GenerateExterns();
 
 private:
+	int numActors;
 	std::vector<ActorSpawnEntry*> actors;
 	uint32_t segmentOffset;
+	std::vector<uint8_t> _rawData;
+	int _rawDataIndex;
 };

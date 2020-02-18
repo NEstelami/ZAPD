@@ -18,22 +18,21 @@ protected:
 	std::string GetSourceOutputHeader(std::string prefix);
 	std::string GetSourceOutputCode(std::string prefix);
 	void GenDefinitions();
-
-	void ParseRawData();
-	void PrepareSourceOutput();
+	void ProcessCommandSets();
 public:
 	ZRoom* scene;
 	std::map<int32_t, Declaration*> declarations;
 	std::map<int32_t, std::string> externs;
+	std::vector<int32_t> commandSets;
 
 	ZRoom(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZRoom* nScene);
 
+	void ParseCommands(std::vector<ZRoomCommand*>& commandList, int rawDataIndex);
 	int32_t GetDeclarationSizeFromNeighbor(int declarationAddress);
 	int32_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();
-	//void Save(std::string outFolder);
 };
 
 enum class DeclarationAlignment

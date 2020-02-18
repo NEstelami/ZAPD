@@ -14,12 +14,12 @@ SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 	unk = rawData[rawDataIndex + 6];
 }
 
-string SetTimeSettings::GenerateSourceCodePass1(string roomName)
+string SetTimeSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), hour, min, unk);
+	sprintf(line, "%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), hour, min, unk);
 	sourceOutput = line;
 
 	return sourceOutput;

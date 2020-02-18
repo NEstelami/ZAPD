@@ -582,6 +582,10 @@ void ZTexture::Save(string outFolder)
 	{
 		stbi_write_png((outFolder + "/" + name + ".i4.png").c_str(), width, height, 3, bmpRgb, width * 3);
 	}
+	else if (type == TextureType::GrayscaleAlpha16bpp)
+	{
+		stbi_write_png((outFolder + "/" + name + ".ia16.png").c_str(), width, height, 4, bmpRgba, width * 4);
+	}
 	else if (type == TextureType::GrayscaleAlpha8bpp)
 	{
 		stbi_write_png((outFolder + "/" + name + ".ia8.png").c_str(), width, height, 4, bmpRgba, width * 4);
@@ -668,8 +672,9 @@ string ZTexture::GetSourceOutputCode(std::string prefix)
 
 		if (i % 16 == 15)
 		{
-			//sprintf(line, " // 0x\n");
-			sourceOutput += "\n";
+			sprintf(line, " // 0x%08X \n", (i / 16) * 16);
+			sourceOutput += line;
+			//sourceOutput += "\n";
 		}
 	}
 

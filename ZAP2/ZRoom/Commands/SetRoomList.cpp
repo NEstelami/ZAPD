@@ -40,12 +40,12 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, declaration);
 }
 
-string SetRoomList::GenerateSourceCodePass1(string roomName)
+string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, (u32)&_%s_roomList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s 0x%02X, (u32)&_%s_roomList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;

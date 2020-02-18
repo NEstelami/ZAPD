@@ -9,18 +9,19 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 	exits = vector<uint16_t>();
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+	if (segmentOffset != 0)
+		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
 }
 
-string SetExitList::GenerateSourceCodePass1(string roomName)
+string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, (u32)&_%s_exitList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s 0x00, (u32)&_%s_exitList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	// Parse Entrances and Generate Declaration

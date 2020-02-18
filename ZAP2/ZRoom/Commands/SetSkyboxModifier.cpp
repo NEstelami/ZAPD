@@ -8,12 +8,12 @@ SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, std::vector<uint8_t> rawData
 	disableSunMoon = rawData[rawDataIndex + 0x05];
 }
 
-string SetSkyboxModifier::GenerateSourceCodePass1(string roomName)
+string SetSkyboxModifier::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0, 0, 0, 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), disableSky, disableSunMoon);
+	sprintf(line, "%s 0, 0, 0, 0x%02X, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), disableSky, disableSunMoon);
 	sourceOutput = line;
 
 	return sourceOutput;

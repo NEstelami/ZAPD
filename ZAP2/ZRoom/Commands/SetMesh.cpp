@@ -250,12 +250,12 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	return sourceOutput;
 }
 
-string SetMesh::GenerateSourceCodePass1(string roomName)
+string SetMesh::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s %i, (u32)&_%s_meshHeader_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), data, zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s %i, (u32)&_%s_meshHeader_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), data, zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput += line;
 
 	/*if (meshHeader->headerType == 0)

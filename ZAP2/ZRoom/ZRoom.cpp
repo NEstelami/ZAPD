@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "ZRoom.h"
+#include "../ZBlob.h"
 #include "ObjectList.h"
 #include "../File.h"
 #include "../StringHelper.h"
@@ -57,11 +58,41 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			ZDisplayList* dList = new ZDisplayList(rawData, address, ZDisplayList::GetDListLength(rawData, address));
 			declarations[address] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), comment + dList->GetSourceOutputCode(name));
 		}
+		else if (string(child->Name()) == "BlobHint")
+		{
+			string comment = "";
+
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Address");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			string sizeStr = child->Attribute("Size");
+			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
+
+			char buffer[2048];
+			sprintf(buffer, "%s_blob_%08X", name.c_str(), address);
+
+			ZBlob* blob = new ZBlob(rawData, address, size, buffer);
+			declarations[address] = new Declaration(DeclarationAlignment::None, blob->GetRawDataSize(), comment + blob->GetSourceOutputCode(name));
+		}
 	}
 
+	//ParseCommands(rawDataIndex);
+	commandSets.push_back(rawDataIndex);
+	ProcessCommandSets();
+}
+
+void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, int rawDataIndex)
+{
 	bool shouldContinue = true;
 
 	int currentIndex = 0;
+
+	int8_t segmentNumber = rawDataIndex >> 24;
+
+	rawDataIndex = rawDataIndex & 0x00FFFFFF;
 
 	while (shouldContinue)
 	{
@@ -71,42 +102,73 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 
 		switch (opcode)
 		{
-			case RoomCommand::SetStartPositionList: cmd = new SetStartPositionList(this, rawData, rawDataIndex); break; // 0x00
-			case RoomCommand::SetActorList: cmd = new SetActorList(this, rawData, rawDataIndex); break; // 0x01
-			case RoomCommand::SetCollisionHeader: cmd = new SetCollisionHeader(this, rawData, rawDataIndex); break; // 0x03
-			case RoomCommand::SetRoomList: cmd = new SetRoomList(this, rawData, rawDataIndex); break; // 0x04
-			case RoomCommand::SetWind: cmd =new SetWind(this, rawData, rawDataIndex); break; // 0x05
-			case RoomCommand::SetEntranceList: cmd = new SetEntranceList(this, rawData, rawDataIndex); break; // 0x06
-			case RoomCommand::SetSpecialObjects: cmd = new SetSpecialObjects(this, rawData, rawDataIndex); break; // 0x07
-			case RoomCommand::SetRoomBehavior: cmd = new SetRoomBehavior(this, rawData, rawDataIndex); break; // 0x08
-			case RoomCommand::Unused09: cmd = new Unused09(this, rawData, rawDataIndex); break; // 0x09
-			case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex); break; // 0x0A
-			case RoomCommand::SetObjectList: cmd = new SetObjectList(this, rawData, rawDataIndex); break; // 0x0B
-			case RoomCommand::SetTransitionActorList: cmd = new SetTransitionActorList(this, rawData, rawDataIndex); break; // 0x0E
-			case RoomCommand::SetLightingSettings: cmd = new SetLightingSettings(this, rawData, rawDataIndex); break; // 0x0F
-			case RoomCommand::SetTimeSettings: cmd = new SetTimeSettings(this, rawData, rawDataIndex); break; // 0x10
-			case RoomCommand::SetSkyboxSettings: cmd = new SetSkyboxSettings(this, rawData, rawDataIndex); break; // 0x11
-			case RoomCommand::SetSkyboxModifier: cmd = new SetSkyboxModifier(this, rawData, rawDataIndex); break; // 0x12
-			case RoomCommand::SetExitList: cmd = new SetExitList(this, rawData, rawDataIndex); break; // 0x13
-			case RoomCommand::EndMarker: cmd = new EndMarker(this, rawData, rawDataIndex); break; // 0x14
-			case RoomCommand::SetSoundSettings: cmd = new SetSoundSettings(this, rawData, rawDataIndex); break; // 0x15
-			case RoomCommand::SetEchoSettings: cmd = new SetEchoSettings(this, rawData, rawDataIndex); break; // 0x16
-			case RoomCommand::SetAlternateHeaders: cmd = new SetAlternateHeaders(this, rawData, rawDataIndex); break; // 0x18
-			case RoomCommand::SetCameraSettings: cmd = new SetCameraSettings(this, rawData, rawDataIndex); break; // 0x19
-			default: cmd = new ZRoomCommand(this, rawData, rawDataIndex);
+		case RoomCommand::SetStartPositionList: cmd = new SetStartPositionList(this, rawData, rawDataIndex); break; // 0x00
+		case RoomCommand::SetActorList: cmd = new SetActorList(this, rawData, rawDataIndex); break; // 0x01
+		case RoomCommand::SetCollisionHeader: cmd = new SetCollisionHeader(this, rawData, rawDataIndex); break; // 0x03
+		case RoomCommand::SetRoomList: cmd = new SetRoomList(this, rawData, rawDataIndex); break; // 0x04
+		case RoomCommand::SetWind: cmd = new SetWind(this, rawData, rawDataIndex); break; // 0x05
+		case RoomCommand::SetEntranceList: cmd = new SetEntranceList(this, rawData, rawDataIndex); break; // 0x06
+		case RoomCommand::SetSpecialObjects: cmd = new SetSpecialObjects(this, rawData, rawDataIndex); break; // 0x07
+		case RoomCommand::SetRoomBehavior: cmd = new SetRoomBehavior(this, rawData, rawDataIndex); break; // 0x08
+		case RoomCommand::Unused09: cmd = new Unused09(this, rawData, rawDataIndex); break; // 0x09
+		case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex); break; // 0x0A
+		case RoomCommand::SetObjectList: cmd = new SetObjectList(this, rawData, rawDataIndex); break; // 0x0B
+		case RoomCommand::SetTransitionActorList: cmd = new SetTransitionActorList(this, rawData, rawDataIndex); break; // 0x0E
+		case RoomCommand::SetLightingSettings: cmd = new SetLightingSettings(this, rawData, rawDataIndex); break; // 0x0F
+		case RoomCommand::SetTimeSettings: cmd = new SetTimeSettings(this, rawData, rawDataIndex); break; // 0x10
+		case RoomCommand::SetSkyboxSettings: cmd = new SetSkyboxSettings(this, rawData, rawDataIndex); break; // 0x11
+		case RoomCommand::SetSkyboxModifier: cmd = new SetSkyboxModifier(this, rawData, rawDataIndex); break; // 0x12
+		case RoomCommand::SetExitList: cmd = new SetExitList(this, rawData, rawDataIndex); break; // 0x13
+		case RoomCommand::EndMarker: cmd = new EndMarker(this, rawData, rawDataIndex); break; // 0x14
+		case RoomCommand::SetSoundSettings: cmd = new SetSoundSettings(this, rawData, rawDataIndex); break; // 0x15
+		case RoomCommand::SetEchoSettings: cmd = new SetEchoSettings(this, rawData, rawDataIndex); break; // 0x16
+		case RoomCommand::SetAlternateHeaders: cmd = new SetAlternateHeaders(this, rawData, rawDataIndex); break; // 0x18
+		case RoomCommand::SetCameraSettings: cmd = new SetCameraSettings(this, rawData, rawDataIndex); break; // 0x19
+		default: cmd = new ZRoomCommand(this, rawData, rawDataIndex);
 		}
 
 		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
-		
+
 		cmd->cmdIndex = currentIndex;
 
-		commands.push_back(cmd);
+		commandList.push_back(cmd);
 
 		if (opcode == RoomCommand::EndMarker)
 			shouldContinue = false;
 
 		rawDataIndex += 8;
 		currentIndex++;
+	}
+}
+
+void ZRoom::ProcessCommandSets()
+{
+	char line[2048];
+
+	while (commandSets.size() > 0)
+	{
+		std::vector<ZRoomCommand*> setCommands = std::vector<ZRoomCommand*>();
+
+		int32_t commandSet = commandSets[0];
+		int8_t segmentNumber = commandSet >> 24;
+		ParseCommands(setCommands, commandSet);
+		commandSets.erase(commandSets.begin());
+
+		for (ZRoomCommand* cmd : setCommands)
+		{
+			string pass1 = cmd->GenerateSourceCodePass1(name, commandSet & 0x00FFFFFF);
+			sprintf(line, "%s // 0x%04X", pass1.c_str(), cmd->cmdAddress);
+
+			declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, line);
+
+			sprintf(line, "extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
+			externs[cmd->cmdAddress] = line;
+		}
+
+		sourceOutput += "\n";
+
+		for (ZRoomCommand* cmd : setCommands)
+			commands.push_back(cmd);
 	}
 }
 
@@ -222,23 +284,9 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 		sourceOutput += line;
 	}
 
-	//for (ZRoomCommand* cmd : commands)
-		//sourceOutput += cmd->GenerateExterns();
-
 	sourceOutput += "\n";
 
-	//sourceOutput += "// BEGIN COMMANDS\n";
-
-	for (ZRoomCommand* cmd : commands)
-	{
-		string pass1 = cmd->GenerateSourceCodePass1(name);
-		sprintf(line, "%s // 0x%04X\n", pass1.c_str(), cmd->cmdAddress);
-		sourceOutput += line;
-	}
-
-	//sourceOutput += "// END COMMANDS\n";
-	sourceOutput += "\n";
-
+	ProcessCommandSets();
 
 	// Copy it into a vector.
 	vector<pair<int32_t, Declaration*>> declarationKeysSorted(declarations.begin(), declarations.end());
@@ -260,10 +308,15 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 		{
 			if (item.second->alignment == DeclarationAlignment::Align16)
 			{
+				int lastAddrSizeTest = declarations[lastAddr]->size;
 				int curPtr = lastAddr + declarations[lastAddr]->size;
 
 				while (curPtr % 4 != 0)
+				{
+					item.second->size++;
+					declarations[item.first]->size++;
 					curPtr++;
+				}
 
 				while (curPtr % 16 != 0)
 				{
@@ -272,6 +325,8 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 					sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
 					sourceOutput += buffer;
 
+					item.second->size += 4;
+					declarations[item.first]->size += 4;
 					curPtr += 4;
 				}
 			}
@@ -280,7 +335,11 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 					int curPtr = lastAddr + declarations[lastAddr]->size;
 
 					while (curPtr % 4 != 0)
+					{
+						item.second->size++;
+						declarations[item.first]->size++;
 						curPtr++;
+					}
 
 					while (curPtr % 8 != 0)
 					{
@@ -289,6 +348,8 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 						sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
 						sourceOutput += buffer;
 
+						item.second->size += 4;
+						declarations[item.first]->size += 4;
 						curPtr += 4;
 					}
 				}
@@ -301,7 +362,10 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 			int curPtr = item.first + item.second->size;
 
 			while (curPtr % 4 != 0)
+			{
+				item.second->size++;
 				curPtr++;
+			}
 
 			while (curPtr % 16 != 0)
 			{
@@ -310,6 +374,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 				sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
 				sourceOutput += buffer;
 
+				item.second->size += 4;
 				curPtr += 4;
 			}
 		}
@@ -362,6 +427,7 @@ int ZRoom::GetRawDataSize()
 Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nText)
 {
 	alignment = nAlignment;
+	padding = DeclarationPadding::None;
 	size = nSize;
 	text = nText;
 }

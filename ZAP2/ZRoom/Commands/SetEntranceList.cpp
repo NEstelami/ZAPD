@@ -14,12 +14,12 @@ SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 	_rawDataIndex = rawDataIndex;
 }
 
-string SetEntranceList::GenerateSourceCodePass1(string roomName)
+string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, (u32)&_%s_entranceList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s 0x00, (u32)&_%s_entranceList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	// Parse Entrances and Generate Declaration

@@ -56,12 +56,12 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 	}
 }
 
-string SetLightingSettings::GenerateSourceCodePass1(string roomName)
+string SetLightingSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s %i, (u32)&_%s_lightSettings_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s %i, (u32)&_%s_lightSettings_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	return sourceOutput;
