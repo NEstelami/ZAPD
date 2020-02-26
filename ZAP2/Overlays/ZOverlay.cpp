@@ -31,37 +31,43 @@ ZOverlay* ZOverlay::FromELF(string elfFilePath, string cfgFolderPath)
 	
 
 	Elf_Half sec_num = reader.sections.size();
-	
-	for (int i = 0; i < sec_num; ++i)
+
+	vector<string> sections = {".rel.text", ".rel.data" , ".rel.rodata"};
+
+	for (auto sectionSearched : sections)
 	{
-		section* pSec = reader.sections[i];
-
-		string sectionName = pSec->get_name();
-
-		if (pSec->get_type() == SHT_REL)
+		for (int i = 0; i < sec_num; ++i)
 		{
-			relocation_section_accessor* symbols = new relocation_section_accessor(reader, pSec);
+			section* pSec = reader.sections[i];
 
-			for (Elf_Xword j = 0; j < symbols->get_entries_num(); j++)
+			string sectionName = pSec->get_name();
+
+			if (pSec->get_type() == SHT_REL && sectionName == sectionSearched)
 			{
-				std::string name;
-				Elf64_Addr offset;
-				Elf64_Addr symbolValue;
-				Elf_Xword size;
-				Elf_Sxword addend;
-				Elf_Sxword calcValue;
-				Elf_Word type;
-				
-				symbols->get_entry(j, offset, symbolValue, name, type, addend, calcValue);
+				relocation_section_accessor* symbols = new relocation_section_accessor(reader, pSec);
 
-				RelocationType typeConverted = (RelocationType)type;
-				SectionType sectionType = GetSectionTypeFromStr(sectionName);
-
-				if (name == ".text" || name == ".data" || name == ".bss" || name == ".rodata")
+				for (Elf_Xword j = 0; j < symbols->get_entries_num(); j++)
 				{
-					RelocationEntry* reloc = new RelocationEntry(sectionType, typeConverted, offset);
-					ovl->entries.push_back(reloc);
+					std::string name;
+					Elf64_Addr offset;
+					Elf64_Addr symbolValue;
+					Elf_Xword size;
+					Elf_Sxword addend;
+					Elf_Sxword calcValue;
+					Elf_Word type;
+
+					symbols->get_entry(j, offset, symbolValue, name, type, addend, calcValue);
+
+					RelocationType typeConverted = (RelocationType)type;
+					SectionType sectionType = GetSectionTypeFromStr(sectionName);
+
+					if (name == ".text" || name == ".data" || name == ".bss" || name == ".rodata")
+					{
+						RelocationEntry* reloc = new RelocationEntry(sectionType, typeConverted, offset);
+						ovl->entries.push_back(reloc);
+					}
 				}
+				break;
 			}
 		}
 	}
