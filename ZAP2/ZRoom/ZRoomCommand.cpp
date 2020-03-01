@@ -18,7 +18,7 @@ string ZRoomCommand::GenerateSourceCodePass1(string roomName, int baseAddress)
 	return string(line);
 }
 
-string ZRoomCommand::GenerateSourceCodePass2(string roomName)
+string ZRoomCommand::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	return "";
 }

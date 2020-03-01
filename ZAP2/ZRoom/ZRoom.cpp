@@ -130,6 +130,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, int rawDataIn
 		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
 
 		cmd->cmdIndex = currentIndex;
+		cmd->cmdSet = rawDataIndex;
 
 		commandList.push_back(cmd);
 
@@ -169,6 +170,20 @@ void ZRoom::ProcessCommandSets()
 
 		for (ZRoomCommand* cmd : setCommands)
 			commands.push_back(cmd);
+	}
+
+	for (ZRoomCommand* cmd : commands)
+	{
+		string pass2 = cmd->GenerateSourceCodePass2(name, 0);
+
+		if (pass2 != "")
+		{
+			sprintf(line, "%s // 0x%04X", pass2.c_str(), cmd->cmdAddress);
+			declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, line);
+
+			sprintf(line, "extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), cmd->cmdSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
+			externs[cmd->cmdAddress] = line;
+		}
 	}
 }
 
@@ -383,14 +398,6 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	}
 
 	sourceOutput += "\n";
-
-	for (ZRoomCommand* cmd : commands)
-		sourceOutput += cmd->GenerateSourceCodePass2(name) + "\n";
-
-	//sourceOutput += "};\n";
-
-	//sprintf(line, "_%s:\n", name.c_str());
-	//sourceOutput += line;
 
 	return sourceOutput;
 }

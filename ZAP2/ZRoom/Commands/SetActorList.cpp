@@ -28,6 +28,12 @@ string SetActorList::GetSourceOutputCode(std::string prefix)
 
 string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
+	return "";
+}
+
+
+string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
+{
 	string sourceOutput = "";
 	char line[2048];
 
@@ -37,7 +43,7 @@ string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numActorsReal; i++)
+	for (int i = 0; i < numActors; i++)
 	{
 		ActorSpawnEntry* entry = new ActorSpawnEntry(_rawData, currentPtr);
 		actors.push_back(entry);
@@ -65,12 +71,6 @@ string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, actors.size() * 16, declaration);
 
 	return sourceOutput;
-}
-
-
-string SetActorList::GenerateSourceCodePass2(string roomName)
-{
-	return "";
 }
 
 int32_t SetActorList::GetRawDataSize()

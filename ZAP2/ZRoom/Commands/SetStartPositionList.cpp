@@ -53,7 +53,7 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAd
 	return sourceOutput;
 }
 
-string SetStartPositionList::GenerateSourceCodePass2(string roomName)
+string SetStartPositionList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
