@@ -67,7 +67,7 @@ string SetLightingSettings::GenerateSourceCodePass1(string roomName, int baseAdd
 	return sourceOutput;
 }
 
-string SetLightingSettings::GenerateSourceCodePass2(string roomName)
+string SetLightingSettings::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];

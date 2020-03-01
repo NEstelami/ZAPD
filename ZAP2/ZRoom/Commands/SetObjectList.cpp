@@ -62,7 +62,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	return sourceOutput;
 }
 
-string SetObjectList::GenerateSourceCodePass2(string roomName)
+string SetObjectList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];

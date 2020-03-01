@@ -43,7 +43,7 @@ string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddr
 	return sourceOutput;
 }
 
-string SetCollisionHeader::GenerateSourceCodePass2(string roomName)
+string SetCollisionHeader::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	char line[2048];
