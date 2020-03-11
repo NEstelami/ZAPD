@@ -44,25 +44,34 @@ ZOverlay* ZOverlay::FromELF(string elfFilePath, string cfgFolderPath)
 
 			if (pSec->get_type() == SHT_REL && sectionName == sectionSearched)
 			{
-				relocation_section_accessor* symbols = new relocation_section_accessor(reader, pSec);
+				relocation_section_accessor relocs(reader, pSec);
+				symbol_section_accessor symbols(reader, reader.sections[(Elf_Half)pSec->get_link()]);
 
-				for (Elf_Xword j = 0; j < symbols->get_entries_num(); j++)
+				for (Elf_Xword j = 0; j < relocs.get_entries_num(); j++)
 				{
-					std::string name;
 					Elf64_Addr offset;
-					Elf64_Addr symbolValue;
-					Elf_Xword size;
-					Elf_Sxword addend;
-					Elf_Sxword calcValue;
+					Elf_Word symbol;
 					Elf_Word type;
-
-					symbols->get_entry(j, offset, symbolValue, name, type, addend, calcValue);
-
-					RelocationType typeConverted = (RelocationType)type;
-					SectionType sectionType = GetSectionTypeFromStr(sectionName);
-
-					if (name == ".text" || name == ".data" || name == ".bss" || name == ".rodata")
 					{
+						Elf_Sxword addend;
+						relocs.get_entry(j, offset, symbol, type, addend);
+					}
+
+					Elf_Half section_index = SHN_UNDEF;
+					{
+						std::string name;
+						Elf64_Addr value;
+						Elf_Xword size;
+						unsigned char bind;
+						unsigned char type;
+						unsigned char other;
+						symbols.get_symbol(symbol, name, value, size, bind, type, section_index, other);
+					}
+
+					if (section_index != SHN_UNDEF)
+					{
+						RelocationType typeConverted = (RelocationType)type;
+						SectionType sectionType = GetSectionTypeFromStr(sectionName);
 						RelocationEntry* reloc = new RelocationEntry(sectionType, typeConverted, offset);
 						ovl->entries.push_back(reloc);
 					}
