@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "ZRoom.h"
+#include "ZCutscene.h"
 #include "../ZBlob.h"
 #include "ObjectList.h"
 #include "../File.h"
@@ -24,7 +25,9 @@
 #include "Commands/SetObjectList.h"
 #include "Commands/SetMesh.h"
 #include "Commands/SetLightingSettings.h"
+#include "Commands/SetPathways.h"
 #include "Commands/Unused09.h"
+#include "Commands/SetCutscenes.h"
 #include "Commands/EndMarker.h"
 
 using namespace std;
@@ -77,26 +80,80 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			ZBlob* blob = new ZBlob(rawData, address, size, buffer);
 			declarations[address] = new Declaration(DeclarationAlignment::None, blob->GetRawDataSize(), comment + blob->GetSourceOutputCode(name));
 		}
+		else if (string(child->Name()) == "CutsceneHint")
+		{
+			string comment = "";
+
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Address");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			ZCutscene* cutscene = new ZCutscene(rawData, address, ZDisplayList::GetDListLength(rawData, address));
+			declarations[address] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), comment + cutscene->GetSourceOutputCode(name));
+		}
+		else if (string(child->Name()) == "AltHeaderHint")
+		{
+			string comment = "";
+
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Address");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			int commandsCount = 99999999;
+
+			if (child->FindAttribute("Count") != NULL)
+			{
+				string commandCountStr = child->Attribute("Count");
+				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
+			}
+
+			commandSets.push_back(CommandSet(address, commandsCount));
+		}
+		else if (string(child->Name()) == "PathHint")
+		{
+			string comment = "";
+
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Address");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			SetPathways* pathway = new SetPathways(this, rawData, address);
+			pathway->InitList(address);
+			pathway->GenerateSourceCodePass1(name, 0);
+			pathway->GenerateSourceCodePass2(name, 0);
+
+			delete pathway;
+		}
 	}
 
 	//ParseCommands(rawDataIndex);
-	commandSets.push_back(rawDataIndex);
+	commandSets.push_back(CommandSet(rawDataIndex));
 	ProcessCommandSets();
 }
 
-void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, int rawDataIndex)
+void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
 {
 	bool shouldContinue = true;
 
 	int currentIndex = 0;
 
+	int rawDataIndex = commandSet.address;
+
 	int8_t segmentNumber = rawDataIndex >> 24;
 
 	rawDataIndex = rawDataIndex & 0x00FFFFFF;
 
+	int32_t commandsLeft = commandSet.commandCount;
+
 	while (shouldContinue)
 	{
-		RoomCommand opcode = (RoomCommand)rawData[rawDataIndex];
+		RoomCommand opcode = (RoomCommand)rawData[rawDataIndex]; 
 
 		ZRoomCommand* cmd = nullptr;
 
@@ -113,6 +170,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, int rawDataIn
 		case RoomCommand::Unused09: cmd = new Unused09(this, rawData, rawDataIndex); break; // 0x09
 		case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex); break; // 0x0A
 		case RoomCommand::SetObjectList: cmd = new SetObjectList(this, rawData, rawDataIndex); break; // 0x0B
+		case RoomCommand::SetPathways: cmd = new SetPathways(this, rawData, rawDataIndex); break; // 0x0D
 		case RoomCommand::SetTransitionActorList: cmd = new SetTransitionActorList(this, rawData, rawDataIndex); break; // 0x0E
 		case RoomCommand::SetLightingSettings: cmd = new SetLightingSettings(this, rawData, rawDataIndex); break; // 0x0F
 		case RoomCommand::SetTimeSettings: cmd = new SetTimeSettings(this, rawData, rawDataIndex); break; // 0x10
@@ -122,6 +180,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, int rawDataIn
 		case RoomCommand::EndMarker: cmd = new EndMarker(this, rawData, rawDataIndex); break; // 0x14
 		case RoomCommand::SetSoundSettings: cmd = new SetSoundSettings(this, rawData, rawDataIndex); break; // 0x15
 		case RoomCommand::SetEchoSettings: cmd = new SetEchoSettings(this, rawData, rawDataIndex); break; // 0x16
+		case RoomCommand::SetCutscenes: cmd = new SetCutscenes(this, rawData, rawDataIndex); break; // 0x17
 		case RoomCommand::SetAlternateHeaders: cmd = new SetAlternateHeaders(this, rawData, rawDataIndex); break; // 0x18
 		case RoomCommand::SetCameraSettings: cmd = new SetCameraSettings(this, rawData, rawDataIndex); break; // 0x19
 		default: cmd = new ZRoomCommand(this, rawData, rawDataIndex);
@@ -139,6 +198,11 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, int rawDataIn
 
 		rawDataIndex += 8;
 		currentIndex++;
+
+		commandsLeft--;
+
+		if (commandsLeft <= 0)
+			break;
 	}
 }
 
@@ -150,17 +214,21 @@ void ZRoom::ProcessCommandSets()
 	{
 		std::vector<ZRoomCommand*> setCommands = std::vector<ZRoomCommand*>();
 
-		int32_t commandSet = commandSets[0];
+		int32_t commandSet = commandSets[0].address;
 		int8_t segmentNumber = commandSet >> 24;
-		ParseCommands(setCommands, commandSet);
+		ParseCommands(setCommands, commandSets[0]);
 		commandSets.erase(commandSets.begin());
 
-		for (ZRoomCommand* cmd : setCommands)
+		//for (ZRoomCommand* cmd : setCommands)
+		for (int i = 0; i < setCommands.size(); i++)
 		{
+			ZRoomCommand* cmd = setCommands[i];
+			cmd->commandSet = commandSet & 0x00FFFFFF;
+
 			string pass1 = cmd->GenerateSourceCodePass1(name, commandSet & 0x00FFFFFF);
 			sprintf(line, "%s // 0x%04X", pass1.c_str(), cmd->cmdAddress);
 
-			declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, line);
+			declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, line);
 
 			sprintf(line, "extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
 			externs[cmd->cmdAddress] = line;
@@ -174,7 +242,7 @@ void ZRoom::ProcessCommandSets()
 
 	for (ZRoomCommand* cmd : commands)
 	{
-		string pass2 = cmd->GenerateSourceCodePass2(name, 0);
+		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
 
 		if (pass2 != "")
 		{
@@ -289,14 +357,14 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 	sourceOutput += "#include <z64.h>\n";
 	sourceOutput += "#include <segment_symbols.h>\n";
+	sourceOutput += "#include <command_macros_base.h>\n";
+	sourceOutput += "#include <z64cutscene_commands.h>\n";
 
-	sprintf(line, "#include \"%s.h\"\n", name.c_str());
-	sourceOutput += line;
-
+	sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", name.c_str());
+	
 	if (scene != nullptr)
 	{
-		sprintf(line, "#include \"%s.h\"\n", scene->GetName().c_str());
-		sourceOutput += line;
+		sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", scene->GetName().c_str());
 	}
 
 	sourceOutput += "\n";
@@ -445,4 +513,16 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	padding = nPadding;
 	size = nSize;
 	text = nText;
+}
+
+CommandSet::CommandSet(int32_t nAddress)
+{
+	address = nAddress;
+	commandCount = 9999999;
+}
+
+CommandSet::CommandSet(int32_t nAddress, int32_t nCommandCount)
+{
+	address = nAddress;
+	commandCount = nCommandCount;
 }

@@ -127,6 +127,7 @@ protected:
 	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
 	bool lastTexLoaded;
 
+	ZDisplayList();
 	//void ParseXML(tinyxml2::XMLElement* reader);
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
 	void ParseRawData();

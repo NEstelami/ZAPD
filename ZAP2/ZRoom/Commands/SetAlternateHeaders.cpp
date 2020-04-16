@@ -28,7 +28,7 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 
 		if (address != 0)
 		{
-			zRoom->commandSets.push_back(address);
+			zRoom->commandSets.push_back(CommandSet(address));
 		}
 	}
 

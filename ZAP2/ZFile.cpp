@@ -43,7 +43,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
-		//printf("%s: %08X\n", child->Attribute("Name"), rawDataIndex);
+		printf("%s: %08X\n", child->Attribute("Name"), rawDataIndex);
 
 		if (string(child->Name()) == "Texture")
 		{

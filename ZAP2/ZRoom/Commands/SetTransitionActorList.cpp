@@ -51,16 +51,6 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 
 	declaration += "};\n\n";
 
-	/*int curAddr = segmentOffset + (transitionActors.size() * 16);
-
-	while (curAddr % 16 != 0)
-	{
-		sprintf(line, "static u32 padding%02X = 0;\n", curAddr);
-		declaration += line;
-
-		curAddr += 4;
-	}*/
-
 	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, transitionActors.size() * 16, declaration);
 
 	return sourceOutput;

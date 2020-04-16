@@ -46,6 +46,7 @@ public:
 	int32_t cmdAddress;
 	int32_t cmdIndex;
 	int32_t cmdSet;
+	uint32_t commandSet;
 
 	ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
