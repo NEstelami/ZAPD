@@ -38,21 +38,7 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 
 		declaration += "};\n";
 
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, numLights * 22, declaration);
-
-		/*int curPtr = segmentOffset + (numLights * 22);
-
-		while (curPtr % 16 != 0)
-		{
-			declaration = "";
-
-			sprintf(line, "static u32 padding%02X = 0;\n", curPtr);
-			declaration += line;
-
-			zRoom->declarations[curPtr] = new Declaration(DeclarationAlignment::None, 4, declaration);
-
-			curPtr += 4;
-		}*/
+		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, numLights * 22, declaration);
 	}
 }
 

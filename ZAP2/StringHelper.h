@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <stdarg.h>
 
 class StringHelper
 {
@@ -38,5 +39,20 @@ public:
 		}
 
 		return s;
+	}
+
+	static std::string Sprintf(const char* format, ...)
+	{
+		char buffer[32768];
+		std::string output = "";
+		va_list va;
+
+		va_start(va, format);
+		vsprintf(buffer, format, va);
+		va_end(va);
+
+		output = buffer;
+
+		return output;
 	}
 };

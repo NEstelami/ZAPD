@@ -1,15 +1,14 @@
 #include "ZDisplayList.h"
 #include "BitConverter.h"
+#include "StringHelper.h"
+#include "Globals.h"
 #include <algorithm>
 
 using namespace std;
 using namespace tinyxml2;
 
-// EXTRACT MODE
-ZDisplayList::ZDisplayList(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath)
+ZDisplayList::ZDisplayList()
 {
-	relativePath = nRelPath;
-	rawData = vector<uint8_t>(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + GetRawDataSize());
 	defines = "";
 	sceneSegName = "";
 	lastTexWidth = 0;
@@ -19,22 +18,27 @@ ZDisplayList::ZDisplayList(XMLElement* reader, vector<uint8_t> nRawData, int raw
 	lastTexSiz = F3DZEXTexSizes::G_IM_SIZ_16b;
 	lastTexSizTest = F3DZEXTexSizes::G_IM_SIZ_16b;
 	lastTexLoaded = false;
+
+	vertices = map<uint32_t, vector<Vertex*>>();
+	vtxDeclarations = map<uint32_t, string>();
+	otherDLists = vector<ZDisplayList*>();
+	textures = map<uint32_t, ZTexture*>();
+	texDeclarations = map<uint32_t, std::string>();
+}
+
+// EXTRACT MODE
+ZDisplayList::ZDisplayList(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath) : ZDisplayList()
+{
+	relativePath = nRelPath;
+	rawData = vector<uint8_t>(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + GetRawDataSize());
 	ParseRawData();
 }
 
-ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize)
+ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize) : ZDisplayList()
 {
 	fileData = nRawData;
 	dListAddress = rawDataIndex;
 	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + rawDataSize);
-	defines = "";
-	sceneSegName = "";
-	lastTexWidth = 0;
-	lastTexHeight = 0;
-	lastTexAddr = 0;
-	lastTexFmt = F3DZEXTexFormats::G_IM_FMT_RGBA;
-	lastTexSiz = F3DZEXTexSizes::G_IM_SIZ_16b;
-	lastTexLoaded = false;
 	ParseRawData();
 }
 
@@ -80,8 +84,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 	char line[4096];
 	string sourceOutput = "";
 
-	sprintf(line, "Gfx _%s_dlist_%08X[] =\n{\n", prefix.c_str(), dListAddress);
-	sourceOutput += line;
+	sourceOutput += StringHelper::Sprintf("Gfx _%s_dlist_%08X[] =\n{\n", prefix.c_str(), dListAddress);
 
 	for (int i = 0; i < instructions.size(); i++) 
 	{
@@ -152,7 +155,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 		{
 			int nn = (data & 0x000FF00000000000ULL) >> 44;
 			int aa = (data & 0x000000FF00000000ULL) >> 32;
-			sprintf(line, "gsSPVertex(_%s_vertices_%08X, %i, %i),", prefix.c_str(), data & 0x00FFFFFF, nn, ((aa >> 1) - nn));
+			uint32_t vtxAddr = data & 0x00FFFFFF;
+			sprintf(line, "gsSPVertex(_%s_vertices_%08X, %i, %i),", prefix.c_str(), vtxAddr, nn, ((aa >> 1) - nn));
 			
 			{
 				uint32_t currentPtr = data & 0x00FFFFFF;
@@ -413,9 +417,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 		sourceOutput += line;
 
-		sprintf(line, " // 0x%08X", dListAddress + (i * 8));
-		sourceOutput += line;
-
+		sourceOutput += StringHelper::Sprintf(" // 0x%08X", dListAddress + (i * 8));
 		sourceOutput += "\n";
 	}
 
@@ -424,7 +426,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 	// Iterate through our vertex lists, connect intersecting lists.
 	if (vertices.size() > 0)
 	{
-		char definesLine[2048];
 		vector<pair<int32_t, vector<Vertex*>>> verticesSorted(vertices.begin(), vertices.end());
 
 		sort(verticesSorted.begin(), verticesSorted.end(), [](const auto& lhs, const auto& rhs)
@@ -447,8 +448,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					vertices[verticesSorted[i].first].push_back(verticesSorted[i + 1].second[j]);
 				}
 
-				sprintf(definesLine, "#define _%s_vertices_%08X ((u32)_%s_vertices_%08X + 0x%08X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
-				defines += definesLine;
+				defines += StringHelper::Sprintf("#define _%s_vertices_%08X ((u32)_%s_vertices_%08X + 0x%08X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
+
 				
 				int nSize = vertices[verticesSorted[i].first].size();
 
@@ -462,23 +463,19 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 		// Generate Vertex Declarations
 		for (pair<int32_t, vector<Vertex*>> item : vertices)
 		{
-			char declLine[2048];
 			string declaration = "";
 
-			sprintf(declLine, "Vtx_t _%s_vertices_%08X[%i] = \n{\n", prefix.c_str(), item.first, item.second.size());
-			declaration += declLine;
+			declaration += StringHelper::Sprintf("Vtx_t _%s_vertices_%08X[%i] = \n{\n", prefix.c_str(), item.first, item.second.size());
 
 			int curAddr = item.first;
 
 			for (Vertex* vtx : item.second)
 			{
-				sprintf(declLine, "\t { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i }, // 0x%08X\n",
-					vtx->x, vtx->y, vtx->z, vtx->flag, vtx->s, vtx->t, vtx->r, vtx->g, vtx->b, vtx->a, curAddr);
-
 				//sprintf(declLine, "\t { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },\n",
 					//(uint16_t)vtx->x, (uint16_t)vtx->y, (uint16_t)vtx->z, (uint16_t)vtx->flag, (uint16_t)vtx->s, (uint16_t)vtx->t, (uint16_t)vtx->r, (uint16_t)vtx->g, (uint16_t)vtx->b, (uint16_t)vtx->a);
 
-				declaration += declLine;
+				declaration += StringHelper::Sprintf("\t { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i }, // 0x%08X\n",
+					vtx->x, vtx->y, vtx->z, vtx->flag, vtx->s, vtx->t, vtx->r, vtx->g, vtx->b, vtx->a, curAddr);
 
 				curAddr += 16;
 			}
@@ -490,11 +487,9 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 		// Generate Texture Declarations
 		for (pair<int32_t, ZTexture*> item : textures)
 		{
-			char declLine[2048];
 			string declaration = "";
 
 			declaration += item.second->GetSourceOutputCode(prefix);
-
 			texDeclarations[item.first] = declaration;
 		}
 	}
@@ -515,17 +510,15 @@ void ZDisplayList::TextureGenCheck(string prefix)
 
 bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZTexture*>& textures, ZRoom* scene, string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded)
 {
-	char buffer[4096];
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
 
 	//printf("TextureGenCheck seg=%i width=%i height=%i addr=0x%08X\n", segmentNumber, texWidth, texHeight, texAddr);
 
 	if (texAddr != 0 && texWidth != 0 && texHeight != 0 && texLoaded)
 	{
-		if (segmentNumber != 2)
+		if (segmentNumber != 2) // Not from a scene file
 		{
-			sprintf(buffer, "_%s_tex_%08X", prefix.c_str(), texAddr);
-			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, string(buffer), texWidth, texHeight);
+			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("_%s_tex_%08X", prefix.c_str(), texAddr), texWidth, texHeight);
 			
 #ifdef _WIN32 // TEST
 			tex->Save("dump");
@@ -536,13 +529,17 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		}
 		else
 		{
-			sprintf(buffer, "_%s_tex_%08X", scene->GetName().c_str(), texAddr);
-			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr, string(buffer), texWidth, texHeight);
+			if (texAddr == 0x7C10)
+			{
+				int bp = 0;
+			}
+
+			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr, 
+				StringHelper::Sprintf("_%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
 			
 #ifdef _WIN32 // TEST
 			tex->Save("dump"); // TEST
 #endif
-			
 			scene->declarations[texAddr] = new Declaration(DeclarationAlignment::None, tex->GetRawDataSize(), tex->GetSourceOutputCode(scene->GetName()));
 			scene->externs[texAddr] = tex->GetSourceOutputHeader(scene->GetName());
 

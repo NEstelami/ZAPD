@@ -2,6 +2,7 @@
 #include "../ZRoom.h"
 #include "../ActorList.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -55,7 +56,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	sourceOutput += line;
 
 	string declaration = "";
-	sprintf(line, "ActorEntry _%s_actorList_%08X[] = \n{\n", roomName.c_str(), segmentOffset);
+	sprintf(line, "ActorEntry _%s_actorList_%08X[%i] = \n{\n", roomName.c_str(), segmentOffset, actors.size());
 	declaration += line;
 
 	int index = 0;
@@ -83,9 +84,8 @@ string SetActorList::GenerateExterns()
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "ActorEntry _%s_actorList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
+	sourceOutput += StringHelper::Sprintf("extern ActorEntry _%s_actorList_%08X[%i];\n", zRoom->GetName().c_str(), segmentOffset, actors.size());
+	
 	return sourceOutput;
 }
 

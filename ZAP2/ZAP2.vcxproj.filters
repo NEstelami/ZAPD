@@ -135,6 +135,15 @@
     <ClCompile Include="ZRoom\Commands\SetTransitionActorList.cpp">
       <Filter>Source Files\ZRoom\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetPathways.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetCutscenes.cpp">
+      <Filter>Source Files\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZCutscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tinyxml2.h">
@@ -298,6 +307,18 @@
     </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetTransitionActorList.h">
       <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetPathways.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetCutscenes.h">
+      <Filter>Header Files\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCutscene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3s.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

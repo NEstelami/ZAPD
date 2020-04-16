@@ -126,6 +126,7 @@
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="ZBlob.cpp" />
+    <ClCompile Include="ZCutscene.cpp" />
     <ClCompile Include="ZDisplayList.cpp" />
     <ClCompile Include="ZFile.cpp" />
     <ClCompile Include="ZResource.cpp" />
@@ -134,12 +135,14 @@
     <ClCompile Include="ZRoom\Commands\SetAlternateHeaders.cpp" />
     <ClCompile Include="ZRoom\Commands\SetCameraSettings.cpp" />
     <ClCompile Include="ZRoom\Commands\SetCollisionHeader.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetCutscenes.cpp" />
     <ClCompile Include="ZRoom\Commands\SetEchoSettings.cpp" />
     <ClCompile Include="ZRoom\Commands\SetEntranceList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetExitList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetLightingSettings.cpp" />
     <ClCompile Include="ZRoom\Commands\SetMesh.cpp" />
     <ClCompile Include="ZRoom\Commands\SetObjectList.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetPathways.cpp" />
     <ClCompile Include="ZRoom\Commands\SetRoomBehavior.cpp" />
     <ClCompile Include="ZRoom\Commands\SetRoomList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetSkyboxModifier.cpp" />
@@ -178,7 +181,9 @@
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="Vec3s.h" />
     <ClInclude Include="ZBlob.h" />
+    <ClInclude Include="ZCutscene.h" />
     <ClInclude Include="ZDisplayList.h" />
     <ClInclude Include="ZFile.h" />
     <ClInclude Include="ZResource.h" />
@@ -188,12 +193,14 @@
     <ClInclude Include="ZRoom\Commands\SetAlternateHeaders.h" />
     <ClInclude Include="ZRoom\Commands\SetCameraSettings.h" />
     <ClInclude Include="ZRoom\Commands\SetCollisionHeader.h" />
+    <ClInclude Include="ZRoom\Commands\SetCutscenes.h" />
     <ClInclude Include="ZRoom\Commands\SetEchoSettings.h" />
     <ClInclude Include="ZRoom\Commands\SetEntranceList.h" />
     <ClInclude Include="ZRoom\Commands\SetExitList.h" />
     <ClInclude Include="ZRoom\Commands\SetLightingSettings.h" />
     <ClInclude Include="ZRoom\Commands\SetMesh.h" />
     <ClInclude Include="ZRoom\Commands\SetObjectList.h" />
+    <ClInclude Include="ZRoom\Commands\SetPathways.h" />
     <ClInclude Include="ZRoom\Commands\SetRoomBehavior.h" />
     <ClInclude Include="ZRoom\Commands\SetRoomList.h" />
     <ClInclude Include="ZRoom\Commands\SetSkyboxModifier.h" />
