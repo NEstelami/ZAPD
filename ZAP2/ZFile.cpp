@@ -151,8 +151,6 @@ void ZFile::ExtractResources(string outputDir)
 
 void ZFile::GenerateSourceFiles(string outputDir)
 {
-	char* buffer = new char[1024 * 1024];
-
 	sourceOutput = "";
 
 	sourceOutput += "#include <ultra64.h>\n";
@@ -177,6 +175,4 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	}
 
 	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h", sourceOutput);
-
-	delete buffer;
 }
