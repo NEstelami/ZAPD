@@ -107,6 +107,8 @@ int NewMain(int argc, char* argv[])
 		string source = overlay->GetSourceOutputCode("");
 		File::WriteAllText(Globals::Instance->outputPath, source);
 	}
+
+	return 0;
 }
 
 int OldMain(int argc, char* argv[])
@@ -207,6 +209,7 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 	if (element == nullptr)
 		return false;
 
+	return true;
 }
 
 void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath)
