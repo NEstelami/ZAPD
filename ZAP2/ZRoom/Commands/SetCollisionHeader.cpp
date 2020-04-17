@@ -277,8 +277,10 @@ CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIn
 		sprintf(line, "CamPosData _%s_camPosData_%08X[] = \n{\n", zRoom->GetName().c_str(), cameraPosDataAddr);
 		declaration += line;
 
-		//for (int i = 0; i < numCameras; i++)
-		for (int i = 0; i < 1; i++)
+		int numCamerasReal = (rawDataIndex - cameraPosDataAddr) / 0x12;
+
+		for (int i = 0; i < numCamerasReal; i++)
+		//for (int i = 0; i < 1; i++)
 		{
 			CameraPositionData* data = new CameraPositionData(zRoom, rawData, cameraPosDataAddr + (i * 0x12));
 			cameraPositionData.push_back(data);
@@ -289,7 +291,8 @@ CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIn
 
 		declaration += "};\n";
 
-		zRoom->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, numCameras * 0x12, declaration);
+		zRoom->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, numCamerasReal * 0x12, declaration);
+		//zRoom->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, 0x12, declaration);
 	}
 
 

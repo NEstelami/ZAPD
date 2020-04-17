@@ -44,7 +44,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numActors; i++)
+	for (int i = 0; i < numActorsReal; i++)
 	{
 		ActorSpawnEntry* entry = new ActorSpawnEntry(_rawData, currentPtr);
 		actors.push_back(entry);

@@ -382,11 +382,16 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 	int lastPtr = 0;
 
-	// Print out the vector.
+	// Account for padding/alignment
 	int lastAddr = 0;
 
 	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
 	{
+		while (declarations[item.first]->size % 4 != 0)
+		{
+			declarations[item.first]->size++;
+		}
+
 		if (lastAddr != 0)
 		{
 			if (item.second->alignment == DeclarationAlignment::Align16)
@@ -396,22 +401,21 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 				while (curPtr % 4 != 0)
 				{
-					item.second->size++;
-					declarations[item.first]->size++;
+					declarations[lastAddr]->size++;
+					//declarations[item.first]->size++;
 					curPtr++;
 				}
 
-				while (curPtr % 16 != 0)
+				/*while (curPtr % 16 != 0)
 				{
 					char buffer[2048];
 
-					sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
-					sourceOutput += buffer;
+					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
+					declarations[item.first]->text = buffer + declarations[item.first]->text;
 
-					item.second->size += 4;
-					declarations[item.first]->size += 4;
+					declarations[lastAddr]->size += 4;
 					curPtr += 4;
-				}
+				}*/
 			}
 			else if (item.second->alignment == DeclarationAlignment::Align8)
 				{
@@ -428,8 +432,8 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 					{
 						char buffer[2048];
 
-						sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
-						sourceOutput += buffer;
+						sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
+						declarations[item.first]->text = buffer + declarations[item.first]->text;
 
 						item.second->size += 4;
 						declarations[item.first]->size += 4;
@@ -437,8 +441,6 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 					}
 				}
 		}
-
-		sourceOutput += item.second->text + "\n";
 
 		if (item.second->padding == DeclarationPadding::Pad16)
 		{
@@ -455,14 +457,67 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 				char buffer[2048];
 
 				sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
-				sourceOutput += buffer;
+				declarations[item.first]->text += buffer;
 
 				item.second->size += 4;
 				curPtr += 4;
 			}
 		}
 
+		//sourceOutput += declarations[item.first]->text + "\n";
+
 		lastAddr = item.first;
+	}
+
+	// Handle for unaccounted data
+	lastAddr = 0;
+	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	{
+		if (lastAddr != 0)
+		{
+			if (lastAddr + declarations[lastAddr]->size > item.first)
+			{
+				// UH OH!
+				int bp = 0;
+			}
+
+			if (lastAddr + declarations[lastAddr]->size != item.first)
+			{
+				int bp = 0;
+
+				int diff = item.first - (lastAddr + declarations[lastAddr]->size);
+
+				string src = "";
+
+				src += StringHelper::Sprintf("static u8 unaccounted%04X[] = \n{\n\t", lastAddr + declarations[lastAddr]->size);
+
+				for (int i = 0; i < diff; i++)
+				{
+					src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + declarations[lastAddr]->size + i]);
+
+					if (i % 16 == 15)
+						src += "\n\t";
+				}
+
+				src += "\n};\n";
+
+				declarations[lastAddr + declarations[lastAddr]->size] = new Declaration(DeclarationAlignment::None, diff, src);
+			}
+		}
+
+		lastAddr = item.first;
+	}
+
+	// Print out our declarations
+	declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
+	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
+	{
+		return lhs.first < rhs.first;
+	});
+
+	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	{
+		sourceOutput += item.second->text + "\n";
 	}
 
 	sourceOutput += "\n";

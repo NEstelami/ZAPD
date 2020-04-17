@@ -52,7 +52,7 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, entrances.size() * 4, declaration);
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, entrances.size() * 2, declaration);
 
 	return sourceOutput;
 }

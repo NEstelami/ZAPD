@@ -10,6 +10,9 @@ SetPathways::SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
 
+	segmentOffset = 0;
+	listSegmentOffset = 0;
+
 	InitList(BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF);
 
 	uint32_t currentPtr = listSegmentOffset;
@@ -17,8 +20,8 @@ SetPathways::SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	if (segmentOffset != 0)
 		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 
-	if (listSegmentOffset != 0)
-		zRoom->declarations[listSegmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+	//if (listSegmentOffset != 0)
+		//zRoom->declarations[listSegmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 }
 
 void SetPathways::InitList(uint32_t address)

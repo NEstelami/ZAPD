@@ -15,7 +15,7 @@ string SetWind::GenerateSourceCodePass1(string roomName, int baseAddress)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, 0x%02X, 0x%02X, 0x%02X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), windWest, windVertical, windSouth, clothFlappingStrength);
+	sprintf(line, "%s 0x%02X, 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), windWest, windVertical, windSouth, clothFlappingStrength);
 	sourceOutput = line;
 
 	return sourceOutput;
