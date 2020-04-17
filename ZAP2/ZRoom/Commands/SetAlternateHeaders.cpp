@@ -54,7 +54,7 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, declaration);
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, headers.size() * 4, declaration);
 
 	declaration = "";
 

@@ -360,6 +360,16 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
 		}
 			break;
+		case F3DZEXOpcode::G_SETENVCOLOR:
+		{
+			uint8_t r = (data & 0xFF000000) >> 24;
+			uint8_t g = (data & 0x00FF0000) >> 16;
+			uint8_t b = (data & 0xFF00FF00) >> 8;
+			uint8_t a = (data & 0x000000FF) >> 0;
+
+			sprintf(line, "gsDPSetEnvColor(%i, %i, %i, %i),", r, g, b, a);
+		}
+			break;
 		case F3DZEXOpcode::G_SETCOMBINE:
 		{
 			int a0 = (data & 0b000000011110000000000000000000000000000000000000000000000000000) >> 52;
@@ -529,11 +539,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		}
 		else
 		{
-			if (texAddr == 0x7C10)
-			{
-				int bp = 0;
-			}
-
 			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr, 
 				StringHelper::Sprintf("_%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
 			

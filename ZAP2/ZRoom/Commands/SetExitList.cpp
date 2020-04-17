@@ -50,7 +50,7 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, exits.size() * 4, declaration);
+	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, exits.size() * 2, declaration);
 
 	return sourceOutput;
 }
