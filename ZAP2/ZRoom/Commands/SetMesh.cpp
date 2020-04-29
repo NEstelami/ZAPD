@@ -211,6 +211,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	zRoom->declarations[dList->dListAddress] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), sourceOutput);
+	zRoom->externs[dList->dListAddress] = dList->GetSourceOutputHeader(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);

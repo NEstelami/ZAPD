@@ -34,6 +34,12 @@
     <Filter Include="Header Files\elfio">
       <UniqueIdentifier>{dc06ed84-f6fe-4277-80f3-d62bd5cdbb98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\OpenFBX">
+      <UniqueIdentifier>{c5d86b0a-fff0-47cf-83af-807dd8267ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OpenFBX">
+      <UniqueIdentifier>{34eda0d2-f599-4610-a75c-716189ee4363}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -142,6 +148,15 @@
       <Filter>Source Files\ZRoom\Commands</Filter>
     </ClCompile>
     <ClCompile Include="ZCutscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenFBX\miniz.c">
+      <Filter>Source Files\OpenFBX</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenFBX\ofbx.cpp">
+      <Filter>Source Files\OpenFBX</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -318,6 +333,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vec3s.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_gltf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenFBX\ofbx.h">
+      <Filter>Header Files\OpenFBX</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenFBX\miniz.h">
+      <Filter>Header Files\OpenFBX</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayListBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

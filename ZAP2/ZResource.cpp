@@ -12,6 +12,11 @@ string ZResource::GetName()
 	return name;
 }
 
+void ZResource::SetName(string nName)
+{
+	name = nName;
+}
+
 string ZResource::GetRelativePath()
 {
 	return relativePath;
@@ -35,9 +40,4 @@ string ZResource::GetSourceOutputCode(std::string prefix)
 string ZResource::GetSourceOutputHeader(std::string prefix)
 {
 	return "";
-}
-
-SourceType ZResource::GetSourceType()
-{
-	return SourceType::C;
 }

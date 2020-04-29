@@ -1,4 +1,5 @@
 #include "SetWind.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -15,8 +16,7 @@ string SetWind::GenerateSourceCodePass1(string roomName, int baseAddress)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), windWest, windVertical, windSouth, clothFlappingStrength);
-	sourceOutput = line;
+	sourceOutput += StringHelper::Sprintf("%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X, 0x%02X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), windWest, windVertical, windSouth, clothFlappingStrength);
 
 	return sourceOutput;
 }

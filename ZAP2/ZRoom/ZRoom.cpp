@@ -90,7 +90,7 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			string addressStr = child->Attribute("Address");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZCutscene* cutscene = new ZCutscene(rawData, address, ZDisplayList::GetDListLength(rawData, address));
+			ZCutscene* cutscene = new ZCutscene(rawData, address, 9999);
 			declarations[address] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), comment + cutscene->GetSourceOutputCode(name));
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
@@ -371,6 +371,43 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 	ProcessCommandSets();
 
+	// Check for texture intersections
+	//{
+	//	if (textures.size() != 0)
+	//	{
+	//		vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
+
+	//		sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
+	//		{
+	//			return lhs.first < rhs.first;
+	//		});
+
+	//		for (int i = 0; i < texturesSorted.size() - 1; i++)
+	//		{
+	//			int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
+
+	//			if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
+	//			{
+	//				int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+
+	//				//defines += StringHelper::Sprintf("#define _%s_tex_%08X ((u32)_%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
+	//					//texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
+
+	//				//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
+
+	//				declarations.erase(texturesSorted[i + 1].first);
+	//				externs.erase(texturesSorted[i + 1].first);
+	//				textures.erase(texturesSorted[i + 1].first);
+	//				texturesSorted.erase(texturesSorted.begin() + i + 1);
+
+	//				//textures.erase(texturesSorted[i + 1].first);
+
+	//				i--;
+	//			}
+	//		}
+	//	}
+	//}
+
 	// Copy it into a vector.
 	vector<pair<int32_t, Declaration*>> declarationKeysSorted(declarations.begin(), declarations.end());
 
@@ -423,8 +460,9 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 					while (curPtr % 4 != 0)
 					{
-						item.second->size++;
-						declarations[item.first]->size++;
+						declarations[lastAddr]->size++;
+						//item.second->size++;
+						//declarations[item.first]->size++;
 						curPtr++;
 					}
 
@@ -435,8 +473,9 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 						sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
 						declarations[item.first]->text = buffer + declarations[item.first]->text;
 
-						item.second->size += 4;
-						declarations[item.first]->size += 4;
+						declarations[lastAddr]->size += 4;
+						//item.second->size += 4;
+						//declarations[item.first]->size += 4;
 						curPtr += 4;
 					}
 				}
@@ -483,8 +522,6 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 			if (lastAddr + declarations[lastAddr]->size != item.first)
 			{
-				int bp = 0;
-
 				int diff = item.first - (lastAddr + declarations[lastAddr]->size);
 
 				string src = "";
@@ -506,6 +543,28 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 		}
 
 		lastAddr = item.first;
+	}
+
+	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
+	if (lastAddr + declarations[lastAddr]->size < rawData.size())
+	{
+		int diff = rawData.size() - (lastAddr + declarations[lastAddr]->size);
+
+		string src = "";
+
+		src += StringHelper::Sprintf("static u8 unaccounted%04X[] = \n{\n\t", lastAddr + declarations[lastAddr]->size);
+
+		for (int i = 0; i < diff; i++)
+		{
+			src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + declarations[lastAddr]->size + i]);
+
+			if (i % 16 == 15)
+				src += "\n\t";
+		}
+
+		src += "\n};\n";
+
+		declarations[lastAddr + declarations[lastAddr]->size] = new Declaration(DeclarationAlignment::None, diff, src);
 	}
 
 	// Print out our declarations

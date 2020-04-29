@@ -2,14 +2,12 @@
 
 #include "../ZResource.h"
 #include "ZRoomCommand.h"
+#include "ZTexture.h"
 #include "../tinyxml2.h"
 
 #include <vector>
 #include <map>
 #include <string>
-
-class Declaration;
-struct CommandSet;
 
 class ZRoom : public ZResource
 {
@@ -24,6 +22,7 @@ public:
 	ZRoom* scene;
 	std::map<int32_t, Declaration*> declarations;
 	std::map<int32_t, std::string> externs;
+	std::map<int32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
 
 	ZRoom(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZRoom* nScene);
@@ -43,32 +42,4 @@ struct CommandSet
 
 	CommandSet(int32_t nAddress);
 	CommandSet(int32_t nAddress, int32_t nCommandCount);
-};
-
-enum class DeclarationAlignment
-{
-	None,
-	Align4,
-	Align8,
-	Align16
-};
-
-enum class DeclarationPadding
-{
-	None,
-	Pad4,
-	Pad8,
-	Pad16
-};
-
-class Declaration
-{
-public:
-	DeclarationAlignment alignment;
-	DeclarationPadding padding;
-	uint32_t size;
-	std::string text;
-
-	Declaration(DeclarationAlignment nPadding, uint32_t nSize, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nText);
 };

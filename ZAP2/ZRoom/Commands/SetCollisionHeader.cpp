@@ -324,7 +324,7 @@ CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIn
 
 			entries.push_back(entry);
 
-			if (entry->unknown == 0x00010000 || entry->unknown == 0x00030000 || entry->unknown == 0x00050000)
+			if (entry->unknown == 0x00010000 || entry->unknown == 0x00030000 || entry->unknown == 0x00040000 || entry->unknown == 0x00050000)
 				break;
 		}
 

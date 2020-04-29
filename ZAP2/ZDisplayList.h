@@ -113,6 +113,7 @@ public:
 	int16_t s, t;
 	uint8_t r, g, b, a;
 	
+	Vertex();
 	Vertex(std::vector<uint8_t> rawData, int rawDataIndex);
 };
 
@@ -127,18 +128,10 @@ protected:
 	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
 	bool lastTexLoaded;
 
-	ZDisplayList();
 	//void ParseXML(tinyxml2::XMLElement* reader);
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
 	void ParseRawData();
 public:
-	ZDisplayList(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
-	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
-
-	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(std::vector<uint8_t> fileData, std::map<uint32_t, ZTexture*>& textures, ZRoom* scene, std::string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded);
-	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex);
-
 	std::string sceneSegName;
 	ZRoom* scene;
 
@@ -147,16 +140,31 @@ public:
 	std::map<uint32_t, std::vector<Vertex*>> vertices;
 	std::map<uint32_t, std::string> vtxDeclarations;
 	std::vector<ZDisplayList*> otherDLists;
-	
+
 	std::map<uint32_t, ZTexture*> textures;
 	std::map<uint32_t, std::string> texDeclarations;
-	
-	std::string defines; // Hack for special cases where vertex arrays intersect...
 
+	std::string defines; // Hack for special cases where vertex arrays intersect...
 	std::vector<uint8_t> fileData;
+
+	ZDisplayList();
+	ZDisplayList(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
+	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
+
+	void TextureGenCheck(std::string prefix);
+	static bool TextureGenCheck(std::vector<uint8_t> fileData, std::map<uint32_t, ZTexture*>& textures, ZRoom* scene, std::string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded);
+	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex);
+
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();
 	std::string GetSourceOutputHeader(std::string prefix);
 	std::string GetSourceOutputCode(std::string prefix);
 	void Save(std::string outFolder);
+
+	// COMMANDS
+	void AddInstruction_PipeSync();
+	void AddInstruction_GeometryMode(uint32_t param);
+	void AddInstruction_ClearGeometryMode(uint32_t param);
+	void AddInstruction_Vertex(uint32_t vtxAddr, uint32_t indexStart, uint32_t indexEnd);
+	void AddInstruction_EndDisplayList();
 };

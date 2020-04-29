@@ -1,5 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define TINYGLTF_IMPLEMENTATION
 
 #include "ZTexture.h"
 
@@ -32,7 +33,10 @@ ZTexture::ZTexture(TextureType nType, std::vector<uint8_t> nRawData, int rawData
 	height = nHeight;
 	type = nType;
 	name = nName;
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
+
+	int dataEnd = rawDataIndex + GetRawDataSize();
+
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + dataEnd);
 
 	FixRawData();
 	PrepareBitmap();
@@ -664,7 +668,9 @@ string ZTexture::GetSourceOutputCode(std::string prefix)
 			sourceOutput += "\t";
 
 		//sprintf(line, "0x%016llX, ", data);
+
 		sprintf(line, "0x%02X, ", rawData[i]);
+
 		sourceOutput += line;
 
 		//if ((i / 8) % 8 == 7)

@@ -109,7 +109,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			int segmentNumber = (data & 0xFF000000) >> 24;
 
-			if (segmentNumber == 8 || segmentNumber == 9 || segmentNumber == 10) // Used for runtime-generated display lists
+			if (segmentNumber == 8 || segmentNumber == 9 || segmentNumber == 10 || segmentNumber == 11 || segmentNumber == 12 || segmentNumber == 13) // Used for runtime-generated display lists
 			{
 				if (pp != 0)
 					sprintf(line, "gsSPBranchList(0x%08X),", data & 0xFFFFFFFF);
@@ -291,13 +291,19 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			int shiftAmtH = 2;
 
 			if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_8b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
-			{
 				shiftAmtW = 3;
-			}
 
 			//if (lastTexFmt == F3DZEXTexFormats::G_IM_FMT_I || lastTexFmt == F3DZEXTexFormats::G_IM_FMT_CI)
 			if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b)
 				shiftAmtW = 3;
+
+			if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
+				shiftAmtH = 3;
+
+			if (lastTexAddr == 0xAD58)
+			{
+				int bp = 0;
+			}
 
 			lastTexWidth = (uuu >> shiftAmtW) + 1;
 			lastTexHeight = (vvv >> shiftAmtH) + 1;
@@ -420,6 +426,36 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			TextureGenCheck(prefix);
 			break;
+		case F3DZEXOpcode::G_RDPHALF_1:
+		{
+			uint64_t data2 = instructions[i+1];
+			uint32_t h = (data & 0xFFFFFFFF);
+			F3DZEXOpcode opcode2 = (F3DZEXOpcode)rawData[((i + 1) * 8) + 0];
+
+			if (opcode2 == F3DZEXOpcode::G_BRANCH_Z)
+			{
+				uint32_t a = (data2 & 0x00FFF00000000000) >> 44;
+				uint32_t b = (data2 & 0x00000FFF00000000) >> 32;
+				uint32_t z = (data2 & 0x00000000FFFFFFFF) >> 0;
+
+				//sprintf(line, "gsDPWord(%i, 0),", h);
+				sprintf(line, "gsSPBranchLessZraw(_%s_dlist_%08X, 0x%02X, 0x%02X),", prefix.c_str(), h & 0x00FFFFFF, (a / 5) | (b / 2), z);
+
+				ZDisplayList* nList = new ZDisplayList(fileData, h & 0x00FFFFFF, GetDListLength(fileData, h & 0x00FFFFFF));
+				nList->scene = scene;
+				otherDLists.push_back(nList);
+
+				i++;
+			}
+		}
+			break;
+		/*case F3DZEXOpcode::G_BRANCH_Z:
+		{
+			uint8_t h = (data & 0xFFFFFFFF);
+
+			sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", h);
+		}
+			break;*/
 		default:
 			sprintf(line, "// Opcode 0x%02X unimplemented!", opcode);
 			break;
@@ -459,7 +495,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				}
 
 				defines += StringHelper::Sprintf("#define _%s_vertices_%08X ((u32)_%s_vertices_%08X + 0x%08X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
-
 				
 				int nSize = vertices[verticesSorted[i].first].size();
 
@@ -492,6 +527,48 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			declaration += "};\n";
 			vtxDeclarations[item.first] = declaration;
+
+			if (parent != nullptr)
+			{
+				parent->declarations[item.first] = new Declaration(DeclarationAlignment::None, item.second.size() * 16, declaration);
+			}
+		}
+
+		// Check for texture intersections
+		{
+			if (scene != nullptr && scene->textures.size() != 0)
+			{
+				vector<pair<uint32_t, ZTexture*>> texturesSorted(scene->textures.begin(), scene->textures.end());
+
+				sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
+				{
+					return lhs.first < rhs.first;
+				});
+
+				for (int i = 0; i < texturesSorted.size() - 1; i++)
+				{
+					int texSize = scene->textures[texturesSorted[i].first]->GetRawDataSize();
+
+					if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
+					{
+						int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+
+						defines += StringHelper::Sprintf("#define _%s_tex_%08X ((u32)_%s_tex_%08X + 0x%08X)\n", scene->GetName().c_str(), texturesSorted[i + 1].first, scene->GetName().c_str(),
+							texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
+
+						//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
+
+						scene->declarations.erase(texturesSorted[i + 1].first);
+						scene->externs.erase(texturesSorted[i + 1].first);
+						scene->textures.erase(texturesSorted[i + 1].first);
+						texturesSorted.erase(texturesSorted.begin() + i + 1);
+
+						//textures.erase(texturesSorted[i + 1].first);
+
+						i--;
+					}
+				}
+			}
 		}
 
 		// Generate Texture Declarations
@@ -539,12 +616,21 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		}
 		else
 		{
+			if (texAddr == 0xAD58)
+			{
+				int bp = 0;
+				//texSiz = F3DZEXTexSizes::G_IM_SIZ_8b;
+				//texHeight /= 2;
+			}
+
 			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr, 
 				StringHelper::Sprintf("_%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
 			
 #ifdef _WIN32 // TEST
 			tex->Save("dump"); // TEST
 #endif
+
+			scene->textures[texAddr] = tex;
 			scene->declarations[texAddr] = new Declaration(DeclarationAlignment::None, tex->GetRawDataSize(), tex->GetSourceOutputCode(scene->GetName()));
 			scene->externs[texAddr] = tex->GetSourceOutputHeader(scene->GetName());
 
@@ -587,6 +673,33 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	return TextureType::RGBA16bpp;
 }
 
+void ZDisplayList::AddInstruction_PipeSync()
+{
+	instructions.push_back(G_RDPPIPESYNC << 56);
+}
+
+void ZDisplayList::AddInstruction_GeometryMode(uint32_t param)
+{
+	instructions.push_back((G_GEOMETRYMODE << 56) | (param << 48));
+}
+
+void ZDisplayList::AddInstruction_ClearGeometryMode(uint32_t param)
+{
+	AddInstruction_GeometryMode(param);
+}
+
+void ZDisplayList::AddInstruction_Vertex(uint32_t vtxAddr, uint32_t indexStart, uint32_t indexEnd)
+{
+	instructions.push_back((G_VTX << 56) | (vtxAddr << 48) | (indexEnd << 16) | (indexStart << 8));
+
+}
+
+void ZDisplayList::AddInstruction_EndDisplayList()
+{
+	instructions.push_back(G_ENDDL << 56);
+}
+
+
 void ZDisplayList::Save(string outFolder)
 {
 
@@ -600,6 +713,20 @@ vector<uint8_t> ZDisplayList::GetRawData()
 int ZDisplayList::GetRawDataSize()
 {
 	return instructions.size() * 8;
+}
+
+Vertex::Vertex()
+{
+	x = 0;
+	y = 0;
+	z = 0;
+	flag = 0;
+	s = 0;
+	t = 0;
+	r = 0;
+	g = 0;
+	b = 0;
+	a = 0;
 }
 
 Vertex::Vertex(std::vector<uint8_t> rawData, int rawDataIndex)

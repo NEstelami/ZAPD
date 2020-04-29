@@ -17,10 +17,14 @@ enum ZFileMode
 class ZFile
 {
 public:
+	std::map<int32_t, Declaration*> declarations;
+
+	ZFile(std::string nOutPath, std::string nName);
 	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath);
 
 	void ExtractResources(std::string outputDir);
 	void BuildResources();
+	void AddResource(ZResource* res);
 
 protected:
 	std::string name;
@@ -29,6 +33,8 @@ protected:
 	std::string sourceOutput;
 	std::vector<ZResource*> resources;
 
+	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader);
 	void GenerateSourceFiles(std::string outputDir);
+	std::string ProcessDeclarations();
 };

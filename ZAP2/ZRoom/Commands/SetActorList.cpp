@@ -62,7 +62,11 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	int index = 0;
 	for (ActorSpawnEntry* entry : actors)
 	{
-		sprintf(line, "\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+		if (entry->actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
+			sprintf(line, "\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+		else
+			sprintf(line, "\t{ 0x%04X, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", entry->actorNum, entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+
 		declaration += line;
 		index++;
 	}

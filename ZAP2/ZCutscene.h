@@ -18,6 +18,7 @@ enum class CutsceneCommands
 	Cmd07 = 0x0007,
 	Cmd08 = 0x0008,
 	Cmd09 = 0x0009,
+	Unknown = 0x001A,
 	Textbox = 0x0013,
 	SetActorAction0 = 0x000A,
 	SetActorAction1 = 0x000F,
@@ -258,6 +259,36 @@ public:
 	std::vector<Unknown9Entry*> entries;
 
 	CutsceneCommandUnknown9(std::vector<uint8_t> rawData, int rawDataIndex);
+	std::string GetCName(std::string prefix);
+	std::string GenerateSourceCode(std::string roomName, int baseAddress);
+	uint32_t GetCommandSize();
+};
+
+class UnkEntry
+{
+public:
+	uint32_t unused0;
+	uint32_t unused1;
+	uint32_t unused2;
+	uint32_t unused3;
+	uint32_t unused4;
+	uint32_t unused5;
+	uint32_t unused6;
+	uint32_t unused7;
+	uint32_t unused8;
+	uint32_t unused9;
+	uint32_t unused10;
+	uint32_t unused11;
+
+	UnkEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+};
+
+class CutsceneCommandUnknown : public CutsceneCommand
+{
+public:
+	std::vector<UnkEntry*> entries;
+
+	CutsceneCommandUnknown(std::vector<uint8_t> rawData, int rawDataIndex);
 	std::string GetCName(std::string prefix);
 	std::string GenerateSourceCode(std::string roomName, int baseAddress);
 	uint32_t GetCommandSize();

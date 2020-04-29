@@ -11,10 +11,21 @@
 using namespace tinyxml2;
 using namespace std;
 
-ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath)
+ZFile::ZFile()
 {
 	resources = vector<ZResource*>();
+	basePath = "";
+	outputPath = Directory::GetCurrentDirectory();
+}
 
+ZFile::ZFile(string nOutPath, string nName) : ZFile()
+{
+	outputPath = nOutPath;
+	name = nName;
+}
+
+ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath) : ZFile()
+{
 	if (nBasePath == "")
 		basePath = Directory::GetCurrentDirectory();
 	else
@@ -149,6 +160,11 @@ void ZFile::ExtractResources(string outputDir)
 		GenerateSourceFiles(outputDir);
 }
 
+void ZFile::AddResource(ZResource* res)
+{
+	resources.push_back(res);
+}
+
 void ZFile::GenerateSourceFiles(string outputDir)
 {
 	sourceOutput = "";
@@ -162,6 +178,8 @@ void ZFile::GenerateSourceFiles(string outputDir)
 		sourceOutput += resSrc + "\n";
 	}
 
+	sourceOutput += ProcessDeclarations();
+
 	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".c", sourceOutput);
 
 	// Generate Header
@@ -170,9 +188,28 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	for (ZResource* res : resources)
 	{
 		string resSrc = res->GetSourceOutputHeader("");
-
 		sourceOutput += resSrc + "\n";
 	}
 
 	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h", sourceOutput);
+}
+
+string ZFile::ProcessDeclarations()
+{
+	string output = "";
+
+	auto declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
+	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
+	{
+		return lhs.first < rhs.first;
+	});
+
+	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	{
+		output += item.second->text + "\n";
+	}
+
+	output += "\n";
+
+	return output;
 }
