@@ -1,6 +1,7 @@
 #include "ZCutscene.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
+#include "TextTable.h"
 
 using namespace std;
 
@@ -21,6 +22,11 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 
 		if (id == -1)
 			break;
+
+		if (i == 0x3D)
+		{
+			int bp = 0;
+		}
 
 		CutsceneCommands cmdID = (CutsceneCommands)GetCommandFromID(id);
 		currentPtr += 4;
@@ -46,6 +52,8 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 			case CutsceneCommands::SetCameraPosLink: cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr); break;
 			case CutsceneCommands::SetCameraFocusLink: cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr); break;
 			case CutsceneCommands::Textbox: cmd = new CutsceneCommandTextbox(rawData, currentPtr); break;
+			case CutsceneCommands::Cmd09: cmd = new CutsceneCommandUnknown9(rawData, currentPtr); break;
+			case CutsceneCommands::Unknown: cmd = new CutsceneCommandUnknown(rawData, currentPtr); break;
 			case CutsceneCommands::SetActorAction0:
 			case CutsceneCommands::SetActorAction1:
 			case CutsceneCommands::SetActorAction2:
@@ -65,7 +73,6 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 			case CutsceneCommands::SetTime: cmd = new CutsceneCommandDayTime(rawData, currentPtr); break;
 			case CutsceneCommands::Terminator: cmd = new CutsceneCommandTerminator(rawData, currentPtr); break;
 			case CutsceneCommands::End: cmd = new CutsceneCommandEnd(rawData, currentPtr); break;
-			default: break;
 			}
 
 			cmd->commandIndex = i;
@@ -154,6 +161,7 @@ CutsceneCommands ZCutscene::GetCommandFromID(int id)
 	case 49: case 60: case 89: case 111: case 114: case 134: case 142: return CutsceneCommands::SetActorAction8;
 	case 62: return CutsceneCommands::SetActorAction9;
 	case 143: return CutsceneCommands::SetActorAction10;
+	case 0x1A: case 0x1B: case 0x6D: case 0x15: case 0x16: case 0x70: case 0x71: return CutsceneCommands::Unknown;
 	}
 
 	return CutsceneCommands::Error;
@@ -531,6 +539,61 @@ uint32_t CutsceneCommandUnknown9::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
 
+UnkEntry::UnkEntry(vector<uint8_t> rawData, int rawDataIndex)
+{
+	unused0 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
+	unused1 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
+	unused2 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 8);
+	unused3 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
+	unused4 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 16);
+	unused5 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 20);
+	unused6 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
+	unused7 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
+	unused8 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
+	unused9 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 36);
+	unused10 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 40);
+	unused11 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 44);
+}
+
+CutsceneCommandUnknown::CutsceneCommandUnknown(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)
+{
+	int numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
+
+	rawDataIndex += 4;
+
+	for (int i = 0; i < numEntries; i++)
+	{
+		entries.push_back(new UnkEntry(rawData, rawDataIndex));
+		rawDataIndex += 0x30;
+	}
+}
+
+string CutsceneCommandUnknown::GenerateSourceCode(string roomName, int baseAddress)
+{
+	string result = "";
+
+	result += StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%02X, %i),\n", commandID, entries.size());
+
+	for (int i = 0; i < entries.size(); i++)
+	{
+		result += StringHelper::Sprintf("\t\CS_UNK_DATA(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->unused0, entries[i]->unused1, entries[i]->unused2,
+			entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
+			entries[i]->unused7, entries[i]->unused8, entries[i]->unused9, entries[i]->unused10, entries[i]->unused11);
+	}
+
+	return result;
+}
+
+string CutsceneCommandUnknown::GetCName(string prefix)
+{
+	return "CsCmdUnknown1A";
+}
+
+uint32_t CutsceneCommandUnknown::GetCommandSize()
+{
+	return CutsceneCommand::GetCommandSize() + (entries.size() * 0x30);
+}
+
 DayTimeEntry::DayTimeEntry(vector<uint8_t> rawData, int rawDataIndex)
 {
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
@@ -621,8 +684,8 @@ string CutsceneCommandTextbox::GenerateSourceCode(string roomName, int baseAddre
 		}
 		else
 		{
-			result += StringHelper::Sprintf("\t\tCS_TEXTBOX_DISPLAY_TEXT(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
-				entries[i]->textID1, entries[i]->textID2);
+			result += StringHelper::Sprintf("\t\tCS_TEXTBOX_DISPLAY_TEXT(%i, %i, %i, %i, %i, %i), // %s\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
+				entries[i]->textID1, entries[i]->textID2, TextTable[entries[i]->base].c_str());
 		}
 	}
 
@@ -801,7 +864,7 @@ string CutsceneCommandSpecialAction::GetCName(string prefix)
 
 uint32_t CutsceneCommandSpecialAction::GetCommandSize()
 {
-	return CutsceneCommand::GetCommandSize() + 0x30;
+	return CutsceneCommand::GetCommandSize() + (0x30 * entries.size());
 }
 
 CutsceneCommandNop::CutsceneCommandNop(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)

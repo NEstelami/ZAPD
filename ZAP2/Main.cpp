@@ -10,6 +10,7 @@
 #include <string>
 #include "tinyxml2.h"
 
+extern void ModelTest();
 
 using namespace tinyxml2;
 using namespace std;
@@ -22,6 +23,12 @@ int NewMain(int argc, char* argv[]);
 int main(int argc, char* argv[])
 {
 	Globals* g = new Globals();
+
+	// TEST TEST
+#if _MSC_VER && _DEBUG
+	//ModelTest();
+	return 0;
+#endif
 
 	return OldMain(argc, argv);
 	//return NewMain(argc, argv);
