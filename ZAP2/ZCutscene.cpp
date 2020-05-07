@@ -161,7 +161,7 @@ CutsceneCommands ZCutscene::GetCommandFromID(int id)
 	case 49: case 60: case 89: case 111: case 114: case 134: case 142: return CutsceneCommands::SetActorAction8;
 	case 62: return CutsceneCommands::SetActorAction9;
 	case 143: return CutsceneCommands::SetActorAction10;
-	case 0x1A: case 0x1B: case 0x6D: case 0x15: case 0x16: case 0x70: case 0x71: case 0x4A: case 0x21: return CutsceneCommands::Unknown;
+	case 0x1A: case 0x1B: case 0x20: case 0x21: case 0x3B: case 0x6D: case 0x15: case 0x16: case 0x70: case 0x71: case 0x4A: return CutsceneCommands::Unknown;
 	}
 
 	return CutsceneCommands::Error;

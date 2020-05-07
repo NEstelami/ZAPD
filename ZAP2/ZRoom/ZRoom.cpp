@@ -372,41 +372,52 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	ProcessCommandSets();
 
 	// Check for texture intersections
-	//{
-	//	if (textures.size() != 0)
-	//	{
-	//		vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
+	{
+		string defines = "";
+		if (textures.size() != 0)
+		{
+			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
 
-	//		sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
-	//		{
-	//			return lhs.first < rhs.first;
-	//		});
+			sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
+			{
+				return lhs.first < rhs.first;
+			});
 
-	//		for (int i = 0; i < texturesSorted.size() - 1; i++)
-	//		{
-	//			int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
+			for (int i = 0; i < texturesSorted.size() - 1; i++)
+			{
+				int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
 
-	//			if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
-	//			{
-	//				int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
+				{
+					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
 
-	//				//defines += StringHelper::Sprintf("#define _%s_tex_%08X ((u32)_%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
-	//					//texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
+					defines += StringHelper::Sprintf("#define _%s_tex_%08X ((u32)_%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
+						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
 
-	//				//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
+					//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
 
-	//				declarations.erase(texturesSorted[i + 1].first);
-	//				externs.erase(texturesSorted[i + 1].first);
-	//				textures.erase(texturesSorted[i + 1].first);
-	//				texturesSorted.erase(texturesSorted.begin() + i + 1);
+					declarations.erase(texturesSorted[i + 1].first);
+					externs.erase(texturesSorted[i + 1].first);
+					textures.erase(texturesSorted[i + 1].first);
+					texturesSorted.erase(texturesSorted.begin() + i + 1);
 
-	//				//textures.erase(texturesSorted[i + 1].first);
+					//textures.erase(texturesSorted[i + 1].first);
 
-	//				i--;
-	//			}
-	//		}
-	//	}
-	//}
+					i--;
+				}
+			}
+		}
+
+		externs[0xFFFFFFFF] = defines;
+	}
+
+	for (pair<int32_t, ZTexture*> item : textures)
+	{
+		string declaration = "";
+
+		declaration += item.second->GetSourceOutputCode(prefix);
+		declarations[item.first] = new Declaration(DeclarationAlignment::None, item.second->GetRawDataSize(), item.second->GetSourceOutputCode(name));
+	}
 
 	// Copy it into a vector.
 	vector<pair<int32_t, Declaration*>> declarationKeysSorted(declarations.begin(), declarations.end());
@@ -582,20 +593,6 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	sourceOutput += "\n";
 
 	return sourceOutput;
-}
-
-void ZRoom::GenDefinitions()
-{
-	char line[2048];
-	string sourceOutput = "";
-
-	for (int i = 0; i < sizeof(ObjectList) / sizeof(ObjectList[0]); i++)
-	{
-		sprintf(line, ".set %s 0x%04X\n", ObjectList[i].c_str(), i);
-		sourceOutput += line;
-	}
-
-	//File::WriteAllText("objectlist.inc", sourceOutput);
 }
 
 vector<uint8_t> ZRoom::GetRawData()

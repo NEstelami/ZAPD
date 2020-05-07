@@ -220,7 +220,10 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 		zRoom->declarations[vtxEntry.first] = new Declaration(DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, vtxEntry.second);
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
+	{
+		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
 		zRoom->declarations[texEntry.first] = new Declaration(DeclarationAlignment::None, dList->textures[texEntry.first]->GetRawDataSize(), texEntry.second);
+	}
 }
 
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
