@@ -299,11 +299,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
 				shiftAmtH = 3;
 
-			if (lastTexAddr == 0xAD58)
-			{
-				int bp = 0;
-			}
-
 			lastTexWidth = (uuu >> shiftAmtW) + 1;
 			lastTexHeight = (vvv >> shiftAmtH) + 1;
 			//printf("lastTexWidth: %i lastTexHeight: %i\n", lastTexWidth, lastTexHeight);
@@ -456,6 +451,14 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", h);
 		}
 			break;*/
+		case F3DZEXOpcode::G_MTX:
+		{
+			// TODO: FINISH THIS
+			uint32_t pp = (data & 0x000000FF00000000) >> 32;
+			uint32_t mm = (data & 0x00000000FFFFFFFF);
+			sprintf(line, "gsSPMatrix(0x%08X, 0x%02X),", mm, pp ^ 0x01);
+		}
+			break;
 		default:
 			sprintf(line, "// Opcode 0x%02X unimplemented!", opcode);
 			break;
@@ -570,6 +573,36 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					}
 				}
 			}
+
+			{
+				vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
+
+				sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
+				{
+					return lhs.first < rhs.first;
+				});
+
+				for (int i = 0; i < texturesSorted.size() - 1; i++)
+				{
+					if (texturesSorted.size() == 0) // ?????
+						break;
+
+					int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
+
+					if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
+					{
+						int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+
+						defines += StringHelper::Sprintf("#define _%s_tex_%08X ((u32)_%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
+							texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
+
+						textures.erase(texturesSorted[i + 1].first);
+						texturesSorted.erase(texturesSorted.begin() + i + 1);
+
+						i--;
+					}
+				}
+			}
 		}
 
 		// Generate Texture Declarations
@@ -617,13 +650,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		}
 		else
 		{
-			if (texAddr == 0xAD58)
-			{
-				int bp = 0;
-				//texSiz = F3DZEXTexSizes::G_IM_SIZ_8b;
-				//texHeight /= 2;
-			}
-
 			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr, 
 				StringHelper::Sprintf("_%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
 			

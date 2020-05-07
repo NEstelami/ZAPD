@@ -16,7 +16,6 @@ protected:
 
 	std::string GetSourceOutputHeader(std::string prefix);
 	std::string GetSourceOutputCode(std::string prefix);
-	void GenDefinitions();
 	void ProcessCommandSets();
 public:
 	ZRoom* scene;
