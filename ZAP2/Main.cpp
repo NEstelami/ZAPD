@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 	// TEST TEST
 #if _MSC_VER && _DEBUG
 	//ModelTest();
-	return 0;
+	//return 0;
 #endif
 
 	return OldMain(argc, argv);
