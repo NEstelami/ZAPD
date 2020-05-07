@@ -7,6 +7,12 @@
 #include "File.h"
 #include "Globals.h"
 
+#ifndef _MSC_VER
+#include <execinfo.h>
+#include <unistd.h>
+#include <signal.h>
+#endif
+
 #include <string>
 #include "tinyxml2.h"
 
@@ -20,8 +26,33 @@ void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath);
 int OldMain(int argc, char* argv[]);
 int NewMain(int argc, char* argv[]);
 
+#ifndef _MSC_VER
+void ErrorHandler(int sig)
+{
+	void* array[4096];
+	char** symbols;
+	size_t size;
+	size = backtrace(array, 4096);
+	symbols = backtrace_symbols(array, 4096);
+
+	for (int i = 1; i < size; i++)
+	{
+		size_t len = strlen(symbols[i]);
+		cout << symbols[i] << "\n";
+	}
+
+	//cout << "Error: signal " << sig << ":\n";
+	backtrace_symbols_fd(array, size, STDERR_FILENO);
+	exit(1);
+}
+#endif
+
 int main(int argc, char* argv[])
 {
+#ifndef _MSC_VER
+	//signal(SIGSEGV, ErrorHandler);
+#endif
+
 	Globals* g = new Globals();
 
 	// TEST TEST
@@ -29,6 +60,8 @@ int main(int argc, char* argv[])
 	//ModelTest();
 	//return 0;
 #endif
+
+
 
 	return OldMain(argc, argv);
 	//return NewMain(argc, argv);

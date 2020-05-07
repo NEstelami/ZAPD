@@ -27,11 +27,11 @@ public:
 	void AddResource(ZResource* res);
 
 protected:
+	std::vector<ZResource*> resources;
 	std::string name;
 	std::string basePath;
 	std::string outputPath;
 	std::string sourceOutput;
-	std::vector<ZResource*> resources;
 
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader);

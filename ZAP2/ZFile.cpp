@@ -7,6 +7,7 @@
 #include "File.h"
 #include "Directory.h"
 #include "Globals.h"
+#include <algorithm>
 
 using namespace tinyxml2;
 using namespace std;
@@ -16,6 +17,7 @@ ZFile::ZFile()
 	resources = vector<ZResource*>();
 	basePath = "";
 	outputPath = Directory::GetCurrentDirectory();
+	declarations = map<int32_t, Declaration*>();
 }
 
 ZFile::ZFile(string nOutPath, string nName) : ZFile()

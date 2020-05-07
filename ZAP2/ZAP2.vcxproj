@@ -124,7 +124,7 @@
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ModelTest.cpp" />
-    <ClCompile Include="OpenFBX\miniz.c" />
+    <ClCompile Include="OpenFBX\miniz.cpp" />
     <ClCompile Include="OpenFBX\ofbx.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="tinyxml2.cpp" />

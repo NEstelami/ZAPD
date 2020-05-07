@@ -90,7 +90,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 	{
 		F3DZEXOpcode opcode = (F3DZEXOpcode)rawData[(i * 8) + 0];
 		uint64_t data = instructions[i];
-
 		sourceOutput += "\t";
 
 		switch (opcode)
@@ -425,6 +424,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			sprintf(line, "gsSPEndDisplayList(),");
 
 			TextureGenCheck(prefix);
+
 			break;
 		case F3DZEXOpcode::G_RDPHALF_1:
 		{
@@ -530,6 +530,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			if (parent != nullptr)
 			{
+				Declaration* test = new Declaration(DeclarationAlignment::None, item.second.size() * 16, declaration);
 				parent->declarations[item.first] = new Declaration(DeclarationAlignment::None, item.second.size() * 16, declaration);
 			}
 		}
