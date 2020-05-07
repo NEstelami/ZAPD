@@ -150,14 +150,14 @@
     <ClCompile Include="ZCutscene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenFBX\miniz.c">
-      <Filter>Source Files\OpenFBX</Filter>
-    </ClCompile>
     <ClCompile Include="OpenFBX\ofbx.cpp">
       <Filter>Source Files\OpenFBX</Filter>
     </ClCompile>
     <ClCompile Include="ModelTest.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenFBX\miniz.cpp">
+      <Filter>Source Files\OpenFBX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

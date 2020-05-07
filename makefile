@@ -1,7 +1,7 @@
 CC := g++
-CFLAGS := -std=c++17 -I ZAP2 -O2
+CFLAGS := -std=c++17 -I ZAP2 -O2 -rdynamic
 
-SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays
+SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/OpenFBX
 
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 O_FILES := $(foreach file,$(CPP_FILES),$(BUILD_DIR)/$(file:.cpp=.o))

@@ -15,6 +15,7 @@ class ZResource
 public:
 	ZFile* parent;
 
+	ZResource();
 	virtual void Save(std::string outFolder);
 	std::string GetName();
 	void SetName(std::string nName);

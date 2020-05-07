@@ -2,6 +2,11 @@
 
 using namespace std;
 
+ZResource::ZResource()
+{
+	parent = nullptr;
+}
+
 void ZResource::Save(string outFolder)
 {
 

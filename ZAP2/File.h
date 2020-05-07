@@ -4,6 +4,8 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
 
 class File
 {

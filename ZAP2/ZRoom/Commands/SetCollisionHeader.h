@@ -65,7 +65,7 @@ public:
 
 	std::vector<CameraPositionData*> cameraPositionData;
 
-	CameraData(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	CameraData(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset);
 };
 
 class CollisionHeader

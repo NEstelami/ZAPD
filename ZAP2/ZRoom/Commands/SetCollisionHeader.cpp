@@ -116,7 +116,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 		polygonTypes.push_back(BitConverter::ToInt64BE(rawData, polyTypeDefSegmentOffset + (i * 8)));
 
 	if (camDataSegmentOffset != 0)
-		camData = new CameraData(zRoom, rawData, camDataSegmentOffset);
+		camData = new CameraData(zRoom, rawData, camDataSegmentOffset, polyTypeDefSegmentOffset);
 
 	for (int i = 0; i < numWaterBoxes; i++)
 		waterBoxes.push_back(new WaterBoxHeader(zRoom, rawData, waterBoxSegmentOffset + (i * 16)));
@@ -234,7 +234,7 @@ WaterBoxHeader::WaterBoxHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 	properties = BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
 }
 
-CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset)
 {
 	cameraSType = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	numCameras = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
@@ -303,7 +303,11 @@ CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIn
 		sprintf(line, "CamPosDataEntry _%s_camPosDataEntries_%08X[] = \n{\n", zRoom->GetName().c_str(), rawDataIndex + 8);
 		declaration += line;
 
-		while (true)
+		//int numEntriesReal = zRoom->GetDeclarationSizeFromNeighbor(rawDataIndex + 8) / 8;
+		int numEntriesReal = (polyTypeDefSegmentOffset - (rawDataIndex + 8)) / 8;
+
+		//while (true)
+		for (int j = 0; j < numEntriesReal; j++)
 		{
 			char camSegLine[2048];
 			CameraPosDataEntry* entry = new CameraPosDataEntry();
