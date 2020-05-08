@@ -105,6 +105,21 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 	{
 		MeshHeader1Base* meshHeader1 = new MeshHeader1Base();
 		meshHeader1->headerType = 1;
+		meshHeader1->format = rawData[segmentOffset + 1];
+		meshHeader1->entryRecord = BitConverter::ToInt32BE(rawData, segmentOffset + 4) & 0x00FFFFFF;
+
+		if (meshHeader1->format == 1) // Single Format
+		{
+
+		}
+		else if (meshHeader1->format == 2) // Multi-Format
+		{
+
+		}
+		else // UH OH
+		{
+			int bp = 0;
+		}
 
 		meshHeader = meshHeader1;
 	}
