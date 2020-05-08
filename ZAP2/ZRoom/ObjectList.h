@@ -308,7 +308,7 @@ static const std::string ObjectList[] =
 	"OBJECT_GI_GLOVES",
 	"OBJECT_GI_COIN",
 	"OBJECT_KANBAN",
-	"OBJECT_GIYO_OBJECTS",
+	"OBJECT_GJYO_OBJECTS",
 	"OBJECT_OWL",
 	"OBJECT_MK",
 	"OBJECT_FU",
