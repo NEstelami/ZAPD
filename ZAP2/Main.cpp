@@ -50,7 +50,7 @@ void ErrorHandler(int sig)
 int main(int argc, char* argv[])
 {
 #ifndef _MSC_VER
-	//signal(SIGSEGV, ErrorHandler);
+	signal(SIGSEGV, ErrorHandler);
 #endif
 
 	Globals* g = new Globals();
@@ -62,9 +62,8 @@ int main(int argc, char* argv[])
 #endif
 
 
-
-	return OldMain(argc, argv);
-	//return NewMain(argc, argv);
+	//return OldMain(argc, argv);
+	return NewMain(argc, argv);
 	
 	return 0;
 }
@@ -109,12 +108,12 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (arg == "-b" || arg == "--baserompath") // Set baserom path
 		{
-			Globals::Instance->inputPath = argv[i + 1];
+			Globals::Instance->baseRomPath = argv[i + 1];
 			i++;
 		}
 		else if (arg == "-gsf") // Generate source file
 		{
-			Globals::Instance->genSourceFile = argv[i + 1] == "1";
+			Globals::Instance->genSourceFile = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-tt") // Set texture type
@@ -122,9 +121,14 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
 			i++;
 		}
-		else if (arg == "-gsf") // Set cfg path
+		else if (arg == "-cfg") // Set cfg path
 		{
 			Globals::Instance->cfgPath = argv[i + 1];
+			i++;
+		}
+		else if (arg == "-sm") // Set symbol map path
+		{
+			Globals::Instance->GenSymbolMap(argv[i + 1]);
 			i++;
 		}
 	}

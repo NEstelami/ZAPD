@@ -266,7 +266,7 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 	return nullptr;
 }
 
-int32_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
+size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 {
 	int declarationIndex = -1;
 
@@ -296,7 +296,7 @@ int32_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 	return 0;
 }
 
-int32_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
+size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 {
 	int cmdIndex = -1;
 
@@ -352,13 +352,13 @@ string ZRoom::GetSourceOutputHeader(string prefix)
 
 string ZRoom::GetSourceOutputCode(std::string prefix)
 {
-	char line[2048];
 	sourceOutput = "";
 
 	sourceOutput += "#include <z64.h>\n";
 	sourceOutput += "#include <segment_symbols.h>\n";
 	sourceOutput += "#include <command_macros_base.h>\n";
 	sourceOutput += "#include <z64cutscene_commands.h>\n";
+	sourceOutput += "#include <variables.h>\n";
 
 	sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", name.c_str());
 	
@@ -559,7 +559,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
 	if (lastAddr + declarations[lastAddr]->size < rawData.size())
 	{
-		int diff = rawData.size() - (lastAddr + declarations[lastAddr]->size);
+		int diff = (int)(rawData.size() - (lastAddr + declarations[lastAddr]->size));
 
 		string src = "";
 

@@ -456,7 +456,14 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			// TODO: FINISH THIS
 			uint32_t pp = (data & 0x000000FF00000000) >> 32;
 			uint32_t mm = (data & 0x00000000FFFFFFFF);
-			sprintf(line, "gsSPMatrix(0x%08X, 0x%02X),", mm, pp ^ 0x01);
+			std::string matrixRef = "";
+
+			if (Globals::Instance->symbolMap.find(mm) != Globals::Instance->symbolMap.end())
+				matrixRef = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[mm].c_str());
+			else
+				matrixRef = StringHelper::Sprintf("0x%08X", mm);
+
+			sprintf(line, "gsSPMatrix(%s, 0x%02X),", matrixRef.c_str(), pp ^ 0x01);
 		}
 			break;
 		default:
@@ -605,6 +612,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			}
 		}
 
+
 		// Generate Texture Declarations
 		for (pair<int32_t, ZTexture*> item : textures)
 		{
@@ -613,6 +621,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			declaration += item.second->GetSourceOutputCode(prefix);
 			texDeclarations[item.first] = declaration;
 		}
+
 	}
 
 	return sourceOutput;

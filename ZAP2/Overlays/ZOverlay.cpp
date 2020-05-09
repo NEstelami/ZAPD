@@ -135,4 +135,6 @@ SectionType ZOverlay::GetSectionTypeFromStr(string sectionName)
 		return SectionType::RoData;
 	else if (sectionName == ".rel.bss")
 		return SectionType::Bss;
+
+	return SectionType::ERROR;
 }

@@ -106,8 +106,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 				//blob = new ZBlob(child, folderName);
 
 			if (string(child->Name()) == "Scene")
+			{
+				//printf("SET LAST SCENE\n");
 				Globals::Instance->lastScene = room;
-			
+			}
+
 			resources.push_back(room);
 
 			rawDataIndex += room->GetRawDataSize();

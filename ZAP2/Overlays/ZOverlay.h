@@ -9,7 +9,8 @@ enum SectionType
 	Text = 1,
 	Data = 2,
 	RoData = 3,
-	Bss = 4
+	Bss = 4,
+	ERROR = 255
 };
 
 enum RelocationType
