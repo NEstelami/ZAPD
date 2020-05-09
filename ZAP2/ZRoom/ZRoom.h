@@ -27,8 +27,8 @@ public:
 	ZRoom(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZRoom* nScene);
 
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
-	int32_t GetDeclarationSizeFromNeighbor(int declarationAddress);
-	int32_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
+	size_t GetDeclarationSizeFromNeighbor(int declarationAddress);
+	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();

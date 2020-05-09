@@ -227,6 +227,11 @@
     <ClInclude Include="ZRoom\ZRoomCommand.h" />
     <ClInclude Include="ZTexture.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\SymbolMap_OoTMqDbg.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

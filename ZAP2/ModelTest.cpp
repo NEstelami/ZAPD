@@ -11,7 +11,7 @@ using namespace std;
 void ModelTest()
 {
 	auto fileData = File::ReadAllBytes("test.fbx");
-	ofbx::IScene* scene = ofbx::load((ofbx::u8*)fileData.data(), fileData.size(), (ofbx::u64)ofbx::LoadFlags::TRIANGULATE);
+	ofbx::IScene* scene = ofbx::load((ofbx::u8*)fileData.data(), (int)fileData.size(), (ofbx::u64)ofbx::LoadFlags::TRIANGULATE);
 	ZFile* file = new ZFile(Directory::GetCurrentDirectory() + "\\Test", "test");
 
 	int declarationIndex = 0;
@@ -32,22 +32,22 @@ void ModelTest()
 		for (int j = 0; j < geo->getVertexCount(); j++)
 		{
 			Vertex* vtx = new Vertex();
-			vtx->x = vertices[j].x;
-			vtx->y = vertices[j].y;
-			vtx->z = vertices[j].z;
+			vtx->x = (int16_t)vertices[j].x;
+			vtx->y = (int16_t)vertices[j].y;
+			vtx->z = (int16_t)vertices[j].z;
 
 			if (uvs != nullptr)
 			{
-				vtx->s = uvs[j].x;
-				vtx->t = uvs[j].y;
+				vtx->s = (int16_t)uvs[j].x;
+				vtx->t = (int16_t)uvs[j].y;
 			}
 
 			if (colors != nullptr)
 			{
-				vtx->r = colors[j].x;
-				vtx->g = colors[j].y;
-				vtx->b = colors[j].z;
-				vtx->a = colors[j].w;
+				vtx->r = (uint8_t)(colors[j].x / 255.0f);
+				vtx->g = (uint8_t)(colors[j].y / 255.0f);
+				vtx->b = (uint8_t)(colors[j].z / 255.0f);
+				vtx->a = (uint8_t)(colors[j].w / 255.0f);
 			}
 
 			dListVertices.push_back(vtx);
@@ -55,8 +55,6 @@ void ModelTest()
 
 			if (dListVertices.size() >= 32)
 			{
-				
-
 				dList->vertices[declarationIndex - (dListVertices.size() * 16)] = dListVertices;
 				dListVertices = vector<Vertex*>();
 			}

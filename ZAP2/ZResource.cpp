@@ -5,6 +5,7 @@ using namespace std;
 ZResource::ZResource()
 {
 	parent = nullptr;
+	name = "";
 }
 
 void ZResource::Save(string outFolder)

@@ -16,6 +16,8 @@ public:
 	TextureType texType;
 
 	ZRoom* lastScene;
+	std::map<uint32_t, std::string> symbolMap;
 
 	Globals();
+	void GenSymbolMap(std::string symbolMapPath);
 };

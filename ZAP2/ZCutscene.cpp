@@ -182,7 +182,7 @@ string CutsceneCommand::GenerateSourceCode(string roomName, int baseAddress)
 	return StringHelper::Sprintf("%s _%s_cutsceneData_%04X_cmd%02X = { 0x%02X,", GetCName(roomName).c_str(), roomName.c_str(), baseAddress, commandIndex, commandID);
 }
 
-uint32_t CutsceneCommand::GetCommandSize()
+size_t CutsceneCommand::GetCommandSize()
 {
 	return 4;
 	//return 0;
@@ -272,7 +272,7 @@ string CutsceneCommandSetCameraPos::GenerateSourceCode(string roomName, int base
 	return result;
 }
 
-uint32_t CutsceneCommandSetCameraPos::GetCommandSize()
+size_t CutsceneCommandSetCameraPos::GetCommandSize()
 {
 	return 8 + (entries.size() * 16);
 }
@@ -329,7 +329,7 @@ string CutsceneCommandFadeBGM::GenerateSourceCode(string roomName, int baseAddre
 	return result;
 }
 
-uint32_t CutsceneCommandFadeBGM::GetCommandSize()
+size_t CutsceneCommandFadeBGM::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 0x30;
 }
@@ -387,7 +387,7 @@ string CutsceneCommandPlayBGM::GetCName(string prefix)
 	return "CsCmdMusicChange";
 }
 
-uint32_t CutsceneCommandPlayBGM::GetCommandSize()
+size_t CutsceneCommandPlayBGM::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 0x30;
 }
@@ -426,7 +426,7 @@ string CutsceneCommandStopBGM::GetCName(string prefix)
 	return "CsCmdMusicChange";
 }
 
-uint32_t CutsceneCommandStopBGM::GetCommandSize()
+size_t CutsceneCommandStopBGM::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 0x30;
 }
@@ -484,7 +484,7 @@ string CutsceneCommandEnvLighting::GetCName(string prefix)
 	return "CsCmdEnvLighting";
 }
 
-uint32_t CutsceneCommandEnvLighting::GetCommandSize()
+size_t CutsceneCommandEnvLighting::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + (0x30 * entries.size());
 }
@@ -534,7 +534,7 @@ string CutsceneCommandUnknown9::GetCName(string prefix)
 	return "CsCmdUnknown9";
 }
 
-uint32_t CutsceneCommandUnknown9::GetCommandSize()
+size_t CutsceneCommandUnknown9::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
@@ -589,7 +589,7 @@ string CutsceneCommandUnknown::GetCName(string prefix)
 	return "CsCmdUnknown1A";
 }
 
-uint32_t CutsceneCommandUnknown::GetCommandSize()
+size_t CutsceneCommandUnknown::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 0x30);
 }
@@ -637,7 +637,7 @@ string CutsceneCommandDayTime::GenerateSourceCode(string roomName, int baseAddre
 	return result;
 }
 
-uint32_t CutsceneCommandDayTime::GetCommandSize()
+size_t CutsceneCommandDayTime::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
@@ -692,7 +692,7 @@ string CutsceneCommandTextbox::GenerateSourceCode(string roomName, int baseAddre
 	return result;
 }
 
-uint32_t CutsceneCommandTextbox::GetCommandSize()
+size_t CutsceneCommandTextbox::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
@@ -750,7 +750,7 @@ string CutsceneCommandActorAction::GetCName(string prefix)
 	return "CsCmdBase";
 }
 
-uint32_t CutsceneCommandActorAction::GetCommandSize()
+size_t CutsceneCommandActorAction::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 0x30);
 }
@@ -779,7 +779,7 @@ string CutsceneCommandTerminator::GenerateSourceCode(string roomName, int baseAd
 	return result;
 }
 
-uint32_t CutsceneCommandTerminator::GetCommandSize()
+size_t CutsceneCommandTerminator::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 8;
 }
@@ -805,7 +805,7 @@ string CutsceneCommandEnd::GetCName(string prefix)
 	return "CsCmdBase";
 }
 
-uint32_t CutsceneCommandEnd::GetCommandSize()
+size_t CutsceneCommandEnd::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 6;
 }
@@ -862,7 +862,7 @@ string CutsceneCommandSpecialAction::GetCName(string prefix)
 	return "CsCmdBase";
 }
 
-uint32_t CutsceneCommandSpecialAction::GetCommandSize()
+size_t CutsceneCommandSpecialAction::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + (0x30 * entries.size());
 }
@@ -879,7 +879,7 @@ string CutsceneCommandNop::GetCName(string prefix)
 	return "CsCmdBase";
 }
 
-uint32_t CutsceneCommandNop::GetCommandSize()
+size_t CutsceneCommandNop::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 6;
 }
@@ -908,7 +908,7 @@ string CutsceneCommandSceneTransFX::GetCName(string prefix)
 	return "CsCmdBase";
 }
 
-uint32_t CutsceneCommandSceneTransFX::GetCommandSize()
+size_t CutsceneCommandSceneTransFX::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 8;
 }
