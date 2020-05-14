@@ -53,7 +53,8 @@ public:
 	std::string name;
 
 	ZOverlay(std::string nName);
-	static ZOverlay* FromELF(std::string elfFilePath, std::string cfgFolderPath);
+	~ZOverlay();
+	static ZOverlay* FromBuild(std::string buildPath, std::string cfgFolderPath);
 	std::string GetSourceOutputCode(std::string prefix);
 
 private:
