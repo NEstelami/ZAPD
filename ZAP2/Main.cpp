@@ -147,9 +147,12 @@ int NewMain(int argc, char* argv[])
 	}
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
-		ZOverlay* overlay = ZOverlay::FromELF(Globals::Instance->inputPath, Path::GetDirectoryName(Globals::Instance->cfgPath));
-		string source = overlay->GetSourceOutputCode("");
-		File::WriteAllText(Globals::Instance->outputPath, source);
+		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath), Path::GetDirectoryName(Globals::Instance->cfgPath));
+		if (overlay)
+		{
+			string source = overlay->GetSourceOutputCode("");
+			File::WriteAllText(Globals::Instance->outputPath, source);
+		}
 	}
 
 	return 0;
@@ -205,9 +208,12 @@ int OldMain(int argc, char* argv[])
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
 		// Syntax: ZAP2.exe bovl [elfFilePath] [cfgFolderPath] [outputFilePath]
-		ZOverlay* overlay = ZOverlay::FromELF(argv[2], Path::GetDirectoryName(argv[3]));
-		string source = overlay->GetSourceOutputCode("");
-		File::WriteAllText(argv[4], source);
+		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(argv[2]), Path::GetDirectoryName(argv[3]));
+		if (overlay)
+		{
+			string source = overlay->GetSourceOutputCode("");
+			File::WriteAllText(argv[4], source);
+		}
 	}
 
 	return 0;
