@@ -102,7 +102,7 @@ string ZCutscene::GetSourceOutputCode(string prefix)
 		size += cmd->GetCommandSize();
 	}
 
-	output += StringHelper::Sprintf("\tCS_END(),\n", commands.size(), endFrame);
+	output += StringHelper::Sprintf("\tCS_END(),\n\tCS_PAD(),\n", commands.size(), endFrame);
 
 	output += "};\n";
 
@@ -261,7 +261,7 @@ string CutsceneCommandSetCameraPos::GenerateSourceCode(string roomName, int base
 		posStr = "CS_CAM_POS";
 	}
 
-	result += StringHelper::Sprintf("%s(%i, %i, %i, %i),\n", listStr.c_str(), base, startFrame, endFrame, unused);
+	result += StringHelper::Sprintf("%s(%i, %i),\n", listStr.c_str(), startFrame, endFrame);
 
 	for (int i = 0; i < entries.size(); i++)
 	{
@@ -336,8 +336,7 @@ size_t CutsceneCommandFadeBGM::GetCommandSize()
 
 MusicChangeEntry::MusicChangeEntry(vector<uint8_t> rawData, int rawDataIndex)
 {
-	unk00 = rawData[rawDataIndex + 0];
-	sequence = rawData[rawDataIndex + 1];
+	sequence = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
 	unknown0 = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
@@ -348,9 +347,6 @@ MusicChangeEntry::MusicChangeEntry(vector<uint8_t> rawData, int rawDataIndex)
 	unknown5 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
 	unknown6 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
 	unknown7 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
-	unknown8 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 36);
-	unknown9 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 40);
-	unknown10 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 44);
 }
 
 CutsceneCommandPlayBGM::CutsceneCommandPlayBGM(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)
@@ -374,9 +370,9 @@ string CutsceneCommandPlayBGM::GenerateSourceCode(string roomName, int baseAddre
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\tCS_PLAY_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->unk00, entries[i]->sequence, entries[i]->startFrame,
+		result += StringHelper::Sprintf("\t\tCS_PLAY_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->sequence, entries[i]->startFrame,
 			entries[i]->endFrame, entries[i]->unknown0, entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4, entries[i]->unknown5,
-			entries[i]->unknown6, entries[i]->unknown7, entries[i]->unknown8, entries[i]->unknown9, entries[i]->unknown10);
+			entries[i]->unknown6, entries[i]->unknown7);
 	}
 
 	return result;
@@ -413,9 +409,9 @@ string CutsceneCommandStopBGM::GenerateSourceCode(string roomName, int baseAddre
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("CS_STOP_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->unk00, entries[i]->sequence, entries[i]->startFrame,
+		result += StringHelper::Sprintf("CS_STOP_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->sequence, entries[i]->startFrame,
 			entries[i]->endFrame, entries[i]->unknown0, entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4, entries[i]->unknown5,
-			entries[i]->unknown6, entries[i]->unknown7, entries[i]->unknown8, entries[i]->unknown9, entries[i]->unknown10);
+			entries[i]->unknown6, entries[i]->unknown7);
 	}
 
 	return result;
@@ -433,8 +429,7 @@ size_t CutsceneCommandStopBGM::GetCommandSize()
 
 EnvLightingEntry::EnvLightingEntry(vector<uint8_t> rawData, int rawDataIndex)
 {
-	unk00 = rawData[rawDataIndex + 0];
-	setting = rawData[rawDataIndex + 1];
+	setting = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
 	unused0 = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
@@ -445,9 +440,6 @@ EnvLightingEntry::EnvLightingEntry(vector<uint8_t> rawData, int rawDataIndex)
 	unused5 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
 	unused6 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
 	unused7 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
-	unused8 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 36);
-	unused9 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 40);
-	unused10 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 44);
 }
 
 CutsceneCommandEnvLighting::CutsceneCommandEnvLighting(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)
@@ -471,9 +463,9 @@ string CutsceneCommandEnvLighting::GenerateSourceCode(string roomName, int baseA
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("CS_LIGHTING(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->unk00, entries[i]->setting, entries[i]->startFrame,
+		result += StringHelper::Sprintf("CS_LIGHTING(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->setting, entries[i]->startFrame,
 			entries[i]->endFrame, entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4, entries[i]->unused5,
-			entries[i]->unused6, entries[i]->unused7, entries[i]->unused8, entries[i]->unused9, entries[i]->unused10);
+			entries[i]->unused6, entries[i]->unused7);
 	}
 
 	return result;
@@ -674,17 +666,17 @@ string CutsceneCommandTextbox::GenerateSourceCode(string roomName, int baseAddre
 {
 	string result = "";
 
-	result += StringHelper::Sprintf("CS_TEXTBOX_LIST(%i),\n", entries.size());
+	result += StringHelper::Sprintf("CS_TEXT_LIST(%i),\n", entries.size());
 
 	for (int i = 0; i < entries.size(); i++)
 	{
 		if (entries[i]->base == 0xFFFF)
 		{
-			result += StringHelper::Sprintf("\t\tCS_TEXTBOX_NO_TEXT(%i, %i),\n", entries[i]->startFrame, entries[i]->endFrame);
+			result += StringHelper::Sprintf("\t\tCS_TEXT_NONE(%i, %i),\n", entries[i]->startFrame, entries[i]->endFrame);
 		}
 		else
 		{
-			result += StringHelper::Sprintf("\t\tCS_TEXTBOX_DISPLAY_TEXT(%i, %i, %i, %i, %i, %i), // %s\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
+			result += StringHelper::Sprintf("\t\tCS_TEXT_DISPLAY_TEXTBOX(%i, %i, %i, %i, %i, %i), // %s\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
 				entries[i]->textID1, entries[i]->textID2, TextTable[entries[i]->base].c_str());
 		}
 	}
@@ -733,11 +725,11 @@ string CutsceneCommandActorAction::GenerateSourceCode(string roomName, int baseA
 {
 	string result = "";
 
-	result += StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(%i, %i),\n", commandID, entries.size());
+	result += StringHelper::Sprintf("CS_NPC_ACTION_LIST(%i, %i),\n", commandID, entries.size());
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\tCS_ACTOR_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
+		result += StringHelper::Sprintf("\t\CS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX, entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY, entries[i]->endPosZ,
 			*(int32_t*)&entries[i]->normalX, *(int32_t*)&entries[i]->normalY, *(int32_t*)&entries[i]->normalZ);
 	}
@@ -796,6 +788,7 @@ string CutsceneCommandEnd::GenerateSourceCode(string roomName, int baseAddress)
 	string result = "";
 
 	result += StringHelper::Sprintf("CS_END(),\n");
+	result += StringHelper::Sprintf("CS_PAD(),\n");
 
 	return result;
 }
