@@ -61,8 +61,6 @@ int main(int argc, char* argv[])
 	//return 0;
 #endif
 
-
-	//return OldMain(argc, argv);
 	return NewMain(argc, argv);
 	
 	return 0;
@@ -71,6 +69,7 @@ int main(int argc, char* argv[])
 int NewMain(int argc, char* argv[])
 {
 	// Syntax: ZAP2.exe [mode (b/btex/bovl/e)] (Arbritrary Number of Arguments)
+	printf("ZAPD: Zelda Asset Processor For Decomp\n");
 
 	// Parse File Mode
 	string buildMode = argv[1];
@@ -152,67 +151,6 @@ int NewMain(int argc, char* argv[])
 		{
 			string source = overlay->GetSourceOutputCode("");
 			File::WriteAllText(Globals::Instance->outputPath, source);
-		}
-	}
-
-	return 0;
-}
-
-int OldMain(int argc, char* argv[])
-{
-	if (argc != 3 && argc != 4 && argc != 5 && argc != 6)
-	{
-		cout << "ZAP2: Zelda Asset Processor (2)" << "\n";
-		cout << "Usage: ZAP2.exe [mode (b/btex/bovl/e)] [Input XML/Texture File/Bin File] [outputPath]" << "\n";
-		return 1;
-	}
-
-	// Parse File Mode
-	string buildMode = argv[1];
-	ZFileMode fileMode = ZFileMode::Invalid;
-
-	if (buildMode == "b")
-		fileMode = ZFileMode::Build;
-	else if (buildMode == "btex")
-		fileMode = ZFileMode::BuildTexture;
-	else if (buildMode == "bovl")
-		fileMode = ZFileMode::BuildOverlay;
-	else
-		fileMode = ZFileMode::Extract;
-
-	if (fileMode == ZFileMode::Invalid)
-	{
-		cout << "Error: Invalid file mode.\n";
-		return 1;
-	}
-
-	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract)
-	{
-		// Syntax: ZAP2.exe e [input xml file] [baseromPath] [outputPath] [(OPTIONAL) shouldGenerateSourceFile (0/1)]
-		if (fileMode == ZFileMode::Extract && argc == 6)
-			Globals::Instance->genSourceFile = argv[5][0] == '1';
-
-		Parse(argv[2], argv[3], argv[4], fileMode);
-	}
-	else if (fileMode == ZFileMode::BuildTexture)
-	{
-		// Syntax: ZAP2.exe btex [texType] [pngFilePath] [outFilePath]
-		string texTypeStr = argv[2];
-		string pngFilePath = argv[3];
-		string outFilePath = argv[4];
-
-		TextureType texType = ZTexture::GetTextureTypeFromString(texTypeStr);
-
-		BuildAssetTexture(pngFilePath, texType, outFilePath);
-	}
-	else if (fileMode == ZFileMode::BuildOverlay)
-	{
-		// Syntax: ZAP2.exe bovl [elfFilePath] [cfgFolderPath] [outputFilePath]
-		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(argv[2]), Path::GetDirectoryName(argv[3]));
-		if (overlay)
-		{
-			string source = overlay->GetSourceOutputCode("");
-			File::WriteAllText(argv[4], source);
 		}
 	}
 

@@ -75,9 +75,9 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 			ZBlob* blob = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				blob = new ZBlob(child, rawData, rawDataIndex, folderName);
+				blob = ZBlob::ExtractFromXML(child, rawData, rawDataIndex, folderName);
 			else
-				blob = new ZBlob(child, folderName);
+				blob = ZBlob::BuildFromXML(child, folderName);
 
 			resources.push_back(blob);
 
@@ -157,7 +157,7 @@ void ZFile::ExtractResources(string outputDir)
 
 	for (ZResource* res : resources)
 	{
-		//Console.WriteLine("Saving resource " + res.GetName());
+		printf("Saving resource %s\n", res->GetName().c_str());
 		res->Save(outputPath);
 	}
 

@@ -4,16 +4,9 @@
 using namespace tinyxml2;
 using namespace std;
 
-// EXTRACT MODE
-ZBlob::ZBlob(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath)
+ZBlob::ZBlob()
 {
-	name = reader->Attribute("Name");
-	int size = strtol(reader->Attribute("Size"), NULL, 16);
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
 
-	relativePath = nRelPath;
-
-	//Array.Copy(nRawData, rawDataIndex, rawData, 0, rawData.Length);
 }
 
 ZBlob::ZBlob(std::vector<uint8_t> nRawData, int rawDataIndex, int size, std::string nName)
@@ -22,32 +15,35 @@ ZBlob::ZBlob(std::vector<uint8_t> nRawData, int rawDataIndex, int size, std::str
 	name = nName;
 }
 
-// BUILD MODE
-ZBlob::ZBlob(XMLElement* reader, string inFolder)
+ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath)
 {
-	name = reader->Attribute("Name");
+	ZBlob* blob = new ZBlob();
 
-	rawData = File::ReadAllBytes(inFolder + "/" + name + ".bin");
+	blob->name = reader->Attribute("Name");
+	int size = strtol(reader->Attribute("Size"), NULL, 16);
+	blob->rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
+
+	blob->relativePath = nRelPath;
+
+	return blob;
+}
+
+ZBlob* ZBlob::BuildFromXML(XMLElement* reader, string inFolder)
+{
+	ZBlob* blob = new ZBlob();
+
+	blob->name = reader->Attribute("Name");
+	blob->rawData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
+
+	return blob;
 }
 
 string ZBlob::GetSourceOutputCode(std::string prefix)
 {
-	char line[2048];
 	sourceOutput = "";
 
-	//sprintf(line, "_%s:\n", name.c_str());
-	//sourceOutput += line;
-
-	//// TODO: TEMP
-	//relativePath = "assets/" + relativePath;
-
-	//sprintf(line, ".incbin \"%s\"\n", (relativePath + "/" + name + ".bin").c_str());
-
-	//sourceOutput += line;
-
 	//sprintf(line, "u64 _%s[] = \n{\n", name.c_str());
-	sprintf(line, "u8 _%s[] = \n{\n", name.c_str());
-	sourceOutput += line;
+	sourceOutput += StringHelper::Sprintf("u8 _%s[] = \n{\n", name.c_str());
 
 	for (int i = 0; i < rawData.size(); i += 1)
 	{
@@ -59,8 +55,7 @@ string ZBlob::GetSourceOutputCode(std::string prefix)
 			sourceOutput += "\t";
 
 		//sprintf(line, "0x%016llX, ", data);
-		sprintf(line, "0x%02X, ", rawData[i]);
-		sourceOutput += line;
+		sourceOutput += StringHelper::Sprintf("0x%02X, ", rawData[i]);
 
 		//if ((i / 8) % 8 == 7)
 			//sourceOutput += "\n";
