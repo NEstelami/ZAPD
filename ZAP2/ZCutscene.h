@@ -150,8 +150,7 @@ public:
 class MusicChangeEntry
 {
 public:
-	uint8_t unk00;
-	uint8_t sequence;
+	uint16_t sequence;
 	uint16_t startFrame;
 	uint16_t endFrame;
 	uint16_t unknown0;
@@ -162,9 +161,6 @@ public:
 	uint32_t unknown5;
 	uint32_t unknown6;
 	uint32_t unknown7;
-	uint32_t unknown8;
-	uint32_t unknown9;
-	uint32_t unknown10;
 
 	MusicChangeEntry(std::vector<uint8_t> rawData, int rawDataIndex);
 };
@@ -194,8 +190,7 @@ public:
 class EnvLightingEntry
 {
 public:
-	uint8_t unk00;
-	uint8_t setting;
+	uint16_t setting;
 	uint16_t startFrame;
 	uint16_t endFrame;
 	uint16_t unused0;
@@ -206,9 +201,6 @@ public:
 	uint32_t unused5;
 	uint32_t unused6;
 	uint32_t unused7;
-	uint32_t unused8;
-	uint32_t unused9;
-	uint32_t unused10;
 
 	EnvLightingEntry(std::vector<uint8_t> rawData, int rawDataIndex);
 };
