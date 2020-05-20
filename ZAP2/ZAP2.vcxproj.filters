@@ -31,21 +31,24 @@
     <Filter Include="Header Files\Overlays">
       <UniqueIdentifier>{34bbe531-7182-4f45-988e-fe08c6091f86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\elfio">
-      <UniqueIdentifier>{dc06ed84-f6fe-4277-80f3-d62bd5cdbb98}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\OpenFBX">
       <UniqueIdentifier>{c5d86b0a-fff0-47cf-83af-807dd8267ad1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\OpenFBX">
+    <Filter Include="Source Files\Libraries">
+      <UniqueIdentifier>{02148456-5068-4613-8478-f10addc58e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Libraries\OpenFBX">
       <UniqueIdentifier>{34eda0d2-f599-4610-a75c-716189ee4363}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Libraries">
+      <UniqueIdentifier>{bcab3136-95ba-4839-833c-43d78ad6e335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Libraries\elfio">
+      <UniqueIdentifier>{dc06ed84-f6fe-4277-80f3-d62bd5cdbb98}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tinyxml2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZBlob.cpp">
@@ -151,22 +154,19 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OpenFBX\ofbx.cpp">
-      <Filter>Source Files\OpenFBX</Filter>
+      <Filter>Source Files\Libraries\OpenFBX</Filter>
     </ClCompile>
     <ClCompile Include="ModelTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OpenFBX\miniz.cpp">
-      <Filter>Source Files\OpenFBX</Filter>
+      <Filter>Source Files\Libraries\OpenFBX</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>Source Files\Libraries</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tinyxml2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -186,9 +186,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZDisplayList.h">
@@ -240,40 +237,40 @@
       <Filter>Header Files\ZRoom\Commands</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elf_types.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_dump.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_dynamic.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_header.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_note.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_relocation.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_section.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_segment.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_strings.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_symbols.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="elfio\elfio_utils.hpp">
-      <Filter>Header Files\elfio</Filter>
+      <Filter>Header Files\Libraries\elfio</Filter>
     </ClInclude>
     <ClInclude Include="Overlays\ZOverlay.h">
       <Filter>Header Files\Overlays</Filter>
@@ -338,12 +335,6 @@
     <ClInclude Include="TextTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tiny_gltf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OpenFBX\ofbx.h">
       <Filter>Header Files\OpenFBX</Filter>
     </ClInclude>
@@ -352,6 +343,21 @@
     </ClInclude>
     <ClInclude Include="DisplayListBuilder.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files\Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files\Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Header Files\Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_gltf.h">
+      <Filter>Header Files\Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>Header Files\Libraries</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

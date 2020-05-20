@@ -24,5 +24,4 @@ void Globals::GenSymbolMap(std::string symbolMapPath)
 
 		symbolMap[addr] = symbolName;
 	}
-
 }

@@ -67,6 +67,5 @@ public:
 
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();
-	//SourceType GetSourceType();
 	void Save(std::string outFolder);
 };

@@ -290,9 +290,6 @@ void ZTexture::PrepareBitmapPalette4()
 				bmpRgb[(((y * width) + x) * 3) + 0] = paletteIndex * 16;
 				bmpRgb[(((y * width) + x) * 3) + 1] = paletteIndex * 16;
 				bmpRgb[(((y * width) + x) * 3) + 2] = paletteIndex * 16;
-
-				//Color c = Color.FromArgb(255, paletteIndex * 16, paletteIndex * 16, paletteIndex * 16);
-				//bmpRgb.SetPixel(x + i, y, c);
 			}
 		}
 	}
@@ -309,9 +306,6 @@ void ZTexture::PrepareBitmapPalette8()
 			bmpRgb[(((y * width) + x) * 3) + 0] = rawData[pos];
 			bmpRgb[(((y * width) + x) * 3) + 1] = rawData[pos];
 			bmpRgb[(((y * width) + x) * 3) + 2] = rawData[pos];
-			
-			//Color c = Color.FromArgb(255, rawData[pos], rawData[pos], rawData[pos]);
-			//bmpRgb.SetPixel(x, y, c);
 		}
 	}
 }
@@ -714,8 +708,3 @@ TextureType ZTexture::GetTextureTypeFromString(string str)
 
 	return texType;
 }
-
-//SourceType ZTexture::GetSourceType()
-//{
-//	return SourceType::ASM;
-//}

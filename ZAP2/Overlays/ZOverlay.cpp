@@ -114,7 +114,9 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 								unsigned char bind;
 								unsigned char type;
 								unsigned char other;
+
 								symbols.get_symbol(symIdx, name, value, size, bind, type, shndx, other);
+
 								if (name == curSymName)
 								{
 									curSymShndx = shndx;

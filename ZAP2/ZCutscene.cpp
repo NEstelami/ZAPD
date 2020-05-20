@@ -23,11 +23,6 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 		if (id == -1)
 			break;
 
-		if (i == 0x3D)
-		{
-			int bp = 0;
-		}
-
 		CutsceneCommands cmdID = (CutsceneCommands)GetCommandFromID(id);
 		currentPtr += 4;
 
@@ -892,7 +887,6 @@ string CutsceneCommandSceneTransFX::GenerateSourceCode(string roomName, int base
 	string result = "";
 
 	result += StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i, %i, %i),\n", base, startFrame, endFrame, unused);
-
 	return result;
 }
 
