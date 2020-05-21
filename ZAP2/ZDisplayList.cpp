@@ -560,6 +560,16 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				{
 					int texSize = scene->textures[texturesSorted[i].first]->GetRawDataSize();
 
+					if (texturesSorted[i].first == 0xEBE0)
+					{
+						int bp = 0;
+					}
+
+					if (texturesSorted[i].first == 0xEDA0)
+					{
+						int bp = 0;
+					}
+
 					if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 					{
 						int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
@@ -579,6 +589,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 						i--;
 					}
 				}
+
+				scene->extDefines += defines;
 			}
 
 			{
@@ -595,6 +607,11 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 						break;
 
 					int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
+
+					if (texturesSorted[i].first == 0xEBE0)
+					{
+						int bp = 0;
+					}
 
 					if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 					{
@@ -662,6 +679,11 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr, 
 				StringHelper::Sprintf("_%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
 			
+			if (texAddr == 0xEDA0)
+			{
+				int bp = 0;
+			}
+
 #ifdef _WIN32 // TEST
 			tex->Save("dump"); // TEST
 #endif

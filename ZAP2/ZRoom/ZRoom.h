@@ -24,6 +24,8 @@ public:
 	std::map<int32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
 
+	std::string extDefines;
+
 	ZRoom(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZRoom* nScene);
 
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);

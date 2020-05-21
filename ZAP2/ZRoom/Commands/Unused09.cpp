@@ -11,7 +11,7 @@ string Unused09::GenerateSourceCodePass1(string roomName, int baseAddress)
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, 0x00};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress));
+	sprintf(line, "%s 0x00, 0x00};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
 	sourceOutput = line;
 
 	return sourceOutput;
