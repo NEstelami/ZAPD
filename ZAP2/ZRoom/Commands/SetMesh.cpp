@@ -1,6 +1,7 @@
 #include "SetMesh.h"
 #include "../ZRoom.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -52,8 +53,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 			currentPtr += 8;
 		}
 
-		sprintf(line, "MeshHeader0 _%s_meshHeader_%08X = { { 0 }, 0x%02X, ", zRoom->GetName().c_str(), segmentOffset, meshHeader0->entries.size());
-		declaration += line;
+		declaration += StringHelper::Sprintf("MeshHeader0 _%s_meshHeader_%08X = { { 0 }, 0x%02X, ", zRoom->GetName().c_str(), segmentOffset, meshHeader0->entries.size());
 
 		if (meshHeader0->dListStart != 0)
 			sprintf(line, "(u32)&_%s_meshDListEntry_%08X, ", zRoom->GetName().c_str(), meshHeader0->dListStart);
@@ -73,8 +73,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 
 		declaration = "";
 
-		sprintf(line, "MeshEntry0 _%s_meshDListEntry_%08X[%i] = \n{\n", zRoom->GetName().c_str(), meshHeader0->dListStart, meshHeader0->entries.size());
-		declaration += line;
+		declaration += StringHelper::Sprintf("MeshEntry0 _%s_meshDListEntry_%08X[%i] = \n{\n", zRoom->GetName().c_str(), meshHeader0->dListStart, meshHeader0->entries.size());
 
 		for (int i = 0; i < meshHeader0->entries.size(); i++)
 		{
@@ -103,23 +102,62 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 	}
 	else if (meshHeaderType == 1)
 	{
-		MeshHeader1Base* meshHeader1 = new MeshHeader1Base();
-		meshHeader1->headerType = 1;
-		meshHeader1->format = rawData[segmentOffset + 1];
-		meshHeader1->entryRecord = BitConverter::ToInt32BE(rawData, segmentOffset + 4) & 0x00FFFFFF;
+		MeshHeader1Base* meshHeader1 = nullptr;
+		
+		uint8_t fmt = rawData[segmentOffset + 1];
 
-		if (meshHeader1->format == 1) // Single Format
+		if (fmt == 1) // Single Format
 		{
+			MeshHeader1Single* headerSingle = new MeshHeader1Single();
 
-		}
-		else if (meshHeader1->format == 2) // Multi-Format
+			headerSingle->headerType = 1;
+			headerSingle->format = fmt;
+			headerSingle->entryRecord = BitConverter::ToInt32BE(rawData, segmentOffset + 4);// &0x00FFFFFF;
+
+			headerSingle->imagePtr = BitConverter::ToInt32BE(rawData, segmentOffset + 8);// &0x00FFFFFF;
+			headerSingle->unknown = BitConverter::ToInt32BE(rawData, segmentOffset + 12);
+			headerSingle->unknown2 = BitConverter::ToInt32BE(rawData, segmentOffset + 16);
+			headerSingle->bgWidth = BitConverter::ToInt16BE(rawData, segmentOffset + 20);
+			headerSingle->bgHeight = BitConverter::ToInt16BE(rawData, segmentOffset + 22);
+			headerSingle->imageFormat = rawData[segmentOffset + 24];
+			headerSingle->imageSize = rawData[segmentOffset + 25];
+			headerSingle->imagePal = BitConverter::ToInt16BE(rawData, segmentOffset + 26);
+			headerSingle->imageFlip = BitConverter::ToInt16BE(rawData, segmentOffset + 28);
+
+			declaration += StringHelper::Sprintf("MeshHeader1Single _%s_meshHeader_%08X = { { { 1 }, 1, 0x%08X  }, 0x%08X, ", 
+				zRoom->GetName().c_str(), segmentOffset, headerSingle->entryRecord, headerSingle->imagePtr);
+
+			declaration += StringHelper::Sprintf("0x%08X, 0x%08X, %i, %i, %i, %i, %i, %i };\n",
+				headerSingle->unknown, headerSingle->unknown2, headerSingle->bgWidth, headerSingle->bgHeight, headerSingle->imageFormat, headerSingle->imageSize, headerSingle->imagePal, headerSingle->imageFlip);
+
+			zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 0x1E, declaration);
+
+			//if (headerSingle->imagePtr != 0)
+			//{
+				//zRoom->declarations[headerSingle->imagePtr] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 0x1E, declaration);
+			//}
+
+			meshHeader1 = headerSingle;
+;		}
+		else if (fmt == 2) // Multi-Format
 		{
+			MeshHeader1Multi* headerMulti = new MeshHeader1Multi();
 
+			headerMulti->bgCnt = rawData[segmentOffset + 8];
+			headerMulti->bgRecordPtr = BitConverter::ToInt16BE(rawData, segmentOffset + 12);
+
+
+			meshHeader1 = headerMulti;
 		}
 		else // UH OH
 		{
 			int bp = 0;
 		}
+
+		meshHeader1->headerType = 1;
+		meshHeader1->format = fmt;
+		meshHeader1->entryRecord = BitConverter::ToInt32BE(rawData, segmentOffset + 4) & 0x00FFFFFF;
+
 
 		meshHeader = meshHeader1;
 	}
@@ -316,6 +354,19 @@ string SetMesh::GenerateExterns()
 			{
 				sourceOutput += GenDListExterns(entry->translucentDList);
 			}
+		}
+	}
+	else if (meshHeader->headerType == 1)
+	{
+		MeshHeader1Base* meshHeader1 = (MeshHeader1Base*)meshHeader;
+
+		if (meshHeader1->format == 1)
+		{
+			sourceOutput += StringHelper::Sprintf("extern MeshHeader1Single _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
+		}
+		else if (meshHeader1->format == 2)
+		{
+			sourceOutput += StringHelper::Sprintf("extern MeshHeader1Multi _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
 		}
 	}
 	else if (meshHeader->headerType == 2)

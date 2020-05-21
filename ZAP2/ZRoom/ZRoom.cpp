@@ -37,6 +37,7 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 {
 	commands = vector<ZRoomCommand*>();
 	declarations = map<int32_t, Declaration*>();
+	extDefines = "";
 	rawData = nRawData;
 	name = reader->Attribute("Name");
 
@@ -344,6 +345,8 @@ string ZRoom::GetSourceOutputHeader(string prefix)
 	{
 		sourceOutput += item.second;
 	}
+
+	sourceOutput += "\n" + extDefines + "\n";
 
 	sourceOutput += "\n";
 

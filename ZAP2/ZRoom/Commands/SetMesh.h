@@ -55,7 +55,7 @@ class MeshHeader1Multi : public MeshHeader1Base
 {
 public:
 	uint8_t bgCnt; // 0x08
-	uint32_t bgRecordPtr;
+	uint32_t bgRecordPtr; // 0x0C
 };
 
 class BackgroundRecord
