@@ -1,6 +1,7 @@
 #include "SetCollisionHeader.h"
 #include "../ZRoom.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -35,11 +36,8 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	char line[2048];
 
-	sprintf(line, "%s 0x00, (u32)&_%s_collisionHeader_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
+	sourceOutput = StringHelper::Sprintf("%s 0x00, (u32)&_%s_collisionHeader_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 	return sourceOutput;
 }
 
@@ -59,11 +57,8 @@ string SetCollisionHeader::GetCommandCName()
 string SetCollisionHeader::GenerateExterns()
 {
 	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "extern CollisionHeader _%s_collisionHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
+	
+	sourceOutput = StringHelper::Sprintf("extern CollisionHeader _%s_collisionHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
 	return sourceOutput;
 }
 

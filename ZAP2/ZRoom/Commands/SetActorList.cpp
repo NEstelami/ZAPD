@@ -21,8 +21,6 @@ SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 string SetActorList::GetSourceOutputCode(std::string prefix)
 {
 	string sourceOutput = "";
-	char line[2048];
-
 
 	return "";
 }
@@ -36,12 +34,8 @@ string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	char line[2048];
-
 	int numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
-
 	actors = vector<ActorSpawnEntry*>();
-
 	uint32_t currentPtr = segmentOffset;
 
 	for (int i = 0; i < numActorsReal; i++)
@@ -52,29 +46,25 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		currentPtr += 16;
 	}
 
-	sprintf(line, "%s 0x%02X, (u32)_%s_actorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), numActors, roomName.c_str(), segmentOffset);
-	sourceOutput += line;
+	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_actorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), numActors, roomName.c_str(), segmentOffset);
 
 	string declaration = "";
-	sprintf(line, "ActorEntry _%s_actorList_%08X[%i] = \n{\n", roomName.c_str(), segmentOffset, actors.size());
-	declaration += line;
+	sourceOutput += StringHelper::Sprintf("ActorEntry _%s_actorList_%08X[%i] = \n{\n", roomName.c_str(), segmentOffset, actors.size());
 
 	int index = 0;
 	for (ActorSpawnEntry* entry : actors)
 	{
 		if (entry->actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
-			sprintf(line, "\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+			declaration += StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
 		else
-			sprintf(line, "\t{ 0x%04X, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", entry->actorNum, entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+			declaration += StringHelper::Sprintf("\t{ 0x%04X, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X \n", entry->actorNum, entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
 
-		declaration += line;
 		index++;
 	}
 
 	declaration += "};\n\n";
 
 	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, actors.size() * 16, declaration);
-
 	return sourceOutput;
 }
 
@@ -86,10 +76,8 @@ int32_t SetActorList::GetRawDataSize()
 string SetActorList::GenerateExterns()
 {
 	string sourceOutput = "";
-	char line[2048];
 
 	sourceOutput += StringHelper::Sprintf("extern ActorEntry _%s_actorList_%08X[%i];\n", zRoom->GetName().c_str(), segmentOffset, actors.size());
-	
 	return sourceOutput;
 }
 

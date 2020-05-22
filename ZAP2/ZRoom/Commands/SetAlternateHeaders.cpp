@@ -1,5 +1,6 @@
 #include "SetAlternateHeaders.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -17,8 +18,6 @@ SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> raw
 string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	char line[2048];
-
 	int numHeaders = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 4;
 
 	for (int i = 0; i < numHeaders; i++)
@@ -27,41 +26,28 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 		headers.push_back(address);
 
 		if (address != 0)
-		{
 			zRoom->commandSets.push_back(CommandSet(address));
-		}
 	}
 
-	sprintf(line, "%s 0, (u32)&_%s_alternateHeaders_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
-	sourceOutput += line;
+	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&_%s_alternateHeaders_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
 
 	string declaration = "";
-
-	sprintf(line, "u32 _%s_alternateHeaders_%08X[] = \n{\n", roomName.c_str(), segmentOffset);
-	declaration += line;
+	declaration += StringHelper::Sprintf("u32 _%s_alternateHeaders_%08X[] = \n{\n", roomName.c_str(), segmentOffset);
 
 	for (int i = 0; i < numHeaders; i++)
 	{
 		//sprintf(line, "\t0x%08X,\n", headers[i]);
 
 		if (headers[i] == 0)
-			sprintf(line, "\t0,\n");
+			declaration += StringHelper::Sprintf("\t0,\n");
 		else
-			sprintf(line, "\t(u32)&_%s_set%04X_cmd00,\n", roomName.c_str(), headers[i] & 0x00FFFFFF);
-		
-		declaration += line;
+			declaration += StringHelper::Sprintf("\t(u32)&_%s_set%04X_cmd00,\n", roomName.c_str(), headers[i] & 0x00FFFFFF);
 	}
 
 	declaration += "};\n";
 
 	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, headers.size() * 4, declaration);
-
-	declaration = "";
-
-	sprintf(line, "extern u32 _%s_alternateHeaders_%08X[];\n", roomName.c_str(), segmentOffset);
-	declaration += line;
-
-	zRoom->externs[segmentOffset] = declaration;
+	zRoom->externs[segmentOffset] = StringHelper::Sprintf("extern u32 _%s_alternateHeaders_%08X[];\n", roomName.c_str(), segmentOffset);
 
 	return sourceOutput;
 }

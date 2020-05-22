@@ -174,28 +174,20 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 string ZOverlay::GetSourceOutputCode(std::string prefix)
 {
 	string output = "";
-	char buffer[4096];
 
 	output += ".section .ovl\n";
 
-	sprintf(buffer, ".word _%sSegmentTextSize\n", name.c_str());
-	output += buffer;
-	sprintf(buffer, ".word _%sSegmentDataSize\n", name.c_str());
-	output += buffer;
-	sprintf(buffer, ".word _%sSegmentRoDataSize\n", name.c_str());
-	output += buffer;
-	sprintf(buffer, ".word _%sSegmentBssSize\n", name.c_str());
-	output += buffer;
+	output += StringHelper::Sprintf(".word _%sSegmentTextSize\n", name.c_str());
+	output += StringHelper::Sprintf(".word _%sSegmentDataSize\n", name.c_str());
+	output += StringHelper::Sprintf(".word _%sSegmentRoDataSize\n", name.c_str());
+	output += StringHelper::Sprintf(".word _%sSegmentBssSize\n", name.c_str());
 
-	sprintf(buffer, ".word %i\n", entries.size());
-	output += buffer;
+	output += StringHelper::Sprintf(".word %i\n", entries.size());
 
 	for (int i = 0; i < entries.size(); i++)
 	{
 		RelocationEntry* reloc = entries[i];
-
-		sprintf(buffer, ".word 0x%08X\n", reloc->CalcRelocationWord());
-		output += buffer;
+		output += StringHelper::Sprintf(".word 0x%08X\n", reloc->CalcRelocationWord());
 	}
 
 	int offset = (entries.size() * 4) + 20;
@@ -206,9 +198,7 @@ string ZOverlay::GetSourceOutputCode(std::string prefix)
 		offset += 4;
 	}
 
-	sprintf(buffer, ".word 0x%08X\n", offset + 4);
-	output += buffer;
-
+	output += StringHelper::Sprintf(".word 0x%08X\n", offset + 4);
 	return output;
 }
 
