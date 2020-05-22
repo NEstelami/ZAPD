@@ -49,7 +49,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_actorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), numActors, roomName.c_str(), segmentOffset);
 
 	string declaration = "";
-	sourceOutput += StringHelper::Sprintf("ActorEntry _%s_actorList_%08X[%i] = \n{\n", roomName.c_str(), segmentOffset, actors.size());
+	declaration += StringHelper::Sprintf("ActorEntry _%s_actorList_%08X[%i] = \n{\n", roomName.c_str(), segmentOffset, actors.size());
 
 	int index = 0;
 	for (ActorSpawnEntry* entry : actors)
