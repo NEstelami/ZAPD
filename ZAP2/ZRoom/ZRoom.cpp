@@ -75,10 +75,7 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			string sizeStr = child->Attribute("Size");
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
-			char buffer[2048];
-			sprintf(buffer, "%s_blob_%08X", name.c_str(), address);
-
-			ZBlob* blob = new ZBlob(rawData, address, size, buffer);
+			ZBlob* blob = new ZBlob(rawData, address, size, StringHelper::Sprintf("%s_blob_%08X", name.c_str(), address));
 			declarations[address] = new Declaration(DeclarationAlignment::None, blob->GetRawDataSize(), comment + blob->GetSourceOutputCode(name));
 		}
 		else if (string(child->Name()) == "CutsceneHint")
@@ -141,15 +138,11 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
 {
 	bool shouldContinue = true;
-
 	int currentIndex = 0;
-
 	int rawDataIndex = commandSet.address;
-
 	int8_t segmentNumber = rawDataIndex >> 24;
 
-	rawDataIndex = rawDataIndex & 0x00FFFFFF;
-
+	rawDataIndex &= 0x00FFFFFF;
 	int32_t commandsLeft = commandSet.commandCount;
 
 	while (shouldContinue)
@@ -209,8 +202,6 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 void ZRoom::ProcessCommandSets()
 {
-	char line[2048];
-
 	while (commandSets.size() > 0)
 	{
 		std::vector<ZRoomCommand*> setCommands = std::vector<ZRoomCommand*>();
@@ -220,19 +211,14 @@ void ZRoom::ProcessCommandSets()
 		ParseCommands(setCommands, commandSets[0]);
 		commandSets.erase(commandSets.begin());
 
-		//for (ZRoomCommand* cmd : setCommands)
 		for (int i = 0; i < setCommands.size(); i++)
 		{
 			ZRoomCommand* cmd = setCommands[i];
 			cmd->commandSet = commandSet & 0x00FFFFFF;
+			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
-			string pass1 = cmd->GenerateSourceCodePass1(name, commandSet & 0x00FFFFFF);
-			sprintf(line, "%s // 0x%04X", pass1.c_str(), cmd->cmdAddress);
-
-			declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, line);
-
-			sprintf(line, "extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
-			externs[cmd->cmdAddress] = line;
+			declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass1.c_str(), cmd->cmdAddress));
+			externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
 		}
 
 		sourceOutput += "\n";
@@ -247,11 +233,8 @@ void ZRoom::ProcessCommandSets()
 
 		if (pass2 != "")
 		{
-			sprintf(line, "%s // 0x%04X", pass2.c_str(), cmd->cmdAddress);
-			declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, line);
-
-			sprintf(line, "extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), cmd->cmdSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
-			externs[cmd->cmdAddress] = line;
+			declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
+			externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), cmd->cmdSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
 		}
 	}
 }
@@ -323,7 +306,6 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 
 string ZRoom::GetSourceOutputHeader(string prefix)
 {
-	char line[2048];
 	sourceOutput = "";
 	
 	for (ZRoomCommand* cmd : commands)
@@ -342,12 +324,9 @@ string ZRoom::GetSourceOutputHeader(string prefix)
 
 	// Print out the vector.
 	for (pair<int32_t, string> item : externsKeysSorted)
-	{
 		sourceOutput += item.second;
-	}
 
 	sourceOutput += "\n" + extDefines + "\n";
-
 	sourceOutput += "\n";
 
 	return sourceOutput;
@@ -589,9 +568,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	});
 
 	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
-	{
 		sourceOutput += item.second->text + "\n";
-	}
 
 	sourceOutput += "\n";
 

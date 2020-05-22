@@ -331,29 +331,21 @@ string SetMesh::GenerateSourceCodePass1(string roomName, int baseAddress)
 string SetMesh::GenerateExterns()
 {
 	string sourceOutput = "";
-	char line[2048];
 
 	if (meshHeader->headerType == 0)
 	{
 		MeshHeader0* meshHeader0 = (MeshHeader0*)meshHeader;
 
-		sprintf(line, "extern MeshHeader0 _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
-		sourceOutput += line;
-
-		sprintf(line, "extern MeshEntry0 _%s_meshDListEntry_%08X[%i];\n", zRoom->GetName().c_str(), meshHeader0->dListStart, meshHeader0->entries.size());
-		sourceOutput += line;
+		sourceOutput += StringHelper::Sprintf("extern MeshHeader0 _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
+		sourceOutput += StringHelper::Sprintf("extern MeshEntry0 _%s_meshDListEntry_%08X[%i];\n", zRoom->GetName().c_str(), meshHeader0->dListStart, meshHeader0->entries.size());
 	
 		for (MeshEntry0* entry : meshHeader0->entries)
 		{
 			if (entry->opaqueDList != nullptr)
-			{
 				sourceOutput += GenDListExterns(entry->opaqueDList);
-			}
 
 			if (entry->translucentDList != nullptr)
-			{
 				sourceOutput += GenDListExterns(entry->translucentDList);
-			}
 		}
 	}
 	else if (meshHeader->headerType == 1)
@@ -361,35 +353,24 @@ string SetMesh::GenerateExterns()
 		MeshHeader1Base* meshHeader1 = (MeshHeader1Base*)meshHeader;
 
 		if (meshHeader1->format == 1)
-		{
 			sourceOutput += StringHelper::Sprintf("extern MeshHeader1Single _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
-		}
 		else if (meshHeader1->format == 2)
-		{
 			sourceOutput += StringHelper::Sprintf("extern MeshHeader1Multi _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
-		}
 	}
 	else if (meshHeader->headerType == 2)
 	{
 		MeshHeader2* meshHeader2 = (MeshHeader2*)meshHeader;
 
-		sprintf(line, "extern MeshHeader2 _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
-		sourceOutput += line;
-
-		sprintf(line, "extern MeshEntry2 _%s_meshDListEntry_%08X[%i];\n", zRoom->GetName().c_str(), meshHeader2->dListStart, meshHeader2->entries.size());
-		sourceOutput += line;
+		sourceOutput += StringHelper::Sprintf("extern MeshHeader2 _%s_meshHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
+		sourceOutput += StringHelper::Sprintf("extern MeshEntry2 _%s_meshDListEntry_%08X[%i];\n", zRoom->GetName().c_str(), meshHeader2->dListStart, meshHeader2->entries.size());
 
 		for (MeshEntry2* entry : meshHeader2->entries)
 		{
 			if (entry->opaqueDList != nullptr)
-			{
 				sourceOutput += GenDListExterns(entry->opaqueDList);
-			}
 
 			if (entry->translucentDList != nullptr)
-			{
 				sourceOutput += GenDListExterns(entry->translucentDList);
-			}
 		}
 	}
 	else
