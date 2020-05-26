@@ -185,24 +185,28 @@ size_t CutsceneCommand::GetCommandSize()
 
 CutsceneCameraPoint::CutsceneCameraPoint(vector<uint8_t> rawData, int rawDataIndex)
 {
-	continueFlag = rawData[rawDataIndex + 0];
-	cameraRoll = rawData[rawDataIndex + 1];
-	nextPointFrame = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	viewAngle = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
+	uint8_t* data = rawData.data();
 
-	posX = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	posY = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-	posZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
+	continueFlag = data[rawDataIndex + 0];
+	cameraRoll = data[rawDataIndex + 1];
+	nextPointFrame = BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	viewAngle = BitConverter::ToInt32BE(data, rawDataIndex + 4);
 
-	unused = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
+	posX = BitConverter::ToInt16BE(data, rawDataIndex + 8);
+	posY = BitConverter::ToInt16BE(data, rawDataIndex + 10);
+	posZ = BitConverter::ToInt16BE(data, rawDataIndex + 12);
+
+	unused = BitConverter::ToInt16BE(data, rawDataIndex + 14);
 }
 
 CutsceneCommandSetCameraPos::CutsceneCommandSetCameraPos(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)
 {
-	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	unused = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
+	uint8_t* data = rawData.data();
+
+	base = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	startFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	endFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 4);
+	unused = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 6);
 
 	entries = vector<CutsceneCameraPoint*>();
 
@@ -879,14 +883,13 @@ CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(vector<uint8_t> rawData
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	unused = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
 }
 
 string CutsceneCommandSceneTransFX::GenerateSourceCode(string roomName, int baseAddress)
 {
 	string result = "";
 
-	result += StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i, %i, %i),\n", base, startFrame, endFrame, unused);
+	result += StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i, %i),\n", base, startFrame, endFrame);
 	return result;
 }
 

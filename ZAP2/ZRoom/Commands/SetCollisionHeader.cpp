@@ -35,18 +35,12 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 
 string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-
-	sourceOutput = StringHelper::Sprintf("%s 0x00, (u32)&_%s_collisionHeader_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
-	return sourceOutput;
+	return StringHelper::Sprintf("%s 0x00, (u32)&_%s_collisionHeader_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetCollisionHeader::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	return sourceOutput;
+	return "";
 }
 
 string SetCollisionHeader::GetCommandCName()
@@ -56,10 +50,7 @@ string SetCollisionHeader::GetCommandCName()
 
 string SetCollisionHeader::GenerateExterns()
 {
-	string sourceOutput = "";
-	
-	sourceOutput = StringHelper::Sprintf("extern CollisionHeader _%s_collisionHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
-	return sourceOutput;
+	return StringHelper::Sprintf("extern CollisionHeader _%s_collisionHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 RoomCommand SetCollisionHeader::GetRoomCommand()
@@ -74,28 +65,32 @@ CollisionHeader::CollisionHeader()
 
 CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	absMinX = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	absMinY = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	absMinZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+	uint8_t* data = rawData.data();
 
-	absMaxX = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	absMaxY = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	absMaxZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
+	absMinX = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	absMinY = BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	absMinZ = BitConverter::ToInt16BE(data, rawDataIndex + 4);
 
-	numVerts = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
-	vtxSegmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 16) & 0x00FFFFFF;
+	absMaxX = BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	absMaxY = BitConverter::ToInt16BE(data, rawDataIndex + 8);
+	absMaxZ = BitConverter::ToInt16BE(data, rawDataIndex + 10);
 
-	numPolygons = BitConverter::ToInt16BE(rawData, rawDataIndex + 20);
-	polySegmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 24) & 0x00FFFFFF;
-	polyTypeDefSegmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 28) & 0x00FFFFFF;
-	camDataSegmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 32) & 0x00FFFFFF;
+	numVerts = BitConverter::ToInt16BE(data, rawDataIndex + 12);
+	vtxSegmentOffset = BitConverter::ToInt32BE(data, rawDataIndex + 16) & 0x00FFFFFF;
 
-	numWaterBoxes = BitConverter::ToInt16BE(rawData, rawDataIndex + 36);
-	waterBoxSegmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 40) & 0x00FFFFFF;
+	numPolygons = BitConverter::ToInt16BE(data, rawDataIndex + 20);
+	polySegmentOffset = BitConverter::ToInt32BE(data, rawDataIndex + 24) & 0x00FFFFFF;
+	polyTypeDefSegmentOffset = BitConverter::ToInt32BE(data, rawDataIndex + 28) & 0x00FFFFFF;
+	camDataSegmentOffset = BitConverter::ToInt32BE(data, rawDataIndex + 32) & 0x00FFFFFF;
 
+	numWaterBoxes = BitConverter::ToInt16BE(data, rawDataIndex + 36);
+	waterBoxSegmentOffset = BitConverter::ToInt32BE(data, rawDataIndex + 40) & 0x00FFFFFF;
+
+	// HOTSPOT
 	for (int i = 0; i < numVerts; i++)
 		vertices.push_back(new VertexEntry(zRoom, rawData, vtxSegmentOffset + (i * 6)));
 
+	// HOTSPOT
 	for (int i = 0; i < numPolygons; i++)
 		polygons.push_back(new PolygonEntry(zRoom, rawData, polySegmentOffset + (i * 16)));
 
@@ -108,7 +103,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 	}
 
 	for (int i = 0; i < highestPolyType + 1; i++)
-		polygonTypes.push_back(BitConverter::ToInt64BE(rawData, polyTypeDefSegmentOffset + (i * 8)));
+		polygonTypes.push_back(BitConverter::ToInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 
 	if (camDataSegmentOffset != 0)
 		camData = new CameraData(zRoom, rawData, camDataSegmentOffset, polyTypeDefSegmentOffset);
@@ -202,31 +197,37 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 
 PolygonEntry::PolygonEntry(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	type = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	vtxA = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	vtxB = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	vtxC = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	a = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	b = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-	c = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
-	d = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
+	uint8_t* data = rawData.data();
+
+	type = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	vtxA = BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	vtxB = BitConverter::ToInt16BE(data, rawDataIndex + 4);
+	vtxC = BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	a = BitConverter::ToInt16BE(data, rawDataIndex + 8);
+	b = BitConverter::ToInt16BE(data, rawDataIndex + 10);
+	c = BitConverter::ToInt16BE(data, rawDataIndex + 12);
+	d = BitConverter::ToInt16BE(data, rawDataIndex + 14);
 }
 
 VertexEntry::VertexEntry(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+	uint8_t* data = rawData.data();
+
+	x = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	y = BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	z = BitConverter::ToInt16BE(data, rawDataIndex + 4);
 }
 
 WaterBoxHeader::WaterBoxHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	xMin = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	ySurface = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	zMin = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	xLength = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	zLength = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	properties = BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
+	uint8_t* data = rawData.data();
+
+	xMin = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	ySurface = BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	zMin = BitConverter::ToInt16BE(data, rawDataIndex + 4);
+	xLength = BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	zLength = BitConverter::ToInt16BE(data, rawDataIndex + 8);
+	properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);
 }
 
 CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset)

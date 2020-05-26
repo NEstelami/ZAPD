@@ -72,7 +72,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::Align16, 12, declaration);
 
 		declaration = "";
-
 		declaration += StringHelper::Sprintf("MeshEntry0 _%s_meshDListEntry_%08X[%i] = \n{\n", zRoom->GetName().c_str(), meshHeader0->dListStart, meshHeader0->entries.size());
 
 		for (int i = 0; i < meshHeader0->entries.size(); i++)
@@ -93,7 +92,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 		}
 
 		declaration += "};\n\n";
-
 		declaration += "static u32 terminatorMaybe = 0x01000000; // This always appears after the mesh entries. Its purpose is not clear.\n";
 
 		zRoom->declarations[meshHeader0->dListStart] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, (meshHeader0->entries.size() * 8) + 4, declaration);
@@ -143,9 +141,19 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 		{
 			MeshHeader1Multi* headerMulti = new MeshHeader1Multi();
 
-			headerMulti->bgCnt = rawData[segmentOffset + 8];
-			headerMulti->bgRecordPtr = BitConverter::ToInt16BE(rawData, segmentOffset + 12);
+			headerMulti->headerType = 1;
+			headerMulti->format = fmt;
+			headerMulti->entryRecord = BitConverter::ToInt32BE(rawData, segmentOffset + 4);// &0x00FFFFFF;
 
+			headerMulti->bgCnt = rawData[segmentOffset + 8];
+			headerMulti->bgRecordPtr = BitConverter::ToInt32BE(rawData, segmentOffset + 12);
+
+			//zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 12, "");
+
+			declaration += StringHelper::Sprintf("MeshHeader1Multi _%s_meshHeader_%08X = { { { 1 }, 2, 0x%08X }, 0x%08X, 0x%08X };\n",
+				zRoom->GetName().c_str(), segmentOffset, headerMulti->entryRecord, headerMulti->bgCnt, headerMulti->bgRecordPtr);
+
+			zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 16, declaration);
 
 			meshHeader1 = headerMulti;
 		}
@@ -171,9 +179,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 		meshHeader2->dListEnd = BitConverter::ToInt32BE(rawData, segmentOffset + 8) & 0x00FFFFFF;
 
 		int8_t numEntries = rawData[segmentOffset + 1];
-
 		uint32_t currentPtr = meshHeader2->dListStart;
 
+		// HOTSPOT
 		for (int i = 0; i < numEntries; i++)
 		{
 			MeshEntry2* entry = new MeshEntry2();
@@ -189,14 +197,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 			{
 				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr));
 				entry->opaqueDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->opaqueDList);
+				GenDListDeclarations(rawData, entry->opaqueDList); // HOTSPOT
 			}
 
 			if (entry->translucentDListAddr != 0)
 			{
 				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr));
 				entry->translucentDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->translucentDList);
+				GenDListDeclarations(rawData, entry->translucentDList); // HOTSPOT
 			}
 
 			meshHeader2->entries.push_back(entry);
@@ -250,9 +258,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 		}
 
 		declaration += "};\n\n";
-
 		declaration += "static u32 terminatorMaybe = 0x01000000; // This always appears after the mesh entries. Its purpose is not clear.\n";
-
 		zRoom->declarations[meshHeader2->dListStart] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, (meshHeader2->entries.size() * 16) + 4, declaration);
 
 		meshHeader = meshHeader2;
@@ -261,7 +267,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 
 void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList)
 {
-	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
+	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName()); // HOTSPOT
 
 	zRoom->declarations[dList->dListAddress] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), sourceOutput);
 	zRoom->externs[dList->dListAddress] = dList->GetSourceOutputHeader(zRoom->GetName());
@@ -281,26 +287,18 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
-	char line[2048];
 	string sourceOutput = "";
 
-	sprintf(line, "extern Gfx _%s_dlist_%08X[];\n", zRoom->GetName().c_str(), dList->dListAddress);
-	sourceOutput += line;
+	sourceOutput += StringHelper::Sprintf("extern Gfx _%s_dlist_%08X[];\n", zRoom->GetName().c_str(), dList->dListAddress);
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-	{
-		sprintf(line, "extern Vtx_t _%s_vertices_%08X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
-		sourceOutput += line;
-	}
+		sourceOutput += StringHelper::Sprintf("extern Vtx_t _%s_vertices_%08X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
-	{
-		sprintf(line, "extern u8 _%s_tex_%08X[];\n", zRoom->GetName().c_str(), texEntry.first);
-		sourceOutput += line;
-	}
+		sourceOutput += StringHelper::Sprintf("extern u64 _%s_tex_%08X[];\n", zRoom->GetName().c_str(), texEntry.first);
 
 	sourceOutput += dList->defines;
 
@@ -310,10 +308,8 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 string SetMesh::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "%s %i, (u32)&_%s_meshHeader_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), data, zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput += line;
+	
+	sourceOutput += StringHelper::Sprintf("%s %i, (u32)&_%s_meshHeader_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), data, zRoom->GetName().c_str(), segmentOffset);
 
 	/*if (meshHeader->headerType == 0)
 	{

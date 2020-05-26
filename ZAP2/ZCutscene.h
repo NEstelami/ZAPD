@@ -222,7 +222,6 @@ public:
 	uint16_t base;
 	uint16_t startFrame;
 	uint16_t endFrame;
-	uint16_t unused;
 
 	CutsceneCommandSceneTransFX(std::vector<uint8_t> rawData, int rawDataIndex);
 	std::string GetCName(std::string prefix);

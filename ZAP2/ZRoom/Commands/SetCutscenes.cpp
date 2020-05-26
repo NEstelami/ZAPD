@@ -38,10 +38,8 @@ int32_t SetCutscenes::GetRawDataSize()
 string SetCutscenes::GenerateExterns()
 {
 	string sourceOutput = "";
-	char line[2048];
 
 	sourceOutput += StringHelper::Sprintf("extern s32 _%s_cutsceneData_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-
 	return sourceOutput;
 }
 
