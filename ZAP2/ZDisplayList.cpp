@@ -2,6 +2,7 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "Globals.h"
+#include <chrono>
 #include <algorithm>
 
 using namespace std;
@@ -45,12 +46,10 @@ ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int rawDataIndex, int rawDa
 void ZDisplayList::ParseRawData()
 {
 	int numInstructions = rawData.size() / 8;
+	uint8_t* rawDataArr = rawData.data();
 
 	for (int i = 0; i < numInstructions; i++)
-	{
-		uint64_t data = BitConverter::ToInt64BE(rawData, (i * 8));
-		instructions.push_back(data);
-	}
+		instructions.push_back(BitConverter::ToInt64BE(rawDataArr, (i * 8)));
 }
 
 int ZDisplayList::GetDListLength(vector<uint8_t> rawData, int rawDataIndex)
@@ -91,6 +90,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 		F3DZEXOpcode opcode = (F3DZEXOpcode)rawData[(i * 8) + 0];
 		uint64_t data = instructions[i];
 		sourceOutput += "\t";
+
+		auto start = chrono::steady_clock::now();
 
 		switch (opcode)
 		{
@@ -175,7 +176,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 		}
 			break;
-		case F3DZEXOpcode::G_SETTIMG:
+		case F3DZEXOpcode::G_SETTIMG: // HOTSPOT
 		{
 			int __ = (data & 0x00FF000000000000) >> 48;
 			int www = (data & 0x00000FFF00000000) >> 32;
@@ -185,7 +186,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			uint32_t fmt = (__ & 0xE0) >> 5;
 			uint32_t siz = (__ & 0x18) >> 3;
 
-			TextureGenCheck(prefix);
+			TextureGenCheck(prefix); // HOTSPOT
 
 			lastTexFmt = (F3DZEXTexFormats)fmt;
 			lastTexSiz = (F3DZEXTexSizes)siz;
@@ -419,7 +420,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			sprintf(line, "gsSPEndDisplayList(),");
 
 			TextureGenCheck(prefix);
-
 			break;
 		case F3DZEXOpcode::G_RDPHALF_1:
 		{
@@ -470,6 +470,14 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			sprintf(line, "// Opcode 0x%02X unimplemented!", opcode);
 			break;
 		}
+
+		auto end = chrono::steady_clock::now();
+		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
+#if _MSC_VER
+		//if (diff > 5)
+			//printf("F3DOP: 0x%02X, TIME: %ims\n", opcode, diff);
+#endif
 
 		sourceOutput += line;
 
@@ -526,9 +534,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			for (Vertex* vtx : item.second)
 			{
-				//sprintf(declLine, "\t { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },\n",
-					//(uint16_t)vtx->x, (uint16_t)vtx->y, (uint16_t)vtx->z, (uint16_t)vtx->flag, (uint16_t)vtx->s, (uint16_t)vtx->t, (uint16_t)vtx->r, (uint16_t)vtx->g, (uint16_t)vtx->b, (uint16_t)vtx->a);
-
 				declaration += StringHelper::Sprintf("\t { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i }, // 0x%08X\n",
 					vtx->x, vtx->y, vtx->z, vtx->flag, vtx->s, vtx->t, vtx->r, vtx->g, vtx->b, vtx->a, curAddr);
 
@@ -559,16 +564,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				for (int i = 0; i < texturesSorted.size() - 1; i++)
 				{
 					int texSize = scene->textures[texturesSorted[i].first]->GetRawDataSize();
-
-					if (texturesSorted[i].first == 0xEBE0)
-					{
-						int bp = 0;
-					}
-
-					if (texturesSorted[i].first == 0xEDA0)
-					{
-						int bp = 0;
-					}
 
 					if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 					{
@@ -608,11 +603,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 					int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
 
-					if (texturesSorted[i].first == 0xEBE0)
-					{
-						int bp = 0;
-					}
-
 					if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 					{
 						int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
@@ -644,6 +634,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 	return sourceOutput;
 }
 
+// HOTSPOT
 void ZDisplayList::TextureGenCheck(string prefix)
 {
 	if (TextureGenCheck(fileData, textures, scene, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded))
@@ -655,6 +646,7 @@ void ZDisplayList::TextureGenCheck(string prefix)
 	}
 }
 
+// HOTSPOT
 bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZTexture*>& textures, ZRoom* scene, string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded)
 {
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
@@ -665,10 +657,10 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 	{
 		if (segmentNumber != 2) // Not from a scene file
 		{
-			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("_%s_tex_%08X", prefix.c_str(), texAddr), texWidth, texHeight);
+			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("_%s_tex_%08X", prefix.c_str(), texAddr), texWidth, texHeight);
 			
 #ifdef _WIN32 // TEST
-			tex->Save("dump");
+			//tex->Save("dump");
 #endif	
 			textures[texAddr] = tex;
 
@@ -676,16 +668,11 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		}
 		else
 		{
-			ZTexture* tex = new ZTexture(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr, 
+			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
 				StringHelper::Sprintf("_%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
-			
-			if (texAddr == 0xEDA0)
-			{
-				int bp = 0;
-			}
 
 #ifdef _WIN32 // TEST
-			tex->Save("dump"); // TEST
+			//tex->Save("dump"); // TEST
 #endif
 
 			scene->textures[texAddr] = tex;
@@ -789,14 +776,16 @@ Vertex::Vertex()
 
 Vertex::Vertex(std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	flag = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	s = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	t = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-	r = rawData[rawDataIndex + 12];
-	g = rawData[rawDataIndex + 13];
-	b = rawData[rawDataIndex + 14];
-	a = rawData[rawDataIndex + 15];
+	uint8_t* data = rawData.data();
+
+	x = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	y = BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	z = BitConverter::ToInt16BE(data, rawDataIndex + 4);
+	flag = BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	s = BitConverter::ToInt16BE(data, rawDataIndex + 8);
+	t = BitConverter::ToInt16BE(data, rawDataIndex + 10);
+	r = data[rawDataIndex + 12];
+	g = data[rawDataIndex + 13];
+	b = data[rawDataIndex + 14];
+	a = data[rawDataIndex + 15];
 }

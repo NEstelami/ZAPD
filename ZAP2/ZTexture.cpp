@@ -3,6 +3,8 @@
 #define TINYGLTF_IMPLEMENTATION
 
 #include "ZTexture.h"
+#include "StringHelper.h"
+#include "BitConverter.h"
 
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -27,19 +29,23 @@ ZTexture::ZTexture(XMLElement* reader, vector<uint8_t> nRawData, int rawDataInde
 	PrepareBitmap();
 }
 
-ZTexture::ZTexture(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nName, int nWidth, int nHeight)
+ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nName, int nWidth, int nHeight)
 {
-	width = nWidth;
-	height = nHeight;
-	type = nType;
-	name = nName;
+	ZTexture* tex = new ZTexture();
 
-	int dataEnd = rawDataIndex + GetRawDataSize();
+	tex->width = nWidth;
+	tex->height = nHeight;
+	tex->type = nType;
+	tex->name = nName;
 
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + dataEnd);
+	int dataEnd = rawDataIndex + tex->GetRawDataSize();
 
-	FixRawData();
-	PrepareBitmap();
+	tex->rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + dataEnd);
+
+	tex->FixRawData();
+	tex->PrepareBitmap();
+
+	return tex;
 }
 
 // BUILD MODE
@@ -565,41 +571,23 @@ int ZTexture::GetRawDataSize()
 void ZTexture::Save(string outFolder)
 {
 	if (type == TextureType::RGBA32bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".rgba32.png").c_str(), width, height, 4, bmpRgba, width * 4);
-	}
 	else if (type == TextureType::RGBA16bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".rgb5a1.png").c_str(), width, height, 4, bmpRgba, width * 4);
-	}
 	else if (type == TextureType::Grayscale8bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".i8.png").c_str(), width, height, 3, bmpRgb, width * 3);
-	}
 	else if (type == TextureType::Grayscale4bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".i4.png").c_str(), width, height, 3, bmpRgb, width * 3);
-	}
 	else if (type == TextureType::GrayscaleAlpha16bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".ia16.png").c_str(), width, height, 4, bmpRgba, width * 4);
-	}
 	else if (type == TextureType::GrayscaleAlpha8bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".ia8.png").c_str(), width, height, 4, bmpRgba, width * 4);
-	}
 	else if (type == TextureType::GrayscaleAlpha4bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".ia4.png").c_str(), width, height, 4, bmpRgba, width * 4);
-	}
 	else if (type == TextureType::Palette4bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".ci4.png").c_str(), width, height, 3, bmpRgb, width * 3);
-	}
 	else if (type == TextureType::Palette8bpp)
-	{
 		stbi_write_png((outFolder + "/" + name + ".ci8.png").c_str(), width, height, 3, bmpRgb, width * 3);
-	}
 }
 
 string ZTexture::GetSourceOutputHeader(std::string prefix)
@@ -607,13 +595,13 @@ string ZTexture::GetSourceOutputHeader(std::string prefix)
 	char line[2048];
 	sourceOutput = "";
 
-	sprintf(line, "extern u8 %s[];\n", name.c_str());
-
+	sprintf(line, "extern u64 %s[];\n", name.c_str());
 	sourceOutput += line;
 
 	return sourceOutput;
 }
 
+// HOTSPOT
 string ZTexture::GetSourceOutputCode(std::string prefix)
 {
 	char line[2048];
@@ -648,34 +636,20 @@ string ZTexture::GetSourceOutputCode(std::string prefix)
 
 	FixRawData();
 
-	//sprintf(line, "u64 _%s[] = \n{\n", name.c_str());
-	sprintf(line, "u8 %s[] = \n{\n", name.c_str());
+	sprintf(line, "u64 %s[] = \n{\n", name.c_str());
 	sourceOutput += line;
 
-	for (int i = 0; i < rawData.size(); i += 1)
+	uint8_t* rawDataArr = rawData.data();
+
+	for (int i = 0; i < rawData.size(); i += 8)
 	{
-		//uint64_t data;
-
-		//memcpy(&data, &rawData[i], 8);
-
-		if (i % 16 == 0)
+		if (i % 32 == 0)
 			sourceOutput += "\t";
 
-		//sprintf(line, "0x%016llX, ", data);
+		sourceOutput += StringHelper::Sprintf("0x%016llX, ", BitConverter::ToInt64BE(rawDataArr, i));
 
-		sprintf(line, "0x%02X, ", rawData[i]);
-
-		sourceOutput += line;
-
-		//if ((i / 8) % 8 == 7)
-			//sourceOutput += "\n";
-
-		if (i % 16 == 15)
-		{
-			sprintf(line, " // 0x%08X \n", (i / 16) * 16);
-			sourceOutput += line;
-			//sourceOutput += "\n";
-		}
+		if (i % 32 == 24)
+			sourceOutput += StringHelper::Sprintf(" // 0x%08X \n", (i / 16) * 16);
 	}
 
 	sourceOutput += "};\n";

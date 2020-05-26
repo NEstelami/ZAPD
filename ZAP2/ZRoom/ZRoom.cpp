@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include "ZRoom.h"
 #include "ZCutscene.h"
 #include "../ZBlob.h"
@@ -128,6 +129,23 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 
 			delete pathway;
 		}
+		else if (string(child->Name()) == "TextureHint")
+		{
+			string comment = "";
+
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Address");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			string typeStr = child->Attribute("Type");
+			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
+			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
+
+			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), rawData, address, StringHelper::Sprintf("%s_tex_%08X", name.c_str(), address), width, height);
+			declarations[address] = new Declaration(DeclarationAlignment::None, tex->GetRawDataSize(), comment + tex->GetSourceOutputCode(name));
+		}
 	}
 
 	//ParseCommands(rawDataIndex);
@@ -150,6 +168,8 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		RoomCommand opcode = (RoomCommand)rawData[rawDataIndex]; 
 
 		ZRoomCommand* cmd = nullptr;
+
+		auto start = chrono::steady_clock::now();
 
 		switch (opcode)
 		{
@@ -179,6 +199,15 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::SetCameraSettings: cmd = new SetCameraSettings(this, rawData, rawDataIndex); break; // 0x19
 		default: cmd = new ZRoomCommand(this, rawData, rawDataIndex);
 		}
+
+		auto end = chrono::steady_clock::now();
+		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
+//#if _MSC_VER
+		//if (opcode == RoomCommand::SetMesh)
+		if (diff > 50)
+			printf("OP: %s, TIME: %ims\n", cmd->GetCommandCName().c_str(), diff);
+//#endif
 
 		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
 
