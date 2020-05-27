@@ -5,7 +5,7 @@
 
 using namespace std;
 
-SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	data = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
@@ -25,8 +25,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 		meshHeader0->dListEnd = BitConverter::ToInt32BE(rawData, segmentOffset + 8) & 0x00FFFFFF;
 
 		int8_t numEntries = rawData[segmentOffset + 1];
-
 		uint32_t currentPtr = meshHeader0->dListStart;
+
+		// Hack for Syotes
+		for (int i = 0; i < abs(segAddressOffset); i++)
+		{
+			rawData.erase(rawData.begin());
+			segmentOffset--;
+		}
 
 		for (int i = 0; i < numEntries; i++)
 		{

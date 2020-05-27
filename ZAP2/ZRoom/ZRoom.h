@@ -17,6 +17,8 @@ protected:
 	std::string GetSourceOutputHeader(std::string prefix);
 	std::string GetSourceOutputCode(std::string prefix);
 	void ProcessCommandSets();
+	void SyotesRoomHack();
+
 public:
 	ZRoom* scene;
 	std::map<int32_t, Declaration*> declarations;
