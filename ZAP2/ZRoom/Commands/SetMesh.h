@@ -101,7 +101,7 @@ public:
 class SetMesh : public ZRoomCommand
 {
 public:
-	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset);
 
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
 	//virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);

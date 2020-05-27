@@ -48,6 +48,14 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 
 	//GenDefinitions();
 
+	int cmdCount = 999999;
+
+	if (name == "syotes_room_0")
+	{
+		SyotesRoomHack();
+		cmdCount = 0;
+	}
+
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "DListHint")
@@ -149,7 +157,7 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 	}
 
 	//ParseCommands(rawDataIndex);
-	commandSets.push_back(CommandSet(rawDataIndex));
+	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
 	ProcessCommandSets();
 }
 
@@ -165,6 +173,9 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 	while (shouldContinue)
 	{
+		if (commandsLeft <= 0)
+			break;
+
 		RoomCommand opcode = (RoomCommand)rawData[rawDataIndex]; 
 
 		ZRoomCommand* cmd = nullptr;
@@ -182,7 +193,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::SetSpecialObjects: cmd = new SetSpecialObjects(this, rawData, rawDataIndex); break; // 0x07
 		case RoomCommand::SetRoomBehavior: cmd = new SetRoomBehavior(this, rawData, rawDataIndex); break; // 0x08
 		case RoomCommand::Unused09: cmd = new Unused09(this, rawData, rawDataIndex); break; // 0x09
-		case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex); break; // 0x0A
+		case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex, 0); break; // 0x0A
 		case RoomCommand::SetObjectList: cmd = new SetObjectList(this, rawData, rawDataIndex); break; // 0x0B
 		case RoomCommand::SetPathways: cmd = new SetPathways(this, rawData, rawDataIndex); break; // 0x0D
 		case RoomCommand::SetTransitionActorList: cmd = new SetTransitionActorList(this, rawData, rawDataIndex); break; // 0x0E
@@ -223,9 +234,6 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		currentIndex++;
 
 		commandsLeft--;
-
-		if (commandsLeft <= 0)
-			break;
 	}
 }
 
@@ -266,6 +274,31 @@ void ZRoom::ProcessCommandSets()
 			externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), cmd->cmdSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
 		}
 	}
+}
+
+/*
+ * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates back to very early in the game's development.
+ * Since this room is a special case, this hack adds back a header so that the room can be processed properly.
+ */
+void ZRoom::SyotesRoomHack()
+{
+	char headerData[] = 
+	{
+		0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08
+	};
+
+	for (int i = 0; i < sizeof(headerData); i++)
+		rawData.insert(rawData.begin() + i, headerData[i]);
+
+	SetMesh* cmdSetMesh = new SetMesh(this, rawData, 0, -8);
+
+	for (int i = 0; i < sizeof(headerData); i++)
+		rawData.erase(rawData.begin());
+
+	cmdSetMesh->cmdIndex = 0;
+	cmdSetMesh->cmdSet = 0;
+
+	commands.push_back(cmdSetMesh);
 }
 
 ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
@@ -542,6 +575,8 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 				int bp = 0;
 			}
 
+			uint8_t* rawDataArr = rawData.data();
+
 			if (lastAddr + declarations[lastAddr]->size != item.first)
 			{
 				int diff = item.first - (lastAddr + declarations[lastAddr]->size);
@@ -552,7 +587,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 				for (int i = 0; i < diff; i++)
 				{
-					src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + declarations[lastAddr]->size + i]);
+					src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr + declarations[lastAddr]->size + i]);
 
 					if (i % 16 == 15)
 						src += "\n\t";
