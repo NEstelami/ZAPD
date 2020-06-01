@@ -1,4 +1,5 @@
 #include "SetActorList.h"
+#include "../../ZFile.h"
 #include "../ZRoom.h"
 #include "../ActorList.h"
 #include "../../BitConverter.h"
@@ -15,13 +16,11 @@ SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	_rawDataIndex = rawDataIndex;
 
 	if (segmentOffset != 0)
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 }
 
 string SetActorList::GetSourceOutputCode(std::string prefix)
 {
-	string sourceOutput = "";
-
 	return "";
 }
 
@@ -64,7 +63,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	declaration += "};\n\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, actors.size() * 16, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, actors.size() * 16, declaration);
 	return sourceOutput;
 }
 
@@ -75,10 +74,7 @@ int32_t SetActorList::GetRawDataSize()
 
 string SetActorList::GenerateExterns()
 {
-	string sourceOutput = "";
-
-	sourceOutput += StringHelper::Sprintf("extern ActorEntry _%s_actorList_%08X[%i];\n", zRoom->GetName().c_str(), segmentOffset, actors.size());
-	return sourceOutput;
+	return StringHelper::Sprintf("extern ActorEntry _%s_actorList_%08X[%i];\n", zRoom->GetName().c_str(), segmentOffset, actors.size());
 }
 
 string SetActorList::GetCommandCName()
@@ -93,12 +89,14 @@ RoomCommand SetActorList::GetRoomCommand()
 
 ActorSpawnEntry::ActorSpawnEntry(std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	actorNum = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	posX = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	posY = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	posZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	rotX = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	rotY = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-	rotZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
-	initVar = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
+	uint8_t* data = rawData.data();
+
+	actorNum = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	posX = BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	posY = BitConverter::ToInt16BE(data, rawDataIndex + 4);
+	posZ = BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	rotX = BitConverter::ToInt16BE(data, rawDataIndex + 8);
+	rotY = BitConverter::ToInt16BE(data, rawDataIndex + 10);
+	rotZ = BitConverter::ToInt16BE(data, rawDataIndex + 12);
+	initVar = BitConverter::ToInt16BE(data, rawDataIndex + 14);
 }

@@ -159,6 +159,8 @@ CutsceneCommands ZCutscene::GetCommandFromID(int id)
 	case 0x0B: case 0x0D: case 0x1A: case 0x1B: case 0x1C: case 0x20: case 0x21: case 0x3B: case 0x3D: case 0x47: case 0x49: case 0x6D: case 0x15: case 0x16: case 0x70: case 0x71: case 0x4A: return CutsceneCommands::Unknown;
 	}
 
+	printf("WARNING: Could not identify cutscene command ID 0x%04X\n", id);
+
 	return CutsceneCommands::Error;
 }
 
@@ -690,21 +692,23 @@ size_t CutsceneCommandTextbox::GetCommandSize()
 
 ActorAction::ActorAction(vector<uint8_t> rawData, int rawDataIndex)
 {
-	action = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	rotX = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	rotY = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	rotZ = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-	startPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
-	startPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 16);
-	startPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 20);
-	endPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
-	endPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
-	endPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
-	normalX = BitConverter::ToInt32BE(rawData, rawDataIndex + 36);
-	normalY = BitConverter::ToInt32BE(rawData, rawDataIndex + 40);
-	normalZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 44);
+	uint8_t* data = rawData.data();
+
+	action = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	startFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	endFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 4);
+	rotX = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	rotY = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 8);
+	rotZ = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 10);
+	startPosX = BitConverter::ToInt32BE(data, rawDataIndex + 12);
+	startPosY = BitConverter::ToInt32BE(data, rawDataIndex + 16);
+	startPosZ = BitConverter::ToInt32BE(data, rawDataIndex + 20);
+	endPosX = BitConverter::ToInt32BE(data, rawDataIndex + 24);
+	endPosY = BitConverter::ToInt32BE(data, rawDataIndex + 28);
+	endPosZ = BitConverter::ToInt32BE(data, rawDataIndex + 32);
+	normalX = BitConverter::ToInt32BE(data, rawDataIndex + 36);
+	normalY = BitConverter::ToInt32BE(data, rawDataIndex + 40);
+	normalZ = BitConverter::ToInt32BE(data, rawDataIndex + 44);
 }
 
 CutsceneCommandActorAction::CutsceneCommandActorAction(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)
@@ -804,20 +808,22 @@ size_t CutsceneCommandEnd::GetCommandSize()
 
 SpecialActionEntry::SpecialActionEntry(vector<uint8_t> rawData, int rawDataIndex)
 {
-	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	unused0 = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	unused1 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 8);
-	unused2 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
-	unused3 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 16);
-	unused4 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 20);
-	unused5 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
-	unused6 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
-	unused7 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
-	unused8 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 36);
-	unused9 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 40);
-	unused10 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 44);
+	uint8_t* data = rawData.data();
+
+	base = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	startFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 2);
+	endFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 4);
+	unused0 = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	unused1 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 8);
+	unused2 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 12);
+	unused3 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 16);
+	unused4 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 20);
+	unused5 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 24);
+	unused6 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 28);
+	unused7 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 32);
+	unused8 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 36);
+	unused9 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 40);
+	unused10 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 44);
 }
 
 CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)

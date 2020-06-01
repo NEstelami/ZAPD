@@ -1,6 +1,8 @@
 #include "SetExitList.h"
 #include "../ZRoom.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -10,7 +12,7 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	exits = vector<uint16_t>();
 
 	if (segmentOffset != 0)
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
@@ -25,7 +27,7 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	sourceOutput = line;
 
 	// Parse Entrances and Generate Declaration
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, ""); // Make sure this segment is defined
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, ""); // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
@@ -43,27 +45,18 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	declaration += line;
 
 	for (uint16_t exit : exits)
-	{
-		sprintf(line, "\t0x%04X,\n", exit);
-		declaration += line;
-	}
+		declaration += StringHelper::Sprintf("\t0x%04X,\n", exit);;
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, exits.size() * 2, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, exits.size() * 2, declaration);
 
 	return sourceOutput;
 }
 
 string SetExitList::GenerateExterns()
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "extern u16 _%s_exitList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
-	return sourceOutput;
+	return StringHelper::Sprintf("extern u16 _%s_exitList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);;
 }
 
 string SetExitList::GetCommandCName()

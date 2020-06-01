@@ -21,15 +21,12 @@ protected:
 
 public:
 	ZRoom* scene;
-	std::map<int32_t, Declaration*> declarations;
-	std::map<int32_t, std::string> externs;
 	std::map<int32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
 
 	std::string extDefines;
 
-	ZRoom(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZRoom* nScene);
-
+	static ZRoom* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent, ZRoom* nScene);
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
 	size_t GetDeclarationSizeFromNeighbor(int declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);

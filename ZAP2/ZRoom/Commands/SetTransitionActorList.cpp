@@ -1,7 +1,9 @@
 #include "SetTransitionActorList.h"
 #include "../ZRoom.h"
 #include "../ActorList.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -50,8 +52,7 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 	}
 
 	declaration += "};\n\n";
-
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, transitionActors.size() * 16, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, transitionActors.size() * 16, declaration);
 
 	return sourceOutput;
 }
@@ -69,13 +70,7 @@ int32_t SetTransitionActorList::GetRawDataSize()
 
 string SetTransitionActorList::GenerateExterns()
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "extern TransitionActorEntry _%s_transitionActorList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
-	return sourceOutput;
+	return StringHelper::Sprintf("extern TransitionActorEntry _%s_transitionActorList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetTransitionActorList::GetCommandCName()

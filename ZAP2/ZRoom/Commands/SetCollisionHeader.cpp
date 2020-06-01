@@ -1,5 +1,6 @@
 #include "SetCollisionHeader.h"
 #include "../ZRoom.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
@@ -30,7 +31,7 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 
 	declaration += line;
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 44, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 44, declaration);
 }
 
 string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
@@ -129,7 +130,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 	}
 
 	if (waterBoxSegmentOffset != 0)
-		zRoom->declarations[waterBoxSegmentOffset] = new Declaration(DeclarationAlignment::None, 16 * waterBoxes.size(), declaration);
+		zRoom->parent->declarations[waterBoxSegmentOffset] = new Declaration(DeclarationAlignment::None, 16 * waterBoxes.size(), declaration);
 
 	if (polygons.size() > 0)
 	{
@@ -149,7 +150,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 		declaration += "};\n";
 
 		if (polySegmentOffset != 0)
-			zRoom->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, declaration);
+			zRoom->parent->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, declaration);
 
 		declaration = "";
 	}
@@ -169,7 +170,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 	declaration += "};\n";
 
 	if (polyTypeDefSegmentOffset != 0)
-		zRoom->declarations[polyTypeDefSegmentOffset] = new Declaration(DeclarationAlignment::None, polygonTypes.size() * 8, declaration);
+		zRoom->parent->declarations[polyTypeDefSegmentOffset] = new Declaration(DeclarationAlignment::None, polygonTypes.size() * 8, declaration);
 
 	declaration = "";
 
@@ -189,7 +190,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 		declaration += "};\n";
 
 		if (vtxSegmentOffset != 0)
-			zRoom->declarations[vtxSegmentOffset] = new Declaration(DeclarationAlignment::None, vertices.size() * 6, declaration);
+			zRoom->parent->declarations[vtxSegmentOffset] = new Declaration(DeclarationAlignment::None, vertices.size() * 6, declaration);
 
 		declaration = "";
 	}
@@ -264,7 +265,7 @@ CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIn
 	//sprintf(line, "0x%08X };\n", unknown);
 	//declaration += line;
 
-	zRoom->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 8, declaration);
+	zRoom->parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 8, declaration);
 
 	declaration = "";
 
@@ -287,7 +288,7 @@ CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIn
 
 		declaration += "};\n";
 
-		zRoom->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, numCamerasReal * 0x12, declaration);
+		zRoom->parent->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, numCamerasReal * 0x12, declaration);
 		//zRoom->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, 0x12, declaration);
 	}
 
@@ -331,7 +332,7 @@ CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIn
 		declaration += "};\n";
 	}
 
-	zRoom->declarations[rawDataIndex + 8] = new Declaration(DeclarationAlignment::None, entries.size() * 8, declaration);
+	zRoom->parent->declarations[rawDataIndex + 8] = new Declaration(DeclarationAlignment::None, entries.size() * 8, declaration);
 }
 
 CameraPositionData::CameraPositionData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex)

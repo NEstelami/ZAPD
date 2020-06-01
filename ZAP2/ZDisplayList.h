@@ -104,7 +104,6 @@ enum Segments
 	FrameBuffer = 16,
 };
 
-
 class Vertex
 {
 public:
@@ -135,9 +134,9 @@ public:
 	std::string sceneSegName;
 	ZRoom* scene;
 
-	int dListAddress;
+	//int dListAddress;
 
-	std::map<uint32_t, std::vector<Vertex*>> vertices;
+	std::map<uint32_t, std::vector<Vertex>> vertices;
 	std::map<uint32_t, std::string> vtxDeclarations;
 	std::vector<ZDisplayList*> otherDLists;
 
@@ -148,8 +147,9 @@ public:
 	std::vector<uint8_t> fileData;
 
 	ZDisplayList();
-	ZDisplayList(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
 	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
+
+	static ZDisplayList* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, std::string nRelPath);
 
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(std::vector<uint8_t> fileData, std::map<uint32_t, ZTexture*>& textures, ZRoom* scene, std::string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded);

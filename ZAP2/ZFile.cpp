@@ -3,6 +3,7 @@
 #include "ZDisplayList.h"
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
+#include "ZAnimation.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -18,6 +19,7 @@ ZFile::ZFile()
 	basePath = "";
 	outputPath = Directory::GetCurrentDirectory();
 	declarations = map<int32_t, Declaration*>();
+	externs = map<int32_t, string>();
 }
 
 ZFile::ZFile(string nOutPath, string nName) : ZFile()
@@ -47,8 +49,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 
 	string folderName = basePath + "/" + Path::GetFileNameWithoutExtension(name);
 	
-	vector<uint8_t> rawData;
-
 	if (mode == ZFileMode::Extract)
 		rawData = File::ReadAllBytes(basePath + "/" + name);
 
@@ -58,14 +58,21 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 	{
 		printf("%s: %08X\n", child->Attribute("Name"), rawDataIndex);
 
+		if (child->Attribute("Address") != NULL)
+		{
+			rawDataIndex = strtol(StringHelper::Split(child->Attribute("Address"), "0x")[1].c_str(), NULL, 16);
+		}
+
 		if (string(child->Name()) == "Texture")
 		{
 			ZTexture* tex = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				tex = new ZTexture(child, rawData, rawDataIndex, folderName);
+				tex = ZTexture::ExtractFromXML(child, rawData, rawDataIndex, folderName);
 			else
-				tex = new ZTexture(child, folderName);
+				tex = ZTexture::BuildFromXML(child, folderName);
+
+			tex->parent = this;
 
 			resources.push_back(tex);
 			rawDataIndex += tex->GetRawDataSize();
@@ -79,18 +86,22 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 			else
 				blob = ZBlob::BuildFromXML(child, folderName);
 
+			blob->parent = this;
+
 			resources.push_back(blob);
 
 			rawDataIndex += blob->GetRawDataSize();
 		}
-		else if (string(child->Name()) == "DisplayList")
+		else if (string(child->Name()) == "DList")
 		{
 			ZDisplayList* dList = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				dList = new ZDisplayList(child, rawData, rawDataIndex, folderName);
+				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex), folderName);
 			//else
 				//dList = new ZBlob(child, folderName);
+
+			dList->parent = this;
 
 			resources.push_back(dList);
 
@@ -101,19 +112,28 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 			ZRoom* room = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				room = new ZRoom(child, rawData, rawDataIndex, folderName, Globals::Instance->lastScene);
+				room = ZRoom::ExtractFromXML(child, rawData, rawDataIndex, folderName, this, Globals::Instance->lastScene);
 			//else
 				//blob = new ZBlob(child, folderName);
 
 			if (string(child->Name()) == "Scene")
-			{
-				//printf("SET LAST SCENE\n");
 				Globals::Instance->lastScene = room;
-			}
 
 			resources.push_back(room);
 
 			rawDataIndex += room->GetRawDataSize();
+		}
+		else if (string(child->Name()) == "Animation")
+		{
+			ZAnimation* anim = nullptr;
+
+			if (mode == ZFileMode::Extract)
+				anim = ZAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+
+			anim->parent = this;
+			resources.push_back(anim);
+
+			rawDataIndex += anim->GetRawDataSize();
 		}
 	}
 }
@@ -125,9 +145,7 @@ void ZFile::BuildResources()
 	int size = 0;
 
 	for (ZResource* res : resources)
-	{
 		size += res->GetRawDataSize();
-	}
 
 	// Make sure size is 16 byte aligned
 	if (size % 16 != 0)
@@ -175,12 +193,17 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	sourceOutput = "";
 
 	sourceOutput += "#include <ultra64.h>\n";
+	sourceOutput += "#include <z64.h>\n";
+	sourceOutput += StringHelper::Sprintf("#include \"%s\"\n", (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
 
 	// Generate Code
 	for (ZResource* res : resources)
 	{
-		string resSrc = res->GetSourceOutputCode(res->GetName());
-		sourceOutput += resSrc + "\n";
+		string resSrc = res->GetSourceOutputCode(name);
+		sourceOutput += resSrc;
+
+		if (resSrc != "")
+			sourceOutput += "\n";
 	}
 
 	sourceOutput += ProcessDeclarations();
@@ -196,6 +219,8 @@ void ZFile::GenerateSourceFiles(string outputDir)
 		sourceOutput += resSrc + "\n";
 	}
 
+	sourceOutput += ProcessExterns();
+
 	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h", sourceOutput);
 }
 
@@ -203,7 +228,166 @@ string ZFile::ProcessDeclarations()
 {
 	string output = "";
 
+	if (declarations.size() == 0)
+		return output;
+
 	auto declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
+	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
+	{
+		return lhs.first < rhs.first;
+	});
+
+	// Account for padding/alignment
+	int lastAddr = 0;
+
+	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	{
+		while (declarations[item.first]->size % 4 != 0)
+		{
+			declarations[item.first]->size++;
+		}
+
+		if (lastAddr != 0)
+		{
+			if (item.second->alignment == DeclarationAlignment::Align16)
+			{
+				int lastAddrSizeTest = declarations[lastAddr]->size;
+				int curPtr = lastAddr + declarations[lastAddr]->size;
+
+				while (curPtr % 4 != 0)
+				{
+					declarations[lastAddr]->size++;
+					//declarations[item.first]->size++;
+					curPtr++;
+				}
+
+				/*while (curPtr % 16 != 0)
+				{
+					char buffer[2048];
+
+					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
+					declarations[item.first]->text = buffer + declarations[item.first]->text;
+
+					declarations[lastAddr]->size += 4;
+					curPtr += 4;
+				}*/
+			}
+			else if (item.second->alignment == DeclarationAlignment::Align8)
+			{
+				int curPtr = lastAddr + declarations[lastAddr]->size;
+
+				while (curPtr % 4 != 0)
+				{
+					declarations[lastAddr]->size++;
+					//item.second->size++;
+					//declarations[item.first]->size++;
+					curPtr++;
+				}
+
+				while (curPtr % 8 != 0)
+				{
+					char buffer[2048];
+
+					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
+					declarations[item.first]->text = buffer + declarations[item.first]->text;
+
+					declarations[lastAddr]->size += 4;
+					//item.second->size += 4;
+					//declarations[item.first]->size += 4;
+					curPtr += 4;
+				}
+			}
+		}
+
+		if (item.second->padding == DeclarationPadding::Pad16)
+		{
+			int curPtr = item.first + item.second->size;
+
+			while (curPtr % 4 != 0)
+			{
+				item.second->size++;
+				curPtr++;
+			}
+
+			while (curPtr % 16 != 0)
+			{
+				char buffer[2048];
+
+				sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
+				declarations[item.first]->text += buffer;
+
+				item.second->size += 4;
+				curPtr += 4;
+			}
+		}
+
+		//sourceOutput += declarations[item.first]->text + "\n";
+
+		lastAddr = item.first;
+	}
+
+	// Handle for unaccounted data
+	lastAddr = 0;
+	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	{
+		if (lastAddr != 0)
+		{
+			if (lastAddr + declarations[lastAddr]->size > item.first)
+			{
+				// UH OH!
+				int bp = 0;
+			}
+
+			uint8_t* rawDataArr = rawData.data();
+
+			if (lastAddr + declarations[lastAddr]->size != item.first)
+			{
+				int diff = item.first - (lastAddr + declarations[lastAddr]->size);
+
+				string src = "";
+
+				src += StringHelper::Sprintf("static u8 unaccounted%04X[] = \n{\n\t", lastAddr + declarations[lastAddr]->size);
+
+				for (int i = 0; i < diff; i++)
+				{
+					src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr + declarations[lastAddr]->size + i]);
+
+					if (i % 16 == 15)
+						src += "\n\t";
+				}
+
+				src += "\n};\n";
+
+				declarations[lastAddr + declarations[lastAddr]->size] = new Declaration(DeclarationAlignment::None, diff, src);
+			}
+		}
+
+		lastAddr = item.first;
+	}
+
+	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
+	if (lastAddr + declarations[lastAddr]->size < rawData.size())
+	{
+		int diff = (int)(rawData.size() - (lastAddr + declarations[lastAddr]->size));
+
+		string src = "";
+
+		src += StringHelper::Sprintf("static u8 unaccounted%04X[] = \n{\n\t", lastAddr + declarations[lastAddr]->size);
+
+		for (int i = 0; i < diff; i++)
+		{
+			src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + declarations[lastAddr]->size + i]);
+
+			if (i % 16 == 15)
+				src += "\n\t";
+		}
+
+		src += "\n};\n";
+
+		declarations[lastAddr + declarations[lastAddr]->size] = new Declaration(DeclarationAlignment::None, diff, src);
+	}
+
+	declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
 	{
 		return lhs.first < rhs.first;
@@ -213,6 +397,25 @@ string ZFile::ProcessDeclarations()
 	{
 		output += item.second->text + "\n";
 	}
+
+	output += "\n";
+
+	return output;
+}
+
+
+string ZFile::ProcessExterns()
+{
+	string output = "";
+
+	auto externsKeysSorted = vector<pair<int32_t, string>>(externs.begin(), externs.end());
+	sort(externsKeysSorted.begin(), externsKeysSorted.end(), [](const auto& lhs, const auto& rhs)
+	{
+		return lhs.first < rhs.first;
+	});
+
+	for (pair<int32_t, string> item : externsKeysSorted)
+		output += item.second + "\n";
 
 	output += "\n";
 

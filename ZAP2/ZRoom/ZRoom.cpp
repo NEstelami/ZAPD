@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <chrono>
 #include "ZRoom.h"
+#include "ZFile.h"
 #include "ZCutscene.h"
 #include "../ZBlob.h"
 #include "ObjectList.h"
@@ -34,25 +35,28 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZRoom* nScene)
+ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, ZRoom* nScene)
 {
-	commands = vector<ZRoomCommand*>();
-	declarations = map<int32_t, Declaration*>();
-	extDefines = "";
-	rawData = nRawData;
-	name = reader->Attribute("Name");
+	ZRoom* room = new ZRoom();
+
+	room->parent = nParent;
+
+	room->commands = vector<ZRoomCommand*>();
+	room->extDefines = "";
+	room->rawData = nRawData;
+	room->name = reader->Attribute("Name");
 
 	//printf("ZRoom: %s\n", name.c_str());
 
-	scene = nScene;
+	room->scene = nScene;
 
 	//GenDefinitions();
 
 	int cmdCount = 999999;
 
-	if (name == "syotes_room_0")
+	if (room->name == "syotes_room_0")
 	{
-		SyotesRoomHack();
+		room->SyotesRoomHack();
 		cmdCount = 0;
 	}
 
@@ -68,8 +72,8 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			string addressStr = child->Attribute("Address");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZDisplayList* dList = new ZDisplayList(rawData, address, ZDisplayList::GetDListLength(rawData, address));
-			declarations[address] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), comment + dList->GetSourceOutputCode(name));
+			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address));
+			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), comment + dList->GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "BlobHint")
 		{
@@ -84,8 +88,8 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			string sizeStr = child->Attribute("Size");
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
-			ZBlob* blob = new ZBlob(rawData, address, size, StringHelper::Sprintf("%s_blob_%08X", name.c_str(), address));
-			declarations[address] = new Declaration(DeclarationAlignment::None, blob->GetRawDataSize(), comment + blob->GetSourceOutputCode(name));
+			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%s_blob_%08X", room->name.c_str(), address));
+			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, blob->GetRawDataSize(), comment + blob->GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
@@ -97,8 +101,8 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			string addressStr = child->Attribute("Address");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZCutscene* cutscene = new ZCutscene(rawData, address, 9999);
-			declarations[address] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), comment + cutscene->GetSourceOutputCode(name));
+			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999);
+			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), comment + cutscene->GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
 		{
@@ -118,7 +122,7 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
 			}
 
-			commandSets.push_back(CommandSet(address, commandsCount));
+			room->commandSets.push_back(CommandSet(address, commandsCount));
 		}
 		else if (string(child->Name()) == "PathHint")
 		{
@@ -130,10 +134,10 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			string addressStr = child->Attribute("Address");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(this, rawData, address);
+			SetPathways* pathway = new SetPathways(room, room->rawData, address);
 			pathway->InitList(address);
-			pathway->GenerateSourceCodePass1(name, 0);
-			pathway->GenerateSourceCodePass2(name, 0);
+			pathway->GenerateSourceCodePass1(room->name, 0);
+			pathway->GenerateSourceCodePass2(room->name, 0);
 
 			delete pathway;
 		}
@@ -151,14 +155,16 @@ ZRoom::ZRoom(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, str
 			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
-			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), rawData, address, StringHelper::Sprintf("%s_tex_%08X", name.c_str(), address), width, height);
-			declarations[address] = new Declaration(DeclarationAlignment::None, tex->GetRawDataSize(), comment + tex->GetSourceOutputCode(name));
+			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%s_tex_%08X", room->name.c_str(), address), width, height);
+			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, tex->GetRawDataSize(), comment + tex->GetSourceOutputCode(room->name));
 		}
 	}
 
 	//ParseCommands(rawDataIndex);
-	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
-	ProcessCommandSets();
+	room->commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
+	room->ProcessCommandSets();
+
+	return room;
 }
 
 void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
@@ -254,8 +260,8 @@ void ZRoom::ProcessCommandSets()
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
-			declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass1.c_str(), cmd->cmdAddress));
-			externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
+			parent->declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass1.c_str(), cmd->cmdAddress));
+			parent->externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
 		}
 
 		sourceOutput += "\n";
@@ -270,8 +276,8 @@ void ZRoom::ProcessCommandSets()
 
 		if (pass2 != "")
 		{
-			declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
-			externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), cmd->cmdSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
+			parent->declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
+			parent->externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), cmd->cmdSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
 		}
 	}
 }
@@ -317,7 +323,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 	int declarationIndex = -1;
 
 	// Copy it into a vector.
-	vector<pair<int32_t, Declaration*>> declarationKeysSorted(declarations.begin(), declarations.end());
+	vector<pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(), parent->declarations.end());
 
 	// Sort the vector according to the word count in descending order.
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
@@ -376,7 +382,7 @@ string ZRoom::GetSourceOutputHeader(string prefix)
 	sourceOutput += "\n";
 
 	// Copy it into a vector.
-	vector<pair<int32_t, string>> externsKeysSorted(externs.begin(), externs.end());
+	vector<pair<int32_t, string>> externsKeysSorted(parent->externs.begin(), parent->externs.end());
 
 	// Sort the vector according to the word count in descending order.
 	sort(externsKeysSorted.begin(), externsKeysSorted.end(), [](const auto& lhs, const auto& rhs)
@@ -404,7 +410,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	sourceOutput += "#include <z64cutscene_commands.h>\n";
 	sourceOutput += "#include <variables.h>\n";
 
-	sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", name.c_str());
+	//sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", name.c_str());
 	
 	if (scene != nullptr)
 	{
@@ -440,8 +446,8 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 					//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
 
-					declarations.erase(texturesSorted[i + 1].first);
-					externs.erase(texturesSorted[i + 1].first);
+					parent->declarations.erase(texturesSorted[i + 1].first);
+					parent->externs.erase(texturesSorted[i + 1].first);
 					textures.erase(texturesSorted[i + 1].first);
 					texturesSorted.erase(texturesSorted.begin() + i + 1);
 
@@ -452,7 +458,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 			}
 		}
 
-		externs[0xFFFFFFFF] = defines;
+		parent->externs[0xFFFFFFFF] = defines;
 	}
 
 	for (pair<int32_t, ZTexture*> item : textures)
@@ -460,179 +466,8 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 		string declaration = "";
 
 		declaration += item.second->GetSourceOutputCode(prefix);
-		declarations[item.first] = new Declaration(DeclarationAlignment::None, item.second->GetRawDataSize(), item.second->GetSourceOutputCode(name));
+		parent->declarations[item.first] = new Declaration(DeclarationAlignment::None, item.second->GetRawDataSize(), item.second->GetSourceOutputCode(name));
 	}
-
-	// Copy it into a vector.
-	vector<pair<int32_t, Declaration*>> declarationKeysSorted(declarations.begin(), declarations.end());
-
-	// Sort the vector according to the word count in descending order.
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs) 
-	{ 
-		return lhs.first < rhs.first;
-	});
-
-	int lastPtr = 0;
-
-	// Account for padding/alignment
-	int lastAddr = 0;
-
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
-	{
-		while (declarations[item.first]->size % 4 != 0)
-		{
-			declarations[item.first]->size++;
-		}
-
-		if (lastAddr != 0)
-		{
-			if (item.second->alignment == DeclarationAlignment::Align16)
-			{
-				int lastAddrSizeTest = declarations[lastAddr]->size;
-				int curPtr = lastAddr + declarations[lastAddr]->size;
-
-				while (curPtr % 4 != 0)
-				{
-					declarations[lastAddr]->size++;
-					//declarations[item.first]->size++;
-					curPtr++;
-				}
-
-				/*while (curPtr % 16 != 0)
-				{
-					char buffer[2048];
-
-					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
-					declarations[item.first]->text = buffer + declarations[item.first]->text;
-
-					declarations[lastAddr]->size += 4;
-					curPtr += 4;
-				}*/
-			}
-			else if (item.second->alignment == DeclarationAlignment::Align8)
-				{
-					int curPtr = lastAddr + declarations[lastAddr]->size;
-
-					while (curPtr % 4 != 0)
-					{
-						declarations[lastAddr]->size++;
-						//item.second->size++;
-						//declarations[item.first]->size++;
-						curPtr++;
-					}
-
-					while (curPtr % 8 != 0)
-					{
-						char buffer[2048];
-
-						sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
-						declarations[item.first]->text = buffer + declarations[item.first]->text;
-
-						declarations[lastAddr]->size += 4;
-						//item.second->size += 4;
-						//declarations[item.first]->size += 4;
-						curPtr += 4;
-					}
-				}
-		}
-
-		if (item.second->padding == DeclarationPadding::Pad16)
-		{
-			int curPtr = item.first + item.second->size;
-
-			while (curPtr % 4 != 0)
-			{
-				item.second->size++;
-				curPtr++;
-			}
-
-			while (curPtr % 16 != 0)
-			{
-				char buffer[2048];
-
-				sprintf(buffer, "static u32 pad%02X = 0;\n", curPtr);
-				declarations[item.first]->text += buffer;
-
-				item.second->size += 4;
-				curPtr += 4;
-			}
-		}
-
-		//sourceOutput += declarations[item.first]->text + "\n";
-
-		lastAddr = item.first;
-	}
-
-	// Handle for unaccounted data
-	lastAddr = 0;
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
-	{
-		if (lastAddr != 0)
-		{
-			if (lastAddr + declarations[lastAddr]->size > item.first)
-			{
-				// UH OH!
-				int bp = 0;
-			}
-
-			uint8_t* rawDataArr = rawData.data();
-
-			if (lastAddr + declarations[lastAddr]->size != item.first)
-			{
-				int diff = item.first - (lastAddr + declarations[lastAddr]->size);
-
-				string src = "";
-
-				src += StringHelper::Sprintf("static u8 unaccounted%04X[] = \n{\n\t", lastAddr + declarations[lastAddr]->size);
-
-				for (int i = 0; i < diff; i++)
-				{
-					src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr + declarations[lastAddr]->size + i]);
-
-					if (i % 16 == 15)
-						src += "\n\t";
-				}
-
-				src += "\n};\n";
-
-				declarations[lastAddr + declarations[lastAddr]->size] = new Declaration(DeclarationAlignment::None, diff, src);
-			}
-		}
-
-		lastAddr = item.first;
-	}
-
-	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
-	if (lastAddr + declarations[lastAddr]->size < rawData.size())
-	{
-		int diff = (int)(rawData.size() - (lastAddr + declarations[lastAddr]->size));
-
-		string src = "";
-
-		src += StringHelper::Sprintf("static u8 unaccounted%04X[] = \n{\n\t", lastAddr + declarations[lastAddr]->size);
-
-		for (int i = 0; i < diff; i++)
-		{
-			src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + declarations[lastAddr]->size + i]);
-
-			if (i % 16 == 15)
-				src += "\n\t";
-		}
-
-		src += "\n};\n";
-
-		declarations[lastAddr + declarations[lastAddr]->size] = new Declaration(DeclarationAlignment::None, diff, src);
-	}
-
-	// Print out our declarations
-	declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
-	{
-		return lhs.first < rhs.first;
-	});
-
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
-		sourceOutput += item.second->text + "\n";
 
 	sourceOutput += "\n";
 

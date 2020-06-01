@@ -1,7 +1,9 @@
 #include "SetObjectList.h"
 #include "../ZRoom.h"
 #include "../ObjectList.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -20,51 +22,28 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int ra
 	}
 
 	if (segmentOffset != 0)
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 }
 
 string SetObjectList::GenerateExterns()
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "s16 _%s_objectList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
-	return sourceOutput;
+	return StringHelper::Sprintf("s16 _%s_objectList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	char line[2048];
 
-	sprintf(line, "%s 0x%02X, (u32)_%s_objectList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput += line;
+	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_objectList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
 
 	string declaration = "";
-	sprintf(line, "s16 _%s_objectList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
-	declaration += line;
+	declaration += StringHelper::Sprintf("s16 _%s_objectList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);;
 
 	for (uint16_t objectIndex : objects)
-	{
-		sprintf(line, "\t%s,\n", ObjectList[objectIndex].c_str());
-		declaration += line;
-	}
+		declaration += StringHelper::Sprintf("\t%s,\n", ObjectList[objectIndex].c_str());
 
 	declaration += "};\n";
-
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, objects.size() * 2, declaration);
-
-	return sourceOutput;
-}
-
-string SetObjectList::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	string sourceOutput = "";
-	char line[2048];
-
-	
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, objects.size() * 2, declaration);
 
 	return sourceOutput;
 }
