@@ -1,7 +1,9 @@
 #include "SetRoomList.h"
 #include "../RoomList.h"
 #include "../ZRoom.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -25,49 +27,31 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	string declaration = "";
 	char line[2048];
 
-	sprintf(line, "RomFile _%s_roomList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
-	declaration += line;
+	declaration += StringHelper::Sprintf("RomFile _%s_roomList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);;
 
 	for (RoomEntry* entry : rooms)
 	{
 		string roomName = RoomList[entry->virtualAddressStart];
-		sprintf(line, "\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());
-		declaration += line;
+		declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());;
 	}
 
 	declaration += "};\n";
-
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, declaration);
 }
 
 string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "%s 0x%02X, (u32)&_%s_roomList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
-	return sourceOutput;
+	return StringHelper::Sprintf("%s 0x%02X, (u32)&_%s_roomList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetRoomList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	return sourceOutput;
+	return "";
 }
 
 string SetRoomList::GenerateExterns()
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "extern RomFile _%s_roomList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
-	return sourceOutput;
+	return StringHelper::Sprintf("extern RomFile _%s_roomList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetRoomList::GetCommandCName()

@@ -1,5 +1,6 @@
 #include "SetPathways.h"
 #include "../ZRoom.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
@@ -18,7 +19,7 @@ SetPathways::SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	uint32_t currentPtr = listSegmentOffset;
 
 	if (segmentOffset != 0)
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 
 	//if (listSegmentOffset != 0)
 		//zRoom->declarations[listSegmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
@@ -33,10 +34,6 @@ void SetPathways::InitList(uint32_t address)
 
 string SetPathways::GetSourceOutputCode(std::string prefix)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-
 	return "";
 }
 
@@ -45,12 +42,14 @@ string SetPathways::GenerateSourceCodePass1(string roomName, int baseAddress)
 	//int numPathsReal = zRoom->GetDeclarationSizeFromNeighbor(listSegmentOffset) / 6;
 	uint32_t currentPtr = listSegmentOffset;
 
+	uint8_t* data = _rawData.data();
+
 	for (int i = 0; i < numPoints; i++)
 	{
 		PathwayEntry* entry = new PathwayEntry();
-		entry->x = BitConverter::ToInt16BE(_rawData, currentPtr + 0);
-		entry->y = BitConverter::ToInt16BE(_rawData, currentPtr + 2);
-		entry->z = BitConverter::ToInt16BE(_rawData, currentPtr + 4);
+		entry->x = BitConverter::ToInt16BE(data, currentPtr + 0);
+		entry->y = BitConverter::ToInt16BE(data, currentPtr + 2);
+		entry->z = BitConverter::ToInt16BE(data, currentPtr + 4);
 
 		pathways.push_back(entry);
 
@@ -69,8 +68,8 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	{
 		string declaration = StringHelper::Sprintf("Path _%s_pathway_%08X = { %i, (u32)_%s_pathwayList_%08X };\n", roomName.c_str(), segmentOffset, numPoints, roomName.c_str(), listSegmentOffset);
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, 8, declaration);
-		zRoom->externs[segmentOffset] = StringHelper::Sprintf("extern Path _%s_pathway_%08X;\n", roomName.c_str(), segmentOffset);
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, 8, declaration);
+		zRoom->parent->externs[segmentOffset] = StringHelper::Sprintf("extern Path _%s_pathway_%08X;\n", roomName.c_str(), segmentOffset);
 	}
 
 	{
@@ -87,8 +86,8 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 		declaration += "};\n\n";
 
 
-		zRoom->declarations[listSegmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, pathways.size() * 6, declaration);
-		zRoom->externs[listSegmentOffset] = StringHelper::Sprintf("extern Vec3s _%s_pathwayList_%08X[];\n", roomName.c_str(), listSegmentOffset);
+		zRoom->parent->declarations[listSegmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, pathways.size() * 6, declaration);
+		zRoom->parent->externs[listSegmentOffset] = StringHelper::Sprintf("extern Vec3s _%s_pathwayList_%08X[];\n", roomName.c_str(), listSegmentOffset);
 	}
 
 	return sourceOutput;
@@ -101,12 +100,7 @@ int32_t SetPathways::GetRawDataSize()
 
 string SetPathways::GenerateExterns()
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sourceOutput += StringHelper::Sprintf("extern Vec3s _%s_pathwayList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-	
-	return sourceOutput;
+	return StringHelper::Sprintf("extern Vec3s _%s_pathwayList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetPathways::GetCommandCName()

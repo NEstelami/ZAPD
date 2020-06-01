@@ -139,6 +139,7 @@
     <ClCompile Include="OpenFBX\ofbx.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="ZAnimation.cpp" />
     <ClCompile Include="ZBlob.cpp" />
     <ClCompile Include="ZCutscene.cpp" />
     <ClCompile Include="ZDisplayList.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="tiny_gltf.h" />
     <ClInclude Include="Vec3s.h" />
+    <ClInclude Include="ZAnimation.h" />
     <ClInclude Include="ZBlob.h" />
     <ClInclude Include="ZCutscene.h" />
     <ClInclude Include="ZDisplayList.h" />

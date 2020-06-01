@@ -13,12 +13,7 @@ SetWind::SetWind(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) 
 
 string SetWind::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sourceOutput += StringHelper::Sprintf("%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X, 0x%02X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), windWest, windVertical, windSouth, clothFlappingStrength);
-
-	return sourceOutput;
+	return StringHelper::Sprintf("%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X, 0x%02X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), windWest, windVertical, windSouth, clothFlappingStrength);
 }
 
 string SetWind::GetCommandCName()

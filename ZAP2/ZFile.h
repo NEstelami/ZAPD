@@ -18,6 +18,7 @@ class ZFile
 {
 public:
 	std::map<int32_t, Declaration*> declarations;
+	std::map<int32_t, std::string> externs;
 
 	ZFile(std::string nOutPath, std::string nName);
 	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath);
@@ -27,6 +28,7 @@ public:
 	void AddResource(ZResource* res);
 
 protected:
+	std::vector<uint8_t> rawData;
 	std::vector<ZResource*> resources;
 	std::string name;
 	std::string basePath;
@@ -37,4 +39,5 @@ protected:
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader);
 	void GenerateSourceFiles(std::string outputDir);
 	std::string ProcessDeclarations();
+	std::string ProcessExterns();
 };

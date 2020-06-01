@@ -1,4 +1,5 @@
 #include "SetAlternateHeaders.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
@@ -9,7 +10,7 @@ SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> raw
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
 	if (segmentOffset != 0)
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 	
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
@@ -46,8 +47,8 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, headers.size() * 4, declaration);
-	zRoom->externs[segmentOffset] = StringHelper::Sprintf("extern u32 _%s_alternateHeaders_%08X[];\n", roomName.c_str(), segmentOffset);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, headers.size() * 4, declaration);
+	zRoom->parent->externs[segmentOffset] = StringHelper::Sprintf("extern u32 _%s_alternateHeaders_%08X[];\n", roomName.c_str(), segmentOffset);
 
 	return sourceOutput;
 }

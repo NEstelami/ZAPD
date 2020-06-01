@@ -1,6 +1,7 @@
 #include "SetStartPositionList.h"
 #include "../ZRoom.h"
 #include "../ActorList.h"
+#include "../../ZFile.h"
 #include "../../BitConverter.h"
 
 using namespace std;
@@ -11,7 +12,7 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 	
 	if (segmentOffset != 0)
-		zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
 
 	actors = vector<ActorSpawnEntry*>();
 
@@ -48,7 +49,7 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAd
 
 	declaration += "};\n";
 
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, actors.size() * 16, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, actors.size() * 16, declaration);
 
 	return sourceOutput;
 }

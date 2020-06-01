@@ -12,7 +12,7 @@
 
 struct DisplayListObject
 {
-	std::map<std::string, std::vector<Vertex*>> vertices;
+	std::map<std::string, std::vector<Vertex>> vertices;
 	std::map<std::string, ZTexture*> textures;
 	std::map<std::string, std::string> drawCommands;
 };

@@ -1,7 +1,9 @@
 #include "SetEntranceList.h"
 #include "SetStartPositionList.h"
+#include "../../ZFile.h"
 #include "../ZRoom.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -23,7 +25,7 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 	sourceOutput = line;
 
 	// Parse Entrances and Generate Declaration
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, ""); // Make sure this segment is defined
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, ""); // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
@@ -51,21 +53,14 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 	}
 
 	declaration += "};\n";
-
-	zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, entrances.size() * 2, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, entrances.size() * 2, declaration);
 
 	return sourceOutput;
 }
 
 string SetEntranceList::GenerateExterns()
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "extern EntranceEntry _%s_entranceList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
-
-	return sourceOutput;
+	return StringHelper::Sprintf("extern EntranceEntry _%s_entranceList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetEntranceList::GetCommandCName()

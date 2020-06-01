@@ -9,10 +9,7 @@ EndMarker::EndMarker(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataInd
 
 string EndMarker::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-
-	sourceOutput = StringHelper::Sprintf("%s 0x00, 0x00 };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
-	return sourceOutput;
+	return StringHelper::Sprintf("%s 0x00, 0x00 };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
 }
 
 string EndMarker::GetCommandCName()

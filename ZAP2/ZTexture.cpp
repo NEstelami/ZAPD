@@ -18,18 +18,23 @@ ZTexture::ZTexture()
 }
 
 // EXTRACT MODE
-ZTexture::ZTexture(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath)
+ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
 {
-	ParseXML(reader);
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
+	ZTexture* tex = new ZTexture();
 
-	relativePath = nRelPath;
+	tex->ParseXML(reader);
+	tex->rawDataIndex = nRawDataIndex;
+	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + tex->rawDataIndex + tex->GetRawDataSize());
 
-	FixRawData();
-	PrepareBitmap();
+	tex->relativePath = nRelPath;
+
+	tex->FixRawData();
+	tex->PrepareBitmap();
+
+	return tex;
 }
 
-ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nName, int nWidth, int nHeight)
+ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nName, int nWidth, int nHeight)
 {
 	ZTexture* tex = new ZTexture();
 
@@ -37,10 +42,10 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	tex->height = nHeight;
 	tex->type = nType;
 	tex->name = nName;
+	tex->rawDataIndex = nRawDataIndex;
 
-	int dataEnd = rawDataIndex + tex->GetRawDataSize();
-
-	tex->rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + dataEnd);
+	int dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
+	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
 
 	tex->FixRawData();
 	tex->PrepareBitmap();
@@ -49,11 +54,14 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 }
 
 // BUILD MODE
-ZTexture::ZTexture(XMLElement* reader, string inFolder)
+ZTexture* ZTexture::BuildFromXML(XMLElement* reader, string inFolder)
 {
-	ParseXML(reader);
+	ZTexture* tex = new ZTexture();
 
-	PrepareRawData(inFolder);
+	tex->ParseXML(reader);
+	tex->PrepareRawData(inFolder);
+
+	return tex;
 }
 
 ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
@@ -420,7 +428,6 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 		for (int x = 0; x < width; x++)
 		{
 			int pos = ((y * width) + x);
-
 			rawData[pos] = bmpRgb[(((y * width) + x) * 3) + 0];
 		}
 	}
@@ -649,7 +656,7 @@ string ZTexture::GetSourceOutputCode(std::string prefix)
 		sourceOutput += StringHelper::Sprintf("0x%016llX, ", BitConverter::ToInt64BE(rawDataArr, i));
 
 		if (i % 32 == 24)
-			sourceOutput += StringHelper::Sprintf(" // 0x%08X \n", (i / 16) * 16);
+			sourceOutput += StringHelper::Sprintf(" // 0x%08X \n", rawDataIndex + ((i / 32) * 32));
 	}
 
 	sourceOutput += "};\n";

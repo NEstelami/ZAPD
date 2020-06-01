@@ -33,6 +33,11 @@ vector<uint8_t> ZResource::GetRawData()
 	return rawData;
 }
 
+int ZResource::GetRawDataIndex()
+{
+	return rawDataIndex;
+}
+
 int ZResource::GetRawDataSize()
 {
 	return rawData.size();

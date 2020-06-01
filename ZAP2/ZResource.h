@@ -21,6 +21,7 @@ public:
 	void SetName(std::string nName);
 	std::string GetRelativePath();
 	virtual std::vector<uint8_t> GetRawData();
+	virtual int GetRawDataIndex();
 	virtual int GetRawDataSize();
 	virtual std::string GetSourceOutputHeader(std::string prefix);
 	virtual std::string GetSourceOutputCode(std::string prefix);
@@ -29,6 +30,7 @@ protected:
 	std::string name;
 	std::string relativePath;
 	std::vector<uint8_t> rawData;
+	int rawDataIndex;
 	std::string sourceOutput;
 };
 
