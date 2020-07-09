@@ -97,7 +97,7 @@ string ZCutscene::GetSourceOutputCode(string prefix)
 		size += cmd->GetCommandSize();
 	}
 
-	output += StringHelper::Sprintf("\tCS_END(),\n\tCS_PAD(),\n", commands.size(), endFrame);
+	output += StringHelper::Sprintf("\tCS_END(),\n", commands.size(), endFrame);
 
 	output += "};\n";
 
@@ -791,7 +791,6 @@ string CutsceneCommandEnd::GenerateSourceCode(string roomName, int baseAddress)
 	string result = "";
 
 	result += StringHelper::Sprintf("CS_END(),\n");
-	result += StringHelper::Sprintf("CS_PAD(),\n");
 
 	return result;
 }
