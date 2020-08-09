@@ -3,8 +3,9 @@ CFLAGS := -std=c++17 -I ZAP2 -O2 -rdynamic
 
 UNAME := $(shell uname)
 
+FS_INC = 
 ifneq ($(UNAME), Darwin)
-    CFLAGS += -lstdc++fs
+    FS_INC += -lstdc++fs
 endif
 
 SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/OpenFBX
@@ -23,4 +24,4 @@ rebuild: clean all
 	@:
 
 ZAP2.out: $(CPP_FILES)
-	$(CC) $(CFLAGS) $(CPP_FILES) -o ZAP2.out
+	$(CC) $(CFLAGS) $(CPP_FILES) -o ZAP2.out $(FS_INC)
