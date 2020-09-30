@@ -3,6 +3,8 @@
 #include "../ZRoom.h"
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
+#include <Path.h>
+#include <Globals.h>
 
 using namespace std;
 
@@ -60,7 +62,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 			currentPtr += 8;
 		}
 
-		declaration += StringHelper::Sprintf("MeshHeader0 _%s_meshHeader_%08X = { { 0 }, 0x%02X, ", zRoom->GetName().c_str(), segmentOffset, meshHeader0->entries.size());
+		//declaration += StringHelper::Sprintf("MeshHeader0 _%s_meshHeader_%08X = { { 0 }, 0x%02X, ", zRoom->GetName().c_str(), segmentOffset, meshHeader0->entries.size());
+		declaration += StringHelper::Sprintf("{ 0 }, 0x%02X, ", meshHeader0->entries.size());
 
 		if (meshHeader0->dListStart != 0)
 			sprintf(line, "(u32)&_%s_meshDListEntry_%08X, ", zRoom->GetName().c_str(), meshHeader0->dListStart);
@@ -70,38 +73,43 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		declaration += line;
 
 		if (meshHeader0->dListEnd != 0)
-			sprintf(line, "(u32)&(_%s_meshDListEntry_%08X) + sizeof(_%s_meshDListEntry_%08X) };\n", zRoom->GetName().c_str(), meshHeader0->dListStart, zRoom->GetName().c_str(), meshHeader0->dListStart);
+			sprintf(line, "(u32)&(_%s_meshDListEntry_%08X) + sizeof(_%s_meshDListEntry_%08X)", zRoom->GetName().c_str(), meshHeader0->dListStart, zRoom->GetName().c_str(), meshHeader0->dListStart);
 		else
-			sprintf(line, "0 };\n");
+			sprintf(line, "0");
 
 		declaration += line;
 
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::Align16, 12, declaration);
+		zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::Align16, 12, "MeshHeader0", StringHelper::Sprintf("_%s_meshHeader_%08X", zRoom->GetName().c_str(), segmentOffset),
+			declaration);
 
 		declaration = "";
-		declaration += StringHelper::Sprintf("MeshEntry0 _%s_meshDListEntry_%08X[%i] = \n{\n", zRoom->GetName().c_str(), meshHeader0->dListStart, meshHeader0->entries.size());
 
 		for (int i = 0; i < meshHeader0->entries.size(); i++)
 		{
 			if (meshHeader0->entries[i]->opaqueDListAddr != 0)
-				sprintf(line, "\t{ (u32)_%s_dlist_%08X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
+				sprintf(line, "\t{ (u32)%s_dlist_%08X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
 			else
 				sprintf(line, "\t{ 0, ");
 
 			declaration += line;
 
 			if (meshHeader0->entries[i]->translucentDListAddr != 0)
-				sprintf(line, "(u32)_%s_dlist_%08X },\n", zRoom->GetName().c_str(), meshHeader0->entries[i]->translucentDListAddr);
+				sprintf(line, "(u32)%s_dlist_%08X },\n", zRoom->GetName().c_str(), meshHeader0->entries[i]->translucentDListAddr);
 			else
 				sprintf(line, "0 },\n");
 
 			declaration += line;
 		}
 
-		declaration += "};\n\n";
-		declaration += "static u32 terminatorMaybe = 0x01000000; // This always appears after the mesh entries. Its purpose is not clear.\n";
+		//declaration += "static u32 terminatorMaybe = 0x01000000; // This always appears after the mesh entries. Its purpose is not clear.\n";
 
-		zRoom->parent->declarations[meshHeader0->dListStart] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, (meshHeader0->entries.size() * 8) + 4, declaration);
+		zRoom->parent->AddDeclarationArray(meshHeader0->dListStart, DeclarationAlignment::None, DeclarationPadding::None, (meshHeader0->entries.size() * 8) + 0, "MeshEntry0",
+			StringHelper::Sprintf("_%s_meshDListEntry_%08X", zRoom->GetName().c_str(), meshHeader0->dListStart), meshHeader0->entries.size(), declaration);
+
+		zRoom->parent->AddDeclaration(meshHeader0->dListStart + (meshHeader0->entries.size() * 8) + 0, DeclarationAlignment::None, DeclarationPadding::Pad16, 4, "static s32",
+			"terminatorMaybe", " 0x01000000 ");
+
+		//zRoom->parent->declarations[meshHeader0->dListStart] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, (meshHeader0->entries.size() * 8) + 4, declaration);
 
 		meshHeader = meshHeader0;
 	}
@@ -129,13 +137,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 			headerSingle->imagePal = BitConverter::ToInt16BE(rawData, segmentOffset + 26);
 			headerSingle->imageFlip = BitConverter::ToInt16BE(rawData, segmentOffset + 28);
 
-			declaration += StringHelper::Sprintf("MeshHeader1Single _%s_meshHeader_%08X = { { { 1 }, 1, 0x%08X  }, 0x%08X, ", 
-				zRoom->GetName().c_str(), segmentOffset, headerSingle->entryRecord, headerSingle->imagePtr);
+			declaration += StringHelper::Sprintf("{ { 1 }, 1, 0x%08X  }, 0x%08X, ", 
+				headerSingle->entryRecord, headerSingle->imagePtr);
 
-			declaration += StringHelper::Sprintf("0x%08X, 0x%08X, %i, %i, %i, %i, %i, %i };\n",
+			declaration += StringHelper::Sprintf("0x%08X, 0x%08X, %i, %i, %i, %i, %i, %i\n",
 				headerSingle->unknown, headerSingle->unknown2, headerSingle->bgWidth, headerSingle->bgHeight, headerSingle->imageFormat, headerSingle->imageSize, headerSingle->imagePal, headerSingle->imageFlip);
 
-			zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 0x1E, declaration);
+			zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16, 0x1E, "MeshHeader1Single",
+				StringHelper::Sprintf("_%s_meshHeader_%08X", zRoom->GetName().c_str(), segmentOffset), declaration);
 
 			//if (headerSingle->imagePtr != 0)
 			//{
@@ -157,10 +166,13 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			//zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 12, "");
 
-			declaration += StringHelper::Sprintf("MeshHeader1Multi _%s_meshHeader_%08X = { { { 1 }, 2, 0x%08X }, 0x%08X, 0x%08X };\n",
-				zRoom->GetName().c_str(), segmentOffset, headerMulti->entryRecord, headerMulti->bgCnt, headerMulti->bgRecordPtr);
+			declaration += StringHelper::Sprintf("{ { 1 }, 2, 0x%08X }, 0x%08X, 0x%08X",
+				headerMulti->entryRecord, headerMulti->bgCnt, headerMulti->bgRecordPtr);
 
-			zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 16, declaration);
+			zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16, 16, "MeshHeader1Multi",
+				StringHelper::Sprintf("_%s_meshHeader_%08X", zRoom->GetName().c_str(), segmentOffset), declaration);
+
+			//zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, 16, declaration);
 
 			meshHeader1 = headerMulti;
 		}
@@ -219,7 +231,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 			currentPtr += 16;
 		}
 
-		sprintf(line, "MeshHeader2 _%s_meshHeader_%08X = { { 2 }, 0x%02X, ", zRoom->GetName().c_str(), segmentOffset, meshHeader2->entries.size());
+		sprintf(line, "{ 2 }, 0x%02X, ", meshHeader2->entries.size());
 		declaration += line;
 
 		if (meshHeader2->dListStart != 0)
@@ -230,18 +242,19 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		declaration += line;
 
 		if (meshHeader2->dListEnd != 0)
-			sprintf(line, "(u32)&(_%s_meshDListEntry_%08X) + sizeof(_%s_meshDListEntry_%08X) };\n", zRoom->GetName().c_str(), meshHeader2->dListStart, zRoom->GetName().c_str(), meshHeader2->dListStart);
+			sprintf(line, "(u32)&(_%s_meshDListEntry_%08X) + sizeof(_%s_meshDListEntry_%08X)", zRoom->GetName().c_str(), meshHeader2->dListStart, zRoom->GetName().c_str(), meshHeader2->dListStart);
 		else
-			sprintf(line, "0 };\n");
+			sprintf(line, "0");
 
 		declaration += line;
 
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 12, declaration);
+		zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None, 12, "MeshHeader2",
+			StringHelper::Sprintf("_%s_meshHeader_%08X", zRoom->GetName().c_str(), segmentOffset), declaration);
 
 		declaration = "";
 
-		sprintf(line, "MeshEntry2 _%s_meshDListEntry_%08X[%i] = \n{\n", zRoom->GetName().c_str(), meshHeader2->dListStart, meshHeader2->entries.size());
-		declaration += line;
+		//sprintf(line, "MeshEntry2 _%s_meshDListEntry_%08X[%i] = \n{\n", zRoom->GetName().c_str(), meshHeader2->dListStart, meshHeader2->entries.size());
+		//declaration += line;
 
 		for (int i = 0; i < meshHeader2->entries.size(); i++)
 		{
@@ -250,23 +263,28 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 			declaration += line;
 
 			if (meshHeader2->entries[i]->opaqueDListAddr != 0)
-				sprintf(line, "(u32)_%s_dlist_%08X, ", zRoom->GetName().c_str(), meshHeader2->entries[i]->opaqueDListAddr);
+				sprintf(line, "(u32)%s_dlist_%08X, ", zRoom->GetName().c_str(), meshHeader2->entries[i]->opaqueDListAddr);
 			else
 				sprintf(line, "0, ");
 
 			declaration += line;
 
 			if (meshHeader2->entries[i]->translucentDListAddr != 0)
-				sprintf(line, "(u32)_%s_dlist_%08X },\n", zRoom->GetName().c_str(), meshHeader2->entries[i]->translucentDListAddr);
+				sprintf(line, "(u32)%s_dlist_%08X },\n", zRoom->GetName().c_str(), meshHeader2->entries[i]->translucentDListAddr);
 			else
 				sprintf(line, "0 },\n");
 
 			declaration += line;
 		}
 
-		declaration += "};\n\n";
-		declaration += "static u32 terminatorMaybe = 0x01000000; // This always appears after the mesh entries. Its purpose is not clear.\n";
-		zRoom->parent->declarations[meshHeader2->dListStart] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, (meshHeader2->entries.size() * 16) + 4, declaration);
+		//declaration += "};\n\n";
+		//declaration += "static u32 terminatorMaybe = 0x01000000; // This always appears after the mesh entries. Its purpose is not clear.\n";
+
+		zRoom->parent->AddDeclarationArray(meshHeader2->dListStart, DeclarationAlignment::None, DeclarationPadding::None, (meshHeader2->entries.size() * 16) + 0, 
+			"MeshEntry2", StringHelper::Sprintf("_%s_meshDListEntry_%08X", zRoom->GetName().c_str(), meshHeader2->dListStart, meshHeader2->entries.size()), meshHeader2->entries.size(), declaration);
+
+		zRoom->parent->AddDeclaration(meshHeader2->dListStart + (meshHeader2->entries.size() * 16), DeclarationAlignment::None, DeclarationPadding::Pad16, 4, "static s32",
+			"terminatorMaybe", "0x01000000");
 
 		meshHeader = meshHeader2;
 	}
@@ -276,19 +294,39 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 {
 	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName()); // HOTSPOT
 
-	zRoom->parent->declarations[dList->GetRawDataIndex()] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), sourceOutput);
-	zRoom->parent->externs[dList->GetRawDataIndex()] = dList->GetSourceOutputHeader(zRoom->GetName());
+	string srcVarName = "";
+
+	if (Globals::Instance->includeFilePrefix)
+		srcVarName = StringHelper::Sprintf("%s_%s", zRoom->GetName().c_str(), dList->GetName().c_str());
+	else
+		srcVarName = StringHelper::Sprintf("%s", dList->GetName().c_str());
+
+	zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None, dList->GetRawDataSize(), "Gfx", srcVarName, 0, sourceOutput);
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-		zRoom->parent->declarations[vtxEntry.first] = new Declaration(DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, vtxEntry.second);
+	{
+		zRoom->parent->AddDeclarationArray(vtxEntry.first, DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, "Vtx_t",
+			StringHelper::Sprintf("%s_vertices_%08X", zRoom->GetName().c_str(), vtxEntry.first), 0, vtxEntry.second);
+
+		//zRoom->parent->declarations[vtxEntry.first] = new Declaration(DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, vtxEntry.second);
+	}
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 	{
 		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
-		zRoom->parent->declarations[texEntry.first] = new Declaration(DeclarationAlignment::None, dList->textures[texEntry.first]->GetRawDataSize(), texEntry.second);
+		
+		//zRoom->parent->AddDeclarationArray(texEntry.first, DeclarationAlignment::None, dList->textures[texEntry.first]->GetRawDataSize(), "u64",
+			//zRoom->textures[texEntry.first]->GetName(), 0, texEntry.second);
+
+		//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		zRoom->textures[texEntry.first]->Save(Globals::Instance->outputPath);
+
+		zRoom->parent->AddDeclarationIncludeArray(texEntry.first, StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
+			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(zRoom->textures[texEntry.first]->GetName()).c_str(), zRoom->textures[texEntry.first]->GetExternalExtension().c_str()), 
+			zRoom->textures[texEntry.first]->GetRawDataSize(), "u64", StringHelper::Sprintf("%s_tex_%08X", zRoom->textures[texEntry.first]->GetName().c_str(), texEntry.first), 0);
 	}
 }
 
@@ -296,16 +334,23 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
 	string sourceOutput = "";
 
-	sourceOutput += StringHelper::Sprintf("extern Gfx _%s_dlist_%08X[];\n", zRoom->GetName().c_str(), dList->GetRawDataIndex());
+	string srcVarName = "";
+
+	if (Globals::Instance->includeFilePrefix)
+		srcVarName = StringHelper::Sprintf("extern Gfx %s_dlist_%08X[];\n", zRoom->GetName().c_str(), dList->GetRawDataIndex());
+	else
+		srcVarName = StringHelper::Sprintf("extern Gfx dlist_%08X[];\n", dList->GetRawDataIndex());
+
+	sourceOutput += srcVarName;
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern Vtx_t _%s_vertices_%08X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
+		sourceOutput += StringHelper::Sprintf("extern Vtx_t %s_vertices_%08X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern u64 _%s_tex_%08X[];\n", zRoom->GetName().c_str(), texEntry.first);
+		sourceOutput += StringHelper::Sprintf("extern u64 %s_tex_%08X[];\n", zRoom->GetName().c_str(), texEntry.first);
 
 	sourceOutput += dList->defines;
 

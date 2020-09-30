@@ -11,6 +11,10 @@ public:
 	static Globals* Instance;
 
 	bool genSourceFile; // Used for extraction
+	bool useExternalResources;
+	bool testMode; // Enables certain experimental features
+	bool profile; // Measure performance of certain operations
+	bool includeFilePrefix; // Include the file prefix in symbols
 	ZFileMode fileMode;
 	std::string baseRomPath, inputPath, outputPath, cfgPath;
 	TextureType texType;

@@ -15,11 +15,11 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 	cutscene = new ZCutscene(rawData, segmentOffset, 9999);
 
-	//output += StringHelper::Sprintf("s32 _%s_cutsceneData_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
 	output += cutscene->GetSourceOutputCode(zRoom->GetName());
 
 	if (segmentOffset != 0)
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), output);
+		zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32", 
+			StringHelper::Sprintf("_%s_cutsceneData_%08X", zRoom->GetName().c_str(), segmentOffset), 0, output);
 }
 
 string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
@@ -49,28 +49,5 @@ RoomCommand SetCutscenes::GetRoomCommand()
 
 string SetCutscenes::GetSourceOutputCode(std::string prefix)
 {
-	//string sourceOutput = "";
-
-	//uint32_t curPtr = cmdAddress;
-
-	//sourceOutput += StringHelper::Sprintf("_%s_cutsceneData_%08X", zRoom->GetName().c_str(), segmentOffset);
-
-	//int size = 0;
-
-	//for (int i = 0; i < commands.size(); i++)
-	//{
-	//	CutsceneCommand* cmd = commands[i];
-	//	//zRoom->declarations[curPtr] = new Declaration(DeclarationAlignment::None, cmd->GetCommandSize(), cmd->GenerateSourceCode(prefix, curPtr));
-	//	sourceOutput += cmd->GenerateSourceCode(prefix, curPtr);
-	//	curPtr += cmd->GetCommandSize();
-	//	size += cmd->GetCommandSize();
-	//}
-
-	//sourceOutput += "};\n";
-
-	//zRoom->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, size, sourceOutput);
-
-	//return sourceOutput;
-
 	return "";
 }

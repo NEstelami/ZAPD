@@ -1,5 +1,4 @@
 #include "SetRoomList.h"
-#include "../RoomList.h"
 #include "../ZRoom.h"
 #include "../../ZFile.h"
 #include "../../BitConverter.h"
@@ -25,18 +24,17 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	}
 
 	string declaration = "";
-	char line[2048];
 
-	declaration += StringHelper::Sprintf("RomFile _%s_roomList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);;
-
-	for (RoomEntry* entry : rooms)
+	for (int i = 0; i < rooms.size(); i++)
 	{
-		string roomName = RoomList[entry->virtualAddressStart];
+		RoomEntry* entry = rooms[i];
+
+		string roomName = StringHelper::Sprintf("%s_room_%i", StringHelper::Split(zRoom->GetName(), "_scene")[0].c_str(), i);
 		declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());;
 	}
-
-	declaration += "};\n";
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, declaration);
+	
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, 
+		"RomFile", StringHelper::Sprintf("_%s_roomList_%08X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
 }
 
 string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)

@@ -7,6 +7,7 @@
 #include "ObjectList.h"
 #include "../File.h"
 #include "../StringHelper.h"
+#include "../Globals.h"
 #include "Commands/SetRoomList.h"
 #include "Commands/SetEchoSettings.h"
 #include "Commands/SetSoundSettings.h"
@@ -31,18 +32,25 @@
 #include "Commands/Unused09.h"
 #include "Commands/SetCutscenes.h"
 #include "Commands/EndMarker.h"
+#include <Path.h>
 
 using namespace std;
 using namespace tinyxml2;
+
+ZRoom::ZRoom() : ZResource()
+{
+	textures = map<int32_t, ZTexture*>();
+	commands = vector<ZRoomCommand*>();
+	commandSets = vector<CommandSet>();
+	extDefines = "";
+	scene = nullptr;
+}
 
 ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, ZRoom* nScene)
 {
 	ZRoom* room = new ZRoom();
 
 	room->parent = nParent;
-
-	room->commands = vector<ZRoomCommand*>();
-	room->extDefines = "";
 	room->rawData = nRawData;
 	room->name = reader->Attribute("Name");
 
@@ -73,7 +81,10 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address));
-			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), comment + dList->GetSourceOutputCode(room->name));
+			//room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), comment + dList->GetSourceOutputCode(room->name));
+			//room->parent->AddDeclarationArray(address, DeclarationAlignment::None, dList->GetRawDataSize(), "Gfx", "", 0, comment + dList->GetSourceOutputCode(room->name));
+
+			dList->GetSourceOutputCode(room->name);
 		}
 		else if (string(child->Name()) == "BlobHint")
 		{
@@ -89,7 +100,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
 			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%s_blob_%08X", room->name.c_str(), address));
-			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, blob->GetRawDataSize(), comment + blob->GetSourceOutputCode(room->name));
+			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(), "u8", StringHelper::Sprintf("_%s_%s", room->name.c_str(), blob->GetName().c_str()), 0, blob->GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
@@ -102,7 +113,9 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999);
-			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), comment + cutscene->GetSourceOutputCode(room->name));
+			
+			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32",
+				StringHelper::Sprintf("_%s_cutsceneData_%08X", room->name.c_str(), cutscene->segmentOffset), 0, cutscene->GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
 		{
@@ -156,7 +169,8 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
 			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%s_tex_%08X", room->name.c_str(), address), width, height);
-			room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, tex->GetRawDataSize(), comment + tex->GetSourceOutputCode(room->name));
+			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
+				tex->GetSourceOutputCode(room->name));
 		}
 	}
 
@@ -220,11 +234,11 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		auto end = chrono::steady_clock::now();
 		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-//#if _MSC_VER
-		//if (opcode == RoomCommand::SetMesh)
-		if (diff > 50)
-			printf("OP: %s, TIME: %ims\n", cmd->GetCommandCName().c_str(), diff);
-//#endif
+		if (Globals::Instance->profile)
+		{
+			if (diff > 50)
+				printf("OP: %s, TIME: %ims\n", cmd->GetCommandCName().c_str(), diff);
+		}
 
 		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
 
@@ -260,8 +274,8 @@ void ZRoom::ProcessCommandSets()
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
-			parent->declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass1.c_str(), cmd->cmdAddress));
-			parent->externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
+			parent->declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, cmd->GetCommandCName(),
+				StringHelper::Sprintf("_%s_set%04X_cmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), false, StringHelper::Sprintf("%s // 0x%04X", pass1.c_str(), cmd->cmdAddress));
 		}
 
 		sourceOutput += "\n";
@@ -275,10 +289,7 @@ void ZRoom::ProcessCommandSets()
 		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
 
 		if (pass2 != "")
-		{
-			parent->declarations[cmd->cmdAddress] = new Declaration(DeclarationAlignment::None, 8, StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
-			parent->externs[cmd->cmdAddress] = StringHelper::Sprintf("extern %s _%s_set%04X_cmd%02X;\n", cmd->GetCommandCName().c_str(), name.c_str(), cmd->cmdSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID);
-		}
+			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, cmd->GetCommandCName(), StringHelper::Sprintf("_%s_set%04X_cmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
 	}
 }
 
@@ -381,19 +392,6 @@ string ZRoom::GetSourceOutputHeader(string prefix)
 
 	sourceOutput += "\n";
 
-	// Copy it into a vector.
-	vector<pair<int32_t, string>> externsKeysSorted(parent->externs.begin(), parent->externs.end());
-
-	// Sort the vector according to the word count in descending order.
-	sort(externsKeysSorted.begin(), externsKeysSorted.end(), [](const auto& lhs, const auto& rhs)
-	{
-		return lhs.first < rhs.first;
-	});
-
-	// Print out the vector.
-	for (pair<int32_t, string> item : externsKeysSorted)
-		sourceOutput += item.second;
-
 	sourceOutput += "\n" + extDefines + "\n";
 	sourceOutput += "\n";
 
@@ -410,12 +408,8 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	sourceOutput += "#include <z64cutscene_commands.h>\n";
 	sourceOutput += "#include <variables.h>\n";
 
-	//sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", name.c_str());
-	
 	if (scene != nullptr)
-	{
 		sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", scene->GetName().c_str());
-	}
 
 	sourceOutput += "\n";
 
@@ -441,24 +435,22 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 				{
 					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
 
-					defines += StringHelper::Sprintf("#define _%s_tex_%08X ((u32)_%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
+					defines += StringHelper::Sprintf("#define %s_tex_%08X ((u32)%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
 						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
 
 					//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
 
 					parent->declarations.erase(texturesSorted[i + 1].first);
-					parent->externs.erase(texturesSorted[i + 1].first);
 					textures.erase(texturesSorted[i + 1].first);
 					texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-					//textures.erase(texturesSorted[i + 1].first);
 
 					i--;
 				}
 			}
 		}
 
-		parent->externs[0xFFFFFFFF] = defines;
+		parent->defines += defines;
+		//parent->externs[0xFFFFFFFF] = defines;
 	}
 
 	for (pair<int32_t, ZTexture*> item : textures)
@@ -466,7 +458,13 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 		string declaration = "";
 
 		declaration += item.second->GetSourceOutputCode(prefix);
-		parent->declarations[item.first] = new Declaration(DeclarationAlignment::None, item.second->GetRawDataSize(), item.second->GetSourceOutputCode(name));
+
+		//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		item.second->Save(Globals::Instance->outputPath);
+
+		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
+			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
+			"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
 	}
 
 	sourceOutput += "\n";
@@ -489,20 +487,58 @@ int ZRoom::GetRawDataSize()
 	return size;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nText)
-{
-	alignment = nAlignment;
-	padding = DeclarationPadding::None;
-	size = nSize;
-	text = nText;
-}
-
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nText)
 {
 	alignment = nAlignment;
 	padding = nPadding;
 	size = nSize;
+	preText = "";
 	text = nText;
+	postText = "";
+	preComment = "";
+	postComment = "";
+	varType = "";
+	varName = "";
+	isArray = false;
+	arrayItemCnt = 0;
+	includePath = "";
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, string nText) : Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
+{
+	varType = nVarType;
+	varName = nVarName;
+	isArray = nIsArray;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, string nText) : Declaration(nAlignment, nPadding, nSize, nText)
+{
+	varType = nVarType;
+	varName = nVarName;
+	isArray = nIsArray;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, int nArrayItemCnt, string nText) : Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
+{
+	varType = nVarType;
+	varName = nVarName;
+	isArray = nIsArray;
+	arrayItemCnt = nArrayItemCnt;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, int nArrayItemCnt, string nText) : Declaration(nAlignment, nPadding, nSize, nText)
+{
+	varType = nVarType;
+	varName = nVarName;
+	isArray = nIsArray;
+	arrayItemCnt = nArrayItemCnt;
+}
+
+Declaration::Declaration(std::string nIncludePath, uint32_t nSize, string nVarType, string nVarName) : Declaration(DeclarationAlignment::None, DeclarationPadding::None, nSize, "")
+{
+	includePath = nIncludePath;
+	varType = nVarType;
+	varName = nVarName;
 }
 
 CommandSet::CommandSet(int32_t nAddress)

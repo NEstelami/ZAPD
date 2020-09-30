@@ -19,7 +19,7 @@ SetPathways::SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	uint32_t currentPtr = listSegmentOffset;
 
 	if (segmentOffset != 0)
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
 
 	//if (listSegmentOffset != 0)
 		//zRoom->declarations[listSegmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
@@ -67,14 +67,14 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&_%s_pathway_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
 
 	{
-		string declaration = StringHelper::Sprintf("Path _%s_pathway_%08X = { %i, (u32)_%s_pathwayList_%08X };\n", roomName.c_str(), segmentOffset, numPoints, roomName.c_str(), listSegmentOffset);
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, 8, declaration);
-		zRoom->parent->externs[segmentOffset] = StringHelper::Sprintf("extern Path _%s_pathway_%08X;\n", roomName.c_str(), segmentOffset);
+		string declaration = StringHelper::Sprintf("%i, (u32)_%s_pathwayList_%08X", numPoints, roomName.c_str(), listSegmentOffset);
+		
+		zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, 8, "Path",
+			StringHelper::Sprintf("_%s_pathway_%08X", roomName.c_str(), segmentOffset), declaration);
 	}
 
 	{
 		string declaration = "";
-		declaration += StringHelper::Sprintf("Vec3s _%s_pathwayList_%08X[] = \n{\n", roomName.c_str(), listSegmentOffset);
 
 		int index = 0;
 		for (PathwayEntry* entry : pathways)
@@ -83,11 +83,8 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 			index++;
 		}
 
-		declaration += "};\n\n";
-
-
-		zRoom->parent->declarations[listSegmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, pathways.size() * 6, declaration);
-		zRoom->parent->externs[listSegmentOffset] = StringHelper::Sprintf("extern Vec3s _%s_pathwayList_%08X[];\n", roomName.c_str(), listSegmentOffset);
+		zRoom->parent->AddDeclarationArray(listSegmentOffset, DeclarationAlignment::None, DeclarationPadding::None, pathways.size() * 6, 
+			"Vec3s", StringHelper::Sprintf("_%s_pathwayList_%08X", roomName.c_str(), listSegmentOffset), pathways.size(), declaration);
 	}
 
 	return sourceOutput;
