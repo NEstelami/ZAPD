@@ -1,7 +1,9 @@
-// TODO: Instead of having a fixed number of arguments for each build mode, allow parameters to be modified with a set of "commands"
-
 #include "ZFile.h"
 #include "ZTexture.h"
+#include "ZBlob.h"
+#include "ZAnimation.h"
+#include "HighLevel/HLModelIntermediette.h"
+#include "HighLevel/HLAnimationIntermediette.h"
 #include "Overlays/ZOverlay.h"
 #include "Path.h"
 #include "File.h"
@@ -17,13 +19,18 @@
 #include "tinyxml2.h"
 
 extern void ModelTest();
+extern void ModelTest2();
 
 using namespace tinyxml2;
 using namespace std;
 
 bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMode);
+
 void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath);
-int OldMain(int argc, char* argv[]);
+void BuildAssetBlob(string blobFilePath, string outPath);
+void BuildAssetModelIntermediette(string mdlPath, string outPath);
+void BuildAssetAnimationIntermediette(string animPath, string outPath);
+
 int NewMain(int argc, char* argv[]);
 
 #ifndef _MSC_VER
@@ -50,20 +57,12 @@ void ErrorHandler(int sig)
 int main(int argc, char* argv[])
 {
 #ifndef _MSC_VER
-	signal(SIGSEGV, ErrorHandler);
+	//signal(SIGSEGV, ErrorHandler);
 #endif
 
 	Globals* g = new Globals();
 
-	// TEST TEST
-#if _MSC_VER && _DEBUG
-	//ModelTest();
-	//return 0;
-#endif
-
 	return NewMain(argc, argv);
-	
-	return 0;
 }
 
 int NewMain(int argc, char* argv[])
@@ -81,12 +80,20 @@ int NewMain(int argc, char* argv[])
 		fileMode = ZFileMode::BuildTexture;
 	else if (buildMode == "bovl")
 		fileMode = ZFileMode::BuildOverlay;
-	else
+	else if (buildMode == "bsf")
+		fileMode = ZFileMode::BuildSourceFile;
+	else if (buildMode == "bblb")
+		fileMode = ZFileMode::BuildBlob;
+	else if (buildMode == "bmdlintr")
+		fileMode = ZFileMode::BuildModelIntermediette;
+	else if (buildMode == "bamnintr")
+		fileMode = ZFileMode::BuildAnimationIntermediette;
+	else if (buildMode == "e")
 		fileMode = ZFileMode::Extract;
 
 	if (fileMode == ZFileMode::Invalid)
 	{
-		cout << "Error: Invalid file mode.\n";
+		printf("Error: Invalid file mode '%s'\n", buildMode.c_str());
 		return 1;
 	}
 
@@ -110,9 +117,29 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->baseRomPath = argv[i + 1];
 			i++;
 		}
-		else if (arg == "-gsf") // Generate source file
+		else if (arg == "-gsf") // Generate source file during extraction
 		{
 			Globals::Instance->genSourceFile = string(argv[i + 1]) == "1";
+			i++;
+		}
+		else if (arg == "-ifp") // Include file prefix in generated symbols
+		{
+			Globals::Instance->includeFilePrefix = string(argv[i + 1]) == "1";
+			i++;
+		}
+		else if (arg == "-tm") // Test Mode
+		{
+			Globals::Instance->testMode = string(argv[i + 1]) == "1";
+			i++;
+		}
+		else if (arg == "-profile") // Profile
+		{
+			Globals::Instance->profile = string(argv[i + 1]) == "1";
+			i++;
+		}
+		else if (arg == "-uer") // Split resources into their individual components (enabled by default)
+		{
+			Globals::Instance->useExternalResources = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-tt") // Set texture type
@@ -130,9 +157,23 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->GenSymbolMap(argv[i + 1]);
 			i++;
 		}
+		else if (arg == "-al") // Set actor list
+		{
+			i++;
+		}
+		else if (arg == "-ol") // Set object list
+		{
+			i++;
+		}
+		else if (arg == "-eh") // Enable Error Handler
+		{
+#ifndef _MSC_VER
+			signal(SIGSEGV, ErrorHandler);
+#endif
+		}
 	}
 
-	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract)
+	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
 		Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
 	}
@@ -143,6 +184,21 @@ int NewMain(int argc, char* argv[])
 		string outFilePath = Globals::Instance->outputPath;
 
 		BuildAssetTexture(pngFilePath, texType, outFilePath);
+	}
+	else if (fileMode == ZFileMode::BuildBlob)
+	{
+		string blobFilePath = Globals::Instance->inputPath;
+		string outFilePath = Globals::Instance->outputPath;
+
+		BuildAssetBlob(blobFilePath, outFilePath);
+	}
+	else if (fileMode == ZFileMode::BuildModelIntermediette)
+	{
+		BuildAssetModelIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
+	{
+		BuildAssetAnimationIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
 	}
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
@@ -160,7 +216,6 @@ int NewMain(int argc, char* argv[])
 bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMode)
 {
 	XMLDocument doc;
-
 	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
@@ -177,9 +232,7 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 	{
 		if (string(child->Name()) == "File")
 		{
-			//ZFile* file = new ZFile(fileMode, child, Path::GetDirectoryName(xmlFilePath));
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath);
-
 			files.push_back(file);
 		}
 	}
@@ -188,6 +241,8 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 	{
 		if (fileMode == ZFileMode::Build)
 			file->BuildResources();
+		else if (fileMode == ZFileMode::BuildSourceFile)
+			file->BuildSourceFile(outPath);
 		else
 			file->ExtractResources(outPath);
 	}
@@ -202,8 +257,67 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 
 void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath)
 {
+	vector<string> split = StringHelper::Split(outPath, "/");
+	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
 	ZTexture* tex = ZTexture::FromPNG(pngFilePath, texType);
-	File::WriteAllBytes(outPath, tex->GetRawData());
+
+	string src = StringHelper::Sprintf("u64 %s[] = \n{\n", name.c_str()) + tex->GetSourceOutputCode(name) + "};\n";
+
+	File::WriteAllText(outPath, src);
 	
 	delete tex;
+}
+
+void BuildAssetBlob(string blobFilePath, string outPath)
+{
+	vector<string> split = StringHelper::Split(outPath, "/");
+	ZBlob* blob = ZBlob::FromFile(blobFilePath);
+	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
+
+	string src = StringHelper::Sprintf("u8 %s[] = \n{\n", name.c_str()) + blob->GetSourceOutputCode(name) + "};\n";
+
+	File::WriteAllText(outPath, src);
+
+	delete blob;
+}
+
+void BuildAssetModelIntermediette(string mdlPath, string outPath)
+{
+	XMLDocument doc;
+	XMLError eResult = doc.LoadFile(mdlPath.c_str());
+
+	vector<string> split = StringHelper::Split(outPath, "/");
+	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
+	
+	string output = "";
+
+	output += mdl->OutputCode();
+	
+	File::WriteAllText(outPath, output);
+
+	delete mdl;
+}
+
+void BuildAssetAnimationIntermediette(string animPath, string outPath)
+{
+	vector<string> split = StringHelper::Split(outPath, "/");
+	ZFile* file = new ZFile("", split[split.size() - 2]);
+	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath);
+	ZAnimation* zAnim = anim->ToZAnimation();
+	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
+	zAnim->parent = file;
+	zAnim->rotationIndicesSeg = 1;
+	zAnim->rotationValuesSeg = 2;
+
+	zAnim->GetSourceOutputCode(split[split.size() - 2]);
+	string output = "";
+	
+	output += file->declarations[2]->text + "\n";
+	output += file->declarations[1]->text + "\n";
+	output += file->declarations[0]->text + "\n";
+
+	File::WriteAllText(outPath, output);
+
+	delete zAnim;
+	delete file;
 }

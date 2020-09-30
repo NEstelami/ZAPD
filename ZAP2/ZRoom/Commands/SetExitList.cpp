@@ -12,7 +12,7 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	exits = vector<uint16_t>();
 
 	if (segmentOffset != 0)
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
@@ -21,13 +21,11 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	char line[2048];
 
-	sprintf(line, "%s 0x00, (u32)&_%s_exitList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
+	sourceOutput = StringHelper::Sprintf("%s 0x00, (u32)&_%s_exitList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 
 	// Parse Entrances and Generate Declaration
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, ""); // Make sure this segment is defined
+	zRoom->parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
@@ -41,15 +39,11 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 	string declaration = "";
 
-	sprintf(line, "u16 _%s_exitList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
-	declaration += line;
-
 	for (uint16_t exit : exits)
 		declaration += StringHelper::Sprintf("\t0x%04X,\n", exit);;
 
-	declaration += "};\n";
-
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, exits.size() * 2, declaration);
+	zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, exits.size() * 2, "u16", StringHelper::Sprintf("_%s_exitList_%08X", zRoom->GetName().c_str(), segmentOffset),
+		exits.size(), declaration);
 
 	return sourceOutput;
 }

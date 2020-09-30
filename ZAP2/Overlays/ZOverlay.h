@@ -60,6 +60,8 @@ public:
 private:
 	std::vector<RelocationEntry*> entries;
 
+	ZOverlay();
+
 	static SectionType GetSectionTypeFromStr(std::string sectionName);
 	//static std::string GetOverlayNameFromElf(ELFIO::elfio& reader);
 };

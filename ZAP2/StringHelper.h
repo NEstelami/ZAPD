@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <stdarg.h>
+#include <string.h>
 
 class StringHelper
 {
@@ -39,6 +40,22 @@ public:
 		}
 
 		return s;
+	}
+
+	static bool StartsWith(std::string s, std::string input)
+	{
+		return s.rfind(input, 0) == 0;
+	}
+
+	static bool Contains(std::string s, std::string input)
+	{
+		return s.find(input) != std::string::npos;
+	}
+
+	static bool EndsWith(std::string s, std::string input)
+	{
+		int inputLen = strlen(input.c_str());
+		return s.rfind(input) == (s.size() - inputLen);
 	}
 
 	static std::string Sprintf(const char* format, ...)

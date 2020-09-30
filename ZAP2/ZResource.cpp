@@ -6,6 +6,10 @@ ZResource::ZResource()
 {
 	parent = nullptr;
 	name = "";
+	relativePath = "";
+	sourceOutput = "";
+	rawData = vector<uint8_t>();
+	rawDataIndex = 0;
 }
 
 void ZResource::Save(string outFolder)
@@ -21,6 +25,16 @@ string ZResource::GetName()
 void ZResource::SetName(string nName)
 {
 	name = nName;
+}
+
+bool ZResource::IsExternalResource()
+{
+	return false;
+}
+
+std::string ZResource::GetExternalExtension()
+{
+	return "";
 }
 
 string ZResource::GetRelativePath()
@@ -41,6 +55,11 @@ int ZResource::GetRawDataIndex()
 int ZResource::GetRawDataSize()
 {
 	return rawData.size();
+}
+
+void ZResource::SetRawDataIndex(int value)
+{
+	rawDataIndex = value;
 }
 
 string ZResource::GetSourceOutputCode(std::string prefix)

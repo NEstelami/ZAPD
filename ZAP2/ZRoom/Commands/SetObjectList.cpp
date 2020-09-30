@@ -22,7 +22,7 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int ra
 	}
 
 	if (segmentOffset != 0)
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 string SetObjectList::GenerateExterns()
@@ -37,13 +37,18 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_objectList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
 
 	string declaration = "";
-	declaration += StringHelper::Sprintf("s16 _%s_objectList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);;
 
-	for (uint16_t objectIndex : objects)
-		declaration += StringHelper::Sprintf("\t%s,\n", ObjectList[objectIndex].c_str());
+	for (int i = 0; i < objects.size(); i++)
+	{
+		uint16_t objectIndex = objects[i];
+		declaration += StringHelper::Sprintf("\t%s,", ObjectList[objectIndex].c_str());
 
-	declaration += "};\n";
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, objects.size() * 2, declaration);
+		if (i < objects.size() - 1)
+			declaration += "\n";
+	}
+
+	zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
+		StringHelper::Sprintf("_%s_objectList_%08X", zRoom->GetName().c_str(), segmentOffset), objects.size(), declaration);
 
 	return sourceOutput;
 }

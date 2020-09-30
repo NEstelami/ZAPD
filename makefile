@@ -1,20 +1,21 @@
 CC := g++
-CFLAGS := -std=c++17 -I ZAP2 -O2 -rdynamic
+CFLAGS := -g -std=c++17 -I ZAP2 -O2 -rdynamic
 
-SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/OpenFBX
+SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/HighLevel ZAP2/OpenFBX
 
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
-O_FILES := $(foreach file,$(CPP_FILES),$(BUILD_DIR)/$(file:.cpp=.o))
+O_FILES   := $(CPP_FILES:.cpp=.o)
 
 all: ZAP2.out
 
 clean: 
-	rm -f ZAP2.out
+	rm -f $(O_FILES) ZAP2.out
 
 rebuild: clean all
 
-/ZAP2/%.cpp:
-	@:
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
 
-ZAP2.out: $(CPP_FILES)
-	$(CC) $(CFLAGS) $(CPP_FILES) -o ZAP2.out -lstdc++fs
+ZAP2.out: $(O_FILES)
+	$(CC) $(CFLAGS) $(O_FILES) -o $@ -lstdc++fs
+#	cp ZAP2.out /mnt/c/projects/oot/tools/ZAP2/ZAP2.out

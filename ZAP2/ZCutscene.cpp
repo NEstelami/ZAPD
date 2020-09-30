@@ -72,7 +72,7 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 
 			cmd->commandIndex = i;
 			cmd->commandID = (uint32_t)id;
-			currentPtr += cmd->GetCommandSize();
+			currentPtr += (uint32_t)cmd->GetCommandSize();
 
 			commands.push_back(cmd);
 		}
@@ -85,21 +85,21 @@ string ZCutscene::GetSourceOutputCode(string prefix)
 	int size = 0;
 	int32_t curPtr = 0;
 
-	output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
-	output += StringHelper::Sprintf("s32 _%s_cutsceneData_%08X[] = \n{\n", prefix.c_str(), segmentOffset);
+	//output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
+	//output += StringHelper::Sprintf("s32 _%s_cutsceneData_%08X[] = \n{\n", prefix.c_str(), segmentOffset);
 	output += StringHelper::Sprintf("\tCS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
 	for (int i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
 		output += "\t" + cmd->GenerateSourceCode(prefix, curPtr);
-		curPtr += cmd->GetCommandSize();
-		size += cmd->GetCommandSize();
+		curPtr += (uint32_t)cmd->GetCommandSize();
+		size += (int)cmd->GetCommandSize();
 	}
 
 	output += StringHelper::Sprintf("\tCS_END(),\n", commands.size(), endFrame);
 
-	output += "};\n";
+	//output += "};\n";
 
 	return output;
 }
@@ -114,7 +114,7 @@ int ZCutscene::GetRawDataSize()
 	for (int i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
-		size += cmd->GetCommandSize();
+		size += (int)cmd->GetCommandSize();
 		size += 4;
 	}
 
@@ -732,7 +732,7 @@ string CutsceneCommandActorAction::GenerateSourceCode(string roomName, int baseA
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\CS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
+		result += StringHelper::Sprintf("\tCS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX, entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY, entries[i]->endPosZ,
 			*(int32_t*)&entries[i]->normalX, *(int32_t*)&entries[i]->normalY, *(int32_t*)&entries[i]->normalZ);
 	}
@@ -849,7 +849,7 @@ string CutsceneCommandSpecialAction::GenerateSourceCode(string roomName, int bas
 		result += StringHelper::Sprintf("\t\tCS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
 			entries[i]->unused7, entries[i]->unused8, entries[i]->unused9, entries[i]->unused10);
-	}
+	}	
 
 	return result;
 }

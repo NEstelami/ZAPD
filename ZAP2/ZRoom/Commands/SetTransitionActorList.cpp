@@ -27,9 +27,6 @@ SetTransitionActorList::SetTransitionActorList(ZRoom* nZRoom, std::vector<uint8_
 
 string SetTransitionActorList::GetSourceOutputCode(std::string prefix)
 {
-	string sourceOutput = "";
-	char line[2048];
-
 	return "";
 }
 
@@ -42,8 +39,6 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 	sourceOutput += line;
 
 	string declaration = "";
-	sprintf(line, "TransitionActorEntry _%s_transitionActorList_%08X[] = \n{\n", roomName.c_str(), segmentOffset);
-	declaration += line;
 
 	for (TransitionActorEntry* entry : transitionActors)
 	{
@@ -51,8 +46,8 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 		declaration += line;
 	}
 
-	declaration += "};\n\n";
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, transitionActors.size() * 16, declaration);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, transitionActors.size() * 16, "TransitionActorEntry",
+		StringHelper::Sprintf("_%s_transitionActorList_%08X", roomName.c_str(), segmentOffset), true, declaration);
 
 	return sourceOutput;
 }
