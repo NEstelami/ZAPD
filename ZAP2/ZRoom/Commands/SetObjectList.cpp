@@ -34,7 +34,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 
-	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_objectList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_objectList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
 
 	string declaration = "";
 

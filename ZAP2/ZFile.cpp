@@ -233,9 +233,11 @@ void ZFile::AddResource(ZResource* res)
 	resources.push_back(res);
 }
 
-void ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body)
+Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body)
 {
-	declarations[address] = new Declaration(alignment, size, varType, varName, false, body);
+	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
+	declarations[address] = decl;
+	return decl;
 }
 
 void ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, string varType, string varName, std::string body)
@@ -543,7 +545,8 @@ string ZFile::ProcessDeclarations()
 		}
 		else
 		{
-			output += item.second->preText + "\n";
+			if (item.second->preText != "")
+				output += item.second->preText + "\n";
 
 			if (item.second->isArray)
 			{
@@ -561,8 +564,11 @@ string ZFile::ProcessDeclarations()
 			}
 
 
-			output += "};\n\n";
-			output += item.second->postText + "\n";
+			output += "};";
+			output += " " + item.second->rightText + "\n\n";
+			
+			if (item.second->postText != "")
+				output += item.second->postText + "\n";
 		}
 	}
 

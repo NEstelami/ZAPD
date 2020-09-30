@@ -35,7 +35,7 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x%02X, (u32)_%s_transitionActorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), transitionActors.size(), roomName.c_str(), segmentOffset);
+	sprintf(line, "%s 0x%02X, (u32)_%s_transitionActorList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), transitionActors.size(), roomName.c_str(), segmentOffset);
 	sourceOutput += line;
 
 	string declaration = "";

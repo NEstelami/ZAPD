@@ -36,7 +36,7 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 
 string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s 0x00, (u32)&_%s_collisionHeader_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s 0x00, (u32)&_%s_collisionHeader_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetCollisionHeader::GenerateSourceCodePass2(string roomName, int baseAddress)

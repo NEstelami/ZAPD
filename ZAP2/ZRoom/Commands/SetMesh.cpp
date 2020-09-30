@@ -361,7 +361,7 @@ string SetMesh::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	
-	sourceOutput += StringHelper::Sprintf("%s %i, (u32)&_%s_meshHeader_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), data, zRoom->GetName().c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s %i, (u32)&_%s_meshHeader_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), data, zRoom->GetName().c_str(), segmentOffset);
 
 	/*if (meshHeader->headerType == 0)
 	{

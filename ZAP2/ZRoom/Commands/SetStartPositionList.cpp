@@ -31,7 +31,7 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAd
 	string sourceOutput = "";
 	char line[2048];
 
-	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)&_%s_startPositionList_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), actors.size(), zRoom->GetName().c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)&_%s_startPositionList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), actors.size(), zRoom->GetName().c_str(), segmentOffset);
 
 	string declaration = "";
 

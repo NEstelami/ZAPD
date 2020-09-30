@@ -61,6 +61,7 @@ public:
 	uint32_t size;
 	std::string preText;
 	std::string text;
+	std::string rightText;
 	std::string postText;
 	std::string preComment;
 	std::string postComment;

@@ -37,7 +37,7 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 
 string SetLightingSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s %i, (u32)&_%s_lightSettings_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s %i, (u32)&_%s_lightSettings_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetLightingSettings::GenerateSourceCodePass2(string roomName, int baseAddress)

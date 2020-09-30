@@ -24,7 +24,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s 0, (u32)&_%s_cutsceneData_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s 0, (u32)&_%s_cutsceneData_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 int32_t SetCutscenes::GetRawDataSize()

@@ -30,7 +30,7 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 			zRoom->commandSets.push_back(CommandSet(address));
 	}
 
-	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&%s_alternateHeaders_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&%s_alternateHeaders_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
 
 	string declaration = "";
 
