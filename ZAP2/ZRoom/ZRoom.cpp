@@ -274,8 +274,11 @@ void ZRoom::ProcessCommandSets()
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
-			parent->declarations[cmd->cmdAddress] = new Declaration(i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, cmd->GetCommandCName(),
-				StringHelper::Sprintf("_%s_set%04X_cmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), false, StringHelper::Sprintf("%s // 0x%04X", pass1.c_str(), cmd->cmdAddress));
+			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, cmd->GetCommandCName(),
+				StringHelper::Sprintf("_%s_set%04X_cmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
+				StringHelper::Sprintf("%s", pass1.c_str()));
+
+			decl->rightText = StringHelper::Sprintf("// 0x%04X", cmd->cmdAddress);
 		}
 
 		sourceOutput += "\n";
@@ -494,6 +497,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	size = nSize;
 	preText = "";
 	text = nText;
+	rightText = "";
 	postText = "";
 	preComment = "";
 	postComment = "";

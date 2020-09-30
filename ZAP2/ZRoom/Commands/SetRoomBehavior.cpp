@@ -12,7 +12,7 @@ SetRoomBehavior::SetRoomBehavior(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 
 string SetRoomBehavior::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s 0x%02X, 0x%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), gameplayFlags, gameplayFlags2);;
+	return StringHelper::Sprintf("%s 0x%02X, 0x%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), gameplayFlags, gameplayFlags2);;
 }
 
 string SetRoomBehavior::GetCommandCName()
