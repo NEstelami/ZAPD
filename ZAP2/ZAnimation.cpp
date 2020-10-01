@@ -90,18 +90,20 @@ string ZAnimation::GetSourceOutputCode(string prefix)
 
 			if (i % 16 == 15)
 				valuesStr += "\n\t";
-
-			parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16, (int)rotationValues.size() * 2, "AnimationRotationValue",
-				StringHelper::Sprintf("%s_values", name.c_str()), rotationValues.size(), valuesStr);
-
-			string indicesStr = "";
-
-			for (int i = 0; i < rotationIndices.size(); i++)
-				indicesStr += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotationIndices[i].x, rotationIndices[i].y, rotationIndices[i].z);
-
-			parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16, (int)rotationIndices.size() * 6, "AnimationRotationIndex",
-				StringHelper::Sprintf("%s_indices", name.c_str()), rotationIndices.size(), indicesStr);
 		}
+
+		string indicesStr = "";
+
+		for (int i = 0; i < rotationIndices.size(); i++)
+			indicesStr += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotationIndices[i].x, rotationIndices[i].y, rotationIndices[i].z);
+
+
+		parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16, (int)rotationValues.size() * 2, "AnimationRotationValue",
+			StringHelper::Sprintf("%s_values", name.c_str()), rotationValues.size(), valuesStr);
+
+
+		parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16, (int)rotationIndices.size() * 6, "AnimationRotationIndex",
+			StringHelper::Sprintf("%s_indices", name.c_str()), rotationIndices.size(), indicesStr);
 	}
 
 	return "";
