@@ -7,7 +7,7 @@
 #include "File.h"
 #include "Globals.h"
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <execinfo.h>
 #include <unistd.h>
 #include <signal.h>
@@ -26,7 +26,7 @@ void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath);
 int OldMain(int argc, char* argv[]);
 int NewMain(int argc, char* argv[]);
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__CYGWIN__)
 void ErrorHandler(int sig)
 {
 	void* array[4096];
@@ -49,7 +49,7 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__CYGWIN__)
 	signal(SIGSEGV, ErrorHandler);
 #endif
 
