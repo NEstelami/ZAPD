@@ -37,35 +37,26 @@ public:
 class CameraPositionData
 {
 public:
-	int16_t posX, posY, posZ;
-	int16_t rotX, rotY, rotZ;
-	int16_t fov;
-	int16_t jfifId;
-	int16_t unk;
+	int16_t x, y, z;
 
 	CameraPositionData(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 };
 
-class CameraPosDataEntry
-{
-public:
-	uint32_t cameraPosDataSeg;
-	uint32_t unknown;
-};
-
-class CameraData
+class CameraDataEntry
 {
 public:
 	int16_t cameraSType;
-	int16_t numCameras;
+	int16_t numData;
 	int32_t cameraPosDataSeg;
-	std::vector<CameraPosDataEntry*> entries;
-	//uint32_t unknown;
+};
 
-
+class CameraDataList
+{
+public:
+	std::vector<CameraDataEntry*> entries;
 	std::vector<CameraPositionData*> cameraPositionData;
 
-	CameraData(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset);
+	CameraDataList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset);
 };
 
 class CollisionHeader
@@ -87,7 +78,7 @@ public:
 	std::vector<PolygonEntry*> polygons;
 	std::vector<uint64_t> polygonTypes;
 	std::vector<WaterBoxHeader*> waterBoxes;
-	CameraData* camData;
+	CameraDataList* camData;
 
 	CollisionHeader();
 	CollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
