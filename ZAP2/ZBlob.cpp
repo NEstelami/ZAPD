@@ -1,16 +1,19 @@
 #include "ZBlob.h"
 #include "File.h"
 #include "ZFile.h"
+#include "BitConverter.h"
+#include "Path.h"
+#include "StringHelper.h"
 
 using namespace tinyxml2;
 using namespace std;
 
-ZBlob::ZBlob()
+ZBlob::ZBlob() : ZResource()
 {
 
 }
 
-ZBlob::ZBlob(std::vector<uint8_t> nRawData, int nRawDataIndex, int size, std::string nName)
+ZBlob::ZBlob(std::vector<uint8_t> nRawData, int nRawDataIndex, int size, std::string nName) : ZBlob()
 {
 	rawDataIndex = nRawDataIndex;
 	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
@@ -32,12 +35,24 @@ ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int n
 	return blob;
 }
 
-ZBlob* ZBlob::BuildFromXML(XMLElement* reader, string inFolder)
+ZBlob* ZBlob::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
 {
 	ZBlob* blob = new ZBlob();
 
 	blob->name = reader->Attribute("Name");
-	blob->rawData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
+
+	if (readFile)
+		blob->rawData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
+
+	return blob;
+}
+
+ZBlob* ZBlob::FromFile(string filePath)
+{
+	int comp;
+	ZBlob* blob = new ZBlob();
+	blob->name = StringHelper::Split(Path::GetFileNameWithoutExtension(filePath), ".")[0];
+	blob->rawData = File::ReadAllBytes(filePath);
 
 	return blob;
 }
@@ -45,7 +60,7 @@ ZBlob* ZBlob::BuildFromXML(XMLElement* reader, string inFolder)
 string ZBlob::GetSourceOutputCode(std::string prefix)
 {
 	sourceOutput = "";
-	sourceOutput += StringHelper::Sprintf("u8 _%s_%s[] = \n{\n", prefix.c_str(), name.c_str());
+	//sourceOutput += StringHelper::Sprintf("u8 _%s_%s[] = \n{\n", prefix.c_str(), name.c_str());
 
 	for (int i = 0; i < rawData.size(); i += 1)
 	{
@@ -58,12 +73,12 @@ string ZBlob::GetSourceOutputCode(std::string prefix)
 			sourceOutput += "\n";
 	}
 
-	sourceOutput += "};\n";
+	//sourceOutput += "};\n";
 
 	if (parent != nullptr)
 	{
-		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, GetRawDataSize(), sourceOutput);
-		return "";
+		//parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, GetRawDataSize(), sourceOutput);
+		//return "";
 	}
 
 	return sourceOutput;
@@ -71,5 +86,16 @@ string ZBlob::GetSourceOutputCode(std::string prefix)
 
 void ZBlob::Save(string outFolder)
 {
+	//printf("NAME = %s\n", name.c_str());
 	File::WriteAllBytes(outFolder + "/" + name + ".bin", rawData);
+}
+
+bool ZBlob::IsExternalResource()
+{
+	return true;
+}
+
+string ZBlob::GetExternalExtension()
+{
+	return "bin";
 }

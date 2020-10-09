@@ -7,10 +7,15 @@
 using namespace std;
 using namespace ELFIO;
 
-ZOverlay::ZOverlay(string nName)
+ZOverlay::ZOverlay()
+{
+	name = "";
+	entries = vector<RelocationEntry*>();
+}
+
+ZOverlay::ZOverlay(string nName) : ZOverlay()
 {
 	name = nName;
-	entries = vector<RelocationEntry*>();
 }
 
 ZOverlay::~ZOverlay()
@@ -190,7 +195,7 @@ string ZOverlay::GetSourceOutputCode(std::string prefix)
 		output += StringHelper::Sprintf(".word 0x%08X\n", reloc->CalcRelocationWord());
 	}
 
-	int offset = (entries.size() * 4) + 20;
+	int offset = ((int)entries.size() * 4) + 20;
 
 	while (offset % 16 != 12)
 	{
@@ -201,7 +206,6 @@ string ZOverlay::GetSourceOutputCode(std::string prefix)
 	output += StringHelper::Sprintf(".word 0x%08X\n", offset + 4);
 	return output;
 }
-
 
 SectionType ZOverlay::GetSectionTypeFromStr(string sectionName)
 {

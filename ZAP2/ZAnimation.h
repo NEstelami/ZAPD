@@ -18,11 +18,7 @@ struct RotationIndex
 class ZAnimation : public ZResource
 {
 public:
-	ZAnimation();
 
-	static ZAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
-
-protected:
 	int16_t frameCount;
 	std::vector<uint16_t> rotationValues;
 	std::vector<RotationIndex> rotationIndices;
@@ -30,8 +26,15 @@ protected:
 	uint32_t rotationIndicesSeg;
 	int16_t limit;
 	int16_t limbCount;
+	
+	ZAnimation();
+
+	std::string GetSourceOutputCode(std::string prefix);
+
+	static ZAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
+protected:
 
 	void ParseRawData();
+	void Save(std::string outFolder);
 	void ParseXML(tinyxml2::XMLElement* reader);
-	std::string GetSourceOutputCode(std::string prefix);
 };

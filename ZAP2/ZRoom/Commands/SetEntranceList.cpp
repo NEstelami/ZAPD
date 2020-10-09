@@ -21,11 +21,11 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 	string sourceOutput = "";
 	char line[2048];
 
-	sprintf(line, "%s 0x00, (u32)&_%s_entranceList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	sprintf(line, "%s 0x00, (u32)&_%s_entranceList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 	sourceOutput = line;
 
 	// Parse Entrances and Generate Declaration
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, ""); // Make sure this segment is defined
+	zRoom->parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
@@ -39,21 +39,16 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 
 	string declaration = "";
 
-	sprintf(line, "EntranceEntry _%s_entranceList_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
-	declaration += line;
-
 	int index = 0;
 
 	for (EntranceEntry* entry : entrances)
 	{
-		sprintf(line, "\t{ 0x%02X, 0x%02X }, //0x%08X \n", entry->startPositionIndex, entry->roomToLoad, segmentOffset + (index * 2));
-		declaration += line;
-
+		declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X }, //0x%08X \n", entry->startPositionIndex, entry->roomToLoad, segmentOffset + (index * 2));
 		index++;
 	}
 
-	declaration += "};\n";
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, entrances.size() * 2, declaration);
+	zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, entrances.size() * 2, "EntranceEntry", 
+		StringHelper::Sprintf("_%s_entranceList_%08X", zRoom->GetName().c_str(), segmentOffset), entrances.size(), declaration);
 
 	return sourceOutput;
 }

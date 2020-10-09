@@ -19,6 +19,8 @@ protected:
 	void ProcessCommandSets();
 	void SyotesRoomHack();
 
+	ZRoom();
+
 public:
 	ZRoom* scene;
 	std::map<int32_t, ZTexture*> textures;

@@ -400,15 +400,15 @@ public:
 class ZCutscene : public ZResource
 {
 public:
+	uint32_t segmentOffset;
+	
 	CutsceneCommands GetCommandFromID(int id);
 	ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
 
 	std::string GetSourceOutputCode(std::string prefix);
 	int GetRawDataSize();
-
 private:
 	int numCommands;
 	int endFrame;
 	std::vector<CutsceneCommand*> commands;
-	uint32_t segmentOffset;
 };

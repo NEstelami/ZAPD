@@ -18,8 +18,6 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 	{
 		string declaration = "";
 
-		declaration += StringHelper::Sprintf("LightSettings _%s_lightSettings_%08X[] = \n{\n", zRoom->GetName().c_str(), segmentOffset);
-
 		for (int i = 0; i < numLights; i++)
 		{
 			declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X }, // 0x%08X \n",
@@ -32,14 +30,14 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 				settings[i]->unk, settings[i]->drawDistance, segmentOffset + (i * 22));
 		}
 
-		declaration += "};\n";
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, DeclarationPadding::None, numLights * 22, declaration);
+		zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, numLights * 22, "LightSettings",
+			StringHelper::Sprintf("_%s_lightSettings_%08X", zRoom->GetName().c_str(), segmentOffset), numLights, declaration);
 	}
 }
 
 string SetLightingSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s %i, (u32)&_%s_lightSettings_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s %i, (u32)&_%s_lightSettings_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetLightingSettings::GenerateSourceCodePass2(string roomName, int baseAddress)

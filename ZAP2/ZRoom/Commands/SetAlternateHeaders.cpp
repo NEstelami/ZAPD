@@ -10,7 +10,7 @@ SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> raw
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
 	if (segmentOffset != 0)
-		zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, 0, "");
+		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 	
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
@@ -30,10 +30,9 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 			zRoom->commandSets.push_back(CommandSet(address));
 	}
 
-	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&_%s_alternateHeaders_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&%s_alternateHeaders_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
 
 	string declaration = "";
-	declaration += StringHelper::Sprintf("u32 _%s_alternateHeaders_%08X[] = \n{\n", roomName.c_str(), segmentOffset);
 
 	for (int i = 0; i < numHeaders; i++)
 	{
@@ -45,10 +44,8 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 			declaration += StringHelper::Sprintf("\t(u32)&_%s_set%04X_cmd00,\n", roomName.c_str(), headers[i] & 0x00FFFFFF);
 	}
 
-	declaration += "};\n";
-
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, headers.size() * 4, declaration);
-	zRoom->parent->externs[segmentOffset] = StringHelper::Sprintf("extern u32 _%s_alternateHeaders_%08X[];\n", roomName.c_str(), segmentOffset);
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, headers.size() * 4, 
+		"u32", StringHelper::Sprintf("%s_alternateHeaders_%08X", roomName.c_str(), segmentOffset), true, declaration);
 
 	return sourceOutput;
 }

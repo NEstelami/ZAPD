@@ -10,7 +10,7 @@ SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 
 string SetEchoSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s 0, { 0 }, 0x%02X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), echo);
+	return StringHelper::Sprintf("%s 0, { 0 }, 0x%02X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), echo);
 }
 
 string SetEchoSettings::GetCommandCName()

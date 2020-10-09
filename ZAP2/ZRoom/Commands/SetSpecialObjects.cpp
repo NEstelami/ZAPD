@@ -1,5 +1,6 @@
 #include "SetSpecialObjects.h"
 #include "../../BitConverter.h"
+#include "../../StringHelper.h"
 
 using namespace std;
 
@@ -11,13 +12,7 @@ SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, std::vector<uint8_t> rawData
 
 string SetSpecialObjects::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "%s 0x%02X, 0x%04X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), elfMessage, globalObject);
-	sourceOutput = line;
-
-	return sourceOutput;
+	return StringHelper::Sprintf("%s 0x%02X, 0x%04X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), elfMessage, globalObject);
 }
 
 string SetSpecialObjects::GetCommandCName()
