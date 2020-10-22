@@ -10,6 +10,7 @@ Globals::Globals()
 	symbolMap = std::map <uint32_t, std::string>();
 	genSourceFile = true;
 	testMode = false;
+	debugMessages = false;
 	profile = false;
 	includeFilePrefix = false;
 	useExternalResources = true;

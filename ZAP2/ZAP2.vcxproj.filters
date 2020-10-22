@@ -392,6 +392,9 @@
     <ClInclude Include="ZHierarchy.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
+    <ClInclude Include="HighLevel\HLFileIntermediette.h">
+      <Filter>Header Files\HighLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\SymbolMap_OoTMqDbg.txt">

@@ -55,6 +55,7 @@ protected:
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader);
 	void GenerateSourceFiles(std::string outputDir);
+	void GenerateHLIntermediette();
 	std::string ProcessDeclarations();
 	std::string ProcessExterns();
 };

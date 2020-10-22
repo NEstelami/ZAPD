@@ -71,3 +71,8 @@ string ZResource::GetSourceOutputHeader(std::string prefix)
 {
 	return "";
 }
+
+void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
+{
+
+}

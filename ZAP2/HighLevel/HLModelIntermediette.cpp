@@ -73,6 +73,7 @@ HLModelIntermediette* HLModelIntermediette::FromZDisplayList(ZDisplayList* zDisp
 
 	HLVerticesIntermediette* vertIntr = new HLVerticesIntermediette();
 	vertIntr->vertices = finalVerts;
+	vertIntr->name = StringHelper::Sprintf("%s_verts", zDisplayList->GetName().c_str());
 	model->blocks.push_back(vertIntr);
 
 	// Go through textures
@@ -348,6 +349,18 @@ inline T* HLModelIntermediette::FindByName(string name)
 	return nullptr;
 }
 
+template<typename T>
+inline T* HLModelIntermediette::FindByType()
+{
+	for (HLIntermediette* block : blocks)
+	{
+		if (typeid(*block) == typeid(T))
+			return (T*)block;
+	}
+
+	return nullptr;
+}
+
 HLIntermediette::HLIntermediette()
 {
 	name = "";
@@ -388,7 +401,7 @@ void HLMeshCommand::InitFromXML(XMLElement* xmlElement)
 
 }
 
-string HLMeshCommand::OutputCode()
+string HLMeshCommand::OutputCode(HLModelIntermediette* parent)
 {
 	return "";
 }
@@ -424,7 +437,7 @@ void HLVerticesIntermediette::InitFromVertices(vector<Vertex> dispListVertices)
 		vertices.push_back(v);
 }
 
-string HLVerticesIntermediette::OutputCode()
+string HLVerticesIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	string output = "";
 
@@ -495,7 +508,7 @@ void HLMeshCmdGeoSettings::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	off = xmlElement->Attribute("Off");
 }
 
-string HLMeshCmdGeoSettings::OutputCode()
+string HLMeshCmdGeoSettings::OutputCode(HLModelIntermediette* parent)
 {
 	string output = "";
 
@@ -532,7 +545,7 @@ void HLMeshCmdTriangle1::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	flag = xmlElement->IntAttribute("flag");
 }
 
-string HLMeshCmdTriangle1::OutputCode()
+string HLMeshCmdTriangle1::OutputCode(HLModelIntermediette* parent)
 {
 	return StringHelper::Sprintf("gsSP1Triangle(%i, %i, %i, %i),", v0, v1, v2, flag);
 }
@@ -585,7 +598,7 @@ void HLMeshCmdTriangle2::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	flag1 = xmlElement->IntAttribute("Flag1");
 }
 
-string HLMeshCmdTriangle2::OutputCode()
+string HLMeshCmdTriangle2::OutputCode(HLModelIntermediette* parent)
 {
 	return StringHelper::Sprintf("gsSP2Triangles(%i, %i, %i, %i, %i, %i, %i, %i),", v0, v1, v2, flag0, v10, v11, v12, flag1);
 }
@@ -653,9 +666,10 @@ std::string HLMeshCmdLoadVertices::OutputOBJ(HLModelIntermediette* parent)
 	return "";
 }
 
-string HLMeshCmdLoadVertices::OutputCode()
+string HLMeshCmdLoadVertices::OutputCode(HLModelIntermediette* parent)
 {
-	return StringHelper::Sprintf("gsSPVertex(&_verts[%i], %i, %i),", startIndex, numVerts, 0);
+	HLVerticesIntermediette* verts = parent->FindByType<HLVerticesIntermediette>();
+	return StringHelper::Sprintf("gsSPVertex(&%s[%i], %i, %i),", verts->name.c_str(), startIndex, numVerts, 0);
 }
 
 HLMaterialIntermediette::HLMaterialIntermediette()
@@ -824,7 +838,7 @@ void HLMeshCmdCull::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	indexEnd = xmlElement->IntAttribute("IndexEnd", 0);
 }
 
-std::string HLMeshCmdCull::OutputCode()
+std::string HLMeshCmdCull::OutputCode(HLModelIntermediette* parent)
 {
 	return StringHelper::Sprintf("gsSPCullDisplayList(%i, %i),", indexStart, indexEnd);
 }
@@ -880,7 +894,7 @@ string HLMeshIntermediette::OutputCode(string materialName)
 
 
 	for (HLMeshCommand* cmd : commands)
-		output += "\t" + cmd->OutputCode() + "\n";
+		output += "\t" + cmd->OutputCode(parent) + "\n";
 
 	return output;
 }

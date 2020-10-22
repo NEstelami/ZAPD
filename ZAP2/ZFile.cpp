@@ -9,6 +9,7 @@
 #include "File.h"
 #include "Directory.h"
 #include "Globals.h"
+#include "HighLevel/HLModelIntermediette.h"
 #include <algorithm>
 
 using namespace tinyxml2;
@@ -370,6 +371,21 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	sourceOutput += ProcessExterns();
 
 	File::WriteAllText(outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h", sourceOutput);
+}
+
+void ZFile::GenerateHLIntermediette()
+{
+	// This is kinda hacky but it gets the job done for now...
+
+	HLModelIntermediette* mdl = new HLModelIntermediette();
+
+	for (ZResource* res : resources)
+	{
+		if (typeid(ZDisplayList) == typeid(res))
+		{
+			res->GenerateHLIntermediette(*mdl);
+		}
+	}
 }
 
 string ZFile::ProcessDeclarations()

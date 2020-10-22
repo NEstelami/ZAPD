@@ -261,4 +261,5 @@ public:
 	std::string GetSourceOutputHeader(std::string prefix);
 	std::string GetSourceOutputCode(std::string prefix);
 	void Save(std::string outFolder);
+	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 };
