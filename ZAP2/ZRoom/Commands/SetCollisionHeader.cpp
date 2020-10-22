@@ -21,9 +21,9 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 	else
 		sprintf(waterBoxStr, "0");
 
-	sprintf(line, "0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, %i, %s_vertices_%08X, 0x%04X, _%s_polygons_%08X, _%s_polygonTypes_%08X, &_%s_camData_%08X, 0x%04X, %s",
-		(uint16_t)collisionHeader.absMinX, (uint16_t)collisionHeader.absMinY, (uint16_t)collisionHeader.absMinZ,
-		(uint16_t)collisionHeader.absMaxX, (uint16_t)collisionHeader.absMaxY, (uint16_t)collisionHeader.absMaxZ,
+	sprintf(line, "%i, %i, %i, %i, %i, %i, %i, %s_vertices_%08X, %i, _%s_polygons_%08X, _%s_polygonTypes_%08X, &_%s_camDataList_%08X, %i, %s",
+		collisionHeader.absMinX, collisionHeader.absMinY, collisionHeader.absMinZ,
+		collisionHeader.absMaxX, collisionHeader.absMaxY, collisionHeader.absMaxZ,
 		collisionHeader.numVerts, zRoom->GetName().c_str(), collisionHeader.vtxSegmentOffset, collisionHeader.numPolygons,
 		zRoom->GetName().c_str(), collisionHeader.polySegmentOffset, zRoom->GetName().c_str(), collisionHeader.polyTypeDefSegmentOffset,
 		zRoom->GetName().c_str(), collisionHeader.camDataSegmentOffset, collisionHeader.numWaterBoxes, waterBoxStr);
@@ -107,7 +107,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 		polygonTypes.push_back(BitConverter::ToInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 
 	if (camDataSegmentOffset != 0)
-		camData = new CameraData(zRoom, rawData, camDataSegmentOffset, polyTypeDefSegmentOffset);
+		camData = new CameraDataList(zRoom, rawData, camDataSegmentOffset, polyTypeDefSegmentOffset);
 
 	for (int i = 0; i < numWaterBoxes; i++)
 		waterBoxes.push_back(new WaterBoxHeader(zRoom, rawData, waterBoxSegmentOffset + (i * 16)));
@@ -117,28 +117,20 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 
 	if (waterBoxes.size() > 0)
 	{
-		//sprintf(line, "WaterBoxHeader %s_waterBoxes_%08X[] = \n{\n", zRoom->GetName().c_str(), waterBoxSegmentOffset);
-		//declaration += line;
-
 		for (int i = 0; i < waterBoxes.size(); i++)
 		{
 			sprintf(line, "\t{ %i, %i, %i, %i, %i, 0x%08X },\n", waterBoxes[i]->xMin, waterBoxes[i]->ySurface, waterBoxes[i]->zMin, waterBoxes[i]->xLength, waterBoxes[i]->zLength, waterBoxes[i]->properties);
 			declaration += line;
 		}
-
-		//declaration += "};\n";
 	}
 
 	if (waterBoxSegmentOffset != 0)
-		zRoom->parent->declarations[waterBoxSegmentOffset] = new Declaration(DeclarationAlignment::None, 16 * waterBoxes.size(), "WaterBoxHeader",
+		zRoom->parent->declarations[waterBoxSegmentOffset] = new Declaration(DeclarationAlignment::None, 16 * waterBoxes.size(), "WaterBox",
 			StringHelper::Sprintf("%s_waterBoxes_%08X", zRoom->GetName().c_str(), waterBoxSegmentOffset), true, declaration);
 
 	if (polygons.size() > 0)
 	{
 		declaration = "";
-
-		//sprintf(line, "RoomPoly _%s_polygons_%08X[] = \n{\n", zRoom->GetName().c_str(), polySegmentOffset);
-		//declaration += line;
 
 		for (int i = 0; i < polygons.size(); i++)
 		{
@@ -148,28 +140,18 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 			declaration += line;
 		}
 
-		//declaration += "};\n";
-
-		if (polySegmentOffset != 0)
-			zRoom->parent->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, "RoomPoly",
+		if (polySegmentOffset != 0) {
+			zRoom->parent->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, "CollisionPoly",
 				StringHelper::Sprintf("_%s_polygons_%08X", zRoom->GetName().c_str(), polySegmentOffset), true, declaration);
-
-		declaration = "";
+		}
 	}
 
 	declaration = "";
-
-	//sprintf(line, "u32 _%s_polygonTypes_%08X[] = \n{\n", zRoom->GetName().c_str(), polyTypeDefSegmentOffset);
-	//declaration += line;
-
 	for (int i = 0; i < polygonTypes.size(); i++)
 	{
-		//sprintf(line, "\t0x%016llX,\n", polygonTypes[i]);
 		sprintf(line, "\t 0x%08X, 0x%08X, \n",  polygonTypes[i] >> 32, polygonTypes[i] & 0xFFFFFFFF);
 		declaration += line;
 	}
-
-	//declaration += "};\n";
 
 	if (polyTypeDefSegmentOffset != 0)
 		zRoom->parent->declarations[polyTypeDefSegmentOffset] = new Declaration(DeclarationAlignment::None, polygonTypes.size() * 8, 
@@ -181,16 +163,11 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 	{
 		declaration = "";
 
-		//sprintf(line, "Vec3s %s_vertices_%08X[%i] = \n{\n", zRoom->GetName().c_str(), vtxSegmentOffset, vertices.size());
-		//declaration += line;
-
 		for (int i = 0; i < vertices.size(); i++)
 		{
 			sprintf(line, "\t{ %i, %i, %i }, // 0x%08X\n", vertices[i]->x, vertices[i]->y, vertices[i]->z, vtxSegmentOffset + (i * 6));
 			declaration += line;
 		}
-
-		//declaration += "};\n";
 
 		if (vtxSegmentOffset != 0)
 			zRoom->parent->declarations[vtxSegmentOffset] = new Declaration(DeclarationAlignment::None, vertices.size() * 6,
@@ -235,125 +212,72 @@ WaterBoxHeader::WaterBoxHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 	properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);
 }
 
-CameraData::CameraData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset)
+CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset)
 {
-	cameraSType = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	numCameras = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	cameraPosDataSeg = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
-
-	int cameraPosDataAddr = cameraPosDataSeg & 0x00FFFFFF;
-
-	string declaration = "";
 	char line[2048];
+	string declaration = "";
 
-	//sprintf(line, "CamData _%s_camData_%08X = ", zRoom->GetName().c_str(), rawDataIndex);
-	//declaration += line;
-
-	char camPosDataStr[2048];
-
-	if (numCameras > 0)
-		sprintf(camPosDataStr, "(u32)_%s_camPosData_%08X", zRoom->GetName().c_str(), cameraPosDataAddr);
-	else
-		sprintf(camPosDataStr, "0x%08X", cameraPosDataSeg);
-
-	sprintf(line, "0x%04X, 0x%04X, %s", cameraSType, numCameras, camPosDataStr);
-	declaration += line;
-
-	//if (cameraPosDataSeg != 0)
-		//sprintf(line, "(u32)&_%s_camPosData_%08X, ", zRoom->GetName().c_str(), cameraPosDataSeg);
-	//else
-		//sprintf(line, "0, ");
-
-	//declaration += line;
-
-	//sprintf(line, "0x%08X };\n", unknown);
-	//declaration += line;
-
-	zRoom->parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, 8, "CamData", StringHelper::Sprintf("_%s_camData_%08X", zRoom->GetName().c_str(), rawDataIndex), declaration);
-
-	declaration = "";
-
-	if (numCameras > 0)
+	//Parse CameraDataEntries
+	int numElements = (polyTypeDefSegmentOffset - (rawDataIndex)) / 8;
+	uint32_t cameraPosDataSeg = rawDataIndex;
+	for (int i = 0; i < numElements; i++)
 	{
-		//sprintf(line, "CamPosData _%s_camPosData_%08X[] = \n{\n", zRoom->GetName().c_str(), cameraPosDataAddr);
-		//declaration += line;
+		CameraDataEntry* entry = new CameraDataEntry();
 
-		int numCamerasReal = (rawDataIndex - cameraPosDataAddr) / 0x12;
-
-		for (int i = 0; i < numCamerasReal; i++)
-		//for (int i = 0; i < 1; i++)
+		entry->cameraSType = BitConverter::ToInt16BE(rawData, rawDataIndex + (entries.size() * 8) + 0);
+		entry->numData = BitConverter::ToInt16BE(rawData, rawDataIndex + (entries.size() * 8) + 2);
+		entry->cameraPosDataSeg = BitConverter::ToInt32BE(rawData, rawDataIndex + (entries.size() * 8) + 4);
+		if (entry->cameraPosDataSeg != 0 && cameraPosDataSeg > (entry->cameraPosDataSeg & 0xFFFFFF))
 		{
-			CameraPositionData* data = new CameraPositionData(zRoom, rawData, cameraPosDataAddr + (i * 0x12));
+			cameraPosDataSeg = (entry->cameraPosDataSeg & 0xFFFFFF);
+		}
+
+		entries.push_back(entry);
+	}
+
+	//setting cameraPosDataAddr to rawDataIndex give a pos list length of 0
+	uint32_t cameraPosDataOffset = cameraPosDataSeg & 0xFFFFFF;
+	for (int i = 0; i < entries.size(); i++)
+	{
+		char camSegLine[2048];
+
+		if (entries[i]->cameraPosDataSeg != 0)
+		{
+			int index = ((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
+			sprintf(camSegLine, "&_%s_camPosData_%08X[%i]", zRoom->GetName().c_str(), cameraPosDataOffset, index);
+		}
+		else
+			sprintf(camSegLine, "0x%08X", entries[i]->cameraPosDataSeg);
+
+		sprintf(line, "\t{ 0x%04X, %i, %s }, // 0x%08X\n", entries[i]->cameraSType, entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
+		declaration += line;
+	}
+
+	zRoom->parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, entries.size() * 8, "CamData", StringHelper::Sprintf("_%s_camDataList_%08X", zRoom->GetName().c_str(), rawDataIndex), entries.size(), declaration);
+
+	int numDataTotal = (rawDataIndex - cameraPosDataOffset) / 0x6;
+
+	if (numDataTotal > 0)
+	{
+		declaration = "";
+		for (int i = 0; i < numDataTotal; i++)
+		{
+			CameraPositionData* data = new CameraPositionData(zRoom, rawData, cameraPosDataOffset + (i * 6));
 			cameraPositionData.push_back(data);
 
-			sprintf(line, "\t{ %i, %i, %i, %i, %i, %i, %i, %i, 0x%04X }, // 0x%08X\n", data->posX, data->posY, data->posZ, data->rotX, data->rotY, data->rotZ, data->fov, data->jfifId, (uint16_t)data->unk, cameraPosDataSeg + (i * 0x12));
+			sprintf(line, "\t{ %6i, %6i, %6i }, // 0x%08X\n", data->x, data->y, data->z, cameraPosDataSeg + (i * 0x6));
 			declaration += line;
 		}
 
-		//declaration += "};\n";
-
-		zRoom->parent->AddDeclarationArray(cameraPosDataSeg & 0x00FFFFFF, DeclarationAlignment::None, numCamerasReal * 0x12, "CamPosData", StringHelper::Sprintf("_%s_camPosData_%08X", zRoom->GetName().c_str(), cameraPosDataSeg & 0x00FFFFFF),
-			0, declaration);
-
-		//zRoom->parent->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, numCamerasReal * 0x12, declaration);
-		//zRoom->declarations[cameraPosDataSeg & 0x00FFFFFF] = new Declaration(DeclarationAlignment::Align16, 0x12, declaration);
+		int cameraPosDataIndex = cameraPosDataSeg & 0x00FFFFFF;
+		int entrySize = numDataTotal * 0x6;
+		zRoom->parent->AddDeclarationArray(cameraPosDataIndex, DeclarationAlignment::None, entrySize, "Vec3s", StringHelper::Sprintf("_%s_camPosData_%08X", zRoom->GetName().c_str(), cameraPosDataIndex), numDataTotal, declaration);
 	}
-
-
-	declaration = "";
-
-	//if (numCameras > 0)
-	{
-		//sprintf(line, "CamPosDataEntry _%s_camPosDataEntries_%08X[] = \n{\n", zRoom->GetName().c_str(), rawDataIndex + 8);
-		//declaration += line;
-
-		//int numEntriesReal = zRoom->GetDeclarationSizeFromNeighbor(rawDataIndex + 8) / 8;
-		int numEntriesReal = (polyTypeDefSegmentOffset - (rawDataIndex + 8)) / 8;
-
-		//while (true)
-		for (int j = 0; j < numEntriesReal; j++)
-		{
-			char camSegLine[2048];
-			CameraPosDataEntry* entry = new CameraPosDataEntry();
-
-			entry->unknown = BitConverter::ToInt32BE(rawData, rawDataIndex + 8 + (entries.size() * 8) + 0);
-			entry->cameraPosDataSeg = BitConverter::ToInt32BE(rawData, rawDataIndex + 8 + (entries.size() * 8) + 4);
-
-			if (entry->cameraPosDataSeg != 0)
-			{
-				int index = ((entry->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataAddr) / 0x12;
-				sprintf(camSegLine, "(u32)&_%s_camPosData_%08X[%i]", zRoom->GetName().c_str(), cameraPosDataAddr, index);
-			}
-			else
-				sprintf(camSegLine, "0x%08X", entry->cameraPosDataSeg);
-
-			sprintf(line, "\t{ 0x%08X, %s }, // 0x%08X\n", entry->unknown, camSegLine, rawDataIndex + 8 + (entries.size() * 8));
-			declaration += line;
-
-			entries.push_back(entry);
-
-			if (entry->unknown == 0x00010000 || entry->unknown == 0x00030000 || entry->unknown == 0x00040000 || entry->unknown == 0x00050000)
-				break;
-		}
-
-		//declaration += "};\n";
-	}
-
-	zRoom->parent->declarations[rawDataIndex + 8] = new Declaration(DeclarationAlignment::None, entries.size() * 8,
-		"CamPosDataEntry", StringHelper::Sprintf("_%s_camPosDataEntries_%08X", zRoom->GetName().c_str(), rawDataIndex + 8), true, declaration);
 }
 
 CameraPositionData::CameraPositionData(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	posX = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	posY = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	posZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-
-	rotX = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	rotY = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	rotZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-
-	fov = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
-	jfifId = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
-	unk = BitConverter::ToInt16BE(rawData, rawDataIndex + 16);
+	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
+	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
 }
