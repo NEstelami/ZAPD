@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "HLTexture.h"
+#include "HLFileIntermediette.h"
 #include "../ZDisplayList.h"
 #include "../tinyxml2.h"
 
@@ -42,7 +43,7 @@ public:
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
 };
 
-class HLModelIntermediette
+class HLModelIntermediette : public HLFileIntermediette
 {
 public:
 	std::vector<HLIntermediette*> blocks;
@@ -67,6 +68,9 @@ public:
 
 	template <typename T>
 	T* FindByName(std::string name);
+
+	template <typename T>
+	T* FindByType();
 };
 
 class HLTextureIntermediette : public HLIntermediette
@@ -112,7 +116,7 @@ class HLMeshCommand
 {
 public:
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
-	virtual std::string OutputCode();
+	virtual std::string OutputCode(HLModelIntermediette* parent);
 	virtual std::string OutputOBJ(HLModelIntermediette* parent);
 
 	virtual void OutputXML(tinyxml2::XMLElement* parent);
@@ -127,7 +131,7 @@ public:
 	
 	virtual void InitFromXML(tinyxml2::XMLElement* verticesElement);
 	void InitFromVertices(std::vector<Vertex> dispListVertices);
-	virtual std::string OutputCode();
+	virtual std::string OutputCode(HLModelIntermediette* parent);
 	virtual std::string OutputOBJ();
 	virtual void OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root);
 };
@@ -143,7 +147,7 @@ public:
 	HLMeshCmdTriangle1(int32_t nV0, int32_t nV1, int32_t nV2, int32_t nFlag);
 
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
-	virtual std::string OutputCode();
+	virtual std::string OutputCode(HLModelIntermediette* parent);
 	virtual void OutputXML(tinyxml2::XMLElement* parent);
 };
 
@@ -156,7 +160,7 @@ public:
 	HLMeshCmdTriangle2(int32_t nV0, int32_t nV1, int32_t nV2, int32_t nFlag0, int32_t nV10, int32_t nV11, int32_t nV12, int32_t nFlag1);
 
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
-	virtual std::string OutputCode();
+	virtual std::string OutputCode(HLModelIntermediette* parent);
 	virtual std::string OutputOBJ(HLModelIntermediette* parent);
 	virtual void OutputXML(tinyxml2::XMLElement* parent);
 };
@@ -173,7 +177,7 @@ public:
 	virtual void OutputXML(tinyxml2::XMLElement* parent);
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
 	virtual std::string OutputOBJ(HLModelIntermediette* parent);
-	virtual std::string OutputCode();
+	virtual std::string OutputCode(HLModelIntermediette* parent);
 };
 
 class HLMeshCmdCull : public HLMeshCommand
@@ -185,7 +189,7 @@ public:
 	HLMeshCmdCull();
 
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
-	virtual std::string OutputCode();
+	virtual std::string OutputCode(HLModelIntermediette* parent);
 };
 
 class HLMeshCmdGeoSettings : public HLMeshCommand
@@ -196,7 +200,7 @@ public:
 	HLMeshCmdGeoSettings();
 
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
-	virtual std::string OutputCode();
+	virtual std::string OutputCode(HLModelIntermediette* parent);
 };
 
 class HLMeshIntermediette : public HLIntermediette

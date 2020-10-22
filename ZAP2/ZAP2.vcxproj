@@ -195,6 +195,7 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="HighLevel\HLAnimation.h" />
     <ClInclude Include="HighLevel\HLAnimationIntermediette.h" />
+    <ClInclude Include="HighLevel\HLFileIntermediette.h" />
     <ClInclude Include="HighLevel\HLModelIntermediette.h" />
     <ClInclude Include="HighLevel\HLTexture.h" />
     <ClInclude Include="json.hpp" />

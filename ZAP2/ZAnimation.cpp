@@ -82,6 +82,7 @@ string ZAnimation::GetSourceOutputCode(string prefix)
 			frameCount, 0, name.c_str(), name.c_str(), limit);
 		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "AnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
 
+		string indicesStr = "";
 		string valuesStr = "\t";
 
 		for (int i = 0; i < rotationValues.size(); i++)
@@ -92,15 +93,11 @@ string ZAnimation::GetSourceOutputCode(string prefix)
 				valuesStr += "\n\t";
 		}
 
-		string indicesStr = "";
-
 		for (int i = 0; i < rotationIndices.size(); i++)
 			indicesStr += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotationIndices[i].x, rotationIndices[i].y, rotationIndices[i].z);
 
-
 		parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16, (int)rotationValues.size() * 2, "AnimationRotationValue",
 			StringHelper::Sprintf("%s_values", name.c_str()), rotationValues.size(), valuesStr);
-
 
 		parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16, (int)rotationIndices.size() * 6, "AnimationRotationIndex",
 			StringHelper::Sprintf("%s_indices", name.c_str()), rotationIndices.size(), indicesStr);

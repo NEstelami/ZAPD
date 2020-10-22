@@ -5,7 +5,11 @@
 #include <vector>
 #include <stdint.h>
 
+#define SEG2FILESPACE(x) (x & 0x00FFFFFF)
+#define GETSEGNUM(x) (x >> 24)
+
 class ZFile;
+class HLFileIntermediette;
 
 class Declaration;
 struct CommandSet;
@@ -28,6 +32,7 @@ public:
 	virtual void SetRawDataIndex(int value);
 	virtual std::string GetSourceOutputCode(std::string prefix);
 	virtual std::string GetSourceOutputHeader(std::string prefix);
+	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 
 protected:
 	std::string name;

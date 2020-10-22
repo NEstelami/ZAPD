@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "../ZAnimation.h"
 #include "../tinyxml2.h"
+#include "HLFileIntermediette.h"
 
 /*
  * An intermediette format for animations. Going to use XML.

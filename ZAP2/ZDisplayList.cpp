@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <File.h>
 #include <Path.h>
+#include <math.h>
 
 using namespace std;
 using namespace tinyxml2;
@@ -438,6 +439,9 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				uint32_t fmt = (__ & 0xE0) >> 5;
 				uint32_t siz = (__ & 0x18) >> 3;
 
+				if (Globals::Instance->debugMessages)
+					printf("TextureGenCheck G_SETTIMG\n");
+				
 				TextureGenCheck(prefix); // HOTSPOT
 
 				lastTexFmt = (F3DZEXTexFormats)fmt;
@@ -761,8 +765,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			break;
 			case F3DZEXOpcode::G_SETTILESIZE:
 			{
-				int sss = (data & 0x00FFF00000000000) >> 48;
-				int ttt = (data & 0x00000FFF00000000) >> 36;
+				int sss = (data & 0x00FFF00000000000) >> 44;
+				int ttt = (data & 0x00000FFF00000000) >> 32;
 				int uuu = (data & 0x0000000000FFF000) >> 12;
 				int vvv = (data & 0x0000000000000FFF);
 				int i = (data & 0x000000000F000000) >> 24;
@@ -780,11 +784,17 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
 					shiftAmtH = 3;
 
+
 				lastTexWidth = (uuu >> shiftAmtW) + 1;
 				lastTexHeight = (vvv >> shiftAmtH) + 1;
-				//printf("lastTexWidth: %i lastTexHeight: %i\n", lastTexWidth, lastTexHeight);
+				
+				if (Globals::Instance->debugMessages)
+					printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n", lastTexWidth, lastTexHeight, lastTexSizTest, lastTexFmt);
 
-				//TextureGenCheck(prefix);
+				if (Globals::Instance->debugMessages)
+					printf("TextureGenCheck G_SETTILESIZE\n");
+				
+				TextureGenCheck(prefix);
 
 				sprintf(line, "gsDPSetTileSize(%i, %i, %i, %i, %i),", i, sss, ttt, uuu, vvv);
 			}
@@ -793,7 +803,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			{
 				int sss = (data & 0x00FFF00000000000) >> 48;
 				int ttt = (data & 0x00000FFF00000000) >> 36;
-				int i = (data & 0x000000000F000000) >> 24;
+				int i	= (data & 0x000000000F000000) >> 24;
 				int xxx = (data & 0x0000000000FFF000) >> 12;
 				int ddd = (data & 0x0000000000000FFF);
 
@@ -811,11 +821,16 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				int ____ = (data & 0x0000FFFF00000000) >> 32;
 				int ssss = (data & 0x00000000FFFF0000) >> 16;
 				int tttt = (data & 0x000000000000FFFF);
-				int lll = (____ & 0x3800) >> 7;
-				int ddd = (____ & 0x700) >> 4;
+				int lll = (____ & 0x3800) >> 11;
+				int ddd = (____ & 0x700) >> 8;
 				int nnnnnnn = (____ & 0xFE) >> 1;
 
 				sprintf(line, "gsSPTexture(%i, %i, %i, %i, %s),", ssss, tttt, lll, ddd, nnnnnnn == 1 ? "G_ON" : "G_OFF");
+			}
+			break;
+			case F3DZEXOpcode::G_POPMTX:
+			{
+				sprintf(line, "gsSPPopMatrix(%i),", data);
 			}
 			break;
 			case F3DZEXOpcode::G_LOADTLUT:
@@ -823,19 +838,14 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				int t = (data & 0x0000000007000000) >> 24;
 				int ccc = (data & 0x00000000003FF000) >> 14;
 
-				if (lastCISiz == F3DZEXTexSizes::G_IM_SIZ_8b)
-				{
-					lastTexWidth = 16;
-					lastTexHeight = 16;
-				}
-				else
-				{
-					lastTexWidth = 4;
-					lastTexHeight = 4;
-				}
+				lastTexWidth = sqrt(ccc + 1);
+				lastTexHeight = sqrt(ccc + 1);
 
 				lastTexLoaded = true;
 
+				if (Globals::Instance->debugMessages)
+					printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", lastCISiz);
+				
 				TextureGenCheck(prefix);
 
 				sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
@@ -899,6 +909,9 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			case F3DZEXOpcode::G_ENDDL:
 				sprintf(line, "gsSPEndDisplayList(),");
 
+				if (Globals::Instance->debugMessages)
+					printf("TextureGenCheck G_ENDDL\n");
+				
 				TextureGenCheck(prefix);
 				break;
 			case F3DZEXOpcode::G_RDPHALF_1:
@@ -1148,7 +1161,8 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 {
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
 
-	//printf("TextureGenCheck seg=%i width=%i height=%i addr=0x%08X\n", segmentNumber, texWidth, texHeight, texAddr);
+	if (Globals::Instance->debugMessages)
+		printf("TextureGenCheck seg=%i width=%i height=%i addr=0x%08X\n", segmentNumber, texWidth, texHeight, texAddr);
 
 	if (texAddr != 0 && texWidth != 0 && texHeight != 0 && texLoaded)
 	{
@@ -1231,19 +1245,24 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 
 void ZDisplayList::Save(string outFolder)
 {
-	HLModelIntermediette* mdl = HLModelIntermediette::FromZDisplayList(this);
+	//HLModelIntermediette* mdl = HLModelIntermediette::FromZDisplayList(this);
 
 	// For testing purposes only at the moment...
 	if (Globals::Instance->testMode)
 	{
-		string xml = mdl->OutputXML();
-		string obj = mdl->ToOBJFile();
-		string fbx = mdl->ToFBXFile();
+		//string xml = mdl->OutputXML();
+		//string obj = mdl->ToOBJFile();
+		//string fbx = mdl->ToFBXFile();
 
-		File::WriteAllText(outFolder + "/" + name + ".mdli", xml);
-		File::WriteAllText(outFolder + "/" + name + ".obj", obj);
-		File::WriteAllText(outFolder + "/" + name + ".fbx", fbx);
+		//File::WriteAllText(outFolder + "/" + name + ".mdli", xml);
+		//File::WriteAllText(outFolder + "/" + name + ".obj", obj);
+		//File::WriteAllText(outFolder + "/" + name + ".fbx", fbx);
 	}
+}
+
+void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
+{
+
 }
 
 vector<uint8_t> ZDisplayList::GetRawData()
