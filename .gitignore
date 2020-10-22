@@ -332,3 +332,4 @@ ASALocalRun/
 *.out
 *.o
 *.d
+.vscode/
