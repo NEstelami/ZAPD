@@ -38,6 +38,7 @@ public:
 	void AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, int arrayItemCnt, std::string body);
 	void AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, std::string varType, std::string varName, int arrayItemCnt, std::string body);
 	void AddDeclarationPlaceholder(uint32_t address);
+	void AddDeclarationPlaceholder(uint32_t address, std::string varName);
 	void AddDeclarationInclude(uint32_t address, std::string includePath, uint32_t size, std::string varType, std::string varName);
 	void AddDeclarationIncludeArray(uint32_t address, std::string includePath, uint32_t size, std::string varType, std::string varName, int arrayItemCnt);
 	std::string GetDeclarationName(uint32_t address);

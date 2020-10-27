@@ -236,6 +236,11 @@ void ZFile::AddResource(ZResource* res)
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body)
 {
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
 	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
 	declarations[address] = decl;
 	return decl;
@@ -243,33 +248,73 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 
 void ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, string varType, string varName, std::string body)
 {
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
 	declarations[address] = new Declaration(alignment, padding, size, varType, varName, false, body);
 }
 
 void ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, int arrayItemCnt, std::string body)
 {
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
 	declarations[address] = new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
 }
 
 
 void ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, string varType, string varName, int arrayItemCnt, std::string body)
 {
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
 	declarations[address] = new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
 }
 
 
 void ZFile::AddDeclarationPlaceholder(uint32_t address)
 {
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
 	declarations[address] = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+}
+
+void ZFile::AddDeclarationPlaceholder(uint32_t address, string varName)
+{
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
+	declarations[address] = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
 }
 
 void ZFile::AddDeclarationInclude(uint32_t address, string includePath, uint32_t size, string varType, string varName)
 {
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
 	declarations[address] = new Declaration(includePath, size, varType, varName);
 }
 
 void ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath, uint32_t size, std::string varType, std::string varName, int arrayItemCnt)
 {
+	if (declarations.find(address) != declarations.end())
+	{
+		int bp = 0;
+	}
+
 	Declaration* decl = new Declaration(includePath, size, varType, varName);
 
 	decl->isArray = true;
@@ -307,6 +352,12 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	sourceOutput += "#include <z64.h>\n";
 	sourceOutput += StringHelper::Sprintf("#include \"%s\"\n\n", (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
 
+	// Generate placeholder declarations
+	for (ZResource* res : resources)
+	{
+		AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+	}
+
 	// Generate Code
 	for (ZResource* res : resources)
 	{
@@ -323,7 +374,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 			//sourceOutput += StringHelper::Sprintf("#include <../build/%s/%s.%s.c.inc>", outputDir.c_str(), Path::GetFileNameWithoutExtension(res->GetName()).c_str(), res->GetExternalExtension().c_str());
 			AddDeclarationIncludeArray(res->GetRawDataIndex(), StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
 				outputDir.c_str(), Path::GetFileNameWithoutExtension(res->GetName()).c_str(), res->GetExternalExtension().c_str()), res->GetRawDataSize(),
-				"", "", 0);
+				"", res->GetName(), 0);
 			
 			
 			//File::WriteAllText("build/" + outputDir + "/" + Path::GetFileNameWithoutExtension(res->GetName()) + ".inc.c", resSrc);
@@ -334,7 +385,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 			sourceOutput += resSrc;
 		}
 
-		if (resSrc != "")
+		if (resSrc != "" && !res->IsExternalResource())
 			sourceOutput += "\n";
 	}
 
@@ -515,8 +566,11 @@ string ZFile::ProcessDeclarations()
 
 				if (declarations.find(lastAddr + declarations[lastAddr]->size) == declarations.end())
 				{
-					AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted%04X", lastAddr + declarations[lastAddr]->size),
-						diff, src);
+					if (diff > 0)
+					{
+						AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted%04X", lastAddr + declarations[lastAddr]->size),
+							diff, src);
+					}
 				}
 			}
 		}
@@ -541,8 +595,11 @@ string ZFile::ProcessDeclarations()
 
 		if (declarations.find(lastAddr + declarations[lastAddr]->size) == declarations.end())
 		{
-			AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted%04X", lastAddr + declarations[lastAddr]->size),
-				diff, src);
+			if (diff > 0)
+			{
+				AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted%04X", lastAddr + declarations[lastAddr]->size),
+					diff, src);
+			}
 		}
 	}
 

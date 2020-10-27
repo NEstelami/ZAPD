@@ -158,13 +158,22 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 
 			fmt = (__ & 0xE0) >> 5;
 			siz = (__ & 0x18) >> 3;
-			texAddr = data & 0x00FFFFFF;
+			texAddr = SEG2FILESPACE(data);
 			int segmentNumber = (data & 0xFF000000) >> 24;
 			lastTexSeg = (data & 0xFF000000);
 
+			Declaration* texDecl = parent->GetDeclaration(texAddr);
+
+			if (texAddr == 0x4058)
+			{
+				int bp = 0;
+			}
+
 			if (texAddr != 0)
 			{
-				if (segmentNumber == 2)
+				if (texDecl != nullptr)
+					texStr = StringHelper::Sprintf("%s", texDecl->varName.c_str());
+				else if (segmentNumber == 2)
 					texStr = StringHelper::Sprintf("%s_tex_%08X", scene->GetName().c_str(), texAddr);
 				else
 					texStr = StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), texAddr);
@@ -347,6 +356,10 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				int pp = (data & 0x00FF000000000000) >> 56;
 				int segNum = (data & 0xFF000000) >> 24;
 
+				Declaration* dListDecl = nullptr;
+				
+				dListDecl = parent->GetDeclaration(SEG2FILESPACE(data));
+
 				// TEST
 				if (segNum != 8 && scene != nullptr && scene->parent->GetDeclarationName(data & 0x00FFFFFF) != "ERROR_COULD_NOT_FIND_DECLARATION")
 				{
@@ -354,9 +367,19 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				}
 
 				if (pp != 0)
-					sprintf(line, "gsSPBranchList(%s_dlist_%08X),", prefix.c_str(), data & 0x00FFFFFF);
+				{
+					if (dListDecl != nullptr)
+						sprintf(line, "gsSPBranchList(%s),", dListDecl->varName.c_str());
+					else
+						sprintf(line, "gsSPBranchList(%s_dlist_%08X),", prefix.c_str(), SEG2FILESPACE(data));
+				}
 				else
-					sprintf(line, "gsSPDisplayList(%s_dlist_%08X),", prefix.c_str(), data & 0x00FFFFFF);
+				{
+					if (dListDecl != nullptr)
+						sprintf(line, "gsSPDisplayList(%s),", dListDecl->varName.c_str());
+					else
+						sprintf(line, "gsSPDisplayList(%s_dlist_%08X),", prefix.c_str(), SEG2FILESPACE(data));
+				}
 
 				int segmentNumber = (data & 0xFF000000) >> 24;
 
@@ -482,9 +505,22 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				{
 					char texStr[2048];
 
-					int32_t texAddress = data & 0x00FFFFFF;
+					int32_t texAddress = SEG2FILESPACE(data & 0x00FFFFFF);
 
-					if (texAddress != 0)
+					Declaration* texDecl = parent->GetDeclaration(texAddress);
+
+					if (texDecl != nullptr)
+					{
+						int bp = 0;
+					}
+					else
+					{
+						int bp = 0;
+					}
+
+					if (texDecl != nullptr)
+						sprintf(texStr, "%s", texDecl->varName.c_str());
+					else if (texAddress != 0)
 						sprintf(texStr, "%s_tex_%08X", prefix.c_str(), texAddress);
 					else if (segmentNumber != 3)
 						sprintf(texStr, "0x%08X", data);
@@ -1161,10 +1197,13 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 				item.second->Save(Globals::Instance->outputPath);
 
-				parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
-					Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), 
-					item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
-					"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
+				if (!parent->GetDeclaration(item.first))
+				{
+					parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
+						Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
+						item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
+						"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
+				}
 			}
 		}
 
