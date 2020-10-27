@@ -158,6 +158,7 @@
     <ClCompile Include="ZRoom\Commands\SetEntranceList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetExitList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetLightingSettings.cpp" />
+    <ClCompile Include="ZRoom\Commands\SetLightList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetMesh.cpp" />
     <ClCompile Include="ZRoom\Commands\SetObjectList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetPathways.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="ZRoom\Commands\SetTransitionActorList.cpp" />
     <ClCompile Include="ZRoom\Commands\SetWind.cpp" />
     <ClCompile Include="ZRoom\Commands\Unused09.cpp" />
+    <ClCompile Include="ZRoom\Commands\ZRoomCommandUnk.cpp" />
     <ClCompile Include="ZRoom\ZRoom.cpp" />
     <ClCompile Include="ZRoom\ZRoomCommand.cpp" />
     <ClCompile Include="ZTexture.cpp" />
@@ -228,6 +230,7 @@
     <ClInclude Include="ZRoom\Commands\SetEntranceList.h" />
     <ClInclude Include="ZRoom\Commands\SetExitList.h" />
     <ClInclude Include="ZRoom\Commands\SetLightingSettings.h" />
+    <ClInclude Include="ZRoom\Commands\SetLightList.h" />
     <ClInclude Include="ZRoom\Commands\SetMesh.h" />
     <ClInclude Include="ZRoom\Commands\SetObjectList.h" />
     <ClInclude Include="ZRoom\Commands\SetPathways.h" />
@@ -242,6 +245,7 @@
     <ClInclude Include="ZRoom\Commands\SetTransitionActorList.h" />
     <ClInclude Include="ZRoom\Commands\SetWind.h" />
     <ClInclude Include="ZRoom\Commands\Unused09.h" />
+    <ClInclude Include="ZRoom\Commands\ZRoomCommandUnk.h" />
     <ClInclude Include="ZRoom\ObjectList.h" />
     <ClInclude Include="ZRoom\ZRoom.h" />
     <ClInclude Include="ZRoom\ZRoomCommand.h" />

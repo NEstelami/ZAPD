@@ -21,7 +21,7 @@ enum class RoomCommand : uint8_t
 	Unused09 = 0x09,
 	SetMesh = 0x0A,
 	SetObjectList = 0x0B,
-	UnusedLightingSetting = 0x0C,
+	SetLightList = 0x0C,
 	SetPathways = 0x0D,
 	SetTransitionActorList = 0x0E,
 	SetLightingSettings = 0x0F,

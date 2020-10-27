@@ -32,6 +32,8 @@
 #include "Commands/Unused09.h"
 #include "Commands/SetCutscenes.h"
 #include "Commands/EndMarker.h"
+#include "Commands/SetLightList.h"
+#include "Commands/ZRoomCommandUnk.h"
 #include <Path.h>
 
 using namespace std;
@@ -215,6 +217,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::Unused09: cmd = new Unused09(this, rawData, rawDataIndex); break; // 0x09
 		case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex, 0); break; // 0x0A
 		case RoomCommand::SetObjectList: cmd = new SetObjectList(this, rawData, rawDataIndex); break; // 0x0B
+		case RoomCommand::SetLightList: cmd = new SetLightList(this, rawData, rawDataIndex); break; // 0x0C (MM-ONLY)
 		case RoomCommand::SetPathways: cmd = new SetPathways(this, rawData, rawDataIndex); break; // 0x0D
 		case RoomCommand::SetTransitionActorList: cmd = new SetTransitionActorList(this, rawData, rawDataIndex); break; // 0x0E
 		case RoomCommand::SetLightingSettings: cmd = new SetLightingSettings(this, rawData, rawDataIndex); break; // 0x0F
@@ -228,7 +231,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::SetCutscenes: cmd = new SetCutscenes(this, rawData, rawDataIndex); break; // 0x17
 		case RoomCommand::SetAlternateHeaders: cmd = new SetAlternateHeaders(this, rawData, rawDataIndex); break; // 0x18
 		case RoomCommand::SetCameraSettings: cmd = new SetCameraSettings(this, rawData, rawDataIndex); break; // 0x19
-		default: cmd = new ZRoomCommand(this, rawData, rawDataIndex);
+		default: cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
 		}
 
 		auto end = chrono::steady_clock::now();

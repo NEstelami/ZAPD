@@ -375,6 +375,15 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				}
 			}
 			break;
+			case F3DZEXOpcode::G_MODIFYVTX:
+			{
+				int ww = (data & 0x00FF000000000000ULL) >> 48;
+				int nnnn = (data & 0x0000FFFF00000000ULL) >> 32;
+				int vvvvvvvv = (data & 0x00000000FFFFFFFFULL);
+
+				sprintf(line, "gsSPModifyVertex(%i, %i, %i),", nnnn / 2, ww, vvvvvvvv);
+			}
+			break;
 			case F3DZEXOpcode::G_CULLDL:
 			{
 				int vvvv = (data & 0xFFFF00000000) >> 32;
@@ -383,6 +392,15 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				sprintf(line, "gsSPCullDisplayList(%i, %i),", vvvv / 2, wwww / 2);
 			}
 			break;
+			/*case F3DZEXOpcode::G_BRANCH_Z:
+			{
+				int aaa = (data & 0x00FFF00000000000) >> 44;
+				int bbb = (data & 0x00000FFF00000000) >> 32;
+				int zzzzzzzz = (data & 0x00000000FFFFFFFF);
+
+				sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", );
+			}
+			break;*/
 			case F3DZEXOpcode::G_TRI1:
 			{
 				int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
@@ -400,6 +418,15 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				int ee = ((data & 0x0000000000FF00ULL) >> 8) / 2;
 				int ff = ((data & 0x000000000000FFULL) >> 0) / 2;
 				sprintf(line, "gsSP2Triangles(%i, %i, %i, 0, %i, %i, %i, 0),", aa, bb, cc, dd, ee, ff);
+			}
+			break;
+			case F3DZEXOpcode::G_QUAD:
+			{
+				int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
+				int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
+				int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
+				int dd = ((data & 0x000000000000FFULL));
+				sprintf(line, "gsSPQuadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
 			}
 			break;
 			case F3DZEXOpcode::G_VTX:
@@ -829,6 +856,14 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			}
 			break;
 			case F3DZEXOpcode::G_POPMTX:
+			{
+				int hhhhhh = (data & 0x00FFFFFF00000000) >> 32;
+				int llllllll = (data & 0x00000000FFFFFFFF);
+
+				sprintf(line, "gsDPSetOtherMode(%i, %i),", hhhhhh, llllllll);
+			}
+			break;
+			case F3DZEXOpcode::G_RDPSETOTHERMODE:
 			{
 				sprintf(line, "gsSPPopMatrix(%i),", data);
 			}
