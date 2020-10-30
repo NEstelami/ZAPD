@@ -92,7 +92,6 @@ int ZDisplayList::GetDListLength(vector<uint8_t> rawData, int rawDataIndex)
 	while (true)
 	{
 		F3DZEXOpcode opcode = (F3DZEXOpcode)rawData[rawDataIndex + (i * 8)];
-
 		i++;
 
 		if (opcode == F3DZEXOpcode::G_ENDDL)
@@ -302,13 +301,12 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 
 string ZDisplayList::GetSourceOutputHeader(string prefix)
 {
-	char line[4096];
-	string sourceOutput = "";
+	//char line[4096];
+	//string sourceOutput = "";
 
 	//sprintf(line, "extern Gfx _%s_dlist_%08X[];\n", prefix.c_str(), dListAddress);
-	sprintf(line, "extern Gfx %s[];\n", name.c_str());
-	sourceOutput += line;
-
+	//sprintf(line, "extern Gfx %s[];\n", name.c_str());
+	//sourceOutput += line;
 	return "";
 }
 
@@ -463,7 +461,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 						currentPtr += 16;
 					}
 
-					vertices[data & 0x00FFFFFF] = vtxList;
+					vertices[SEG2FILESPACE(data)] = vtxList;
 				}
 
 			}
@@ -494,7 +492,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				{
 					char texStr[2048];
 
-					int32_t texAddress = SEG2FILESPACE(data & 0x00FFFFFF);
+					int32_t texAddress = SEG2FILESPACE(data);
 
 					Declaration* texDecl = nullptr;
 					
@@ -568,7 +566,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				if (geoModeParam & 0x00800000)
 					geoModeStr += " | G_CLIPPING";
-
 				
 				if (ssssssss != 0)
 				{
@@ -1126,13 +1123,9 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 						defines += StringHelper::Sprintf("#define %s_tex_%08X ((u32)%s_tex_%08X + 0x%08X)\n", scene->GetName().c_str(), texturesSorted[i + 1].first, scene->GetName().c_str(),
 							texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
 
-						//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
-
 						scene->parent->declarations.erase(texturesSorted[i + 1].first);
 						scene->textures.erase(texturesSorted[i + 1].first);
 						texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-						//textures.erase(texturesSorted[i + 1].first);
 
 						i--;
 					}
@@ -1183,10 +1176,9 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			if (parent != nullptr)
 			{
-				//parent->declarations[item.first] = new Declaration(DeclarationAlignment::None, item.second->GetRawDataSize(), "u64", 
-					//StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), true, declaration);
+				if (Globals::Instance->debugMessages)
+					printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 
-				//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 				item.second->Save(Globals::Instance->outputPath);
 
 				if (!parent->GetDeclaration(item.first))
@@ -1215,8 +1207,6 @@ void ZDisplayList::TextureGenCheck(string prefix)
 {
 	if (TextureGenCheck(fileData, textures, scene, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded))
 	{
-		//lastTexWidth = 0;
-		//lastTexHeight = 0;
 		lastTexAddr = 0;
 		lastTexLoaded = false;
 	}
@@ -1236,11 +1226,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		{
 			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), texAddr), texWidth, texHeight);
 
-			if (texAddr == 0x8FD8)
-			{
-				int bp = 0;
-			}
-
 			tex->Save(Globals::Instance->outputPath);
 			textures[texAddr] = tex;
 
@@ -1253,15 +1238,9 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 
 			tex->Save(Globals::Instance->outputPath);
 
-			if (texAddr == 0x8FD8)
-			{
-				int bp = 0;
-			}
-
 			if (scene != nullptr)
 			{
 				scene->textures[texAddr] = tex;
-				//scene->parent->AddDeclarationArray(texAddr, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", tex->GetName(), 0, tex->GetSourceOutputCode(scene->GetName()));
 				scene->parent->AddDeclarationIncludeArray(texAddr, StringHelper::Sprintf("../build/%s/%s.%s.c.inc", 
 					Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(tex->GetName()).c_str(), tex->GetExternalExtension().c_str()), tex->GetRawDataSize(),
 					"u64", StringHelper::Sprintf("%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), 0);

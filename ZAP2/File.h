@@ -11,6 +11,12 @@
 class File
 {
 public:
+	static bool Exists(std::string filePath)
+	{
+		std::ifstream file(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+		return file.good();
+	}
+	
 	static std::vector<uint8_t> ReadAllBytes(std::string filePath)
 	{
 		std::ifstream file(filePath, std::ios::in | std::ios::binary | std::ios::ate);

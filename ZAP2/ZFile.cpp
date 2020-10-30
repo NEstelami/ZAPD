@@ -11,6 +11,7 @@
 #include "Globals.h"
 #include "HighLevel/HLModelIntermediette.h"
 #include <algorithm>
+#include <cassert>
 
 using namespace tinyxml2;
 using namespace std;
@@ -52,7 +53,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 	string folderName = basePath + "/" + Path::GetFileNameWithoutExtension(name);
 	
 	if (mode == ZFileMode::Extract)
+	{
+		if (!File::Exists(basePath + "/" + name))
+			throw StringHelper::Sprintf("Error! File %s does not exist.", (basePath + "/" + name).c_str());
+
 		rawData = File::ReadAllBytes(basePath + "/" + name);
+	}
 
 	int rawDataIndex = 0;
 
@@ -313,10 +319,15 @@ void ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath
 
 std::string ZFile::GetDeclarationName(uint32_t address)
 {
+	return GetDeclarationName(address, "ERROR_COULD_NOT_FIND_DECLARATION"); // Note: For now that default message is just for testing
+}
+
+std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult)
+{
 	if (declarations.find(address) != declarations.end())
 		return declarations[address]->varName;
 
-	return "ERROR_COULD_NOT_FIND_DECLARATION";
+	return defaultResult;
 }
 
 Declaration* ZFile::GetDeclaration(uint32_t address)
@@ -338,7 +349,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 	sourceOutput += "#include <ultra64.h>\n";
 	sourceOutput += "#include <z64.h>\n";
-	sourceOutput += StringHelper::Sprintf("#include \"%s\"\n\n", (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
+	sourceOutput += GetHeaderInclude();
 
 	// Generate placeholder declarations
 	for (ZResource* res : resources)
@@ -426,6 +437,11 @@ void ZFile::GenerateHLIntermediette()
 			res->GenerateHLIntermediette(*mdl);
 		}
 	}
+}
+
+std::string ZFile::GetHeaderInclude()
+{
+	return StringHelper::Sprintf("#include \"%s\"\n\n", (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
 }
 
 string ZFile::ProcessDeclarations()

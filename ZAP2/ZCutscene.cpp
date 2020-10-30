@@ -182,7 +182,6 @@ string CutsceneCommand::GenerateSourceCode(string roomName, int baseAddress)
 size_t CutsceneCommand::GetCommandSize()
 {
 	return 4;
-	//return 0;
 }
 
 CutsceneCameraPoint::CutsceneCameraPoint(vector<uint8_t> rawData, int rawDataIndex)
