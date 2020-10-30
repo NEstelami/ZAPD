@@ -162,12 +162,10 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 			int segmentNumber = (data & 0xFF000000) >> 24;
 			lastTexSeg = (data & 0xFF000000);
 
-			Declaration* texDecl = parent->GetDeclaration(texAddr);
-
-			if (texAddr == 0x4058)
-			{
-				int bp = 0;
-			}
+			Declaration* texDecl = nullptr;
+			
+			if (parent != nullptr)
+				texDecl = parent->GetDeclaration(texAddr);
 
 			if (texAddr != 0)
 			{
@@ -223,11 +221,6 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 			int uuu = (data & 0x0000000000FFF000) >> 12;
 			int vvv = (data & 0x0000000000000FFF);
 
-			if (texAddr == 0x8798)
-			{
-				int bp = 0;
-			}
-
 			int shiftAmtW = 2;
 			int shiftAmtH = 2;
 
@@ -277,11 +270,6 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 				lastTexHeight = height;
 				lastTexSiz = (F3DZEXTexSizes)siz;
 				lastTexLoaded = true;
-
-				if (lastTexAddr == 0x8FD8)
-				{
-					int bp = 0;
-				}
 
 				TextureGenCheck(prefix);
 
@@ -358,7 +346,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				Declaration* dListDecl = nullptr;
 				
-				dListDecl = parent->GetDeclaration(SEG2FILESPACE(data));
+				if (parent != nullptr)
+					dListDecl = parent->GetDeclaration(SEG2FILESPACE(data));
 
 				// TEST
 				if (segNum != 8 && scene != nullptr && scene->parent->GetDeclarationName(data & 0x00FFFFFF) != "ERROR_COULD_NOT_FIND_DECLARATION")
@@ -449,7 +438,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
 				int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
 				int dd = ((data & 0x000000000000FFULL));
-				sprintf(line, "gsSPQuadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
+				sprintf(line, "gsSP1Quadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
 			}
 			break;
 			case F3DZEXOpcode::G_VTX:
@@ -507,7 +496,10 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 					int32_t texAddress = SEG2FILESPACE(data & 0x00FFFFFF);
 
-					Declaration* texDecl = parent->GetDeclaration(texAddress);
+					Declaration* texDecl = nullptr;
+					
+					if (parent != nullptr)
+						texDecl = parent->GetDeclaration(texAddress);
 
 					if (texDecl != nullptr)
 					{

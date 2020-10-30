@@ -280,32 +280,20 @@ void ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment
 
 void ZFile::AddDeclarationPlaceholder(uint32_t address)
 {
-	if (declarations.find(address) != declarations.end())
-	{
-		int bp = 0;
-	}
-
-	declarations[address] = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+	if (declarations.find(address) == declarations.end())
+		declarations[address] = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
 }
 
 void ZFile::AddDeclarationPlaceholder(uint32_t address, string varName)
 {
-	if (declarations.find(address) != declarations.end())
-	{
-		int bp = 0;
-	}
-
-	declarations[address] = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
+	if (declarations.find(address) == declarations.end())
+		declarations[address] = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
 }
 
 void ZFile::AddDeclarationInclude(uint32_t address, string includePath, uint32_t size, string varType, string varName)
 {
-	if (declarations.find(address) != declarations.end())
-	{
-		int bp = 0;
-	}
-
-	declarations[address] = new Declaration(includePath, size, varType, varName);
+	if (declarations.find(address) == declarations.end())
+		declarations[address] = new Declaration(includePath, size, varType, varName);
 }
 
 void ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath, uint32_t size, std::string varType, std::string varName, int arrayItemCnt)
@@ -355,7 +343,8 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	// Generate placeholder declarations
 	for (ZResource* res : resources)
 	{
-		AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
+			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
 	}
 
 	// Generate Code

@@ -141,7 +141,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 		}
 
 		if (polySegmentOffset != 0) {
-			zRoom->parent->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, "CollisionPoly",
+			zRoom->parent->declarations[polySegmentOffset] = new Declaration(DeclarationAlignment::None, polygons.size() * 16, "RoomPoly", // TODO: Change this to CollisionPoly once the struct has been updated
 				StringHelper::Sprintf("_%s_polygons_%08X", zRoom->GetName().c_str(), polySegmentOffset), true, declaration);
 		}
 	}
