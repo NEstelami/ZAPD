@@ -215,7 +215,7 @@ SectionType ZOverlay::GetSectionTypeFromStr(string sectionName)
 		return SectionType::Data;
 	else if (sectionName == ".rel.rodata" || sectionName == ".rodata")
 		return SectionType::RoData;
-	else if (sectionName == ".rel.bss" ||sectionName == ".bss")
+	else if (sectionName == ".rel.bss" || sectionName == ".bss")
 		return SectionType::Bss;
 		
 	return SectionType::ERROR;

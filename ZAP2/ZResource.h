@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 #define SEG2FILESPACE(x) (x & 0x00FFFFFF)
-#define GETSEGNUM(x) (x >> 24)
+#define GETSEGNUM(x) ((x >> 24) & 0xFF)
 
 class ZFile;
 class HLFileIntermediette;

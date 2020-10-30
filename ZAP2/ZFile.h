@@ -42,8 +42,10 @@ public:
 	void AddDeclarationInclude(uint32_t address, std::string includePath, uint32_t size, std::string varType, std::string varName);
 	void AddDeclarationIncludeArray(uint32_t address, std::string includePath, uint32_t size, std::string varType, std::string varName, int arrayItemCnt);
 	std::string GetDeclarationName(uint32_t address);
+	std::string GetDeclarationName(uint32_t address, std::string defaultResult);
 	Declaration* GetDeclaration(uint32_t address);
 	bool HasDeclaration(uint32_t address);
+	std::string GetHeaderInclude();
 
 protected:
 	std::vector<uint8_t> rawData;

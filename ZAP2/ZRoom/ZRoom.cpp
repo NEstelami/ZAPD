@@ -415,7 +415,10 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	sourceOutput += "#include <variables.h>\n";
 
 	if (scene != nullptr)
-		sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", scene->GetName().c_str());
+	{
+		//sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", scene->GetName().c_str());
+		sourceOutput += scene->parent->GetHeaderInclude();
+	}
 
 	sourceOutput += "\n";
 
