@@ -55,6 +55,9 @@
     <Filter Include="Source Files\HighLevel">
       <UniqueIdentifier>{0f9980bb-ae46-4891-a39e-275bf255f010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\HighLevel\Room">
+      <UniqueIdentifier>{11dbd8e6-d97a-42a5-b40c-e1350389544d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

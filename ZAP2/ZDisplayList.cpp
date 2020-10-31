@@ -435,7 +435,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
 				int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
 				int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
-				int dd = ((data & 0x000000000000FFULL));
+				int dd = ((data & 0x000000000000FFULL)) / 2;
 				sprintf(line, "gsSP1Quadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
 			}
 			break;
@@ -443,7 +443,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			{
 				int nn = (data & 0x000FF00000000000ULL) >> 44;
 				int aa = (data & 0x000000FF00000000ULL) >> 32;
-				uint32_t vtxAddr = data & 0x00FFFFFF;
+				uint32_t vtxAddr = SEG2FILESPACE(data);
+
 				sprintf(line, "gsSPVertex(%s_vertices_%08X, %i, %i),", prefix.c_str(), vtxAddr, nn, ((aa >> 1) - nn));
 
 				{
@@ -496,7 +497,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 					Declaration* texDecl = nullptr;
 					
-					if (parent != nullptr)
+					if (parent != nullptr && segmentNumber != 8) // HACK 
 						texDecl = parent->GetDeclaration(texAddress);
 
 					if (texDecl != nullptr)
@@ -510,7 +511,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 					if (texDecl != nullptr)
 						sprintf(texStr, "%s", texDecl->varName.c_str());
-					else if (texAddress != 0)
+					else if (texAddress != 0 && segmentNumber != 8) // TODO: TEMP HACK
 						sprintf(texStr, "%s_tex_%08X", prefix.c_str(), texAddress);
 					else if (segmentNumber != 3)
 						sprintf(texStr, "0x%08X", data);
@@ -880,7 +881,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				sprintf(line, "gsSPTexture(%i, %i, %i, %i, %s),", ssss, tttt, lll, ddd, nnnnnnn == 1 ? "G_ON" : "G_OFF");
 			}
 			break;
-			case F3DZEXOpcode::G_POPMTX:
+			case F3DZEXOpcode::G_RDPSETOTHERMODE:
 			{
 				int hhhhhh = (data & 0x00FFFFFF00000000) >> 32;
 				int llllllll = (data & 0x00000000FFFFFFFF);
@@ -888,7 +889,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				sprintf(line, "gsDPSetOtherMode(%i, %i),", hhhhhh, llllllll);
 			}
 			break;
-			case F3DZEXOpcode::G_RDPSETOTHERMODE:
+			case F3DZEXOpcode::G_POPMTX:
 			{
 				sprintf(line, "gsSPPopMatrix(%i),", data);
 			}
@@ -1076,6 +1077,9 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				i--;
 			}
 		}
+
+		if (scene == nullptr) // TODO: Bit of a hack but it works for now...
+			parent->defines += defines;
 
 		// Generate Vertex Declarations
 		for (pair<int32_t, vector<Vertex>> item : vertices)

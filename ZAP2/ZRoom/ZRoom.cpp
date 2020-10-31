@@ -408,7 +408,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 {
 	sourceOutput = "";
 
-	sourceOutput += "#include <z64.h>\n";
+	//sourceOutput += "#include <z64.h>\n";
 	sourceOutput += "#include <segment_symbols.h>\n";
 	sourceOutput += "#include <command_macros_base.h>\n";
 	sourceOutput += "#include <z64cutscene_commands.h>\n";
