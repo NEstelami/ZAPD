@@ -409,7 +409,7 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 
 			uint8_t alphaBit = (bmpRgba[(((y * width) + x) * 4) + 3] != 0);
 
-			short data = (short)((r << 11) + (g << 6) + (b << 1) + alphaBit);
+			uint16_t data = (uint16_t)((r << 11) + (g << 6) + (b << 1) + alphaBit);
 
 			rawData[pos + 0] = (uint8_t)((data & 0xFF00) >> 8);
 			rawData[pos + 1] = (uint8_t)((data & 0x00FF));
