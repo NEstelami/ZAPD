@@ -1187,7 +1187,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				if (!parent->GetDeclaration(item.first))
 				{
-					parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
+					parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.inc.c",
 						Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
 						item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
 						"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
@@ -1245,7 +1245,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 			if (scene != nullptr)
 			{
 				scene->textures[texAddr] = tex;
-				scene->parent->AddDeclarationIncludeArray(texAddr, StringHelper::Sprintf("../build/%s/%s.%s.c.inc", 
+				scene->parent->AddDeclarationIncludeArray(texAddr, StringHelper::Sprintf("../build/%s/%s.%s.inc.c", 
 					Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(tex->GetName()).c_str(), tex->GetExternalExtension().c_str()), tex->GetRawDataSize(),
 					"u64", StringHelper::Sprintf("%s_tex_%08X", Globals::Instance->lastScene->GetName().c_str(), texAddr), 0);
 			}

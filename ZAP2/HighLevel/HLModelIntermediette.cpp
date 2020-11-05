@@ -803,7 +803,7 @@ void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 
 std::string HLTextureIntermediette::OutputCode()
 {
-	return StringHelper::Sprintf("#include <../%s/%s.c.inc>", Globals::Instance->outputPath.c_str(), name.c_str());
+	return StringHelper::Sprintf("#include <../%s/%s.inc.c>", Globals::Instance->outputPath.c_str(), name.c_str());
 }
 
 void HLTextureIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root)

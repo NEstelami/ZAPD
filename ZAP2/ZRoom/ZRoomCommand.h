@@ -57,6 +57,8 @@ public:
 	virtual int32_t GetRawDataSize();
 	virtual std::string GetCommandCName();
 	virtual std::string GenerateExterns();
+	virtual std::string Save();
+	virtual std::string PreGenSourceFiles();
 
 protected:
 	ZRoom* zRoom;

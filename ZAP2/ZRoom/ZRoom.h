@@ -35,6 +35,9 @@ public:
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();
+	virtual ZResourceType GetResourceType();
+	virtual void Save(std::string outFolder);
+	virtual void PreGenSourceFiles();
 };
 
 struct CommandSet

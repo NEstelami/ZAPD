@@ -23,6 +23,7 @@ class ZFile
 public:
 	std::map<int32_t, Declaration*> declarations;
 	std::string defines;
+	std::vector<ZResource*> resources;
 
 	ZFile(std::string nOutPath, std::string nName);
 	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath);
@@ -49,7 +50,6 @@ public:
 
 protected:
 	std::vector<uint8_t> rawData;
-	std::vector<ZResource*> resources;
 	std::string name;
 	std::string basePath;
 	std::string outputPath;

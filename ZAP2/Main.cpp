@@ -231,18 +231,18 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 	if (root == nullptr)
 		return false;
 
-	vector<ZFile*> files = vector<ZFile*>();
+	//vector<ZFile*> files = vector<ZFile*>();
 
 	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "File")
 		{
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath);
-			files.push_back(file);
+			Globals::Instance->files.push_back(file);
 		}
 	}
 
-	for (ZFile* file : files)
+	for (ZFile* file : Globals::Instance->files)
 	{
 		if (fileMode == ZFileMode::Build)
 			file->BuildResources();

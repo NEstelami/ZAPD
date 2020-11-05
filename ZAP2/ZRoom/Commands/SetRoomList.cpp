@@ -1,6 +1,7 @@
 #include "SetRoomList.h"
 #include "../ZRoom.h"
 #include "../../ZFile.h"
+#include "../../Globals.h"
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
@@ -23,18 +24,18 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 		currentPtr += 8;
 	}
 
-	string declaration = "";
+	//string declaration = "";
 
-	for (int i = 0; i < rooms.size(); i++)
+	/*for (int i = 0; i < rooms.size(); i++)
 	{
 		RoomEntry* entry = rooms[i];
 
 		string roomName = StringHelper::Sprintf("%s_room_%i", StringHelper::Split(zRoom->GetName(), "_scene")[0].c_str(), i);
-		declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());;
-	}
+		declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());
+	}*/
 	
-	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, 
-		"RomFile", StringHelper::Sprintf("_%s_roomList_%08X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
+	//zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, 
+		//"RomFile", StringHelper::Sprintf("_%s_roomList_%08X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
 }
 
 string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)
@@ -60,6 +61,33 @@ string SetRoomList::GetCommandCName()
 RoomCommand SetRoomList::GetRoomCommand()
 {
 	return RoomCommand::SetRoomList;
+}
+
+std::string SetRoomList::PreGenSourceFiles()
+{
+	string declaration = "";
+
+	for (ZFile* file : Globals::Instance->files)
+	{
+		for (ZResource* res : file->resources)
+		{
+			if (res->GetResourceType() == ZResourceType::Room && res != zRoom)
+			{
+				string roomName = res->GetName();
+				declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());
+			}
+		}
+	}
+
+	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8,
+		"RomFile", StringHelper::Sprintf("_%s_roomList_%08X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
+
+	return std::string();
+}
+
+std::string SetRoomList::Save()
+{
+	return std::string();
 }
 
 RoomEntry::RoomEntry(int32_t nVAS, int32_t nVAE)
