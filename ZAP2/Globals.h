@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "ZFile.h"
 #include "ZTexture.h"
 #include "ZRoom/ZRoom.h"
@@ -20,6 +21,7 @@ public:
 	std::string baseRomPath, inputPath, outputPath, cfgPath;
 	TextureType texType;
 
+	std::vector<ZFile*> files;
 	ZRoom* lastScene;
 	std::map<uint32_t, std::string> symbolMap;
 

@@ -324,7 +324,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 		//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 		zRoom->textures[texEntry.first]->Save(Globals::Instance->outputPath);
 
-		zRoom->parent->AddDeclarationIncludeArray(texEntry.first, StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
+		zRoom->parent->AddDeclarationIncludeArray(texEntry.first, StringHelper::Sprintf("../build/%s/%s.%s.inc.c",
 			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(zRoom->textures[texEntry.first]->GetName()).c_str(), zRoom->textures[texEntry.first]->GetExternalExtension().c_str()), 
 			zRoom->textures[texEntry.first]->GetRawDataSize(), "u64", StringHelper::Sprintf("%s_tex_%08X", zRoom->textures[texEntry.first]->GetName().c_str(), texEntry.first), 0);
 	}

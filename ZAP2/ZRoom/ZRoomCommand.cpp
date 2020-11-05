@@ -34,6 +34,16 @@ string ZRoomCommand::GenerateExterns()
 	return "";
 }
 
+std::string ZRoomCommand::Save()
+{
+	return std::string();
+}
+
+std::string ZRoomCommand::PreGenSourceFiles()
+{
+	return std::string();
+}
+
 int32_t ZRoomCommand::GetRawDataSize()
 {
 	return 8;

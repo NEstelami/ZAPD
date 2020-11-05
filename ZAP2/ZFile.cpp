@@ -225,6 +225,9 @@ void ZFile::ExtractResources(string outputDir)
 	if (!Directory::Exists(outputPath))
 		Directory::CreateDirectory(outputPath);
 
+	for (ZResource* res : resources)
+		res->PreGenSourceFiles();
+
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles(outputDir);
 
@@ -371,8 +374,8 @@ void ZFile::GenerateSourceFiles(string outputDir)
 			while (StringHelper::EndsWith(outputDir, "/"))
 				outputDir = outputDir.substr(0, outputDir.length() - 1);
 
-			//sourceOutput += StringHelper::Sprintf("#include <../build/%s/%s.%s.c.inc>", outputDir.c_str(), Path::GetFileNameWithoutExtension(res->GetName()).c_str(), res->GetExternalExtension().c_str());
-			AddDeclarationIncludeArray(res->GetRawDataIndex(), StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
+			//sourceOutput += StringHelper::Sprintf("#include <../build/%s/%s.%s.inc.c>", outputDir.c_str(), Path::GetFileNameWithoutExtension(res->GetName()).c_str(), res->GetExternalExtension().c_str());
+			AddDeclarationIncludeArray(res->GetRawDataIndex(), StringHelper::Sprintf("../build/%s/%s.%s.inc.c",
 				outputDir.c_str(), Path::GetFileNameWithoutExtension(res->GetName()).c_str(), res->GetExternalExtension().c_str()), res->GetRawDataSize(),
 				"", res->GetName(), 0);
 			

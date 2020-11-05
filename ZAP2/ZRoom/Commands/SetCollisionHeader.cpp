@@ -103,11 +103,21 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 			highestPolyType = poly->type;
 	}
 
-	for (int i = 0; i < highestPolyType + 1; i++)
-		polygonTypes.push_back(BitConverter::ToInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
+	//if (highestPolyType > 0)
+	{
+		for (int i = 0; i < highestPolyType + 1; i++)
+			polygonTypes.push_back(BitConverter::ToInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
+	}
+	//else
+	//{
+		//int polyTypesSize = abs(polyTypeDefSegmentOffset - camDataSegmentOffset) / 8;
+
+		//for (int i = 0; i < polyTypesSize; i++)
+			//polygonTypes.push_back(BitConverter::ToInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
+	//}
 
 	if (camDataSegmentOffset != 0)
-		camData = new CameraDataList(zRoom, rawData, camDataSegmentOffset, polyTypeDefSegmentOffset);
+		camData = new CameraDataList(zRoom, rawData, camDataSegmentOffset, polyTypeDefSegmentOffset, polygonTypes.size());
 
 	for (int i = 0; i < numWaterBoxes; i++)
 		waterBoxes.push_back(new WaterBoxHeader(zRoom, rawData, waterBoxSegmentOffset + (i * 16)));
@@ -212,13 +222,14 @@ WaterBoxHeader::WaterBoxHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 	properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);
 }
 
-CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset)
+CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset, int polygonTypesCnt)
 {
 	char line[2048];
 	string declaration = "";
 
-	//Parse CameraDataEntries
-	int numElements = (polyTypeDefSegmentOffset - (rawDataIndex)) / 8;
+	// Parse CameraDataEntries
+	int numElements = abs(polyTypeDefSegmentOffset - (rawDataIndex)) / 8;
+	//int numElements = polygonTypesCnt;
 	uint32_t cameraPosDataSeg = rawDataIndex;
 	for (int i = 0; i < numElements; i++)
 	{
@@ -227,10 +238,15 @@ CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 		entry->cameraSType = BitConverter::ToInt16BE(rawData, rawDataIndex + (entries.size() * 8) + 0);
 		entry->numData = BitConverter::ToInt16BE(rawData, rawDataIndex + (entries.size() * 8) + 2);
 		entry->cameraPosDataSeg = BitConverter::ToInt32BE(rawData, rawDataIndex + (entries.size() * 8) + 4);
-		if (entry->cameraPosDataSeg != 0 && cameraPosDataSeg > (entry->cameraPosDataSeg & 0xFFFFFF))
+
+		if (entry->cameraPosDataSeg != 0 && GETSEGNUM(entry->cameraPosDataSeg) != 2)
 		{
-			cameraPosDataSeg = (entry->cameraPosDataSeg & 0xFFFFFF);
+			cameraPosDataSeg = rawDataIndex + (entries.size() * 8);
+			break;
 		}
+
+		if (entry->cameraPosDataSeg != 0 && cameraPosDataSeg > (entry->cameraPosDataSeg & 0xFFFFFF))
+			cameraPosDataSeg = (entry->cameraPosDataSeg & 0xFFFFFF);
 
 		entries.push_back(entry);
 	}
@@ -255,7 +271,7 @@ CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 
 	zRoom->parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, entries.size() * 8, "CamData", StringHelper::Sprintf("_%s_camDataList_%08X", zRoom->GetName().c_str(), rawDataIndex), entries.size(), declaration);
 
-	int numDataTotal = (rawDataIndex - cameraPosDataOffset) / 0x6;
+	int numDataTotal = abs(rawDataIndex - (int)cameraPosDataOffset) / 0x6;
 
 	if (numDataTotal > 0)
 	{

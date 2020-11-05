@@ -471,7 +471,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 		//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 		item.second->Save(Globals::Instance->outputPath);
 
-		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.c.inc",
+		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.inc.c",
 			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
 			"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
 	}
@@ -494,6 +494,23 @@ int ZRoom::GetRawDataSize()
 		size += cmd->GetRawDataSize();
 
 	return size;
+}
+
+ZResourceType ZRoom::GetResourceType()
+{
+	return ZResourceType::Room;
+}
+
+void ZRoom::Save(string outFolder)
+{
+	for (ZRoomCommand* cmd : commands)
+		cmd->Save();
+}
+
+void ZRoom::PreGenSourceFiles()
+{
+	for (ZRoomCommand* cmd : commands)
+		cmd->PreGenSourceFiles();
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nText)

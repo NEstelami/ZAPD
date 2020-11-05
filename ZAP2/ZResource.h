@@ -14,6 +14,20 @@ class HLFileIntermediette;
 class Declaration;
 struct CommandSet;
 
+enum class ZResourceType
+{
+	Error,
+	Texture,
+	DisplayList,
+	Room,
+	Overlay,
+	Animation,
+	Cutscene,
+	Blob,
+	Limb,
+	Hierarchy
+};
+
 class ZResource
 {
 public:
@@ -21,6 +35,7 @@ public:
 
 	ZResource();
 	virtual void Save(std::string outFolder);
+	virtual void PreGenSourceFiles();
 	std::string GetName();
 	void SetName(std::string nName);
 	std::string GetRelativePath();
@@ -33,6 +48,7 @@ public:
 	virtual std::string GetSourceOutputCode(std::string prefix);
 	virtual std::string GetSourceOutputHeader(std::string prefix);
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
+	virtual ZResourceType GetResourceType();
 
 protected:
 	std::string name;

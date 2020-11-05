@@ -7,6 +7,7 @@ Globals::Globals()
 {
 	Instance = this;
 
+	files = std::vector<ZFile*>();
 	symbolMap = std::map <uint32_t, std::string>();
 	genSourceFile = true;
 	testMode = false;

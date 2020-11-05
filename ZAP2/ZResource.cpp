@@ -17,6 +17,10 @@ void ZResource::Save(string outFolder)
 
 }
 
+void ZResource::PreGenSourceFiles()
+{
+}
+
 string ZResource::GetName()
 {
 	return name;
@@ -75,4 +79,9 @@ string ZResource::GetSourceOutputHeader(std::string prefix)
 void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 
+}
+
+ZResourceType ZResource::GetResourceType()
+{
+	return ZResourceType::Error;
 }

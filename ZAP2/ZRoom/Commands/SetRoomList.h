@@ -22,6 +22,8 @@ public:
 	virtual std::string GetCommandCName();
 	virtual std::string GenerateExterns();
 	virtual RoomCommand GetRoomCommand();
+	virtual std::string PreGenSourceFiles();
+	virtual std::string Save();
 
 private:
 	std::vector<RoomEntry*> rooms;
