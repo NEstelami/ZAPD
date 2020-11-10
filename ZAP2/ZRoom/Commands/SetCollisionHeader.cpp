@@ -265,8 +265,7 @@ CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 		else
 			sprintf(camSegLine, "0x%08X", entries[i]->cameraPosDataSeg);
 
-		sprintf(line, "\t{ 0x%04X, %i, %s }, // 0x%08X\n", entries[i]->cameraSType, entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
-		declaration += line;
+		declaration += StringHelper::Sprintf("\t{ 0x%04X, %i, %s }, // 0x%08X\n", entries[i]->cameraSType, entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
 	}
 
 	zRoom->parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, entries.size() * 8, "CamData", StringHelper::Sprintf("_%s_camDataList_%08X", zRoom->GetName().c_str(), rawDataIndex), entries.size(), declaration);
@@ -281,8 +280,7 @@ CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 			CameraPositionData* data = new CameraPositionData(zRoom, rawData, cameraPosDataOffset + (i * 6));
 			cameraPositionData.push_back(data);
 
-			sprintf(line, "\t{ %6i, %6i, %6i }, // 0x%08X\n", data->x, data->y, data->z, cameraPosDataSeg + (i * 0x6));
-			declaration += line;
+			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i }, // 0x%08X\n", data->x, data->y, data->z, cameraPosDataSeg + (i * 0x6));;
 		}
 
 		int cameraPosDataIndex = cameraPosDataSeg & 0x00FFFFFF;
