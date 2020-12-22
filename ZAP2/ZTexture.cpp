@@ -724,33 +724,8 @@ ZResourceType ZTexture::GetResourceType()
 	return ZResourceType::Texture;
 }
 
-uint64_t murmur64(uint64_t h)
-{
-	h ^= h >> 33;
-	h *= 0xff51afd7ed558ccdL;
-	h ^= h >> 33;
-	h *= 0xc4ceb9fe1a85ec53L;
-	h ^= h >> 33;
-	return h;
-}
-
 void ZTexture::CalcHash()
 {
-	hash = 0;
-
-	for (int y = 0; y < height; y++)
-	{
-		for (int x = 0; x < width; x++)
-		{
-			uint8_t r = bmpRgb[(((y * width) + x) * 3) + 0];
-			uint8_t g = bmpRgb[(((y * width) + x) * 3) + 1];
-			uint8_t b = bmpRgb[(((y * width) + x) * 3) + 2];
-			
-			hash = murmur64(hash + r);
-			hash = murmur64(hash + g);
-			hash = murmur64(hash + b);
-		}
-	}
 }
 
 std::string ZTexture::GetExternalExtension()
