@@ -6,10 +6,22 @@ ZResource::ZResource()
 {
 	parent = nullptr;
 	name = "";
+	outName = "";
 	relativePath = "";
 	sourceOutput = "";
 	rawData = vector<uint8_t>();
 	rawDataIndex = 0;
+	outputDeclaration = true;
+}
+
+void ZResource::ParseXML(tinyxml2::XMLElement* reader)
+{
+	name = reader->Attribute("Name");
+
+	if (reader->Attribute("OutName") != nullptr)
+		outName = reader->Attribute("OutName");
+	else
+		outName = name;
 }
 
 void ZResource::Save(string outFolder)
@@ -24,6 +36,11 @@ void ZResource::PreGenSourceFiles()
 string ZResource::GetName()
 {
 	return name;
+}
+
+std::string ZResource::GetOutName()
+{
+	return outName;
 }
 
 void ZResource::SetName(string nName)
@@ -84,4 +101,9 @@ void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 ZResourceType ZResource::GetResourceType()
 {
 	return ZResourceType::Error;
+}
+
+void ZResource::CalcHash()
+{
+	hash = 0;
 }

@@ -224,7 +224,6 @@ WaterBoxHeader::WaterBoxHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int r
 
 CameraDataList::CameraDataList(ZRoom* zRoom, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset, int polygonTypesCnt)
 {
-	char line[2048];
 	string declaration = "";
 
 	// Parse CameraDataEntries

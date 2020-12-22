@@ -70,7 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Jack\Documents\GitHub\ZAP2\ZAP2\;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Jack\Documents\GitHub\ZAP2\ZAP2\sqlite;C:\Users\Jack\Documents\GitHub\ZAP2\ZAP2\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Users\Jack\Documents\GitHub\ZAP2\ZAP2\;$(IncludePath)</IncludePath>
@@ -94,11 +95,12 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <Profile>true</Profile>
+      <AdditionalDependencies>assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,9 +139,8 @@
     <ClCompile Include="HighLevel\HLModelIntermediette.cpp" />
     <ClCompile Include="HighLevel\HLTexture.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="OpenFBX\miniz.cpp" />
-    <ClCompile Include="OpenFBX\ofbx.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
+    <ClCompile Include="sqlite\sqlite3.c" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="ZAnimation.cpp" />
     <ClCompile Include="ZBlob.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="OpenFBX\ofbx.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="Path.h" />
+    <ClInclude Include="sqlite_orm.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="StringHelper.h" />
@@ -257,6 +259,5 @@
     </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

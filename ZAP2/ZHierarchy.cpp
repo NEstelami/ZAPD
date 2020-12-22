@@ -1,6 +1,7 @@
 #include "ZHierarchy.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
+#include "HighLevel/HLModelIntermediette.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -21,12 +22,13 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 {
 	ZLimbType limbType = ZLimbType::Standard;
 	string limbName = reader->Attribute("Name");
-	int limbAddress = strtol(StringHelper::Split(reader->Attribute("Address"), "0x")[1].c_str(), NULL, 16);
+	int limbAddress = strtol(StringHelper::Split(reader->Attribute("Offset"), "0x")[1].c_str(), NULL, 16);
 
 	if (string(reader->Attribute("Type")) == "LOD")
 		limbType = ZLimbType::LOD;
 
 	ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, rawDataIndex);
+	limb->ParseXML(reader);
 	limb->parent = parent;
 	limb->name = limbName;
 	limb->address = limbAddress;
@@ -75,6 +77,13 @@ int ZLimbStandard::GetRawDataSize()
 ZHierarchy::ZHierarchy() : ZResource()
 {
 	limbs = vector<ZLimbStandard*>();
+}
+
+void ZHierarchy::GenerateHLIntermediette(HLFileIntermediette& hlFile)
+{
+	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
+	HLModelIntermediette::FromZHierarchy(mdl, this);
+	//mdl->blocks.push_back(new HLTerminator());
 }
 
 ZHierarchy* ZHierarchy::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
@@ -133,7 +142,7 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 			if (parent->HasDeclaration(limb->address))
 				limbName = parent->GetDeclarationName(limb->address);
 
-			parent->AddDeclaration(limb->address, DeclarationAlignment::None, 12, "SkelLimbEntry", limbName, entryStr);
+			parent->AddDeclaration(limb->address, DeclarationAlignment::None, 12, "StandardLimb", limbName, entryStr);
 		}
 
 		// Table
@@ -157,10 +166,11 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 		if (!parent->HasDeclaration(ptr))
 		{
 			parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbs.size(),
-				"SkelLimbEntry*", StringHelper::Sprintf("_%s_limbs", prefix.c_str()), limbs.size(), tblStr);
+				"StandardLimb*", StringHelper::Sprintf("_%s_limbs", prefix.c_str()), limbs.size(), tblStr);
 		}
 
-		string headerStr = StringHelper::Sprintf("_%s_limbs, %i, 0, 0, 0, %i", prefix.c_str(), name.c_str(), prefix.c_str(), name.c_str(), limbs.size(), dListCount);
+		//string headerStr = StringHelper::Sprintf("_%s_limbs, %i, 0, 0, 0, %i", prefix.c_str(), limbs.size(), dListCount);
+		string headerStr = StringHelper::Sprintf("_%s_limbs, %i", prefix.c_str(), limbs.size());
 
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 8, 
 			"SkeletonHeader", StringHelper::Sprintf("_%s_%s_header", prefix.c_str(), name.c_str()), headerStr);

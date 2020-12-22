@@ -12,9 +12,11 @@ public:
 	static ZBlob* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool readFile);
 	static ZBlob* FromFile(std::string filePath);
 	std::string GetSourceOutputCode(std::string prefix);
+	std::string GetSourceOutputHeader(std::string prefix);
 	void Save(std::string outFolder);
 	bool IsExternalResource();
 	std::string GetExternalExtension();
+	ZResourceType GetResourceType();
 
 private:
 	ZBlob();

@@ -70,6 +70,8 @@ void ZAnimation::Save(string outFolder)
 
 void ZAnimation::ParseXML(tinyxml2::XMLElement* reader)
 {
+	ZResource::ParseXML(reader);
+
 	name = reader->Attribute("Name");
 	limbCount = reader->IntAttribute("LimbCount");
 }
