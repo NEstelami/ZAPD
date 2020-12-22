@@ -60,6 +60,9 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 
 	room->scene = nScene;
 
+	Globals::Instance->AddSegment(SEGMENT_ROOM);
+	Globals::Instance->AddSegment(SEGMENT_SCENE);
+
 	//GenDefinitions();
 
 	int cmdCount = 999999;
@@ -79,7 +82,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			if (child->Attribute("Comment") != NULL)
 				comment = "// " + string(child->Attribute("Comment")) + "\n";
 
-			string addressStr = child->Attribute("Address");
+			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address));
@@ -95,7 +98,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			if (child->Attribute("Comment") != NULL)
 				comment = "// " + string(child->Attribute("Comment")) + "\n";
 
-			string addressStr = child->Attribute("Address");
+			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			string sizeStr = child->Attribute("Size");
@@ -111,7 +114,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			if (child->Attribute("Comment") != NULL)
 				comment = "// " + string(child->Attribute("Comment")) + "\n";
 
-			string addressStr = child->Attribute("Address");
+			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999);
@@ -126,7 +129,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			if (child->Attribute("Comment") != NULL)
 				comment = "// " + string(child->Attribute("Comment")) + "\n";
 
-			string addressStr = child->Attribute("Address");
+			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			int commandsCount = 99999999;
@@ -146,7 +149,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			if (child->Attribute("Comment") != NULL)
 				comment = "// " + string(child->Attribute("Comment")) + "\n";
 
-			string addressStr = child->Attribute("Address");
+			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			SetPathways* pathway = new SetPathways(room, room->rawData, address);
@@ -163,7 +166,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			if (child->Attribute("Comment") != NULL)
 				comment = "// " + string(child->Attribute("Comment")) + "\n";
 
-			string addressStr = child->Attribute("Address");
+			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			string typeStr = child->Attribute("Type");
@@ -471,7 +474,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 		//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 		item.second->Save(Globals::Instance->outputPath);
 
-		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("../build/%s/%s.%s.inc.c",
+		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
 			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
 			"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
 	}

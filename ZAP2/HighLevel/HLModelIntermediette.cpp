@@ -4,7 +4,10 @@
 #include "../Globals.h"
 #include "../Path.h"
 #include "../File.h"
-#include "../OpenFBX/ofbx.h"
+#include "../assimp/Importer.hpp"
+#include "../assimp/Exporter.hpp"
+#include "../assimp/scene.h"
+#include "../assimp/postprocess.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -14,6 +17,8 @@ HLModelIntermediette::HLModelIntermediette()
 	blocks = vector<HLIntermediette*>();
 	mode = HLModelMode::Unknown;
 	startIndex = 0;
+	meshStartIndex = 0;
+	hasHierarchy = false;
 }
 
 HLModelIntermediette::~HLModelIntermediette()
@@ -51,9 +56,9 @@ HLModelIntermediette* HLModelIntermediette::FromXML(tinyxml2::XMLElement* root)
 	return model;
 }
 
-HLModelIntermediette* HLModelIntermediette::FromZDisplayList(ZDisplayList* zDisplayList)
+void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDisplayList* zDisplayList)
 {
-	HLModelIntermediette* model = new HLModelIntermediette();
+	//HLModelIntermediette* model = new HLModelIntermediette();
 	HLLimbIntermediette* limb = new HLLimbIntermediette();
 	limb->name = zDisplayList->GetName();
 
@@ -88,6 +93,7 @@ HLModelIntermediette* HLModelIntermediette::FromZDisplayList(ZDisplayList* zDisp
 
 	// Analyze display lists to determine components
 	HLDisplayListIntermediette* dList = new HLDisplayListIntermediette();
+	dList->address = zDisplayList->GetRawDataIndex();
 	int startIndex = 0;
 
 	// Check if first opcode is pipe sync...
@@ -272,7 +278,30 @@ HLModelIntermediette* HLModelIntermediette::FromZDisplayList(ZDisplayList* zDisp
 	model->blocks.push_back(mesh);
 	model->blocks.push_back(limb);
 
-	return model;
+	//return model;
+}
+
+void HLModelIntermediette::FromZHierarchy(HLModelIntermediette* model, ZHierarchy* zHierarchy)
+{
+	model->hasHierarchy = true;
+
+	for (int i = 0; i < zHierarchy->limbs.size(); i++)
+	{
+		ZLimbStandard* limb = zHierarchy->limbs[i];
+
+		for (int j = 0; j < model->blocks.size(); j++)
+		{
+			if (typeid(HLDisplayListIntermediette) == typeid(*model->blocks[j]))
+			{
+				HLDisplayListIntermediette* hlDList = (HLDisplayListIntermediette*)model->blocks[j];
+
+				//if (limb->dListPtr == model->blocks[0]->address)
+				//{
+
+				//}
+			}
+		}
+	}
 }
 
 string HLModelIntermediette::ToOBJFile()
@@ -295,6 +324,39 @@ string HLModelIntermediette::ToOBJFile()
 
 string HLModelIntermediette::ToFBXFile()
 {
+	Assimp::Exporter exporter;
+	aiScene* newScene = new aiScene();
+	newScene->mMeshes = new aiMesh*[128];
+	newScene->mRootNode = new aiNode();
+	newScene->mRootNode->mName = "RootNode";
+
+	std::vector<aiVector3D> vertices;
+
+	for (HLIntermediette* block : blocks)
+	{
+		block->parent = this;
+		block->OutputAssimp(newScene, &vertices);
+	}
+
+	newScene->mRootNode->mNumChildren += newScene->mNumMeshes;
+	newScene->mRootNode->mChildren = new aiNode*[newScene->mRootNode->mNumChildren];
+
+	for (int i = 0; i < newScene->mNumMeshes; i++)
+	{
+		aiNode* child = new aiNode();
+		child->mName = StringHelper::Sprintf("OBJ_%i", i);
+		child->mNumMeshes = 1;
+		child->mMeshes = new unsigned int[1];
+		child->mMeshes[0] = i;
+		newScene->mRootNode->mChildren[i] = child;
+	}
+
+	newScene->mNumMaterials = 1;
+	newScene->mMaterials = new aiMaterial*[1];
+	newScene->mMaterials[0] = new aiMaterial();
+
+	exporter.Export(newScene, "fbx", "__export.fbx");
+
 	return "";
 }
 
@@ -386,9 +448,9 @@ string HLIntermediette::OutputOBJ()
 	return "";
 }
 
-string HLIntermediette::OutputFBX()
+void HLIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
 {
-	return "";
+
 }
 
 void HLIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root)
@@ -409,6 +471,10 @@ string HLMeshCommand::OutputCode(HLModelIntermediette* parent)
 std::string HLMeshCommand::OutputOBJ(HLModelIntermediette* parent)
 {
 	return "";
+}
+
+void HLMeshCommand::OutputAssimp(HLModelIntermediette* parent, aiScene* scene, aiMesh* mesh)
+{
 }
 
 void HLMeshCommand::OutputXML(tinyxml2::XMLElement* parent)
@@ -468,6 +534,24 @@ std::string HLVerticesIntermediette::OutputOBJ()
 		//output += StringHelper::Sprintf("vt %i %i\n", v.s, v.t);
 
 	return output;
+}
+
+void HLVerticesIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
+{
+	//aiVector3D* verts = new aiVector3D[vertices.size()];
+	//aiVector3D* normals = new aiVector3D[vertices.size()];
+
+	verts->clear();
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		verts->push_back(aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z));
+		//normals[i] = aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z);
+	}
+
+	//mesh->mVertices = verts;
+	//mesh->mNormals = normals;
+	//mesh->mNumVertices += vertices.size();
 }
 
 void HLVerticesIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root)
@@ -550,6 +634,18 @@ string HLMeshCmdTriangle1::OutputCode(HLModelIntermediette* parent)
 	return StringHelper::Sprintf("gsSP1Triangle(%i, %i, %i, %i),", v0, v1, v2, flag);
 }
 
+void HLMeshCmdTriangle1::OutputAssimp(HLModelIntermediette* parent, aiScene* scene, aiMesh* mesh)
+{
+	aiFace* face = new aiFace();
+	face->mNumIndices = 3;
+	face->mIndices = new unsigned int[3];
+	face->mIndices[0] = parent->startIndex + v0;
+	face->mIndices[1] = parent->startIndex + v1;
+	face->mIndices[2] = parent->startIndex + v2;
+
+	mesh->mFaces[mesh->mNumFaces++] = face[0];
+}
+
 void HLMeshCmdTriangle1::OutputXML(tinyxml2::XMLElement* parent)
 {
 	XMLElement* elem = parent->GetDocument()->NewElement("Triangle1");
@@ -616,6 +712,31 @@ std::string HLMeshCmdTriangle2::OutputOBJ(HLModelIntermediette* parent)
 	return output;
 }
 
+void HLMeshCmdTriangle2::OutputAssimp(HLModelIntermediette* parent, aiScene* scene, aiMesh* mesh)
+{
+	{
+		aiFace* face = new aiFace();
+		face->mNumIndices = 3;
+		face->mIndices = new unsigned int[3];
+		face->mIndices[0] = parent->startIndex + v0;
+		face->mIndices[1] = parent->startIndex + v1;
+		face->mIndices[2] = parent->startIndex + v2;
+
+		mesh->mFaces[mesh->mNumFaces++] = face[0];
+	}
+
+	{
+		aiFace* face = new aiFace();
+		face->mNumIndices = 3;
+		face->mIndices = new unsigned int[3];
+		face->mIndices[0] = parent->startIndex + v10;
+		face->mIndices[1] = parent->startIndex + v11;
+		face->mIndices[2] = parent->startIndex + v12;
+
+		mesh->mFaces[mesh->mNumFaces++] = face[0];
+	}
+}
+
 void HLMeshCmdTriangle2::OutputXML(tinyxml2::XMLElement* parent)
 {
 	XMLElement* elem = parent->GetDocument()->NewElement("Triangle2");
@@ -664,6 +785,11 @@ std::string HLMeshCmdLoadVertices::OutputOBJ(HLModelIntermediette* parent)
 {
 	parent->startIndex = startIndex;
 	return "";
+}
+
+void HLMeshCmdLoadVertices::OutputAssimp(HLModelIntermediette* parent, aiScene* scene, aiMesh* mesh)
+{
+	parent->startIndex = startIndex;
 }
 
 string HLMeshCmdLoadVertices::OutputCode(HLModelIntermediette* parent)
@@ -911,6 +1037,23 @@ string HLMeshIntermediette::OutputOBJ()
 	return output;
 }
 
+void HLMeshIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
+{
+	aiMesh* mesh = new aiMesh();
+	mesh->mVertices = new aiVector3D[8192]; // TODO: Replace these hardcoded counts with the actual count
+	mesh->mNormals = new aiVector3D[8192];
+	mesh->mFaces = new aiFace[8192];
+	mesh->mPrimitiveTypes = 8;
+	mesh->mName = name;
+
+	for (HLMeshCommand* cmd : commands)
+	{
+		cmd->OutputAssimp(parent, scene, mesh);
+	}
+
+	scene->mMeshes[scene->mNumMeshes++] = mesh;
+}
+
 void HLMeshIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root)
 {
 	XMLElement* element = doc->NewElement("Mesh");
@@ -1018,4 +1161,27 @@ std::string HLLimbCommand::OutputCode(HLModelIntermediette* parent)
 	output += mesh->OutputCode(materialName);
 
 	return output;
+}
+
+HLTerminator::HLTerminator()
+{
+}
+
+HLTerminator::~HLTerminator()
+{
+}
+
+void HLTerminator::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
+{
+	for (int i = parent->meshStartIndex; i < scene->mNumMeshes; i++)
+	{
+		scene->mMeshes[i]->mNumVertices = verts->size();
+
+		for (int j = 0; j < verts->size(); j++)
+			scene->mMeshes[i]->mVertices[j] = verts[0][j];
+
+		parent->meshStartIndex++;
+	}
+
+	verts->clear();
 }

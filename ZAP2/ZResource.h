@@ -4,6 +4,14 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include "tinyxml2.h"
+
+#define SEGMENT_SCENE 2
+#define SEGMENT_ROOM 3
+#define SEGMENT_KEEP 4
+#define SEGMENT_FIELDDANGEON_KEEP 5
+#define SEGMENT_OBJECT 6
+#define SEGMENT_LINKANIMETION 7
 
 #define SEG2FILESPACE(x) (x & 0x00FFFFFF)
 #define GETSEGNUM(x) ((x >> 24) & 0xFF)
@@ -32,11 +40,14 @@ class ZResource
 {
 public:
 	ZFile* parent;
+	bool outputDeclaration;
 
 	ZResource();
+	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	virtual void Save(std::string outFolder);
 	virtual void PreGenSourceFiles();
 	std::string GetName();
+	std::string GetOutName();
 	void SetName(std::string nName);
 	std::string GetRelativePath();
 	virtual std::vector<uint8_t> GetRawData();
@@ -49,13 +60,16 @@ public:
 	virtual std::string GetSourceOutputHeader(std::string prefix);
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	virtual ZResourceType GetResourceType();
+	virtual void CalcHash();
 
 protected:
 	std::string name;
+	std::string outName;
 	std::string relativePath;
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	std::string sourceOutput;
+	uint64_t hash;
 };
 
 enum class DeclarationAlignment

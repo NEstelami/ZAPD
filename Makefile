@@ -4,9 +4,9 @@ ifneq (, $(shell which ccache))
 CC := ccache $(CC)
 endif
 
-CFLAGS := -g -std=c++17 -I ZAP2 -O2 -rdynamic
+CFLAGS := -g -std=c++17 -I ZAP2 -I ZAP2/sqlite -O2 -rdynamic
 
-SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/HighLevel ZAP2/OpenFBX
+SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/HighLevel ZAP2/OpenFBX ZAP2/sqlite
 
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 O_FILES   := $(CPP_FILES:.cpp=.o)
@@ -22,5 +22,5 @@ rebuild: clean all
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ZAP2.out: $(O_FILES)
-	$(CC) $(CFLAGS) $(O_FILES) -o $@ -lstdc++fs
+	$(CC) $(CFLAGS) $(O_FILES) -o $@ -lstdc++fs -lassimp
 #	cp ZAP2.out /mnt/c/projects/oot/tools/ZAP2/ZAP2.out

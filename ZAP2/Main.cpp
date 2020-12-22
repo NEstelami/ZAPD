@@ -265,8 +265,13 @@ void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath)
 	vector<string> split = StringHelper::Split(outPath, "/");
 	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
 	ZTexture* tex = ZTexture::FromPNG(pngFilePath, texType);
+	string cfgPath = StringHelper::Split(pngFilePath, ".")[0] + ".cfg";
 
-	string src = StringHelper::Sprintf("u64 %s[] = \n{\n", name.c_str()) + tex->GetSourceOutputCode(name) + "};\n";
+	if (File::Exists(cfgPath))
+		name = File::ReadAllText(cfgPath);
+
+	//string src = StringHelper::Sprintf("u64 %s[] = \n{\n", name.c_str()) + tex->GetSourceOutputCode(name) + "};\n";
+	string src = tex->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
 	
@@ -279,7 +284,8 @@ void BuildAssetBlob(string blobFilePath, string outPath)
 	ZBlob* blob = ZBlob::FromFile(blobFilePath);
 	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
 
-	string src = StringHelper::Sprintf("u8 %s[] = \n{\n", name.c_str()) + blob->GetSourceOutputCode(name) + "};\n";
+	//string src = StringHelper::Sprintf("u8 %s[] = \n{\n", name.c_str()) + blob->GetSourceOutputCode(name) + "};\n";
+	string src = blob->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
 

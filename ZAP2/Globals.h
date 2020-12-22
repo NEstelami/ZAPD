@@ -22,9 +22,12 @@ public:
 	TextureType texType;
 
 	std::vector<ZFile*> files;
+	std::vector<int> segments;
 	ZRoom* lastScene;
 	std::map<uint32_t, std::string> symbolMap;
 
 	Globals();
 	void GenSymbolMap(std::string symbolMapPath);
+	void AddSegment(int segment);
+	bool HasSegment(int segment);
 };

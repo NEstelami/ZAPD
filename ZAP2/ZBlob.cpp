@@ -26,7 +26,8 @@ ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int n
 
 	blob->rawDataIndex = nRawDataIndex;
 
-	blob->name = reader->Attribute("Name");
+	//blob->name = reader->Attribute("Name");
+	blob->ParseXML(reader);
 	int size = strtol(reader->Attribute("Size"), NULL, 16);
 	blob->rawData = vector<uint8_t>(nRawData.data() + blob->rawDataIndex, nRawData.data() + blob->rawDataIndex + size);
 
@@ -39,7 +40,8 @@ ZBlob* ZBlob::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
 {
 	ZBlob* blob = new ZBlob();
 
-	blob->name = reader->Attribute("Name");
+	//blob->name = reader->Attribute("Name");
+	blob->ParseXML(reader);
 
 	if (readFile)
 		blob->rawData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
@@ -84,6 +86,11 @@ string ZBlob::GetSourceOutputCode(std::string prefix)
 	return sourceOutput;
 }
 
+string ZBlob::GetSourceOutputHeader(std::string prefix)
+{
+	return StringHelper::Sprintf("extern u8 %s[];\n", name.c_str());
+}
+
 void ZBlob::Save(string outFolder)
 {
 	//printf("NAME = %s\n", name.c_str());
@@ -98,4 +105,9 @@ bool ZBlob::IsExternalResource()
 string ZBlob::GetExternalExtension()
 {
 	return "bin";
+}
+
+ZResourceType ZBlob::GetResourceType()
+{
+	return ZResourceType::Blob;
 }

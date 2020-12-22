@@ -29,7 +29,7 @@ protected:
 	uint8_t* bmpRgb;
 	uint8_t* bmpRgba;
 
-	void ParseXML(tinyxml2::XMLElement* reader);
+	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	void FixRawData();
 	void PrepareBitmap();
 	void PrepareBitmapRGBA16();
@@ -53,6 +53,8 @@ protected:
 	void PrepareRawDataPalette8(std::string palPath);
 	float GetPixelMultiplyer();
 	bool IsExternalResource();
+	ZResourceType GetResourceType();
+	void CalcHash();
 
 public:
 	ZTexture();

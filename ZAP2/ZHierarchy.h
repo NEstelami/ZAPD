@@ -42,6 +42,7 @@ public:
 	uint8_t dListCount;
 
 	ZHierarchy();
+	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	static ZHierarchy* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
 	void Save(std::string outFolder);
 

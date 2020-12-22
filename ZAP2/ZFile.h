@@ -24,6 +24,7 @@ public:
 	std::map<int32_t, Declaration*> declarations;
 	std::string defines;
 	std::vector<ZResource*> resources;
+	uint32_t baseAddress, rangeStart, rangeEnd;
 
 	ZFile(std::string nOutPath, std::string nName);
 	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath);
@@ -45,6 +46,7 @@ public:
 	std::string GetDeclarationName(uint32_t address);
 	std::string GetDeclarationName(uint32_t address, std::string defaultResult);
 	Declaration* GetDeclaration(uint32_t address);
+	Declaration* GetDeclarationRanged(uint32_t address);
 	bool HasDeclaration(uint32_t address);
 	std::string GetHeaderInclude();
 
@@ -59,6 +61,7 @@ protected:
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader);
 	void GenerateSourceFiles(std::string outputDir);
 	void GenerateHLIntermediette();
+	void AddDeclarationDebugChecks(uint32_t address);
 	std::string ProcessDeclarations();
 	std::string ProcessExterns();
 };
