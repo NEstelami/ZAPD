@@ -726,6 +726,7 @@ ZResourceType ZTexture::GetResourceType()
 
 void ZTexture::CalcHash()
 {
+	hash = 0;
 }
 
 std::string ZTexture::GetExternalExtension()
