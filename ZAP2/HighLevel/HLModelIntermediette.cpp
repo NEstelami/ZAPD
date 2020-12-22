@@ -4,10 +4,13 @@
 #include "../Globals.h"
 #include "../Path.h"
 #include "../File.h"
+
+#ifdef USE_ASSIMP
 #include "../assimp/Importer.hpp"
 #include "../assimp/Exporter.hpp"
 #include "../assimp/scene.h"
 #include "../assimp/postprocess.h"
+#endif
 
 using namespace std;
 using namespace tinyxml2;
@@ -324,6 +327,7 @@ string HLModelIntermediette::ToOBJFile()
 
 string HLModelIntermediette::ToFBXFile()
 {
+#ifdef USE_ASSIMP
 	Assimp::Exporter exporter;
 	aiScene* newScene = new aiScene();
 	newScene->mMeshes = new aiMesh*[128];
@@ -356,6 +360,7 @@ string HLModelIntermediette::ToFBXFile()
 	newScene->mMaterials[0] = new aiMaterial();
 
 	exporter.Export(newScene, "fbx", "__export.fbx");
+#endif
 
 	return "";
 }

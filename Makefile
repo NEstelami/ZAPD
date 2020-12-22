@@ -22,5 +22,5 @@ rebuild: clean all
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ZAP2.out: $(O_FILES)
-	$(CC) $(CFLAGS) $(O_FILES) -o $@ -lstdc++fs -lassimp
+	$(CC) $(CFLAGS) $(O_FILES) -o $@ -lstdc++fs
 #	cp ZAP2.out /mnt/c/projects/oot/tools/ZAP2/ZAP2.out
