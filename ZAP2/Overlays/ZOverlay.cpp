@@ -112,7 +112,13 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 							if (reader == curReader)
 								continue;
 
-							symbol_section_accessor symbols(*reader, reader->sections[(Elf_Half)pSec->get_link()]);
+							auto sectionData = reader->sections[(Elf_Half)pSec->get_link()];
+
+							if (sectionData == nullptr)
+								continue;
+
+							symbol_section_accessor symbols(*reader, sectionData);
+
 							for (Elf_Xword symIdx = 0; symIdx < symbols.get_symbols_num(); symIdx++)
 							{
 								Elf_Half shndx = SHN_UNDEF;
@@ -216,7 +222,7 @@ SectionType ZOverlay::GetSectionTypeFromStr(string sectionName)
 		return SectionType::Text;
 	else if (sectionName == ".rel.data" || sectionName == ".data")
 		return SectionType::Data;
-	else if (sectionName == ".rel.rodata" || sectionName == ".rodata")
+	else if (sectionName == ".rel.rodata" || sectionName == ".rodata" || sectionName == ".rodata.str1.4" || sectionName == ".rodata.cst4")
 		return SectionType::RoData;
 	else if (sectionName == ".rel.bss" || sectionName == ".bss")
 		return SectionType::Bss;
