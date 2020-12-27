@@ -29,7 +29,6 @@ ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int n
 	blob->ParseXML(reader);
 	int size = strtol(reader->Attribute("Size"), NULL, 16);
 	blob->rawData = vector<uint8_t>(nRawData.data() + blob->rawDataIndex, nRawData.data() + blob->rawDataIndex + size);
-
 	blob->relativePath = nRelPath;
 
 	return blob;

@@ -18,9 +18,6 @@
 #include <string>
 #include "tinyxml2.h"
 
-extern void ModelTest();
-extern void ModelTest2();
-
 using namespace tinyxml2;
 using namespace std;
 
@@ -56,12 +53,7 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-#if !defined(_MSC_VER) && !defined(__CYGWIN__)
-	//signal(SIGSEGV, ErrorHandler);
-#endif
-
 	Globals* g = new Globals();
-
 	return NewMain(argc, argv);
 }
 
@@ -208,11 +200,9 @@ int NewMain(int argc, char* argv[])
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
 		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath), Path::GetDirectoryName(Globals::Instance->cfgPath));
+		
 		if (overlay)
-		{
-			string source = overlay->GetSourceOutputCode("");
-			File::WriteAllText(Globals::Instance->outputPath, source);
-		}
+			File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
 	}
 
 	return 0;
@@ -299,10 +289,7 @@ void BuildAssetModelIntermediette(string mdlPath, string outPath)
 
 	vector<string> split = StringHelper::Split(outPath, "/");
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
-	
-	string output = "";
-
-	output += mdl->OutputCode();
+	string output = mdl->OutputCode();
 	
 	File::WriteAllText(outPath, output);
 
