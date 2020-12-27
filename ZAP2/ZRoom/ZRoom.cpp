@@ -418,10 +418,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	sourceOutput += "#include <variables.h>\n";
 
 	if (scene != nullptr)
-	{
-		//sourceOutput += StringHelper::Sprintf("#include \"%s.h\"\n", scene->GetName().c_str());
 		sourceOutput += scene->parent->GetHeaderInclude();
-	}
 
 	sourceOutput += "\n";
 
@@ -450,8 +447,6 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 					defines += StringHelper::Sprintf("#define %s_tex_%08X ((u32)%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
 						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
 
-					//int nSize = textures[texturesSorted[i].first]->GetRawDataSize();
-
 					parent->declarations.erase(texturesSorted[i + 1].first);
 					textures.erase(texturesSorted[i + 1].first);
 					texturesSorted.erase(texturesSorted.begin() + i + 1);
@@ -471,7 +466,9 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 		declaration += item.second->GetSourceOutputCode(prefix);
 
-		//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		if (Globals::Instance->debugMessages)
+			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		
 		item.second->Save(Globals::Instance->outputPath);
 
 		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("%s/%s.%s.inc.c",

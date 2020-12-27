@@ -11,7 +11,7 @@ using namespace std;
 SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	data = rawData[rawDataIndex + 1];
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+	segmentOffset = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	string declaration = "";
 	char line[2048];
@@ -321,7 +321,9 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 		//zRoom->parent->AddDeclarationArray(texEntry.first, DeclarationAlignment::None, dList->textures[texEntry.first]->GetRawDataSize(), "u64",
 			//zRoom->textures[texEntry.first]->GetName(), 0, texEntry.second);
 
-		//printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		if (Globals::Instance->debugMessages)
+			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		
 		zRoom->textures[texEntry.first]->Save(Globals::Instance->outputPath);
 
 		zRoom->parent->AddDeclarationIncludeArray(texEntry.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
@@ -333,15 +335,11 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
 	string sourceOutput = "";
-
-	string srcVarName = "";
-
+	
 	if (Globals::Instance->includeFilePrefix)
-		srcVarName = StringHelper::Sprintf("extern Gfx %s_dlist_%08X[];\n", zRoom->GetName().c_str(), dList->GetRawDataIndex());
+		sourceOutput += StringHelper::Sprintf("extern Gfx %s_dlist_%08X[];\n", zRoom->GetName().c_str(), dList->GetRawDataIndex());
 	else
-		srcVarName = StringHelper::Sprintf("extern Gfx dlist_%08X[];\n", dList->GetRawDataIndex());
-
-	sourceOutput += srcVarName;
+		sourceOutput += StringHelper::Sprintf("extern Gfx dlist_%08X[];\n", dList->GetRawDataIndex());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);

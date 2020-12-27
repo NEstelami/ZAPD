@@ -18,7 +18,6 @@ string SetEchoSettings::GetCommandCName()
 	return "SCmdEchoSettings";
 }
 
-
 RoomCommand SetEchoSettings::GetRoomCommand()
 {
 	return RoomCommand::SetEchoSettings;
