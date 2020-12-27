@@ -86,7 +86,6 @@ string ZCutscene::GetSourceOutputCode(string prefix)
 	int32_t curPtr = 0;
 
 	//output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
-	//output += StringHelper::Sprintf("s32 _%s_cutsceneData_%08X[] = \n{\n", prefix.c_str(), segmentOffset);
 	output += StringHelper::Sprintf("\tCS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
 	for (int i = 0; i < commands.size(); i++)
@@ -98,8 +97,6 @@ string ZCutscene::GetSourceOutputCode(string prefix)
 	}
 
 	output += StringHelper::Sprintf("\tCS_END(),\n", commands.size(), endFrame);
-
-	//output += "};\n";
 
 	return output;
 }

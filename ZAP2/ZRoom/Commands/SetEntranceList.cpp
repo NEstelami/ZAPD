@@ -18,11 +18,7 @@ SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 
 string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-	char line[2048];
-
-	sprintf(line, "%s 0x00, (u32)&_%s_entranceList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
-	sourceOutput = line;
+	string sourceOutput = StringHelper::Sprintf("%s 0x00, (u32)&_%s_entranceList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 
 	// Parse Entrances and Generate Declaration
 	zRoom->parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined

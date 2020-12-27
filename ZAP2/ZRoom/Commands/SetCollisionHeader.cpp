@@ -8,12 +8,10 @@ using namespace std;
 
 SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
-
+	segmentOffset = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 	collisionHeader = CollisionHeader(nZRoom, rawData, segmentOffset);
 
 	string declaration = "";
-	char line[2048];
 	char waterBoxStr[2048];
 
 	if (collisionHeader.waterBoxSegmentOffset != 0)
@@ -21,14 +19,12 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 	else
 		sprintf(waterBoxStr, "0");
 
-	sprintf(line, "%i, %i, %i, %i, %i, %i, %i, %s_vertices_%08X, %i, _%s_polygons_%08X, _%s_polygonTypes_%08X, &_%s_camDataList_%08X, %i, %s",
+	declaration += StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %s_vertices_%08X, %i, _%s_polygons_%08X, _%s_polygonTypes_%08X, &_%s_camDataList_%08X, %i, %s",
 		collisionHeader.absMinX, collisionHeader.absMinY, collisionHeader.absMinZ,
 		collisionHeader.absMaxX, collisionHeader.absMaxY, collisionHeader.absMaxZ,
 		collisionHeader.numVerts, zRoom->GetName().c_str(), collisionHeader.vtxSegmentOffset, collisionHeader.numPolygons,
 		zRoom->GetName().c_str(), collisionHeader.polySegmentOffset, zRoom->GetName().c_str(), collisionHeader.polyTypeDefSegmentOffset,
 		zRoom->GetName().c_str(), collisionHeader.camDataSegmentOffset, collisionHeader.numWaterBoxes, waterBoxStr);
-
-	declaration += line;
 
 	zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16, 44, "CollisionHeader", 
 		StringHelper::Sprintf("_%s_collisionHeader_%08X", zRoom->GetName().c_str(), segmentOffset), declaration);

@@ -26,7 +26,6 @@ ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int n
 
 	blob->rawDataIndex = nRawDataIndex;
 
-	//blob->name = reader->Attribute("Name");
 	blob->ParseXML(reader);
 	int size = strtol(reader->Attribute("Size"), NULL, 16);
 	blob->rawData = vector<uint8_t>(nRawData.data() + blob->rawDataIndex, nRawData.data() + blob->rawDataIndex + size);
@@ -40,7 +39,6 @@ ZBlob* ZBlob::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
 {
 	ZBlob* blob = new ZBlob();
 
-	//blob->name = reader->Attribute("Name");
 	blob->ParseXML(reader);
 
 	if (readFile)
@@ -76,12 +74,6 @@ string ZBlob::GetSourceOutputCode(std::string prefix)
 	}
 
 	//sourceOutput += "};\n";
-
-	if (parent != nullptr)
-	{
-		//parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, GetRawDataSize(), sourceOutput);
-		//return "";
-	}
 
 	return sourceOutput;
 }

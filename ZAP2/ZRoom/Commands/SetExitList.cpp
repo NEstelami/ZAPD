@@ -8,7 +8,7 @@ using namespace std;
 
 SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+	segmentOffset = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 	exits = vector<uint16_t>();
 
 	if (segmentOffset != 0)
@@ -20,9 +20,7 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 
 string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-
-	sourceOutput = StringHelper::Sprintf("%s 0x00, (u32)&_%s_exitList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	string sourceOutput = StringHelper::Sprintf("%s 0x00, (u32)&_%s_exitList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 
 	// Parse Entrances and Generate Declaration
 	zRoom->parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
