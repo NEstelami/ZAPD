@@ -888,10 +888,7 @@ CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(vector<uint8_t> rawData
 
 string CutsceneCommandSceneTransFX::GenerateSourceCode(string roomName, int baseAddress)
 {
-	string result = "";
-
-	result += StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i, %i),\n", base, startFrame, endFrame);
-	return result;
+	return StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i, %i),\n", base, startFrame, endFrame);
 }
 
 string CutsceneCommandSceneTransFX::GetCName(string prefix)

@@ -59,17 +59,12 @@ ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bo
 	ZDisplayList* dList = new ZDisplayList();
 
 	dList->SetName(reader->Attribute("Name"));
-
-	//if (readFile)
-		//blob->rawData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
-
 	return dList;
 }
 
 ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize) : ZDisplayList()
 {
 	fileData = nRawData;
-	//dListAddress = nRawDataIndex;
 	rawDataIndex = nRawDataIndex;
 	name = StringHelper::Sprintf("dlist_%08X", rawDataIndex);
 	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + rawDataSize);
@@ -324,12 +319,6 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 
 string ZDisplayList::GetSourceOutputHeader(string prefix)
 {
-	//char line[4096];
-	//string sourceOutput = "";
-
-	//sprintf(line, "extern Gfx _%s_dlist_%08X[];\n", prefix.c_str(), dListAddress);
-	//sprintf(line, "extern Gfx %s[];\n", name.c_str());
-	//sourceOutput += line;
 	return "";
 }
 
@@ -1323,8 +1312,8 @@ void ZDisplayList::Save(string outFolder)
 	//HLModelIntermediette* mdl = HLModelIntermediette::FromZDisplayList(this);
 
 	// For testing purposes only at the moment...
-	if (Globals::Instance->testMode)
-	{
+	//if (Globals::Instance->testMode)
+	//{
 		//string xml = mdl->OutputXML();
 		//string obj = mdl->ToOBJFile();
 		//string fbx = mdl->ToFBXFile();
@@ -1332,7 +1321,7 @@ void ZDisplayList::Save(string outFolder)
 		//File::WriteAllText(outFolder + "/" + name + ".mdli", xml);
 		//File::WriteAllText(outFolder + "/" + name + ".obj", obj);
 		//File::WriteAllText(outFolder + "/" + name + ".fbx", fbx);
-	}
+	//}
 }
 
 void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
