@@ -86,8 +86,8 @@ string ZAnimation::GetSourceOutputCode(string prefix)
 
 		string indicesStr = "";
 		string valuesStr = "\t";
-		int lineLength = 15;
-		int offset = 0;
+		const int lineLength = 15;
+		const int offset = 0;
 
 		for (int i = 0; i < rotationValues.size(); i++)
 		{
