@@ -10,7 +10,6 @@
 #include "Directory.h"
 #include "Globals.h"
 #include "HighLevel/HLModelIntermediette.h"
-#include "sqlite_orm.h"
 #include <algorithm>
 #include <cassert>
 
@@ -35,7 +34,7 @@ ZFile::ZFile(string nOutPath, string nName) : ZFile()
 	name = nName;
 }
 
-ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath) : ZFile()
+ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath, bool placeholderMode) : ZFile()
 {
 	if (nBasePath == "")
 		basePath = Directory::GetCurrentDirectory();
@@ -47,10 +46,10 @@ ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPa
 	else
 		outputPath = nOutPath;
 
-	ParseXML(mode, reader);
+	ParseXML(mode, reader, placeholderMode);
 }
 
-void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
+void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 {
 	name = reader->Attribute("Name");
 	int segment = -1;
@@ -213,6 +212,26 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader)
 			}
 
 			resources.push_back(res);
+		}
+		else if (string(child->Name()) == "Vec3s")
+		{
+			
+		}
+		else if (string(child->Name()) == "Vec3f")
+		{
+
+		}
+		else if (string(child->Name()) == "Vec3i")
+		{
+
+		}
+		else if (string(child->Name()) == "String")
+		{
+
+		}
+		else
+		{
+			
 		}
 	}
 }
@@ -457,12 +476,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	sourceOutput += "#include <z64.h>\n";
 	sourceOutput += GetHeaderInclude();
 
-	// Generate placeholder declarations
-	for (ZResource* res : resources)
-	{
-		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
-			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
-	}
+	GeneratePlaceholderDeclarations();
 
 	// Generate Code
 	for (ZResource* res : resources)
@@ -553,6 +567,16 @@ void ZFile::GenerateHLIntermediette()
 std::string ZFile::GetHeaderInclude()
 {
 	return StringHelper::Sprintf("#include \"%s\"\n\n", (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
+}
+
+void ZFile::GeneratePlaceholderDeclarations()
+{
+	// Generate placeholder declarations
+	for (ZResource* res : resources)
+	{
+		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
+			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+	}
 }
 
 string ZFile::ProcessDeclarations()

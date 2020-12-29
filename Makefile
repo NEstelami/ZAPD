@@ -6,7 +6,7 @@ endif
 
 CFLAGS := -g -std=c++17 -I ZAP2 -I ZAP2/sqlite -O2 -rdynamic
 
-SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/HighLevel ZAP2/OpenFBX ZAP2/sqlite
+SRC_DIRS := ZAP2 ZAP2/ZRoom ZAP2/ZRoom/Commands ZAP2/Overlays ZAP2/HighLevel ZAP2/OpenFBX
 
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 O_FILES   := $(CPP_FILES:.cpp=.o)

@@ -12,6 +12,7 @@ ZResource::ZResource()
 	rawData = vector<uint8_t>();
 	rawDataIndex = 0;
 	outputDeclaration = true;
+	arrayCnt = -1;
 }
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)

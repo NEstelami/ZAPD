@@ -18,7 +18,6 @@ using namespace tinyxml2;
 HLModelIntermediette::HLModelIntermediette()
 {
 	blocks = vector<HLIntermediette*>();
-	mode = HLModelMode::Unknown;
 	startIndex = 0;
 	meshStartIndex = 0;
 	hasHierarchy = false;
@@ -98,36 +97,6 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	HLDisplayListIntermediette* dList = new HLDisplayListIntermediette();
 	dList->address = zDisplayList->GetRawDataIndex();
 	int startIndex = 0;
-
-	// Check if first opcode is pipe sync...
-	//if (zDisplayList->instructions[startIndex] >> 56 == (uint64_t)F3DZEXOpcode::G_RDPPIPESYNC)
-	//{
-	//	// Object1, Object2, or Room2
-	//	//dList->commands.push_back(new HLDisplayListCmdPipeSync());
-	//	startIndex++;
-
-	//	// Object1?
-	//	if (zDisplayList->instructions[startIndex] >> 56 == (uint64_t)F3DZEXOpcode::G_SETPRIMCOLOR)
-	//	{
-	//		model->mode = HLModelMode::Object1;
-	//		startIndex++;
-	//	}
-	//	else if (zDisplayList->instructions[startIndex] >> 56 == (uint64_t)F3DZEXOpcode::G_GEOMETRYMODE) // Room2?
-	//	{
-	//		model->mode = HLModelMode::Room2;
-	//		startIndex++;
-	//	}
-	//	else
-	//	{
-	//		model->mode = HLModelMode::Object2;
-	//		startIndex++;
-	//	}
-	//}
-	//else if (zDisplayList->instructions[startIndex] >> 56 == (uint64_t)F3DZEXOpcode::G_GEOMETRYMODE) // Room1?
-	//{
-	//	model->mode = HLModelMode::Room1;
-	//	startIndex++;
-	//}
 	
 	// Go through the display lists and setup commands
 	int meshCnt = 0;
@@ -294,15 +263,6 @@ void HLModelIntermediette::FromZHierarchy(HLModelIntermediette* model, ZHierarch
 
 		for (int j = 0; j < model->blocks.size(); j++)
 		{
-			if (typeid(HLDisplayListIntermediette) == typeid(*model->blocks[j]))
-			{
-				HLDisplayListIntermediette* hlDList = (HLDisplayListIntermediette*)model->blocks[j];
-
-				//if (limb->dListPtr == model->blocks[0]->address)
-				//{
-
-				//}
-			}
 		}
 	}
 }

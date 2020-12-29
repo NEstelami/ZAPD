@@ -59,8 +59,14 @@ int main(int argc, char* argv[])
 
 int NewMain(int argc, char* argv[])
 {
-	// Syntax: ZAP2.exe [mode (b/btex/bovl/e)] (Arbritrary Number of Arguments)
+	// Syntax: ZAPD.exe [mode (b/btex/bovl/e)] (Arbritrary Number of Arguments)
 	printf("ZAPD: Zelda Asset Processor For Decomp\n");
+
+	if (argc < 2)
+	{
+		printf("ZAPD.exe [mode (b/btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n");
+		return 1;
+	}
 
 	// Parse File Mode
 	string buildMode = argv[1];
@@ -154,6 +160,11 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->GenSymbolMap(argv[i + 1]);
 			i++;
 		}
+		else if (arg == "-rconf") // Read Config File
+		{
+			Globals::Instance->ReadConfigFile(argv[i + 1]);
+			i++;
+		}
 		else if (arg == "-al") // Set actor list
 		{
 			i++;
@@ -227,7 +238,7 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 	{
 		if (string(child->Name()) == "File")
 		{
-			ZFile* file = new ZFile(fileMode, child, basePath, outPath);
+			ZFile* file = new ZFile(fileMode, child, basePath, outPath, false);
 			Globals::Instance->files.push_back(file);
 		}
 	}

@@ -4,7 +4,6 @@
 
 /*
  * The high level format for animations.
- * Could possibly use FBX files here?
  */
 
 class HLAnimation
