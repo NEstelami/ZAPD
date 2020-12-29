@@ -14,19 +14,6 @@
  * An intermediette format for models. Goes from FBX<-->Intermediette<-->Display List C Code.
  */
 
-/// <summary>
-/// Looking at a number of different files in OoT, it appears that different tools were used to convert different files.
-/// As such, we need to account for the patterns of each tool.
-/// </summary>
-enum class HLModelMode
-{
-	Unknown,
-	Object1, // Starts with gsDPPipeSync(), sets primary color immedietely. Examples include object_vase
-	Object2, // Starts with gsDpPipeSync(). Examples include object_sk2
-	Room1, // Starts with gsSPClearGeometryMode, makes use of volume culling. Examples include ganon_tou_room_0
-	Room2, // Starts with gsDPPipeSync(), followed by gsSPClearGeometryMode(). Examples include spot00_room_0 and spot03_room_0
-};
-
 class HLModelIntermediette;
 
 class HLIntermediette
@@ -49,7 +36,6 @@ class HLModelIntermediette : public HLFileIntermediette
 {
 public:
 	std::vector<HLIntermediette*> blocks;
-	HLModelMode mode;
 
 	bool hasHierarchy;
 

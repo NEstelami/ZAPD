@@ -531,7 +531,17 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					else if (data != 0 && Globals::Instance->HasSegment(segmentNumber))
 						sprintf(texStr, "%s_tex_%08X", prefix.c_str(), texAddress);
 					else
-						sprintf(texStr, "0x%08X", data);
+					{
+						// TEST: CHECK OTHER FILES FOR REF
+						//if (segmentNumber == 4)
+						//{
+							//Globals::Instance->FindSymbolSegRef(segmentNumber, texAddress);
+						//}
+						//else
+						{
+							sprintf(texStr, "0x%08X", data);
+						}
+					}
 
 					sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, texStr);
 				}
@@ -1054,7 +1064,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 		if (optimizationResult != -1)
 			sourceOutput += StringHelper::Sprintf(" // 0x%08X", rawDataIndex + (i * 8));
 		
-		sourceOutput += "\n";
+		if (i < instructions.size() - 1)
+			sourceOutput += "\n";
 	}
 
 	// Iterate through our vertex lists, connect intersecting lists.

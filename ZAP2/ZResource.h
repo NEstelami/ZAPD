@@ -41,6 +41,7 @@ class ZResource
 public:
 	ZFile* parent;
 	bool outputDeclaration;
+	int arrayCnt;
 
 	ZResource();
 	virtual void ParseXML(tinyxml2::XMLElement* reader);

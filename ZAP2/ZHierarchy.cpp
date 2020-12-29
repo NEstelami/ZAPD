@@ -89,14 +89,27 @@ void ZHierarchy::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 ZHierarchy* ZHierarchy::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
 {
 	ZHierarchy* hierarchy = new ZHierarchy();
+	hierarchy->name = reader->Attribute("Name");
 	hierarchy->parent = nParent;
 	ZLimbType limbType = ZLimbType::Standard;
+	ZHierarchyType hierarchyType = ZHierarchyType::Normal;
 	int limbCount = 0;
 
 	hierarchy->rawData = nRawData;
 	hierarchy->rawDataIndex = rawDataIndex;
 
-	if (string(reader->Attribute("Type")) == "LOD")
+	if (string(reader->Attribute("Type")) == "Flex")
+		hierarchyType = ZHierarchyType::Flex;
+	else if (string(reader->Attribute("Type")) == "Skinned")
+		hierarchyType = ZHierarchyType::Skinned;
+	else if (string(reader->Attribute("Type")) != "Normal")
+	{
+		// TODO: Print some error here...
+	}
+
+	hierarchy->type = hierarchyType;
+
+	if (string(reader->Attribute("LimbType")) == "LOD")
 		limbType = ZLimbType::LOD;
 
 	limbCount = nRawData[rawDataIndex + 4];
@@ -116,7 +129,10 @@ ZHierarchy* ZHierarchy::FromXML(XMLElement* reader, vector<uint8_t> nRawData, in
 			hierarchy->limbs.push_back(limb);
 		}
 		else
-			;
+		{
+			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2);
+			hierarchy->limbs.push_back(limb);
+		}
 
 		ptr += 4;
 	}
@@ -137,7 +153,7 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 			string entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, %s",
 				limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->nextIndex, dListStr.c_str());
 
-			string limbName = StringHelper::Sprintf("_%s_limb_%04X", prefix.c_str(), limb->address);
+			string limbName = StringHelper::Sprintf("%s_limb_%04X", name.c_str(), limb->address);
 
 			if (parent->HasDeclaration(limb->address))
 				limbName = parent->GetDeclarationName(limb->address);
@@ -166,14 +182,21 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 		if (!parent->HasDeclaration(ptr))
 		{
 			parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbs.size(),
-				"StandardLimb*", StringHelper::Sprintf("_%s_limbs", prefix.c_str()), limbs.size(), tblStr);
+				"StandardLimb*", StringHelper::Sprintf("%s_limbs", name.c_str()), limbs.size(), tblStr);
 		}
 
-		//string headerStr = StringHelper::Sprintf("_%s_limbs, %i, 0, 0, 0, %i", prefix.c_str(), limbs.size(), dListCount);
-		string headerStr = StringHelper::Sprintf("_%s_limbs, %i", prefix.c_str(), limbs.size());
-
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 8, 
-			"SkeletonHeader", StringHelper::Sprintf("_%s_%s_header", prefix.c_str(), name.c_str()), headerStr);
+		if (type == ZHierarchyType::Normal)
+		{
+			string headerStr = StringHelper::Sprintf("%s_limbs, %i", name.c_str(), limbs.size());
+			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 8,
+				"SkeletonHeader", StringHelper::Sprintf("%s", name.c_str()), headerStr);
+		}
+		else
+		{
+			string headerStr = StringHelper::Sprintf("%s_limbs, %i, %i", name.c_str(), limbs.size(), dListCount);
+			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 12,
+				"FlexSkeletonHeader", StringHelper::Sprintf("%s", name.c_str()), headerStr);
+		}
 	}
 
 	return "";
@@ -182,4 +205,38 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 void ZHierarchy::Save(string outFolder)
 {
 
+}
+
+ZLimbLOD::ZLimbLOD() : ZLimbStandard()
+{
+	farDListPtr = 0;
+}
+
+ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
+{
+	ZLimbLOD* limb = new ZLimbLOD();
+
+	limb->address = rawDataIndex;
+
+	limb->transX = BitConverter::ToInt16BE(nRawData, rawDataIndex + 0);
+	limb->transY = BitConverter::ToInt16BE(nRawData, rawDataIndex + 2);
+	limb->transZ = BitConverter::ToInt16BE(nRawData, rawDataIndex + 4);
+
+	limb->childIndex = nRawData[rawDataIndex + 6];
+	limb->nextIndex = nRawData[rawDataIndex + 7];
+
+	limb->dListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 8) & 0x00FFFFFF;
+	limb->farDListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 12) & 0x00FFFFFF;
+
+	return limb;
+}
+
+string ZLimbLOD::GetSourceOutputCode(string prefix)
+{
+	return std::string();
+}
+
+int ZLimbLOD::GetRawDataSize()
+{
+	return 16;
 }

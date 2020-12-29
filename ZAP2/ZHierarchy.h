@@ -32,14 +32,28 @@ struct ZLimbStandard : public ZResource
 struct ZLimbLOD : ZLimbStandard
 {
 	uint32_t farDListPtr;
+
+	ZLimbLOD();
+	//static ZLimbLOD* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
+	static ZLimbLOD* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
+	std::string GetSourceOutputCode(std::string prefix);
+	virtual int GetRawDataSize();
+};
+
+enum ZHierarchyType
+{
+	Normal,
+	Flex,
+	Skinned
 };
 
 class ZHierarchy : public ZResource
 {
 public:
+	ZHierarchyType type;
 	std::vector<ZLimbStandard*> limbs;
 	ZLimbStandard* rootLimb;
-	uint8_t dListCount;
+	uint8_t dListCount; // FLEX SKELETON ONLY
 
 	ZHierarchy();
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);

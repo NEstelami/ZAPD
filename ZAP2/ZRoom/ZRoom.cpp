@@ -420,7 +420,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 	if (scene != nullptr)
 		sourceOutput += scene->parent->GetHeaderInclude();
 
-	sourceOutput += "\n";
+	//sourceOutput += "\n";
 
 	ProcessCommandSets();
 
@@ -476,7 +476,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 			"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
 	}
 
-	sourceOutput += "\n";
+	//sourceOutput += "\n";
 
 	return sourceOutput;
 }

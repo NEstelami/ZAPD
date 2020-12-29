@@ -189,9 +189,6 @@
     <ClCompile Include="ZRoom\Commands\ZRoomCommandUnk.cpp">
       <Filter>Source Files\Z64\ZRoom\Commands</Filter>
     </ClCompile>
-    <ClCompile Include="sqlite\sqlite3.c">
-      <Filter>Source Files\Libraries</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Path.h">
@@ -415,5 +412,10 @@
     <Text Include="..\SymbolMap_OoTMqDbg.txt">
       <Filter>Resource Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Libs\assimp-vc142-mt.dll">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
