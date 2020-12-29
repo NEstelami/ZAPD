@@ -73,7 +73,6 @@ void ZAnimation::ParseXML(tinyxml2::XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	name = reader->Attribute("Name");
-	limbCount = reader->IntAttribute("LimbCount");
 }
 
 string ZAnimation::GetSourceOutputCode(string prefix)

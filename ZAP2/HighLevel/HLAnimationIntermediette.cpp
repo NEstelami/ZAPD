@@ -54,7 +54,6 @@ HLAnimationIntermediette* HLAnimationIntermediette::FromZAnimation(ZAnimation* z
 {
 	HLAnimationIntermediette* anim = new HLAnimationIntermediette();
 
-	anim->limbCount = zAnim->limbCount;
 	anim->limit = zAnim->limit;
 	anim->frameCount = zAnim->frameCount;
 	
@@ -71,7 +70,6 @@ ZAnimation* HLAnimationIntermediette::ToZAnimation()
 {
 	ZAnimation* zAnim = new ZAnimation();
 
-	zAnim->limbCount = limbCount;
 	zAnim->limit = limit;
 	zAnim->frameCount = frameCount;
 

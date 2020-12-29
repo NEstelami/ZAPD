@@ -25,7 +25,6 @@ public:
 	uint32_t rotationValuesSeg;
 	uint32_t rotationIndicesSeg;
 	int16_t limit;
-	int16_t limbCount;
 	
 	ZAnimation();
 
