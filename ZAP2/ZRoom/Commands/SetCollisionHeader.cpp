@@ -155,7 +155,7 @@ CollisionHeader::CollisionHeader(ZRoom* zRoom, std::vector<uint8_t> rawData, int
 	declaration = "";
 	for (int i = 0; i < polygonTypes.size(); i++)
 	{
-		sprintf(line, "\t 0x%08X, 0x%08X, \n",  polygonTypes[i] >> 32, polygonTypes[i] & 0xFFFFFFFF);
+		sprintf(line, "\t 0x%08lX, 0x%08lX, \n",  polygonTypes[i] >> 32, polygonTypes[i] & 0xFFFFFFFF);
 		declaration += line;
 	}
 
