@@ -180,7 +180,7 @@
     <ClCompile Include="HighLevel\HLTexture.cpp">
       <Filter>Source Files\HighLevel</Filter>
     </ClCompile>
-    <ClCompile Include="ZHierarchy.cpp">
+    <ClCompile Include="ZSkeleton.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
     <ClCompile Include="ZRoom\Commands\SetLightList.cpp">
@@ -392,7 +392,7 @@
     <ClInclude Include="HighLevel\HLModelIntermediette.h">
       <Filter>Header Files\HighLevel</Filter>
     </ClInclude>
-    <ClInclude Include="ZHierarchy.h">
+    <ClInclude Include="ZSkeleton.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
     <ClInclude Include="HighLevel\HLFileIntermediette.h">

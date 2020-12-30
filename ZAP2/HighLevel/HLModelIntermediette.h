@@ -6,7 +6,7 @@
 #include "HLTexture.h"
 #include "HLFileIntermediette.h"
 #include "../ZDisplayList.h"
-#include "../ZHierarchy.h"
+#include "../ZSkeleton.h"
 #include "../tinyxml2.h"
 #include "../assimp/scene.h"
 
@@ -37,7 +37,7 @@ class HLModelIntermediette : public HLFileIntermediette
 public:
 	std::vector<HLIntermediette*> blocks;
 
-	bool hasHierarchy;
+	bool hasSkeleton;
 
 	bool startsWithPipeSync;
 	bool startsWithClearGeometryMode;
@@ -51,7 +51,7 @@ public:
 
 	static HLModelIntermediette* FromXML(tinyxml2::XMLElement* root);
 	static void FromZDisplayList(HLModelIntermediette* model, ZDisplayList* zDisplayList);
-	static void FromZHierarchy(HLModelIntermediette* model, ZHierarchy* zHierarchy);
+	static void FromZSkeleton(HLModelIntermediette* model, ZSkeleton* zSkeleton);
 	std::string ToOBJFile();
 	std::string ToFBXFile();
 
