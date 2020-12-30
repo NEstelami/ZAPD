@@ -340,14 +340,14 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 		if (optimizationResult != -1)
 		{
 			i += optimizationResult - 1;
-			sprintf(line, "");
+			line[0] = '\0';
 		}
 		else
 		{
 			switch (opcode)
 			{
 			case F3DZEXOpcode::G_NOOP:
-				sprintf(line, "gsDPNoOpTag(0x%08X),", data & 0xFFFFFFFF);
+				sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
 				break;
 			case F3DZEXOpcode::G_DL:
 			{
@@ -370,14 +370,14 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					if (dListDecl != nullptr)
 						sprintf(line, "gsSPBranchList(%s),", dListDecl->varName.c_str());
 					else
-						sprintf(line, "gsSPBranchList(%s_dlist_%08X),", prefix.c_str(), SEG2FILESPACE(data));
+						sprintf(line, "gsSPBranchList(%s_dlist_%08lX),", prefix.c_str(), SEG2FILESPACE(data));
 				}
 				else
 				{
 					if (dListDecl != nullptr)
 						sprintf(line, "gsSPDisplayList(%s),", dListDecl->varName.c_str());
 					else
-						sprintf(line, "gsSPDisplayList(%s_dlist_%08X),", prefix.c_str(), SEG2FILESPACE(data));
+						sprintf(line, "gsSPDisplayList(%s_dlist_%08lX),", prefix.c_str(), SEG2FILESPACE(data));
 				}
 
 				int segmentNumber = (data & 0xFF000000) >> 24;
@@ -385,9 +385,9 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				if (segmentNumber == 8 || segmentNumber == 9 || segmentNumber == 10 || segmentNumber == 11 || segmentNumber == 12 || segmentNumber == 13) // Used for runtime-generated display lists
 				{
 					if (pp != 0)
-						sprintf(line, "gsSPBranchList(0x%08X),", data & 0xFFFFFFFF);
+						sprintf(line, "gsSPBranchList(0x%08lX),", data & 0xFFFFFFFF);
 					else
-						sprintf(line, "gsSPDisplayList(0x%08X),", data & 0xFFFFFFFF);
+						sprintf(line, "gsSPDisplayList(0x%08lX),", data & 0xFFFFFFFF);
 				}
 				else
 				{
@@ -539,7 +539,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 						//}
 						//else
 						{
-							sprintf(texStr, "0x%08X", data);
+							sprintf(texStr, "0x%08lX", data);
 						}
 					}
 
@@ -548,7 +548,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				else
 				{
 					//sprintf(line, "gsDPSetTextureImage(%s, %s, %i, 0x%08X),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, data & 0xFFFFFFFF);
-					sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s_tex_%08X),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, scene->GetName().c_str(), data & 0x00FFFFFF);
+					sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s_tex_%08lX),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, scene->GetName().c_str(), data & 0x00FFFFFF);
 				}
 			}
 			break;
@@ -867,7 +867,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				lastTexHeight = (vvv >> shiftAmtH) + 1;
 				
 				if (Globals::Instance->debugMessages)
-					printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n", lastTexWidth, lastTexHeight, lastTexSizTest, lastTexFmt);
+					printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n", lastTexWidth, lastTexHeight, (uint32_t)lastTexSizTest, (uint32_t)lastTexFmt);
 
 				if (Globals::Instance->debugMessages)
 					printf("TextureGenCheck G_SETTILESIZE\n");
@@ -916,7 +916,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			break;
 			case F3DZEXOpcode::G_POPMTX:
 			{
-				sprintf(line, "gsSPPopMatrix(%i),", data);
+				sprintf(line, "gsSPPopMatrix(%li),", data);
 			}
 			break;
 			case F3DZEXOpcode::G_LOADTLUT:
@@ -930,7 +930,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				lastTexLoaded = true;
 
 				if (Globals::Instance->debugMessages)
-					printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", lastCISiz);
+					printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", (uint32_t)lastCISiz);
 				
 				TextureGenCheck(prefix);
 
@@ -1046,7 +1046,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			}
 			break;
 			default:
-				sprintf(line, "// Opcode 0x%02X unimplemented!", opcode);
+				sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
 				break;
 			}
 		}

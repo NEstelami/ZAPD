@@ -243,7 +243,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		if (Globals::Instance->profile)
 		{
 			if (diff > 50)
-				printf("OP: %s, TIME: %ims\n", cmd->GetCommandCName().c_str(), diff);
+				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
 
 		//printf("OP: %s\n", cmd->GetCommandCName().c_str());

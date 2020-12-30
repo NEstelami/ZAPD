@@ -175,7 +175,7 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (arg == "-eh") // Enable Error Handler
 		{
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__CYGWIN__)
 			signal(SIGSEGV, ErrorHandler);
 #endif
 		}
