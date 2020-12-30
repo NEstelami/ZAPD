@@ -231,7 +231,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 			currentPtr += 16;
 		}
 
-		sprintf(line, "{ 2 }, 0x%02X, ", meshHeader2->entries.size());
+		sprintf(line, "{ 2 }, 0x%02lX, ", meshHeader2->entries.size());
 		declaration += line;
 
 		if (meshHeader2->dListStart != 0)
