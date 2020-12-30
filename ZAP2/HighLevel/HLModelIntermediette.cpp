@@ -253,13 +253,13 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	//return model;
 }
 
-void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton* ZSkeleton)
+void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton* zSkeleton)
 {
 	model->hasSkeleton = true;
 
-	for (int i = 0; i < ZSkeleton->limbs.size(); i++)
+	for (int i = 0; i < zSkeleton->limbs.size(); i++)
 	{
-		ZLimbStandard* limb = ZSkeleton->limbs[i];
+		ZLimbStandard* limb = zSkeleton->limbs[i];
 
 		for (int j = 0; j < model->blocks.size(); j++)
 		{

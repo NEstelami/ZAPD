@@ -51,7 +51,7 @@ public:
 
 	static HLModelIntermediette* FromXML(tinyxml2::XMLElement* root);
 	static void FromZDisplayList(HLModelIntermediette* model, ZDisplayList* zDisplayList);
-	static void FromZSkeleton(HLModelIntermediette* model, ZSkeleton* ZSkeleton);
+	static void FromZSkeleton(HLModelIntermediette* model, ZSkeleton* zSkeleton);
 	std::string ToOBJFile();
 	std::string ToFBXFile();
 
