@@ -146,7 +146,7 @@
     <ClCompile Include="ZCutscene.cpp" />
     <ClCompile Include="ZDisplayList.cpp" />
     <ClCompile Include="ZFile.cpp" />
-    <ClCompile Include="ZHierarchy.cpp" />
+    <ClCompile Include="ZSkeleton.cpp" />
     <ClCompile Include="ZResource.cpp" />
     <ClCompile Include="ZRoom\Commands\EndMarker.cpp" />
     <ClCompile Include="ZRoom\Commands\SetActorList.cpp" />
@@ -218,7 +218,7 @@
     <ClInclude Include="ZCutscene.h" />
     <ClInclude Include="ZDisplayList.h" />
     <ClInclude Include="ZFile.h" />
-    <ClInclude Include="ZHierarchy.h" />
+    <ClInclude Include="ZSkeleton.h" />
     <ClInclude Include="ZResource.h" />
     <ClInclude Include="ZRoom\ActorList.h" />
     <ClInclude Include="ZRoom\Commands\EndMarker.h" />

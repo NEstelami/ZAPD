@@ -4,7 +4,7 @@
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
 #include "ZAnimation.h"
-#include "ZHierarchy.h"
+#include "ZSkeleton.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -178,15 +178,15 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 
 			rawDataIndex += anim->GetRawDataSize();
 		}
-		else if (string(child->Name()) == "Hierarchy")
+		else if (string(child->Name()) == "Skeleton")
 		{
-			ZHierarchy* hierarchy = nullptr;
+			ZSkeleton* skeleton = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				hierarchy = ZHierarchy::FromXML(child, rawData, rawDataIndex, folderName, this);
+				skeleton = ZSkeleton::FromXML(child, rawData, rawDataIndex, folderName, this);
 
-			resources.push_back(hierarchy);
-			rawDataIndex += hierarchy->GetRawDataSize();
+			resources.push_back(skeleton);
+			rawDataIndex += skeleton->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Limb")
 		{
@@ -556,7 +556,7 @@ void ZFile::GenerateHLIntermediette()
 
 	for (ZResource* res : resources)
 	{
-		if (typeid(ZDisplayList) == typeid(*res) || typeid(ZHierarchy) == typeid(*res))
+		if (typeid(ZDisplayList) == typeid(*res) || typeid(ZSkeleton) == typeid(*res))
 			res->GenerateHLIntermediette(*mdl);
 	}
 

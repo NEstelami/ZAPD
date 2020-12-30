@@ -20,7 +20,7 @@ HLModelIntermediette::HLModelIntermediette()
 	blocks = vector<HLIntermediette*>();
 	startIndex = 0;
 	meshStartIndex = 0;
-	hasHierarchy = false;
+	hasSkeleton = false;
 }
 
 HLModelIntermediette::~HLModelIntermediette()
@@ -253,13 +253,13 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	//return model;
 }
 
-void HLModelIntermediette::FromZHierarchy(HLModelIntermediette* model, ZHierarchy* zHierarchy)
+void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton* ZSkeleton)
 {
-	model->hasHierarchy = true;
+	model->hasSkeleton = true;
 
-	for (int i = 0; i < zHierarchy->limbs.size(); i++)
+	for (int i = 0; i < ZSkeleton->limbs.size(); i++)
 	{
-		ZLimbStandard* limb = zHierarchy->limbs[i];
+		ZLimbStandard* limb = ZSkeleton->limbs[i];
 
 		for (int j = 0; j < model->blocks.size(); j++)
 		{

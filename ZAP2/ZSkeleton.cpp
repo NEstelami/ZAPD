@@ -1,4 +1,4 @@
-#include "ZHierarchy.h"
+#include "ZSkeleton.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "HighLevel/HLModelIntermediette.h"
@@ -13,7 +13,7 @@ ZLimbStandard::ZLimbStandard()
 	transY = 0;
 	transZ = 0;
 	childIndex = 0;
-	nextIndex = 0;
+	siblingIndex = 0;
 	dListPtr = 0;
 	children = vector<ZLimbStandard*>();
 }
@@ -49,7 +49,7 @@ ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int raw
 	limb->transZ = BitConverter::ToInt16BE(nRawData, rawDataIndex + 4);
 	
 	limb->childIndex = nRawData[rawDataIndex + 6];
-	limb->nextIndex = nRawData[rawDataIndex + 7];
+	limb->siblingIndex = nRawData[rawDataIndex + 7];
 	
 	limb->dListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 8) & 0x00FFFFFF;
 
@@ -61,7 +61,7 @@ string ZLimbStandard::GetSourceOutputCode(string prefix)
 	string dListStr = dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(dListPtr).c_str());
 
 	string entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, %s",
-		transX, transY, transZ, childIndex, nextIndex, dListStr.c_str());
+		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str());
 
 	Declaration* decl = parent->GetDeclaration(address);
 	decl->text = entryStr;
@@ -74,46 +74,46 @@ int ZLimbStandard::GetRawDataSize()
 	return 12;
 }
 
-ZHierarchy::ZHierarchy() : ZResource()
+ZSkeleton::ZSkeleton() : ZResource()
 {
 	limbs = vector<ZLimbStandard*>();
 }
 
-void ZHierarchy::GenerateHLIntermediette(HLFileIntermediette& hlFile)
+void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
-	HLModelIntermediette::FromZHierarchy(mdl, this);
+	HLModelIntermediette::FromZSkeleton(mdl, this);
 	//mdl->blocks.push_back(new HLTerminator());
 }
 
-ZHierarchy* ZHierarchy::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
+ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
 {
-	ZHierarchy* hierarchy = new ZHierarchy();
-	hierarchy->name = reader->Attribute("Name");
-	hierarchy->parent = nParent;
+	ZSkeleton* skeleton = new ZSkeleton();
+	skeleton->name = reader->Attribute("Name");
+	skeleton->parent = nParent;
 	ZLimbType limbType = ZLimbType::Standard;
-	ZHierarchyType hierarchyType = ZHierarchyType::Normal;
+	ZSkeletonType skeltonType = ZSkeletonType::Normal;
 	int limbCount = 0;
 
-	hierarchy->rawData = nRawData;
-	hierarchy->rawDataIndex = rawDataIndex;
+	skeleton->rawData = nRawData;
+	skeleton->rawDataIndex = rawDataIndex;
 
 	if (string(reader->Attribute("Type")) == "Flex")
-		hierarchyType = ZHierarchyType::Flex;
-	else if (string(reader->Attribute("Type")) == "Skinned")
-		hierarchyType = ZHierarchyType::Skinned;
+		skeltonType = ZSkeletonType::Flex;
+	else if (string(reader->Attribute("Type")) == "Skin")
+		skeltonType = ZSkeletonType::Skin;
 	else if (string(reader->Attribute("Type")) != "Normal")
 	{
 		// TODO: Print some error here...
 	}
 
-	hierarchy->type = hierarchyType;
+	skeleton->type = skeltonType;
 
 	if (string(reader->Attribute("LimbType")) == "LOD")
 		limbType = ZLimbType::LOD;
 
 	limbCount = nRawData[rawDataIndex + 4];
-	hierarchy->dListCount = nRawData[rawDataIndex + 8];
+	skeleton->dListCount = nRawData[rawDataIndex + 8];
 
 	ZLimbStandard* currentLimb = nullptr;
 
@@ -126,21 +126,21 @@ ZHierarchy* ZHierarchy::FromXML(XMLElement* reader, vector<uint8_t> nRawData, in
 		if (limbType == ZLimbType::Standard)
 		{
 			ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, ptr2);
-			hierarchy->limbs.push_back(limb);
+			skeleton->limbs.push_back(limb);
 		}
 		else
 		{
 			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2);
-			hierarchy->limbs.push_back(limb);
+			skeleton->limbs.push_back(limb);
 		}
 
 		ptr += 4;
 	}
 
-	return hierarchy;
+	return skeleton;
 }
 
-std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
+std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 {
 	if (parent != nullptr)
 	{
@@ -151,7 +151,7 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(limb->dListPtr).c_str());
 
 			string entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, %s",
-				limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->nextIndex, dListStr.c_str());
+				limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->siblingIndex, dListStr.c_str());
 
 			string limbName = StringHelper::Sprintf("%s_limb_%04X", name.c_str(), limb->address);
 
@@ -185,7 +185,7 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 				"StandardLimb*", StringHelper::Sprintf("%s_limbs", name.c_str()), limbs.size(), tblStr);
 		}
 
-		if (type == ZHierarchyType::Normal)
+		if (type == ZSkeletonType::Normal)
 		{
 			string headerStr = StringHelper::Sprintf("%s_limbs, %i", name.c_str(), limbs.size());
 			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 8,
@@ -202,7 +202,7 @@ std::string ZHierarchy::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-void ZHierarchy::Save(string outFolder)
+void ZSkeleton::Save(string outFolder)
 {
 
 }
@@ -223,7 +223,7 @@ ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
 	limb->transZ = BitConverter::ToInt16BE(nRawData, rawDataIndex + 4);
 
 	limb->childIndex = nRawData[rawDataIndex + 6];
-	limb->nextIndex = nRawData[rawDataIndex + 7];
+	limb->siblingIndex = nRawData[rawDataIndex + 7];
 
 	limb->dListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 8) & 0x00FFFFFF;
 	limb->farDListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 12) & 0x00FFFFFF;
