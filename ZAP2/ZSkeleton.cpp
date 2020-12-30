@@ -92,22 +92,22 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 	skeleton->name = reader->Attribute("Name");
 	skeleton->parent = nParent;
 	ZLimbType limbType = ZLimbType::Standard;
-	ZSkeletonType skeltonType = ZSkeletonType::Normal;
+	ZSkeletonType skeletonType = ZSkeletonType::Normal;
 	int limbCount = 0;
 
 	skeleton->rawData = nRawData;
 	skeleton->rawDataIndex = rawDataIndex;
 
 	if (string(reader->Attribute("Type")) == "Flex")
-		skeltonType = ZSkeletonType::Flex;
+		skeletonType = ZSkeletonType::Flex;
 	else if (string(reader->Attribute("Type")) == "Skin")
-		skeltonType = ZSkeletonType::Skin;
+		skeletonType = ZSkeletonType::Skin;
 	else if (string(reader->Attribute("Type")) != "Normal")
 	{
 		// TODO: Print some error here...
 	}
 
-	skeleton->type = skeltonType;
+	skeleton->type = skeletonType;
 
 	if (string(reader->Attribute("LimbType")) == "LOD")
 		limbType = ZLimbType::LOD;
