@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZAP2", "ZAP2\ZAP2.vcxproj", "{B53F9E5B-0A58-4BAE-9AFE-856C8CBB8D36}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZAPD", "ZAPD\ZAPD.vcxproj", "{B53F9E5B-0A58-4BAE-9AFE-856C8CBB8D36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
