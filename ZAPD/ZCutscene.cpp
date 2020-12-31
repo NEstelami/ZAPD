@@ -673,7 +673,7 @@ string CutsceneCommandTextbox::GenerateSourceCode(string roomName, int baseAddre
 		else
 		{
 			result += StringHelper::Sprintf("\t\tCS_TEXT_DISPLAY_TEXTBOX(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
-				entries[i]->textID1);
+				entries[i]->textID1, entries[i]->textID2);
 		}
 	}
 
@@ -841,7 +841,7 @@ string CutsceneCommandSpecialAction::GenerateSourceCode(string roomName, int bas
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\tCS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
+		result += StringHelper::Sprintf("\t\tCS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
 			entries[i]->unused7, entries[i]->unused8, entries[i]->unused9, entries[i]->unused10);
 	}	

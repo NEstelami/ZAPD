@@ -34,7 +34,9 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 	limb->name = limbName;
 	limb->address = limbAddress;
 
-	limb->parent->AddDeclaration(limb->address, DeclarationAlignment::None, 12, "SkelLimbEntry", StringHelper::Sprintf("%s", limbName.c_str(), limb->address), "");
+	string entryType = limbType == ZLimbType::LOD ? "LodLimb" : "StandardLimb";
+
+	limb->parent->AddDeclaration(limb->address, DeclarationAlignment::None, 12, entryType, StringHelper::Sprintf("%s", limbName.c_str(), limb->address), "");
 
 	return limb;
 }
@@ -77,7 +79,10 @@ int ZLimbStandard::GetRawDataSize()
 
 ZSkeleton::ZSkeleton() : ZResource()
 {
+	type = ZSkeletonType::Normal;
 	limbs = vector<ZLimbStandard*>();
+	rootLimb = nullptr;
+	dListCount = 0;
 }
 
 void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
@@ -99,19 +104,27 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 	skeleton->rawData = nRawData;
 	skeleton->rawDataIndex = rawDataIndex;
 
-	if (string(reader->Attribute("Type")) == "Flex")
-		skeletonType = ZSkeletonType::Flex;
-	else if (string(reader->Attribute("Type")) == "Skin")
-		skeletonType = ZSkeletonType::Skin;
-	else if (string(reader->Attribute("Type")) != "Normal")
+	if (reader->Attribute("Type") != nullptr)
 	{
-		// TODO: Print some error here...
+		if (string(reader->Attribute("Type")) == "Flex")
+			skeletonType = ZSkeletonType::Flex;
+		else if (string(reader->Attribute("Type")) == "Skin")
+			skeletonType = ZSkeletonType::Skin;
+		else if (string(reader->Attribute("Type")) != "Normal")
+		{
+			// TODO: Print some error here...
+		}
 	}
 
 	skeleton->type = skeletonType;
 
-	if (string(reader->Attribute("LimbType")) == "LOD")
-		limbType = ZLimbType::LOD;
+	if (reader->Attribute("LimbType") != nullptr)
+	{
+		//printf("C3\n");
+
+		if (string(reader->Attribute("LimbType")) == "LOD")
+			limbType = ZLimbType::LOD;
+	}
 
 	limbCount = nRawData[rawDataIndex + 4];
 	skeleton->dListCount = nRawData[rawDataIndex + 8];
@@ -148,8 +161,17 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 		for (int i = 0; i < limbs.size(); i++)
 		{
 			ZLimbStandard* limb = limbs[i];
+			
+			string defaultDLName = StringHelper::Sprintf("%s_dlist_%08X", name.c_str(), limb->dListPtr);
+			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limb->dListPtr, defaultDLName).c_str());
 
-			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(limb->dListPtr).c_str());
+			if (limb->dListPtr != 0 && parent->GetDeclaration(limb->dListPtr) == nullptr)
+			{
+				ZDisplayList* dList = new ZDisplayList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr));
+				dList->parent = parent;
+				dList->SetName(StringHelper::Sprintf("%s_dlist_%08X", name.c_str(), limb->dListPtr));
+				dList->GetSourceOutputCode("");
+			}
 
 			string entryStr = "";
 			string entryType = "";
@@ -157,18 +179,27 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 			if (typeid(*limb) == typeid(ZLimbLOD))
 			{
 				ZLimbLOD* limbLOD = (ZLimbLOD*)limbs[i];
-				string dListStr2 = limbLOD->farDListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(limbLOD->farDListPtr).c_str());
+				string defaultFarDLName = StringHelper::Sprintf("%s_farLimbDlist_%08X", name.c_str(), limbLOD->farDListPtr);
+				string dListStr2 = limbLOD->farDListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limbLOD->farDListPtr, defaultFarDLName).c_str());
+
+				if (limbLOD->farDListPtr != 0 && parent->GetDeclaration(limbLOD->farDListPtr) == nullptr)
+				{
+					ZDisplayList* dList = new ZDisplayList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr));
+					dList->parent = parent;
+					dList->SetName(StringHelper::Sprintf("%s_farLimbDlist_%08X", name.c_str(), limbLOD->farDListPtr));
+					dList->GetSourceOutputCode("");
+				}
 
 				entryType = "LodLimb";
 
-				entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, { %s, %s }",
+				entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, { %s, %s }",
 					limbLOD->transX, limbLOD->transY, limbLOD->transZ, limbLOD->childIndex, limbLOD->siblingIndex, dListStr.c_str(), dListStr2.c_str());
 			}
 			else
 			{
 				entryType = "StandardLimb";
 
-				entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, %s",
+				entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
 					limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->siblingIndex, dListStr.c_str());
 			}
 
