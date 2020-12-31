@@ -1,7 +1,6 @@
 #include "ZCutscene.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
-#include "TextTable.h"
 
 using namespace std;
 

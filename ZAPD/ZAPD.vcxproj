@@ -210,7 +210,6 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="StringHelper.h" />
-    <ClInclude Include="TextTable.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="tiny_gltf.h" />
     <ClInclude Include="Vec3s.h" />
