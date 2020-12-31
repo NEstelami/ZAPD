@@ -5,6 +5,7 @@
 #include "ZTexture.h"
 #include "ZAnimation.h"
 #include "ZSkeleton.h"
+#include "ZCollision.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -209,6 +210,19 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 				res->SetName(child->Attribute("Name"));
 				res->SetRawDataIndex(rawDataIndex);
 				res->outputDeclaration = false;
+			}
+
+			resources.push_back(res);
+		}
+		else if (string(child->Name()) == "Collision")
+		{
+			ZCollisionHeader* res = nullptr;
+
+			if (mode == ZFileMode::Extract)
+			{
+				res = new ZCollisionHeader(this, child->Attribute("Name"), rawData, rawDataIndex);
+				res->SetName(child->Attribute("Name"));
+				res->SetRawDataIndex(rawDataIndex);
 			}
 
 			resources.push_back(res);
@@ -519,7 +533,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	while (StringHelper::EndsWith(outputDir, "/"))
 		outputDir = outputDir.substr(0, outputDir.length() - 1);
 
-	string buildPath = "build/" + outputDir + "/" + "basefile.txt";
+	//string buildPath = "build/" + outputDir + "/" + "basefile.txt";
 	string outPath = outputDir + "/" + Path::GetFileNameWithoutExtension(name) + ".c";
 	//printf("WRITING %s\n", buildPath.c_str());
 
@@ -530,7 +544,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 		//Directory::CreateDirectory(Path::GetPath(buildPath));
 
 	File::WriteAllText(outPath, sourceOutput);
-	File::WriteAllText(buildPath, outPath);
+	//File::WriteAllText(buildPath, outPath);
 
 	// Generate Header
 	sourceOutput = "";
