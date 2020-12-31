@@ -678,8 +678,8 @@ void ZTexture::Save(string outFolder)
 	else if (type == TextureType::Palette8bpp)
 		stbi_write_png((outFolder + "/" + outName + ".ci8.png").c_str(), width, height, 3, bmpRgb, width * 3);
 
-	if (outName != name && outName != "")
-		File::WriteAllText(outFolder + "/" + outName + ".cfg", name.c_str());
+	//if (outName != name && outName != "")
+		//File::WriteAllText(outFolder + "/" + outName + ".cfg", name.c_str());
 }
 
 // HOTSPOT

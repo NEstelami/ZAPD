@@ -144,6 +144,7 @@
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="ZAnimation.cpp" />
     <ClCompile Include="ZBlob.cpp" />
+    <ClCompile Include="ZCollision.cpp" />
     <ClCompile Include="ZCutscene.cpp" />
     <ClCompile Include="ZDisplayList.cpp" />
     <ClCompile Include="ZFile.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Vec3s.h" />
     <ClInclude Include="ZAnimation.h" />
     <ClInclude Include="ZBlob.h" />
+    <ClInclude Include="ZCollision.h" />
     <ClInclude Include="ZCutscene.h" />
     <ClInclude Include="ZDisplayList.h" />
     <ClInclude Include="ZFile.h" />
