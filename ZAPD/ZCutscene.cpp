@@ -673,8 +673,8 @@ string CutsceneCommandTextbox::GenerateSourceCode(string roomName, int baseAddre
 		}
 		else
 		{
-			result += StringHelper::Sprintf("\t\tCS_TEXT_DISPLAY_TEXTBOX(%i, %i, %i, %i, %i, %i), // %s\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
-				entries[i]->textID1, entries[i]->textID2, TextTable[entries[i]->base].c_str());
+			result += StringHelper::Sprintf("\t\tCS_TEXT_DISPLAY_TEXTBOX(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
+				entries[i]->textID1);
 		}
 	}
 
