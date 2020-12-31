@@ -2,6 +2,7 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "HighLevel/HLModelIntermediette.h"
+#include <typeinfo>
 
 using namespace std;
 using namespace tinyxml2;
@@ -150,15 +151,33 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 
 			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(limb->dListPtr).c_str());
 
-			string entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, %s",
-				limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->siblingIndex, dListStr.c_str());
+			string entryStr = "";
+			string entryType = "";
+
+			if (typeid(*limb) == typeid(ZLimbLOD))
+			{
+				ZLimbLOD* limbLOD = (ZLimbLOD*)limbs[i];
+				string dListStr2 = limbLOD->farDListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(limbLOD->farDListPtr).c_str());
+
+				entryType = "LodLimb";
+
+				entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, { %s, %s }",
+					limbLOD->transX, limbLOD->transY, limbLOD->transZ, limbLOD->childIndex, limbLOD->siblingIndex, dListStr.c_str(), dListStr2.c_str());
+			}
+			else
+			{
+				entryType = "StandardLimb";
+
+				entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, %s",
+					limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->siblingIndex, dListStr.c_str());
+			}
 
 			string limbName = StringHelper::Sprintf("%s_limb_%04X", name.c_str(), limb->address);
 
 			if (parent->HasDeclaration(limb->address))
 				limbName = parent->GetDeclarationName(limb->address);
 
-			parent->AddDeclaration(limb->address, DeclarationAlignment::None, 12, "StandardLimb", limbName, entryStr);
+			parent->AddDeclaration(limb->address, DeclarationAlignment::None, 12, entryType, limbName, entryStr);
 		}
 
 		// Table
