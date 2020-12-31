@@ -79,13 +79,13 @@ string ZAnimation::GetSourceOutputCode(string prefix)
 {
 	if (parent != nullptr)
 	{
-		string headerStr = StringHelper::Sprintf("%i, %s_values, %s_indices, %i",
+		string headerStr = StringHelper::Sprintf("%i, %sFrameData, %sJointIndicies, %i",
 			frameCount, name.c_str(), name.c_str(), limit);
 		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "AnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
 
 		string indicesStr = "";
-		string valuesStr = "\t";
-		const int lineLength = 15;
+		string valuesStr = "    ";
+		const int lineLength = 14;
 		const int offset = 0;
 
 		for (int i = 0; i < rotationValues.size(); i++)
@@ -93,17 +93,22 @@ string ZAnimation::GetSourceOutputCode(string prefix)
 			valuesStr += StringHelper::Sprintf("0x%04X, ", rotationValues[i]);
 
 			if ((i - offset + 1) % lineLength == 0)
-				valuesStr += "\n\t";
+				valuesStr += "\n    ";
 		}
 
 		for (int i = 0; i < rotationIndices.size(); i++)
-			indicesStr += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotationIndices[i].x, rotationIndices[i].y, rotationIndices[i].z);
+		{
+			indicesStr += StringHelper::Sprintf("    { 0x%04X, 0x%04X, 0x%04X },", rotationIndices[i].x, rotationIndices[i].y, rotationIndices[i].z);
+
+			if (i != (rotationIndices.size() - 1))
+				indicesStr += "\n";
+		}
 
 		parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16, (int)rotationValues.size() * 2, "s16",
-			StringHelper::Sprintf("%s_values", name.c_str()), rotationValues.size(), valuesStr);
+			StringHelper::Sprintf("%sFrameData", name.c_str()), rotationValues.size(), valuesStr);
 
 		parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16, (int)rotationIndices.size() * 6, "JointIndex",
-			StringHelper::Sprintf("%s_indices", name.c_str()), rotationIndices.size(), indicesStr);
+			StringHelper::Sprintf("%sJointIndicies", name.c_str()), rotationIndices.size(), indicesStr);
 	}
 
 	return "";

@@ -486,8 +486,9 @@ void ZFile::GenerateSourceFiles(string outputDir)
 {
 	sourceOutput = "";
 
-	sourceOutput += "#include <ultra64.h>\n";
-	sourceOutput += "#include <z64.h>\n";
+	sourceOutput += "#include \"ultra64.h\"\n";
+	sourceOutput += "#include \"z64.h\"\n";
+	sourceOutput += "#include \"macros.h\"\n";
 	sourceOutput += GetHeaderInclude();
 
 	GeneratePlaceholderDeclarations();
@@ -724,7 +725,7 @@ string ZFile::ProcessDeclarations()
 				{
 					if (diff > 0)
 					{
-						AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted%04X", lastAddr + declarations[lastAddr]->size),
+						AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%04X", lastAddr + declarations[lastAddr]->size),
 							diff, src);
 					}
 				}
@@ -739,21 +740,21 @@ string ZFile::ProcessDeclarations()
 	{
 		int diff = (int)(rawData.size() - (lastAddr + declarations[lastAddr]->size));
 
-		string src = "\t";
+		string src = "    ";
 
 		for (int i = 0; i < diff; i++)
 		{
 			src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + declarations[lastAddr]->size + i]);
 
 			if (i % 16 == 15)
-				src += "\n\t";
+				src += "\n    ";
 		}
 
 		if (declarations.find(lastAddr + declarations[lastAddr]->size) == declarations.end())
 		{
 			if (diff > 0)
 			{
-				AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted%04X", lastAddr + declarations[lastAddr]->size),
+				AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%04X", lastAddr + declarations[lastAddr]->size),
 					diff, src);
 			}
 		}
@@ -771,7 +772,7 @@ string ZFile::ProcessDeclarations()
 		if (item.second->includePath != "")
 		{
 			//output += StringHelper::Sprintf("#include \"%s\"\n", item.second->includePath.c_str());
-			output += StringHelper::Sprintf("%s %s[] = {\n#include \"%s\"\n};\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->includePath.c_str());
+			output += StringHelper::Sprintf("%s %s[] = {\n#include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->includePath.c_str());
 		}
 		else if (item.second->varType != "")
 		{
@@ -781,20 +782,23 @@ string ZFile::ProcessDeclarations()
 			if (item.second->isArray)
 			{
 				if (item.second->arrayItemCnt == 0)
-					output += StringHelper::Sprintf("%s %s[] = \n{\n", item.second->varType.c_str(), item.second->varName.c_str());
+					output += StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(), item.second->varName.c_str());
 				else
-					output += StringHelper::Sprintf("%s %s[%i] = \n{\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->arrayItemCnt);
+					output += StringHelper::Sprintf("%s %s[%i] = {\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->arrayItemCnt);
 
 				output += item.second->text + "\n";
 			}
 			else
 			{
-				output += StringHelper::Sprintf("%s %s = {", item.second->varType.c_str(), item.second->varName.c_str());
+				output += StringHelper::Sprintf("%s %s = { ", item.second->varType.c_str(), item.second->varName.c_str());
 				output += item.second->text;
 			}
 
+			if (output.back() == '\n')
+				output += "};";
+			else
+				output += " };";
 
-			output += "};";
 			output += " " + item.second->rightText + "\n\n";
 			
 			if (item.second->postText != "")

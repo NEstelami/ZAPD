@@ -472,7 +472,7 @@ string HLVerticesIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	string output = "";
 
-	output += StringHelper::Sprintf("Vtx_t %s_verts[] = \n{\n", name.c_str());
+	output += StringHelper::Sprintf("Vtx %s_verts[] = \n{\n", name.c_str());
 
 	for (Vertex v : vertices)
 	{
