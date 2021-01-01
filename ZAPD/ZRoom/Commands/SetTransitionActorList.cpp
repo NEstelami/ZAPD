@@ -32,14 +32,14 @@ string SetTransitionActorList::GetSourceOutputCode(std::string prefix)
 
 string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = StringHelper::Sprintf("%s 0x%02X, (u32)_%s_transitionActorList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), transitionActors.size(), roomName.c_str(), segmentOffset);
+	string sourceOutput = StringHelper::Sprintf("%s 0x%02X, (u32)%sTransitionActorList0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), transitionActors.size(), roomName.c_str(), segmentOffset);
 	string declaration = "";
 
 	for (TransitionActorEntry* entry : transitionActors)
 		declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n", entry->frontObjectRoom, entry->frontTransitionReaction, entry->backObjectRoom, entry->backTransitionReaction, ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotY, (uint16_t)entry->initVar);
 
 	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, transitionActors.size() * 16, "TransitionActorEntry",
-		StringHelper::Sprintf("_%s_transitionActorList_%08X", roomName.c_str(), segmentOffset), true, declaration);
+		StringHelper::Sprintf("%sTransitionActorList0x%06X", roomName.c_str(), segmentOffset), true, declaration);
 
 	return sourceOutput;
 }
@@ -57,7 +57,7 @@ int32_t SetTransitionActorList::GetRawDataSize()
 
 string SetTransitionActorList::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern TransitionActorEntry _%s_transitionActorList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("extern TransitionActorEntry %sTransitionActorList0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetTransitionActorList::GetCommandCName()

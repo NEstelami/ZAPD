@@ -59,7 +59,7 @@ ZBlob* ZBlob::FromFile(string filePath)
 string ZBlob::GetSourceOutputCode(std::string prefix)
 {
 	sourceOutput = "";
-	//sourceOutput += StringHelper::Sprintf("u8 _%s_%s[] = \n{\n", prefix.c_str(), name.c_str());
+	//sourceOutput += StringHelper::Sprintf("u8 %s_%s[] = \n{\n", prefix.c_str(), name.c_str());
 
 	for (int i = 0; i < rawData.size(); i += 1)
 	{

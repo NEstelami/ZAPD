@@ -45,7 +45,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		currentPtr += 16;
 	}
 
-	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_actorList_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), numActors, roomName.c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)%sActorList0x%06X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), numActors, roomName.c_str(), segmentOffset);
 
 	//zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, GetRawDataSize(),
 		//"SCmdActorList", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress), sourceOutput);
@@ -56,9 +56,9 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	for (ActorSpawnEntry* entry : actors)
 	{
 		if (entry->actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
-			declaration += StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+			declaration += StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X", ActorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
 		else
-			declaration += StringHelper::Sprintf("\t{ 0x%04X, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%08X", entry->actorNum, entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+			declaration += StringHelper::Sprintf("\t{ 0x%04X, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X", entry->actorNum, entry->posX, entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
 
 		if (index < actors.size() - 1)
 			declaration += "\n";
@@ -67,7 +67,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	}
 
 	zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16, actors.size() * 16, 
-		"ActorEntry", StringHelper::Sprintf("_%s_actorList_%08X", roomName.c_str(), segmentOffset), actors.size(), declaration);
+		"ActorEntry", StringHelper::Sprintf("%sActorList0x%06X", roomName.c_str(), segmentOffset), actors.size(), declaration);
 	
 	return sourceOutput;
 }
@@ -79,7 +79,7 @@ int32_t SetActorList::GetRawDataSize()
 
 string SetActorList::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern ActorEntry _%s_actorList_%08X[%i];\n", zRoom->GetName().c_str(), segmentOffset, (int)actors.size());
+	return StringHelper::Sprintf("extern ActorEntry %sActorList0x%06X[%i];\n", zRoom->GetName().c_str(), segmentOffset, (int)actors.size());
 }
 
 string SetActorList::GetCommandCName()

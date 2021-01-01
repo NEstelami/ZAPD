@@ -30,17 +30,17 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	{
 		RoomEntry* entry = rooms[i];
 
-		string roomName = StringHelper::Sprintf("%s_room_%i", StringHelper::Split(zRoom->GetName(), "_scene")[0].c_str(), i);
-		declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());
+		string roomName = StringHelper::Sprintf("%sRoom%i", StringHelper::Split(zRoom->GetName(), "_scene")[0].c_str(), i);
+		declaration += StringHelper::Sprintf("\t{ (u32)%sSegmentRomStart, (u32)%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());
 	}*/
 	
 	//zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8, 
-		//"RomFile", StringHelper::Sprintf("_%s_roomList_%08X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
+		//"RomFile", StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
 }
 
 string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s 0x%02X, (u32)&_%s_roomList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s 0x%02X, (u32)&%sRoomList0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetRoomList::GenerateSourceCodePass2(string roomName, int baseAddress)
@@ -50,7 +50,7 @@ string SetRoomList::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 string SetRoomList::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern RomFile _%s_roomList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("extern RomFile %sRoomList0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetRoomList::GetCommandCName()
@@ -74,13 +74,13 @@ std::string SetRoomList::PreGenSourceFiles()
 			if (res->GetResourceType() == ZResourceType::Room && res != zRoom)
 			{
 				string roomName = res->GetName();
-				declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());
+				declaration += StringHelper::Sprintf("\t{ (u32)%sSegmentRomStart, (u32)%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());
 			}
 		}
 	}
 
 	zRoom->parent->declarations[segmentOffset] = new Declaration(DeclarationAlignment::None, rooms.size() * 8,
-		"RomFile", StringHelper::Sprintf("_%s_roomList_%08X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
+		"RomFile", StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), true, declaration);
 
 	return std::string();
 }

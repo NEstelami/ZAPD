@@ -64,13 +64,13 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 
-	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&_%s_pathway_%08X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0, (u32)&%sPathway0x%06X };", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), roomName.c_str(), segmentOffset);
 
 	{
-		string declaration = StringHelper::Sprintf("%i, (u32)_%s_pathwayList_%08X", numPoints, roomName.c_str(), listSegmentOffset);
+		string declaration = StringHelper::Sprintf("%i, (u32)%sPathwayList0x%06X", numPoints, roomName.c_str(), listSegmentOffset);
 		
 		zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, 8, "Path",
-			StringHelper::Sprintf("_%s_pathway_%08X", roomName.c_str(), segmentOffset), declaration);
+			StringHelper::Sprintf("%sPathway0x%06X", roomName.c_str(), segmentOffset), declaration);
 	}
 
 	{
@@ -79,12 +79,12 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 		int index = 0;
 		for (PathwayEntry* entry : pathways)
 		{
-			declaration += StringHelper::Sprintf("{ %i, %i, %i }, //0x%08X \n", entry->x, entry->y, entry->z, listSegmentOffset + (index * 6));
+			declaration += StringHelper::Sprintf("{ %i, %i, %i }, //0x%06X \n", entry->x, entry->y, entry->z, listSegmentOffset + (index * 6));
 			index++;
 		}
 
 		zRoom->parent->AddDeclarationArray(listSegmentOffset, DeclarationAlignment::None, DeclarationPadding::None, pathways.size() * 6, 
-			"Vec3s", StringHelper::Sprintf("_%s_pathwayList_%08X", roomName.c_str(), listSegmentOffset), pathways.size(), declaration);
+			"Vec3s", StringHelper::Sprintf("%sPathwayList0x%06X", roomName.c_str(), listSegmentOffset), pathways.size(), declaration);
 	}
 
 	return sourceOutput;
@@ -97,7 +97,7 @@ int32_t SetPathways::GetRawDataSize()
 
 string SetPathways::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern Vec3s _%s_pathwayList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("extern Vec3s %sPathwayList0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetPathways::GetCommandCName()
