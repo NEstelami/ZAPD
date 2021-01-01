@@ -90,7 +90,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 		if (child->Attribute("Offset") != NULL)
 			rawDataIndex = strtol(StringHelper::Split(child->Attribute("Offset"), "0x")[1].c_str(), NULL, 16);
 
-		printf("%s: %08X\n", child->Attribute("Name"), rawDataIndex);
+		printf("%s: 0x%06X\n", child->Attribute("Name"), rawDataIndex);
 
 		if (string(child->Name()) == "Texture")
 		{
@@ -610,7 +610,7 @@ string ZFile::ProcessDeclarations()
 	// Account for padding/alignment
 	int lastAddr = 0;
 
-	//printf("RANGE START: 0x%08X - RANGE END: 0x%08X\n", rangeStart, rangeEnd);
+	//printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
 	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
 	{

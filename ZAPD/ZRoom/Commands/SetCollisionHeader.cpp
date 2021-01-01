@@ -9,12 +9,12 @@ using namespace std;
 SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
-	collisionHeader = ZCollisionHeader(nZRoom->parent, StringHelper::Sprintf("%s_collisionHeader", nZRoom->GetName().c_str()), rawData, segmentOffset);
+	collisionHeader = ZCollisionHeader(nZRoom->parent, StringHelper::Sprintf("%sCollisionHeader", nZRoom->GetName().c_str()), rawData, segmentOffset);
 }
 
 string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s 0x00, (u32)&%s_collisionHeader", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str());
+	return StringHelper::Sprintf("%s 0x00, (u32)&%sCollisionHeader0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetCollisionHeader::GenerateSourceCodePass2(string roomName, int baseAddress)
@@ -29,7 +29,7 @@ string SetCollisionHeader::GetCommandCName()
 
 string SetCollisionHeader::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern CollisionHeader %s_collisionHeader_%08X;\n", zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("extern CollisionHeader %sCollisionHeader0x%06X;\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 RoomCommand SetCollisionHeader::GetRoomCommand()

@@ -16,7 +16,7 @@ ZRoomCommandUnk::ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 
 string ZRoomCommandUnk::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s _%s_set%04X_cmd%02X = { 0x%02X, 0x%02X, 0x%08X }; /* WARNING: UNIMPLEMENTED ROOM COMMAND */", GetCommandCName().c_str(), roomName.c_str(), baseAddress, data2, cmdID, data1, data2);
+	return StringHelper::Sprintf("%s %sSet%04XCmd%02X = { 0x%02X, 0x%02X, 0x%06X }; /* WARNING: UNIMPLEMENTED ROOM COMMAND */", GetCommandCName().c_str(), roomName.c_str(), baseAddress, data2, cmdID, data1, data2);
 }
 
 string ZRoomCommandUnk::GenerateSourceCodePass2(string roomName, int baseAddress)

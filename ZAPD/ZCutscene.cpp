@@ -172,7 +172,7 @@ string CutsceneCommand::GetCName(string prefix)
 
 string CutsceneCommand::GenerateSourceCode(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s _%s_cutsceneData_%04X_cmd%02X = { 0x%02X,", GetCName(roomName).c_str(), roomName.c_str(), baseAddress, commandIndex, commandID);
+	return StringHelper::Sprintf("%s %sCutsceneData%04XCmd%02X = { 0x%02X,", GetCName(roomName).c_str(), roomName.c_str(), baseAddress, commandIndex, commandID);
 }
 
 size_t CutsceneCommand::GetCommandSize()
@@ -261,7 +261,7 @@ string CutsceneCommandSetCameraPos::GenerateSourceCode(string roomName, int base
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\t%s(%i, %i, %i, 0x%08X, %i, %i, %i, %i),\n", posStr.c_str(), entries[i]->continueFlag, entries[i]->cameraRoll, entries[i]->nextPointFrame,
+		result += StringHelper::Sprintf("\t\t%s(%i, %i, %i, 0x%06X, %i, %i, %i, %i),\n", posStr.c_str(), entries[i]->continueFlag, entries[i]->cameraRoll, entries[i]->nextPointFrame,
 			*(uint32_t*)&entries[i]->viewAngle, entries[i]->posX, entries[i]->posY, entries[i]->posZ, entries[i]->unused);
 	}
 

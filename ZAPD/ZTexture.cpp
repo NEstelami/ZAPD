@@ -706,7 +706,7 @@ string ZTexture::GetSourceOutputCode(std::string prefix)
 		sourceOutput += StringHelper::Sprintf("0x%016llX, ", BitConverter::ToInt64BE(rawDataArr, i));
 
 		if (i % 32 == 24)
-			sourceOutput += StringHelper::Sprintf(" // 0x%08X \n", rawDataIndex + ((i / 32) * 32));
+			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));
 	}
 
 	//sourceOutput += "};\n";
