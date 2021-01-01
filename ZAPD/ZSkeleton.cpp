@@ -163,6 +163,8 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 			ZLimbStandard* limb = limbs[i];
 			
 			string defaultDLName = StringHelper::Sprintf("%sLimbDL_%08X", name.c_str(), limb->dListPtr);
+			string defaultPrefix = name.c_str();
+			defaultPrefix.replace(0, 1, "s");
 			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limb->dListPtr, defaultDLName).c_str());
 
 			if (limb->dListPtr != 0 && parent->GetDeclaration(limb->dListPtr) == nullptr)
@@ -170,7 +172,7 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 				ZDisplayList* dList = new ZDisplayList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr));
 				dList->parent = parent;
 				dList->SetName(StringHelper::Sprintf("%sLimbDL_%08X", name.c_str(), limb->dListPtr));
-				dList->GetSourceOutputCode("");
+				dList->GetSourceOutputCode(defaultPrefix);
 			}
 
 			string entryStr = "";
@@ -187,7 +189,7 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 					ZDisplayList* dList = new ZDisplayList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr));
 					dList->parent = parent;
 					dList->SetName(StringHelper::Sprintf("%s_farLimbDlist_%08X", name.c_str(), limbLOD->farDListPtr));
-					dList->GetSourceOutputCode("");
+					dList->GetSourceOutputCode(defaultPrefix);
 				}
 
 				entryType = "LodLimb";

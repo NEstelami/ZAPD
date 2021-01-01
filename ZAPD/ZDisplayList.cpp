@@ -1113,7 +1113,10 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			for (Vertex vtx : item.second)
 			{
-				declaration += StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i),\n",
+				if (curAddr != item.first)
+					declaration += "\n";
+
+				declaration += StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i),",
 					vtx.x, vtx.y, vtx.z, vtx.s, vtx.t, vtx.r, vtx.g, vtx.b, vtx.a);
 
 				curAddr += 16;
