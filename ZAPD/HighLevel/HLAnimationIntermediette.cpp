@@ -54,14 +54,14 @@ HLAnimationIntermediette* HLAnimationIntermediette::FromZAnimation(ZAnimation* z
 {
 	HLAnimationIntermediette* anim = new HLAnimationIntermediette();
 
-	anim->limit = zAnim->limit;
+	/*anim->limit = zAnim->limit;
 	anim->frameCount = zAnim->frameCount;
 	
 	for (uint16_t item : zAnim->rotationValues)
 		anim->rotationValues.push_back(item);
 
 	for (RotationIndex item : zAnim->rotationIndices)
-		anim->rotationIndices.push_back(item);
+		anim->rotationIndices.push_back(item);*/
 
 	return anim;
 }
@@ -70,14 +70,14 @@ ZAnimation* HLAnimationIntermediette::ToZAnimation()
 {
 	ZAnimation* zAnim = new ZAnimation();
 
-	zAnim->limit = limit;
+	/*zAnim->limit = limit;
 	zAnim->frameCount = frameCount;
 
 	for (uint16_t item : rotationValues)
 		zAnim->rotationValues.push_back(item);
 
 	for (RotationIndex item : rotationIndices)
-		zAnim->rotationIndices.push_back(item);
+		zAnim->rotationIndices.push_back(item);*/
 
 	return zAnim;
 }
