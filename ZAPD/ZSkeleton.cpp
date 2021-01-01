@@ -162,9 +162,10 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 		{
 			ZLimbStandard* limb = limbs[i];
 			
-			string defaultDLName = StringHelper::Sprintf("%sLimbDL_%08X", name.c_str(), limb->dListPtr);
 			string defaultPrefix = name.c_str();
-			defaultPrefix.replace(0, 1, "s");
+			defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
+
+			string defaultDLName = StringHelper::Sprintf("%sLimbDL_%08X", name.c_str(), limb->dListPtr);
 			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limb->dListPtr, defaultDLName).c_str());
 
 			if (limb->dListPtr != 0 && parent->GetDeclaration(limb->dListPtr) == nullptr)
