@@ -122,13 +122,13 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, std::string prefix, std::vecto
 
 		for (int i = 0; i < vertices.size(); i++)
 		{
-			sprintf(line, "\t{ %i, %i, %i }, // 0x%08X\n", vertices[i]->x, vertices[i]->y, vertices[i]->z, vtxSegmentOffset + (i * 6));
+			sprintf(line, "{ %i, %i, %i }, // 0x%08X\n", vertices[i]->x, vertices[i]->y, vertices[i]->z, vtxSegmentOffset + (i * 6));
 			declaration += line;
 		}
 
 		if (vtxSegmentOffset != 0)
 			parent->declarations[vtxSegmentOffset] = new Declaration(DeclarationAlignment::None, vertices.size() * 6,
-				"Vec3s", StringHelper::Sprintf("%s_vertices_%08X", prefix.c_str(), vtxSegmentOffset), true, declaration);
+				"Vec3s", StringHelper::Sprintf("%s_vtx_%08X", prefix.c_str(), vtxSegmentOffset), true, declaration);
 
 		declaration = "";
 	}
@@ -141,7 +141,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, std::string prefix, std::vecto
 	else
 		sprintf(waterBoxStr, "0");
 
-	declaration += StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %s_vertices_%08X, %i, %s_polygons_%08X, %s_polygonTypes_%08X, &%s_camDataList_%08X, %i, %s",
+	declaration += StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %s_vtx_%08X, %i, %s_polygons_%08X, %s_polygonTypes_%08X, &%s_camDataList_%08X, %i, %s",
 		absMinX, absMinY, absMinZ,
 		absMaxX, absMaxY, absMaxZ,
 		numVerts, prefix.c_str(), vtxSegmentOffset, numPolygons,

@@ -331,7 +331,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 	{
 		F3DZEXOpcode opcode = (F3DZEXOpcode)(instructions[i] >> 56);
 		uint64_t data = instructions[i];
-		sourceOutput += "\t";
+		sourceOutput += "    ";
 
 		auto start = chrono::steady_clock::now();
 
@@ -460,7 +460,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				if (GETSEGNUM(data) == 0x80) // Are these vertices defined in code?
 					vtxAddr -= SEG2FILESPACE(parent->baseAddress);
 
-				sprintf(line, "gsSPVertex(%s_vertices_%08X, %i, %i),", prefix.c_str(), vtxAddr, nn, ((aa >> 1) - nn));
+				sprintf(line, "gsSPVertex(%s_vtx_%08X, %i, %i),", prefix.c_str(), vtxAddr, nn, ((aa >> 1) - nn));
 
 				{
 					uint32_t currentPtr = data & 0x00FFFFFF;
@@ -973,7 +973,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				string modes2[] = { "COMBINED", "TEXEL0", "TEXEL1", "PRIMITIVE", "SHADE", "ENVIRONMENT", "1", "0" };
 
-				sprintf(line, "gsDPSetCombineLERP(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s),",
+				sprintf(line, "gsDPSetCombineLERP(%s, %s, %s, %s, %s, %s, %s, %s,\n                       %s, %s, %s, %s, %s, %s, %s, %s),",
 					modes[a0].c_str(), modes[b0].c_str(), modes[c0].c_str(), modes[d0].c_str(),
 					modes2[aa0].c_str(), modes2[ab0].c_str(), modes2[ac0].c_str(), modes2[ad0].c_str(),
 					modes[a1].c_str(), modes[b1].c_str(), modes[c1].c_str(), modes[d1].c_str(),
@@ -1060,9 +1060,6 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 #endif
 
 		sourceOutput += line;
-
-		if (optimizationResult != -1)
-			sourceOutput += StringHelper::Sprintf(" // 0x%08X", rawDataIndex + (i * 8));
 		
 		if (i < instructions.size() - 1)
 			sourceOutput += "\n";
@@ -1093,7 +1090,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					vertices[verticesSorted[i].first].push_back(verticesSorted[i + 1].second[j]);
 				}
 
-				defines += StringHelper::Sprintf("#define %s_vertices_%08X ((u32)%s_vertices_%08X + 0x%08X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
+				defines += StringHelper::Sprintf("#define %s_vtx_%08X ((u32)%s_vtx_%08X + 0x%08X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
 				
 				int nSize = (int)vertices[verticesSorted[i].first].size();
 
@@ -1116,8 +1113,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			for (Vertex vtx : item.second)
 			{
-				declaration += StringHelper::Sprintf("\t { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i }, // 0x%08X\n",
-					vtx.x, vtx.y, vtx.z, vtx.flag, vtx.s, vtx.t, vtx.r, vtx.g, vtx.b, vtx.a, curAddr);
+				declaration += StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i),\n",
+					vtx.x, vtx.y, vtx.z, vtx.s, vtx.t, vtx.r, vtx.g, vtx.b, vtx.a);
 
 				curAddr += 16;
 			}
@@ -1126,8 +1123,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			if (parent != nullptr)
 			{
-				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "Vtx_t", 
-					StringHelper::Sprintf("%s_vertices_%08X", prefix.c_str(), item.first, item.second.size()), 0, declaration);
+				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "Vtx", 
+					StringHelper::Sprintf("%s_vtx_%08X", prefix.c_str(), item.first, item.second.size()), 0, declaration);
 			}
 		}
 

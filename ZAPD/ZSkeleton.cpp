@@ -63,7 +63,7 @@ string ZLimbStandard::GetSourceOutputCode(string prefix)
 {
 	string dListStr = dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(dListPtr).c_str());
 
-	string entryStr = StringHelper::Sprintf("\t{ %i, %i, %i }, %i, %i, %s",
+	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
 		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str());
 
 	Declaration* decl = parent->GetDeclaration(address);
@@ -162,14 +162,14 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 		{
 			ZLimbStandard* limb = limbs[i];
 			
-			string defaultDLName = StringHelper::Sprintf("%s_dlist_%08X", name.c_str(), limb->dListPtr);
+			string defaultDLName = StringHelper::Sprintf("%sLimbDL_%08X", name.c_str(), limb->dListPtr);
 			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limb->dListPtr, defaultDLName).c_str());
 
 			if (limb->dListPtr != 0 && parent->GetDeclaration(limb->dListPtr) == nullptr)
 			{
 				ZDisplayList* dList = new ZDisplayList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr));
 				dList->parent = parent;
-				dList->SetName(StringHelper::Sprintf("%s_dlist_%08X", name.c_str(), limb->dListPtr));
+				dList->SetName(StringHelper::Sprintf("%sLimbDL_%08X", name.c_str(), limb->dListPtr));
 				dList->GetSourceOutputCode("");
 			}
 
@@ -203,7 +203,7 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 					limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->siblingIndex, dListStr.c_str());
 			}
 
-			string limbName = StringHelper::Sprintf("%s_limb_%04X", name.c_str(), limb->address);
+			string limbName = StringHelper::Sprintf("%sLimb_%04X", name.c_str(), limb->address);
 
 			if (parent->HasDeclaration(limb->address))
 				limbName = parent->GetDeclarationName(limb->address);
@@ -218,11 +218,13 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 		{
 			ZLimbStandard* limb = limbs[i];
 
-			//string decl = StringHelper::Sprintf("\t&_%s_limb_%04X,\n", prefix.c_str(), limb->address);
+			//string decl = StringHelper::Sprintf("    &_%sLimb_%04X,\n", prefix.c_str(), limb->address);
 			string decl = "";
 
 			if (parent->HasDeclaration(limb->address))
-				decl = StringHelper::Sprintf("\t&%s,\n", parent->GetDeclarationName(limb->address).c_str());
+				decl = StringHelper::Sprintf("    &%s,", parent->GetDeclarationName(limb->address).c_str());
+				if (i != (limbs.size() - 1))
+				    decl += "\n";
 
 			tblStr += decl;
 		}
@@ -232,18 +234,18 @@ std::string ZSkeleton::GetSourceOutputCode(std::string prefix)
 		if (!parent->HasDeclaration(ptr))
 		{
 			parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbs.size(),
-				"StandardLimb*", StringHelper::Sprintf("%s_limbs", name.c_str()), limbs.size(), tblStr);
+				"void*", StringHelper::Sprintf("%sLimbs", name.c_str()), limbs.size(), tblStr);
 		}
 
 		if (type == ZSkeletonType::Normal)
 		{
-			string headerStr = StringHelper::Sprintf("%s_limbs, %i", name.c_str(), limbs.size());
+			string headerStr = StringHelper::Sprintf("%sLimbs, %i", name.c_str(), limbs.size());
 			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 8,
 				"SkeletonHeader", StringHelper::Sprintf("%s", name.c_str()), headerStr);
 		}
 		else
 		{
-			string headerStr = StringHelper::Sprintf("%s_limbs, %i, %i", name.c_str(), limbs.size(), dListCount);
+			string headerStr = StringHelper::Sprintf("%sLimbs, %i, %i", name.c_str(), limbs.size(), dListCount);
 			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 12,
 				"FlexSkeletonHeader", StringHelper::Sprintf("%s", name.c_str()), headerStr);
 		}
