@@ -19,12 +19,12 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32", 
-			StringHelper::Sprintf("_%s_cutsceneData_%08X", zRoom->GetName().c_str(), segmentOffset), 0, output);
+			StringHelper::Sprintf("%sCutsceneData0x%06X", zRoom->GetName().c_str(), segmentOffset), 0, output);
 }
 
 string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s 0, (u32)&_%s_cutsceneData_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s 0, (u32)%sCutsceneData0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 int32_t SetCutscenes::GetRawDataSize()
@@ -34,7 +34,7 @@ int32_t SetCutscenes::GetRawDataSize()
 
 string SetCutscenes::GenerateExterns()
 {
-	return  StringHelper::Sprintf("extern s32 _%s_cutsceneData_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
+	return  StringHelper::Sprintf("extern s32 %sCutsceneData0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetCutscenes::GetCommandCName()
