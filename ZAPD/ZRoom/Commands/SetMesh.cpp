@@ -308,8 +308,8 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
 	{
-		zRoom->parent->AddDeclarationArray(vtxEntry.first, DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, "Vtx_t",
-			StringHelper::Sprintf("%s_vertices_%08X", zRoom->GetName().c_str(), vtxEntry.first), 0, vtxEntry.second);
+		zRoom->parent->AddDeclarationArray(vtxEntry.first, DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, "Vtx",
+			StringHelper::Sprintf("%s_vtx_%08X", zRoom->GetName().c_str(), vtxEntry.first), 0, vtxEntry.second);
 
 		//zRoom->parent->declarations[vtxEntry.first] = new Declaration(DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, vtxEntry.second);
 	}
@@ -345,7 +345,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 		sourceOutput += GenDListExterns(otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern Vtx_t %s_vertices_%08X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
+		sourceOutput += StringHelper::Sprintf("extern Vtx %s_vtx_%08X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 		sourceOutput += StringHelper::Sprintf("extern u64 %s_tex_%08X[];\n", zRoom->GetName().c_str(), texEntry.first);
