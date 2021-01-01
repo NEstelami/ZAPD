@@ -20,7 +20,7 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 
 		for (int i = 0; i < numLights; i++)
 		{
-			declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X }, // 0x%08X \n",
+			declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X }, // 0x%06X \n",
 				settings[i]->ambientClrR, settings[i]->ambientClrG, settings[i]->ambientClrB,
 				settings[i]->diffuseClrA_R, settings[i]->diffuseClrA_G, settings[i]->diffuseClrA_B,
 				settings[i]->diffuseDirA_X, settings[i]->diffuseDirA_Y, settings[i]->diffuseDirA_Z,
@@ -31,13 +31,13 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 		}
 
 		zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, numLights * 22, "LightSettings",
-			StringHelper::Sprintf("_%s_lightSettings_%08X", zRoom->GetName().c_str(), segmentOffset), numLights, declaration);
+			StringHelper::Sprintf("%sLightSettings0x%06X", zRoom->GetName().c_str(), segmentOffset), numLights, declaration);
 	}
 }
 
 string SetLightingSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s %i, (u32)&_%s_lightSettings_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s %i, (u32)&%sLightSettings0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetLightingSettings::GenerateSourceCodePass2(string roomName, int baseAddress)
@@ -52,7 +52,7 @@ string SetLightingSettings::GetCommandCName()
 
 string SetLightingSettings::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern LightSettings _%s_lightSettings_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("extern LightSettings %sLightSettings0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 RoomCommand SetLightingSettings::GetRoomCommand()

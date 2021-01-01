@@ -27,14 +27,14 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int ra
 
 string SetObjectList::GenerateExterns()
 {
-	return StringHelper::Sprintf("s16 _%s_objectList_%08X[];\n", zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 
-	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)_%s_objectList_%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)%sObjectList0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
 
 	string declaration = "";
 
@@ -48,7 +48,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	}
 
 	zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
-		StringHelper::Sprintf("_%s_objectList_%08X", zRoom->GetName().c_str(), segmentOffset), objects.size(), declaration);
+		StringHelper::Sprintf("%sObjectList0x%06X", zRoom->GetName().c_str(), segmentOffset), objects.size(), declaration);
 
 	return sourceOutput;
 }
