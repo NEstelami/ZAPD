@@ -104,7 +104,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		//declaration += "static u32 terminatorMaybe = 0x01000000; // This always appears after the mesh entries. Its purpose is not clear.\n";
 
 		zRoom->parent->AddDeclarationArray(meshHeader0->dListStart, DeclarationAlignment::None, DeclarationPadding::None, (meshHeader0->entries.size() * 8) + 0, "MeshEntry0",
-			StringHelper::Sprintf("%sMeshDListEntry", zRoom->GetName().c_str(), meshHeader0->dListStart), meshHeader0->entries.size(), declaration);
+			StringHelper::Sprintf("%sMeshDListEntry0x%06X", zRoom->GetName().c_str(), meshHeader0->dListStart), meshHeader0->entries.size(), declaration);
 
 		zRoom->parent->AddDeclaration(meshHeader0->dListStart + (meshHeader0->entries.size() * 8) + 0, DeclarationAlignment::None, DeclarationPadding::Pad16, 4, "static s32",
 			"terminatorMaybe", " 0x01000000 ");
@@ -297,7 +297,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	string srcVarName = "";
 
 	if (Globals::Instance->includeFilePrefix)
-		srcVarName = StringHelper::Sprintf("%s_%s", zRoom->GetName().c_str(), dList->GetName().c_str());
+		srcVarName = StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 	else
 		srcVarName = StringHelper::Sprintf("%s", dList->GetName().c_str());
 
@@ -345,7 +345,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 		sourceOutput += GenDListExterns(otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern Vtx_t %sVertices0x%06X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
+		sourceOutput += StringHelper::Sprintf("extern Vtx %sVertices0x%06X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 		sourceOutput += StringHelper::Sprintf("extern u64 %sTex0x%06X[];\n", zRoom->GetName().c_str(), texEntry.first);

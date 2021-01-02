@@ -9,7 +9,7 @@ using namespace std;
 SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
-	collisionHeader = ZCollisionHeader(nZRoom->parent, StringHelper::Sprintf("%sCollisionHeader", nZRoom->GetName().c_str()), rawData, segmentOffset);
+	collisionHeader = ZCollisionHeader(nZRoom->parent, StringHelper::Sprintf("%sCollisionHeader0x%06X", nZRoom->GetName().c_str(), segmentOffset), rawData, segmentOffset);
 }
 
 string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
@@ -29,7 +29,7 @@ string SetCollisionHeader::GetCommandCName()
 
 string SetCollisionHeader::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern CollisionHeader %sCollisionHeader0x%06X;\n", zRoom->GetName().c_str(), segmentOffset);
+	return "";
 }
 
 RoomCommand SetCollisionHeader::GetRoomCommand()
