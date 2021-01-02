@@ -10,7 +10,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	this->numLights = rawData[rawDataIndex + 1];
 	this->segment = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
-	//std::string declarations = StringHelper::Sprintf("LightInfo _%s_lightInfo_%08X[] =\n{\n", this->ptrRoom->GetName().c_str(), this->segment);
+	//std::string declarations = StringHelper::Sprintf("LightInfo %sLightInfo0x%06X[] =\n{\n", this->ptrRoom->GetName().c_str(), this->segment);
 	string declarations = "";
 
 	for (int i = 0; i < this->numLights; i++)
@@ -29,12 +29,12 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	declarations += "};\n";
 
 	this->ptrRoom->parent->AddDeclarationArray(this->segment, DeclarationAlignment::None, this->numLights * 0xE, "LightInfo", 
-		StringHelper::Sprintf("_%s_lightInfo_%08X", this->ptrRoom->GetName().c_str(), this->segment), this->numLights, declarations);
+		StringHelper::Sprintf("%sLightInfo0x%06X", this->ptrRoom->GetName().c_str(), this->segment), this->numLights, declarations);
 }
 
 string SetLightList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("%s %i, &_%s_lightInfo_%08X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), this->numLights, this->ptrRoom->GetName().c_str(), this->segment);
+	return StringHelper::Sprintf("%s %i, &%sLightInfo0x%06X};", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), this->numLights, this->ptrRoom->GetName().c_str(), this->segment);
 }
 
 string SetLightList::GetCommandCName()
@@ -44,7 +44,7 @@ string SetLightList::GetCommandCName()
 
 string SetLightList::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern LightInfo _%s_lightInfo_%08X[];\n", this->ptrRoom->GetName().c_str(), this->segment);
+	return StringHelper::Sprintf("extern LightInfo %sLightInfo0x%06X[];\n", this->ptrRoom->GetName().c_str(), this->segment);
 }
 
 RoomCommand SetLightList::GetRoomCommand()

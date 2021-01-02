@@ -104,8 +104,8 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string sizeStr = child->Attribute("Size");
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
-			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%s_blob_%08X", room->name.c_str(), address));
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(), "u8", StringHelper::Sprintf("_%s_%s", room->name.c_str(), blob->GetName().c_str()), 0, blob->GetSourceOutputCode(room->name));
+			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", room->name.c_str(), address));
+			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(), "u8", StringHelper::Sprintf("%s_%s", room->name.c_str(), blob->GetName().c_str()), 0, blob->GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
@@ -120,7 +120,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999);
 			
 			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32",
-				StringHelper::Sprintf("_%s_cutsceneData_%08X", room->name.c_str(), cutscene->segmentOffset), 0, cutscene->GetSourceOutputCode(room->name));
+				StringHelper::Sprintf("%sCutsceneData0x%06X", room->name.c_str(), cutscene->segmentOffset), 0, cutscene->GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
 		{
@@ -173,7 +173,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
-			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%s_tex_%08X", room->name.c_str(), address), width, height);
+			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex0x%06X", room->name.c_str(), address), width, height);
 			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
 				tex->GetSourceOutputCode(room->name));
 		}
@@ -281,7 +281,7 @@ void ZRoom::ProcessCommandSets()
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
 			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, cmd->GetCommandCName(),
-				StringHelper::Sprintf("_%s_set%04X_cmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
+				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
 				StringHelper::Sprintf("%s", pass1.c_str()));
 
 			decl->rightText = StringHelper::Sprintf("// 0x%04X", cmd->cmdAddress);
@@ -298,7 +298,7 @@ void ZRoom::ProcessCommandSets()
 		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
 
 		if (pass2 != "")
-			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, cmd->GetCommandCName(), StringHelper::Sprintf("_%s_set%04X_cmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
+			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, cmd->GetCommandCName(), StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
 	}
 }
 
@@ -444,7 +444,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 				{
 					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
 
-					defines += StringHelper::Sprintf("#define %s_tex_%08X ((u32)%s_tex_%08X + 0x%08X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
+					defines += StringHelper::Sprintf("#define %sTex0x%06X ((u32)%sTex0x%06X + 0x%06X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
 						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
 
 					parent->declarations.erase(texturesSorted[i + 1].first);
@@ -473,7 +473,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
 			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
-			"u64", StringHelper::Sprintf("%s_tex_%08X", prefix.c_str(), item.first), 0);
+			"u64", StringHelper::Sprintf("%sTex0x%06X", prefix.c_str(), item.first), 0);
 	}
 
 	//sourceOutput += "\n";
