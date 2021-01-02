@@ -173,7 +173,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
-			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex0x%06X", room->name.c_str(), address), width, height);
+			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height);
 			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
 				tex->GetSourceOutputCode(room->name));
 		}
@@ -444,7 +444,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 				{
 					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
 
-					defines += StringHelper::Sprintf("#define %sTex0x%06X ((u32)%sTex0x%06X + 0x%06X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
+					defines += StringHelper::Sprintf("#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
 						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
 
 					parent->declarations.erase(texturesSorted[i + 1].first);
@@ -473,7 +473,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
 			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
-			"u64", StringHelper::Sprintf("%sTex0x%06X", prefix.c_str(), item.first), 0);
+			"u64", StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
 	}
 
 	//sourceOutput += "\n";
