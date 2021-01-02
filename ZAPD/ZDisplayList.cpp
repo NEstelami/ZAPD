@@ -460,7 +460,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				if (GETSEGNUM(data) == 0x80) // Are these vertices defined in code?
 					vtxAddr -= SEG2FILESPACE(parent->baseAddress);
 
-				sprintf(line, "gsSPVertex(%sVertices0x%06X, %i, %i),", prefix.c_str(), vtxAddr, nn, ((aa >> 1) - nn));
+				sprintf(line, "gsSPVertex(%sVtx_%06X, %i, %i),", prefix.c_str(), vtxAddr, nn, ((aa >> 1) - nn));
 
 				{
 					uint32_t currentPtr = data & 0x00FFFFFF;
@@ -1090,7 +1090,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					vertices[verticesSorted[i].first].push_back(verticesSorted[i + 1].second[j]);
 				}
 
-				defines += StringHelper::Sprintf("#define %sVertices0x%06X ((u32)%sVertices0x%06X + 0x%06X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
+				defines += StringHelper::Sprintf("#define %sVtx_%06X ((u32)%sVtx_%06X + 0x%06X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
 				
 				int nSize = (int)vertices[verticesSorted[i].first].size();
 
@@ -1127,7 +1127,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			if (parent != nullptr)
 			{
 				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "Vtx", 
-					StringHelper::Sprintf("%sVertices0x%06X", prefix.c_str(), item.first, item.second.size()), 0, declaration);
+					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first, item.second.size()), 0, declaration);
 			}
 		}
 

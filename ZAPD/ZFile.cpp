@@ -738,7 +738,7 @@ string ZFile::ProcessDeclarations()
 				{
 					if (diff > 0)
 					{
-						AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%04X", lastAddr + declarations[lastAddr]->size),
+						AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%06X", lastAddr + declarations[lastAddr]->size),
 							diff, src);
 					}
 				}
@@ -767,7 +767,7 @@ string ZFile::ProcessDeclarations()
 		{
 			if (diff > 0)
 			{
-				AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%04X", lastAddr + declarations[lastAddr]->size),
+				AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%06X", lastAddr + declarations[lastAddr]->size),
 					diff, src);
 			}
 		}
