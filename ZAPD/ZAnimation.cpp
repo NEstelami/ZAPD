@@ -56,8 +56,11 @@ std::string ZNormalAnimation::GetSourceOutputCode(std::string prefix)
 {
 	if (parent != nullptr)
 	{
-		string headerStr = StringHelper::Sprintf("%i, %sFrameData, %sJointIndices, %i",
-			frameCount, name.c_str(), name.c_str(), limit);
+		string defaultPrefix = name.c_str();
+		defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
+
+		string headerStr = StringHelper::Sprintf("{ %i }, %sFrameData, %sJointIndices, %i",
+			frameCount, defaultPrefix.c_str(), defaultPrefix.c_str(), limit);
 		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "AnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
 
 		string indicesStr = "";
@@ -81,11 +84,11 @@ std::string ZNormalAnimation::GetSourceOutputCode(std::string prefix)
 				indicesStr += "\n";
 		}
 
-		parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16, (int)rotationValues.size() * 2, "s16",
-			StringHelper::Sprintf("%sFrameData", name.c_str()), rotationValues.size(), valuesStr);
+		parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16, (int)rotationValues.size() * 2, "static s16",
+			StringHelper::Sprintf("%sFrameData", defaultPrefix.c_str()), rotationValues.size(), valuesStr);
 
-		parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16, (int)rotationIndices.size() * 6, "JointIndex",
-			StringHelper::Sprintf("%sJointIndices", name.c_str()), rotationIndices.size(), indicesStr);
+		parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16, (int)rotationIndices.size() * 6, "static JointIndex",
+			StringHelper::Sprintf("%sJointIndices", defaultPrefix.c_str()), rotationIndices.size(), indicesStr);
 	}
 
 	return "";
@@ -146,7 +149,7 @@ std::string ZLinkAnimation::GetSourceOutputCode(std::string prefix)
 	if (parent != nullptr)
 	{
 		string segSymbol = segmentAddress == 0 ? "NULL" : parent->GetDeclarationName(segmentAddress, StringHelper::Sprintf("%sSeg%06X", name.c_str(), segmentAddress));
-		string headerStr = StringHelper::Sprintf("%i, 0x%08X",
+		string headerStr = StringHelper::Sprintf("{ %i }, 0x%08X",
 			frameCount, segmentAddress);
 		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "LinkAnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
 	}

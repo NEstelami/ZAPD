@@ -723,21 +723,22 @@ string ZFile::ProcessDeclarations()
 			{
 				int diff = item.first - (lastAddr + declarations[lastAddr]->size);
 
-				string src = "\t";
+				string src = "    ";
+
 
 				for (int i = 0; i < diff; i++)
 				{
 					src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr + declarations[lastAddr]->size + i]);
 
-					if (i % 16 == 15)
-						src += "\n\t";
+					if ((i % 16 == 15) && (i != (diff - 1)))
+						src += "\n    ";
 				}
 
 				if (declarations.find(lastAddr + declarations[lastAddr]->size) == declarations.end())
 				{
 					if (diff > 0)
 					{
-						AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%04X", lastAddr + declarations[lastAddr]->size),
+						AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%06X", lastAddr + declarations[lastAddr]->size),
 							diff, src);
 					}
 				}
@@ -766,7 +767,7 @@ string ZFile::ProcessDeclarations()
 		{
 			if (diff > 0)
 			{
-				AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%04X", lastAddr + declarations[lastAddr]->size),
+				AddDeclarationArray(lastAddr + declarations[lastAddr]->size, DeclarationAlignment::None, diff, "static u8", StringHelper::Sprintf("unaccounted_%06X", lastAddr + declarations[lastAddr]->size),
 					diff, src);
 			}
 		}

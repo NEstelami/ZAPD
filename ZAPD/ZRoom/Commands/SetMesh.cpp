@@ -309,7 +309,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
 	{
 		zRoom->parent->AddDeclarationArray(vtxEntry.first, DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, "Vtx",
-			StringHelper::Sprintf("%sVertices0x%06X", zRoom->GetName().c_str(), vtxEntry.first), 0, vtxEntry.second);
+			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first), 0, vtxEntry.second);
 
 		//zRoom->parent->declarations[vtxEntry.first] = new Declaration(DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, vtxEntry.second);
 	}
@@ -328,7 +328,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 
 		zRoom->parent->AddDeclarationIncludeArray(texEntry.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
 			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(zRoom->textures[texEntry.first]->GetName()).c_str(), zRoom->textures[texEntry.first]->GetExternalExtension().c_str()), 
-			zRoom->textures[texEntry.first]->GetRawDataSize(), "u64", StringHelper::Sprintf("%sTex0x%06X", zRoom->textures[texEntry.first]->GetName().c_str(), texEntry.first), 0);
+			zRoom->textures[texEntry.first]->GetRawDataSize(), "u64", StringHelper::Sprintf("%sTex_%06X", zRoom->textures[texEntry.first]->GetName().c_str(), texEntry.first), 0);
 	}
 }
 
@@ -345,10 +345,10 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 		sourceOutput += GenDListExterns(otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern Vtx %sVertices0x%06X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
+		sourceOutput += StringHelper::Sprintf("extern Vtx %sVtx_%06X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern u64 %sTex0x%06X[];\n", zRoom->GetName().c_str(), texEntry.first);
+		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n", zRoom->GetName().c_str(), texEntry.first);
 
 	sourceOutput += dList->defines;
 
