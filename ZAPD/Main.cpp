@@ -315,8 +315,8 @@ void BuildAssetAnimationIntermediette(string animPath, string outPath)
 	ZAnimation* zAnim = anim->ToZAnimation();
 	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
 	zAnim->parent = file;
-	zAnim->rotationIndicesSeg = 1;
-	zAnim->rotationValuesSeg = 2;
+	//zAnim->rotationIndicesSeg = 1;
+	//zAnim->rotationValuesSeg = 2;
 
 	zAnim->GetSourceOutputCode(split[split.size() - 2]);
 	string output = "";

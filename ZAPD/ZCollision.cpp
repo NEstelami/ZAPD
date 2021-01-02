@@ -122,6 +122,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, std::string prefix, std::vecto
 
 		for (int i = 0; i < vertices.size(); i++)
 		{
+
 			sprintf(line, "{ %i, %i, %i }, // 0x%08X\n", vertices[i]->x, vertices[i]->y, vertices[i]->z, vtxSegmentOffset + (i * 6));
 			declaration += line;
 		}

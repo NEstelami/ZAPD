@@ -11,20 +11,6 @@ using namespace std;
 ZAnimation::ZAnimation() : ZResource()
 {
 	frameCount = 0;
-	rotationValues = vector<uint16_t>();
-	rotationIndices = vector<RotationIndex>();
-	limit = 0;
-}
-
-ZAnimation* ZAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath)
-{
-	ZAnimation* anim = new ZAnimation();
-	anim->rawData = nRawData;
-	anim->rawDataIndex = rawDataIndex;
-	anim->ParseXML(reader);
-	anim->ParseRawData();
-
-	return anim;
 }
 
 void ZAnimation::ParseRawData()
@@ -33,27 +19,6 @@ void ZAnimation::ParseRawData()
 
 	// Read the header
 	frameCount = BitConverter::ToInt16BE(data, rawDataIndex + 0);
-	rotationValuesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 4) & 0x00FFFFFF;
-	rotationIndicesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 8) & 0x00FFFFFF;
-	limit = BitConverter::ToInt16BE(data, rawDataIndex + 12);
-
-	uint32_t currentPtr = rotationValuesSeg;
-
-	// Read the Rotation Values
-	for (int i = 0; i < ((rotationIndicesSeg - rotationValuesSeg) / 2); i++)
-	{
-		rotationValues.push_back(BitConverter::ToInt16BE(data, currentPtr));
-		currentPtr += 2;
-	}
-
-	currentPtr = rotationIndicesSeg;
-
-	// Read the Rotation Indices
-	for (int i = 0; i < ((rawDataIndex - rotationIndicesSeg) / 6); i++)
-	{
-		rotationIndices.push_back(RotationIndex(BitConverter::ToInt16BE(data, currentPtr), BitConverter::ToInt16BE(data, currentPtr + 2), BitConverter::ToInt16BE(data, currentPtr + 4)));
-		currentPtr += 6;
-	}
 }
 
 void ZAnimation::Save(string outFolder)
@@ -76,6 +41,18 @@ void ZAnimation::ParseXML(tinyxml2::XMLElement* reader)
 }
 
 string ZAnimation::GetSourceOutputCode(string prefix)
+{
+	return "";
+}
+
+ZNormalAnimation::ZNormalAnimation() : ZAnimation()
+{
+	rotationValues = vector<uint16_t>();
+	rotationIndices = vector<RotationIndex>();
+	limit = 0;
+}
+
+std::string ZNormalAnimation::GetSourceOutputCode(std::string prefix)
 {
 	if (parent != nullptr)
 	{
@@ -112,4 +89,93 @@ string ZAnimation::GetSourceOutputCode(string prefix)
 	}
 
 	return "";
+}
+
+int ZNormalAnimation::GetRawDataSize()
+{
+	return 16;
+}
+
+ZNormalAnimation* ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath)
+{
+	ZNormalAnimation* anim = new ZNormalAnimation();
+	anim->rawData = nRawData;
+	anim->rawDataIndex = rawDataIndex;
+	anim->ParseXML(reader);
+	anim->ParseRawData();
+
+	return anim;
+}
+
+void ZNormalAnimation::ParseRawData()
+{
+	ZAnimation::ParseRawData();
+
+	uint8_t* data = rawData.data();
+
+	rotationValuesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 4) & 0x00FFFFFF;
+	rotationIndicesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 8) & 0x00FFFFFF;
+	limit = BitConverter::ToInt16BE(data, rawDataIndex + 12);
+
+	uint32_t currentPtr = rotationValuesSeg;
+
+	// Read the Rotation Values
+	for (int i = 0; i < ((rotationIndicesSeg - rotationValuesSeg) / 2); i++)
+	{
+		rotationValues.push_back(BitConverter::ToInt16BE(data, currentPtr));
+		currentPtr += 2;
+	}
+
+	currentPtr = rotationIndicesSeg;
+
+	// Read the Rotation Indices
+	for (int i = 0; i < ((rawDataIndex - rotationIndicesSeg) / 6); i++)
+	{
+		rotationIndices.push_back(RotationIndex(BitConverter::ToInt16BE(data, currentPtr), BitConverter::ToInt16BE(data, currentPtr + 2), BitConverter::ToInt16BE(data, currentPtr + 4)));
+		currentPtr += 6;
+	}
+}
+
+ZLinkAnimation::ZLinkAnimation() : ZAnimation()
+{
+	segmentAddress = 0;
+}
+
+std::string ZLinkAnimation::GetSourceOutputCode(std::string prefix)
+{
+	if (parent != nullptr)
+	{
+		string segSymbol = segmentAddress == 0 ? "NULL" : parent->GetDeclarationName(segmentAddress, StringHelper::Sprintf("%sSeg%06X", name.c_str(), segmentAddress));
+		string headerStr = StringHelper::Sprintf("%i, 0x%08X",
+			frameCount, segmentAddress);
+		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "LinkAnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
+	}
+
+	return "";
+}
+
+int ZLinkAnimation::GetRawDataSize()
+{
+	return 8;
+}
+
+ZLinkAnimation* ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath)
+{
+	ZLinkAnimation* anim = new ZLinkAnimation();
+	anim->rawData = nRawData;
+	anim->rawDataIndex = rawDataIndex;
+	anim->ParseXML(reader);
+	anim->ParseRawData();
+
+	return anim;
+}
+
+void ZLinkAnimation::ParseRawData()
+{
+	ZAnimation::ParseRawData();
+
+	uint8_t* data = rawData.data();
+
+	//segmentAddress = SEG2FILESPACE(BitConverter::ToInt32BE(data, rawDataIndex + 4));
+	segmentAddress = (BitConverter::ToInt32BE(data, rawDataIndex + 4));
 }

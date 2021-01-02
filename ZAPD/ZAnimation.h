@@ -20,20 +20,49 @@ class ZAnimation : public ZResource
 public:
 
 	int16_t frameCount;
+	
+	ZAnimation();
+
+	std::string GetSourceOutputCode(std::string prefix);
+protected:
+
+	virtual void ParseRawData();
+	void Save(std::string outFolder);
+	void ParseXML(tinyxml2::XMLElement* reader);
+};
+
+class ZNormalAnimation : public ZAnimation
+{
+public:
 	std::vector<uint16_t> rotationValues;
 	std::vector<RotationIndex> rotationIndices;
 	uint32_t rotationValuesSeg;
 	uint32_t rotationIndicesSeg;
 	int16_t limit;
 	
-	ZAnimation();
+	ZNormalAnimation();
 
 	std::string GetSourceOutputCode(std::string prefix);
+	virtual int GetRawDataSize();
 
-	static ZAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
+	static ZNormalAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
+
 protected:
+	virtual void ParseRawData();
+};
 
-	void ParseRawData();
-	void Save(std::string outFolder);
-	void ParseXML(tinyxml2::XMLElement* reader);
+class ZLinkAnimation : public ZAnimation
+{
+public:
+	uint32_t segmentAddress;
+
+	ZLinkAnimation();
+
+	std::string GetSourceOutputCode(std::string prefix);
+	virtual int GetRawDataSize();
+
+	static ZLinkAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
+
+protected:
+	virtual void ParseRawData();
 };
