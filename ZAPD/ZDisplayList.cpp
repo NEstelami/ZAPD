@@ -66,7 +66,7 @@ ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawD
 {
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
-	name = StringHelper::Sprintf("dlist0x%06X", rawDataIndex);
+	name = StringHelper::Sprintf("Dlist0x%06X", rawDataIndex);
 	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }

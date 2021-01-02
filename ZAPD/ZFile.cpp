@@ -172,7 +172,19 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 			ZAnimation* anim = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				anim = ZAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				anim = ZNormalAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+
+			anim->parent = this;
+			resources.push_back(anim);
+
+			rawDataIndex += anim->GetRawDataSize();
+		}
+		else if (string(child->Name()) == "PlayerAnimation")
+		{
+			ZLinkAnimation* anim = nullptr;
+
+			if (mode == ZFileMode::Extract)
+				anim = ZLinkAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
 
 			anim->parent = this;
 			resources.push_back(anim);
