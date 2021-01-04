@@ -4,7 +4,7 @@
 #include <iostream>
 #include "StringHelper.h"
 
-#if defined(_MSC_VER) || defined(__clang__)
+#if __has_include(<filesystem>)
 #include <filesystem>
 namespace fs = std::filesystem;
 #else
