@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 
-#if defined(_MSC_VER) || defined(__clang__)
+#if __has_include(<filesystem>)
 #include <filesystem>
 namespace fs = std::filesystem;
 #else
