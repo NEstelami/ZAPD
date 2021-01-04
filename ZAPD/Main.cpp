@@ -60,7 +60,6 @@ int main(int argc, char* argv[])
 int NewMain(int argc, char* argv[])
 {
 	// Syntax: ZAPD.exe [mode (b/btex/bovl/e)] (Arbritrary Number of Arguments)
-	//printf("ZAPD: Zelda Asset Processor For Decomp\n");
 
 	if (argc < 2)
 	{
@@ -179,6 +178,15 @@ int NewMain(int argc, char* argv[])
 			signal(SIGSEGV, ErrorHandler);
 #endif
 		}
+		else if (arg == "-v") // Verbose
+		{
+			Globals::Instance->verbose = true;
+		}
+	}
+
+	if (Globals::Instance->verbose)
+	{
+		printf("ZAPD: Zelda Asset Processor For Decomp\n");
 	}
 
 	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)

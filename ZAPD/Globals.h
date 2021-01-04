@@ -17,6 +17,7 @@ public:
 	bool debugMessages; // Enables certain printfs
 	bool profile; // Measure performance of certain operations
 	bool includeFilePrefix; // Include the file prefix in symbols
+	bool verbose = false; // ZAPD outputs additional information
 	ZFileMode fileMode;
 	std::string baseRomPath, inputPath, outputPath, cfgPath;
 	TextureType texType;
