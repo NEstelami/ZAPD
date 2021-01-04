@@ -11,9 +11,9 @@ ZCollisionHeader::ZCollisionHeader()
 
 }
 
-ZCollisionHeader::ZCollisionHeader(ZFile* parent, std::string prefix, std::vector<uint8_t> rawData, int rawDataIndex)
+ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex)
 {
-	uint8_t* data = rawData.data();
+	const uint8_t* data = rawData.data();
 
 	absMinX = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 	absMinY = BitConverter::ToInt16BE(data, rawDataIndex + 2);
@@ -161,14 +161,14 @@ ZCollisionHeader* ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader,
 {
 	ZCollisionHeader* col = new ZCollisionHeader();
 
-	
+
 
 	return col;
 }
 
-PolygonEntry::PolygonEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 {
-	uint8_t* data = rawData.data();
+	const uint8_t* data = rawData.data();
 
 	type = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 	vtxA = BitConverter::ToInt16BE(data, rawDataIndex + 2);
@@ -180,18 +180,18 @@ PolygonEntry::PolygonEntry(std::vector<uint8_t> rawData, int rawDataIndex)
 	d = BitConverter::ToInt16BE(data, rawDataIndex + 14);
 }
 
-VertexEntry::VertexEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+VertexEntry::VertexEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 {
-	uint8_t* data = rawData.data();
+	const uint8_t* data = rawData.data();
 
 	x = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 	y = BitConverter::ToInt16BE(data, rawDataIndex + 2);
 	z = BitConverter::ToInt16BE(data, rawDataIndex + 4);
 }
 
-WaterBoxHeader::WaterBoxHeader(std::vector<uint8_t> rawData, int rawDataIndex)
+WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, int rawDataIndex)
 {
-	uint8_t* data = rawData.data();
+	const uint8_t* data = rawData.data();
 
 	xMin = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 	ySurface = BitConverter::ToInt16BE(data, rawDataIndex + 2);
@@ -201,7 +201,7 @@ WaterBoxHeader::WaterBoxHeader(std::vector<uint8_t> rawData, int rawDataIndex)
 	properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);
 }
 
-CameraDataList::CameraDataList(ZFile* parent, std::string prefix, std::vector<uint8_t> rawData, int rawDataIndex, int polyTypeDefSegmentOffset, int polygonTypesCnt)
+CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex, int polyTypeDefSegmentOffset, int polygonTypesCnt)
 {
 	string declaration = "";
 
@@ -267,7 +267,7 @@ CameraDataList::CameraDataList(ZFile* parent, std::string prefix, std::vector<ui
 	}
 }
 
-CameraPositionData::CameraPositionData(std::vector<uint8_t> rawData, int rawDataIndex)
+CameraPositionData::CameraPositionData(const std::vector<uint8_t>& rawData, int rawDataIndex)
 {
 	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);

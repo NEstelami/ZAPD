@@ -91,7 +91,7 @@ public:
 		float value;
 		uint32_t floatData = ((uint32_t)data[offset + 0] << 24) + ((uint32_t)data[offset + 1] << 16) + ((uint32_t)data[offset + 2] << 8) + (uint32_t)data[offset + 3];
 		static_assert(sizeof(uint32_t) == sizeof(float));
-		std::memcpy(&value, &floatData, sizeof(value));  
+		std::memcpy(&value, &floatData, sizeof(value));
 		return value;
 	}
 

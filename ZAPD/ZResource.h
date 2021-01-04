@@ -45,7 +45,7 @@ public:
 
 	ZResource();
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
-	virtual void Save(std::string outFolder);
+	virtual void Save(const std::string& outFolder);
 	virtual void PreGenSourceFiles();
 	std::string GetName();
 	std::string GetOutName();
@@ -57,8 +57,8 @@ public:
 	virtual int GetRawDataIndex();
 	virtual int GetRawDataSize();
 	virtual void SetRawDataIndex(int value);
-	virtual std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GetSourceOutputHeader(std::string prefix);
+	virtual std::string GetSourceOutputCode(const std::string& prefix);
+	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	virtual ZResourceType GetResourceType();
 	virtual void CalcHash();
