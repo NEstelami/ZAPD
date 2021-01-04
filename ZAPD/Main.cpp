@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 int NewMain(int argc, char* argv[])
 {
 	// Syntax: ZAPD.exe [mode (b/btex/bovl/e)] (Arbritrary Number of Arguments)
-	printf("ZAPD: Zelda Asset Processor For Decomp\n");
+	//printf("ZAPD: Zelda Asset Processor For Decomp\n");
 
 	if (argc < 2)
 	{
