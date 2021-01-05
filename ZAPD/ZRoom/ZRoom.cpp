@@ -86,8 +86,6 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address));
-			//room->parent->declarations[address] = new Declaration(DeclarationAlignment::None, dList->GetRawDataSize(), comment + dList->GetSourceOutputCode(room->name));
-			//room->parent->AddDeclarationArray(address, DeclarationAlignment::None, dList->GetRawDataSize(), "Gfx", "", 0, comment + dList->GetSourceOutputCode(room->name));
 
 			dList->GetSourceOutputCode(room->name);
 		}
