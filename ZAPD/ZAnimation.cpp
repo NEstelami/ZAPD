@@ -61,7 +61,7 @@ std::string ZNormalAnimation::GetSourceOutputCode(std::string prefix)
 
 		string headerStr = StringHelper::Sprintf("{ %i }, %sFrameData, %sJointIndices, %i",
 			frameCount, defaultPrefix.c_str(), defaultPrefix.c_str(), limit);
-		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "AnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
+		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "AnimationHeaderMEOW", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
 
 		string indicesStr = "";
 		string valuesStr = "    ";
