@@ -217,3 +217,8 @@ std::string ZScalar::GetSourceOutputCode(std::string prefix)
 
 	return "";
 }
+
+ZResourceType ZScalar::GetResourceType()
+{
+	return ZResourceType::Scalar;
+}

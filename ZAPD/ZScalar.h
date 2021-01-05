@@ -47,6 +47,7 @@ public:
 	std::string GetSourceValue();
 	std::string GetSourceOutputCode(std::string prefix);
 	int GetRawDataSize();
+	ZResourceType GetResourceType();
 
 	static ZScalar* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
 	static int MapTypeToSize(const ZScalarType scalarType);
