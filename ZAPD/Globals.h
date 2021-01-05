@@ -14,10 +14,9 @@ public:
 	bool genSourceFile; // Used for extraction
 	bool useExternalResources;
 	bool testMode; // Enables certain experimental features
-	bool debugMessages; // Enables certain printfs
 	bool profile; // Measure performance of certain operations
 	bool includeFilePrefix; // Include the file prefix in symbols
-	bool verbose = false; // ZAPD outputs additional information
+	VerbosityLevel verbosity = VERBOSITY_SILENT; // ZAPD outputs additional information
 	ZFileMode fileMode;
 	std::string baseRomPath, inputPath, outputPath, cfgPath;
 	TextureType texType;
@@ -37,6 +36,11 @@ public:
 	bool HasSegment(int segment);
 };
 
+typedef enum VerbosityLevel {
+	VERBOSITY_SILENT,
+	VERBOSITY_INFO,
+	VERBOSITY_DEBUG
+} VerbosityLevel;
 /*
  * Note: In being able to track references across files, there are a few major files that make use of segments...
  * Segment 1: nintendo_rogo_static/title_static

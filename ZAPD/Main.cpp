@@ -129,11 +129,6 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->testMode = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-dm") // Debug Messages
-		{
-			Globals::Instance->debugMessages = string(argv[i + 1]) == "1";
-			i++;
-		}
 		else if (arg == "-profile") // Profile
 		{
 			Globals::Instance->profile = string(argv[i + 1]) == "1";
@@ -180,11 +175,12 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (arg == "-v") // Verbose
 		{
-			Globals::Instance->verbose = true;
+			Globals::Instance->verbosity = strtol(argv[i + 1], NULL, 16);
+			i++;
 		}
 	}
 
-	if (Globals::Instance->verbose)
+	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 	{
 		printf("ZAPD: Zelda Asset Processor For Decomp\n");
 	}
