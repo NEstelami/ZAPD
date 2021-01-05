@@ -175,8 +175,7 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (arg == "-v") // Verbose
 		{
-			Globals::Instance->verbosity = strtol(argv[i + 1], NULL, 16);
-			i++;
+			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
 		}
 	}
 
