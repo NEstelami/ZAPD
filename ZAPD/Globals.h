@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 #include "ZFile.h"
@@ -36,8 +37,8 @@ public:
 
 	Globals();
 	std::string FindSymbolSegRef(int segNumber, uint32_t symbolAddress);
-	void ReadConfigFile(std::string configFilePath);
-	void GenSymbolMap(std::string symbolMapPath);
+	void ReadConfigFile(const std::string& configFilePath);
+	void GenSymbolMap(const std::string& symbolMapPath);
 	void AddSegment(int segment);
 	bool HasSegment(int segment);
 };
