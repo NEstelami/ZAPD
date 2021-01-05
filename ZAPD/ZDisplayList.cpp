@@ -1126,8 +1126,8 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			if (parent != nullptr)
 			{
-				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "Vtx", 
-					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first, item.second.size()), 0, declaration);
+				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "static Vtx", 
+					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first, item.second.size()), item.second.size(), declaration);
 			}
 		}
 
