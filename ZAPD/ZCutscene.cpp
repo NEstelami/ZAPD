@@ -802,22 +802,22 @@ size_t CutsceneCommandEnd::GetCommandSize()
 
 SpecialActionEntry::SpecialActionEntry(vector<uint8_t> rawData, int rawDataIndex)
 {
-	uint8_t* data = rawData.data();
+	const uint8_t* data = rawData.data();
 
-	base = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 0);
-	startFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 2);
-	endFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 4);
-	unused0 = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 6);
-	unused1 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 8);
-	unused2 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 12);
-	unused3 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 16);
-	unused4 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 20);
-	unused5 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 24);
-	unused6 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 28);
-	unused7 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 32);
-	unused8 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 36);
-	unused9 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 40);
-	unused10 = (uint32_t)BitConverter::ToInt32BE(data, rawDataIndex + 44);
+	base = BitConverter::ToUInt16BE(data, rawDataIndex + 0);
+	startFrame = BitConverter::ToUInt16BE(data, rawDataIndex + 2);
+	endFrame = BitConverter::ToUInt16BE(data, rawDataIndex + 4);
+	unused0 = BitConverter::ToUInt16BE(data, rawDataIndex + 6);
+	unused1 = BitConverter::ToUInt32BE(data, rawDataIndex + 8);
+	unused2 = BitConverter::ToUInt32BE(data, rawDataIndex + 12);
+	unused3 = BitConverter::ToUInt32BE(data, rawDataIndex + 16);
+	unused4 = BitConverter::ToUInt32BE(data, rawDataIndex + 20);
+	unused5 = BitConverter::ToUInt32BE(data, rawDataIndex + 24);
+	unused6 = BitConverter::ToUInt32BE(data, rawDataIndex + 28);
+	unused7 = BitConverter::ToUInt32BE(data, rawDataIndex + 32);
+	unused8 = BitConverter::ToUInt32BE(data, rawDataIndex + 36);
+	unused9 = BitConverter::ToUInt32BE(data, rawDataIndex + 40);
+	unused10 = BitConverter::ToUInt32BE(data, rawDataIndex + 44);
 }
 
 CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(vector<uint8_t> rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)

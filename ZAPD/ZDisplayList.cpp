@@ -79,7 +79,7 @@ void ZDisplayList::ParseRawData()
 	instructions.reserve(numInstructions);
 
 	for (int i = 0; i < numInstructions; i++)
-		instructions.push_back(BitConverter::ToInt64BE(rawDataArr, (i * 8)));
+		instructions.push_back(BitConverter::ToUInt64BE(rawDataArr, (i * 8)));
 }
 
 int ZDisplayList::GetDListLength(vector<uint8_t> rawData, int rawDataIndex)
