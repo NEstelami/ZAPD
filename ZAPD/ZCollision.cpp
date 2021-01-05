@@ -53,14 +53,14 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, std::string prefix, std::vecto
 	//if (highestPolyType > 0)
 	{
 		for (int i = 0; i < highestPolyType + 1; i++)
-			polygonTypes.push_back(BitConverter::ToInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
+			polygonTypes.push_back(BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 	}
 	//else
 	//{
 		//int polyTypesSize = abs(polyTypeDefSegmentOffset - camDataSegmentOffset) / 8;
 
 		//for (int i = 0; i < polyTypesSize; i++)
-			//polygonTypes.push_back(BitConverter::ToInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
+			//polygonTypes.push_back(BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 	//}
 
 	if (camDataSegmentOffset != 0)

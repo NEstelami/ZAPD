@@ -466,7 +466,7 @@ string ZRoom::GetSourceOutputCode(std::string prefix)
 
 		declaration += item.second->GetSourceOutputCode(prefix);
 
-		if (Globals::Instance->debugMessages)
+		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 		
 		item.second->Save(Globals::Instance->outputPath);

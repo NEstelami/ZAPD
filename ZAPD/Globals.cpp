@@ -19,11 +19,11 @@ Globals::Globals()
 	segmentRefFiles = map<int, ZFile*>();
 	genSourceFile = true;
 	testMode = false;
-	debugMessages = false;
 	profile = false;
 	includeFilePrefix = false;
 	useExternalResources = true;
 	lastScene = nullptr;
+	verbosity = VERBOSITY_SILENT;
 }
 
 string Globals::FindSymbolSegRef(int segNumber, uint32_t symbolAddress)
