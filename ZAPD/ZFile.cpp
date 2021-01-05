@@ -6,6 +6,7 @@
 #include "ZAnimation.h"
 #include "ZSkeleton.h"
 #include "ZCollision.h"
+#include "ZScalar.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -90,7 +91,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 		if (child->Attribute("Offset") != NULL)
 			rawDataIndex = strtol(StringHelper::Split(child->Attribute("Offset"), "0x")[1].c_str(), NULL, 16);
 
-		printf("%s: 0x%06X\n", child->Attribute("Name"), rawDataIndex);
+		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+			printf("%s: 0x%06X\n", child->Attribute("Name"), rawDataIndex);
 
 		if (string(child->Name()) == "Texture")
 		{
@@ -239,25 +241,25 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 
 			resources.push_back(res);
 		}
-		else if (string(child->Name()) == "Vec3s")
+		else if (string(child->Name()) == "Scalar")
 		{
-			
-		}
-		else if (string(child->Name()) == "Vec3f")
-		{
+			ZScalar* scalar = nullptr;
 
-		}
-		else if (string(child->Name()) == "Vec3i")
-		{
+			if (mode == ZFileMode::Extract)
+				scalar = ZScalar::ExtractFromXML(child, rawData, rawDataIndex, folderName);
 
-		}
-		else if (string(child->Name()) == "String")
-		{
+			if (scalar != nullptr)
+			{
+				scalar->parent = this;
+				resources.push_back(scalar);
 
+				rawDataIndex += scalar->GetRawDataSize();
+			}
 		}
 		else
 		{
-			
+			if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+				printf("Encountered unknown resource type: %s\n", string(child->Name()).c_str());
 		}
 	}
 }
@@ -328,7 +330,9 @@ void ZFile::ExtractResources(string outputDir)
 
 	for (ZResource* res : resources)
 	{
-		printf("Saving resource %s\n", res->GetName().c_str());
+		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+			printf("Saving resource %s\n", res->GetName().c_str());
+
 		res->CalcHash(); // TEST
 		res->Save(outputPath);
 	}
