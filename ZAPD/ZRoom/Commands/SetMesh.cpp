@@ -290,15 +290,17 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	else
 		srcVarName = StringHelper::Sprintf("%s", dList->GetName().c_str());
 
-	zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None, dList->GetRawDataSize(), "Gfx", srcVarName, 0, sourceOutput);
+	zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None, dList->GetRawDataSize(), "static Gfx", srcVarName, dList->GetRawDataSize() / 8, sourceOutput);
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
 	{
-		zRoom->parent->AddDeclarationArray(vtxEntry.first, DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, "Vtx",
-			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first), 0, vtxEntry.second);
+		zRoom->parent->AddDeclarationArray(vtxEntry.first, DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
+			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first), dList->vertices[vtxEntry.first].size(), vtxEntry.second);
+
+		//zRoom->parent->declarations[vtxEntry.first] = new Declaration(DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, vtxEntry.second);
 	}
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
@@ -328,8 +330,8 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
-	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern Vtx %sVtx_%06X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
+	//for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
+		//sourceOutput += StringHelper::Sprintf("extern Vtx %sVtx_%06X[%i];\n", zRoom->GetName().c_str(), vtxEntry.first, dList->vertices[vtxEntry.first].size());
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n", zRoom->GetName().c_str(), texEntry.first);
