@@ -495,7 +495,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				uint32_t fmt = (__ & 0xE0) >> 5;
 				uint32_t siz = (__ & 0x18) >> 3;
 
-				if (Globals::Instance->debugMessages)
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_SETTIMG\n");
 				
 				TextureGenCheck(prefix); // HOTSPOT
@@ -866,10 +866,10 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				lastTexWidth = (uuu >> shiftAmtW) + 1;
 				lastTexHeight = (vvv >> shiftAmtH) + 1;
 				
-				if (Globals::Instance->debugMessages)
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n", lastTexWidth, lastTexHeight, (uint32_t)lastTexSizTest, (uint32_t)lastTexFmt);
 
-				if (Globals::Instance->debugMessages)
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_SETTILESIZE\n");
 				
 				TextureGenCheck(prefix);
@@ -929,7 +929,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				lastTexLoaded = true;
 
-				if (Globals::Instance->debugMessages)
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", (uint32_t)lastCISiz);
 				
 				TextureGenCheck(prefix);
@@ -995,7 +995,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			case F3DZEXOpcode::G_ENDDL:
 				sprintf(line, "gsSPEndDisplayList(),");
 
-				if (Globals::Instance->debugMessages)
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_ENDDL\n");
 				
 				TextureGenCheck(prefix);
@@ -1208,7 +1208,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 			{
 				if (parent->GetDeclaration(item.first) == nullptr)
 				{
-					if (Globals::Instance->debugMessages)
+					if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 						printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 
 					item.second->Save(Globals::Instance->outputPath);
@@ -1247,7 +1247,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 {
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
 
-	if (Globals::Instance->debugMessages)
+	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 		printf("TextureGenCheck seg=%i width=%i height=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texAddr);
 
 	if (texAddr != 0 && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))

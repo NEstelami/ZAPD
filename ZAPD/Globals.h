@@ -6,6 +6,12 @@
 #include "ZTexture.h"
 #include "ZRoom/ZRoom.h"
 
+typedef enum VerbosityLevel {
+	VERBOSITY_SILENT,
+	VERBOSITY_INFO,
+	VERBOSITY_DEBUG
+} VerbosityLevel;
+
 class Globals
 {
 public:
@@ -14,9 +20,9 @@ public:
 	bool genSourceFile; // Used for extraction
 	bool useExternalResources;
 	bool testMode; // Enables certain experimental features
-	bool debugMessages; // Enables certain printfs
 	bool profile; // Measure performance of certain operations
 	bool includeFilePrefix; // Include the file prefix in symbols
+	VerbosityLevel verbosity; // ZAPD outputs additional information
 	ZFileMode fileMode;
 	std::string baseRomPath, inputPath, outputPath, cfgPath;
 	TextureType texType;

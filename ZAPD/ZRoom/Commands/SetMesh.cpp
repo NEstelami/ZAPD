@@ -321,7 +321,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 		//zRoom->parent->AddDeclarationArray(texEntry.first, DeclarationAlignment::None, dList->textures[texEntry.first]->GetRawDataSize(), "u64",
 			//zRoom->textures[texEntry.first]->GetName(), 0, texEntry.second);
 
-		if (Globals::Instance->debugMessages)
+		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
 		
 		zRoom->textures[texEntry.first]->Save(Globals::Instance->outputPath);
