@@ -212,7 +212,7 @@ std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
 	{
-		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, GetSourceTypeName(), name, false, GetSourceValue());
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), GetName(), GetSourceValue());
 	}
 
 	return "";
