@@ -45,7 +45,7 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader);
 	std::string GetSourceTypeName();
 	std::string GetSourceValue();
-	std::string GetSourceOutputCode(std::string prefix);
+	std::string GetSourceOutputCode(const std::string& prefix);
 	int GetRawDataSize();
 	ZResourceType GetResourceType();
 

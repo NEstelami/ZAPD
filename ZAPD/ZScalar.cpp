@@ -208,7 +208,7 @@ std::string ZScalar::GetSourceValue()
 	}
 }
 
-std::string ZScalar::GetSourceOutputCode(std::string prefix)
+std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
 	{
