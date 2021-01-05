@@ -18,6 +18,8 @@ pipeline {
             steps {
                 dir('oot') {
                     sh 'cp /usr/local/etc/roms/baserom_oot.z64 baserom_original.z64'
+
+                    // Identical to `make setup` except for copying our newer ZAPD.out into oot
                     sh 'git submodule update --init --recursive'
                     sh 'make -C tools'
                     sh 'cp ../ZAPD.out tools/ZAPD/'
@@ -29,7 +31,9 @@ pipeline {
         }
         stage('Build oot') {
             steps {
-                sh 'make -j'
+                dir('oot') {
+                    sh 'make -j'
+                }
             }
         }
     }
