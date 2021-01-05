@@ -156,10 +156,10 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 			siz = (__ & 0x18) >> 3;
 			texAddr = SEG2FILESPACE(data);
 			int segmentNumber = (data & 0xFF000000) >> 24;
-			
+
 			if (segmentNumber == 0x80) // Is this texture defined in code?
 				texAddr -= SEG2FILESPACE(parent->baseAddress);
-			
+
 			lastTexSeg = (data & 0xFF000000);
 
 			if (texAddr == 0xb880e0)
@@ -168,7 +168,7 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 			}
 
 			Declaration* texDecl = nullptr;
-			
+
 			if (parent != nullptr)
 			{
 				texDecl = parent->GetDeclaration(texAddr);
@@ -199,7 +199,7 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 			uint64_t data = instructions[startIndex + 1];
 
 			tmem = (data & 0b0000000000000000111111111111111100000000000000000000000000000000) >> 32;
-			
+
 			cmt = (data & 0b0000000000000000000000000000000000000000000011000000000000000000) >> 18;
 			maskt = (data & 0b0000000000000000000000000000000000000000000000111100000000000000) >> 14;
 			shiftt = (data & 0b0000000000000000000000000000000000000000000000000011110000000000) >> 10;
@@ -260,7 +260,7 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 		string fmtTbl[] = { "G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA", "G_IM_FMT_I" };
 		string sizTbl[] = { "G_IM_SIZ_4b", "G_IM_SIZ_8b", "G_IM_SIZ_16b", "G_IM_SIZ_32b" };
 
-		//output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),", 
+		//output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
 									//texStr.c_str(), fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), width, height, pal, cms, cmt, masks, maskt, shifts, shiftt);
 
 		if (siz == 2 && sizB == 0)
@@ -317,17 +317,17 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 	return -1;
 }
 
-string ZDisplayList::GetSourceOutputHeader(string prefix)
+string ZDisplayList::GetSourceOutputHeader(const std::string& prefix)
 {
 	return "";
 }
 
-string ZDisplayList::GetSourceOutputCode(std::string prefix)
+string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
 	char line[4096];
 	string sourceOutput = "";
 
-	for (int i = 0; i < instructions.size(); i++) 
+	for (int i = 0; i < instructions.size(); i++)
 	{
 		F3DZEXOpcode opcode = (F3DZEXOpcode)(instructions[i] >> 56);
 		uint64_t data = instructions[i];
@@ -355,7 +355,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				int segNum = (data & 0xFF000000) >> 24;
 
 				Declaration* dListDecl = nullptr;
-				
+
 				if (parent != nullptr)
 					dListDecl = parent->GetDeclaration(SEG2FILESPACE(data));
 
@@ -497,7 +497,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_SETTIMG\n");
-				
+
 				TextureGenCheck(prefix); // HOTSPOT
 
 				lastTexFmt = (F3DZEXTexFormats)fmt;
@@ -517,7 +517,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					int32_t texAddress = SEG2FILESPACE(data);
 
 					Declaration* texDecl = nullptr;
-					
+
 					if (parent != nullptr)
 					{
 						if (Globals::Instance->HasSegment(segmentNumber))
@@ -592,7 +592,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				if (geoModeParam & 0x00800000)
 					geoModeStr += " | G_CLIPPING";
-				
+
 				if (ssssssss != 0)
 				{
 					if ((~cccccc & 0xFF000000) != 0)
@@ -602,7 +602,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				}
 				else
 					sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
-					
+
 				//sprintf(line, "gsSPGeometryMode(0x%08X, 0x%08X),", ~cccccc, ssssssss);
 			}
 			break;
@@ -632,7 +632,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 					int mode2 = (dd & 0x33330000) >> 0;
 
 					// TODO: Jesus Christ This is Messy
-					
+
 					uint32_t tblA[] =
 					{
 						G_RM_FOG_SHADE_A, G_RM_FOG_PRIM_A, G_RM_PASS, G_RM_AA_ZB_OPA_SURF,
@@ -671,7 +671,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 						G_RM_ADD2, G_RM_NOOP2,G_RM_VISCVG2, G_RM_OPA_CI2
 					};
 
-					map<uint32_t, string> str = 
+					map<uint32_t, string> str =
 					{
 						{ G_RM_FOG_SHADE_A, "G_RM_FOG_SHADE_A" },
 						{ G_RM_FOG_PRIM_A, "G_RM_FOG_PRIM_A" },
@@ -865,13 +865,13 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				lastTexWidth = (uuu >> shiftAmtW) + 1;
 				lastTexHeight = (vvv >> shiftAmtH) + 1;
-				
+
 				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n", lastTexWidth, lastTexHeight, (uint32_t)lastTexSizTest, (uint32_t)lastTexFmt);
 
 				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_SETTILESIZE\n");
-				
+
 				TextureGenCheck(prefix);
 
 				sprintf(line, "gsDPSetTileSize(%i, %i, %i, %i, %i),", i, sss, ttt, uuu, vvv);
@@ -931,7 +931,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", (uint32_t)lastCISiz);
-				
+
 				TextureGenCheck(prefix);
 
 				sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
@@ -997,7 +997,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 					printf("TextureGenCheck G_ENDDL\n");
-				
+
 				TextureGenCheck(prefix);
 				break;
 			case F3DZEXOpcode::G_RDPHALF_1:
@@ -1060,7 +1060,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 #endif
 
 		sourceOutput += line;
-		
+
 		if (i < instructions.size() - 1)
 			sourceOutput += "\n";
 	}
@@ -1091,7 +1091,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 				}
 
 				defines += StringHelper::Sprintf("#define %sVtx_%06X ((u32)%sVtx_%06X + 0x%06X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
-				
+
 				int nSize = (int)vertices[verticesSorted[i].first].size();
 
 				vertices.erase(verticesSorted[i + 1].first);
@@ -1126,7 +1126,7 @@ string ZDisplayList::GetSourceOutputCode(std::string prefix)
 
 			if (parent != nullptr)
 			{
-				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "Vtx", 
+				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "Vtx",
 					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first, item.second.size()), 0, declaration);
 			}
 		}
@@ -1271,7 +1271,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 			if (scene != nullptr)
 			{
 				scene->textures[texAddr] = tex;
-				scene->parent->AddDeclarationIncludeArray(texAddr, StringHelper::Sprintf("%s/%s.%s.inc.c", 
+				scene->parent->AddDeclarationIncludeArray(texAddr, StringHelper::Sprintf("%s/%s.%s.inc.c",
 					Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(tex->GetName()).c_str(), tex->GetExternalExtension().c_str()), tex->GetRawDataSize(),
 					"u64", StringHelper::Sprintf("%sTex_%06X", Globals::Instance->lastScene->GetName().c_str(), texAddr), 0);
 			}
@@ -1318,7 +1318,7 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	return TextureType::RGBA16bpp;
 }
 
-void ZDisplayList::Save(string outFolder)
+void ZDisplayList::Save(const std::string& outFolder)
 {
 	//HLModelIntermediette* mdl = HLModelIntermediette::FromZDisplayList(this);
 
@@ -1382,7 +1382,7 @@ Vertex::Vertex(int16_t nX, int16_t nY, int16_t nZ, uint16_t nFlag, int16_t nS, i
 
 Vertex::Vertex(std::vector<uint8_t> rawData, int rawDataIndex)
 {
-	uint8_t* data = rawData.data();
+	const uint8_t* data = rawData.data();
 
 	x = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 	y = BitConverter::ToInt16BE(data, rawDataIndex + 2);

@@ -4,7 +4,7 @@ ifneq (, $(shell which ccache))
 CC := ccache $(CC)
 endif
 
-CFLAGS := -g -std=c++17 -I ZAPD -I ZAPD/sqlite -O2 -rdynamic
+CFLAGS := -g -std=c++17 -I ZAPD -O2 -rdynamic
 
 SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel ZAPD/OpenFBX
 

@@ -19,12 +19,12 @@ public:
 		return fs::current_path().u8string();
 	}
 
-	static bool Exists(std::string path)
+	static bool Exists(const std::string& path)
 	{
 		return fs::exists(fs::path(path));
 	}
 
-	static void CreateDirectory(std::string path)
+	static void CreateDirectory(const std::string& path)
 	{
 		fs::create_directory(path);
 	}

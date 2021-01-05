@@ -21,12 +21,12 @@
 using namespace tinyxml2;
 using namespace std;
 
-bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMode);
+bool Parse(const std::string& xmlFilePath, const std::string& basePath, const std::string& outPath, ZFileMode fileMode);
 
-void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath);
-void BuildAssetBlob(string blobFilePath, string outPath);
-void BuildAssetModelIntermediette(string mdlPath, string outPath);
-void BuildAssetAnimationIntermediette(string animPath, string outPath);
+void BuildAssetTexture(const std::string& pngFilePath, TextureType texType, const std::string& outPath);
+void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath);
+void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath);
+void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
 
 int NewMain(int argc, char* argv[]);
 
@@ -214,7 +214,7 @@ int NewMain(int argc, char* argv[])
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
 		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath), Path::GetDirectoryName(Globals::Instance->cfgPath));
-		
+
 		if (overlay)
 			File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
 	}
@@ -222,7 +222,7 @@ int NewMain(int argc, char* argv[])
 	return 0;
 }
 
-bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMode)
+bool Parse(const std::string& xmlFilePath, const std::string& basePath, const std::string& outPath, ZFileMode fileMode)
 {
 	XMLDocument doc;
 	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());
@@ -264,7 +264,7 @@ bool Parse(string xmlFilePath, string basePath, string outPath, ZFileMode fileMo
 	return true;
 }
 
-void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath)
+void BuildAssetTexture(const std::string& pngFilePath, TextureType texType, const std::string& outPath)
 {
 	vector<string> split = StringHelper::Split(outPath, "/");
 	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
@@ -278,11 +278,11 @@ void BuildAssetTexture(string pngFilePath, TextureType texType, string outPath)
 	string src = tex->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
-	
+
 	delete tex;
 }
 
-void BuildAssetBlob(string blobFilePath, string outPath)
+void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 {
 	vector<string> split = StringHelper::Split(outPath, "/");
 	ZBlob* blob = ZBlob::FromFile(blobFilePath);
@@ -296,7 +296,7 @@ void BuildAssetBlob(string blobFilePath, string outPath)
 	delete blob;
 }
 
-void BuildAssetModelIntermediette(string mdlPath, string outPath)
+void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath)
 {
 	XMLDocument doc;
 	XMLError eResult = doc.LoadFile(mdlPath.c_str());
@@ -304,13 +304,13 @@ void BuildAssetModelIntermediette(string mdlPath, string outPath)
 	vector<string> split = StringHelper::Split(outPath, "/");
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
 	string output = mdl->OutputCode();
-	
+
 	File::WriteAllText(outPath, output);
 
 	delete mdl;
 }
 
-void BuildAssetAnimationIntermediette(string animPath, string outPath)
+void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath)
 {
 	vector<string> split = StringHelper::Split(outPath, "/");
 	ZFile* file = new ZFile("", split[split.size() - 2]);
@@ -323,7 +323,7 @@ void BuildAssetAnimationIntermediette(string animPath, string outPath)
 
 	zAnim->GetSourceOutputCode(split[split.size() - 2]);
 	string output = "";
-	
+
 	output += file->declarations[2]->text + "\n";
 	output += file->declarations[1]->text + "\n";
 	output += file->declarations[0]->text + "\n";
