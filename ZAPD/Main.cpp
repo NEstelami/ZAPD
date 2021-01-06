@@ -256,10 +256,10 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 			file->ExtractResources(outPath);
 	}
 
-	XMLElement* element = root->FirstChildElement("File");
+	//XMLElement* element = root->FirstChildElement("File");
 
-	if (element == nullptr)
-		return false;
+	//if (element == nullptr)
+		//return false;
 
 	return true;
 }

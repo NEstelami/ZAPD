@@ -62,7 +62,7 @@ std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
 
 		string headerStr = StringHelper::Sprintf("{ %i }, %sFrameData, %sJointIndices, %i",
 			frameCount, defaultPrefix.c_str(), defaultPrefix.c_str(), limit);
-		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "AnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, 16, "AnimationHeader", StringHelper::Sprintf("%s", name.c_str()), headerStr);
 
 		string indicesStr = "";
 		string valuesStr = "    ";
@@ -152,7 +152,7 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 		string segSymbol = segmentAddress == 0 ? "NULL" : parent->GetDeclarationName(segmentAddress, StringHelper::Sprintf("%sSeg%06X", name.c_str(), segmentAddress));
 		string headerStr = StringHelper::Sprintf("{ %i }, 0x%08X",
 			frameCount, segmentAddress);
-		parent->declarations[rawDataIndex] = new Declaration(DeclarationAlignment::None, 16, "LinkAnimationHeader", StringHelper::Sprintf("%s", name.c_str()), false, headerStr);
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, 16, "LinkAnimationHeader", StringHelper::Sprintf("%s", name.c_str()), headerStr);
 	}
 
 	return "";
