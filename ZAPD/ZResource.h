@@ -33,7 +33,8 @@ enum class ZResourceType
 	Cutscene,
 	Blob,
 	Limb,
-	Skeleton
+	Skeleton,
+	Scalar
 };
 
 class ZResource

@@ -109,6 +109,8 @@ public:
 		double value;
 		uint64_t floatData = ((uint64_t)data[offset + 0] << 56) + ((uint64_t)data[offset + 1] << 48) + ((uint64_t)data[offset + 2] << 40) + ((uint64_t)data[offset + 3] << 32) + ((uint64_t)data[offset + 4] << 24) + ((uint64_t)data[offset + 5] << 16) + ((uint64_t)data[offset + 6] << 8) + ((uint64_t)data[offset + 7]);
 		static_assert(sizeof(uint64_t) == sizeof(double));
+		// Checks if the float format on the platform the ZAPD binary is running on supports the same float format as the object file.
+		static_assert(std::numeric_limits<float>::is_iec559);
 		std::memcpy(&value, &floatData, sizeof(value));
 		return value;
 	}
@@ -118,6 +120,8 @@ public:
 		double value;
 		uint64_t floatData = ((uint64_t)data[offset + 0] << 56) + ((uint64_t)data[offset + 1] << 48) + ((uint64_t)data[offset + 2] << 40) + ((uint64_t)data[offset + 3] << 32) + ((uint64_t)data[offset + 4] << 24) + ((uint64_t)data[offset + 5] << 16) + ((uint64_t)data[offset + 6] << 8) + ((uint64_t)data[offset + 7]);
 		static_assert(sizeof(uint64_t) == sizeof(double));
+		// Checks if the float format on the platform the ZAPD binary is running on supports the same float format as the object file.
+		static_assert(std::numeric_limits<double>::is_iec559);
 		std::memcpy(&value, &floatData, sizeof(value));
 		return value;
 	}
