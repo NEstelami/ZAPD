@@ -98,7 +98,7 @@ ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 	ZTexture* tex = new ZTexture();
 	tex->type = texType;
 	tex->name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
-
+	
 	tex->bmpRgb = (uint8_t*)stbi_load((pngFilePath).c_str(), &tex->width, &tex->height, &comp, STBI_rgb);
 	stbi_image_free(tex->bmpRgb);
 	tex->bmpRgb = nullptr;

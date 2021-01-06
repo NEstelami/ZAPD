@@ -328,7 +328,9 @@ void ZFile::ExtractResources(string outputDir)
 
 	for (ZResource* res : resources)
 	{
-		printf("Saving resource %s\n", res->GetName().c_str());
+		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+			printf("Saving resource %s\n", res->GetName().c_str());
+		
 		res->CalcHash(); // TEST
 		res->Save(outputPath);
 	}
@@ -780,6 +782,30 @@ string ZFile::ProcessDeclarations()
 		return lhs.first < rhs.first;
 	});
 
+	// First, handle the prototypes (static only for now)
+	int protoCnt = 0;
+	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	{
+		if (item.second->includePath == "" && StringHelper::StartsWith(item.second->varType, "static ") && !StringHelper::StartsWith(item.second->varName, "unaccounted_"))
+		{
+			if (item.second->isArray)
+			{
+				if (item.second->arrayItemCnt == 0)
+					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(), item.second->varName.c_str());
+				else
+					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->arrayItemCnt);
+			}
+			else
+				output += StringHelper::Sprintf("%s %s;\n", item.second->varType.c_str(), item.second->varName.c_str());
+
+			protoCnt++;
+		}
+	}
+
+	if (protoCnt > 0)
+		output += "\n";
+
+	// Next, output the actual declarations
 	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
 	{
 		if (item.second->includePath != "")
