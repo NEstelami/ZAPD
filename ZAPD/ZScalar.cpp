@@ -154,24 +154,36 @@ void ZScalar::ParseRawData(const std::vector<uint8_t>& data, const int offset)
 	switch (scalarType) {
 	case ZSCALAR_S8:
 		scalarData.s8 = BitConverter::ToInt8BE(data, offset);
+		break;
 	case ZSCALAR_U8:
 		scalarData.u8 = BitConverter::ToUInt8BE(data, offset);
+		break;
 	case ZSCALAR_S16:
 		scalarData.s16 = BitConverter::ToInt16BE(data, offset);
+		break;
 	case ZSCALAR_U16:
 		scalarData.u16 = BitConverter::ToUInt16BE(data, offset);
+		break;
 	case ZSCALAR_S32:
 		scalarData.s32 = BitConverter::ToInt32BE(data, offset);
+		break;
 	case ZSCALAR_U32:
 		scalarData.u32 = BitConverter::ToUInt32BE(data, offset);
+		break;
 	case ZSCALAR_S64:
 		scalarData.s64 = BitConverter::ToInt64BE(data, offset);
+		break;
 	case ZSCALAR_U64:
 		scalarData.u64 = BitConverter::ToUInt64BE(data, offset);
+		break;
 	case ZSCALAR_F32:
 		scalarData.f32 = BitConverter::ToFloatBE(data, offset);
+		break;
 	case ZSCALAR_F64:
 		scalarData.f64 = BitConverter::ToDoubleBE(data, offset);
+		break;
+	case ZSCALAR_NONE:
+		break;
 	}
 }
 
