@@ -203,8 +203,6 @@
     <ClInclude Include="HighLevel\HLModelIntermediette.h" />
     <ClInclude Include="HighLevel\HLTexture.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="OpenFBX\miniz.h" />
-    <ClInclude Include="OpenFBX\ofbx.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="sqlite_orm.h" />

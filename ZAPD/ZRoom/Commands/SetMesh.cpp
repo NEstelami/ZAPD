@@ -279,6 +279,15 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 	}
 }
 
+SetMesh::~SetMesh()
+{
+	if (meshHeader != nullptr)
+	{
+		delete meshHeader;
+		meshHeader = nullptr;
+	}
+}
+
 void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList)
 {
 	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName()); // HOTSPOT

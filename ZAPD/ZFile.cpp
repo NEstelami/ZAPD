@@ -50,6 +50,12 @@ ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPa
 	ParseXML(mode, reader, placeholderMode);
 }
 
+ZFile::~ZFile()
+{
+	for (ZResource* res : resources)
+		delete res;
+}
+
 void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 {
 	name = reader->Attribute("Name");
