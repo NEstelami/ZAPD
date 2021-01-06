@@ -6,6 +6,13 @@ endif
 
 CFLAGS := -g -std=c++17 -I ZAPD -O2 -rdynamic
 
+UNAME := $(shell uname)
+
+FS_INC =
+ifneq ($(UNAME), Darwin)
+    FS_INC += -lstdc++fs
+endif
+
 SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel ZAPD/OpenFBX
 
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
@@ -22,4 +29,4 @@ rebuild: clean all
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ZAPD.out: $(O_FILES)
-	$(CC) $(CFLAGS) $(O_FILES) -o $@ -lstdc++fs
+	$(CC) $(CFLAGS) $(O_FILES) -o $@ $(FS_INC)
