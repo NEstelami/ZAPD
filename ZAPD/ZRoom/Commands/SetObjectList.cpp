@@ -1,13 +1,14 @@
 #include "SetObjectList.h"
-#include "../ZRoom.h"
-#include "../ObjectList.h"
-#include "../../ZFile.h"
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
+#include "../../ZFile.h"
+#include "../ObjectList.h"
+#include "../ZRoom.h"
 
 using namespace std;
 
-SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	objects = vector<uint16_t>();
 	uint8_t objectCnt = rawData[rawDataIndex + 1];
@@ -27,14 +28,18 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int ra
 
 string SetObjectList::GenerateExterns()
 {
-	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(),
+	                             segmentOffset);
 }
 
 string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 
-	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)%sObjectList0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), objects.size(), zRoom->GetName().c_str(), segmentOffset);
+	sourceOutput +=
+		StringHelper::Sprintf("%s 0x%02X, (u32)%sObjectList0x%06X",
+	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
+	                          objects.size(), zRoom->GetName().c_str(), segmentOffset);
 
 	string declaration = "";
 
@@ -47,8 +52,10 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 			declaration += "\n";
 	}
 
-	zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
-		StringHelper::Sprintf("%sObjectList0x%06X", zRoom->GetName().c_str(), segmentOffset), objects.size(), declaration);
+	zRoom->parent->AddDeclarationArray(
+		segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
+		StringHelper::Sprintf("%sObjectList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+		objects.size(), declaration);
 
 	return sourceOutput;
 }
