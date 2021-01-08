@@ -370,14 +370,14 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					if (dListDecl != nullptr)
 						sprintf(line, "gsSPBranchList(%s),", dListDecl->varName.c_str());
 					else
-						sprintf(line, "gsSPBranchList(%sDlist0x%06X),", prefix.c_str(), SEG2FILESPACE(data));
+						sprintf(line, "gsSPBranchList(%sDlist0x%06lX),", prefix.c_str(), SEG2FILESPACE(data));
 				}
 				else
 				{
 					if (dListDecl != nullptr)
 						sprintf(line, "gsSPDisplayList(%s),", dListDecl->varName.c_str());
 					else
-						sprintf(line, "gsSPDisplayList(%sDlist0x%06X),", prefix.c_str(), SEG2FILESPACE(data));
+						sprintf(line, "gsSPDisplayList(%sDlist0x%06lX),", prefix.c_str(), SEG2FILESPACE(data));
 				}
 
 				int segmentNumber = (data & 0xFF000000) >> 24;
@@ -548,7 +548,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				else
 				{
 					//sprintf(line, "gsDPSetTextureImage(%s, %s, %i, 0x%08X),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, data & 0xFFFFFFFF);
-					sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %sTex_%06X),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, scene->GetName().c_str(), data & 0x00FFFFFF);
+					sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %sTex_%06lX),", fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), www + 1, scene->GetName().c_str(), data & 0x00FFFFFF);
 				}
 			}
 			break;
