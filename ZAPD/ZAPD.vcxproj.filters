@@ -350,9 +350,6 @@
     <ClInclude Include="..\lib\tinygtlf\tiny_gltf.h">
       <Filter>Header Files\Libraries</Filter>
     </ClInclude>
-    <ClInclude Include="..\lib\tinyxml2\tinyxml2.h">
-      <Filter>Header Files\Libraries</Filter>
-    </ClInclude>
     <ClInclude Include="Overlays\ZOverlay.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
@@ -409,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="ZVector.h">
       <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\stb\tinyxml2.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
