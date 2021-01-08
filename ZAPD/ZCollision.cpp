@@ -152,6 +152,18 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 		StringHelper::Sprintf("%s", prefix.c_str(), rawDataIndex), declaration);
 }
 
+ZCollisionHeader::~ZCollisionHeader()
+{
+	for (VertexEntry* vtx : vertices)
+		delete vtx;
+
+	for (PolygonEntry* poly : polygons)
+		delete poly;
+
+	for (WaterBoxHeader* waterBox : waterBoxes)
+		delete waterBox;
+}
+
 ZCollisionHeader* ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex)
 {
 	ZCollisionHeader* col = new ZCollisionHeader();

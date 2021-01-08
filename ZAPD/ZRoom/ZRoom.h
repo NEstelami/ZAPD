@@ -20,6 +20,7 @@ protected:
 	void SyotesRoomHack();
 
 	ZRoom();
+	~ZRoom();
 
 public:
 	ZRoom* scene;
