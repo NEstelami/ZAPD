@@ -180,6 +180,7 @@
     <ClCompile Include="ZRoom\ZRoom.cpp" />
     <ClCompile Include="ZRoom\ZRoomCommand.cpp" />
     <ClCompile Include="ZTexture.cpp" />
+    <ClCompile Include="ZVector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\lib\elfio\elfio\elfio.hpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="ZRoom\ZRoom.h" />
     <ClInclude Include="ZRoom\ZRoomCommand.h" />
     <ClInclude Include="ZTexture.h" />
+    <ClInclude Include="ZVector.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\SymbolMap_OoTMqDbg.txt">

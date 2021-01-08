@@ -7,6 +7,7 @@
 #include "ZSkeleton.h"
 #include "ZCollision.h"
 #include "ZScalar.h"
+#include "ZVector.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -254,6 +255,31 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 				resources.push_back(scalar);
 
 				rawDataIndex += scalar->GetRawDataSize();
+			}
+			else
+			{
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+					printf("No ZScalar created!!");
+			}
+		}
+		else if (string(child->Name()) == "Vector")
+		{
+			ZVector* vector = nullptr;
+
+			if (mode == ZFileMode::Extract)
+				vector = ZVector::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+
+			if (vector != nullptr)
+			{
+				vector->parent = this;
+				resources.push_back(vector);
+
+				rawDataIndex += vector->GetRawDataSize();
+			}
+			else
+			{
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+					printf("No ZVector created!!");
 			}
 		}
 		else

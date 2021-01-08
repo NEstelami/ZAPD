@@ -3,7 +3,6 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "File.h"
-#include "HighLevel/HLAnimationIntermediette.h"
 #include "Globals.h"
 
 ZScalar* ZScalar::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
@@ -107,7 +106,7 @@ std::string ZScalar::MapScalarTypeToOutputType(const ZScalarType scalarType)
 	case ZSCALAR_F64:
 		return "f64";
 	default:
-		return "char*";
+		return "";
 	}
 }
 
@@ -182,8 +181,6 @@ void ZScalar::ParseRawData(const std::vector<uint8_t>& data, const int offset)
 	case ZSCALAR_F64:
 		scalarData.f64 = BitConverter::ToDoubleBE(data, offset);
 		break;
-	case ZSCALAR_NONE:
-		break;
 	}
 }
 
@@ -204,9 +201,9 @@ std::string ZScalar::GetSourceValue()
 	case ZSCALAR_U16:
 		return StringHelper::Sprintf("%hu", scalarData.u16);
 	case ZSCALAR_S32:
-		return StringHelper::Sprintf("%ld", scalarData.s32);
+		return StringHelper::Sprintf("%d", scalarData.s32);
 	case ZSCALAR_U32:
-		return StringHelper::Sprintf("%lu", scalarData.u32);
+		return StringHelper::Sprintf("%u", scalarData.u32);
 	case ZSCALAR_S64:
 		return StringHelper::Sprintf("%lld", scalarData.s64);
 	case ZSCALAR_U64:
@@ -216,16 +213,14 @@ std::string ZScalar::GetSourceValue()
 	case ZSCALAR_F64:
 		return StringHelper::Sprintf("%lf", scalarData.f64);
 	default:
-		return "\"BADTYPE!!\"";
+		return "";
 	}
 }
 
 std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
-	{
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), GetName(), GetSourceValue());
-	}
 
 	return "";
 }
