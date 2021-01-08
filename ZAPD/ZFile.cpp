@@ -6,6 +6,8 @@
 #include "ZAnimation.h"
 #include "ZSkeleton.h"
 #include "ZCollision.h"
+#include "ZScalar.h"
+#include "ZVector.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -246,25 +248,50 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 
 			resources.push_back(res);
 		}
-		else if (string(child->Name()) == "Vec3s")
+		else if (string(child->Name()) == "Scalar")
 		{
-			
-		}
-		else if (string(child->Name()) == "Vec3f")
-		{
+			ZScalar* scalar = nullptr;
 
-		}
-		else if (string(child->Name()) == "Vec3i")
-		{
+			if (mode == ZFileMode::Extract)
+				scalar = ZScalar::ExtractFromXML(child, rawData, rawDataIndex, folderName);
 
-		}
-		else if (string(child->Name()) == "String")
-		{
+			if (scalar != nullptr)
+			{
+				scalar->parent = this;
+				resources.push_back(scalar);
 
+				rawDataIndex += scalar->GetRawDataSize();
+			}
+			else
+			{
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+					printf("No ZScalar created!!");
+			}
+		}
+		else if (string(child->Name()) == "Vector")
+		{
+			ZVector* vector = nullptr;
+
+			if (mode == ZFileMode::Extract)
+				vector = ZVector::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+
+			if (vector != nullptr)
+			{
+				vector->parent = this;
+				resources.push_back(vector);
+
+				rawDataIndex += vector->GetRawDataSize();
+			}
+			else
+			{
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+					printf("No ZVector created!!");
+			}
 		}
 		else
 		{
-			
+			if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+				printf("Encountered unknown resource type: %s\n", string(child->Name()).c_str());
 		}
 	}
 }

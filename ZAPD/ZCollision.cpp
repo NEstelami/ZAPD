@@ -98,8 +98,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 		}
 
 		if (polySegmentOffset != 0) {
-			parent->AddDeclarationArray(polySegmentOffset, DeclarationAlignment::None, polygons.size() * 16, "RoomPoly", // TODO: Change this to CollisionPoly once the struct has been updated
-				StringHelper::Sprintf("%s_polygons_%08X", prefix.c_str(), polySegmentOffset), 0, declaration);
+			parent->AddDeclarationArray(polySegmentOffset, DeclarationAlignment::None, polygons.size() * 16, "CollisionPoly", StringHelper::Sprintf("%s_polygons_%08X", prefix.c_str(), polySegmentOffset), 0, declaration);
 		}
 	}
 
