@@ -345,12 +345,6 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				if (parent != nullptr)
 					dListDecl = parent->GetDeclaration(SEG2FILESPACE(data));
 
-				// TEST
-				if (segNum != 8 && scene != nullptr && scene->parent->GetDeclarationName(data & 0x00FFFFFF) != "ERROR_COULD_NOT_FIND_DECLARATION")
-				{
-					int bp = 0;
-				}
-
 				if (pp != 0)
 				{
 					if (!Globals::Instance->HasSegment(segNum))
@@ -1283,11 +1277,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 
 	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 		printf("TextureGenCheck seg=%i width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texIsPalette, texAddr);
-
-	if (texAddr == 0)
-	{
-		int bp = 0;
-	}
 
 	if ((texSeg != 0 || texAddr != 0) && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))
 	{
