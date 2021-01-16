@@ -353,14 +353,18 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 				if (pp != 0)
 				{
-					if (dListDecl != nullptr)
+					if (!Globals::Instance->HasSegment(segNum))
+						sprintf(line, "gsSPBranchList(0x%08lX),", data & 0xFFFFFFFF);
+					else if (dListDecl != nullptr)
 						sprintf(line, "gsSPBranchList(%s),", dListDecl->varName.c_str());
 					else
 						sprintf(line, "gsSPBranchList(%sDlist0x%06lX),", prefix.c_str(), SEG2FILESPACE(data));
 				}
 				else
 				{
-					if (dListDecl != nullptr)
+					if (!Globals::Instance->HasSegment(segNum))
+						sprintf(line, "gsSPDisplayList(0x%08lX),", data & 0xFFFFFFFF);
+					else if (dListDecl != nullptr)
 						sprintf(line, "gsSPDisplayList(%s),", dListDecl->varName.c_str());
 					else
 						sprintf(line, "gsSPDisplayList(%sDlist0x%06lX),", prefix.c_str(), SEG2FILESPACE(data));
@@ -555,7 +559,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 						//}
 						//else
 						{
-							sprintf(texStr, "0x%08lX", data);
+							sprintf(texStr, "0x%08lX", data & 0xFFFFFFFF);
 						}
 					}
 
@@ -1280,7 +1284,12 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 		printf("TextureGenCheck seg=%i width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texIsPalette, texAddr);
 
-	if (texAddr != 0 && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))
+	if (texAddr == 0)
+	{
+		int bp = 0;
+	}
+
+	if ((texSeg != 0 || texAddr != 0) && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))
 	{
 		if (segmentNumber != 2) // Not from a scene file
 		{
