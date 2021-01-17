@@ -308,7 +308,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, bool placeholderMode)
 			std::cerr << "ERROR bad type\n";
 			printf("Encountered unknown resource type: %s on line: %d\n", child->Name(), child->GetLineNum());
 			std::exit(EXIT_FAILURE);
-				
 		}
 	}
 }
