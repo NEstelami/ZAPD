@@ -144,7 +144,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZResource* dList = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex), folderName);
+				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, DListType::F3DZEX), folderName);
 			//else
 				//dList = ZDisplayList::BuildFromXML(child, folderName, mode == ZFileMode::Build);
 			else
