@@ -66,6 +66,12 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 
 	room->scene = nScene;
 
+	if (string(reader->Name()) == "Scene")
+	{
+		room->scene = room;
+		Globals::Instance->lastScene = room;
+	}
+
 	Globals::Instance->AddSegment(SEGMENT_ROOM);
 	Globals::Instance->AddSegment(SEGMENT_SCENE);
 

@@ -31,6 +31,7 @@ enum class F3DEXOpcode
 	G_TEXTURE = 0xBB,
 	G_MOVEWORD = 0xBC,
 	G_POPMTX = 0xBD,
+	G_CULLDL = 0xBE,
 	G_TRI1 = 0xBF,
 	G_NOOP = 0xC0,
 	G_TEXRECT = 0xE4,
@@ -297,6 +298,17 @@ protected:
 	void Opcode_G_MODIFYVTX(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_CULLDL(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_TRI1(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_TRI2(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_MTX(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_TEXTURE(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_SETTIMG(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_SETTILE(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_LOADBLOCK(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_SETCOMBINE(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_SETPRIMCOLOR(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_ENDDL(uint64_t data, int i, std::string prefix, char* line);
 public:
 	std::string sceneSegName;
 	ZRoom* scene;
