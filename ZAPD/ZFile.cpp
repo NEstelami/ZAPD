@@ -70,6 +70,24 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 	int segment = -1;
 
+	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all ZResource types to have a parent ZFile.
+	const char* gameStr = reader->Attribute("Game");
+	if (reader->Attribute("Game") != nullptr)
+	{
+		if (string(gameStr) == "MM")
+		{
+			Globals::Instance->game = ZGame::MM_RETAIL;
+		}
+		else if (string(gameStr) == "SW97" || string(gameStr) == "OOTSW97")
+		{
+			Globals::Instance->game = ZGame::OOT_SW97;
+		}
+		else
+		{
+			// TODO: Error here.
+		}
+	}
+
 	if (reader->Attribute("BaseAddress") != NULL)
 		baseAddress = (uint32_t)strtoul(StringHelper::Split(reader->Attribute("BaseAddress"), "0x")[1].c_str(), NULL, 16);
 

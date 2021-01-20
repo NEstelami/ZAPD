@@ -27,6 +27,7 @@ public:
 	ZFileMode fileMode;
 	std::string baseRomPath, inputPath, outputPath, cfgPath;
 	TextureType texType;
+	ZGame game;
 
 	std::vector<ZFile*> files;
 	std::vector<int> segments;

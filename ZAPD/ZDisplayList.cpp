@@ -26,7 +26,7 @@ ZDisplayList::ZDisplayList() : ZResource()
 	lastTexIsPalette = false;
 	name = "";
 	scene = nullptr;
-	dListType = DListType::F3DZEX;
+	dListType = Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX;
 
 	fileData = vector<uint8_t>();
 	instructions = vector<uint64_t>();

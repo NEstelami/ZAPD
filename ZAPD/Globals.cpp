@@ -17,6 +17,7 @@ Globals::Globals()
 	symbolMap = std::map <uint32_t, std::string>();
 	segmentRefs = map<int, string>();
 	segmentRefFiles = map<int, ZFile*>();
+	game = ZGame::OOT_RETAIL;
 	genSourceFile = true;
 	testMode = false;
 	profile = false;
