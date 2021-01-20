@@ -380,9 +380,9 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::str
 		break;
 	case F3DEXOpcode::G_DL:
 		Opcode_G_DL(data, i, prefix, line);
+		break;
 	case F3DEXOpcode::G_CULLDL:
 		Opcode_G_CULLDL(data, i, prefix, line);
-		break;
 		break;
 	case F3DEXOpcode::G_MODIFYVTX:
 		Opcode_G_MODIFYVTX(data, i, prefix, line);

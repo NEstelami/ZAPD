@@ -45,7 +45,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->opaqueDListAddr != 0)
 			{
-				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, DListType::F3DEX));
+				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->opaqueDList->scene = zRoom->scene;
 				entry->opaqueDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->opaqueDList);
@@ -53,7 +53,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->translucentDListAddr != 0)
 			{
-				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, DListType::F3DEX));
+				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->translucentDList->scene = zRoom->scene;
 				entry->translucentDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->translucentDList);
@@ -206,7 +206,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->opaqueDListAddr != 0)
 			{
-				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, DListType::F3DEX));
+				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->opaqueDList->scene = zRoom->scene;
 				entry->opaqueDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->opaqueDList); // HOTSPOT
@@ -214,7 +214,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->translucentDListAddr != 0)
 			{
-				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, DListType::F3DEX));
+				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->translucentDList->scene = zRoom->scene;
 				entry->translucentDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->translucentDList); // HOTSPOT

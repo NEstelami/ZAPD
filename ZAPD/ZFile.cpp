@@ -162,7 +162,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZResource* dList = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, DListType::F3DZEX), folderName);
+				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName);
 			//else
 				//dList = ZDisplayList::BuildFromXML(child, folderName, mode == ZFileMode::Build);
 			else
