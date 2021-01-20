@@ -211,19 +211,7 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 	break;
 	case F3DZEXOpcode::G_SETOTHERMODE_H:
 	{
-		int ss = (data & 0x0000FF0000000000) >> 40;
-		int nn = (data & 0x000000FF00000000) >> 32;
-		int dd = (data & 0xFFFFFFFF);
-
-		int sft = 32 - (nn + 1) - ss;
-
-		if (sft == 14) // G_MDSFT_TEXTLUT
-		{
-			string types[] = { "G_TT_NONE", "G_TT_NONE", "G_TT_RGBA16", "G_TT_IA16" };
-			sprintf(line, "gsDPSetTextureLUT(%s),", types[dd >> 14].c_str());
-		}
-		else
-			sprintf(line, "gsSPSetOtherMode(0xE3, %i, %i, 0x%08X),", sft, nn + 1, dd);
+		Opcode_G_G_SETOTHERMODE_H(data, i, prefix, line);
 	}
 	break;
 	case F3DZEXOpcode::G_SETTILE:
@@ -444,6 +432,9 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::str
 		break;
 	case F3DEXOpcode::G_SETOTHERMODE_L:
 		Opcode_G_G_SETOTHERMODE_L(data, i, prefix, line);
+		break;
+	case F3DEXOpcode::G_SETOTHERMODE_H:
+		Opcode_G_G_SETOTHERMODE_H(data, i, prefix, line);
 		break;
 	case F3DEXOpcode::G_CLEARGEOMETRYMODE:
 	case F3DEXOpcode::G_SETGEOMETRYMODE:
@@ -797,10 +788,20 @@ void ZDisplayList::Opcode_G_CULLDL(uint64_t data, int i, std::string prefix, cha
 
 void ZDisplayList::Opcode_G_TRI1(uint64_t data, int i, std::string prefix, char* line)
 {
-	int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
-	int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
-	int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
-	sprintf(line, "gsSP1Triangle(%i, %i, %i, 0),", aa, bb, cc);
+	if (dListType == DListType::F3DZEX)
+	{
+		int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
+		int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
+		int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
+		sprintf(line, "gsSP1Triangle(%i, %i, %i, 0),", aa, bb, cc);
+	}
+	else
+	{
+		int aa = ((data & 0x0000000000FF0000ULL) >> 16) / 2;
+		int bb = ((data & 0x000000000000FF00ULL) >> 8) / 2;
+		int cc = ((data & 0x00000000000000FFULL) >> 0) / 2;
+		sprintf(line, "gsSP1Triangle(%i, %i, %i, 0),", aa, bb, cc);
+	}
 }
 
 void ZDisplayList::Opcode_G_TRI2(uint64_t data, int i, std::string prefix, char* line)
@@ -832,14 +833,28 @@ void ZDisplayList::Opcode_G_MTX(uint64_t data, int i, std::string prefix, char* 
 void ZDisplayList::Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* line)
 {
 	int nn = (data & 0x000FF00000000000ULL) >> 44;
-	int aa = (data & 0x000000FF00000000ULL) >> 32;
+	int aa = (data & 0x00FF000000000000ULL) >> 48;
+
 	uint32_t vtxAddr = SEG2FILESPACE(data);
 
 	if (GETSEGNUM(data) == 0x80) // Are these vertices defined in code?
 		vtxAddr -= SEG2FILESPACE(parent->baseAddress);
 
-	//sprintf(line, "gsSPVertex(%sVtx_%06X, %i, %i),", prefix.c_str(), vtxAddr, nn, ((aa >> 1) - nn));
-	sprintf(line, "gsSPVertex(@r, %i, %i),", nn, ((aa >> 1) - nn));
+	if (dListType == DListType::F3DZEX)
+		sprintf(line, "gsSPVertex(@r, %i, %i),", nn, ((aa >> 1) - nn));
+	else
+	{
+		uint32_t hi = data >> 32;
+		uint32_t lo = data & 0xFFFFFFFF;
+
+		#define _SHIFTR( v, s, w )	\
+			(((uint32_t)v >> s) & ((0x01 << w) - 1))
+
+		nn = _SHIFTR(hi, 10, 6);
+
+		sprintf(line, "gsSPVertex(@r, %i, %i),", nn, _SHIFTR(hi, 17, 7));
+	}
+
 	references.push_back(vtxAddr);
 
 	{
@@ -1238,6 +1253,23 @@ void ZDisplayList::Opcode_G_G_SETOTHERMODE_L(uint64_t data, int i, std::string p
 	}
 	else
 		sprintf(line, "gsSPSetOtherMode(0xE2, %i, %i, 0x%08X),", sft, nn + 1, dd);
+}
+
+void ZDisplayList::Opcode_G_G_SETOTHERMODE_H(uint64_t data, int i, std::string prefix, char* line)
+{
+	int ss = (data & 0x0000FF0000000000) >> 40;
+	int nn = (data & 0x000000FF00000000) >> 32;
+	int dd = (data & 0xFFFFFFFF);
+
+	int sft = 32 - (nn + 1) - ss;
+
+	if (sft == 14) // G_MDSFT_TEXTLUT
+	{
+		string types[] = { "G_TT_NONE", "G_TT_NONE", "G_TT_RGBA16", "G_TT_IA16" };
+		sprintf(line, "gsDPSetTextureLUT(%s),", types[dd >> 14].c_str());
+	}
+	else
+		sprintf(line, "gsSPSetOtherMode(0xE3, %i, %i, 0x%08X),", sft, nn + 1, dd);
 }
 
 void ZDisplayList::Opcode_G_ENDDL(uint64_t data, int i, std::string prefix, char* line)

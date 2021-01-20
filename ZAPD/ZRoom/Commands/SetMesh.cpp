@@ -214,7 +214,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->translucentDListAddr != 0)
 			{
-				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, DListType::F3DZEX));
+				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, DListType::F3DEX));
 				entry->translucentDList->scene = zRoom->scene;
 				entry->translucentDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->translucentDList); // HOTSPOT
