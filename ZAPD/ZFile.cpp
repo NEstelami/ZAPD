@@ -1032,6 +1032,9 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 
 			if (c == '@' && c2 == 'r')
 			{
+				if (refIndex >= decl->references.size())
+					break;
+
 				Declaration* refDecl = GetDeclarationRanged(decl->references[refIndex]);
 				uint32_t refDeclAddr = GetDeclarationRangedAddress(decl->references[refIndex]);
 
@@ -1039,10 +1042,17 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 				{
 					if (refDecl->isArray)
 					{
-						int itemSize = refDecl->size / refDecl->arrayItemCnt;
-						int itemIndex = (decl->references[refIndex] - refDeclAddr) / itemSize;
+						if (refDecl->arrayItemCnt != 0)
+						{
+							int itemSize = refDecl->size / refDecl->arrayItemCnt;
+							int itemIndex = (decl->references[refIndex] - refDeclAddr) / itemSize;
 
-						decl->text.replace(i, 2, StringHelper::Sprintf("&%s[%i]", refDecl->varName.c_str(), itemIndex));
+							decl->text.replace(i, 2, StringHelper::Sprintf("&%s[%i]", refDecl->varName.c_str(), itemIndex));
+						}
+						else
+						{
+							decl->text.replace(i, 2, StringHelper::Sprintf("ERROR ARRAYITEMCNT = 0"));
+						}
 					}
 					else
 					{
