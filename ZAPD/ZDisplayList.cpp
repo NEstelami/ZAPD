@@ -205,12 +205,12 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 	break;
 	case F3DZEXOpcode::G_SETOTHERMODE_L:
 	{
-		Opcode_G_G_SETOTHERMODE_L(data, i, prefix, line);
+		Opcode_G_SETOTHERMODE_L(data, i, prefix, line);
 	}
 	break;
 	case F3DZEXOpcode::G_SETOTHERMODE_H:
 	{
-		Opcode_G_G_SETOTHERMODE_H(data, i, prefix, line);
+		Opcode_G_SETOTHERMODE_H(data, i, prefix, line);
 	}
 	break;
 	case F3DZEXOpcode::G_SETTILE:
@@ -247,23 +247,7 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 	}
 	break;
 	case F3DZEXOpcode::G_LOADTLUT:
-	{
-		int t = (data & 0x0000000007000000) >> 24;
-		int ccc = (data & 0x00000000003FF000) >> 14;
-
-		lastTexWidth = sqrt(ccc + 1);
-		lastTexHeight = sqrt(ccc + 1);
-
-		lastTexLoaded = true;
-		lastTexIsPalette = true;
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", (uint32_t)lastCISiz);
-
-		TextureGenCheck(prefix);
-
-		sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
-	}
+		Opcode_G_LOADTLUT(data, i, prefix, line);
 	break;
 	case F3DZEXOpcode::G_SETENVCOLOR:
 	{
@@ -402,11 +386,14 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::str
 		Opcode_G_SETPRIMCOLOR(data, i, prefix, line);
 		break;
 	case F3DEXOpcode::G_SETOTHERMODE_L:
-		Opcode_G_G_SETOTHERMODE_L(data, i, prefix, line);
+		Opcode_G_SETOTHERMODE_L(data, i, prefix, line);
 		break;
 	case F3DEXOpcode::G_SETOTHERMODE_H:
-		Opcode_G_G_SETOTHERMODE_H(data, i, prefix, line);
+		Opcode_G_SETOTHERMODE_H(data, i, prefix, line);
 		break;
+	case F3DEXOpcode::G_LOADTLUT:
+		Opcode_G_LOADTLUT(data, i, prefix, line);
+	break;
 	case F3DEXOpcode::G_CLEARGEOMETRYMODE:
 	case F3DEXOpcode::G_SETGEOMETRYMODE:
 	{
@@ -804,7 +791,7 @@ void ZDisplayList::Opcode_G_MTX(uint64_t data, int i, std::string prefix, char* 
 void ZDisplayList::Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* line)
 {
 	int nn = (data & 0x000FF00000000000ULL) >> 44;
-	int aa = (data & 0x00FF000000000000ULL) >> 48;
+	int aa = (data & 0x000000FF00000000ULL) >> 32;
 
 	uint32_t vtxAddr = SEG2FILESPACE(data);
 
@@ -816,7 +803,6 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* 
 	else
 	{
 		uint32_t hi = data >> 32;
-		uint32_t lo = data & 0xFFFFFFFF;
 
 		#define _SHIFTR( v, s, w )	\
 			(((uint32_t)v >> s) & ((0x01 << w) - 1))
@@ -1081,7 +1067,7 @@ void ZDisplayList::Opcode_G_SETPRIMCOLOR(uint64_t data, int i, std::string prefi
 	sprintf(line, "gsDPSetPrimColor(%i, %i, %i, %i, %i, %i),", mm, ff, rr, gg, bb, aa);
 }
 
-void ZDisplayList::Opcode_G_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line)
 {
 	int ss = (data & 0x0000FF0000000000) >> 40;
 	int nn = (data & 0x000000FF00000000) >> 32;
@@ -1240,8 +1226,6 @@ void ZDisplayList::Opcode_G_G_SETOTHERMODE_L(uint64_t data, int i, std::string p
 			{
 				if (tblA[k] > mode1)
 					mode1 = tblA[k];
-
-				int bp = 0;
 			}
 		}
 
@@ -1251,8 +1235,6 @@ void ZDisplayList::Opcode_G_G_SETOTHERMODE_L(uint64_t data, int i, std::string p
 			{
 				if (tblB[k] > mode2)
 					mode2 = tblB[k];
-
-				int bp = 0;
 			}
 		}
 
@@ -1262,7 +1244,7 @@ void ZDisplayList::Opcode_G_G_SETOTHERMODE_L(uint64_t data, int i, std::string p
 		sprintf(line, "gsSPSetOtherMode(0xE2, %i, %i, 0x%08X),", sft, nn + 1, dd);
 }
 
-void ZDisplayList::Opcode_G_G_SETOTHERMODE_H(uint64_t data, int i, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_SETOTHERMODE_H(uint64_t data, int i, std::string prefix, char* line)
 {
 	int ss = (data & 0x0000FF0000000000) >> 40;
 	int nn = (data & 0x000000FF00000000) >> 32;
@@ -1277,6 +1259,25 @@ void ZDisplayList::Opcode_G_G_SETOTHERMODE_H(uint64_t data, int i, std::string p
 	}
 	else
 		sprintf(line, "gsSPSetOtherMode(0xE3, %i, %i, 0x%08X),", sft, nn + 1, dd);
+}
+
+void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, int i, std::string prefix, char* line)
+{
+	int t = (data & 0x0000000007000000) >> 24;
+	int ccc = (data & 0x00000000003FF000) >> 14;
+
+	lastTexWidth = sqrt(ccc + 1);
+	lastTexHeight = sqrt(ccc + 1);
+
+	lastTexLoaded = true;
+	lastTexIsPalette = true;
+
+	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+		printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", (uint32_t)lastCISiz);
+
+	TextureGenCheck(prefix);
+
+	sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
 }
 
 void ZDisplayList::Opcode_G_ENDDL(uint64_t data, int i, std::string prefix, char* line)

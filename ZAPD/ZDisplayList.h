@@ -308,8 +308,9 @@ protected:
 	void Opcode_G_LOADBLOCK(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_SETCOMBINE(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_SETPRIMCOLOR(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_G_SETOTHERMODE_H(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_SETOTHERMODE_H(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_LOADTLUT(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_ENDDL(uint64_t data, int i, std::string prefix, char* line);
 public:
 	std::string sceneSegName;
