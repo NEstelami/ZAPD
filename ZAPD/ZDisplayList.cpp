@@ -220,38 +220,7 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 	break;
 	case F3DZEXOpcode::G_SETTILESIZE:
 	{
-		int sss = (data & 0x00FFF00000000000) >> 44;
-		int ttt = (data & 0x00000FFF00000000) >> 32;
-		int uuu = (data & 0x0000000000FFF000) >> 12;
-		int vvv = (data & 0x0000000000000FFF);
-		int i = (data & 0x000000000F000000) >> 24;
-
-		int shiftAmtW = 2;
-		int shiftAmtH = 2;
-
-		if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_8b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
-			shiftAmtW = 3;
-
-		//if (lastTexFmt == F3DZEXTexFormats::G_IM_FMT_I || lastTexFmt == F3DZEXTexFormats::G_IM_FMT_CI)
-		if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b)
-			shiftAmtW = 3;
-
-		if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
-			shiftAmtH = 3;
-
-
-		lastTexWidth = (uuu >> shiftAmtW) + 1;
-		lastTexHeight = (vvv >> shiftAmtH) + 1;
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n", lastTexWidth, lastTexHeight, (uint32_t)lastTexSizTest, (uint32_t)lastTexFmt);
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("TextureGenCheck G_SETTILESIZE\n");
-
-		TextureGenCheck(prefix);
-
-		sprintf(line, "gsDPSetTileSize(%i, %i, %i, %i, %i),", i, sss, ttt, uuu, vvv);
+		Opcode_G_SETTILESIZE(data, i, prefix, line);
 	}
 	break;
 	case F3DZEXOpcode::G_LOADBLOCK:
@@ -419,6 +388,9 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::str
 		break;
 	case F3DEXOpcode::G_SETTILE:
 		Opcode_G_SETTILE(data, i, prefix, line);
+		break;
+	case F3DEXOpcode::G_SETTILESIZE:
+		Opcode_G_SETTILESIZE(data, i, prefix, line);
 		break;
 	case F3DEXOpcode::G_LOADBLOCK:
 		Opcode_G_LOADBLOCK(data, i, prefix, line);
@@ -1010,6 +982,42 @@ void ZDisplayList::Opcode_G_SETTILE(uint64_t data, int i, std::string prefix, ch
 	lastTexSizTest = (F3DZEXTexSizes)ii;
 
 	sprintf(line, "gsDPSetTile(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", fmtTbl[fff].c_str(), sizTbl[ii].c_str(), nnnnnnnnn, mmmmmmmmm, ttt, pppp, cc, aaaa, ssss, dd, bbbb, uuuu);
+}
+
+void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, int index, std::string prefix, char* line)
+{
+	int sss = (data & 0x00FFF00000000000) >> 44;
+	int ttt = (data & 0x00000FFF00000000) >> 32;
+	int uuu = (data & 0x0000000000FFF000) >> 12;
+	int vvv = (data & 0x0000000000000FFF);
+	int i = (data & 0x000000000F000000) >> 24;
+
+	int shiftAmtW = 2;
+	int shiftAmtH = 2;
+
+	if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_8b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
+		shiftAmtW = 3;
+
+	//if (lastTexFmt == F3DZEXTexFormats::G_IM_FMT_I || lastTexFmt == F3DZEXTexFormats::G_IM_FMT_CI)
+	if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b)
+		shiftAmtW = 3;
+
+	if (lastTexSizTest == F3DZEXTexSizes::G_IM_SIZ_4b && lastTexFmt == F3DZEXTexFormats::G_IM_FMT_IA)
+		shiftAmtH = 3;
+
+
+	lastTexWidth = (uuu >> shiftAmtW) + 1;
+	lastTexHeight = (vvv >> shiftAmtH) + 1;
+
+	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+		printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n", lastTexWidth, lastTexHeight, (uint32_t)lastTexSizTest, (uint32_t)lastTexFmt);
+
+	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+		printf("TextureGenCheck G_SETTILESIZE\n");
+
+	TextureGenCheck(prefix);
+
+	sprintf(line, "gsDPSetTileSize(%i, %i, %i, %i, %i),", i, sss, ttt, uuu, vvv);
 }
 
 void ZDisplayList::Opcode_G_LOADBLOCK(uint64_t data, int index, std::string prefix, char* line)

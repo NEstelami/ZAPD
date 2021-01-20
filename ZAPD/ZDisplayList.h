@@ -304,6 +304,7 @@ protected:
 	void Opcode_G_TEXTURE(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_SETTIMG(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_SETTILE(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_SETTILESIZE(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_LOADBLOCK(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_SETCOMBINE(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_SETPRIMCOLOR(uint64_t data, int i, std::string prefix, char* line);
