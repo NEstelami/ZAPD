@@ -293,7 +293,7 @@ protected:
 	int OptimizationCheck_LoadMultiBlock(int startIndex, std::string& output, std::string prefix);
 
 	// F3DEX Specific Opcode Values
-	void ZDisplayList::Opcode_F3DEX_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line)
+	void Opcode_F3DEX_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line);
 
 	// Shared Opcodes between F3DZEX and F3DEX
 	void Opcode_G_DL(uint64_t data, int i, std::string prefix, char* line);
