@@ -45,7 +45,7 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 	{
 		string actorStr = "";
 
-		if (entry->actorNum < ActorList->length())
+		if (entry->actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
 			actorStr = ActorList[entry->actorNum];
 		else
 			actorStr = StringHelper::Sprintf("0x%04X", entry->actorNum);
