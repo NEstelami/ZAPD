@@ -776,8 +776,14 @@ void ZDisplayList::Opcode_G_TRI2(uint64_t data, int i, std::string prefix, char*
 void ZDisplayList::Opcode_G_MTX(uint64_t data, int i, std::string prefix, char* line)
 {
 	// TODO: FINISH THIS
-	uint32_t pp = (data & 0x000000FF00000000) >> 32;
+	uint32_t pp = 0;
 	uint32_t mm = (data & 0x00000000FFFFFFFF);
+
+	if (dListType == DListType::F3DEX)
+		pp = (data & 0x00FF000000000000) >> 48;
+	else
+		pp = (data & 0x000000FF00000000) >> 32;
+
 	std::string matrixRef = "";
 
 	if (Globals::Instance->symbolMap.find(mm) != Globals::Instance->symbolMap.end())
