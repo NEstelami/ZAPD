@@ -875,7 +875,12 @@ void ZDisplayList::Opcode_G_TEXTURE(uint64_t data, int i, std::string prefix, ch
 	int tttt = (data & 0x000000000000FFFF);
 	int lll = (____ & 0x3800) >> 11;
 	int ddd = (____ & 0x700) >> 8;
-	int nnnnnnn = (____ & 0xFE) >> 1;
+	int nnnnnnn = 0;
+
+	if (dListType == DListType::F3DEX)
+		nnnnnnn = (____ & 0xFF);
+	else
+		nnnnnnn = (____ & 0xFE) >> 1;
 
 	sprintf(line, "gsSPTexture(%i, %i, %i, %i, %s),", ssss, tttt, lll, ddd, nnnnnnn == 1 ? "G_ON" : "G_OFF");
 }
