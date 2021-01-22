@@ -107,14 +107,11 @@ int SetActorList::GetActorListArraySize()
 	// Actor 0x22 is removed from SW97, so we need to ensure that we don't increment the actor count for it.
 	if (Globals::Instance->game == ZGame::OOT_SW97)
 	{
-		int actorCount = 0;
-		for (ActorSpawnEntry* entry : actors)
-		{
-			uint16_t actorNum = entry->actorNum;
+		actorCount = 0;
 
-			if (actorNum != 0x22)
+		for (ActorSpawnEntry* entry : actors)
+			if (entry->actorNum != 0x22)
 				actorCount++;
-		}
 	}
 	else
 	{
