@@ -13,6 +13,8 @@ typedef enum VerbosityLevel {
 	VERBOSITY_DEBUG
 } VerbosityLevel;
 
+class GameConfig;
+
 class Globals
 {
 public:
@@ -42,6 +44,21 @@ public:
 	void GenSymbolMap(const std::string& symbolMapPath);
 	void AddSegment(int segment);
 	bool HasSegment(int segment);
+};
+
+class GameConfig
+{
+public:
+	std::map<int, std::string> segmentRefs;
+	std::map<int, ZFile*> segmentRefFiles;
+	std::map<uint32_t, std::string> symbolMap;
+	std::vector<std::string> actorList;
+	std::vector<std::string> objectList;
+
+	GameConfig();
+
+private:
+
 };
 
 /*
