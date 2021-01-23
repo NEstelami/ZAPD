@@ -406,17 +406,23 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::str
 		if (ssssssss != 0)
 			geoModeParam = ssssssss;
 
+		if (geoModeParam & 0x00000002)
+			geoModeStr += " | G_TEXTURE_ENABLE";
+
+		if (geoModeParam & 0x00000200)
+			geoModeStr += " | G_SHADING_SMOOTH";
+
+		if (geoModeParam & 0x00001000)
+			geoModeStr += " | G_CULL_FRONT";
+		
+		if (geoModeParam & 0x00002000)
+			geoModeStr += " | G_CULL_BACK";
+
 		if (geoModeParam & 0x00000001)
 			geoModeStr += " | G_ZBUFFER";
 
 		if (geoModeParam & 0x00000004)
 			geoModeStr += " | G_SHADE";
-
-		if (geoModeParam & 0x00000200)
-			geoModeStr += " | G_CULL_FRONT";
-
-		if (geoModeParam & 0x00000400)
-			geoModeStr += " | G_CULL_BACK";
 
 		if (geoModeParam & 0x00010000)
 			geoModeStr += " | G_FOG";
@@ -429,9 +435,6 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::str
 
 		if (geoModeParam & 0x00080000)
 			geoModeStr += " | G_TEXTURE_GEN_LINEAR";
-
-		if (geoModeParam & 0x00200000)
-			geoModeStr += " | G_SHADING_SMOOTH";
 
 		if (geoModeParam & 0x00800000)
 			geoModeStr += " | G_CLIPPING";
