@@ -164,6 +164,11 @@ enum class OoTSegments
 	FrameBuffer = 16,
 };
 
+#define	G_MDSFT_ALPHACOMPARE	0
+#define	G_MDSFT_ZSRCSEL			2
+#define	G_MDSFT_RENDERMODE		3
+#define	G_MDSFT_BLENDER			16
+
 #define G_RM_FOG_SHADE_A 0xC8000000
 #define G_RM_FOG_PRIM_A 0xC4000000
 #define G_RM_PASS 0x0C080000
@@ -257,6 +262,24 @@ enum class OoTSegments
 #define G_RM_VISCVG2 0x03214040
 #define G_RM_OPA_CI 0x0C080000
 #define G_RM_OPA_CI2 0x03020000
+
+#define	AA_EN		0x8
+#define	Z_CMP		0x10
+#define	Z_UPD		0x20
+#define	IM_RD		0x40
+#define	CLR_ON_CVG	0x80
+#define	CVG_DST_CLAMP	0
+#define	CVG_DST_WRAP	0x100
+#define	CVG_DST_FULL	0x200
+#define	CVG_DST_SAVE	0x300
+#define	ZMODE_OPA	0
+#define	ZMODE_INTER	0x400
+#define	ZMODE_XLU	0x800
+#define	ZMODE_DEC	0xc00
+#define	CVG_X_ALPHA	0x1000
+#define	ALPHA_CVG_SEL	0x2000
+#define	FORCE_BL	0x4000
+#define	TEX_EDGE	0x0000
 
 class Vertex
 {
