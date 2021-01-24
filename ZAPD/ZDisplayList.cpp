@@ -360,7 +360,7 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::str
 		Opcode_G_SETPRIMCOLOR(data, i, prefix, line);
 		break;
 	case F3DEXOpcode::G_SETOTHERMODE_L:
-		Opcode_F3DEX_G_SETOTHERMODE_L(data, i, prefix, line);
+		Opcode_G_SETOTHERMODE_L(data, i, prefix, line);
 		break;
 	case F3DEXOpcode::G_SETOTHERMODE_H:
 		Opcode_G_SETOTHERMODE_H(data, i, prefix, line);
@@ -1068,11 +1068,21 @@ void ZDisplayList::Opcode_F3DEX_G_SETOTHERMODE_L(uint64_t data, int i, std::stri
 
 void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line)
 {
-	int ss = (data & 0x0000FF0000000000) >> 40;
-	int nn = (data & 0x000000FF00000000) >> 32;
 	int dd = (data & 0xFFFFFFFF);
+	int sft = 0;
+	int len = 0;
 
-	int sft = 32 - (nn + 1) - ss;
+	if (dListType == DListType::F3DEX)
+	{
+		sft = (data & 0x0000FF0000000000) >> 40;
+		len = (data & 0x000000FF00000000) >> 32;
+	}
+	else
+	{
+		int ss = (data & 0x0000FF0000000000) >> 40;
+		len = ((data & 0x000000FF00000000) >> 32) + 1;
+		sft = 32 - (len) - ss;
+	}
 
 	if (sft == G_MDSFT_RENDERMODE)
 	{
@@ -1351,7 +1361,7 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string pre
 	}
 	else
 	{
-		sprintf(line, "gsSPSetOtherMode(0xE2, %i, %i, 0x%08X),", sft, nn + 1, dd);
+		sprintf(line, "gsSPSetOtherMode(0xE2, %i, %i, 0x%08X),", sft, len, dd);
 	}
 }
 
