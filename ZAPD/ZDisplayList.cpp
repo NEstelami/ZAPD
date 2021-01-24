@@ -617,11 +617,15 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 				output += StringHelper::Sprintf("gsDPLoadTextureBlock_4b(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
 					texStr.c_str(), fmtTbl[fmt].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
 		}
-		/*else if (siz == 2 && sizB == 1)
+		else if (siz == 2 && sizB != 0)
 		{
-			output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-				texStr.c_str(), fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
-		}*/
+			if (tmem != 0)
+				output += StringHelper::Sprintf("gsDPLoadMultiBlock(%s, %i, %i, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+					texStr.c_str(), tmem, rtile, fmtTbl[fmt].c_str(), sizTbl[sizB].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
+			else
+				output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+					texStr.c_str(), fmtTbl[fmt].c_str(), sizTbl[sizB].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
+		}
 		else
 		{
 			if (siz != sizB)
