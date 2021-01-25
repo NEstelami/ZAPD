@@ -68,7 +68,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 		camData = new CameraDataList(parent, prefix, rawData, SEG2FILESPACE(camDataSegmentOffset), SEG2FILESPACE(polyTypeDefSegmentOffset), polygonTypes.size());
 
 	for (int i = 0; i < numWaterBoxes; i++)
-		waterBoxes.push_back(new WaterBoxHeader(rawData, waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 14 : 16))));
+		waterBoxes.push_back(new WaterBoxHeader(rawData, waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16))));
 
 	string declaration = "";
 	char line[2048];
@@ -216,7 +216,7 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, int rawDataI
 	zLength = BitConverter::ToInt16BE(data, rawDataIndex + 8);
 	if (Globals::Instance->game == ZGame::OOT_SW97)
 	{
-		properties = BitConverter::ToInt16BE(data, rawDataIndex + 12);
+		properties = BitConverter::ToInt16BE(data, rawDataIndex + 10);
 	}
 	else
 	{
