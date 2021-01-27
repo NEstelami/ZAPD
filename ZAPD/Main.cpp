@@ -9,6 +9,7 @@
 #include "File.h"
 #include "Directory.h"
 #include "Globals.h"
+#include "BuildInfo.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <execinfo.h>
@@ -181,7 +182,7 @@ int NewMain(int argc, char* argv[])
 	}
 
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
-		printf("ZAPD: Zelda Asset Processor For Decomp\n");
+		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{

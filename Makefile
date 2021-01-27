@@ -19,7 +19,10 @@ CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 CPP_FILES += lib/tinyxml2/tinyxml2.cpp
 O_FILES   := $(CPP_FILES:.cpp=.o)
 
-all: ZAPD.out
+all: genbuildinfo ZAPD.out
+
+genbuildinfo:
+	python3 ZAPD/genbuildinfo.py
 
 clean:
 	rm -f $(O_FILES) ZAPD.out
