@@ -1,6 +1,7 @@
 #include "ZCollision.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
+#include "Globals.h"
 #include <stdint.h>
 #include <string>
 
@@ -67,7 +68,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 		camData = new CameraDataList(parent, prefix, rawData, SEG2FILESPACE(camDataSegmentOffset), SEG2FILESPACE(polyTypeDefSegmentOffset), polygonTypes.size());
 
 	for (int i = 0; i < numWaterBoxes; i++)
-		waterBoxes.push_back(new WaterBoxHeader(rawData, waterBoxSegmentOffset + (i * 16)));
+		waterBoxes.push_back(new WaterBoxHeader(rawData, waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16))));
 
 	string declaration = "";
 	char line[2048];
@@ -167,6 +168,11 @@ ZCollisionHeader::~ZCollisionHeader()
 		delete waterBox;
 }
 
+ZResourceType ZCollisionHeader::GetResourceType()
+{
+	return ZResourceType::CollisionHeader;
+}
+
 ZCollisionHeader* ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex)
 {
 	ZCollisionHeader* col = new ZCollisionHeader();
@@ -208,7 +214,14 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, int rawDataI
 	zMin = BitConverter::ToInt16BE(data, rawDataIndex + 4);
 	xLength = BitConverter::ToInt16BE(data, rawDataIndex + 6);
 	zLength = BitConverter::ToInt16BE(data, rawDataIndex + 8);
-	properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);
+	if (Globals::Instance->game == ZGame::OOT_SW97)
+	{
+		properties = BitConverter::ToInt16BE(data, rawDataIndex + 10);
+	}
+	else
+	{
+		properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);
+	}
 }
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex, int polyTypeDefSegmentOffset, int polygonTypesCnt)
