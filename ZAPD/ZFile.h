@@ -7,7 +7,7 @@
 
 enum class ZFileMode
 {
-	Build,
+	Build, // DEPRICATED!
 	BuildTexture,
 	BuildOverlay,
 	BuildModelIntermediette,

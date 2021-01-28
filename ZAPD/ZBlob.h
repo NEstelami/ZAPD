@@ -6,10 +6,11 @@
 class ZBlob : public ZResource
 {
 public:
-	ZBlob(const std::vector<uint8_t>& nRawData, int rawDataIndex, int size, std::string nName);
+	ZBlob(ZFile* nParent);
+	ZBlob(const std::vector<uint8_t>& nRawData, int rawDataIndex, int size, std::string nName, ZFile* nParent);
 
-	static ZBlob* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, std::string nRelPath);
-	static ZBlob* BuildFromXML(tinyxml2::XMLElement* reader, const std::string& inFolder, bool readFile);
+	static ZBlob* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
+	//static ZBlob* BuildFromXML(tinyxml2::XMLElement* reader, const std::string& inFolder, bool readFile); // BUILD MODE DEPRICATED
 	static ZBlob* FromFile(const std::string& filePath);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
@@ -20,5 +21,4 @@ public:
 	ZResourceType GetResourceType() override;
 
 private:
-	ZBlob();
 };

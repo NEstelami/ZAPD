@@ -39,7 +39,7 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZRoom::ZRoom() : ZResource()
+ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
 	textures = map<int32_t, ZTexture*>();
 	commands = vector<ZRoomCommand*>();
@@ -56,9 +56,8 @@ ZRoom::~ZRoom()
 
 ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, ZRoom* nScene)
 {
-	ZRoom* room = new ZRoom();
+	ZRoom* room = new ZRoom(nParent);
 
-	room->parent = nParent;
 	room->rawData = nRawData;
 	room->name = reader->Attribute("Name");
 
@@ -99,7 +98,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), nParent);
 
 			if (child->Attribute("Name") != NULL)
 				name = string(child->Attribute("Name"));
@@ -123,7 +122,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string sizeStr = child->Attribute("Size");
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
-			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", room->name.c_str(), address));
+			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", room->name.c_str(), address), nParent);
 			
 			if (child->Attribute("Name") != NULL)
 				name = string(child->Attribute("Name"));
@@ -144,7 +143,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999);
+			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999, room->parent);
 
 			if (child->Attribute("Name") != NULL)
 				name = string(child->Attribute("Name"));
@@ -207,7 +206,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
-			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height);
+			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height, nParent);
 			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
 				tex->GetSourceOutputCode(room->name));
 			delete tex;

@@ -131,14 +131,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZTexture* tex = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				tex = ZTexture::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				tex = ZTexture::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
 			else
 				tex = ZTexture::BuildFromXML(child, folderName, mode == ZFileMode::Build);
 
 			tex->SetRawDataIndex(rawDataIndex);
-
-			tex->parent = this;
-
+			
 			resources.push_back(tex);
 			rawDataIndex += tex->GetRawDataSize();
 		}
@@ -147,32 +145,28 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZBlob* blob = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				blob = ZBlob::ExtractFromXML(child, rawData, rawDataIndex, folderName);
-			else
-				blob = ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+				blob = ZBlob::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
+			//else
+				//blob = ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build);
 
-			blob->parent = this;
-
-			resources.push_back(blob);
-
-			rawDataIndex += blob->GetRawDataSize();
+			if (blob != nullptr)
+			{
+				resources.push_back(blob);
+				rawDataIndex += blob->GetRawDataSize();
+			}
 		}
 		else if (string(child->Name()) == "DList")
 		{
 			ZResource* dList = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName);
-			//else
-				//dList = ZDisplayList::BuildFromXML(child, folderName, mode == ZFileMode::Build);
-			else
-				dList = ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName, this);
 
-			dList->parent = this;
-
-			resources.push_back(dList);
-
-			rawDataIndex += dList->GetRawDataSize();
+			if (dList != nullptr)
+			{
+				resources.push_back(dList);
+				rawDataIndex += dList->GetRawDataSize();
+			}
 		}
 		else if (string(child->Name()) == "Scene" || string(child->Name()) == "Room")
 		{
@@ -206,11 +200,9 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZAnimation* anim = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				anim = ZNormalAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				anim = ZNormalAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
 
-			anim->parent = this;
 			resources.push_back(anim);
-
 			rawDataIndex += anim->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "PlayerAnimation")
@@ -218,11 +210,9 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZLinkAnimation* anim = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				anim = ZLinkAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				anim = ZLinkAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
 
-			anim->parent = this;
 			resources.push_back(anim);
-
 			rawDataIndex += anim->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Skeleton")
@@ -252,7 +242,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			if (mode == ZFileMode::Extract)
 			{
-				res = new ZResource();
+				res = new ZResource(this);
 				res->SetName(child->Attribute("Name"));
 				res->SetRawDataIndex(rawDataIndex);
 				res->outputDeclaration = false;
@@ -278,13 +268,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZScalar* scalar = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				scalar = ZScalar::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				scalar = ZScalar::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
 
 			if (scalar != nullptr)
 			{
-				scalar->parent = this;
 				resources.push_back(scalar);
-
 				rawDataIndex += scalar->GetRawDataSize();
 			}
 			else
@@ -298,13 +286,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZVector* vector = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				vector = ZVector::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				vector = ZVector::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
 
 			if (vector != nullptr)
 			{
-				vector->parent = this;
 				resources.push_back(vector);
-
 				rawDataIndex += vector->GetRawDataSize();
 			}
 			else
@@ -318,13 +304,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZVtx* vtx = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				vtx = ZVtx::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				vtx = ZVtx::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
 
 			if (vtx != nullptr)
 			{
-				vtx->parent = this;
 				resources.push_back(vtx);
-
 				rawDataIndex += vtx->GetRawDataSize();
 			}
 			else
@@ -338,11 +322,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZCutscene* cs = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				cs = ZCutscene::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				cs = ZCutscene::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
 
 			if (cs != nullptr)
 			{
-				cs->parent = this;
 				resources.push_back(cs);
 				rawDataIndex += cs->GetRawDataSize();
 			}

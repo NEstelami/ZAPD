@@ -3,7 +3,7 @@
 #include "StringHelper.h"
 #include "BitConverter.h"
 
-ZVtx::ZVtx()
+ZVtx::ZVtx(ZFile* nParent) : ZResource(nParent)
 {
 	x = 0;
 	y = 0;
@@ -67,9 +67,9 @@ ZResourceType ZVtx::GetResourceType()
     return ZResourceType::Vertex;
 }
 
-ZVtx* ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
+ZVtx* ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
 {
-    ZVtx* vtx = new ZVtx();
+    ZVtx* vtx = new ZVtx(nParent);
 	vtx->rawData = nRawData;
 	vtx->rawDataIndex = rawDataIndex;
     vtx->ParseRawData();

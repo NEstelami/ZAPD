@@ -9,7 +9,7 @@
 
 using namespace std;
 
-ZAnimation::ZAnimation() : ZResource()
+ZAnimation::ZAnimation(ZFile* nParent) : ZResource(nParent)
 {
 	frameCount = 0;
 }
@@ -49,7 +49,7 @@ ZResourceType ZAnimation::GetResourceType()
 	return ZResourceType::Animation;
 }
 
-ZNormalAnimation::ZNormalAnimation() : ZAnimation()
+ZNormalAnimation::ZNormalAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
 	rotationValues = vector<uint16_t>();
 	rotationIndices = vector<RotationIndex>();
@@ -103,9 +103,9 @@ int ZNormalAnimation::GetRawDataSize()
 	return 16;
 }
 
-ZNormalAnimation* ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath)
+ZNormalAnimation* ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
 {
-	ZNormalAnimation* anim = new ZNormalAnimation();
+	ZNormalAnimation* anim = new ZNormalAnimation(nParent);
 	anim->rawData = std::move(nRawData);
 	anim->rawDataIndex = rawDataIndex;
 	anim->ParseXML(reader);
@@ -143,7 +143,7 @@ void ZNormalAnimation::ParseRawData()
 	}
 }
 
-ZLinkAnimation::ZLinkAnimation() : ZAnimation()
+ZLinkAnimation::ZLinkAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
 	segmentAddress = 0;
 }
@@ -166,9 +166,9 @@ int ZLinkAnimation::GetRawDataSize()
 	return 8;
 }
 
-ZLinkAnimation* ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath)
+ZLinkAnimation* ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
 {
-	ZLinkAnimation* anim = new ZLinkAnimation();
+	ZLinkAnimation* anim = new ZLinkAnimation(nParent);
 	anim->rawData = std::move(nRawData);
 	anim->rawDataIndex = rawDataIndex;
 	anim->ParseXML(reader);

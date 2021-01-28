@@ -402,7 +402,7 @@ class ZCutscene : public ZResource
 public:
 	uint32_t segmentOffset;
 
-	ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
+	ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, ZFile* nParent);
 	~ZCutscene();
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
@@ -411,7 +411,7 @@ public:
 
 	ZResourceType GetResourceType() override;
 
-	static ZCutscene* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
+	static ZCutscene* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
 protected:
 	int numCommands;
 	int endFrame;

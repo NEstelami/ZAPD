@@ -19,7 +19,7 @@ protected:
 	void ProcessCommandSets();
 	void SyotesRoomHack();
 
-	ZRoom();
+	ZRoom(ZFile* nParent);
 	~ZRoom();
 
 public:

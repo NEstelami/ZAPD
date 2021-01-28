@@ -5,9 +5,9 @@
 #include "File.h"
 #include "Globals.h"
 
-ZScalar* ZScalar::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
+ZScalar* ZScalar::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
 {
-	ZScalar* scalar = new ZScalar();
+	ZScalar* scalar = new ZScalar(nParent);
 	scalar->rawData = nRawData;
 	scalar->rawDataIndex = rawDataIndex;
 	scalar->ParseXML(reader);
@@ -16,13 +16,13 @@ ZScalar* ZScalar::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector
 	return scalar;
 }
 
-ZScalar::ZScalar() : ZResource()
+ZScalar::ZScalar(ZFile* nParent) : ZResource(nParent)
 {
 	memset(&scalarData, 0, sizeof(ZScalarData));
 	scalarType = ZSCALAR_NONE;
 }
 
-ZScalar::ZScalar(const ZScalarType scalarType) : ZScalar()
+ZScalar::ZScalar(const ZScalarType scalarType, ZFile* nParent) : ZScalar(nParent)
 {
 	this->scalarType = scalarType;
 }

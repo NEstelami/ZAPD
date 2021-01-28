@@ -6,16 +6,16 @@
 #include "Globals.h"
 #include <assert.h>
 
-ZVector::ZVector() : ZResource()
+ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 {
 	scalars = std::vector<ZScalar*>();
 	this->scalarType = ZSCALAR_NONE;
 	this->dimensions = 0;
 }
 
-ZVector* ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
+ZVector* ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
 {
-	ZVector* vector = new ZVector();
+	ZVector* vector = new ZVector(nParent);
 	vector->rawData = nRawData;
 	vector->rawDataIndex = rawDataIndex;
 	vector->ParseXML(reader);
@@ -43,7 +43,7 @@ void ZVector::ParseRawData()
 
 	for (int i = 0; i < this->dimensions; i++) 
 	{
-		ZScalar* scalar = new ZScalar(this->scalarType);
+		ZScalar* scalar = new ZScalar(this->scalarType, this->parent);
 		scalar->rawDataIndex = currentRawDataIndex;
 		scalar->rawData = this->rawData;
 		scalar->ParseRawData();

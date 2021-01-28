@@ -15,7 +15,7 @@ public:
 	int16_t s, t;
 	uint8_t r, g, b, a;
 
-	ZVtx();
+	ZVtx(ZFile* nParent);
 
 	void ParseXML(tinyxml2::XMLElement* reader);
 	std::string GetSourceTypeName() override;
@@ -25,7 +25,7 @@ public:
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType();
 
-	static ZVtx* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
+	static ZVtx* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
 
 protected:
 };

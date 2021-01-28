@@ -12,7 +12,7 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZDisplayList::ZDisplayList() : ZResource()
+ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 {
 	defines = "";
 	sceneSegName = "";
@@ -38,9 +38,9 @@ ZDisplayList::ZDisplayList() : ZResource()
 }
 
 // EXTRACT MODE
-ZDisplayList* ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize, string nRelPath)
+ZDisplayList* ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize, string nRelPath, ZFile* nParent)
 {
-	ZDisplayList* dList = new ZDisplayList();
+	ZDisplayList* dList = new ZDisplayList(nParent);
 
 	dList->ParseXML(reader);
 
@@ -56,15 +56,15 @@ ZDisplayList* ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> n
 	return dList;
 }
 
-ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
-{
-	ZDisplayList* dList = new ZDisplayList();
+//ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
+//{
+//	ZDisplayList* dList = new ZDisplayList();
+//
+//	dList->SetName(reader->Attribute("Name"));
+//	return dList;
+//}
 
-	dList->SetName(reader->Attribute("Name"));
-	return dList;
-}
-
-ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize) : ZDisplayList()
+ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize, ZFile* nParent) : ZDisplayList(nParent)
 {
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
@@ -270,9 +270,8 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 			//sprintf(line, "gsDPWord(%i, 0),", h);
 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(), h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList* nList = new ZDisplayList(fileData, h & 0x00FFFFFF, GetDListLength(fileData, h & 0x00FFFFFF, dListType));
+			ZDisplayList* nList = new ZDisplayList(fileData, h & 0x00FFFFFF, GetDListLength(fileData, h & 0x00FFFFFF, dListType), parent);
 			nList->scene = scene;
-			nList->parent = parent;
 			otherDLists.push_back(nList);
 
 			i++;
@@ -701,9 +700,8 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, int i, std::string prefix, char* l
 	}
 	else
 	{
-		ZDisplayList* nList = new ZDisplayList(fileData, data & 0x00FFFFFF, GetDListLength(fileData, data & 0x00FFFFFF, dListType));
+		ZDisplayList* nList = new ZDisplayList(fileData, data & 0x00FFFFFF, GetDListLength(fileData, data & 0x00FFFFFF, dListType), parent);
 		nList->scene = scene;
-		nList->parent = parent;
 		otherDLists.push_back(nList);
 	}
 }
@@ -1661,7 +1659,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 	{
 		if (segmentNumber != 2) // Not from a scene file
 		{
-			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr), texWidth, texHeight);
+			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr), texWidth, texHeight, parent);
 			tex->isPalette = texIsPalette;
 			textures[texAddr] = tex;
 
@@ -1670,7 +1668,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		else
 		{
 			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
-				StringHelper::Sprintf("%sTex_%06X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
+				StringHelper::Sprintf("%sTex_%06X", Globals::Instance->lastScene->GetName().c_str(), texAddr), texWidth, texHeight, parent);
 
 			if (scene != nullptr)
 			{

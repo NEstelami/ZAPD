@@ -8,7 +8,7 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZLimbStandard::ZLimbStandard()
+ZLimbStandard::ZLimbStandard(ZFile* nParent) : ZResource(nParent)
 {
 	name = "";
 	transX = 0;
@@ -29,9 +29,8 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 	if (string(reader->Attribute("Type")) == "LOD")
 		limbType = ZLimbType::LOD;
 
-	ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, rawDataIndex);
+	ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, rawDataIndex, parent);
 	limb->ParseXML(reader);
-	limb->parent = parent;
 	limb->name = limbName;
 	limb->address = limbAddress;
 
@@ -42,9 +41,9 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 	return limb;
 }
 
-ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex)
+ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex, ZFile* nParent)
 {
-	ZLimbStandard* limb = new ZLimbStandard();
+	ZLimbStandard* limb = new ZLimbStandard(nParent);
 
 	limb->address = rawDataIndex;
 
@@ -78,7 +77,7 @@ int ZLimbStandard::GetRawDataSize()
 	return 12;
 }
 
-ZSkeleton::ZSkeleton() : ZResource()
+ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 {
 	type = ZSkeletonType::Normal;
 	limbs = vector<ZLimbStandard*>();
@@ -95,9 +94,8 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 
 ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
 {
-	ZSkeleton* skeleton = new ZSkeleton();
+	ZSkeleton* skeleton = new ZSkeleton(nParent);
 	skeleton->name = reader->Attribute("Name");
-	skeleton->parent = nParent;
 	ZLimbType limbType = ZLimbType::Standard;
 	ZSkeletonType skeletonType = ZSkeletonType::Normal;
 	int limbCount = 0;
@@ -140,12 +138,12 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 
 		if (limbType == ZLimbType::Standard)
 		{
-			ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, ptr2);
+			ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, ptr2, nParent);
 			skeleton->limbs.push_back(limb);
 		}
 		else
 		{
-			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2);
+			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2, nParent);
 			skeleton->limbs.push_back(limb);
 		}
 
@@ -171,8 +169,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 			if (limb->dListPtr != 0 && parent->GetDeclaration(limb->dListPtr) == nullptr)
 			{
-				ZDisplayList* dList = new ZDisplayList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
-				dList->parent = parent;
+				ZDisplayList* dList = new ZDisplayList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), parent);
 				dList->SetName(StringHelper::Sprintf("%sLimbDL_%06X", defaultPrefix.c_str(), limb->dListPtr));
 				dList->GetSourceOutputCode(defaultPrefix);
 			}
@@ -188,8 +185,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 				if (limbLOD->farDListPtr != 0 && parent->GetDeclaration(limbLOD->farDListPtr) == nullptr)
 				{
-					ZDisplayList* dList = new ZDisplayList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
-					dList->parent = parent;
+					ZDisplayList* dList = new ZDisplayList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), parent);
 					dList->SetName(StringHelper::Sprintf("%s_farLimbDlist_%06X", defaultPrefix.c_str(), limbLOD->farDListPtr));
 					dList->GetSourceOutputCode(defaultPrefix);
 				}
@@ -270,14 +266,14 @@ ZResourceType ZSkeleton::GetResourceType()
 	return ZResourceType::Skeleton;
 }
 
-ZLimbLOD::ZLimbLOD() : ZLimbStandard()
+ZLimbLOD::ZLimbLOD(ZFile* nParent) : ZLimbStandard(nParent)
 {
 	farDListPtr = 0;
 }
 
-ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
+ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex, ZFile* nParent)
 {
-	ZLimbLOD* limb = new ZLimbLOD();
+	ZLimbLOD* limb = new ZLimbLOD(nParent);
 
 	limb->address = rawDataIndex;
 

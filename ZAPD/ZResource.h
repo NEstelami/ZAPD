@@ -30,7 +30,6 @@ enum class ZResourceType
 	Texture,
 	DisplayList,
 	Room,
-	Overlay,
 	Animation,
 	Cutscene,
 	Blob,
@@ -48,7 +47,7 @@ public:
 	ZFile* parent;
 	bool outputDeclaration;
 
-	ZResource();
+	ZResource(ZFile* nParent);
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	virtual void Save(const std::string& outFolder);
 	virtual void PreGenSourceFiles();

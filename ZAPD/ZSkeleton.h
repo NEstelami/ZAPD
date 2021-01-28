@@ -22,9 +22,9 @@ struct ZLimbStandard : public ZResource
 
 	std::vector<ZLimbStandard*> children;
 
-	ZLimbStandard();
+	ZLimbStandard(ZFile* nParent);
 	static ZLimbStandard* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
-	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
+	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex, ZFile* nParent);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
 };
@@ -33,9 +33,9 @@ struct ZLimbLOD : ZLimbStandard
 {
 	uint32_t farDListPtr;
 
-	ZLimbLOD();
+	ZLimbLOD(ZFile* nParent);
 	//static ZLimbLOD* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
-	static ZLimbLOD* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
+	static ZLimbLOD* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex, ZFile* nParent);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
 };
@@ -55,7 +55,7 @@ public:
 	ZLimbStandard* rootLimb;
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
-	ZSkeleton();
+	ZSkeleton(ZFile* nParent);
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
 	void Save(const std::string& outFolder) override;

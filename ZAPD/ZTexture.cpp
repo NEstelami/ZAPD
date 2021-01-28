@@ -14,7 +14,7 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZTexture::ZTexture() : ZResource()
+ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 {
 	bmpRgb = nullptr;
 	bmpRgba = nullptr;
@@ -44,9 +44,9 @@ ZTexture::~ZTexture()
 }
 
 // EXTRACT MODE
-ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
+ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath, ZFile* nParent)
 {
-	ZTexture* tex = new ZTexture();
+	ZTexture* tex = new ZTexture(nParent);
 
 	tex->ParseXML(reader);
 	tex->rawDataIndex = nRawDataIndex;
@@ -60,9 +60,9 @@ ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData,
 	return tex;
 }
 
-ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nName, int nWidth, int nHeight)
+ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nName, int nWidth, int nHeight, ZFile* nParent)
 {
-	ZTexture* tex = new ZTexture();
+	ZTexture* tex = new ZTexture(nParent);
 
 	tex->width = nWidth;
 	tex->height = nHeight;
@@ -83,7 +83,7 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 // BUILD MODE
 ZTexture* ZTexture::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
 {
-	ZTexture* tex = new ZTexture();
+	ZTexture* tex = new ZTexture(nullptr);
 
 	tex->ParseXML(reader);
 
@@ -96,7 +96,7 @@ ZTexture* ZTexture::BuildFromXML(XMLElement* reader, string inFolder, bool readF
 ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 {
 	int comp;
-	ZTexture* tex = new ZTexture();
+	ZTexture* tex = new ZTexture(nullptr);
 	tex->type = texType;
 	tex->name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
 	
@@ -125,7 +125,7 @@ ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 
 ZTexture* ZTexture::FromHLTexture(HLTexture* hlTex)
 {
-	ZTexture* tex = new ZTexture();
+	ZTexture* tex = new ZTexture(nullptr);
 
 	tex->width = hlTex->width;
 	tex->height = hlTex->height;

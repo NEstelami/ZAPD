@@ -82,7 +82,7 @@ public:
 	std::vector<WaterBoxHeader*> waterBoxes;
 	CameraDataList* camData;
 
-	ZCollisionHeader();
+	ZCollisionHeader(ZFile* nParent);
 	//ZCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	ZCollisionHeader(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex);
 	~ZCollisionHeader();

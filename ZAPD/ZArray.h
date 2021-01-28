@@ -9,7 +9,7 @@
 class ZArray : public ZResource
 {
 public:
-	ZArray();
+	ZArray(ZFile* nParent);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;

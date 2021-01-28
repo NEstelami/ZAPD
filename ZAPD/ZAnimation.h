@@ -21,7 +21,7 @@ public:
 
 	int16_t frameCount;
 
-	ZAnimation();
+	ZAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	ZResourceType GetResourceType() override;
@@ -41,12 +41,12 @@ public:
 	uint32_t rotationIndicesSeg;
 	int16_t limit;
 
-	ZNormalAnimation();
+	ZNormalAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix);
 	int GetRawDataSize() override;
 
-	static ZNormalAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath);
+	static ZNormalAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
 
 protected:
 	virtual void ParseRawData();
@@ -57,12 +57,12 @@ class ZLinkAnimation : public ZAnimation
 public:
 	uint32_t segmentAddress;
 
-	ZLinkAnimation();
+	ZLinkAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix);
 	int GetRawDataSize() override;
 
-	static ZLinkAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath);
+	static ZLinkAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
 
 protected:
 	virtual void ParseRawData();

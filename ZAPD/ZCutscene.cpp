@@ -4,7 +4,7 @@
 
 using namespace std;
 
-ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize)
+ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, ZFile* nParent) : ZResource(nParent)
 {
 	rawData = std::move(nRawData);
 	segmentOffset = rawDataIndex;
@@ -126,9 +126,9 @@ int ZCutscene::GetRawDataSize()
 	return size;
 }
 
-ZCutscene* ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
+ZCutscene* ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
 {
-	ZCutscene* cs = new ZCutscene(nRawData, rawDataIndex, 9999);
+	ZCutscene* cs = new ZCutscene(nRawData, rawDataIndex, 9999, nParent);
 	cs->rawData = nRawData;
 	cs->rawDataIndex = rawDataIndex;
 	cs->ParseXML(reader);

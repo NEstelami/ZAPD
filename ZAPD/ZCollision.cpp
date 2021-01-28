@@ -7,12 +7,12 @@
 
 using namespace std;
 
-ZCollisionHeader::ZCollisionHeader()
+ZCollisionHeader::ZCollisionHeader(ZFile* nParent) : ZResource(nParent)
 {
 
 }
 
-ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex)
+ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex) : ZCollisionHeader(parent)
 {
 	const uint8_t* data = rawData.data();
 
@@ -71,15 +71,11 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 		waterBoxes.push_back(new WaterBoxHeader(rawData, waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16))));
 
 	string declaration = "";
-	char line[2048];
 
 	if (waterBoxes.size() > 0)
 	{
 		for (int i = 0; i < waterBoxes.size(); i++)
-		{
-			sprintf(line, "   { %i, %i, %i, %i, %i, 0x%08X },\n", waterBoxes[i]->xMin, waterBoxes[i]->ySurface, waterBoxes[i]->zMin, waterBoxes[i]->xLength, waterBoxes[i]->zLength, waterBoxes[i]->properties);
-			declaration += line;
-		}
+			declaration += StringHelper::Sprintf("   { %i, %i, %i, %i, %i, 0x%08X },\n", waterBoxes[i]->xMin, waterBoxes[i]->ySurface, waterBoxes[i]->zMin, waterBoxes[i]->xLength, waterBoxes[i]->zLength, waterBoxes[i]->properties);
 	}
 
 	if (waterBoxSegmentOffset != 0)
@@ -92,10 +88,9 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 
 		for (int i = 0; i < polygons.size(); i++)
 		{
-			sprintf(line, "   { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X }, // 0x%08X\n",
+			declaration += StringHelper::Sprintf("   { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X }, // 0x%08X\n",
 				(uint16_t)polygons[i]->type, (uint16_t)polygons[i]->vtxA, (uint16_t)polygons[i]->vtxB, (uint16_t)polygons[i]->vtxC,
 				(uint16_t)polygons[i]->a, (uint16_t)polygons[i]->b, (uint16_t)polygons[i]->c, (uint16_t)polygons[i]->d, SEG2FILESPACE(polySegmentOffset) + (i * 16));
-			declaration += line;
 		}
 
 		if (polySegmentOffset != 0) {
@@ -175,9 +170,7 @@ ZResourceType ZCollisionHeader::GetResourceType()
 
 ZCollisionHeader* ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex)
 {
-	ZCollisionHeader* col = new ZCollisionHeader();
-
-
+	ZCollisionHeader* col = new ZCollisionHeader(nullptr);
 
 	return col;
 }
@@ -214,14 +207,11 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, int rawDataI
 	zMin = BitConverter::ToInt16BE(data, rawDataIndex + 4);
 	xLength = BitConverter::ToInt16BE(data, rawDataIndex + 6);
 	zLength = BitConverter::ToInt16BE(data, rawDataIndex + 8);
+
 	if (Globals::Instance->game == ZGame::OOT_SW97)
-	{
 		properties = BitConverter::ToInt16BE(data, rawDataIndex + 10);
-	}
 	else
-	{
 		properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);
-	}
 }
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex, int polyTypeDefSegmentOffset, int polygonTypesCnt)

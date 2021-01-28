@@ -2,9 +2,9 @@
 
 using namespace std;
 
-ZResource::ZResource()
+ZResource::ZResource(ZFile* nParent)
 {
-	parent = nullptr;
+	parent = nParent;
 	name = "";
 	outName = "";
 	relativePath = "";
