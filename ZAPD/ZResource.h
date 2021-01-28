@@ -48,27 +48,37 @@ public:
 	bool outputDeclaration;
 
 	ZResource(ZFile* nParent);
+
+	// Parsing from File
+	virtual void ExtractFromXML();
+	virtual void ExtractFromFile();
+
+	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
-	virtual void Save(const std::string& outFolder);
-	virtual void PreGenSourceFiles();
-	std::string GetName();
-	std::string GetOutName();
-	void SetName(std::string nName);
-	std::string GetRelativePath();
-	virtual std::vector<uint8_t> GetRawData();
-	virtual bool IsExternalResource();
-	virtual bool DoesSupportArray(); // Can this type be wrapped in an <Array> node?
-	virtual std::string GetExternalExtension();
-	virtual int GetRawDataIndex();
-	virtual int GetRawDataSize();
-	virtual void SetRawDataIndex(int value);
+	virtual void ParseRawData();
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
-	virtual void ParseRawData();
+	virtual void PreGenSourceFiles();
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
+	virtual void CalcHash();
+	virtual void Save(const std::string& outFolder);
+
+	// Properties
+	virtual bool IsExternalResource();
+	virtual bool DoesSupportArray(); // Can this type be wrapped in an <Array> node?
 	virtual std::string GetSourceTypeName();
 	virtual ZResourceType GetResourceType();
-	virtual void CalcHash();
+	virtual std::string GetExternalExtension();
+
+	// Getters/Setters
+	std::string GetName();
+	void SetName(std::string nName);
+	std::string GetOutName();
+	std::string GetRelativePath();
+	virtual int GetRawDataIndex();
+	virtual void SetRawDataIndex(int value);
+	virtual int GetRawDataSize();
+	virtual std::vector<uint8_t> GetRawData();
 
 protected:
 	std::string name;
