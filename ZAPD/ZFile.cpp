@@ -57,8 +57,12 @@ ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPa
 
 ZFile::~ZFile()
 {
-	for (ZResource* res : resources)
-		delete res;
+	for (ZResource* res : resources) {
+		if (res != nullptr) {
+			delete res;
+		}
+	}
+	resources.clear();
 	for (auto& decl: declarations)
 		delete decl.second;
 }
@@ -469,6 +473,10 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 
 	AddDeclarationDebugChecks(address);
 
+	if (declarations.find(address) != declarations.end()) {
+		delete declarations[address];
+	}
+
 	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
 	declarations[address] = decl;
 	return decl;
@@ -485,6 +493,10 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 
 	AddDeclarationDebugChecks(address);
 
+	if (declarations.find(address) != declarations.end()) {
+		delete declarations[address];
+	}
+
 	declarations[address] = new Declaration(alignment, padding, size, varType, varName, false, body);
 	return declarations[address];
 }
@@ -499,6 +511,10 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 #endif
 
 	AddDeclarationDebugChecks(address);
+
+	if (declarations.find(address) != declarations.end()) {
+		delete declarations[address];
+	}
 
 	declarations[address] = new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
 	return declarations[address];
@@ -515,6 +531,10 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 #endif
 
 	AddDeclarationDebugChecks(address);
+
+	if (declarations.find(address) != declarations.end()) {
+		delete declarations[address];
+	}
 
 	declarations[address] = new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
 	return declarations[address];
@@ -566,6 +586,11 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 
 	decl->isArray = true;
 	decl->arrayItemCnt = arrayItemCnt;
+
+	// check if the address is not already being used
+	if (declarations.find(address) != declarations.end()) {
+		delete declarations[address];
+	}
 
 	declarations[address] = decl;
 	return declarations[address];

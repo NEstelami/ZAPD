@@ -66,6 +66,10 @@ string Globals::FindSymbolSegRef(int segNumber, uint32_t symbolAddress)
 				{
 					ZFile* file = new ZFile(fileMode, child, "", "", "", true);
 					file->GeneratePlaceholderDeclarations();
+					if (segmentRefFiles.find(segNumber) != segmentRefFiles.end()) {
+						// Maybe print an error (?)
+						delete segmentRefFiles[segNumber];
+					}
 					segmentRefFiles[segNumber] = file;
 					break;
 				}
