@@ -87,7 +87,7 @@ std::string ZVector::GetSourceTypeName()
 	{
 		std::string output = StringHelper::Sprintf("Encountered unsupported vector type: %d dimensions, %s type", dimensions, ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
 
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+		if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
 			printf("%s\n", output.c_str());
 
 		throw output;

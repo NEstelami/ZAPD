@@ -76,11 +76,11 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 	if (string(reader->Name()) == "Scene")
 	{
 		room->scene = room;
-		Globals::Instance->lastScene = room;
+		Globals::Instance.lastScene = room;
 	}
 
-	Globals::Instance->AddSegment(SEGMENT_ROOM);
-	Globals::Instance->AddSegment(SEGMENT_SCENE);
+	Globals::Instance.AddSegment(SEGMENT_ROOM);
+	Globals::Instance.AddSegment(SEGMENT_SCENE);
 
 	//GenDefinitions();
 
@@ -106,7 +106,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZDisplayList dList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+			ZDisplayList dList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 
 			if (child->Attribute("Name") != NULL)
 				name = string(child->Attribute("Name"));
@@ -281,7 +281,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		auto end = chrono::steady_clock::now();
 		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-		if (Globals::Instance->profile)
+		if (Globals::Instance.profile)
 		{
 			if (diff > 50)
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
@@ -507,13 +507,13 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 		declaration += item.second->GetSourceOutputCode(prefix);
 
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
+			printf("SAVING IMAGE TO %s\n", Globals::Instance.outputPath.c_str());
 
-		item.second->Save(Globals::Instance->outputPath);
+		item.second->Save(Globals::Instance.outputPath);
 
 		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
-			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
+			Globals::Instance.outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
 			"u64", StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
 	}
 

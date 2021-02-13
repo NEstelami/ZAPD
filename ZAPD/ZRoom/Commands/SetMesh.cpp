@@ -61,7 +61,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->opaqueDListAddr != 0)
 			{
-				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->opaqueDList->scene = zRoom->scene;
 				entry->opaqueDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->opaqueDList);
@@ -69,7 +69,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->translucentDListAddr != 0)
 			{
-				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->translucentDList->scene = zRoom->scene;
 				entry->translucentDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->translucentDList);
@@ -174,7 +174,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		}
 		else // UH OH
 		{
-			if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+			if (Globals::Instance.verbosity >= VERBOSITY_INFO)
 				printf("WARNING: MeshHeader FMT %i not implemented!\n", fmt);
 		}
 
@@ -211,7 +211,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->opaqueDListAddr != 0)
 			{
-				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->opaqueDList->scene = zRoom->scene;
 				entry->opaqueDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->opaqueDList); // HOTSPOT
@@ -219,7 +219,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 			if (entry->translucentDListAddr != 0)
 			{
-				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 				entry->translucentDList->scene = zRoom->scene;
 				entry->translucentDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->translucentDList); // HOTSPOT
@@ -285,7 +285,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 {
 	string srcVarName = "";
 
-	//if (Globals::Instance->includeFilePrefix)
+	//if (Globals::Instance.includeFilePrefix)
 		srcVarName = StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 	//else
 		//srcVarName = StringHelper::Sprintf("%s", dList->GetName().c_str());
@@ -295,8 +295,8 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 
 	//zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None, dList->GetRawDataSize(), "static Gfx", srcVarName, dList->GetRawDataSize() / 8, sourceOutput);
 
-	for (ZDisplayList* otherDList : dList->otherDLists)
-		GenDListDeclarations(rawData, otherDList);
+	for (ZDisplayList& otherDList : dList->otherDLists)
+		GenDListDeclarations(rawData, &otherDList);
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
 	{
@@ -308,13 +308,13 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	{
 		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
 
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
+			printf("SAVING IMAGE TO %s\n", Globals::Instance.outputPath.c_str());
 		
-		zRoom->textures[texEntry.first]->Save(Globals::Instance->outputPath);
+		zRoom->textures[texEntry.first]->Save(Globals::Instance.outputPath);
 
 		zRoom->parent->AddDeclarationIncludeArray(texEntry.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
-			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(zRoom->textures[texEntry.first]->GetName()).c_str(), zRoom->textures[texEntry.first]->GetExternalExtension().c_str()), 
+			Globals::Instance.outputPath.c_str(), Path::GetFileNameWithoutExtension(zRoom->textures[texEntry.first]->GetName()).c_str(), zRoom->textures[texEntry.first]->GetExternalExtension().c_str()), 
 			zRoom->textures[texEntry.first]->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", zRoom->textures[texEntry.first]->GetName().c_str(), texEntry.first), 0);
 	}
 }
@@ -323,13 +323,13 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
 	string sourceOutput = "";
 	
-	if (Globals::Instance->includeFilePrefix)
+	if (Globals::Instance.includeFilePrefix)
 		sourceOutput += StringHelper::Sprintf("extern Gfx %sDlist0x%06X[];\n", zRoom->GetName().c_str(), dList->GetRawDataIndex());
 	else
 		sourceOutput += StringHelper::Sprintf("extern Gfx dlist0x%06X[];\n", dList->GetRawDataIndex());
 
-	for (ZDisplayList* otherDList : dList->otherDLists)
-		sourceOutput += GenDListExterns(otherDList);
+	for (ZDisplayList& otherDList : dList->otherDLists)
+		sourceOutput += GenDListExterns(&otherDList);
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n", zRoom->GetName().c_str(), texEntry.first);

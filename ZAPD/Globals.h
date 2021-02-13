@@ -18,7 +18,7 @@ class GameConfig;
 class Globals
 {
 public:
-	static Globals* Instance;
+	static Globals Instance;
 
 	bool genSourceFile; // Used for extraction
 	bool useExternalResources;

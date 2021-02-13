@@ -60,7 +60,7 @@ std::string SetRoomList::PreGenSourceFiles()
 {
 	string declaration = "";
 
-	for (ZFile* file : Globals::Instance->files)
+	for (ZFile* file : Globals::Instance.files)
 	{
 		for (ZResource* res : file->resources)
 		{

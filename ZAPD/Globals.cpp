@@ -6,11 +6,10 @@
 using namespace tinyxml2;
 using namespace std;
 
-Globals* Globals::Instance;
+Globals Globals::Instance;
 
 Globals::Globals()
 {
-	Instance = this;
 
 	files = std::vector<ZFile*>();
 	segments = std::vector<int>();
@@ -30,8 +29,6 @@ Globals::Globals()
 
 Globals::~Globals()
 {
-	Instance = nullptr;
-
 	for (ZFile* file: files) {
 		delete file;
 	}

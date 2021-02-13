@@ -55,10 +55,7 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	Globals* g = new Globals();
-	int retval = NewMain(argc, argv);
-	delete g;
-	return retval;
+	return NewMain(argc, argv);
 }
 
 int NewMain(int argc, char* argv[])
@@ -105,62 +102,62 @@ int NewMain(int argc, char* argv[])
 
 		if (arg == "-o" || arg == "--outputpath") // Set output path
 		{
-			Globals::Instance->outputPath = argv[i + 1];
+			Globals::Instance.outputPath = argv[i + 1];
 			i++;
 		}
 		else if (arg == "-i" || arg == "--inputpath") // Set input path
 		{
-			Globals::Instance->inputPath = argv[i + 1];
+			Globals::Instance.inputPath = argv[i + 1];
 			i++;
 		}
 		else if (arg == "-b" || arg == "--baserompath") // Set baserom path
 		{
-			Globals::Instance->baseRomPath = argv[i + 1];
+			Globals::Instance.baseRomPath = argv[i + 1];
 			i++;
 		}
 		else if (arg == "-gsf") // Generate source file during extraction
 		{
-			Globals::Instance->genSourceFile = string(argv[i + 1]) == "1";
+			Globals::Instance.genSourceFile = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-ifp") // Include file prefix in generated symbols
 		{
-			Globals::Instance->includeFilePrefix = string(argv[i + 1]) == "1";
+			Globals::Instance.includeFilePrefix = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-tm") // Test Mode
 		{
-			Globals::Instance->testMode = string(argv[i + 1]) == "1";
+			Globals::Instance.testMode = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-profile") // Profile
 		{
-			Globals::Instance->profile = string(argv[i + 1]) == "1";
+			Globals::Instance.profile = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-uer") // Split resources into their individual components (enabled by default)
 		{
-			Globals::Instance->useExternalResources = string(argv[i + 1]) == "1";
+			Globals::Instance.useExternalResources = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-tt") // Set texture type
 		{
-			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
+			Globals::Instance.texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
 			i++;
 		}
 		else if (arg == "-cfg") // Set cfg path
 		{
-			Globals::Instance->cfgPath = argv[i + 1];
+			Globals::Instance.cfgPath = argv[i + 1];
 			i++;
 		}
 		else if (arg == "-sm") // Set symbol map path
 		{
-			Globals::Instance->GenSymbolMap(argv[i + 1]);
+			Globals::Instance.GenSymbolMap(argv[i + 1]);
 			i++;
 		}
 		else if (arg == "-rconf") // Read Config File
 		{
-			Globals::Instance->ReadConfigFile(argv[i + 1]);
+			Globals::Instance.ReadConfigFile(argv[i + 1]);
 			i++;
 		}
 		else if (arg == "-al") // Set actor list
@@ -179,46 +176,46 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (arg == "-v") // Verbose
 		{
-			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
+			Globals::Instance.verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
 		}
 	}
 
-	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+	if (Globals::Instance.verbosity >= VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
-		Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
+		Parse(Globals::Instance.inputPath, Globals::Instance.baseRomPath, Globals::Instance.outputPath, fileMode);
 	}
 	else if (fileMode == ZFileMode::BuildTexture)
 	{
-		TextureType texType = Globals::Instance->texType;
-		string pngFilePath = Globals::Instance->inputPath;
-		string outFilePath = Globals::Instance->outputPath;
+		TextureType texType = Globals::Instance.texType;
+		string pngFilePath = Globals::Instance.inputPath;
+		string outFilePath = Globals::Instance.outputPath;
 
 		BuildAssetTexture(pngFilePath, texType, outFilePath);
 	}
 	else if (fileMode == ZFileMode::BuildBlob)
 	{
-		string blobFilePath = Globals::Instance->inputPath;
-		string outFilePath = Globals::Instance->outputPath;
+		string blobFilePath = Globals::Instance.inputPath;
+		string outFilePath = Globals::Instance.outputPath;
 
 		BuildAssetBlob(blobFilePath, outFilePath);
 	}
 	else if (fileMode == ZFileMode::BuildModelIntermediette)
 	{
-		BuildAssetModelIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
+		BuildAssetModelIntermediette(Globals::Instance.inputPath, Globals::Instance.outputPath);
 	}
 	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
 	{
-		BuildAssetAnimationIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
+		BuildAssetAnimationIntermediette(Globals::Instance.inputPath, Globals::Instance.outputPath);
 	}
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
-		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath), Path::GetDirectoryName(Globals::Instance->cfgPath));
+		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance.inputPath), Path::GetDirectoryName(Globals::Instance.cfgPath));
 
 		if (overlay)
-			File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
+			File::WriteAllText(Globals::Instance.outputPath, overlay->GetSourceOutputCode(""));
 	}
 
 	return 0;
@@ -242,11 +239,11 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 		if (string(child->Name()) == "File")
 		{
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", false);
-			Globals::Instance->files.push_back(file);
+			Globals::Instance.files.push_back(file);
 		}
 	}
 
-	for (ZFile* file : Globals::Instance->files)
+	for (ZFile* file : Globals::Instance.files)
 	{
 		if (fileMode == ZFileMode::Build)
 			file->BuildResources();
@@ -257,10 +254,10 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	}
 
 	// All done, free files
-	for (ZFile* file : Globals::Instance->files)
+	for (ZFile* file : Globals::Instance.files)
 		delete file;
 
-	Globals::Instance->files.clear();
+	Globals::Instance.files.clear();
 
 	return true;
 }

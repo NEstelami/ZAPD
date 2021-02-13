@@ -899,12 +899,12 @@ void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	string format = "rgb5a1"; // TEST
 
 	//tex = HLTexture::FromPNG(fileName, (HLTextureType)ZTexture::GetTextureTypeFromString(format));
-	tex = ZTexture::FromPNG(Path::GetDirectoryName(Globals::Instance->inputPath) + "/" + fileName, ZTexture::GetTextureTypeFromString(format));
+	tex = ZTexture::FromPNG(Path::GetDirectoryName(Globals::Instance.inputPath) + "/" + fileName, ZTexture::GetTextureTypeFromString(format));
 }
 
 std::string HLTextureIntermediette::OutputCode()
 {
-	return StringHelper::Sprintf("#include <../%s/%s.inc.c>", Globals::Instance->outputPath.c_str(), name.c_str());
+	return StringHelper::Sprintf("#include <../%s/%s.inc.c>", Globals::Instance.outputPath.c_str(), name.c_str());
 }
 
 void HLTextureIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root)
@@ -913,7 +913,7 @@ void HLTextureIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XML
 
 	element->SetAttribute("Name", name.c_str());
 	element->SetAttribute("TextureName", (name + "." + tex->GetExternalExtension() + ".png").c_str());
-	tex->Save(Globals::Instance->outputPath);
+	tex->Save(Globals::Instance.outputPath);
 
 	root->InsertEndChild(element);
 }

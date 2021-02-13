@@ -82,11 +82,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	{
 		if (string(gameStr) == "MM")
 		{
-			Globals::Instance->game = ZGame::MM_RETAIL;
+			Globals::Instance.game = ZGame::MM_RETAIL;
 		}
 		else if (string(gameStr) == "SW97" || string(gameStr) == "OOTSW97")
 		{
-			Globals::Instance->game = ZGame::OOT_SW97;
+			Globals::Instance.game = ZGame::OOT_SW97;
 		}
 		else
 		{
@@ -109,7 +109,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (segment != -1)
 	{
 		//printf("Adding Segment %i\n", segment);
-		Globals::Instance->AddSegment(segment);
+		Globals::Instance.AddSegment(segment);
 	}
 
 	string folderName = basePath + "/" + Path::GetFileNameWithoutExtension(name);
@@ -129,7 +129,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		if (child->Attribute("Offset") != NULL)
 			rawDataIndex = strtol(StringHelper::Split(child->Attribute("Offset"), "0x")[1].c_str(), NULL, 16);
 
-		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+		if (Globals::Instance.verbosity >= VERBOSITY_INFO)
 			printf("%s: 0x%06X\n", child->Attribute("Name"), rawDataIndex);
 
 		if (string(child->Name()) == "Texture")
@@ -168,7 +168,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZResource* dList = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName);
+				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName);
 			//else
 				//dList = ZDisplayList::BuildFromXML(child, folderName, mode == ZFileMode::Build);
 			else
@@ -185,11 +185,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZRoom* room = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				room = ZRoom::ExtractFromXML(child, rawData, rawDataIndex, folderName, this, Globals::Instance->lastScene);
+				room = ZRoom::ExtractFromXML(child, rawData, rawDataIndex, folderName, this, Globals::Instance.lastScene);
 
 			if (string(child->Name()) == "Scene")
 			{
-				Globals::Instance->lastScene = room;
+				Globals::Instance.lastScene = room;
 
 				if (segment == -1)
 					segment = SEGMENT_SCENE;
@@ -201,7 +201,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 
 			if (segment != -1)
-				Globals::Instance->AddSegment(segment);
+				Globals::Instance.AddSegment(segment);
 
 			resources.push_back(room);
 
@@ -295,7 +295,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			else
 			{
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+				if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
 					printf("No ZScalar created!!");
 			}
 		}
@@ -315,7 +315,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			else
 			{
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+				if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
 					printf("No ZVector created!!");
 			}
 		}
@@ -335,7 +335,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			else
 			{
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+				if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
 					printf("No ZVtx created!!");
 			}
 		}
@@ -441,19 +441,19 @@ void ZFile::ExtractResources(string outputDir)
 	for (ZResource* res : resources)
 		res->PreGenSourceFiles();
 
-	if (Globals::Instance->genSourceFile)
+	if (Globals::Instance.genSourceFile)
 		GenerateSourceFiles(outputDir);
 
 	for (ZResource* res : resources)
 	{
-		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+		if (Globals::Instance.verbosity >= VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 		
 		res->CalcHash(); // TEST
 		res->Save(outputPath);
 	}
 
-	if (Globals::Instance->testMode)
+	if (Globals::Instance.testMode)
 		GenerateHLIntermediette();
 }
 

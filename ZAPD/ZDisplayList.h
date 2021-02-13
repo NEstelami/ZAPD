@@ -348,7 +348,7 @@ public:
 
 	std::map<uint32_t, std::vector<Vertex>> vertices;
 	std::map<uint32_t, std::string> vtxDeclarations;
-	std::vector<ZDisplayList*> otherDLists;
+	std::vector<ZDisplayList> otherDLists;
 
 	std::map<uint32_t, ZTexture*> textures;
 	std::map<uint32_t, std::string> texDeclarations;

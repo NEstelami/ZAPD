@@ -24,7 +24,7 @@ void ZAnimation::ParseRawData()
 
 void ZAnimation::Save(const std::string& outFolder)
 {
-	if (Globals::Instance->testMode)
+	if (Globals::Instance.testMode)
 	{
 		HLAnimationIntermediette* anim = HLAnimationIntermediette::FromZAnimation(this);
 		string xml = anim->OutputXML();
