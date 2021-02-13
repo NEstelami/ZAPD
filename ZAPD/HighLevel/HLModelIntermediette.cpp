@@ -87,7 +87,7 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	model->blocks.push_back(vertIntr);
 
 	// Go through textures
-	for (pair<uint32_t, ZTexture*> pair : zDisplayList->textures)
+	for (auto& pair : zDisplayList->textures)
 	{
 		HLTextureIntermediette* texIntr = new HLTextureIntermediette();
 		texIntr->tex = pair.second;
@@ -262,7 +262,7 @@ void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton*
 
 	for (int i = 0; i < zSkeleton->limbs.size(); i++)
 	{
-		ZLimbStandard* limb = zSkeleton->limbs[i];
+		auto& limb = zSkeleton->limbs[i];
 
 		for (int j = 0; j < model->blocks.size(); j++)
 		{
@@ -880,14 +880,6 @@ std::string HLDisplayListCmdDrawMesh::OutputCode()
 
 HLTextureIntermediette::HLTextureIntermediette()
 {
-	tex = nullptr;
-}
-
-HLTextureIntermediette::~HLTextureIntermediette()
-{
-	if (tex != nullptr) {
-		delete tex;
-	}
 }
 
 void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)

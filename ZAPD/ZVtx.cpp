@@ -67,9 +67,9 @@ ZResourceType ZVtx::GetResourceType()
     return ZResourceType::Vertex;
 }
 
-ZVtx* ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
+std::shared_ptr<ZVtx> ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
 {
-    ZVtx* vtx = new ZVtx();
+    std::shared_ptr<ZVtx> vtx = std::make_shared<ZVtx>();
 	vtx->rawData = nRawData;
 	vtx->rawDataIndex = rawDataIndex;
     vtx->ParseRawData();

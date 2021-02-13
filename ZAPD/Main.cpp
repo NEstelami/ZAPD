@@ -238,12 +238,11 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	{
 		if (string(child->Name()) == "File")
 		{
-			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", false);
-			Globals::Instance.files.push_back(file);
+			Globals::Instance.files.push_back(std::make_shared<ZFile>(fileMode, child, basePath, outPath, "", false));
 		}
 	}
 
-	for (ZFile* file : Globals::Instance.files)
+	for (auto& file : Globals::Instance.files)
 	{
 		if (fileMode == ZFileMode::Build)
 			file->BuildResources();
@@ -254,9 +253,6 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	}
 
 	// All done, free files
-	for (ZFile* file : Globals::Instance.files)
-		delete file;
-
 	Globals::Instance.files.clear();
 
 	return true;
@@ -266,7 +262,7 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType, cons
 {
 	vector<string> split = StringHelper::Split(outPath, "/");
 	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
-	ZTexture* tex = ZTexture::FromPNG(pngFilePath, texType);
+	auto tex = ZTexture::FromPNG(pngFilePath, texType);
 	string cfgPath = StringHelper::Split(pngFilePath, ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))
@@ -276,22 +272,18 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType, cons
 	string src = tex->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
-
-	delete tex;
 }
 
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 {
 	vector<string> split = StringHelper::Split(outPath, "/");
-	ZBlob* blob = ZBlob::FromFile(blobFilePath);
+	auto blob = ZBlob::FromFile(blobFilePath);
 	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
 
 	//string src = StringHelper::Sprintf("u8 %s[] = \n{\n", name.c_str()) + blob->GetSourceOutputCode(name) + "};\n";
 	string src = blob->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
-
-	delete blob;
 }
 
 void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath)

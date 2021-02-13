@@ -12,9 +12,9 @@ ZVector::ZVector() : ZResource()
 	this->dimensions = 0;
 }
 
-ZVector* ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
+std::shared_ptr<ZVector> ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
 {
-	ZVector* vector = new ZVector();
+	std::shared_ptr<ZVector> vector = std::make_shared<ZVector>();
 	vector->rawData = nRawData;
 	vector->rawDataIndex = rawDataIndex;
 	vector->ParseXML(reader);

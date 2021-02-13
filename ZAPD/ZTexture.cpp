@@ -54,9 +54,9 @@ ZTexture::~ZTexture()
 }
 
 // EXTRACT MODE
-ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
+std::shared_ptr<ZTexture> ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
 {
-	ZTexture* tex = new ZTexture();
+	auto tex = std::make_shared<ZTexture>();
 
 	tex->ParseXML(reader);
 	tex->rawDataIndex = nRawDataIndex;
@@ -70,9 +70,9 @@ ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData,
 	return tex;
 }
 
-ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nName, int nWidth, int nHeight)
+std::shared_ptr<ZTexture> ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nName, int nWidth, int nHeight)
 {
-	ZTexture* tex = new ZTexture();
+	auto tex = std::make_shared<ZTexture>();
 
 	tex->width = nWidth;
 	tex->height = nHeight;
@@ -91,9 +91,9 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 }
 
 // BUILD MODE
-ZTexture* ZTexture::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
+std::shared_ptr<ZTexture> ZTexture::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
 {
-	ZTexture* tex = new ZTexture();
+	auto tex = std::make_shared<ZTexture>();
 
 	tex->ParseXML(reader);
 
@@ -103,10 +103,10 @@ ZTexture* ZTexture::BuildFromXML(XMLElement* reader, string inFolder, bool readF
 	return tex;
 }
 
-ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
+std::shared_ptr<ZTexture> ZTexture::FromPNG(string pngFilePath, TextureType texType)
 {
 	int comp;
-	ZTexture* tex = new ZTexture();
+	auto tex = std::make_shared<ZTexture>();
 	tex->type = texType;
 	tex->name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
 	
@@ -133,9 +133,9 @@ ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 	return tex;
 }
 
-ZTexture* ZTexture::FromHLTexture(HLTexture* hlTex)
+std::shared_ptr<ZTexture> ZTexture::FromHLTexture(HLTexture* hlTex)
 {
-	ZTexture* tex = new ZTexture();
+	auto tex = std::make_shared<ZTexture>();
 
 	tex->width = hlTex->width;
 	tex->height = hlTex->height;

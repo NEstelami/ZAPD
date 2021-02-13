@@ -24,10 +24,8 @@ using namespace std;
 
 ZFile::ZFile()
 {
-	resources = vector<ZResource*>();
 	basePath = "";
 	outputPath = Directory::GetCurrentDirectory();
-	declarations = map<int32_t, Declaration*>();
 	defines = "";
 	baseAddress = 0;
 	rangeStart = 0x000000000;
@@ -57,11 +55,6 @@ ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPa
 
 ZFile::~ZFile()
 {
-	for (ZResource* res : resources) {
-		if (res != nullptr) {
-			delete res;
-		}
-	}
 	resources.clear();
 	for (auto& decl: declarations)
 		delete decl.second;
@@ -134,235 +127,187 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 		if (string(child->Name()) == "Texture")
 		{
-			ZTexture* tex = nullptr;
-
 			if (mode == ZFileMode::Extract)
-				tex = ZTexture::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				resources.push_back(ZTexture::ExtractFromXML(child, rawData, rawDataIndex, folderName));
 			else
-				tex = ZTexture::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+				resources.push_back(ZTexture::BuildFromXML(child, folderName, mode == ZFileMode::Build));
+
+			auto& tex = resources.back();
 
 			tex->SetRawDataIndex(rawDataIndex);
 
 			tex->parent = this;
 
-			resources.push_back(tex);
 			rawDataIndex += tex->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Blob")
 		{
-			ZBlob* blob = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				blob = ZBlob::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				resources.push_back(ZBlob::ExtractFromXML(child, rawData, rawDataIndex, folderName));
 			else
-				blob = ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+				resources.push_back(ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build));
 
+			auto& blob = resources.back();
 			blob->parent = this;
-
-			resources.push_back(blob);
 
 			rawDataIndex += blob->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "DList")
 		{
-			ZResource* dList = nullptr;
-
 			if (mode == ZFileMode::Extract)
-				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName);
+				resources.push_back(ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance.game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName));
 			//else
-				//dList = ZDisplayList::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+				//resources.push_back(ZDisplayList::BuildFromXML(child, folderName, mode == ZFileMode::Build));
 			else
-				dList = ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+				resources.push_back(ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build));
+
+			auto& dList = resources.back();
 
 			dList->parent = this;
-
-			resources.push_back(dList);
 
 			rawDataIndex += dList->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Scene" || string(child->Name()) == "Room")
 		{
-			ZRoom* room = nullptr;
+			if (mode == ZFileMode::Extract) {
+				std::shared_ptr<ZRoom> room = ZRoom::ExtractFromXML(child, rawData, rawDataIndex, folderName, this, Globals::Instance.lastScene);
+				resources.push_back(room);
 
-			if (mode == ZFileMode::Extract)
-				room = ZRoom::ExtractFromXML(child, rawData, rawDataIndex, folderName, this, Globals::Instance.lastScene);
+				if (string(child->Name()) == "Scene")
+				{
+					Globals::Instance.lastScene = room;
 
-			if (string(child->Name()) == "Scene")
-			{
-				Globals::Instance.lastScene = room;
+					if (segment == -1)
+						segment = SEGMENT_SCENE;
+				}
+				else
+				{
+					if (segment == -1)
+						segment = SEGMENT_ROOM;
+				}
 
-				if (segment == -1)
-					segment = SEGMENT_SCENE;
+				if (segment != -1)
+					Globals::Instance.AddSegment(segment);
+
+				rawDataIndex += room->GetRawDataSize();
 			}
-			else
-			{
-				if (segment == -1)
-					segment = SEGMENT_ROOM;
-			}
-
-			if (segment != -1)
-				Globals::Instance.AddSegment(segment);
-
-			resources.push_back(room);
-
-			rawDataIndex += room->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Animation")
 		{
-			ZAnimation* anim = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZNormalAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName));
+				auto& anim = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				anim = ZNormalAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				anim->parent = this;
 
-			anim->parent = this;
-			resources.push_back(anim);
+				rawDataIndex += anim->GetRawDataSize();
+			}
 
-			rawDataIndex += anim->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "PlayerAnimation")
 		{
-			ZLinkAnimation* anim = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZLinkAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName));
+				auto& anim = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				anim = ZLinkAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName);
-
-			anim->parent = this;
-			resources.push_back(anim);
-
-			rawDataIndex += anim->GetRawDataSize();
+				anim->parent = this;
+				rawDataIndex += anim->GetRawDataSize();
+			}
 		}
 		else if (string(child->Name()) == "Skeleton")
 		{
-			ZSkeleton* skeleton = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZSkeleton::FromXML(child, rawData, rawDataIndex, folderName, this));
+				auto& skeleton = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				skeleton = ZSkeleton::FromXML(child, rawData, rawDataIndex, folderName, this);
-
-			resources.push_back(skeleton);
-			rawDataIndex += skeleton->GetRawDataSize();
+				skeleton->parent = this;
+				rawDataIndex += skeleton->GetRawDataSize();
+			}
 		}
 		else if (string(child->Name()) == "Limb")
 		{
-			ZLimbStandard* limb = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZLimbStandard::FromXML(child, rawData, rawDataIndex, folderName, this));
+				auto& limb = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				limb = ZLimbStandard::FromXML(child, rawData, rawDataIndex, folderName, this);
-
-			resources.push_back(limb);
-
-			rawDataIndex += limb->GetRawDataSize();
+				// is this missing a limb->parent = this; ?
+				rawDataIndex += limb->GetRawDataSize();
+			}
 		}
 		else if (string(child->Name()) == "Symbol")
 		{
-			ZResource* res = nullptr;
-
 			if (mode == ZFileMode::Extract)
 			{
-				res = new ZResource();
+				resources.push_back(std::make_shared<ZResource>());
+				auto& res = resources.back();
 				res->SetName(child->Attribute("Name"));
 				res->SetRawDataIndex(rawDataIndex);
 				res->outputDeclaration = false;
 			}
-
-			resources.push_back(res);
 		}
 		else if (string(child->Name()) == "Collision")
 		{
-			ZCollisionHeader* res = nullptr;
-
 			if (mode == ZFileMode::Extract)
 			{
-				res = new ZCollisionHeader(this, child->Attribute("Name"), rawData, rawDataIndex);
+				resources.push_back(std::make_shared<ZCollisionHeader>(this, child->Attribute("Name"), rawData, rawDataIndex));
+				auto& res = resources.back();
 				res->SetName(child->Attribute("Name"));
 				res->SetRawDataIndex(rawDataIndex);
 			}
-
-			resources.push_back(res);
 		}
 		else if (string(child->Name()) == "Scalar")
 		{
-			ZScalar* scalar = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZScalar::ExtractFromXML(child, rawData, rawDataIndex, folderName));
+				auto& scalar = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				scalar = ZScalar::ExtractFromXML(child, rawData, rawDataIndex, folderName);
-
-			if (scalar != nullptr)
-			{
 				scalar->parent = this;
-				resources.push_back(scalar);
 
 				rawDataIndex += scalar->GetRawDataSize();
-			}
-			else
-			{
-				if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
-					printf("No ZScalar created!!");
 			}
 		}
 		else if (string(child->Name()) == "Vector")
 		{
-			ZVector* vector = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZVector::ExtractFromXML(child, rawData, rawDataIndex, folderName));
+				auto& vector = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				vector = ZVector::ExtractFromXML(child, rawData, rawDataIndex, folderName);
-
-			if (vector != nullptr)
-			{
 				vector->parent = this;
-				resources.push_back(vector);
 
 				rawDataIndex += vector->GetRawDataSize();
-			}
-			else
-			{
-				if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
-					printf("No ZVector created!!");
 			}
 		}
 		else if (string(child->Name()) == "Vtx")
 		{
-			ZVtx* vtx = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZVtx::ExtractFromXML(child, rawData, rawDataIndex, folderName));
+				auto& vtx = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				vtx = ZVtx::ExtractFromXML(child, rawData, rawDataIndex, folderName);
-
-			if (vtx != nullptr)
-			{
 				vtx->parent = this;
-				resources.push_back(vtx);
 
 				rawDataIndex += vtx->GetRawDataSize();
-			}
-			else
-			{
-				if (Globals::Instance.verbosity >= VERBOSITY_DEBUG)
-					printf("No ZVtx created!!");
 			}
 		}
 		else if (string(child->Name()) == "Cutscene")
 		{
-			ZCutscene* cs = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZCutscene::ExtractFromXML(child, rawData, rawDataIndex, folderName));
+				auto& cs = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				cs = ZCutscene::ExtractFromXML(child, rawData, rawDataIndex, folderName);
-
-			if (cs != nullptr)
-			{
 				cs->parent = this;
-				resources.push_back(cs);
+
 				rawDataIndex += cs->GetRawDataSize();
 			}
 		}
 		else if (string(child->Name()) == "Array")
 		{
-			ZArray* array = nullptr;
+			if (mode == ZFileMode::Extract) {
+				resources.push_back(ZArray::ExtractFromXML(child, rawData, rawDataIndex, folderName, this));
+				auto& array = resources.back();
 
-			if (mode == ZFileMode::Extract)
-				array = ZArray::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
+				//array->parent = this;
 
-			if (array != nullptr)
-			{
-				resources.push_back(array);
 				rawDataIndex += array->GetRawDataSize();
 			}
 		}
@@ -381,7 +326,7 @@ void ZFile::BuildResources()
 
 	int size = 0;
 
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 		size += res->GetRawDataSize();
 
 	// Make sure size is 16 byte aligned
@@ -391,7 +336,7 @@ void ZFile::BuildResources()
 	vector<uint8_t> file = vector<uint8_t>(size);
 	int fileIndex = 0;
 
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 	{
 		//Console.WriteLine("Building resource " + res.GetName());
 		memcpy(file.data() + fileIndex, res->GetRawData().data(), res->GetRawData().size());
@@ -438,13 +383,13 @@ void ZFile::ExtractResources(string outputDir)
 	if (!Directory::Exists(outputPath))
 		Directory::CreateDirectory(outputPath);
 
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 		res->PreGenSourceFiles();
 
 	if (Globals::Instance.genSourceFile)
 		GenerateSourceFiles(outputDir);
 
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 	{
 		if (Globals::Instance.verbosity >= VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
@@ -457,9 +402,9 @@ void ZFile::ExtractResources(string outputDir)
 		GenerateHLIntermediette();
 }
 
-void ZFile::AddResource(ZResource* res)
+void ZFile::AddResource(std::shared_ptr<ZResource>&& res)
 {
-	resources.push_back(res);
+	resources.push_back(std::move(res));
 }
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body)
@@ -666,7 +611,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	GeneratePlaceholderDeclarations();
 
 	// Generate Code
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 	{
 		string resSrc = res->GetSourceOutputCode(name);
 
@@ -722,7 +667,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	// Generate Header
 	sourceOutput = "";
 
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 	{
 		string resSrc = res->GetSourceOutputHeader("");
 		sourceOutput += resSrc;
@@ -741,7 +686,7 @@ void ZFile::GenerateHLIntermediette()
 	// This is kinda hacky but it gets the job done for now...
 	HLModelIntermediette mdl;
 
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 	{
 		if (typeid(ZDisplayList) == typeid(*res) || typeid(ZSkeleton) == typeid(*res))
 			res->GenerateHLIntermediette(mdl);
@@ -759,7 +704,7 @@ std::string ZFile::GetHeaderInclude()
 void ZFile::GeneratePlaceholderDeclarations()
 {
 	// Generate placeholder declarations
-	for (ZResource* res : resources)
+	for (auto& res : resources)
 	{
 		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
 			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());

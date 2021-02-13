@@ -20,9 +20,9 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, 
 	name = std::move(nName);
 }
 
-ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, const vector<uint8_t>& nRawData, int nRawDataIndex, string nRelPath)
+std::shared_ptr<ZBlob> ZBlob::ExtractFromXML(XMLElement* reader, const vector<uint8_t>& nRawData, int nRawDataIndex, string nRelPath)
 {
-	ZBlob* blob = new ZBlob();
+	std::shared_ptr<ZBlob> blob = make_shared<ZBlob>();
 
 	blob->rawDataIndex = nRawDataIndex;
 
@@ -34,9 +34,9 @@ ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, const vector<uint8_t>& nRawData
 	return blob;
 }
 
-ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool readFile)
+std::shared_ptr<ZBlob> ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool readFile)
 {
-	ZBlob* blob = new ZBlob();
+	std::shared_ptr<ZBlob> blob = make_shared<ZBlob>();
 
 	blob->ParseXML(reader);
 
@@ -46,10 +46,10 @@ ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool
 	return blob;
 }
 
-ZBlob* ZBlob::FromFile(const std::string& filePath)
+std::shared_ptr<ZBlob> ZBlob::FromFile(const std::string& filePath)
 {
 	int comp;
-	ZBlob* blob = new ZBlob();
+	std::shared_ptr<ZBlob> blob = make_shared<ZBlob>();
 	blob->name = StringHelper::Split(Path::GetFileNameWithoutExtension(filePath), ".")[0];
 	blob->rawData = File::ReadAllBytes(filePath);
 

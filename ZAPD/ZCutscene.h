@@ -422,7 +422,7 @@ public:
 
 	ZResourceType GetResourceType() override;
 
-	static ZCutscene* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
+	static std::shared_ptr<ZCutscene> ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
 protected:
 	int numCommands;
 	int endFrame;

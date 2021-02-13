@@ -64,11 +64,11 @@ public:
 
 	bool isPalette;
 
-	static ZTexture* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool readFile);
-	static ZTexture* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
-	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nName, int nWidth, int nHeight);
-	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
-	static ZTexture* FromHLTexture(HLTexture* hlTex);
+	static std::shared_ptr<ZTexture> BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool readFile);
+	static std::shared_ptr<ZTexture> ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath);
+	static std::shared_ptr<ZTexture> FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nName, int nWidth, int nHeight);
+	static std::shared_ptr<ZTexture> FromPNG(std::string pngFilePath, TextureType texType);
+	static std::shared_ptr<ZTexture> FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;

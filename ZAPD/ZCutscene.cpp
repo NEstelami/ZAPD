@@ -126,9 +126,9 @@ int ZCutscene::GetRawDataSize()
 	return size;
 }
 
-ZCutscene* ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
+std::shared_ptr<ZCutscene> ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath)
 {
-	ZCutscene* cs = new ZCutscene(nRawData, rawDataIndex, 9999);
+	std::shared_ptr<ZCutscene> cs = std::make_shared<ZCutscene>(nRawData, rawDataIndex, 9999);
 	cs->rawData = nRawData;
 	cs->rawDataIndex = rawDataIndex;
 	cs->ParseXML(reader);

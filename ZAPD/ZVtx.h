@@ -25,7 +25,7 @@ public:
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType();
 
-	static ZVtx* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
+	static std::shared_ptr<ZVtx> ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
 
 protected:
 };

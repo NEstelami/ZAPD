@@ -30,7 +30,7 @@ class ZFile
 public:
 	std::map<int32_t, Declaration*> declarations;
 	std::string defines;
-	std::vector<ZResource*> resources;
+	std::vector<std::shared_ptr<ZResource>> resources;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 
 	ZFile(std::string nOutPath, std::string nName);
@@ -42,7 +42,7 @@ public:
 	void ExtractResources(std::string outputDir);
 	void BuildResources();
 	void BuildSourceFile(std::string outputDir);
-	void AddResource(ZResource* res);
+	void AddResource(std::shared_ptr<ZResource>&& res);
 
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body);
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, std::string varType, std::string varName, std::string body);

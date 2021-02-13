@@ -27,7 +27,7 @@ ZLimbStandard::~ZLimbStandard()
 	}
 }
 
-ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* parent)
+std::shared_ptr<ZLimbStandard> ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* parent)
 {
 	ZLimbType limbType = ZLimbType::Standard;
 	string limbName = reader->Attribute("Name");
@@ -36,7 +36,7 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 	if (string(reader->Attribute("Type")) == "LOD")
 		limbType = ZLimbType::LOD;
 
-	ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, rawDataIndex);
+	std::shared_ptr<ZLimbStandard> limb = ZLimbStandard::FromRawData(nRawData, rawDataIndex);
 	limb->ParseXML(reader);
 	limb->parent = parent;
 	limb->name = limbName;
@@ -49,9 +49,9 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 	return limb;
 }
 
-ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex)
+std::shared_ptr<ZLimbStandard> ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex)
 {
-	ZLimbStandard* limb = new ZLimbStandard();
+	std::shared_ptr<ZLimbStandard> limb = std::make_shared<ZLimbStandard>();
 
 	limb->address = rawDataIndex;
 
@@ -94,9 +94,6 @@ ZSkeleton::ZSkeleton() : ZResource()
 
 ZSkeleton::~ZSkeleton()
 {
-	for (ZLimbStandard* limb: limbs) {
-		delete limb;
-	}
 	if (rootLimb != nullptr) {
 		delete rootLimb;
 	}
@@ -109,9 +106,9 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	//mdl->blocks.push_back(new HLTerminator());
 }
 
-ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
+std::shared_ptr<ZSkeleton> ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
 {
-	ZSkeleton* skeleton = new ZSkeleton();
+	std::shared_ptr<ZSkeleton> skeleton = std::make_shared<ZSkeleton>();
 	skeleton->name = reader->Attribute("Name");
 	skeleton->parent = nParent;
 	ZLimbType limbType = ZLimbType::Standard;
@@ -156,13 +153,11 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 
 		if (limbType == ZLimbType::Standard)
 		{
-			ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, ptr2);
-			skeleton->limbs.push_back(limb);
+			skeleton->limbs.push_back(ZLimbStandard::FromRawData(nRawData, ptr2));
 		}
 		else
 		{
-			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2);
-			skeleton->limbs.push_back(limb);
+			skeleton->limbs.push_back(ZLimbLOD::FromRawData(nRawData, ptr2));
 		}
 
 		ptr += 4;
@@ -180,7 +175,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 		for (int i = 0; i < limbs.size(); i++)
 		{
-			ZLimbStandard* limb = limbs[i];
+			auto& limb = limbs[i];
 
 			string defaultDLName = StringHelper::Sprintf("%sLimbDL_%06X", defaultPrefix.c_str(), limb->dListPtr);
 			string dListStr = limb->dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limb->dListPtr, defaultDLName).c_str());
@@ -198,7 +193,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 			if (typeid(*limb) == typeid(ZLimbLOD))
 			{
-				ZLimbLOD* limbLOD = (ZLimbLOD*)limbs[i];
+				ZLimbLOD* limbLOD = dynamic_cast<ZLimbLOD*>(limbs[i].get());
 				string defaultFarDLName = StringHelper::Sprintf("%sFarLimbDlist0x%06X", defaultPrefix.c_str(), limbLOD->farDListPtr);
 				string dListStr2 = limbLOD->farDListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limbLOD->farDListPtr, defaultFarDLName).c_str());
 
@@ -236,7 +231,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 		for (int i = 0; i < limbs.size(); i++)
 		{
-			ZLimbStandard* limb = limbs[i];
+			auto& limb = limbs[i];
 
 			//string decl = StringHelper::Sprintf("    &_%sLimb_%04X,\n", prefix.c_str(), limb->address);
 			string decl = "";
@@ -291,9 +286,9 @@ ZLimbLOD::ZLimbLOD() : ZLimbStandard()
 	farDListPtr = 0;
 }
 
-ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
+std::shared_ptr<ZLimbLOD> ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
 {
-	ZLimbLOD* limb = new ZLimbLOD();
+	std::shared_ptr<ZLimbLOD> limb = std::make_shared<ZLimbLOD>();
 
 	limb->address = rawDataIndex;
 

@@ -16,7 +16,6 @@ class SetRoomList : public ZRoomCommand
 {
 public:
 	SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetRoomList();
 
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
 	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
@@ -27,6 +26,6 @@ public:
 	virtual std::string Save();
 
 private:
-	std::vector<RoomEntry*> rooms;
+	std::vector<RoomEntry> rooms;
 	uint32_t segmentOffset;
 };

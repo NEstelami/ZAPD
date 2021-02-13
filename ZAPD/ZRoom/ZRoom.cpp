@@ -41,29 +41,13 @@ using namespace tinyxml2;
 
 ZRoom::ZRoom() : ZResource()
 {
-	textures = map<int32_t, ZTexture*>();
-	commands = vector<ZRoomCommand*>();
-	commandSets = vector<CommandSet>();
 	extDefines = "";
 	scene = nullptr;
 }
 
-ZRoom::~ZRoom()
+std::shared_ptr<ZRoom> ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, std::shared_ptr<ZRoom>& nScene)
 {
-	if (scene != nullptr) {
-		delete scene;
-	}
-	for (ZRoomCommand* cmd : commands) {
-		delete cmd;
-	}
-	for (auto& tex: textures) {
-		delete tex.second;
-	}
-}
-
-ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, ZRoom* nScene)
-{
-	ZRoom* room = new ZRoom();
+	std::shared_ptr<ZRoom> room = std::make_shared<ZRoom>();
 
 	room->parent = nParent;
 	room->rawData = nRawData;
@@ -192,12 +176,10 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(room, room->rawData, address);
-			pathway->InitList(address);
-			pathway->GenerateSourceCodePass1(room->name, 0);
-			pathway->GenerateSourceCodePass2(room->name, 0);
-
-			delete pathway;
+			SetPathways pathway(room.get(), room->rawData, address);
+			pathway.InitList(address);
+			pathway.GenerateSourceCodePass1(room->name, 0);
+			pathway.GenerateSourceCodePass2(room->name, 0);
 		}
 		else if (string(child->Name()) == "TextureHint")
 		{
@@ -213,10 +195,9 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
-			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height);
+			auto tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height);
 			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
 				tex->GetSourceOutputCode(room->name));
-			delete tex;
 		}
 	}
 
@@ -227,7 +208,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 	return room;
 }
 
-void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
+void ZRoom::ParseCommands(std::vector<std::shared_ptr<ZRoomCommand>>& commandList, CommandSet commandSet)
 {
 	bool shouldContinue = true;
 	int currentIndex = 0;
@@ -292,7 +273,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		cmd->cmdIndex = currentIndex;
 		cmd->cmdSet = rawDataIndex;
 
-		commandList.push_back(cmd);
+		commandList.push_back(std::shared_ptr<ZRoomCommand>(cmd));
 
 		if (opcode == RoomCommand::EndMarker)
 			shouldContinue = false;
@@ -308,7 +289,7 @@ void ZRoom::ProcessCommandSets()
 {
 	while (commandSets.size() > 0)
 	{
-		std::vector<ZRoomCommand*> setCommands = std::vector<ZRoomCommand*>();
+		std::vector<std::shared_ptr<ZRoomCommand>> setCommands;
 
 		int32_t commandSet = commandSets[0].address;
 		int8_t segmentNumber = commandSet >> 24;
@@ -317,7 +298,7 @@ void ZRoom::ProcessCommandSets()
 
 		for (int i = 0; i < setCommands.size(); i++)
 		{
-			ZRoomCommand* cmd = setCommands[i];
+			auto& cmd = setCommands[i];
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
@@ -330,11 +311,11 @@ void ZRoom::ProcessCommandSets()
 
 		sourceOutput += "\n";
 
-		for (ZRoomCommand* cmd : setCommands)
+		for (auto& cmd : setCommands)
 			commands.push_back(cmd);
 	}
 
-	for (ZRoomCommand* cmd : commands)
+	for (auto& cmd : commands)
 	{
 		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
 
@@ -357,18 +338,17 @@ void ZRoom::SyotesRoomHack()
 	for (int i = 0; i < sizeof(headerData); i++)
 		rawData.insert(rawData.begin() + i, headerData[i]);
 
-	SetMesh* cmdSetMesh = new SetMesh(this, rawData, 0, -8);
+	commands.push_back(std::make_shared<SetMesh>(this, rawData, 0, -8));
+	auto& cmdSetMesh = commands.back();
 
 	for (int i = 0; i < sizeof(headerData); i++)
 		rawData.erase(rawData.begin());
 
 	cmdSetMesh->cmdIndex = 0;
 	cmdSetMesh->cmdSet = 0;
-
-	commands.push_back(cmdSetMesh);
 }
 
-ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
+std::shared_ptr<ZRoomCommand> ZRoom::FindCommandOfType(RoomCommand cmdType)
 {
 	for (int i = 0; i < commands.size(); i++)
 	{
@@ -376,7 +356,7 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 			return commands[i];
 	}
 
-	return nullptr;
+	return std::shared_ptr<ZRoomCommand>();
 }
 
 size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
@@ -415,7 +395,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 
 	for (int i = 0; i < commands.size(); i++)
 	{
-		if (commands[i] == cmd)
+		if (commands[i].get() == cmd)
 		{
 			cmdIndex = i;
 			break;
@@ -437,7 +417,7 @@ string ZRoom::GetSourceOutputHeader(const std::string& prefix)
 {
 	sourceOutput = "";
 
-	for (ZRoomCommand* cmd : commands)
+	for (auto& cmd : commands)
 		sourceOutput += cmd->GenerateExterns();
 
 	sourceOutput += "\n";
@@ -470,7 +450,11 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		string defines = "";
 		if (textures.size() != 0)
 		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
+			vector<pair<uint32_t, ZTexture*>> texturesSorted;
+			texturesSorted.reserve(textures.size());
+			for (auto& tex: textures) {
+				texturesSorted.emplace_back(tex.first, tex.second.get());
+			}
 
 			sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
 			{
@@ -501,7 +485,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		//parent->externs[0xFFFFFFFF] = defines;
 	}
 
-	for (pair<int32_t, ZTexture*> item : textures)
+	for (auto& item : textures)
 	{
 		string declaration = "";
 
@@ -531,7 +515,7 @@ int ZRoom::GetRawDataSize()
 {
 	int32_t size = 0;
 
-	for (ZRoomCommand* cmd : commands)
+	for (auto& cmd : commands)
 		size += cmd->GetRawDataSize();
 
 	return size;
@@ -544,13 +528,13 @@ ZResourceType ZRoom::GetResourceType()
 
 void ZRoom::Save(const std::string& outFolder)
 {
-	for (ZRoomCommand* cmd : commands)
+	for (auto& cmd : commands)
 		cmd->Save();
 }
 
 void ZRoom::PreGenSourceFiles()
 {
-	for (ZRoomCommand* cmd : commands)
+	for (auto& cmd : commands)
 		cmd->PreGenSourceFiles();
 }
 

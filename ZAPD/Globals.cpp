@@ -10,12 +10,6 @@ Globals Globals::Instance;
 
 Globals::Globals()
 {
-
-	files = std::vector<ZFile*>();
-	segments = std::vector<int>();
-	symbolMap = std::map <uint32_t, std::string>();
-	segmentRefs = map<int, string>();
-	segmentRefFiles = map<int, ZFile*>();
 	game = ZGame::OOT_RETAIL;
 	genSourceFile = true;
 	testMode = false;
@@ -24,17 +18,6 @@ Globals::Globals()
 	useExternalResources = true;
 	lastScene = nullptr;
 	verbosity = VERBOSITY_SILENT;
-}
-
-
-Globals::~Globals()
-{
-	for (ZFile* file: files) {
-		delete file;
-	}
-	for (auto& file: segmentRefFiles) {
-		delete file.second;
-	}
 }
 
 string Globals::FindSymbolSegRef(int segNumber, uint32_t symbolAddress)
@@ -61,13 +44,9 @@ string Globals::FindSymbolSegRef(int segNumber, uint32_t symbolAddress)
 			{
 				if (string(child->Name()) == "File")
 				{
-					ZFile* file = new ZFile(fileMode, child, "", "", "", true);
-					file->GeneratePlaceholderDeclarations();
-					if (segmentRefFiles.find(segNumber) != segmentRefFiles.end()) {
-						// Maybe print an error (?)
-						delete segmentRefFiles[segNumber];
-					}
-					segmentRefFiles[segNumber] = file;
+					segmentRefFiles[segNumber] = std::make_shared<ZFile>(fileMode, child, "", "", "", true);;
+					segmentRefFiles[segNumber]->GeneratePlaceholderDeclarations();
+
 					break;
 				}
 			}
@@ -131,13 +110,4 @@ void Globals::AddSegment(int segment)
 bool Globals::HasSegment(int segment)
 {
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
-}
-
-GameConfig::GameConfig()
-{
-	segmentRefs = map<int, string>();
-	segmentRefFiles = map<int, ZFile*>();
-	symbolMap = std::map<uint32_t, std::string>();
-	actorList = std::vector<std::string>();
-	objectList = std::vector<std::string>();
 }

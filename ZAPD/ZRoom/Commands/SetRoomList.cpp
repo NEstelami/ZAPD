@@ -12,23 +12,14 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	int numRooms = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
-	rooms = vector<RoomEntry*>();
-
 	int32_t currentPtr = segmentOffset;
 
 	for (int i = 0; i < numRooms; i++)
 	{
-		RoomEntry* entry = new RoomEntry(rawData, currentPtr);
-		rooms.push_back(entry);
+		rooms.emplace_back(rawData, currentPtr);
 
 		currentPtr += 8;
 	}
-}
-
-SetRoomList::~SetRoomList()
-{
-	for (RoomEntry* entry : rooms)
-		delete entry;
 }
 
 string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)
@@ -60,11 +51,11 @@ std::string SetRoomList::PreGenSourceFiles()
 {
 	string declaration = "";
 
-	for (ZFile* file : Globals::Instance.files)
+	for (auto& file : Globals::Instance.files)
 	{
-		for (ZResource* res : file->resources)
+		for (auto& res : file->resources)
 		{
-			if (res->GetResourceType() == ZResourceType::Room && res != zRoom)
+			if (res->GetResourceType() == ZResourceType::Room && res.get() != zRoom)
 			{
 				string roomName = res->GetName();
 				declaration += StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(), roomName.c_str());

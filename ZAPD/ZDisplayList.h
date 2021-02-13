@@ -339,7 +339,7 @@ protected:
 	void Opcode_G_ENDDL(uint64_t data, int i, std::string prefix, char* line);
 public:
 	std::string sceneSegName;
-	ZRoom* scene;
+	std::shared_ptr<ZRoom> scene;
 	std::vector<uint64_t> instructions;
 
 	DListType dListType;
@@ -348,9 +348,9 @@ public:
 
 	std::map<uint32_t, std::vector<Vertex>> vertices;
 	std::map<uint32_t, std::string> vtxDeclarations;
-	std::vector<ZDisplayList> otherDLists;
+	std::vector<std::shared_ptr<ZDisplayList>> otherDLists;
 
-	std::map<uint32_t, ZTexture*> textures;
+	std::map<uint32_t, std::shared_ptr<ZTexture>> textures;
 	std::map<uint32_t, std::string> texDeclarations;
 
 	std::vector<uint32_t> references;
@@ -359,14 +359,13 @@ public:
 	std::vector<uint8_t> fileData;
 
 	ZDisplayList();
-	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
-	~ZDisplayList();
+	ZDisplayList(const std::vector<uint8_t> &nRawData, int rawDataIndex, int rawDataSize);
 
-	static ZDisplayList* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, std::string nRelPath);
-	static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool readFile);
+	static std::shared_ptr<ZDisplayList> ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, std::string nRelPath);
+	static std::shared_ptr<ZDisplayList> BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool readFile);
 
 	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(std::vector<uint8_t> fileData, std::map<uint32_t, ZTexture*>& textures, ZRoom* scene, ZFile* parent, std::string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette);
+	static bool TextureGenCheck(std::vector<uint8_t> fileData, std::map<uint32_t, std::shared_ptr<ZTexture>>& textures, std::shared_ptr<ZRoom> scene, ZFile* parent, std::string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette);
 	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex, DListType dListType);
 
 	std::vector<uint8_t> GetRawData();

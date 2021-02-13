@@ -31,15 +31,14 @@ public:
 	TextureType texType;
 	ZGame game;
 
-	std::vector<ZFile*> files;
+	std::vector<std::shared_ptr<ZFile>> files;
 	std::vector<int> segments;
 	std::map<int, std::string> segmentRefs;
-	std::map<int, ZFile*> segmentRefFiles;
-	ZRoom* lastScene;
+	std::map<int, std::shared_ptr<ZFile>> segmentRefFiles;
+	std::shared_ptr<ZRoom> lastScene;
 	std::map<uint32_t, std::string> symbolMap;
 
 	Globals();
-	~Globals();
 	std::string FindSymbolSegRef(int segNumber, uint32_t symbolAddress);
 	void ReadConfigFile(const std::string& configFilePath);
 	void GenSymbolMap(const std::string& symbolMapPath);
@@ -51,15 +50,10 @@ class GameConfig
 {
 public:
 	std::map<int, std::string> segmentRefs;
-	std::map<int, ZFile*> segmentRefFiles;
+	std::map<int, std::shared_ptr<ZFile>> segmentRefFiles;
 	std::map<uint32_t, std::string> symbolMap;
 	std::vector<std::string> actorList;
 	std::vector<std::string> objectList;
-
-	GameConfig();
-
-private:
-
 };
 
 /*

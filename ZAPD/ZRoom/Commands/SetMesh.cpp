@@ -295,8 +295,8 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 
 	//zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None, dList->GetRawDataSize(), "static Gfx", srcVarName, dList->GetRawDataSize() / 8, sourceOutput);
 
-	for (ZDisplayList& otherDList : dList->otherDLists)
-		GenDListDeclarations(rawData, &otherDList);
+	for (auto& otherDList : dList->otherDLists)
+		GenDListDeclarations(rawData, otherDList.get());
 
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
 	{
@@ -328,8 +328,8 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	else
 		sourceOutput += StringHelper::Sprintf("extern Gfx dlist0x%06X[];\n", dList->GetRawDataIndex());
 
-	for (ZDisplayList& otherDList : dList->otherDLists)
-		sourceOutput += GenDListExterns(&otherDList);
+	for (auto& otherDList : dList->otherDLists)
+		sourceOutput += GenDListExterns(otherDList.get());
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n", zRoom->GetName().c_str(), texEntry.first);

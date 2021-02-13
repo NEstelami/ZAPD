@@ -30,9 +30,9 @@ ZDisplayList::ZDisplayList() : ZResource()
 }
 
 // EXTRACT MODE
-ZDisplayList* ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize, string nRelPath)
+std::shared_ptr<ZDisplayList> ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize, string nRelPath)
 {
-	ZDisplayList* dList = new ZDisplayList();
+	std::shared_ptr<ZDisplayList> dList = std::make_shared<ZDisplayList>();
 
 	dList->ParseXML(reader);
 
@@ -48,31 +48,21 @@ ZDisplayList* ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> n
 	return dList;
 }
 
-ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
+std::shared_ptr<ZDisplayList> ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
 {
-	ZDisplayList* dList = new ZDisplayList();
+	std::shared_ptr<ZDisplayList> dList = std::make_shared<ZDisplayList>();
 
 	dList->SetName(reader->Attribute("Name"));
 	return dList;
 }
 
-ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize) : ZDisplayList()
+ZDisplayList::ZDisplayList(const vector<uint8_t> &nRawData, int nRawDataIndex, int rawDataSize) : ZDisplayList()
 {
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	name = StringHelper::Sprintf("Dlist0x%06X", rawDataIndex);
 	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
-}
-
-ZDisplayList::~ZDisplayList()
-{
-	if (scene != nullptr) {
-		delete scene;
-	}
-	for (auto& tex: textures) {
-		delete tex.second;
-	}
 }
 
 void ZDisplayList::ParseRawData()
@@ -272,9 +262,10 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 			//sprintf(line, "gsDPWord(%i, 0),", h);
 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(), h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList& nList = otherDLists.emplace_back(fileData, h & 0x00FFFFFF, GetDListLength(fileData, h & 0x00FFFFFF, dListType));
-			nList.scene = scene;
-			nList.parent = parent;
+			otherDLists.push_back(std::make_shared<ZDisplayList>(fileData, h & 0x00FFFFFF, GetDListLength(fileData, h & 0x00FFFFFF, dListType)));
+			auto& nList = otherDLists.back();
+			nList->scene = scene;
+			nList->parent = parent;
 
 			i++;
 		}
@@ -702,9 +693,10 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, int i, std::string prefix, char* l
 	}
 	else
 	{
-		ZDisplayList& nList = otherDLists.emplace_back(fileData, data & 0x00FFFFFF, GetDListLength(fileData, data & 0x00FFFFFF, dListType));
-		nList.scene = scene;
-		nList.parent = parent;
+		otherDLists.push_back(std::make_shared<ZDisplayList>(fileData, data & 0x00FFFFFF, GetDListLength(fileData, data & 0x00FFFFFF, dListType)));
+		auto& nList = otherDLists.back();
+		nList->scene = scene;
+		nList->parent = parent;
 	}
 }
 
@@ -1555,7 +1547,11 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	{
 		if (scene != nullptr && scene->textures.size() != 0)
 		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(scene->textures.begin(), scene->textures.end());
+			vector<pair<uint32_t, ZTexture*>> texturesSorted;
+			texturesSorted.reserve(scene->textures.size());
+			for (auto& tex: scene->textures) {
+				texturesSorted.emplace_back(tex.first, tex.second.get());
+			}
 
 			sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
 				{
@@ -1585,7 +1581,11 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
+			vector<pair<uint32_t, ZTexture*>> texturesSorted;
+			texturesSorted.reserve(textures.size());
+			for (auto& tex: textures) {
+				texturesSorted.emplace_back(tex.first, tex.second.get());
+			}
 
 			sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
 				{
@@ -1624,7 +1624,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		// Generate Texture Declarations
-		for (pair<int32_t, ZTexture*> item : textures)
+		for (auto& item : textures)
 		{
 			string declaration = "";
 
@@ -1672,7 +1672,7 @@ void ZDisplayList::TextureGenCheck(string prefix)
 }
 
 // HOTSPOT
-bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZTexture*>& textures, ZRoom* scene, ZFile* parent, string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette)
+bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, std::shared_ptr<ZTexture>>& textures, std::shared_ptr<ZRoom> scene, ZFile* parent, string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette)
 {
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
 
@@ -1683,29 +1683,22 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 	{
 		if (segmentNumber != 2) // Not from a scene file
 		{
-			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr), texWidth, texHeight);
-			tex->isPalette = texIsPalette;
-			if (textures.find(texAddr) != textures.end()) {
-				delete textures[texAddr];
-			}
-			textures[texAddr] = tex;
+			textures[texAddr] = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr), texWidth, texHeight);
+			textures[texAddr]->isPalette = texIsPalette;
 
 			return true;
 		}
 		else
 		{
-			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
+			auto tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
 				StringHelper::Sprintf("%sTex_%06X", Globals::Instance.lastScene->GetName().c_str(), texAddr), texWidth, texHeight);
 
 			if (scene != nullptr)
 			{
-				if (textures.find(texAddr) != textures.end()) {
-					delete textures[texAddr];
-				}
-				scene->textures[texAddr] = tex;
 				scene->parent->AddDeclarationIncludeArray(texAddr, StringHelper::Sprintf("%s/%s.%s.inc.c",
 					Globals::Instance.outputPath.c_str(), Path::GetFileNameWithoutExtension(tex->GetName()).c_str(), tex->GetExternalExtension().c_str()), tex->GetRawDataSize(),
 					"u64", StringHelper::Sprintf("%sTex_%06X", Globals::Instance.lastScene->GetName().c_str(), texAddr), 0);
+				scene->textures[texAddr] = std::move(tex);
 			}
 
 			return true;

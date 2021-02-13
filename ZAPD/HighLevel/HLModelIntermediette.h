@@ -68,7 +68,7 @@ public:
 class HLTextureIntermediette : public HLIntermediette
 {
 public:
-	ZTexture* tex;
+	std::shared_ptr<ZTexture> tex;
 	std::string fileName;
 
 	HLTextureIntermediette();

@@ -12,29 +12,27 @@
 class ZRoom : public ZResource
 {
 protected:
-	std::vector<ZRoomCommand*> commands;
+	std::vector<std::shared_ptr<ZRoomCommand>> commands;
 
 	std::string GetSourceOutputHeader(const std::string& prefix);
 	std::string GetSourceOutputCode(const std::string& prefix);
 	void ProcessCommandSets();
 	void SyotesRoomHack();
 
-	ZRoom();
-
 public:
-	ZRoom* scene;
-	std::map<int32_t, ZTexture*> textures;
+	std::shared_ptr<ZRoom> scene;
+	std::map<int32_t, std::shared_ptr<ZTexture>> textures;
 	std::vector<CommandSet> commandSets;
 
 	std::string extDefines;
 
-	~ZRoom();
+	ZRoom();
 
-	static ZRoom* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent, ZRoom* nScene);
-	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
+	static std::shared_ptr<ZRoom> ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent, std::shared_ptr<ZRoom>& nScene);
+	void ParseCommands(std::vector<std::shared_ptr<ZRoomCommand>>& commandList, CommandSet commandSet);
 	size_t GetDeclarationSizeFromNeighbor(int declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
-	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
+	std::shared_ptr<ZRoomCommand> FindCommandOfType(RoomCommand cmdType);
 	std::vector<uint8_t> GetRawData();
 	int GetRawDataSize();
 	virtual ZResourceType GetResourceType();
