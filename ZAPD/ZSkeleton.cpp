@@ -20,6 +20,13 @@ ZLimbStandard::ZLimbStandard()
 	children = vector<ZLimbStandard*>();
 }
 
+ZLimbStandard::~ZLimbStandard()
+{
+	for (ZLimbStandard* limb: children) {
+		delete limb;
+	}
+}
+
 ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* parent)
 {
 	ZLimbType limbType = ZLimbType::Standard;
@@ -81,9 +88,18 @@ int ZLimbStandard::GetRawDataSize()
 ZSkeleton::ZSkeleton() : ZResource()
 {
 	type = ZSkeletonType::Normal;
-	limbs = vector<ZLimbStandard*>();
 	rootLimb = nullptr;
 	dListCount = 0;
+}
+
+ZSkeleton::~ZSkeleton()
+{
+	for (ZLimbStandard* limb: limbs) {
+		delete limb;
+	}
+	if (rootLimb != nullptr) {
+		delete rootLimb;
+	}
 }
 
 void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
@@ -171,10 +187,10 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 			if (limb->dListPtr != 0 && parent->GetDeclaration(limb->dListPtr) == nullptr)
 			{
-				ZDisplayList* dList = new ZDisplayList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
-				dList->parent = parent;
-				dList->SetName(StringHelper::Sprintf("%sLimbDL_%06X", defaultPrefix.c_str(), limb->dListPtr));
-				dList->GetSourceOutputCode(defaultPrefix);
+				ZDisplayList dList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+				dList.parent = parent;
+				dList.SetName(StringHelper::Sprintf("%sLimbDL_%06X", defaultPrefix.c_str(), limb->dListPtr));
+				dList.GetSourceOutputCode(defaultPrefix);
 			}
 
 			string entryStr = "";
@@ -188,10 +204,10 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 				if (limbLOD->farDListPtr != 0 && parent->GetDeclaration(limbLOD->farDListPtr) == nullptr)
 				{
-					ZDisplayList* dList = new ZDisplayList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
-					dList->parent = parent;
-					dList->SetName(StringHelper::Sprintf("%s_farLimbDlist_%06X", defaultPrefix.c_str(), limbLOD->farDListPtr));
-					dList->GetSourceOutputCode(defaultPrefix);
+					ZDisplayList dList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+					dList.parent = parent;
+					dList.SetName(StringHelper::Sprintf("%s_farLimbDlist_%06X", defaultPrefix.c_str(), limbLOD->farDListPtr));
+					dList.GetSourceOutputCode(defaultPrefix);
 				}
 
 				entryType = "LodLimb";

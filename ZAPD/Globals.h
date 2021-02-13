@@ -39,6 +39,7 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 
 	Globals();
+	~Globals();
 	std::string FindSymbolSegRef(int segNumber, uint32_t symbolAddress);
 	void ReadConfigFile(const std::string& configFilePath);
 	void GenSymbolMap(const std::string& symbolMapPath);

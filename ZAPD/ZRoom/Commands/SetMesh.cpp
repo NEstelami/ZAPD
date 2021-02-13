@@ -8,6 +8,24 @@
 
 using namespace std;
 
+MeshEntry0::MeshEntry0()
+{
+	opaqueDList = nullptr;
+	translucentDList = nullptr;
+}
+
+MeshEntry0::~MeshEntry0()
+{
+	if (opaqueDList != nullptr) delete opaqueDList;
+	if (translucentDList != nullptr) delete translucentDList;
+}
+
+MeshHeader0::~MeshHeader0()
+{
+	for (MeshEntry0* entry: entries)
+		delete entry;
+}
+
 SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	data = rawData[rawDataIndex + 1];
@@ -20,7 +38,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 	{
 		MeshHeader0* meshHeader0 = new MeshHeader0();
 		meshHeader0->headerType = 0;
-		meshHeader0->entries = vector<MeshEntry0*>();
+		//meshHeader0->entries = vector<MeshEntry0*>();
 
 		meshHeader0->dListStart = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
 		meshHeader0->dListEnd = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, segmentOffset + 8));

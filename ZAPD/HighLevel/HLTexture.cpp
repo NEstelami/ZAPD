@@ -4,6 +4,13 @@
 
 using namespace std;
 
+HLTexture::~HLTexture()
+{
+	if (bmpRgba != nullptr) {
+		stbi_image_free(bmpRgba);
+	}
+}
+
 HLTexture* HLTexture::FromPNG(std::string pngFilePath, HLTextureType texType)
 {
 	int comp;

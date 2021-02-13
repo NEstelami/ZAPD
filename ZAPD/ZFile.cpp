@@ -59,6 +59,8 @@ ZFile::~ZFile()
 {
 	for (ZResource* res : resources)
 		delete res;
+	for (auto& decl: declarations)
+		delete decl.second;
 }
 
 void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, bool placeholderMode)
@@ -712,16 +714,16 @@ void ZFile::GenerateSourceFiles(string outputDir)
 void ZFile::GenerateHLIntermediette()
 {
 	// This is kinda hacky but it gets the job done for now...
-	HLModelIntermediette* mdl = new HLModelIntermediette();
+	HLModelIntermediette mdl;
 
 	for (ZResource* res : resources)
 	{
 		if (typeid(ZDisplayList) == typeid(*res) || typeid(ZSkeleton) == typeid(*res))
-			res->GenerateHLIntermediette(*mdl);
+			res->GenerateHLIntermediette(mdl);
 	}
 
-	std::string test = mdl->ToOBJFile();
-	std::string test2 = mdl->ToFBXFile();
+	std::string test = mdl.ToOBJFile();
+	std::string test2 = mdl.ToFBXFile();
 }
 
 std::string ZFile::GetHeaderInclude()

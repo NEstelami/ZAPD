@@ -50,8 +50,15 @@ ZRoom::ZRoom() : ZResource()
 
 ZRoom::~ZRoom()
 {
-	for (ZRoomCommand* cmd : commands)
+	if (scene != nullptr) {
+		delete scene;
+	}
+	for (ZRoomCommand* cmd : commands) {
 		delete cmd;
+	}
+	for (auto& tex: textures) {
+		delete tex.second;
+	}
 }
 
 ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, ZRoom* nScene)
@@ -99,15 +106,14 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+			ZDisplayList dList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 
 			if (child->Attribute("Name") != NULL)
 				name = string(child->Attribute("Name"));
 			else
 				name = room->name;
 
-			dList->GetSourceOutputCode(name);
-			delete dList;
+			dList.GetSourceOutputCode(name);
 		}
 		else if (string(child->Name()) == "BlobHint")
 		{

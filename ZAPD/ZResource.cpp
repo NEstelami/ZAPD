@@ -14,6 +14,13 @@ ZResource::ZResource()
 	outputDeclaration = true;
 }
 
+ZResource::~ZResource()
+{
+	if (parent != nullptr) {
+		//delete parent;
+	}
+}
+
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 {
 	if (reader->Attribute("Name") != nullptr)

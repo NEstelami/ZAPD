@@ -25,7 +25,7 @@ public:
 		char* data = new char[fileSize];
 		file.read(data, fileSize);
 		std::vector<uint8_t> result = std::vector<uint8_t>(data, data + fileSize);
-		delete data;
+		delete[] data;
 
 		return result;
 	};
@@ -39,7 +39,7 @@ public:
 		memset(data, 0, fileSize + 1);
 		file.read(data, fileSize);
 		std::string str = std::string((const char*)data);
-		delete data;
+		delete[] data;
 
 		return str;
 	};

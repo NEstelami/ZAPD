@@ -49,6 +49,7 @@ public:
 	bool outputDeclaration;
 
 	ZResource();
+	~ZResource();
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	virtual void Save(const std::string& outFolder);
 	virtual void PreGenSourceFiles();

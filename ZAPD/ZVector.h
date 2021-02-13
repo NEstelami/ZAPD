@@ -10,10 +10,6 @@
 class ZVector : public ZResource
 {
 public:
-	std::vector<ZScalar*> scalars;
-	ZScalarType scalarType;
-	uint32_t dimensions;
-
 	ZVector();
 
 	void ParseXML(tinyxml2::XMLElement* reader);
@@ -27,5 +23,8 @@ public:
 
 	static ZVector* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
 
-protected:
+private:
+	std::vector<ZScalar> scalars;
+	ZScalarType scalarType;
+	uint32_t dimensions;
 };

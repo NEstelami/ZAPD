@@ -23,6 +23,7 @@ struct ZLimbStandard : public ZResource
 	std::vector<ZLimbStandard*> children;
 
 	ZLimbStandard();
+	~ZLimbStandard();
 	static ZLimbStandard* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
@@ -56,6 +57,7 @@ public:
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
 	ZSkeleton();
+	~ZSkeleton();
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
 	void Save(const std::string& outFolder) override;

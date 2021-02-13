@@ -27,6 +27,19 @@ Globals::Globals()
 	verbosity = VERBOSITY_SILENT;
 }
 
+
+Globals::~Globals()
+{
+	Instance = nullptr;
+
+	for (ZFile* file: files) {
+		delete file;
+	}
+	for (auto& file: segmentRefFiles) {
+		delete file.second;
+	}
+}
+
 string Globals::FindSymbolSegRef(int segNumber, uint32_t symbolAddress)
 {
 	if (segmentRefs.find(segNumber) != segmentRefs.end())

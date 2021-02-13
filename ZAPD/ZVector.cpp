@@ -8,7 +8,6 @@
 
 ZVector::ZVector() : ZResource()
 {
-	scalars = std::vector<ZScalar*>();
 	this->scalarType = ZSCALAR_NONE;
 	this->dimensions = 0;
 }
@@ -43,13 +42,14 @@ void ZVector::ParseRawData()
 
 	for (int i = 0; i < this->dimensions; i++) 
 	{
-		ZScalar* scalar = new ZScalar(this->scalarType);
-		scalar->rawDataIndex = currentRawDataIndex;
-		scalar->rawData = this->rawData;
-		scalar->ParseRawData();
-		currentRawDataIndex += scalar->GetRawDataSize();
+		this->scalars.emplace_back(this->scalarType);
+		ZScalar& scalar = this->scalars.back();
 
-		this->scalars.push_back(scalar);
+		scalar.rawDataIndex = currentRawDataIndex;
+		scalar.rawData = this->rawData;
+		scalar.ParseRawData();
+		currentRawDataIndex += scalar.GetRawDataSize();
+
 	}
 
 	// Ensure the scalars vector has the same number of elements as the vector dimension.
@@ -60,7 +60,7 @@ int ZVector::GetRawDataSize()
 {
 	int size = 0;
 	for (int i = 0; i < this->scalars.size(); i++)
-		size += this->scalars[i]->GetRawDataSize();
+		size += this->scalars[i].GetRawDataSize();
 	return size;
 }
 
@@ -98,7 +98,7 @@ std::string ZVector::GetSourceValue()
 {
 	std::vector<std::string> strings = std::vector<std::string>();
 	for (int i = 0; i < this->scalars.size(); i++)
-		strings.push_back(scalars[i]->GetSourceValue());
+		strings.push_back(scalars[i].GetSourceValue());
 	return "{ " + StringHelper::Implode(strings, ", ") + " }";
 }
 

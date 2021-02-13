@@ -249,6 +249,12 @@ CutsceneCommandSetCameraPos::CutsceneCommandSetCameraPos(const vector<uint8_t>& 
 	}
 }
 
+CutsceneCommandSetCameraPos::~CutsceneCommandSetCameraPos()
+{
+	for (CutsceneCameraPoint* entry: entries)
+		delete entry;
+}
+
 // TODO
 string CutsceneCommandSetCameraPos::GetCName(const std::string& prefix)
 {
@@ -330,6 +336,12 @@ CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const vector<uint8_t>& rawData, i
 	}
 }
 
+CutsceneCommandFadeBGM::~CutsceneCommandFadeBGM()
+{
+	for (MusicFadeEntry* entry: entries)
+		delete entry;
+}
+
 string CutsceneCommandFadeBGM::GetCName(const std::string& prefix)
 {
 	return "CsCmdMusicFade";
@@ -384,6 +396,12 @@ CutsceneCommandPlayBGM::CutsceneCommandPlayBGM(const vector<uint8_t>& rawData, i
 	}
 }
 
+CutsceneCommandPlayBGM::~CutsceneCommandPlayBGM()
+{
+	for (MusicChangeEntry* entry: entries)
+		delete entry;
+}
+
 string CutsceneCommandPlayBGM::GenerateSourceCode(const std::string& roomName, int baseAddress)
 {
 	string result = "";
@@ -421,6 +439,12 @@ CutsceneCommandStopBGM::CutsceneCommandStopBGM(const vector<uint8_t>& rawData, i
 		entries.push_back(new MusicChangeEntry(rawData, rawDataIndex));
 		rawDataIndex += 0x30;
 	}
+}
+
+CutsceneCommandStopBGM::~CutsceneCommandStopBGM()
+{
+	for (MusicChangeEntry* entry: entries)
+		delete entry;
 }
 
 string CutsceneCommandStopBGM::GenerateSourceCode(const std::string& roomName, int baseAddress)
@@ -477,6 +501,12 @@ CutsceneCommandEnvLighting::CutsceneCommandEnvLighting(const vector<uint8_t>& ra
 	}
 }
 
+CutsceneCommandEnvLighting::~CutsceneCommandEnvLighting()
+{
+	for (EnvLightingEntry* entry: entries)
+		delete entry;
+}
+
 string CutsceneCommandEnvLighting::GenerateSourceCode(const std::string& roomName, int baseAddress)
 {
 	string result = "";
@@ -526,6 +556,12 @@ CutsceneCommandUnknown9::CutsceneCommandUnknown9(const vector<uint8_t>& rawData,
 		entries.push_back(new Unknown9Entry(rawData, rawDataIndex));
 		rawDataIndex += 0x0C;
 	}
+}
+
+CutsceneCommandUnknown9::~CutsceneCommandUnknown9()
+{
+	for (Unknown9Entry* entry: entries)
+		delete entry;
 }
 
 string CutsceneCommandUnknown9::GenerateSourceCode(const std::string& roomName, int baseAddress)
@@ -582,6 +618,12 @@ CutsceneCommandUnknown::CutsceneCommandUnknown(const vector<uint8_t>& rawData, i
 	}
 }
 
+CutsceneCommandUnknown::~CutsceneCommandUnknown()
+{
+	for (UnkEntry* entry: entries)
+		delete entry;
+}
+
 string CutsceneCommandUnknown::GenerateSourceCode(const std::string& roomName, int baseAddress)
 {
 	string result = "";
@@ -631,6 +673,12 @@ CutsceneCommandDayTime::CutsceneCommandDayTime(const vector<uint8_t>& rawData, i
 	}
 }
 
+CutsceneCommandDayTime::~CutsceneCommandDayTime()
+{
+	for (DayTimeEntry* entry: entries)
+		delete entry;
+}
+
 string CutsceneCommandDayTime::GetCName(const std::string& prefix)
 {
 	return "CsCmdDayTime";
@@ -677,6 +725,12 @@ CutsceneCommandTextbox::CutsceneCommandTextbox(const vector<uint8_t>& rawData, i
 		entries.push_back(new TextboxEntry(rawData, rawDataIndex));
 		rawDataIndex += 12;
 	}
+}
+
+CutsceneCommandTextbox::~CutsceneCommandTextbox()
+{
+	for (TextboxEntry* entry: entries)
+		delete entry;
 }
 
 string CutsceneCommandTextbox::GetCName(const std::string& prefix)
@@ -743,6 +797,12 @@ CutsceneCommandActorAction::CutsceneCommandActorAction(const vector<uint8_t>& ra
 		entries.push_back(new ActorAction(rawData, rawDataIndex));
 		rawDataIndex += 0x30;
 	}
+}
+
+CutsceneCommandActorAction::~CutsceneCommandActorAction()
+{
+	for (ActorAction* entry: entries)
+		delete entry;
 }
 
 string CutsceneCommandActorAction::GenerateSourceCode(const std::string& roomName, int baseAddress)
@@ -857,6 +917,12 @@ CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(const vector<uint8_t>
 		entries.push_back(new SpecialActionEntry(rawData, rawDataIndex));
 		rawDataIndex += 0x30;
 	}
+}
+
+CutsceneCommandSpecialAction::~CutsceneCommandSpecialAction()
+{
+	for (SpecialActionEntry* entry: entries)
+		delete entry;
 }
 
 string CutsceneCommandSpecialAction::GenerateSourceCode(const std::string& roomName, int baseAddress)

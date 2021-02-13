@@ -20,7 +20,6 @@ protected:
 	void SyotesRoomHack();
 
 	ZRoom();
-	~ZRoom();
 
 public:
 	ZRoom* scene;
@@ -28,6 +27,8 @@ public:
 	std::vector<CommandSet> commandSets;
 
 	std::string extDefines;
+
+	~ZRoom();
 
 	static ZRoom* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent, ZRoom* nScene);
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);

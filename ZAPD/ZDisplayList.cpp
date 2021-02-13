@@ -73,6 +73,19 @@ ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawD
 	ParseRawData();
 }
 
+ZDisplayList::~ZDisplayList()
+{
+	if (scene != nullptr) {
+		delete scene;
+	}
+	for (ZDisplayList* nList: otherDLists) {
+		delete nList;
+	}
+	for (auto& tex: textures) {
+		delete tex.second;
+	}
+}
+
 void ZDisplayList::ParseRawData()
 {
 	int numInstructions = (int)rawData.size() / 8;

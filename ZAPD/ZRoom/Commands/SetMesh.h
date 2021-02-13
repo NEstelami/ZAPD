@@ -17,6 +17,9 @@ public:
 
 	ZDisplayList* opaqueDList;
 	ZDisplayList* translucentDList;
+
+	MeshEntry0();
+	~MeshEntry0();
 };
 
 class MeshHeader0 : public MeshHeaderBase
@@ -25,6 +28,8 @@ public:
 	std::vector<MeshEntry0*> entries;
 	uint32_t dListStart;
 	uint32_t dListEnd;
+
+	~MeshHeader0();
 };
 
 class MeshHeader1Base : public MeshHeaderBase

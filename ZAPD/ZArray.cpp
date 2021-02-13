@@ -8,6 +8,13 @@ ZArray::ZArray()
 
 }
 
+ZArray::~ZArray()
+{
+	if (testFile != nullptr) {
+		delete testFile;
+	}
+}
+
 void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);

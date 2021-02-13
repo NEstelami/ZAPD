@@ -23,6 +23,8 @@ enum class HLTextureType
 class HLTexture
 {
 public:
+	~HLTexture();
+
 	static HLTexture* FromPNG(std::string pngFilePath, HLTextureType texType);
 
 	HLTextureType type;

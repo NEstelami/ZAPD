@@ -72,6 +72,7 @@ public:
 	std::string fileName;
 
 	HLTextureIntermediette();
+	~HLTextureIntermediette();
 
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
 	virtual std::string OutputCode();
@@ -275,6 +276,7 @@ public:
 	std::vector<HLLimbCommand*> commands;
 
 	HLLimbIntermediette();
+	~HLLimbIntermediette();
 
 	void InitFromXML(tinyxml2::XMLElement* xmlElement);
 	std::string OutputCode();

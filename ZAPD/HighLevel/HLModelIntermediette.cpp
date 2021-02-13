@@ -25,6 +25,9 @@ HLModelIntermediette::HLModelIntermediette()
 
 HLModelIntermediette::~HLModelIntermediette()
 {
+	for (HLIntermediette* block: blocks) {
+		delete block;
+	}
 }
 
 HLModelIntermediette* HLModelIntermediette::FromXML(tinyxml2::XMLElement* root)
@@ -880,6 +883,13 @@ HLTextureIntermediette::HLTextureIntermediette()
 	tex = nullptr;
 }
 
+HLTextureIntermediette::~HLTextureIntermediette()
+{
+	if (tex != nullptr) {
+		delete tex;
+	}
+}
+
 void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 {
 	name = xmlElement->Attribute("Name");
@@ -1036,6 +1046,13 @@ void HLMeshIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLEle
 HLLimbIntermediette::HLLimbIntermediette()
 {
 	commands = vector<HLLimbCommand*>();
+}
+
+HLLimbIntermediette::~HLLimbIntermediette()
+{
+	for (HLLimbCommand* cmd: commands) {
+		delete cmd;
+	}
 }
 
 void HLLimbIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)

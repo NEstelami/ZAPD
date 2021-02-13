@@ -28,6 +28,8 @@ protected:
 
 	uint8_t* bmpRgb;
 	uint8_t* bmpRgba;
+	bool isStbi;
+	bool isStbia;
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void FixRawData();

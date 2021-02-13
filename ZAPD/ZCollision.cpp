@@ -166,6 +166,10 @@ ZCollisionHeader::~ZCollisionHeader()
 
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
+	
+	if (camData != nullptr) {
+		delete camData;
+	}
 }
 
 ZResourceType ZCollisionHeader::GetResourceType()
@@ -298,4 +302,14 @@ CameraPositionData::CameraPositionData(const std::vector<uint8_t>& rawData, int 
 	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+}
+
+CameraDataList::~CameraDataList()
+{
+	for (CameraDataEntry* entry: entries) {
+		delete entry;
+	}
+	for (CameraPositionData* pos: cameraPositionData) {
+		delete pos;
+	}
 }

@@ -18,6 +18,8 @@ ZTexture::ZTexture() : ZResource()
 {
 	bmpRgb = nullptr;
 	bmpRgba = nullptr;
+	isStbi = false;
+	isStbia = false;
 	width = 0;
 	height = 0;
 	type = TextureType::Error;
@@ -28,13 +30,21 @@ ZTexture::~ZTexture()
 {
 	if (bmpRgb != nullptr)
 	{
-		stbi_image_free(bmpRgb);
+		if (isStbi) {
+			stbi_image_free(bmpRgb);
+		} else {
+			delete[] bmpRgb;
+		}
 		bmpRgb = nullptr;
 	}
 
 	if (bmpRgba != nullptr)
 	{
-		stbi_image_free(bmpRgba);
+		if (isStbia) {
+			stbi_image_free(bmpRgba);
+		} else {
+			delete[] bmpRgba;
+		}
 		bmpRgba = nullptr;
 	}
 
@@ -178,6 +188,8 @@ void ZTexture::PrepareBitmap()
 {
 	bmpRgb = new uint8_t[width * height * 3];
 	bmpRgba = new uint8_t[width * height * 4];
+	isStbi = false;
+	isStbia = false;
 
 	switch (type)
 	{
@@ -399,6 +411,7 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 	int comp;
 
 	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
+	isStbia = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -427,6 +440,7 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 	int comp;
 
 	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
+	isStbia = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -449,6 +463,7 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 	int comp;
 
 	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
+	isStbi = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -470,6 +485,7 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 	int comp;
 
 	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
+	isStbi = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -488,6 +504,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 	int comp;
 
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
+	isStbia = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -519,6 +536,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 	int comp;
 
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
+	isStbia = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -541,6 +559,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 	int comp;
 
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
+	isStbia = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -564,6 +583,7 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 	int comp;
 
 	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
+	isStbi = true;
 
 	for (int y = 0; y < height; y++)
 	{
@@ -586,6 +606,7 @@ void ZTexture::PrepareRawDataPalette8(string palPath)
 	int comp;
 
 	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
+	isStbi = true;
 
 	for (int y = 0; y < height; y++)
 	{
