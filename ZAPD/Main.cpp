@@ -56,7 +56,9 @@ void ErrorHandler(int sig)
 int main(int argc, char* argv[])
 {
 	Globals* g = new Globals();
-	return NewMain(argc, argv);
+	int retval = NewMain(argc, argv);
+	delete g;
+	return retval;
 }
 
 int NewMain(int argc, char* argv[])
