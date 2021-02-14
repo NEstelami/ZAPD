@@ -10,7 +10,6 @@ using namespace ELFIO;
 ZOverlay::ZOverlay()
 {
 	name = "";
-	entries = vector<RelocationEntry*>();
 }
 
 ZOverlay::ZOverlay(string nName) : ZOverlay()
@@ -18,49 +17,36 @@ ZOverlay::ZOverlay(string nName) : ZOverlay()
 	name = nName;
 }
 
-ZOverlay::~ZOverlay()
-{
-	for (auto entry: entries)
-		if (entry)
-			delete entry;
-	entries.clear();
-}
-
-ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
+std::shared_ptr<ZOverlay> ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 {
 	string cfgText = File::ReadAllText(cfgFolderPath + "/overlay.cfg");
 	vector<string> cfgLines = StringHelper::Split(cfgText, "\n");
 
-	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
+	std::shared_ptr<ZOverlay> ovl = std::make_shared<ZOverlay>(StringHelper::Strip(cfgLines[0], "\r"));
 
 	vector<string> relSections = {".rel.text", ".rel.data" , ".rel.rodata"};
 	vector<string> sections = {".text", ".data" , ".rodata"};
 
 	int sectionOffs[5] = {0};
-	vector<RelocationEntry*> textRelocs;
-	vector<RelocationEntry*> dataRelocs;
-	vector<RelocationEntry*> rodataRelocs;
+	std::vector<std::shared_ptr<RelocationEntry>> textRelocs;
+	std::vector<std::shared_ptr<RelocationEntry>> dataRelocs;
+	std::vector<std::shared_ptr<RelocationEntry>> rodataRelocs;
 
 
 	// get the elf files
-	vector<elfio*> readers;
+	vector<std::shared_ptr<elfio>> readers;
 	for (int i = 1; i < cfgLines.size(); i++)
 	{
 		string elfPath = buildPath + "/" + cfgLines[i].substr(0, cfgLines[i].size()-2) + ".o";
-		elfio* reader = new elfio();
+		readers.push_back(std::make_shared<elfio>());
 
-		if (!reader->load(elfPath))
+		if (!readers.back()->load(elfPath))
 		{
 			// not all files were compiled
-			for (auto r: readers)
-				delete r;
 			readers.clear();
 
-			delete ovl;
 			return nullptr;
 		}
-
-		readers.push_back(reader);
 	}
 
 	for (auto curReader : readers)
@@ -104,12 +90,12 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 					// check symbols outside the elf but within the overlay
 					if (curSymShndx == SHN_UNDEF)
 					{
-						for (auto reader : readers)
+						for (auto& reader : readers)
 						{
 							if (curSymShndx != SHN_UNDEF)
 								break;
 
-							if (reader == curReader)
+							if (&reader == &curReader)
 								continue;
 
 							auto sectionData = reader->sections[(Elf_Half)pSec->get_link()];
@@ -145,15 +131,20 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 						RelocationType typeConverted = (RelocationType)type;
 						offset += sectionOffs[sectionType];
 
-						RelocationEntry* reloc = new RelocationEntry(sectionType, typeConverted, offset);
+						auto reloc = std::make_shared<RelocationEntry>(sectionType, typeConverted, offset);
 
 						// this is to keep the correct reloc entry order
-						if (sectionType == SectionType::Text)
+						switch (sectionType) {
+						case SectionType::Text:
 							textRelocs.push_back(reloc);
-						if (sectionType == SectionType::Data)
+							break;
+						case SectionType::Data:
 							dataRelocs.push_back(reloc);
-						if (sectionType == SectionType::RoData)
+							break;
+						case SectionType::RoData:
 							rodataRelocs.push_back(reloc);
+							break;
+						}
 					}
 				}
 			}
@@ -178,8 +169,6 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 	for (auto reloc : rodataRelocs)
 		ovl->entries.push_back(reloc);
 
-	for (auto r: readers)
-		delete r;
 	readers.clear();
 
 	return ovl;
@@ -200,7 +189,7 @@ string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		RelocationEntry* reloc = entries[i];
+		auto reloc = entries[i];
 		output += StringHelper::Sprintf(".word 0x%08X\n", reloc->CalcRelocationWord());
 	}
 

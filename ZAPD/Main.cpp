@@ -212,7 +212,7 @@ int NewMain(int argc, char* argv[])
 	}
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
-		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance.inputPath), Path::GetDirectoryName(Globals::Instance.cfgPath));
+		auto overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance.inputPath), Path::GetDirectoryName(Globals::Instance.cfgPath));
 
 		if (overlay)
 			File::WriteAllText(Globals::Instance.outputPath, overlay->GetSourceOutputCode(""));

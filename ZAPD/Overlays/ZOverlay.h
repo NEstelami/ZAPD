@@ -53,13 +53,12 @@ public:
 	std::string name;
 
 	ZOverlay(std::string nName);
-	~ZOverlay();
-	static ZOverlay* FromBuild(std::string buildPath, std::string cfgFolderPath);
+	static std::shared_ptr<ZOverlay> FromBuild(std::string buildPath, std::string cfgFolderPath);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	ZResourceType GetResourceType() override;
 
 private:
-	std::vector<RelocationEntry*> entries;
+	std::vector<std::shared_ptr<RelocationEntry>> entries;
 
 	ZOverlay();
 

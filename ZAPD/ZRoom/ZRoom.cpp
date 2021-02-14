@@ -113,15 +113,14 @@ std::shared_ptr<ZRoom> ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t>
 			string sizeStr = child->Attribute("Size");
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
-			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", room->name.c_str(), address));
+			ZBlob blob(room->rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", room->name.c_str(), address));
 			
 			if (child->Attribute("Name") != NULL)
 				name = string(child->Attribute("Name"));
 			else
-				name = StringHelper::Sprintf("%s_%s", room->name.c_str(), blob->GetName().c_str());
+				name = StringHelper::Sprintf("%s_%s", room->name.c_str(), blob.GetName().c_str());
 			
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(), "u8", name, 0, blob->GetSourceOutputCode(room->name));
-			delete blob;
+			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, blob.GetRawDataSize(), "u8", name, 0, blob.GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
@@ -134,16 +133,15 @@ std::shared_ptr<ZRoom> ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t>
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999);
+			ZCutscene cutscene(room->rawData, address, 9999);
 
 			if (child->Attribute("Name") != NULL)
 				name = string(child->Attribute("Name"));
 			else
-				name = StringHelper::Sprintf("%sCutsceneData0x%06X", room->name.c_str(), cutscene->segmentOffset);
+				name = StringHelper::Sprintf("%sCutsceneData0x%06X", room->name.c_str(), cutscene.segmentOffset);
 
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32",
-				name, 0, cutscene->GetSourceOutputCode(room->name));
-			delete cutscene;
+			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene.GetRawDataSize(), "s32",
+				name, 0, cutscene.GetSourceOutputCode(room->name));
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
 		{
