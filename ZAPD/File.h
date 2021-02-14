@@ -14,7 +14,8 @@ public:
 	static bool Exists(const std::string& filePath)
 	{
 		std::ifstream file(filePath, std::ios::in | std::ios::binary | std::ios::ate);
-		return file.good();
+		bool good = file.good();
+		return good;
 	}
 
 	static std::vector<uint8_t> ReadAllBytes(const std::string& filePath)
@@ -26,6 +27,7 @@ public:
 		file.read(data, fileSize);
 		std::vector<uint8_t> result = std::vector<uint8_t>(data, data + fileSize);
 		delete[] data;
+		file.close();
 
 		return result;
 	};
@@ -40,6 +42,7 @@ public:
 		file.read(data, fileSize);
 		std::string str = std::string((const char*)data);
 		delete[] data;
+		file.close();
 
 		return str;
 	};
@@ -56,11 +59,13 @@ public:
 	{
 		std::ofstream file(filePath, std::ios::binary);
 		file.write((char*)data.data(), data.size());
+		file.close();
 	};
 
 	static void WriteAllText(const std::string& filePath, const std::string& text)
 	{
 		std::ofstream file(filePath, std::ios::out);
 		file.write(text.c_str(), text.size());
+		file.close();
 	}
 };
