@@ -28,7 +28,7 @@ public:
 
 	ZRoom();
 
-	static std::shared_ptr<ZRoom> ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent, std::shared_ptr<ZRoom>& nScene);
+	static std::shared_ptr<ZRoom> ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent, std::shared_ptr<ZRoom> nScene);
 	void ParseCommands(std::vector<std::shared_ptr<ZRoomCommand>>& commandList, CommandSet commandSet);
 	size_t GetDeclarationSizeFromNeighbor(int declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);

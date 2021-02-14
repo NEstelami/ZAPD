@@ -45,7 +45,7 @@ ZRoom::ZRoom() : ZResource()
 	scene = nullptr;
 }
 
-std::shared_ptr<ZRoom> ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, std::shared_ptr<ZRoom>& nScene)
+std::shared_ptr<ZRoom> ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, std::shared_ptr<ZRoom> nScene)
 {
 	std::shared_ptr<ZRoom> room = std::make_shared<ZRoom>();
 

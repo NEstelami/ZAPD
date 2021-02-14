@@ -402,9 +402,9 @@ void ZFile::ExtractResources(string outputDir)
 		GenerateHLIntermediette();
 }
 
-void ZFile::AddResource(std::shared_ptr<ZResource>&& res)
+void ZFile::AddResource(std::shared_ptr<ZResource> res)
 {
-	resources.push_back(std::move(res));
+	resources.push_back(res);
 }
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body)

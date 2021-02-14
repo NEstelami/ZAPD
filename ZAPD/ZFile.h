@@ -42,7 +42,7 @@ public:
 	void ExtractResources(std::string outputDir);
 	void BuildResources();
 	void BuildSourceFile(std::string outputDir);
-	void AddResource(std::shared_ptr<ZResource>&& res);
+	void AddResource(std::shared_ptr<ZResource> res);
 
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body);
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, std::string varType, std::string varName, std::string body);
