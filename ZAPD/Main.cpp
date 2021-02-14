@@ -303,23 +303,22 @@ void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string&
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath)
 {
 	vector<string> split = StringHelper::Split(outPath, "/");
-	ZFile* file = new ZFile("", split[split.size() - 2]);
+	ZFile file("", split[split.size() - 2]);
 	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath);
 	ZAnimation* zAnim = anim->ToZAnimation();
 	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
-	zAnim->parent = file;
+	zAnim->parent = &file;
 	//zAnim->rotationIndicesSeg = 1;
 	//zAnim->rotationValuesSeg = 2;
 
 	zAnim->GetSourceOutputCode(split[split.size() - 2]);
 	string output = "";
 
-	output += file->declarations[2]->text + "\n";
-	output += file->declarations[1]->text + "\n";
-	output += file->declarations[0]->text + "\n";
+	output += file.declarations[2]->text + "\n";
+	output += file.declarations[1]->text + "\n";
+	output += file.declarations[0]->text + "\n";
 
 	File::WriteAllText(outPath, output);
 
 	delete zAnim;
-	delete file;
 }

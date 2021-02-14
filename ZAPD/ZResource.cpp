@@ -9,16 +9,8 @@ ZResource::ZResource()
 	outName = "";
 	relativePath = "";
 	sourceOutput = "";
-	rawData = vector<uint8_t>();
 	rawDataIndex = 0;
 	outputDeclaration = true;
-}
-
-ZResource::~ZResource()
-{
-	if (parent != nullptr) {
-		//delete parent;
-	}
 }
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)

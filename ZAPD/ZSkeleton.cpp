@@ -74,7 +74,7 @@ string ZLimbStandard::GetSourceOutputCode(const std::string& prefix)
 	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
 		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str());
 
-	Declaration* decl = parent->GetDeclaration(address);
+	auto decl = parent->GetDeclaration(address);
 	decl->text = entryStr;
 
 	return "";
