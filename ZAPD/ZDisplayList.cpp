@@ -3,6 +3,7 @@
 #include "StringHelper.h"
 #include "HighLevel/HLModelIntermediette.h"
 #include "Globals.h"
+#include "gfxd.h"
 #include <chrono>
 #include <algorithm>
 #include <File.h>
@@ -29,7 +30,7 @@ ZDisplayList::ZDisplayList() : ZResource()
 	dListType = Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX;
 
 	fileData = vector<uint8_t>();
-	instructions = vector<uint64_t>();
+	instructions = vector<uint8_t>();
 	vertices = map<uint32_t, vector<Vertex>>();
 	vtxDeclarations = map<uint32_t, string>();
 	otherDLists = vector<ZDisplayList*>();
@@ -84,346 +85,346 @@ void ZDisplayList::ParseRawData()
 		instructions.push_back(BitConverter::ToUInt64BE(rawDataArr, (i * 8)));
 }
 
-void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line)
-{
-	switch (opcode)
-	{
-	case F3DZEXOpcode::G_NOOP:
-		sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
-		break;
-	case F3DZEXOpcode::G_DL:
-		Opcode_G_DL(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_MODIFYVTX:
-		Opcode_G_MODIFYVTX(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_CULLDL:
-		Opcode_G_CULLDL(data, i, prefix, line);
-	break;
-	/*case F3DZEXOpcode::G_BRANCH_Z:
-	{
-		int aaa = (data & 0x00FFF00000000000) >> 44;
-		int bbb = (data & 0x00000FFF00000000) >> 32;
-		int zzzzzzzz = (data & 0x00000000FFFFFFFF);
+// void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line)
+// {
+// 	switch (opcode)
+// 	{
+// 	case F3DZEXOpcode::G_NOOP:
+// 		sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
+// 		break;
+// 	case F3DZEXOpcode::G_DL:
+// 		Opcode_G_DL(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_MODIFYVTX:
+// 		Opcode_G_MODIFYVTX(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_CULLDL:
+// 		Opcode_G_CULLDL(data, i, prefix, line);
+// 	break;
+// 	/*case F3DZEXOpcode::G_BRANCH_Z:
+// 	{
+// 		int aaa = (data & 0x00FFF00000000000) >> 44;
+// 		int bbb = (data & 0x00000FFF00000000) >> 32;
+// 		int zzzzzzzz = (data & 0x00000000FFFFFFFF);
 
-		sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", );
-	}
-	break;*/
-	case F3DZEXOpcode::G_TRI1:
-		Opcode_G_TRI1(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_TRI2:
-		Opcode_G_TRI2(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_QUAD:
-	{
-		int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
-		int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
-		int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
-		int dd = ((data & 0x000000000000FFULL)) / 2;
-		sprintf(line, "gsSP1Quadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
-	}
-	break;
-	case F3DZEXOpcode::G_VTX:
-	{
-		Opcode_G_VTX(data, i, prefix, line);
-	}
-	break;
-	case F3DZEXOpcode::G_SETTIMG: // HOTSPOT
-	{
-		Opcode_G_SETTIMG(data, i, prefix, line);
-	}
-	break;
-	case F3DZEXOpcode::G_GEOMETRYMODE:
-	{
-		int cccccc = (data & 0x00FFFFFF00000000) >> 32;
-		int ssssssss = (data & 0xFFFFFFFF);
-		string geoModeStr = "G_TEXTURE_ENABLE";
+// 		sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", );
+// 	}
+// 	break;*/
+// 	case F3DZEXOpcode::G_TRI1:
+// 		Opcode_G_TRI1(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_TRI2:
+// 		Opcode_G_TRI2(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_QUAD:
+// 	{
+// 		int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
+// 		int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
+// 		int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
+// 		int dd = ((data & 0x000000000000FFULL)) / 2;
+// 		sprintf(line, "gsSP1Quadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_VTX:
+// 	{
+// 		Opcode_G_VTX(data, i, prefix, line);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_SETTIMG: // HOTSPOT
+// 	{
+// 		Opcode_G_SETTIMG(data, i, prefix, line);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_GEOMETRYMODE:
+// 	{
+// 		int cccccc = (data & 0x00FFFFFF00000000) >> 32;
+// 		int ssssssss = (data & 0xFFFFFFFF);
+// 		string geoModeStr = "G_TEXTURE_ENABLE";
 
-		int geoModeParam = ~cccccc;
+// 		int geoModeParam = ~cccccc;
 
-		if (ssssssss != 0)
-			geoModeParam = ssssssss;
+// 		if (ssssssss != 0)
+// 			geoModeParam = ssssssss;
 
-		if (geoModeParam & 0x00000001)
-			geoModeStr += " | G_ZBUFFER";
+// 		if (geoModeParam & 0x00000001)
+// 			geoModeStr += " | G_ZBUFFER";
 
-		if (geoModeParam & 0x00000004)
-			geoModeStr += " | G_SHADE";
+// 		if (geoModeParam & 0x00000004)
+// 			geoModeStr += " | G_SHADE";
 
-		if (geoModeParam & 0x00000200)
-			geoModeStr += " | G_CULL_FRONT";
+// 		if (geoModeParam & 0x00000200)
+// 			geoModeStr += " | G_CULL_FRONT";
 
-		if (geoModeParam & 0x00000400)
-			geoModeStr += " | G_CULL_BACK";
+// 		if (geoModeParam & 0x00000400)
+// 			geoModeStr += " | G_CULL_BACK";
 
-		if (geoModeParam & 0x00010000)
-			geoModeStr += " | G_FOG";
+// 		if (geoModeParam & 0x00010000)
+// 			geoModeStr += " | G_FOG";
 
-		if (geoModeParam & 0x00020000)
-			geoModeStr += " | G_LIGHTING";
+// 		if (geoModeParam & 0x00020000)
+// 			geoModeStr += " | G_LIGHTING";
 
-		if (geoModeParam & 0x00040000)
-			geoModeStr += " | G_TEXTURE_GEN";
+// 		if (geoModeParam & 0x00040000)
+// 			geoModeStr += " | G_TEXTURE_GEN";
 
-		if (geoModeParam & 0x00080000)
-			geoModeStr += " | G_TEXTURE_GEN_LINEAR";
+// 		if (geoModeParam & 0x00080000)
+// 			geoModeStr += " | G_TEXTURE_GEN_LINEAR";
 
-		if (geoModeParam & 0x00200000)
-			geoModeStr += " | G_SHADING_SMOOTH";
+// 		if (geoModeParam & 0x00200000)
+// 			geoModeStr += " | G_SHADING_SMOOTH";
 
-		if (geoModeParam & 0x00800000)
-			geoModeStr += " | G_CLIPPING";
+// 		if (geoModeParam & 0x00800000)
+// 			geoModeStr += " | G_CLIPPING";
 
-		if (ssssssss != 0)
-		{
-			if ((~cccccc & 0xFF000000) != 0)
-				sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
-			else
-				sprintf(line, "gsSPLoadGeometryMode(%s),", geoModeStr.c_str());
-		}
-		else
-			sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
+// 		if (ssssssss != 0)
+// 		{
+// 			if ((~cccccc & 0xFF000000) != 0)
+// 				sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
+// 			else
+// 				sprintf(line, "gsSPLoadGeometryMode(%s),", geoModeStr.c_str());
+// 		}
+// 		else
+// 			sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
 
-		//sprintf(line, "gsSPGeometryMode(0x%08X, 0x%08X),", ~cccccc, ssssssss);
-	}
-	break;
-	case F3DZEXOpcode::G_SETPRIMCOLOR:
-		Opcode_G_SETPRIMCOLOR(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_SETOTHERMODE_L:
-		Opcode_G_SETOTHERMODE_L(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_SETOTHERMODE_H:
-		Opcode_G_SETOTHERMODE_H(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_SETTILE:
-		Opcode_G_SETTILE(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_SETTILESIZE:
-		Opcode_G_SETTILESIZE(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_LOADBLOCK:
-		Opcode_G_LOADBLOCK(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_TEXTURE:
-		Opcode_G_TEXTURE(data, i, prefix, line);
-	break;
-	case F3DZEXOpcode::G_RDPSETOTHERMODE:
-	{
-		int hhhhhh = (data & 0x00FFFFFF00000000) >> 32;
-		int llllllll = (data & 0x00000000FFFFFFFF);
+// 		//sprintf(line, "gsSPGeometryMode(0x%08X, 0x%08X),", ~cccccc, ssssssss);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_SETPRIMCOLOR:
+// 		Opcode_G_SETPRIMCOLOR(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_SETOTHERMODE_L:
+// 		Opcode_G_SETOTHERMODE_L(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_SETOTHERMODE_H:
+// 		Opcode_G_SETOTHERMODE_H(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_SETTILE:
+// 		Opcode_G_SETTILE(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_SETTILESIZE:
+// 		Opcode_G_SETTILESIZE(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_LOADBLOCK:
+// 		Opcode_G_LOADBLOCK(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_TEXTURE:
+// 		Opcode_G_TEXTURE(data, i, prefix, line);
+// 	break;
+// 	case F3DZEXOpcode::G_RDPSETOTHERMODE:
+// 	{
+// 		int hhhhhh = (data & 0x00FFFFFF00000000) >> 32;
+// 		int llllllll = (data & 0x00000000FFFFFFFF);
 
-		sprintf(line, "gsDPSetOtherMode(%i, %i),", hhhhhh, llllllll);
-	}
-	break;
-	case F3DZEXOpcode::G_POPMTX:
-	{
-		sprintf(line, "gsSPPopMatrix(%li),", data);
-	}
-	break;
-	case F3DZEXOpcode::G_LOADTLUT:
-		Opcode_G_LOADTLUT(data, i, prefix, line);
-		break;
-	case F3DZEXOpcode::G_SETENVCOLOR:
-	{
-		uint8_t r = (uint8_t)((data & 0xFF000000) >> 24);
-		uint8_t g = (uint8_t)((data & 0x00FF0000) >> 16);
-		uint8_t b = (uint8_t)((data & 0xFF00FF00) >> 8);
-		uint8_t a = (uint8_t)((data & 0x000000FF) >> 0);
+// 		sprintf(line, "gsDPSetOtherMode(%i, %i),", hhhhhh, llllllll);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_POPMTX:
+// 	{
+// 		sprintf(line, "gsSPPopMatrix(%li),", data);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_LOADTLUT:
+// 		Opcode_G_LOADTLUT(data, i, prefix, line);
+// 		break;
+// 	case F3DZEXOpcode::G_SETENVCOLOR:
+// 	{
+// 		uint8_t r = (uint8_t)((data & 0xFF000000) >> 24);
+// 		uint8_t g = (uint8_t)((data & 0x00FF0000) >> 16);
+// 		uint8_t b = (uint8_t)((data & 0xFF00FF00) >> 8);
+// 		uint8_t a = (uint8_t)((data & 0x000000FF) >> 0);
 
-		sprintf(line, "gsDPSetEnvColor(%i, %i, %i, %i),", r, g, b, a);
-	}
-	break;
-	case F3DZEXOpcode::G_SETCOMBINE:
-	{
-		Opcode_G_SETCOMBINE(data, i, prefix, line);
-	}
-	break;
-	case F3DZEXOpcode::G_RDPLOADSYNC:
-		sprintf(line, "gsDPLoadSync(),");
-		break;
-	case F3DZEXOpcode::G_RDPPIPESYNC:
-		sprintf(line, "gsDPPipeSync(),");
-		break;
-	case F3DZEXOpcode::G_RDPTILESYNC:
-		sprintf(line, "gsDPTileSync(),");
-		break;
-	case F3DZEXOpcode::G_RDPFULLSYNC:
-		sprintf(line, "gsDPFullSync(),");
-		break;
-	case F3DZEXOpcode::G_ENDDL:
-		Opcode_G_ENDDL(data, i, prefix, line);
-		break;
-	case F3DZEXOpcode::G_RDPHALF_1:
-	{
-		uint64_t data2 = instructions[i + 1];
-		uint32_t h = (data & 0xFFFFFFFF);
-		F3DZEXOpcode opcode2 = (F3DZEXOpcode)(instructions[i + 1] >> 56);
+// 		sprintf(line, "gsDPSetEnvColor(%i, %i, %i, %i),", r, g, b, a);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_SETCOMBINE:
+// 	{
+// 		Opcode_G_SETCOMBINE(data, i, prefix, line);
+// 	}
+// 	break;
+// 	case F3DZEXOpcode::G_RDPLOADSYNC:
+// 		sprintf(line, "gsDPLoadSync(),");
+// 		break;
+// 	case F3DZEXOpcode::G_RDPPIPESYNC:
+// 		sprintf(line, "gsDPPipeSync(),");
+// 		break;
+// 	case F3DZEXOpcode::G_RDPTILESYNC:
+// 		sprintf(line, "gsDPTileSync(),");
+// 		break;
+// 	case F3DZEXOpcode::G_RDPFULLSYNC:
+// 		sprintf(line, "gsDPFullSync(),");
+// 		break;
+// 	case F3DZEXOpcode::G_ENDDL:
+// 		Opcode_G_ENDDL(data, i, prefix, line);
+// 		break;
+// 	case F3DZEXOpcode::G_RDPHALF_1:
+// 	{
+// 		uint64_t data2 = instructions[i + 1];
+// 		uint32_t h = (data & 0xFFFFFFFF);
+// 		F3DZEXOpcode opcode2 = (F3DZEXOpcode)(instructions[i + 1] >> 56);
 
-		if (opcode2 == F3DZEXOpcode::G_BRANCH_Z)
-		{
-			uint32_t a = (data2 & 0x00FFF00000000000) >> 44;
-			uint32_t b = (data2 & 0x00000FFF00000000) >> 32;
-			uint32_t z = (data2 & 0x00000000FFFFFFFF) >> 0;
+// 		if (opcode2 == F3DZEXOpcode::G_BRANCH_Z)
+// 		{
+// 			uint32_t a = (data2 & 0x00FFF00000000000) >> 44;
+// 			uint32_t b = (data2 & 0x00000FFF00000000) >> 32;
+// 			uint32_t z = (data2 & 0x00000000FFFFFFFF) >> 0;
 
-			//sprintf(line, "gsDPWord(%i, 0),", h);
-			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(), h & 0x00FFFFFF, (a / 5) | (b / 2), z);
+// 			//sprintf(line, "gsDPWord(%i, 0),", h);
+// 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(), h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList* nList = new ZDisplayList(fileData, h & 0x00FFFFFF, GetDListLength(fileData, h & 0x00FFFFFF, dListType));
-			nList->scene = scene;
-			nList->parent = parent;
-			otherDLists.push_back(nList);
+// 			ZDisplayList* nList = new ZDisplayList(fileData, h & 0x00FFFFFF, GetDListLength(fileData, h & 0x00FFFFFF, dListType));
+// 			nList->scene = scene;
+// 			nList->parent = parent;
+// 			otherDLists.push_back(nList);
 
-			i++;
-		}
-	}
-	break;
-	/*case F3DZEXOpcode::G_BRANCH_Z:
-	{
-		uint8_t h = (data & 0xFFFFFFFF);
+// 			i++;
+// 		}
+// 	}
+// 	break;
+// 	/*case F3DZEXOpcode::G_BRANCH_Z:
+// 	{
+// 		uint8_t h = (data & 0xFFFFFFFF);
 
-		sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", h);
-	}
-		break;*/
-	case F3DZEXOpcode::G_MTX:
-		Opcode_G_MTX(data, i, prefix, line);
-	break;
-	default:
-		sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
-		break;
-	}
-}
+// 		sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", h);
+// 	}
+// 		break;*/
+// 	case F3DZEXOpcode::G_MTX:
+// 		Opcode_G_MTX(data, i, prefix, line);
+// 	break;
+// 	default:
+// 		sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
+// 		break;
+// 	}
+// }
 
-void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line)
-{
-	switch (opcode)
-	{
-	case F3DEXOpcode::G_NOOP:
-		sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
-		break;
-	case F3DEXOpcode::G_VTX:
-		Opcode_G_VTX(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_DL:
-		Opcode_G_DL(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_CULLDL:
-		Opcode_G_CULLDL(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_MODIFYVTX:
-		Opcode_G_MODIFYVTX(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_MTX:
-		Opcode_G_MTX(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_TRI1:
-		Opcode_G_TRI1(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_TRI2:
-		Opcode_G_TRI2(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_ENDDL:
-		Opcode_G_ENDDL(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_RDPLOADSYNC:
-		sprintf(line, "gsDPLoadSync(),");
-		break;
-	case F3DEXOpcode::G_RDPPIPESYNC:
-		sprintf(line, "gsDPPipeSync(),");
-		break;
-	case F3DEXOpcode::G_RDPTILESYNC:
-		sprintf(line, "gsDPTileSync(),");
-		break;
-	case F3DEXOpcode::G_RDPFULLSYNC:
-		sprintf(line, "gsDPFullSync(),");
-		break;
-	case F3DEXOpcode::G_TEXTURE:
-		Opcode_G_TEXTURE(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETTIMG:
-		Opcode_G_SETTIMG(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETTILE:
-		Opcode_G_SETTILE(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETTILESIZE:
-		Opcode_G_SETTILESIZE(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_LOADBLOCK:
-		Opcode_G_LOADBLOCK(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETCOMBINE:
-		Opcode_G_SETCOMBINE(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETPRIMCOLOR:
-		Opcode_G_SETPRIMCOLOR(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETOTHERMODE_L:
-		Opcode_G_SETOTHERMODE_L(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETOTHERMODE_H:
-		Opcode_G_SETOTHERMODE_H(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_LOADTLUT:
-		Opcode_G_LOADTLUT(data, i, prefix, line);
-		break;
-	case F3DEXOpcode::G_CLEARGEOMETRYMODE:
-	case F3DEXOpcode::G_SETGEOMETRYMODE:
-	{
-		int cccccc = (data & 0x00FFFFFF00000000) >> 32;
-		int ssssssss = (data & 0xFFFFFFFF);
-		string geoModeStr = "G_TEXTURE_ENABLE";
+// void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line)
+// {
+// 	switch (opcode)
+// 	{
+// 	case F3DEXOpcode::G_NOOP:
+// 		sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
+// 		break;
+// 	case F3DEXOpcode::G_VTX:
+// 		Opcode_G_VTX(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_DL:
+// 		Opcode_G_DL(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_CULLDL:
+// 		Opcode_G_CULLDL(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_MODIFYVTX:
+// 		Opcode_G_MODIFYVTX(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_MTX:
+// 		Opcode_G_MTX(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_TRI1:
+// 		Opcode_G_TRI1(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_TRI2:
+// 		Opcode_G_TRI2(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_ENDDL:
+// 		Opcode_G_ENDDL(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_RDPLOADSYNC:
+// 		sprintf(line, "gsDPLoadSync(),");
+// 		break;
+// 	case F3DEXOpcode::G_RDPPIPESYNC:
+// 		sprintf(line, "gsDPPipeSync(),");
+// 		break;
+// 	case F3DEXOpcode::G_RDPTILESYNC:
+// 		sprintf(line, "gsDPTileSync(),");
+// 		break;
+// 	case F3DEXOpcode::G_RDPFULLSYNC:
+// 		sprintf(line, "gsDPFullSync(),");
+// 		break;
+// 	case F3DEXOpcode::G_TEXTURE:
+// 		Opcode_G_TEXTURE(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_SETTIMG:
+// 		Opcode_G_SETTIMG(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_SETTILE:
+// 		Opcode_G_SETTILE(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_SETTILESIZE:
+// 		Opcode_G_SETTILESIZE(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_LOADBLOCK:
+// 		Opcode_G_LOADBLOCK(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_SETCOMBINE:
+// 		Opcode_G_SETCOMBINE(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_SETPRIMCOLOR:
+// 		Opcode_G_SETPRIMCOLOR(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_SETOTHERMODE_L:
+// 		Opcode_G_SETOTHERMODE_L(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_SETOTHERMODE_H:
+// 		Opcode_G_SETOTHERMODE_H(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_LOADTLUT:
+// 		Opcode_G_LOADTLUT(data, i, prefix, line);
+// 		break;
+// 	case F3DEXOpcode::G_CLEARGEOMETRYMODE:
+// 	case F3DEXOpcode::G_SETGEOMETRYMODE:
+// 	{
+// 		int cccccc = (data & 0x00FFFFFF00000000) >> 32;
+// 		int ssssssss = (data & 0xFFFFFFFF);
+// 		string geoModeStr = "G_TEXTURE_ENABLE";
 
-		int geoModeParam = ~cccccc;
+// 		int geoModeParam = ~cccccc;
 
-		if (ssssssss != 0)
-			geoModeParam = ssssssss;
+// 		if (ssssssss != 0)
+// 			geoModeParam = ssssssss;
 
-		if (geoModeParam & 0x00000002)
-			geoModeStr += " | G_TEXTURE_ENABLE";
+// 		if (geoModeParam & 0x00000002)
+// 			geoModeStr += " | G_TEXTURE_ENABLE";
 
-		if (geoModeParam & 0x00000200)
-			geoModeStr += " | G_SHADING_SMOOTH";
+// 		if (geoModeParam & 0x00000200)
+// 			geoModeStr += " | G_SHADING_SMOOTH";
 
-		if (geoModeParam & 0x00001000)
-			geoModeStr += " | G_CULL_FRONT";
+// 		if (geoModeParam & 0x00001000)
+// 			geoModeStr += " | G_CULL_FRONT";
 
-		if (geoModeParam & 0x00002000)
-			geoModeStr += " | G_CULL_BACK";
+// 		if (geoModeParam & 0x00002000)
+// 			geoModeStr += " | G_CULL_BACK";
 
-		if (geoModeParam & 0x00000001)
-			geoModeStr += " | G_ZBUFFER";
+// 		if (geoModeParam & 0x00000001)
+// 			geoModeStr += " | G_ZBUFFER";
 
-		if (geoModeParam & 0x00000004)
-			geoModeStr += " | G_SHADE";
+// 		if (geoModeParam & 0x00000004)
+// 			geoModeStr += " | G_SHADE";
 
-		if (geoModeParam & 0x00010000)
-			geoModeStr += " | G_FOG";
+// 		if (geoModeParam & 0x00010000)
+// 			geoModeStr += " | G_FOG";
 
-		if (geoModeParam & 0x00020000)
-			geoModeStr += " | G_LIGHTING";
+// 		if (geoModeParam & 0x00020000)
+// 			geoModeStr += " | G_LIGHTING";
 
-		if (geoModeParam & 0x00040000)
-			geoModeStr += " | G_TEXTURE_GEN";
+// 		if (geoModeParam & 0x00040000)
+// 			geoModeStr += " | G_TEXTURE_GEN";
 
-		if (geoModeParam & 0x00080000)
-			geoModeStr += " | G_TEXTURE_GEN_LINEAR";
+// 		if (geoModeParam & 0x00080000)
+// 			geoModeStr += " | G_TEXTURE_GEN_LINEAR";
 
-		if (geoModeParam & 0x00800000)
-			geoModeStr += " | G_CLIPPING";
+// 		if (geoModeParam & 0x00800000)
+// 			geoModeStr += " | G_CLIPPING";
 
-		if (opcode == F3DEXOpcode::G_SETGEOMETRYMODE)
-			sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
-		else
-			sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
-	}
-	break;
-	default:
-		sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
-		break;
-	}
-}
+// 		if (opcode == F3DEXOpcode::G_SETGEOMETRYMODE)
+// 			sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
+// 		else
+// 			sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
+// 	}
+// 	break;
+// 	default:
+// 		sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
+// 		break;
+// 	}
+// }
 
 int ZDisplayList::GetDListLength(vector<uint8_t> rawData, int rawDataIndex, DListType dListType)
 {
@@ -446,220 +447,220 @@ int ZDisplayList::GetDListLength(vector<uint8_t> rawData, int rawDataIndex, DLis
 	}
 }
 
-bool ZDisplayList::SequenceCheck(vector<F3DZEXOpcode> sequence, int startIndex)
-{
-	bool success = true;
+// bool ZDisplayList::SequenceCheck(vector<F3DZEXOpcode> sequence, int startIndex)
+// {
+// 	bool success = true;
 
-	for (int j = 0; j < sequence.size(); j++)
-	{
-		F3DZEXOpcode opcode = (F3DZEXOpcode)(instructions[startIndex + j] >> 56);
+// 	for (int j = 0; j < sequence.size(); j++)
+// 	{
+// 		F3DZEXOpcode opcode = (F3DZEXOpcode)(instructions[startIndex + j] >> 56);
 
-		if (sequence[j] != opcode)
-		{
-			success = false;
-			break;
-		}
-	}
+// 		if (sequence[j] != opcode)
+// 		{
+// 			success = false;
+// 			break;
+// 		}
+// 	}
 
-	if (success)
-		return true;
+// 	if (success)
+// 		return true;
 
-	return false;
-}
+// 	return false;
+// }
 
-int ZDisplayList::OptimizationChecks(int startIndex, string& output, string prefix)
-{
-	int result = -1;
+// int ZDisplayList::OptimizationChecks(int startIndex, string& output, string prefix)
+// {
+// 	int result = -1;
 
-	result = OptimizationCheck_LoadTextureBlock(startIndex, output, prefix);
+// 	result = OptimizationCheck_LoadTextureBlock(startIndex, output, prefix);
 
-	if (result != -1)
-		return result;
+// 	if (result != -1)
+// 		return result;
 
-	return -1;
-}
+// 	return -1;
+// }
 
-int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& output, string prefix)
-{
-	if (scene == nullptr)
-	{
-		return -1;
-	}
+// int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& output, string prefix)
+// {
+// 	if (scene == nullptr)
+// 	{
+// 		return -1;
+// 	}
 
-	std::vector<F3DZEXOpcode> sequence = { F3DZEXOpcode::G_SETTIMG, F3DZEXOpcode::G_SETTILE, F3DZEXOpcode::G_RDPLOADSYNC, F3DZEXOpcode::G_LOADBLOCK, F3DZEXOpcode::G_RDPPIPESYNC, F3DZEXOpcode::G_SETTILE, F3DZEXOpcode::G_SETTILESIZE };
+// 	std::vector<F3DZEXOpcode> sequence = { F3DZEXOpcode::G_SETTIMG, F3DZEXOpcode::G_SETTILE, F3DZEXOpcode::G_RDPLOADSYNC, F3DZEXOpcode::G_LOADBLOCK, F3DZEXOpcode::G_RDPPIPESYNC, F3DZEXOpcode::G_SETTILE, F3DZEXOpcode::G_SETTILESIZE };
 
-	bool seqRes = SequenceCheck(sequence, startIndex);
+// 	bool seqRes = SequenceCheck(sequence, startIndex);
 
-	if (seqRes)
-	{
-		// gsDPLoadTextureBlock(texAddr, fmt, siz, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
-		// gsDPLoadMultiBlock(texAddr, tmem, rtile, fmt, siz, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
-		// gsDPLoadTextureBlock_4b(texAddr, fmt, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
-		// gsDPLoadMultiBlock_4b(texAddr, tmem, rtile, fmt, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
+// 	if (seqRes)
+// 	{
+// 		// gsDPLoadTextureBlock(texAddr, fmt, siz, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
+// 		// gsDPLoadMultiBlock(texAddr, tmem, rtile, fmt, siz, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
+// 		// gsDPLoadTextureBlock_4b(texAddr, fmt, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
+// 		// gsDPLoadMultiBlock_4b(texAddr, tmem, rtile, fmt, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
 
-		uint32_t texAddr, tmem, rtile, fmt, siz, sizB, width, height, width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt;
-		string texStr = "";
+// 		uint32_t texAddr, tmem, rtile, fmt, siz, sizB, width, height, width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt;
+// 		string texStr = "";
 
-		// gsDPSetTextureImage
-		{
-			uint64_t data = instructions[startIndex + 0];
+// 		// gsDPSetTextureImage
+// 		{
+// 			uint64_t data = instructions[startIndex + 0];
 
-			int __ = (data & 0x00FF000000000000) >> 48;
-			int www = (data & 0x00000FFF00000000) >> 32;
+// 			int __ = (data & 0x00FF000000000000) >> 48;
+// 			int www = (data & 0x00000FFF00000000) >> 32;
 
-			fmt = (__ & 0xE0) >> 5;
-			siz = (__ & 0x18) >> 3;
-			texAddr = SEG2FILESPACE(data);
-			int segmentNumber = (data & 0xFF000000) >> 24;
+// 			fmt = (__ & 0xE0) >> 5;
+// 			siz = (__ & 0x18) >> 3;
+// 			texAddr = SEG2FILESPACE(data);
+// 			int segmentNumber = (data & 0xFF000000) >> 24;
 
-			if (segmentNumber == 0x80) // Is this texture defined in code?
-				texAddr -= SEG2FILESPACE(parent->baseAddress);
+// 			if (segmentNumber == 0x80) // Is this texture defined in code?
+// 				texAddr -= SEG2FILESPACE(parent->baseAddress);
 
-			lastTexSeg = (data & 0xFF000000);
+// 			lastTexSeg = (data & 0xFF000000);
 
-			Declaration* texDecl = nullptr;
+// 			Declaration* texDecl = nullptr;
 
-			if (parent != nullptr && segmentNumber != 2) // HACK: Until we have declarations use segment addresses, we'll exclude scene references...
-			{
-				texDecl = parent->GetDeclaration(texAddr);
+// 			if (parent != nullptr && segmentNumber != 2) // HACK: Until we have declarations use segment addresses, we'll exclude scene references...
+// 			{
+// 				texDecl = parent->GetDeclaration(texAddr);
 
-				if (texDecl == nullptr)
-					texDecl = parent->GetDeclaration(data);
-			}
+// 				if (texDecl == nullptr)
+// 					texDecl = parent->GetDeclaration(data);
+// 			}
 
-			if (texAddr != 0)
-			{
-				if (texDecl != nullptr)
-					texStr = StringHelper::Sprintf("%s", texDecl->varName.c_str());
-				else if (segmentNumber == 2)
-					texStr = StringHelper::Sprintf("%sTex_%06X", scene->GetName().c_str(), texAddr);
-				else if (!Globals::Instance->HasSegment(segmentNumber)) // Probably an external asset we are unable to track
-					texStr = StringHelper::Sprintf("0x%06X", data);
-				else
-					texStr = StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr);
-			}
-			else if (segmentNumber != 3)
-				texStr = StringHelper::Sprintf("0x%06X", data);
-			else
-				texStr = StringHelper::Sprintf("0");
-		}
+// 			if (texAddr != 0)
+// 			{
+// 				if (texDecl != nullptr)
+// 					texStr = StringHelper::Sprintf("%s", texDecl->varName.c_str());
+// 				else if (segmentNumber == 2)
+// 					texStr = StringHelper::Sprintf("%sTex_%06X", scene->GetName().c_str(), texAddr);
+// 				else if (!Globals::Instance->HasSegment(segmentNumber)) // Probably an external asset we are unable to track
+// 					texStr = StringHelper::Sprintf("0x%06X", data);
+// 				else
+// 					texStr = StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr);
+// 			}
+// 			else if (segmentNumber != 3)
+// 				texStr = StringHelper::Sprintf("0x%06X", data);
+// 			else
+// 				texStr = StringHelper::Sprintf("0");
+// 		}
 
-		// gsDPSetTile
-		{
-			uint64_t data = instructions[startIndex + 1];
+// 		// gsDPSetTile
+// 		{
+// 			uint64_t data = instructions[startIndex + 1];
 
-			tmem = (data & 0b0000000000000000111111111111111100000000000000000000000000000000) >> 32;
+// 			tmem = (data & 0b0000000000000000111111111111111100000000000000000000000000000000) >> 32;
 
-			cmt = (data & 0b0000000000000000000000000000000000000000000011000000000000000000) >> 18;
-			maskt = (data & 0b0000000000000000000000000000000000000000000000111100000000000000) >> 14;
-			shiftt = (data & 0b0000000000000000000000000000000000000000000000000011110000000000) >> 10;
-			cms = (data & 0b0000000000000000000000000000000000000000000000000000001100000000) >> 8;
-			masks = (data & 0b0000000000000000000000000000000000000000000000000000000011110000) >> 4;
-			shifts = (data & 0b0000000000000000000000000000000000000000000000000000000000001111);
+// 			cmt = (data & 0b0000000000000000000000000000000000000000000011000000000000000000) >> 18;
+// 			maskt = (data & 0b0000000000000000000000000000000000000000000000111100000000000000) >> 14;
+// 			shiftt = (data & 0b0000000000000000000000000000000000000000000000000011110000000000) >> 10;
+// 			cms = (data & 0b0000000000000000000000000000000000000000000000000000001100000000) >> 8;
+// 			masks = (data & 0b0000000000000000000000000000000000000000000000000000000011110000) >> 4;
+// 			shifts = (data & 0b0000000000000000000000000000000000000000000000000000000000001111);
 
-			//sprintf(line, "gsDPSetTile(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", fmtTbl[fff].c_str(), sizTbl[ii].c_str(), nnnnnnnnn, mmmmmmmmm, ttt, pppp, cc, aaaa, ssss, dd, bbbb, uuuu);
+// 			//sprintf(line, "gsDPSetTile(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", fmtTbl[fff].c_str(), sizTbl[ii].c_str(), nnnnnnnnn, mmmmmmmmm, ttt, pppp, cc, aaaa, ssss, dd, bbbb, uuuu);
 
-		}
+// 		}
 
-		// gsDPLoadSync
+// 		// gsDPLoadSync
 
-		// gsDPLoadBlock
+// 		// gsDPLoadBlock
 
-		// gsDPPipeSync
+// 		// gsDPPipeSync
 
-		// gsDPSetTile
-		{
-			uint64_t data = instructions[startIndex + 5];
-			int __ = (data & 0x00FF000000000000) >> 48;
-			pal = (data & 0b0000000000000000000000000000000000000000111100000000000000000000) >> 20;
-			//siz = (__ & 0x18) >> 3;
-			rtile = (data & 0b0000000000000000000000000000000011111111000000000000000000000000) >> 24;
-			sizB = (__ & 0x18) >> 3;
-		}
+// 		// gsDPSetTile
+// 		{
+// 			uint64_t data = instructions[startIndex + 5];
+// 			int __ = (data & 0x00FF000000000000) >> 48;
+// 			pal = (data & 0b0000000000000000000000000000000000000000111100000000000000000000) >> 20;
+// 			//siz = (__ & 0x18) >> 3;
+// 			rtile = (data & 0b0000000000000000000000000000000011111111000000000000000000000000) >> 24;
+// 			sizB = (__ & 0x18) >> 3;
+// 		}
 
-		// gsDPSetTileSize
-		{
-			uint64_t data = instructions[startIndex + 6];
-			int uuu = (data & 0x0000000000FFF000) >> 12;
-			int vvv = (data & 0x0000000000000FFF);
+// 		// gsDPSetTileSize
+// 		{
+// 			uint64_t data = instructions[startIndex + 6];
+// 			int uuu = (data & 0x0000000000FFF000) >> 12;
+// 			int vvv = (data & 0x0000000000000FFF);
 
-			int shiftAmtW = 2;
-			int shiftAmtH = 2;
+// 			int shiftAmtW = 2;
+// 			int shiftAmtH = 2;
 
-			if (sizB == (int)F3DZEXTexSizes::G_IM_SIZ_8b && fmt == (int)F3DZEXTexFormats::G_IM_FMT_IA)
-				shiftAmtW = 3;
+// 			if (sizB == (int)F3DZEXTexSizes::G_IM_SIZ_8b && fmt == (int)F3DZEXTexFormats::G_IM_FMT_IA)
+// 				shiftAmtW = 3;
 
-			if (sizB == (int)F3DZEXTexSizes::G_IM_SIZ_4b)
-				shiftAmtW = 3;
+// 			if (sizB == (int)F3DZEXTexSizes::G_IM_SIZ_4b)
+// 				shiftAmtW = 3;
 
-			if (sizB == (int)F3DZEXTexSizes::G_IM_SIZ_4b && fmt == (int)F3DZEXTexFormats::G_IM_FMT_IA)
-				shiftAmtH = 3;
+// 			if (sizB == (int)F3DZEXTexSizes::G_IM_SIZ_4b && fmt == (int)F3DZEXTexFormats::G_IM_FMT_IA)
+// 				shiftAmtH = 3;
 
-			width = (uuu >> shiftAmtW) + 1;
-			height = (vvv >> shiftAmtH) + 1;
+// 			width = (uuu >> shiftAmtW) + 1;
+// 			height = (vvv >> shiftAmtH) + 1;
 
-			width2 = (uuu >> 2) + 1;
-			height2 = (vvv >> 2) + 1;
-		}
+// 			width2 = (uuu >> 2) + 1;
+// 			height2 = (vvv >> 2) + 1;
+// 		}
 
-		string fmtTbl[] = { "G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA", "G_IM_FMT_I" };
-		string sizTbl[] = { "G_IM_SIZ_4b", "G_IM_SIZ_8b", "G_IM_SIZ_16b", "G_IM_SIZ_32b" };
+// 		string fmtTbl[] = { "G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA", "G_IM_FMT_I" };
+// 		string sizTbl[] = { "G_IM_SIZ_4b", "G_IM_SIZ_8b", "G_IM_SIZ_16b", "G_IM_SIZ_32b" };
 
-		//output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-									//texStr.c_str(), fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), width, height, pal, cms, cmt, masks, maskt, shifts, shiftt);
+// 		//output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+// 									//texStr.c_str(), fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), width, height, pal, cms, cmt, masks, maskt, shifts, shiftt);
 
-		if (siz == 2 && sizB == 0)
-		{
-			if (tmem != 0)
-				output += StringHelper::Sprintf("gsDPLoadMultiBlock_4b(%s, %i, %i, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), tmem, rtile, fmtTbl[fmt].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
-			else
-				output += StringHelper::Sprintf("gsDPLoadTextureBlock_4b(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), fmtTbl[fmt].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
-		}
-		else if (siz == 2 && sizB != 0)
-		{
-			if (tmem != 0)
-				output += StringHelper::Sprintf("gsDPLoadMultiBlock(%s, %i, %i, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), tmem, rtile, fmtTbl[fmt].c_str(), sizTbl[sizB].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
-			else
-				output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), fmtTbl[fmt].c_str(), sizTbl[sizB].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
-		}
-		else
-		{
-			if (siz != sizB)
-			{
-				lastTexAddr = texAddr;
-				lastTexFmt = (F3DZEXTexFormats)fmt;
-				lastTexWidth = width;
-				lastTexHeight = height;
-				lastTexSiz = (F3DZEXTexSizes)siz;
-				lastTexLoaded = true;
+// 		if (siz == 2 && sizB == 0)
+// 		{
+// 			if (tmem != 0)
+// 				output += StringHelper::Sprintf("gsDPLoadMultiBlock_4b(%s, %i, %i, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+// 					texStr.c_str(), tmem, rtile, fmtTbl[fmt].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
+// 			else
+// 				output += StringHelper::Sprintf("gsDPLoadTextureBlock_4b(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+// 					texStr.c_str(), fmtTbl[fmt].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
+// 		}
+// 		else if (siz == 2 && sizB != 0)
+// 		{
+// 			if (tmem != 0)
+// 				output += StringHelper::Sprintf("gsDPLoadMultiBlock(%s, %i, %i, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+// 					texStr.c_str(), tmem, rtile, fmtTbl[fmt].c_str(), sizTbl[sizB].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
+// 			else
+// 				output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+// 					texStr.c_str(), fmtTbl[fmt].c_str(), sizTbl[sizB].c_str(), width2, height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
+// 		}
+// 		else
+// 		{
+// 			if (siz != sizB)
+// 			{
+// 				lastTexAddr = texAddr;
+// 				lastTexFmt = (F3DZEXTexFormats)fmt;
+// 				lastTexWidth = width;
+// 				lastTexHeight = height;
+// 				lastTexSiz = (F3DZEXTexSizes)siz;
+// 				lastTexLoaded = true;
 
-				TextureGenCheck(prefix);
+// 				TextureGenCheck(prefix);
 
-				return -1;
-			}
+// 				return -1;
+// 			}
 
-			output += StringHelper::Sprintf("gsDPLoadMultiBlock(%s, %i, %i, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-				texStr.c_str(), tmem, rtile, fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), width, height, pal, cms, cmt, masks, maskt, shifts, shiftt);
-		}
+// 			output += StringHelper::Sprintf("gsDPLoadMultiBlock(%s, %i, %i, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+// 				texStr.c_str(), tmem, rtile, fmtTbl[fmt].c_str(), sizTbl[siz].c_str(), width, height, pal, cms, cmt, masks, maskt, shifts, shiftt);
+// 		}
 
-		lastTexAddr = texAddr;
-		lastTexFmt = (F3DZEXTexFormats)fmt;
-		lastTexWidth = width;
-		lastTexHeight = height;
-		lastTexSiz = (F3DZEXTexSizes)siz;
-		lastTexLoaded = true;
+// 		lastTexAddr = texAddr;
+// 		lastTexFmt = (F3DZEXTexFormats)fmt;
+// 		lastTexWidth = width;
+// 		lastTexHeight = height;
+// 		lastTexSiz = (F3DZEXTexSizes)siz;
+// 		lastTexLoaded = true;
 
-		TextureGenCheck(prefix);
+// 		TextureGenCheck(prefix);
 
-		return (int)sequence.size();
-	}
+// 		return (int)sequence.size();
+// 	}
 
-	return -1;
-}
+// 	return -1;
+// }
 
 void ZDisplayList::Opcode_G_DL(uint64_t data, int i, std::string prefix, char* line)
 {
@@ -1442,47 +1443,75 @@ string ZDisplayList::GetSourceOutputHeader(const std::string& prefix)
 	return "";
 }
 
+int GfxdFormatCallback(void)
+{
+	gfxd_puts("    ");
+	gfxd_macro_dflt();
+	gfxd_puts(",\n");
+
+	return 0;
+}
+
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
 	char line[4096];
 	string sourceOutput = "";
 
-	for (int i = 0; i < instructions.size(); i++)
-	{
-		uint8_t opcode = (uint8_t)(instructions[i] >> 56);
-		uint64_t data = instructions[i];
-		sourceOutput += "    ";
+	gfxd_input_buffer(instructions.data(), instructions.size());
+	gfxd_output_buffer(line, sizeof(line));
 
-		auto start = chrono::steady_clock::now();
+	gfxd_macro_fn(GfxdFormatCallback);
 
-		int optimizationResult = OptimizationChecks(i, sourceOutput, prefix);
-
-		if (optimizationResult != -1)
-		{
-			i += optimizationResult - 1;
-			line[0] = '\0';
-		}
-		else
-		{
-			if (dListType == DListType::F3DZEX)
-				ParseF3DZEX((F3DZEXOpcode)opcode, data, i, prefix, line);
-			else
-				ParseF3DEX((F3DEXOpcode)opcode, data, i, prefix, line);
-		}
-
-		auto end = chrono::steady_clock::now();
-		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-
-#if _MSC_VER
-		//if (diff > 5)
-			//printf("F3DOP: 0x%02X, TIME: %ims\n", opcode, diff);
-#endif
-
-		sourceOutput += line;
-
-		if (i < instructions.size() - 1)
-			sourceOutput += "\n";
+	if (dListType == DListType::F3DZEX) {
+		gfxd_target(gfxd_f3dex2);
+	} else {
+		gfxd_target(gfxd_f3dex);
 	}
+
+	gfxd_endian(gfxd_endian_big);
+
+	gfxd_execute();
+
+	sourceOutput += line;
+
+
+// 	for (int i = 0; i < instructions.size(); i++)
+// 	{
+// 		uint8_t opcode = (uint8_t)(instructions[i] >> 56);
+// 		uint64_t data = instructions[i];
+// 		sourceOutput += "    ";
+
+// 		auto start = chrono::steady_clock::now();
+
+// 		int optimizationResult = OptimizationChecks(i, sourceOutput, prefix);
+
+// 		if (optimizationResult != -1)
+// 		{
+// 			i += optimizationResult - 1;
+// 			line[0] = '\0';
+// 		}
+// 		else
+// 		{
+// 			if (dListType == DListType::F3DZEX) {
+// 				ParseF3DZEX((F3DZEXOpcode)opcode, data, i, prefix, line);
+// 			} else {
+// 				ParseF3DEX((F3DEXOpcode)opcode, data, i, prefix, line);
+// 			}
+// 		}
+
+// 		auto end = chrono::steady_clock::now();
+// 		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
+// #if _MSC_VER
+// 		//if (diff > 5)
+// 			//printf("F3DOP: 0x%02X, TIME: %ims\n", opcode, diff);
+// #endif
+
+// 		sourceOutput += line;
+
+// 		if (i < instructions.size() - 1)
+// 			sourceOutput += "\n";
+// 	}
 
 	// Iterate through our vertex lists, connect intersecting lists.
 	if (vertices.size() > 0)

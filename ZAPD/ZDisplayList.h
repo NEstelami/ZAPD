@@ -340,7 +340,7 @@ protected:
 public:
 	std::string sceneSegName;
 	ZRoom* scene;
-	std::vector<uint64_t> instructions;
+	std::vector<uint8_t> instructions;
 
 	DListType dListType;
 
