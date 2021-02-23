@@ -257,7 +257,6 @@ enum
 {
 	gfxd_endian_big,
 	gfxd_endian_little,
-	gfxd_endian_pdp,
 };
 
 enum
@@ -344,7 +343,7 @@ int gfxd_printf(const char *fmt, ...);
 int gfxd_print_value(int type, const gfxd_value_t *value);
 
 void gfxd_target(gfxd_ucode_t ucode);
-void gfxd_endian(int endian);
+void gfxd_endian(int endian, int wordsize);
 void gfxd_dynamic(const char *arg);
 void gfxd_enable(int cap);
 void gfxd_disable(int cap);
