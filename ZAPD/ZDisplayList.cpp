@@ -1460,11 +1460,60 @@ static int GfxdCallback_FormatSingleEntry(void)
 
 static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 {
-	uint32_t offset = SEG2FILESPACE(seg);
-	//references.push_back(offset);
+	ZDisplayList* instance = ZDisplayList::static_instance;
+	uint32_t vtxOffset = SEG2FILESPACE(seg);
+
+	if (GETSEGNUM(seg) == 0x80) // Are these vertices defined in code?
+		vtxOffset -= SEG2FILESPACE(instance->parent->baseAddress);
+
+	instance->references.push_back(vtxOffset);
+
+	uint32_t currentPtr = vtxOffset;
+	
+	// Check for vertex intersections from other display lists
+	// TODO: These two could probably be condenced to one...
+	if (instance->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
+	{
+		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
+		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
+		int diff = addr - vtxOffset;
+		if (diff > 0)
+			count = diff / 16;
+		else
+			count = 0;
+	}
+
+	if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
+	{
+		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
+		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
+		int diff = addr - vtxOffset;
+		if (diff > 0)
+			count = diff / 16;
+		else
+			count = 0;
+	}
+
+	if (count > 0)
+	{
+		vector<Vertex> vtxList = vector<Vertex>();
+		vtxList.reserve(count);
+		for (int i = 0; i < count; i++)
+		{
+			Vertex vtx = Vertex(instance->fileData, currentPtr);
+			vtxList.push_back(vtx);
+			currentPtr += 16;
+		}
+		instance->vertices[vtxOffset] = vtxList;
+	}
+
 	gfxd_puts("@r");
+
+
 	return 1;
 }
+
+ZDisplayList* ZDisplayList::static_instance;
 
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
@@ -1486,6 +1535,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		gfxd_target(gfxd_f3dex);
 	}
 
+	static_instance = this;
 	gfxd_execute(); // generate display list
 	sourceOutput += outputformatter.get_output(); // write formatted display list 
 

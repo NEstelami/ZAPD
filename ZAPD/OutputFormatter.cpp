@@ -63,7 +63,8 @@ int OutputFormatter::write(const char *buf, int count)
 	return count;
 }
 
-OutputFormatter *OutputFormatter::static_instance;
+OutputFormatter* OutputFormatter::static_instance;
+
 int OutputFormatter::write_static(const char *buf, int count)
 {
 	return static_instance->write(buf, count);
