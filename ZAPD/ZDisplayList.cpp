@@ -1458,6 +1458,14 @@ static int GfxdCallback_FormatSingleEntry(void)
 	return 0;
 }
 
+static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
+{
+	uint32_t offset = SEG2FILESPACE(seg);
+	//references.push_back(offset);
+	gfxd_puts("@r");
+	return 1;
+}
+
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
 	OutputFormatter outputformatter;
@@ -1467,6 +1475,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	gfxd_input_buffer(instructions.data(), dListSize);
 	gfxd_endian(gfxd_endian_little, sizeof(uint64_t)); // tell gfxdis what format the data is
 	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // every command starts with an indent and ends in a newline
+	gfxd_vtx_callback(GfxdCallback_Vtx); // handle vertices
 	gfxd_output_callback(outputformatter.static_writer()); // convert tabs to 4 spaces and enforce 120 line limit
 	gfxd_enable(gfxd_emit_dec_color); // use decimal for colors
 
