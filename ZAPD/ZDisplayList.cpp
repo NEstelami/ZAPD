@@ -1559,7 +1559,7 @@ static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz,
 	//printf("timg: %08X \nfmt: %08X \nsiz: %08X \nwidth: %08X \nheight: %08X \npal: %08X \n\n", seg, fmt, siz, width, height, pal);
 	instance->TextureGenCheck(instance->curPrefix);
 	gfxd_puts(texName.c_str());
-	
+
 	return 1;
 }
 
@@ -1783,8 +1783,8 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 {
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
 
-	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-		printf("TextureGenCheck seg=%i width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texIsPalette, texAddr);
+	// if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+		printf("TextureGenCheck seg=%2X width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texIsPalette, texAddr);
 
 	if ((texSeg != 0 || texAddr != 0) && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))
 	{
