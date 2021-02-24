@@ -1513,6 +1513,56 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	return 1;
 }
 
+static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, 
+								int32_t width, int32_t height, int32_t pal)
+{
+	ZDisplayList* instance = ZDisplayList::static_instance;
+	uint32_t texOffset = SEG2FILESPACE(seg);
+	uint32_t texSegNum = GETSEGNUM(seg);
+	Declaration* texDecl = nullptr;
+	string texName = "";
+
+	if (texSegNum == 0x80) // Are these vertices defined in code?
+		texOffset -= SEG2FILESPACE(instance->parent->baseAddress);
+
+
+	if (instance->parent != nullptr && texSegNum != 2) // HACK: Until we have declarations use segment addresses, we'll exclude scene references...
+	{
+		texDecl = instance->parent->GetDeclaration(texOffset);
+
+		if (texDecl == nullptr)
+			texDecl = instance->parent->GetDeclaration(seg);
+	}
+
+	if (texOffset != 0)
+	{
+		if (texDecl != nullptr)
+			texName = StringHelper::Sprintf("%s", texDecl->varName.c_str());
+		else if (texSegNum == 2)
+			texName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), texOffset);
+		else if (!Globals::Instance->HasSegment(texSegNum)) // Probably an external asset we are unable to track
+			texName = StringHelper::Sprintf("0x%06X", texOffset);
+		else
+			texName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), texOffset);
+	}
+	else if (texSegNum != 3)
+		texName = StringHelper::Sprintf("0x%06X", texOffset);
+	else
+		texName = StringHelper::Sprintf("0");
+
+	instance->lastTexAddr = texOffset;
+	instance->lastTexFmt = (F3DZEXTexFormats)fmt;
+	instance->lastTexWidth = width;
+	instance->lastTexHeight = height;
+	instance->lastTexSiz = (F3DZEXTexSizes)siz;
+	instance->lastTexLoaded = true;
+	//printf("timg: %08X \nfmt: %08X \nsiz: %08X \nwidth: %08X \nheight: %08X \npal: %08X \n\n", seg, fmt, siz, width, height, pal);
+	instance->TextureGenCheck(instance->curPrefix);
+	gfxd_puts(texName.c_str());
+	
+	return 1;
+}
+
 ZDisplayList* ZDisplayList::static_instance;
 
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
@@ -1525,6 +1575,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	gfxd_endian(gfxd_endian_little, sizeof(uint64_t)); // tell gfxdis what format the data is
 	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // every command starts with an indent and ends in a newline
 	gfxd_vtx_callback(GfxdCallback_Vtx); // handle vertices
+	gfxd_timg_callback(GfxdCallback_Texture);
 	gfxd_output_callback(outputformatter.static_writer()); // convert tabs to 4 spaces and enforce 120 line limit
 	gfxd_enable(gfxd_emit_dec_color); // use decimal for colors
 
@@ -1535,6 +1586,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		gfxd_target(gfxd_f3dex);
 	}
 
+	this->curPrefix = prefix;
 	static_instance = this;
 	gfxd_execute(); // generate display list
 	sourceOutput += outputformatter.get_output(); // write formatted display list 

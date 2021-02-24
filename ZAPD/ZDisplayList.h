@@ -297,11 +297,7 @@ public:
 class ZDisplayList : public ZResource
 {
 protected:
-	uint32_t lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg;
-	F3DZEXTexFormats lastTexFmt;
-	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
-	bool lastTexLoaded;
-	bool lastTexIsPalette;
+
 
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
 	void ParseRawData();
@@ -343,6 +339,13 @@ public:
 	std::string sceneSegName;
 	ZRoom* scene;
 	std::vector<uint64_t> instructions;
+	std::string curPrefix;
+
+	uint32_t lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg;
+	F3DZEXTexFormats lastTexFmt;
+	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
+	bool lastTexLoaded;
+	bool lastTexIsPalette;
 
 	DListType dListType;
 
