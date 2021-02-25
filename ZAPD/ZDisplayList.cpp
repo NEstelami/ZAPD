@@ -1546,20 +1546,74 @@ static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz,
 			texName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), texOffset);
 	}
 	else if (texSegNum != 3)
-		texName = StringHelper::Sprintf("0x%06X", texOffset);
+		texName = StringHelper::Sprintf("0x%08X", seg); // should be 6x?
 	else
 		texName = StringHelper::Sprintf("0");
 
-	instance->lastTexAddr = texOffset;
-	instance->lastTexFmt = (F3DZEXTexFormats)fmt;
 	instance->lastTexWidth = width;
 	instance->lastTexHeight = height;
+	instance->lastTexAddr = texOffset;
+	instance->lastTexSeg = seg;
+	instance->lastTexFmt = (F3DZEXTexFormats)fmt;
 	instance->lastTexSiz = (F3DZEXTexSizes)siz;
 	instance->lastTexLoaded = true;
-	//printf("timg: %08X \nfmt: %08X \nsiz: %08X \nwidth: %08X \nheight: %08X \npal: %08X \n\n", seg, fmt, siz, width, height, pal);
+	instance->lastTexIsPalette = false;
+
 	instance->TextureGenCheck(instance->curPrefix);
 	gfxd_puts(texName.c_str());
 
+	return 1;
+}
+
+static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
+{
+	ZDisplayList* instance = ZDisplayList::static_instance;
+	uint32_t palOffset = SEG2FILESPACE(seg);
+	uint32_t palSegNum = GETSEGNUM(seg);
+	Declaration* palDecl = nullptr;
+	string palName = "";
+
+	if (palSegNum == 0x80) // Are these vertices defined in code?
+		palOffset -= SEG2FILESPACE(instance->parent->baseAddress);
+
+
+	if (instance->parent != nullptr && palSegNum != 2) // HACK: Until we have declarations use segment addresses, we'll exclude scene references...
+	{
+		palDecl = instance->parent->GetDeclaration(palOffset);
+
+		if (palDecl == nullptr)
+			palDecl = instance->parent->GetDeclaration(seg);
+	}
+
+	if (palOffset != 0)
+	{
+		if (palDecl != nullptr)
+			palName = StringHelper::Sprintf("%s", palDecl->varName.c_str());
+		else if (palSegNum == 2)
+			palName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), palOffset);
+		else if (!Globals::Instance->HasSegment(palSegNum)) // Probably an external asset we are unable to track
+			palName = StringHelper::Sprintf("0x%06X", palOffset);
+		else
+			palName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), palOffset);
+	}
+	else if (palSegNum != 3)
+		palName = StringHelper::Sprintf("0x%08X", seg); // should be 6x?
+	else
+		palName = StringHelper::Sprintf("0");
+
+	instance->lastTexWidth = sqrt(count);
+	instance->lastTexHeight = sqrt(count);
+	instance->lastTexAddr = palOffset;
+	instance->lastTexSeg = seg;
+	instance->lastTexLoaded = true;
+	instance->lastTexSiz = (F3DZEXTexSizes)2;
+	instance->lastTexFmt = F3DZEXTexFormats::G_IM_FMT_RGBA;
+	instance->lastTexIsPalette = true;
+
+	instance->TextureGenCheck(instance->curPrefix);
+	gfxd_puts(palName.c_str());
+
+	//printf("tlut: %08X idx: %i count: %i" , seg, idx, count);
 	return 1;
 }
 
@@ -1576,6 +1630,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // every command starts with an indent and ends in a newline
 	gfxd_vtx_callback(GfxdCallback_Vtx); // handle vertices
 	gfxd_timg_callback(GfxdCallback_Texture);
+	gfxd_tlut_callback(GfxdCallback_Palette);
 	gfxd_output_callback(outputformatter.static_writer()); // convert tabs to 4 spaces and enforce 120 line limit
 	gfxd_enable(gfxd_emit_dec_color); // use decimal for colors
 
@@ -1770,8 +1825,11 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 // HOTSPOT
 void ZDisplayList::TextureGenCheck(string prefix)
 {
+	printf("lastTexWidth=%i lastTexHeight=%i lastTexAddr=0x%08X lastTexSeg=0x%08X \nlastTexFmt=%i lastTexSiz=%i lastTexLoaded=%i lastTexIsPalette=%i\n\n",
+            lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette);
 	if (TextureGenCheck(fileData, textures, scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette))
 	{
+		printf("!!! TextureGenCheck returned TRUE!!! reset\n\n");
 		lastTexAddr = 0;
 		lastTexLoaded = false;
 		lastTexIsPalette = false;
@@ -1783,7 +1841,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 {
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
 
-	// if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 		printf("TextureGenCheck seg=%2X width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texIsPalette, texAddr);
 
 	if ((texSeg != 0 || texAddr != 0) && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))
