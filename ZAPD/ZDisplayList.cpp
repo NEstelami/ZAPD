@@ -1480,11 +1480,12 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
 		int diff = addr - vtxOffset;
 		printf("addr:%08X - vtxOffset:%08X = diff: %08X\n", addr, vtxOffset, diff);
-		if (diff > 0)
+		if (diff > 0) {
 			count = diff / 16;
-		else
+		} else {
 			printf("count is ZERO\n");
 			count = 0;
+		}
 	}
 
 	if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
