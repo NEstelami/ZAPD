@@ -273,7 +273,7 @@ typedef union
 	float		f;
 } gfxd_value_t;
 
-typedef struct gfxd_ucode *gfxd_ucode_t;
+typedef const struct gfxd_ucode *gfxd_ucode_t;
 
 typedef int gfxd_input_fn_t(void *buf, int count);
 void gfxd_input_buffer(const void *buf, int size);
@@ -365,11 +365,11 @@ const gfxd_value_t *gfxd_value_by_type(int type, int idx);
 int gfxd_arg_valid(int arg_num);
 int gfxd_arg_callbacks(int arg_num);
 
-extern gfxd_ucode_t gfxd_f3d;
-extern gfxd_ucode_t gfxd_f3db;
-extern gfxd_ucode_t gfxd_f3dex;
-extern gfxd_ucode_t gfxd_f3dexb;
-extern gfxd_ucode_t gfxd_f3dex2;
+extern const gfxd_ucode_t gfxd_f3d;
+extern const gfxd_ucode_t gfxd_f3db;
+extern const gfxd_ucode_t gfxd_f3dex;
+extern const gfxd_ucode_t gfxd_f3dexb;
+extern const gfxd_ucode_t gfxd_f3dex2;
 
 #ifdef __cplusplus
 }

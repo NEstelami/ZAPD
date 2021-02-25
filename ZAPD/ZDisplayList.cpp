@@ -1472,19 +1472,24 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	
 	// Check for vertex intersections from other display lists
 	// TODO: These two could probably be condenced to one...
+	printf("seg:%08X vtxOffset:%08X\n", seg, vtxOffset);
 	if (instance->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
 	{
+		printf("FIRST IF ENTERED\n");
 		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
 		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
 		int diff = addr - vtxOffset;
+		printf("addr:%08X - vtxOffset:%08X = diff: %08X\n", addr, vtxOffset, diff);
 		if (diff > 0)
 			count = diff / 16;
 		else
+			printf("count is ZERO\n");
 			count = 0;
 	}
 
 	if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
 	{
+		printf("SECOND IF ENTERED\n");
 		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
 		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
 		int diff = addr - vtxOffset;
@@ -1536,14 +1541,14 @@ static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz,
 
 	// if (texOffset != 0)
 	// {
-		if (texDecl != nullptr)
-			texName = StringHelper::Sprintf("%s", texDecl->varName.c_str());
-		else if (texSegNum == 2)
-			texName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), texOffset);
-		else if (!Globals::Instance->HasSegment(texSegNum)) // Probably an external asset we are unable to track
-			texName = StringHelper::Sprintf("0x%06X", texOffset);
-		else
-			texName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), texOffset);
+	if (texDecl != nullptr)
+		texName = StringHelper::Sprintf("%s", texDecl->varName.c_str());
+	else if (texSegNum == 2)
+		texName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), texOffset);
+	else if (!Globals::Instance->HasSegment(texSegNum)) // Probably an external asset we are unable to track
+		texName = StringHelper::Sprintf("0x%08X", seg);
+	else
+		texName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), texOffset);
 	// }
 	// else if (texSegNum != 3)
 	// 	texName = StringHelper::Sprintf("0x%08X", seg); // should be 6x?
@@ -1585,21 +1590,14 @@ static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 			palDecl = instance->parent->GetDeclaration(seg);
 	}
 
-	// if (palOffset != 0)
-	// {
-		if (palDecl != nullptr)
-			palName = StringHelper::Sprintf("%s", palDecl->varName.c_str());
-		else if (palSegNum == 2)
-			palName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), palOffset);
-		else if (!Globals::Instance->HasSegment(palSegNum)) // Probably an external asset we are unable to track
-			palName = StringHelper::Sprintf("0x%06X", palOffset);
-		else
-			palName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), palOffset);
-	// }
-	// else if (palSegNum != 3)
-	// 	palName = StringHelper::Sprintf("0x%08X", seg); // should be 6x?
-	// else
-	// 	palName = StringHelper::Sprintf("0");
+	if (palDecl != nullptr)
+		palName = StringHelper::Sprintf("%s", palDecl->varName.c_str());
+	else if (palSegNum == 2)
+		palName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), palOffset);
+	else if (!Globals::Instance->HasSegment(palSegNum)) // Probably an external asset we are unable to track
+		palName = StringHelper::Sprintf("0x%08X", seg);
+	else
+		palName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), palOffset);
 
 	instance->lastTexWidth = sqrt(count);
 	instance->lastTexHeight = sqrt(count);
@@ -1885,11 +1883,13 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 		else if (siz == F3DZEXTexSizes::G_IM_SIZ_32b)
 			return TextureType::RGBA32bpp;
 	}
-	else if (fmt == F3DZEXTexFormats::G_IM_FMT_CI)
-	{
-		//if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
-		return TextureType::Palette8bpp;
-	}
+    else if (fmt == F3DZEXTexFormats::G_IM_FMT_CI)
+    {
+        if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
+        	return TextureType::Palette8bpp;
+        else if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
+        	return TextureType::Palette4bpp;
+    }
 	else if (fmt == F3DZEXTexFormats::G_IM_FMT_IA)
 	{
 		if (siz == F3DZEXTexSizes::G_IM_SIZ_16b)
