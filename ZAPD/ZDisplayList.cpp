@@ -1531,7 +1531,7 @@ static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz,
 	Declaration* texDecl = nullptr;
 	string texName = "";
 
-	if (texSegNum == 0x80) // Are these vertices defined in code?
+	if (texSegNum == 0x80)
 		texOffset -= SEG2FILESPACE(instance->parent->baseAddress);
 
 
@@ -1543,21 +1543,14 @@ static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz,
 			texDecl = instance->parent->GetDeclaration(seg);
 	}
 
-	// if (texOffset != 0)
-	// {
-	if (texDecl != nullptr)
+	if (!Globals::Instance->HasSegment(texSegNum)) // Probably an external asset we are unable to track
+		texName = StringHelper::Sprintf("0x%08X", seg);
+	else if (texDecl != nullptr)
 		texName = StringHelper::Sprintf("%s", texDecl->varName.c_str());
 	else if (texSegNum == 2)
 		texName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), texOffset);
-	else if (!Globals::Instance->HasSegment(texSegNum)) // Probably an external asset we are unable to track
-		texName = StringHelper::Sprintf("0x%08X", seg);
 	else
 		texName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), texOffset);
-	// }
-	// else if (texSegNum != 3)
-	// 	texName = StringHelper::Sprintf("0x%08X", seg); // should be 6x?
-	// else
-	// 	texName = StringHelper::Sprintf("0");
 
 	instance->lastTexWidth = width;
 	instance->lastTexHeight = height;
@@ -1582,7 +1575,7 @@ static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	Declaration* palDecl = nullptr;
 	string palName = "";
 
-	if (palSegNum == 0x80) // Are these vertices defined in code?
+	if (palSegNum == 0x80)
 		palOffset -= SEG2FILESPACE(instance->parent->baseAddress);
 
 
@@ -1594,12 +1587,12 @@ static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 			palDecl = instance->parent->GetDeclaration(seg);
 	}
 
-	if (palDecl != nullptr)
+	if (!Globals::Instance->HasSegment(palSegNum)) // Probably an external asset we are unable to track
+		palName = StringHelper::Sprintf("0x%08X", seg);
+	else if (palDecl != nullptr)
 		palName = StringHelper::Sprintf("%s", palDecl->varName.c_str());
 	else if (palSegNum == 2)
 		palName = StringHelper::Sprintf("%sTex_%06X", instance->scene->GetName().c_str(), palOffset);
-	else if (!Globals::Instance->HasSegment(palSegNum)) // Probably an external asset we are unable to track
-		palName = StringHelper::Sprintf("0x%08X", seg);
 	else
 		palName = StringHelper::Sprintf("%sTex_%06X", instance->curPrefix.c_str(), palOffset);
 
@@ -1615,7 +1608,6 @@ static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	instance->TextureGenCheck(instance->curPrefix);
 	gfxd_puts(palName.c_str());
 
-	//printf("tlut: %08X idx: %i count: %i" , seg, idx, count);
 	return 1;
 }
 
@@ -1626,7 +1618,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	OutputFormatter outputformatter;
 	string sourceOutput = "";
 	int dListSize = instructions.size() * sizeof(instructions[0]);
-
+	printf("dlist get source output code ran\n");
 	gfxd_input_buffer(instructions.data(), dListSize);
 	gfxd_endian(gfxd_endian_little, sizeof(uint64_t)); // tell gfxdis what format the data is
 	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // every command starts with an indent and ends in a newline
@@ -1827,8 +1819,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 // HOTSPOT
 void ZDisplayList::TextureGenCheck(string prefix)
 {
-	printf("lastTexWidth=%i lastTexHeight=%i lastTexAddr=0x%08X lastTexSeg=0x%08X \nlastTexFmt=%i lastTexSiz=%i lastTexLoaded=%i lastTexIsPalette=%i\n\n",
-            lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette);
+	// printf("lastTexWidth=%i lastTexHeight=%i lastTexAddr=0x%08X lastTexSeg=0x%08X \nlastTexFmt=%i lastTexSiz=%i lastTexLoaded=%i lastTexIsPalette=%i\n\n",
+    //         lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette);
     // if (lastTexIsPalette)
     //     printf("lastTexWidth=%i lastTexHeight=%i lastTexFmt=%i lastTexSiz=%i\n", lastTexWidth, lastTexHeight, lastTexFmt, lastTexSiz);
 	if (TextureGenCheck(fileData, textures, scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette))
@@ -1900,6 +1892,8 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 			return TextureType::GrayscaleAlpha16bpp;
 		else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
 			return TextureType::GrayscaleAlpha8bpp;
+		else if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
+			return TextureType::Grayscale4bpp;
 	}
 	else if (fmt == F3DZEXTexFormats::G_IM_FMT_I)
 	{
