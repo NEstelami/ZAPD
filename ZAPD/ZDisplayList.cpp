@@ -1468,29 +1468,32 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 
 	instance->references.push_back(vtxOffset);
 
-	uint32_t currentPtr = vtxOffset;
+	uint32_t currentPtr = SEG2FILESPACE(seg);
+	if (GETSEGNUM(seg) == 0x80) // Are these vertices defined in code?
+		currentPtr -= SEG2FILESPACE(instance->parent->baseAddress);
 	
 	// Check for vertex intersections from other display lists
 	// TODO: These two could probably be condenced to one...
-	printf("seg:%08X vtxOffset:%08X\n", seg, vtxOffset);
+	//printf("seg:%08X vtxOffset:%08X\n", seg, vtxOffset);
 	if (instance->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
 	{
-		printf("FIRST IF ENTERED\n");
+		//printf("FIRST IF ENTERED\n");
 		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
 		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
 		int diff = addr - vtxOffset;
-		printf("addr:%08X - vtxOffset:%08X = diff: %08X\n", addr, vtxOffset, diff);
+		//printf("addr:%08X - vtxOffset:%08X = diff: %08X\n", addr, vtxOffset, diff);
 		if (diff > 0) {
 			count = diff / 16;
 		} else {
-			printf("count is ZERO\n");
+			//printf("count is ZERO\n");
 			count = 0;
 		}
+		
 	}
 
 	if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
 	{
-		printf("SECOND IF ENTERED\n");
+		//printf("SECOND IF ENTERED\n");
 		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
 		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
 		int diff = addr - vtxOffset;
@@ -1499,7 +1502,7 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 		else
 			count = 0;
 	}
-
+	//printf("count: %i\n", count);
 	if (count > 0)
 	{
 		vector<Vertex> vtxList = vector<Vertex>();
@@ -1824,8 +1827,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 // HOTSPOT
 void ZDisplayList::TextureGenCheck(string prefix)
 {
-	// printf("lastTexWidth=%i lastTexHeight=%i lastTexAddr=0x%08X lastTexSeg=0x%08X \nlastTexFmt=%i lastTexSiz=%i lastTexLoaded=%i lastTexIsPalette=%i\n\n",
-    //         lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette);
+	printf("lastTexWidth=%i lastTexHeight=%i lastTexAddr=0x%08X lastTexSeg=0x%08X \nlastTexFmt=%i lastTexSiz=%i lastTexLoaded=%i lastTexIsPalette=%i\n\n",
+            lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette);
     // if (lastTexIsPalette)
     //     printf("lastTexWidth=%i lastTexHeight=%i lastTexFmt=%i lastTexSiz=%i\n", lastTexWidth, lastTexHeight, lastTexFmt, lastTexSiz);
 	if (TextureGenCheck(fileData, textures, scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette))
