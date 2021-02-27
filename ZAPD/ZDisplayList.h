@@ -297,8 +297,6 @@ public:
 class ZDisplayList : public ZResource
 {
 protected:
-
-
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
 	void ParseRawData();
 
@@ -333,8 +331,6 @@ protected:
 	void Opcode_G_SETOTHERMODE_H(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_LOADTLUT(uint64_t data, int i, std::string prefix, char* line);
 	void Opcode_G_ENDDL(uint64_t data, int i, std::string prefix, char* line);
-
-
 public:
 	std::string sceneSegName;
 	ZRoom* scene;
@@ -380,9 +376,6 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void Save(const std::string& outFolder) override;
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
-
-	// gfxd callbacks
-	int GfxdCallback_VtxImpl(uint32_t seg, int32_t count);
 
 	ZResourceType GetResourceType() override;
 };

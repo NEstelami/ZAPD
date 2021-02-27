@@ -1877,7 +1877,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 	int segmentNumber = (texSeg & 0xFF000000) >> 24;
 
 	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-		printf("TextureGenCheck seg=%2X width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texIsPalette, texAddr);
+		printf("TextureGenCheck seg=%i width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber, texWidth, texHeight, texIsPalette, texAddr);
 
 	if ((texSeg != 0 || texAddr != 0) && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))
 	{
@@ -1920,19 +1920,19 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	}
     else if (fmt == F3DZEXTexFormats::G_IM_FMT_CI)
     {
-        if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
-        	return TextureType::Palette8bpp;
-        else if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
+    	if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
         	return TextureType::Palette4bpp;
+		else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
+        	return TextureType::Palette8bpp;
     }
 	else if (fmt == F3DZEXTexFormats::G_IM_FMT_IA)
 	{
-		if (siz == F3DZEXTexSizes::G_IM_SIZ_16b)
-			return TextureType::GrayscaleAlpha16bpp;
+		if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
+			return TextureType::Grayscale4bpp;
 		else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
 			return TextureType::GrayscaleAlpha8bpp;
-		else if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
-			return TextureType::Grayscale4bpp;
+		else if (siz == F3DZEXTexSizes::G_IM_SIZ_16b)
+			return TextureType::GrayscaleAlpha16bpp;
 	}
 	else if (fmt == F3DZEXTexFormats::G_IM_FMT_I)
 	{
