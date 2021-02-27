@@ -183,14 +183,14 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 			if (typeid(*limb) == typeid(ZLimbLOD))
 			{
 				ZLimbLOD* limbLOD = (ZLimbLOD*)limbs[i];
-				string defaultFarDLName = StringHelper::Sprintf("%sFarLimbDlist0x%06X", defaultPrefix.c_str(), limbLOD->farDListPtr);
+				string defaultFarDLName = StringHelper::Sprintf("%sFarLimbDL_%06X", defaultPrefix.c_str(), limbLOD->farDListPtr);
 				string dListStr2 = limbLOD->farDListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(limbLOD->farDListPtr, defaultFarDLName).c_str());
 
 				if (limbLOD->farDListPtr != 0 && parent->GetDeclaration(limbLOD->farDListPtr) == nullptr)
 				{
 					ZDisplayList* dList = new ZDisplayList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 					dList->parent = parent;
-					dList->SetName(StringHelper::Sprintf("%s_farLimbDlist_%06X", defaultPrefix.c_str(), limbLOD->farDListPtr));
+					dList->SetName(StringHelper::Sprintf("%s_farLimbDL_%06X", defaultPrefix.c_str(), limbLOD->farDListPtr));
 					dList->GetSourceOutputCode(defaultPrefix);
 				}
 

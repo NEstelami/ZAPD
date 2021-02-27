@@ -70,7 +70,7 @@ ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawD
 {
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
-	name = StringHelper::Sprintf("Dlist0x%06X", rawDataIndex);
+	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
 	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
@@ -1474,39 +1474,35 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	
 	// Check for vertex intersections from other display lists
 	// TODO: These two could probably be condenced to one...
-	//printf("seg:%08X vtxOffset:%08X\n", seg, vtxOffset);
 	if (instance->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
 	{
-		//printf("FIRST IF ENTERED\n");
 		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
 		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
 		int diff = addr - vtxOffset;
-		//printf("addr:%08X - vtxOffset:%08X = diff: %08X\n", addr, vtxOffset, diff);
-		if (diff > 0) {
-			count = diff / 16;
-		} else {
-			//printf("count is ZERO\n");
-			count = 0;
-		}
-		
-	}
 
-	if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
-	{
-		//printf("SECOND IF ENTERED\n");
-		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
-		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
-		int diff = addr - vtxOffset;
 		if (diff > 0)
 			count = diff / 16;
 		else
 			count = 0;
 	}
-	//printf("count: %i\n", count);
+
+	if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
+	{
+		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
+		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
+		int diff = addr - vtxOffset;
+
+		if (diff > 0)
+			count = diff / 16;
+		else
+			count = 0;
+	}
+
 	if (count > 0)
 	{
 		vector<Vertex> vtxList = vector<Vertex>();
 		vtxList.reserve(count);
+
 		for (int i = 0; i < count; i++)
 		{
 			Vertex vtx = Vertex(instance->fileData, currentPtr);
@@ -1517,7 +1513,6 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	}
 
 	gfxd_puts("@r");
-
 
 	return 1;
 }
@@ -1611,6 +1606,51 @@ static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	return 1;
 }
 
+static int GfxdCallback_DisplayList(uint32_t seg) 
+{
+	ZDisplayList* instance = ZDisplayList::static_instance;
+	uint32_t dListOffset = SEG2FILESPACE(seg);
+	uint32_t dListSegNum = GETSEGNUM(seg);
+	Declaration* dListDecl = nullptr;
+	string dListName = "";
+
+	if (instance->parent != nullptr)
+		dListDecl = instance->parent->GetDeclaration(dListOffset);
+
+	if (!Globals::Instance->HasSegment(dListSegNum)) // Probably an external asset we are unable to track
+		dListName = StringHelper::Sprintf("0x%08X", seg);
+	else if (dListDecl != nullptr)
+		dListName = StringHelper::Sprintf("%s", dListDecl->varName.c_str());
+	else
+		dListName = StringHelper::Sprintf("%sDL_%06X", instance->curPrefix.c_str(), dListOffset);
+
+	if (dListSegNum <= 6)
+	{
+		ZDisplayList* newDList = new ZDisplayList(instance->fileData, dListOffset, instance->GetDListLength(instance->fileData, dListOffset, instance->dListType));
+		newDList->scene = instance->scene;
+		newDList->parent = instance->parent;
+		instance->otherDLists.push_back(newDList);
+	}
+
+	gfxd_puts(dListName.c_str());
+
+	return 1;
+}
+
+static int GfxdCallback_Matrix(uint32_t seg) 
+{
+	string mtxName = "";
+
+	if (Globals::Instance->symbolMap.find(seg) != Globals::Instance->symbolMap.end())
+		mtxName = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[seg].c_str());
+	else
+		mtxName = StringHelper::Sprintf("0x%08X", seg);
+
+	gfxd_puts(mtxName.c_str());
+
+	return 1;
+}
+
 ZDisplayList* ZDisplayList::static_instance;
 
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
@@ -1618,14 +1658,18 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	OutputFormatter outputformatter;
 	string sourceOutput = "";
 	int dListSize = instructions.size() * sizeof(instructions[0]);
-	printf("dlist get source output code ran\n");
+
 	gfxd_input_buffer(instructions.data(), dListSize);
 	gfxd_endian(gfxd_endian_little, sizeof(uint64_t)); // tell gfxdis what format the data is
-	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // every command starts with an indent and ends in a newline
+
+	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // format for each command entry
 	gfxd_vtx_callback(GfxdCallback_Vtx); // handle vertices
-	gfxd_timg_callback(GfxdCallback_Texture);
-	gfxd_tlut_callback(GfxdCallback_Palette);
+	gfxd_timg_callback(GfxdCallback_Texture); // handle textures
+	gfxd_tlut_callback(GfxdCallback_Palette); // handle palettes
+	gfxd_dl_callback(GfxdCallback_DisplayList); // handle child display lists
+	gfxd_mtx_callback(GfxdCallback_Matrix); // handle matrices
 	gfxd_output_callback(outputformatter.static_writer()); // convert tabs to 4 spaces and enforce 120 line limit
+
 	gfxd_enable(gfxd_emit_dec_color); // use decimal for colors
 
 	// set microcode. see gfxd.h for more options.
@@ -1819,13 +1863,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 // HOTSPOT
 void ZDisplayList::TextureGenCheck(string prefix)
 {
-	// printf("lastTexWidth=%i lastTexHeight=%i lastTexAddr=0x%08X lastTexSeg=0x%08X \nlastTexFmt=%i lastTexSiz=%i lastTexLoaded=%i lastTexIsPalette=%i\n\n",
-    //         lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette);
-    // if (lastTexIsPalette)
-    //     printf("lastTexWidth=%i lastTexHeight=%i lastTexFmt=%i lastTexSiz=%i\n", lastTexWidth, lastTexHeight, lastTexFmt, lastTexSiz);
 	if (TextureGenCheck(fileData, textures, scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette))
 	{
-		// printf("!!! TextureGenCheck returned TRUE!!! reset\n\n");
 		lastTexAddr = 0;
 		lastTexLoaded = false;
 		lastTexIsPalette = false;
