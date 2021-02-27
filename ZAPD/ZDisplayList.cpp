@@ -1517,8 +1517,7 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	return 1;
 }
 
-static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, 
-								int32_t width, int32_t height, int32_t pal)
+static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int32_t width, int32_t height, int32_t pal)
 {
 	ZDisplayList* instance = ZDisplayList::static_instance;
 	uint32_t texOffset = SEG2FILESPACE(seg);
