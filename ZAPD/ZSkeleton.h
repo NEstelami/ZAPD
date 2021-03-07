@@ -27,6 +27,9 @@ struct ZLimbStandard : public ZResource
 	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
+
+	// protected: // ?
+	static std::string MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t>& rawData, ZFile* parent);
 };
 
 struct ZLimbLOD : ZLimbStandard
