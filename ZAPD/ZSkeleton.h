@@ -11,8 +11,10 @@ enum class ZLimbType
 	LOD
 };
 
-struct ZLimbStandard : public ZResource
+class ZLimbStandard : public ZResource
 {
+// protected:
+public:
 	uint32_t address;
 	std::string name;
 
@@ -22,25 +24,32 @@ struct ZLimbStandard : public ZResource
 
 	std::vector<ZLimbStandard*> children;
 
+public:
 	ZLimbStandard();
 	static ZLimbStandard* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetSourceTypeName() override;
+	ZResourceType GetResourceType() override;
 
 	// protected: // ?
 	static std::string MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t>& rawData, ZFile* parent);
 };
 
-struct ZLimbLOD : ZLimbStandard
+class ZLimbLOD : public ZLimbStandard
 {
+// protected:
+public:
 	uint32_t farDListPtr;
 
+public:
 	ZLimbLOD();
 	//static ZLimbLOD* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	static ZLimbLOD* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetSourceTypeName() override;
 };
 
 enum ZSkeletonType
@@ -59,10 +68,12 @@ public:
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
 	ZSkeleton();
-	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
 	void Save(const std::string& outFolder) override;
-	ZResourceType GetResourceType() override;
+	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
+
+	std::string GetSourceTypeName() override;
+	ZResourceType GetResourceType() override;
 };
