@@ -50,6 +50,9 @@ ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int raw
 {
 	ZLimbStandard* limb = new ZLimbStandard();
 
+	limb->rawData.assign(nRawData.begin(), nRawData.end());
+	limb->rawDataIndex = rawDataIndex;
+
 	// ?
 	limb->segAddress = rawDataIndex;
 	limb->fileAddress = rawDataIndex;
@@ -68,7 +71,7 @@ ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int raw
 
 int ZLimbStandard::GetRawDataSize()
 {
-	return 12;
+	return 0x0C;
 }
 
 string ZLimbStandard::GetSourceOutputCode(const std::string& prefix)
@@ -77,13 +80,22 @@ string ZLimbStandard::GetSourceOutputCode(const std::string& prefix)
 	if (GETSEGNUM(dListPtr) == 0x80) {
 		dListOffset -= SEG2FILESPACE(parent->baseAddress);
 	}
-	string dListStr = dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(dListOffset).c_str());
+
+	string dListStr = ZLimbStandard::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
 
 	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
 		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str());
 
 	Declaration* decl = parent->GetDeclaration(fileAddress);
-	decl->text = entryStr;
+	if (decl == nullptr) {
+		// TODO: check if has name from xml and use that instead.
+		string limbName = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), fileAddress);
+		parent->AddDeclaration(fileAddress, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), limbName, entryStr);
+	}
+	else {
+		// TODO: check if has name from xml and use that instead.
+		decl->text = entryStr;
+	}
 
 	return "";
 }
@@ -98,17 +110,30 @@ ZResourceType ZLimbStandard::GetResourceType()
 	return ZResourceType::Limb;
 }
 
-std::string ZLimbStandard::MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListOffset, const std::vector<uint8_t> &rawData, ZFile* parent)
+std::string ZLimbStandard::MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t> &rawData, ZFile* parent)
 {
-	string defaultDLName = StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(), dListOffset);
-	string dListStr = dListOffset == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetDeclarationName(dListOffset, defaultDLName).c_str());
+	if (dListPtr == 0) {
+		return "NULL";
+	}
 
-	if (dListOffset != 0 && parent->GetDeclaration(dListOffset) == nullptr)
-	{
+	uint32_t dListOffset = SEG2FILESPACE(dListPtr);
+	if (GETSEGNUM(dListPtr) == 0x80) {
+		dListOffset -= SEG2FILESPACE(parent->baseAddress);
+	}
+
+	string dListStr;
+	Declaration* decl = parent->GetDeclaration(dListOffset);
+	if (decl == nullptr) {
+		dListStr = StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(), dListOffset);
+
+		// Does this need to be a pointer?
 		ZDisplayList* dList = new ZDisplayList(rawData, dListOffset, ZDisplayList::GetDListLength(rawData, dListOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
 		dList->parent = parent;
 		dList->SetName(dListStr);
 		dList->GetSourceOutputCode(prefix);
+	}
+	else {
+		dListStr = decl->varName;
 	}
 
 	return dListStr;
@@ -135,15 +160,17 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 	skeleton->rawData = nRawData;
 	skeleton->rawDataIndex = rawDataIndex;
 
-	if (reader->Attribute("Type") != nullptr)
+	const char* skelType = reader->Attribute("Type");
+	if (skelType != nullptr)
 	{
-		if (string(reader->Attribute("Type")) == "Flex")
+		if (string(skelType) == "Flex")
 			skeletonType = ZSkeletonType::Flex;
-		else if (string(reader->Attribute("Type")) == "Skin")
+		else if (string(skelType) == "Skin")
 			skeletonType = ZSkeletonType::Skin;
-		else if (string(reader->Attribute("Type")) != "Normal")
+		else if (string(skelType) != "Normal")
 		{
 			// TODO: Print some error here...
+			fprintf(stderr, "Error in ZSkeleton '%s': Unexpected type '%s'. Defaulting to 'Normal'.\n", skeleton->name.c_str(), skelType);
 		}
 	}
 
@@ -171,11 +198,13 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 		if (limbType == ZLimbType::Standard)
 		{
 			ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, ptr2);
+			limb->parent = nParent;
 			skeleton->limbs.push_back(limb);
 		}
 		else
 		{
 			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2);
+			limb->parent = nParent;
 			skeleton->limbs.push_back(limb);
 		}
 
@@ -221,40 +250,28 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		for (int i = 0; i < limbs.size(); i++)
 		{
 			ZLimbStandard* limb = limbs[i];
-			uint32_t dListOffset = SEG2FILESPACE(limb->dListPtr);
-			if (GETSEGNUM(limb->dListPtr) == 0x80) {
-				dListOffset -= SEG2FILESPACE(parent->baseAddress);
-			}
-
-			string dListStr = ZLimbStandard::MakeLimbDListSourceOutputCode(defaultPrefix, "", dListOffset, rawData, parent);
-
-			string entryStr = "";
 
 			if (typeid(*limb) == typeid(ZLimbLOD))
 			{
 				ZLimbLOD* limbLOD = (ZLimbLOD*)limbs[i];
-				uint32_t farDListOffset = SEG2FILESPACE(limbLOD->farDListPtr);
-				if (GETSEGNUM(limbLOD->farDListPtr) == 0x80) {
-					farDListOffset -= SEG2FILESPACE(parent->baseAddress);
-				}
 
-				string dListStr2 = ZLimbStandard::MakeLimbDListSourceOutputCode(defaultPrefix, "Far", farDListOffset, rawData, parent);
+				string dListStr = ZLimbStandard::MakeLimbDListSourceOutputCode(defaultPrefix, "", limb->dListPtr, rawData, parent);
+				string dListStr2 = ZLimbStandard::MakeLimbDListSourceOutputCode(defaultPrefix, "Far", limbLOD->farDListPtr, rawData, parent);
 
-				entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, { %s, %s }",
+				string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, { %s, %s }",
 					limbLOD->transX, limbLOD->transY, limbLOD->transZ, limbLOD->childIndex, limbLOD->siblingIndex, dListStr.c_str(), dListStr2.c_str());
+
+				string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limb->fileAddress);
+
+				if (parent->HasDeclaration(limb->fileAddress))
+					limbName = parent->GetDeclarationName(limb->fileAddress);
+
+				parent->AddDeclaration(limb->fileAddress, DeclarationAlignment::None, limb->GetRawDataSize(), limb->GetSourceTypeName(), limbName, entryStr);
 			}
 			else
 			{
-				entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
-					limb->transX, limb->transY, limb->transZ, limb->childIndex, limb->siblingIndex, dListStr.c_str());
+				limb->GetSourceOutputCode(defaultPrefix);
 			}
-
-			string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limb->fileAddress);
-
-			if (parent->HasDeclaration(limb->fileAddress))
-				limbName = parent->GetDeclarationName(limb->fileAddress);
-
-			parent->AddDeclaration(limb->fileAddress, DeclarationAlignment::None, limb->GetRawDataSize(), limb->GetSourceTypeName(), limbName, entryStr);
 		}
 
 		// Table
@@ -350,7 +367,7 @@ ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
 
 int ZLimbLOD::GetRawDataSize()
 {
-	return 16;
+	return 0x10;
 }
 
 string ZLimbLOD::GetSourceOutputCode(const std::string& prefix)
