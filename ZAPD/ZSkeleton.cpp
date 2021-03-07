@@ -76,19 +76,20 @@ int ZLimbStandard::GetRawDataSize()
 
 string ZLimbStandard::GetSourceOutputCode(const std::string& prefix)
 {
-	string dListStr = ZLimbStandard::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
+	string dListStr = "NULL";
+	if (dListPtr != 0) {
+		dListStr = "&" + ZLimbStandard::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
+	}
 
 	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
 		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str());
 
 	Declaration* decl = parent->GetDeclaration(fileAddress);
 	if (decl == nullptr) {
-		// TODO: check if has name from xml and use that instead.
 		string limbName = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), fileAddress);
 		parent->AddDeclaration(fileAddress, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), limbName, entryStr);
 	}
 	else {
-		// TODO: check if has name from xml and use that instead.
 		decl->text = entryStr;
 	}
 
@@ -103,6 +104,11 @@ std::string ZLimbStandard::GetSourceTypeName()
 ZResourceType ZLimbStandard::GetResourceType()
 {
 	return ZResourceType::Limb;
+}
+
+uint32_t ZLimbStandard::GetFileAddress()
+{
+	return fileAddress;
 }
 
 std::string ZLimbStandard::MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t> &rawData, ZFile* parent)
@@ -237,11 +243,21 @@ int ZSkeleton::GetRawDataSize()
 
 std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 {
-	if (parent != nullptr)
-	{
-		string defaultPrefix = name.c_str();
-		defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
+	if (parent == nullptr) {
+		return "";
+	}
 
+	string defaultPrefix = name.c_str();
+	defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
+
+	for (auto& limb: limbs) {
+		limb->GetSourceOutputCode(defaultPrefix);
+	}
+
+	uint32_t ptr = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex) & 0x00FFFFFF;
+
+	if (!parent->HasDeclaration(ptr))
+	{
 		// Table
 		string tblStr = "";
 		string limbsType = "StandardLimb";
@@ -250,44 +266,37 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		{
 			ZLimbStandard* limb = limbs[i];
 
-			limb->GetSourceOutputCode(defaultPrefix);
-
-			//string decl = StringHelper::Sprintf("    &_%sLimb_%04X,\n", prefix.c_str(), limb->fileAddress);
-			string decl = "";
-
 			limbsType = limb->GetSourceTypeName();
-			if (parent->HasDeclaration(limb->fileAddress)) {
-				decl = StringHelper::Sprintf("    &%s,", parent->GetDeclarationName(limb->fileAddress).c_str());
-				if (i != (limbs.size() - 1)) {
-				    decl += "\n";
-				}
+
+			string decl = StringHelper::Sprintf("    &%s,", parent->GetDeclarationName(limb->GetFileAddress()).c_str());
+			if (i != (limbs.size() - 1)) {
+				decl += "\n";
 			}
 
 			tblStr += decl;
 		}
 
-		uint32_t ptr = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex) & 0x00FFFFFF;
-
-		if (!parent->HasDeclaration(ptr))
-		{
-			parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbs.size(),
-				StringHelper::Sprintf("static %s*", limbsType.c_str()), 
-				StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()), limbs.size(), tblStr);
-		}
-
-		string headerStr;
-		if (type == ZSkeletonType::Normal)
-		{
-			headerStr = StringHelper::Sprintf("%sLimbs, %i", defaultPrefix.c_str(), limbs.size());
-		}
-		else
-		{
-			headerStr = StringHelper::Sprintf("%sLimbs, %i, %i", defaultPrefix.c_str(), limbs.size(), dListCount);
-		}
-
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
-			GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()), headerStr);
+		parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbs.size(),
+			StringHelper::Sprintf("static %s*", limbsType.c_str()), 
+			StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()), limbs.size(), tblStr);
 	}
+
+	string headerStr;
+	switch (type) {
+	case ZSkeletonType::Normal:
+		headerStr = StringHelper::Sprintf("%sLimbs, %i", defaultPrefix.c_str(), limbs.size());
+		break;
+	case ZSkeletonType::Flex:
+		headerStr = StringHelper::Sprintf("%sLimbs, %i, %i", defaultPrefix.c_str(), limbs.size(), dListCount);
+		break;
+	case ZSkeletonType::Skin:
+		// TODO
+		fprintf(stderr, "Oh no!\n");
+		break;
+	}
+
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+		GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()), headerStr);
 
 	return "";
 }
@@ -348,20 +357,25 @@ int ZLimbLOD::GetRawDataSize()
 
 string ZLimbLOD::GetSourceOutputCode(const std::string& prefix)
 {
-	string dListStr = ZLimbStandard::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
-	string dListStr2 = ZLimbStandard::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
+	string dListStr = "NULL";
+	string dListStr2 = "NULL";
+
+	if (dListPtr != 0) {
+		dListStr = "&" + ZLimbStandard::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
+	}
+	if (farDListPtr != 0) {
+		dListStr2 = "&" + ZLimbStandard::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
+	}
 
 	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, { %s, %s }",
 		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str(), dListStr2.c_str());
 
 	Declaration* decl = parent->GetDeclaration(fileAddress);
 	if (decl == nullptr) {
-		// TODO: check if has name from xml and use that instead.
 		string limbName = StringHelper::Sprintf("%sFarLimb_%06X", prefix.c_str(), fileAddress);
 		parent->AddDeclaration(fileAddress, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), limbName, entryStr);
 	}
 	else {
-		// TODO: check if has name from xml and use that instead.
 		decl->text = entryStr;
 	}
 

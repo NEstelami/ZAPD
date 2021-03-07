@@ -14,8 +14,7 @@ enum class ZLimbType
 
 class ZLimbStandard : public ZResource
 {
-// protected:
-public:
+protected:
 	segptr_t segAddress;
 	uint32_t fileAddress;
 	std::string name;
@@ -35,14 +34,15 @@ public:
 	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;
 
+	uint32_t GetFileAddress();
+
 	// protected: // ?
 	static std::string MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t>& rawData, ZFile* parent);
 };
 
 class ZLimbLOD : public ZLimbStandard
 {
-// protected:
-public:
+protected:
 	segptr_t farDListPtr;
 
 public:
