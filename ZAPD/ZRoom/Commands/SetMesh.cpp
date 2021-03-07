@@ -11,7 +11,7 @@ using namespace std;
 SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	data = rawData[rawDataIndex + 1];
-	segmentOffset = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
+	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	string declaration = "";
 	int8_t meshHeaderType = rawData[segmentOffset + 0];
@@ -22,8 +22,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		meshHeader0->headerType = 0;
 		meshHeader0->entries = vector<MeshEntry0*>();
 
-		meshHeader0->dListStart = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
-		meshHeader0->dListEnd = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
+		meshHeader0->dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
+		meshHeader0->dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
 
 		int8_t numEntries = rawData[segmentOffset + 1];
 		uint32_t currentPtr = meshHeader0->dListStart;
@@ -38,8 +38,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		for (int i = 0; i < numEntries; i++)
 		{
 			MeshEntry0* entry = new MeshEntry0();
-			entry->opaqueDListAddr = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, currentPtr + 0));
-			entry->translucentDListAddr = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, currentPtr + 4));
+			entry->opaqueDListAddr = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 0));
+			entry->translucentDListAddr = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 4));
 
 			if (entry->opaqueDListAddr != 0)
 			{
@@ -134,7 +134,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 				StringHelper::Sprintf("%sMeshHeader0x%06X", zRoom->GetName().c_str(), segmentOffset), declaration);
 
 			meshHeader1 = headerSingle;
-;		}
+		}
 		else if (fmt == 2) // Multi-Format
 		{
 			MeshHeader1Multi* headerMulti = new MeshHeader1Multi();
@@ -173,8 +173,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		meshHeader2->headerType = 2;
 		
 		meshHeader2->entries = vector<MeshEntry2*>();
-		meshHeader2->dListStart = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
-		meshHeader2->dListEnd = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
+		meshHeader2->dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
+		meshHeader2->dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
 
 		int8_t numEntries = rawData[segmentOffset + 1];
 		uint32_t currentPtr = meshHeader2->dListStart;

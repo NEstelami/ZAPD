@@ -35,30 +35,10 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 	numWaterBoxes = BitConverter::ToInt16BE(data, rawDataIndex + 36);
 	waterBoxSegmentOffset = BitConverter::ToInt32BE(data, rawDataIndex + 40) & 0x00FFFFFF;
 
-	uint32_t vtxAddr = SEG2FILESPACE(vtxSegmentOffset);
-	uint32_t polyAddr = SEG2FILESPACE(polySegmentOffset);
-	uint32_t polyTypeDefAddr = SEG2FILESPACE(polyTypeDefSegmentOffset);
-	uint32_t camDataAddr = SEG2FILESPACE(camDataSegmentOffset);
-
-	int segmentNumber = GETSEGNUM(vtxSegmentOffset);
-	if (segmentNumber == 0x80) { // Is defined in code?
-		vtxAddr -= SEG2FILESPACE(parent->baseAddress);
-	}
-
-	segmentNumber = GETSEGNUM(polySegmentOffset);
-	if (segmentNumber == 0x80) { // Is defined in code?
-		polyAddr -= SEG2FILESPACE(parent->baseAddress);
-	}
-
-	segmentNumber = GETSEGNUM(polyTypeDefSegmentOffset);
-	if (segmentNumber == 0x80) { // Is defined in code?
-		polyTypeDefAddr -= SEG2FILESPACE(parent->baseAddress);
-	}
-
-	segmentNumber = GETSEGNUM(camDataSegmentOffset);
-	if (segmentNumber == 0x80) { // Is defined in code?
-		camDataAddr -= SEG2FILESPACE(parent->baseAddress);
-	}
+	uint32_t vtxAddr = Seg2Filespace(vtxSegmentOffset, parent->baseAddress);
+	uint32_t polyAddr = Seg2Filespace(polySegmentOffset, parent->baseAddress);
+	uint32_t polyTypeDefAddr = Seg2Filespace(polyTypeDefSegmentOffset, parent->baseAddress);
+	uint32_t camDataAddr = Seg2Filespace(camDataSegmentOffset, parent->baseAddress);
 
 	// HOTSPOT
 	for (int i = 0; i < numVerts; i++)
