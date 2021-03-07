@@ -188,6 +188,20 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	//mdl->blocks.push_back(new HLTerminator());
 }
 
+int ZSkeleton::GetRawDataSize()
+{
+	switch (type) {
+	case ZSkeletonType::Normal:
+		return 0x8;
+	case ZSkeletonType::Flex:
+		return 0xC;
+	default:
+		fprintf(stderr, "Error in ZSkeleton '%s': Type not implemented: %i. Defaulting to 'SkeletonHeader'\n", name.c_str(), type);
+		exit(-1);
+		return 0x8;
+	}
+}
+
 std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
@@ -253,18 +267,18 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 				"static void*", StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()), limbs.size(), tblStr);
 		}
 
+		string headerStr;
 		if (type == ZSkeletonType::Normal)
 		{
-			string headerStr = StringHelper::Sprintf("%sLimbs, %i", defaultPrefix.c_str(), limbs.size());
-			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 8,
-				GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()), headerStr);
+			headerStr = StringHelper::Sprintf("%sLimbs, %i", defaultPrefix.c_str(), limbs.size());
 		}
 		else
 		{
-			string headerStr = StringHelper::Sprintf("%sLimbs, %i, %i", defaultPrefix.c_str(), limbs.size(), dListCount);
-			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, 12,
-				GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()), headerStr);
+			headerStr = StringHelper::Sprintf("%sLimbs, %i, %i", defaultPrefix.c_str(), limbs.size(), dListCount);
 		}
+
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+			GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()), headerStr);
 	}
 
 	return "";

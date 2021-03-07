@@ -72,6 +72,7 @@ public:
 	void Save(const std::string& outFolder) override;
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 
+	int GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() override;
