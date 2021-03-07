@@ -8,19 +8,21 @@
 enum class ZLimbType
 {
 	Standard,
-	LOD
+	LOD,
+	Skin
 };
 
 class ZLimbStandard : public ZResource
 {
 // protected:
 public:
-	uint32_t address;
+	segptr_t segAddress;
+	uint32_t fileAddress;
 	std::string name;
 
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
-	uint32_t dListPtr;
+	segptr_t dListPtr;
 
 	std::vector<ZLimbStandard*> children;
 
@@ -41,7 +43,7 @@ class ZLimbLOD : public ZLimbStandard
 {
 // protected:
 public:
-	uint32_t farDListPtr;
+	segptr_t farDListPtr;
 
 public:
 	ZLimbLOD();
