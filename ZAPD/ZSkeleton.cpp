@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "HighLevel/HLModelIntermediette.h"
 #include <typeinfo>
+#include <cassert>
 
 using namespace std;
 using namespace tinyxml2;
@@ -72,12 +73,12 @@ void ZLimb::ParseRawData()
 	case ZLimbType::Skin:
 		skinSegmentType = static_cast<ZLimbSkinType>(BitConverter::ToInt32BE(rawData, rawDataIndex + 8));
 		skinSegment = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		if (skinSegmentType == ZLimbSkinType::SkinType_4 || skinSegmentType == ZLimbSkinType::SkinType_DList) {
+		/*if (skinSegmentType == ZLimbSkinType::SkinType_4 || skinSegmentType == ZLimbSkinType::SkinType_DList) {
 			printf("Type: %i\nsegment: 0x%08X\n\n", skinSegmentType, skinSegment);
 		}
 		else {
 			printf("Type: %i\nsegment: %X\n\n", skinSegmentType, skinSegment);
-		}
+		}*/
 		break;
 	}
 }
@@ -111,21 +112,12 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 {
 	string dListStr = "NULL";
 	string dListStr2 = "NULL";
-	string skinSegmentStr = "NULL";
 
 	if (dListPtr != 0) {
 		dListStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
 	}
 	if (farDListPtr != 0) {
 		dListStr2 = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
-	}
-	if (skinSegment != 0) {
-		if (skinSegmentType == ZLimbSkinType::SkinType_DList) {
-			skinSegmentStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
-		}
-		else {
-			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
-		}
 	}
 
 	string entryStr = StringHelper::Sprintf("\n    { %i, %i, %i },\n    0x%02X, 0x%02X,\n",
@@ -140,8 +132,7 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 			dListStr.c_str(), dListStr2.c_str());
 		break;
 	case ZLimbType::Skin:
-		entryStr += StringHelper::Sprintf("    0x%02X, %s\n",
-			skinSegmentType, skinSegmentStr.c_str());
+		entryStr += GetSourceOutputCodeSkin(prefix);
 		break;
 	}
 
@@ -216,6 +207,83 @@ std::string ZLimb::MakeLimbDListSourceOutputCode(const std::string& prefix, cons
 	return dListStr;
 }
 
+std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
+{
+	assert(type == ZLimbType::Skin);
+
+	string skinSegmentStr = "NULL";
+
+	if (skinSegment != 0) {
+		switch (skinSegmentType) {
+		case ZLimbSkinType::SkinType_4:
+			skinSegmentStr = "&" + GetSourceOutputCodeSkin_Type_4(prefix);
+			break;
+		case ZLimbSkinType::SkinType_DList:
+			skinSegmentStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
+			break;
+		default:
+			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type for SkinLimb: '%i'. \n\tPlease report this.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
+		case ZLimbSkinType::SkinType_0:
+		case ZLimbSkinType::SkinType_5:
+			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Segment type for SkinLimb not implemented: '%i'.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
+			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
+			break;
+		}
+	}
+
+	string entryStr = StringHelper::Sprintf("    0x%02X, %s\n",
+		skinSegmentType, skinSegmentStr.c_str());
+
+	return entryStr;
+}
+
+// Should this be a class on it's own?
+std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
+{
+	assert(type == ZLimbType::Skin);
+	assert(skinSegmentType == ZLimbSkinType::SkinType_4);
+
+	// Hacky way. Change when the struct has a proper name.
+	#define SKINTYPE_4_STRUCT_TYPE "Struct_800A5E28"
+	#define SKINTYPE_4_STRUCT_TYPE_SIZE 0x0C
+
+	uint32_t skinSegmentOffset = Seg2Filespace(skinSegment, parent->baseAddress);
+
+	string struct_800A5E28_Str;
+	Declaration* decl = parent->GetDeclaration(skinSegmentOffset);
+	if (decl == nullptr) {
+		struct_800A5E28_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_TYPE "_%06X", prefix.c_str(), skinSegmentOffset);
+
+		/*int dlistLength = ZDisplayList::GetDListLength(rawData, skinSegmentOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		// Does this need to be a pointer?
+		ZDisplayList* dList = new ZDisplayList(rawData, skinSegmentOffset, dlistLength);
+		dList->parent = parent;
+		dList->SetName(struct_800A5E28_Str);
+		dList->GetSourceOutputCode(prefix);*/
+
+		uint16_t Struct_800A5E28_unk_0 = BitConverter::ToUInt16BE(rawData, skinSegmentOffset + 0);
+		uint16_t Struct_800A5E28_unk_2 = BitConverter::ToUInt16BE(rawData, skinSegmentOffset + 2);
+		segptr_t Struct_800A5E28_unk_4 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 4); // Struct_800A598C*
+		segptr_t Struct_800A5E28_unk_8 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 8); // Gfx*
+
+		string entryStr = StringHelper::Sprintf("0x%04X, 0x%04X, 0x%08X, 0x%08X", 
+			Struct_800A5E28_unk_0, Struct_800A5E28_unk_2, Struct_800A5E28_unk_4, Struct_800A5E28_unk_8);
+
+		parent->AddDeclaration(
+			skinSegmentOffset, DeclarationAlignment::None, 
+			SKINTYPE_4_STRUCT_TYPE_SIZE, SKINTYPE_4_STRUCT_TYPE, 
+			struct_800A5E28_Str, entryStr);
+	}
+	else {
+		struct_800A5E28_Str = decl->varName;
+	}
+
+	#undef SKINTYPE_4_STRUCT_TYPE_SIZE
+	#undef SKINTYPE_4_STRUCT_TYPE
+
+	return struct_800A5E28_Str;
+}
+
 
 ZSkeleton::ZSkeleton() : ZResource()
 {
@@ -266,6 +334,7 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 
 	string defaultPrefix = skeleton->name.c_str();
 	defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
+	// TODO: Fix?
 	uint32_t ptr = (uint32_t)BitConverter::ToInt32BE(nRawData, rawDataIndex) & 0x00FFFFFF;
 
 	for (int i = 0; i < limbCount; i++)

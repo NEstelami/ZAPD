@@ -16,7 +16,7 @@ enum class ZLimbType
 enum class ZLimbSkinType
 {
 	SkinType_0, // Segment = 0
-	SkinType_4 = 4, // Segment = segmented address // dunno what is it
+	SkinType_4 = 4, // Segment = segmented address // dunno what is it // Struct_800A5E28
 	SkinType_5 = 5, // Segment = 0
 	SkinType_DList = 11,
 };
@@ -37,6 +37,10 @@ protected:
 
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0; // Skin only
 	segptr_t skinSegment = 0; // Skin only
+
+
+	std::string GetSourceOutputCodeSkin(const std::string& prefix);
+	std::string GetSourceOutputCodeSkin_Type_4(const std::string& prefix);
 
 public:
 	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);
