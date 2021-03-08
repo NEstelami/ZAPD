@@ -114,10 +114,10 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	string dListStr2 = "NULL";
 
 	if (dListPtr != 0) {
-		dListStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
+		dListStr = ZLimb::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
 	}
 	if (farDListPtr != 0) {
-		dListStr2 = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
+		dListStr2 = ZLimb::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
 	}
 
 	string entryStr = StringHelper::Sprintf("\n    { %i, %i, %i },\n    0x%02X, 0x%02X,\n",
@@ -180,7 +180,7 @@ uint32_t ZLimb::GetFileAddress()
 	return Seg2Filespace(segAddress, parent->baseAddress);
 }
 
-std::string ZLimb::MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t> &rawData, ZFile* parent)
+std::string ZLimb::MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr, const std::vector<uint8_t> &rawData, ZFile* parent)
 {
 	if (dListPtr == 0) {
 		return "NULL";
@@ -219,7 +219,7 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 			skinSegmentStr = "&" + GetSourceOutputCodeSkin_Type_4(prefix);
 			break;
 		case ZLimbSkinType::SkinType_DList:
-			skinSegmentStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
+			skinSegmentStr = ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
 			break;
 		default:
 			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type for SkinLimb: '%i'. \n\tPlease report this.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
@@ -266,8 +266,15 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		segptr_t Struct_800A5E28_unk_4 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 4); // Struct_800A598C*
 		segptr_t Struct_800A5E28_unk_8 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 8); // Gfx*
 
-		string entryStr = StringHelper::Sprintf("0x%04X, 0x%04X, 0x%08X, 0x%08X", 
-			Struct_800A5E28_unk_0, Struct_800A5E28_unk_2, Struct_800A5E28_unk_4, Struct_800A5E28_unk_8);
+		string Struct_800A5E28_unk_8_Str = "NULL";
+		if (Struct_800A5E28_unk_8 != 0) {
+			// TODO: Fix
+			// Struct_800A5E28_unk_8_Str = ZLimb::MakeLimbDListSourceOutputCode(prefix, SKINTYPE_4_STRUCT_TYPE, Struct_800A5E28_unk_8, rawData, parent);
+			Struct_800A5E28_unk_8_Str = StringHelper::Sprintf("0x%08X", Struct_800A5E28_unk_8);
+		}
+
+		string entryStr = StringHelper::Sprintf("0x%04X, 0x%04X, 0x%08X, %s", 
+			Struct_800A5E28_unk_0, Struct_800A5E28_unk_2, Struct_800A5E28_unk_4, Struct_800A5E28_unk_8_Str.c_str());
 
 		parent->AddDeclaration(
 			skinSegmentOffset, DeclarationAlignment::None, 

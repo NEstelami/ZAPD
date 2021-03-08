@@ -60,7 +60,7 @@ public:
 	uint32_t GetFileAddress();
 
 	// protected: // ?
-	static std::string MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t>& rawData, ZFile* parent);
+	static std::string MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr, const std::vector<uint8_t>& rawData, ZFile* parent);
 };
 
 
