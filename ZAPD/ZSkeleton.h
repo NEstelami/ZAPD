@@ -12,6 +12,15 @@ enum class ZLimbType
 	Skin
 };
 
+// TODO: check if more types exists
+enum class ZLimbSkinType
+{
+	SkinType_0, // Segment = 0
+	SkinType_4 = 4, // Segment = segmented address // dunno what is it
+	SkinType_5 = 5, // Segment = 0
+	SkinType_DList = 11,
+};
+
 class ZLimb : public ZResource
 {
 protected:
@@ -26,7 +35,7 @@ protected:
 
 	segptr_t farDListPtr = 0; // LOD only
 
-	int32_t skinSegmentType = 0; // Skin only
+	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0; // Skin only
 	segptr_t skinSegment = 0; // Skin only
 
 public:

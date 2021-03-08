@@ -70,8 +70,14 @@ void ZLimb::ParseRawData()
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 		break;
 	case ZLimbType::Skin:
-		skinSegmentType = BitConverter::ToInt32BE(rawData, rawDataIndex + 8);
+		skinSegmentType = static_cast<ZLimbSkinType>(BitConverter::ToInt32BE(rawData, rawDataIndex + 8));
 		skinSegment = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+		if (skinSegmentType == ZLimbSkinType::SkinType_4 || skinSegmentType == ZLimbSkinType::SkinType_DList) {
+			printf("Type: %i\nsegment: 0x%08X\n\n", skinSegmentType, skinSegment);
+		}
+		else {
+			printf("Type: %i\nsegment: %X\n\n", skinSegmentType, skinSegment);
+		}
 		break;
 	}
 }
@@ -114,8 +120,12 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 		dListStr2 = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
 	}
 	if (skinSegment != 0) {
-		//skinSegmentStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
-		skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
+		if (skinSegmentType == ZLimbSkinType::SkinType_DList) {
+			skinSegmentStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
+		}
+		else {
+			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
+		}
 	}
 
 	string entryStr = StringHelper::Sprintf("\n    { %i, %i, %i },\n    0x%02X, 0x%02X,\n",
