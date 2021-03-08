@@ -35,13 +35,12 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 	limb->parent = parent;
 	limb->name = limbName;
 	limb->segAddress = limbAddress;
-	limb->fileAddress = SEG2FILESPACE(limbAddress) - ( (GETSEGNUM(limbAddress) == 0x80) ? SEG2FILESPACE(parent->baseAddress) : 0 );
 
 	string entryType = limbType == ZLimbType::LOD ? "LodLimb" : "StandardLimb";
 
 	limb->parent->AddDeclaration(
-		limb->fileAddress, DeclarationAlignment::None, limb->GetRawDataSize(), entryType, 
-		StringHelper::Sprintf("%s", limbName.c_str(), limb->fileAddress), ""); // ?
+		limb->GetFileAddress(), DeclarationAlignment::None, limb->GetRawDataSize(), entryType, 
+		StringHelper::Sprintf("%s", limbName.c_str(), limb->GetFileAddress()), ""); // ?
 
 	return limb;
 }
@@ -53,9 +52,7 @@ ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int raw
 	limb->rawData.assign(nRawData.begin(), nRawData.end());
 	limb->rawDataIndex = rawDataIndex;
 
-	// ?
 	limb->segAddress = rawDataIndex;
-	limb->fileAddress = rawDataIndex;
 
 	limb->transX = BitConverter::ToInt16BE(nRawData, rawDataIndex + 0);
 	limb->transY = BitConverter::ToInt16BE(nRawData, rawDataIndex + 2);
@@ -84,10 +81,10 @@ string ZLimbStandard::GetSourceOutputCode(const std::string& prefix)
 	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
 		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str());
 
-	Declaration* decl = parent->GetDeclaration(fileAddress);
+	Declaration* decl = parent->GetDeclaration(GetFileAddress());
 	if (decl == nullptr) {
-		string limbName = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), fileAddress);
-		parent->AddDeclaration(fileAddress, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), limbName, entryStr);
+		string limbName = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), GetFileAddress());
+		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), limbName, entryStr);
 	}
 	else {
 		decl->text = entryStr;
@@ -108,7 +105,7 @@ ZResourceType ZLimbStandard::GetResourceType()
 
 uint32_t ZLimbStandard::GetFileAddress()
 {
-	return fileAddress;
+	return Seg2Filespace(segAddress, parent->baseAddress);
 }
 
 std::string ZLimbStandard::MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t> &rawData, ZFile* parent)
@@ -117,10 +114,7 @@ std::string ZLimbStandard::MakeLimbDListSourceOutputCode(const std::string& pref
 		return "NULL";
 	}
 
-	uint32_t dListOffset = SEG2FILESPACE(dListPtr);
-	if (GETSEGNUM(dListPtr) == 0x80) {
-		dListOffset -= SEG2FILESPACE(parent->baseAddress);
-	}
+	uint32_t dListOffset = Seg2Filespace(dListPtr, parent->baseAddress);
 
 	string dListStr;
 	Declaration* decl = parent->GetDeclaration(dListOffset);
@@ -333,9 +327,7 @@ ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
 	limb->rawData.assign(nRawData.begin(), nRawData.end());
 	limb->rawDataIndex = rawDataIndex;
 
-	// ?
 	limb->segAddress = rawDataIndex;
-	limb->fileAddress = rawDataIndex;
 
 	limb->transX = BitConverter::ToInt16BE(nRawData, rawDataIndex + 0);
 	limb->transY = BitConverter::ToInt16BE(nRawData, rawDataIndex + 2);
@@ -370,10 +362,10 @@ string ZLimbLOD::GetSourceOutputCode(const std::string& prefix)
 	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, { %s, %s }",
 		transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str(), dListStr2.c_str());
 
-	Declaration* decl = parent->GetDeclaration(fileAddress);
+	Declaration* decl = parent->GetDeclaration(GetFileAddress());
 	if (decl == nullptr) {
-		string limbName = StringHelper::Sprintf("%sFarLimb_%06X", prefix.c_str(), fileAddress);
-		parent->AddDeclaration(fileAddress, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), limbName, entryStr);
+		string limbName = StringHelper::Sprintf("%sFarLimb_%06X", prefix.c_str(), GetFileAddress());
+		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), limbName, entryStr);
 	}
 	else {
 		decl->text = entryStr;

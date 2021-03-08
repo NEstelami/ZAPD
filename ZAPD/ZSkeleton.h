@@ -16,7 +16,6 @@ class ZLimbStandard : public ZResource
 {
 protected:
 	segptr_t segAddress;
-	uint32_t fileAddress;
 	std::string name;
 
 	int16_t transX, transY, transZ;
