@@ -12,50 +12,39 @@ enum class ZLimbType
 	Skin
 };
 
-class ZLimbStandard : public ZResource
+class ZLimb : public ZResource
 {
 protected:
 	segptr_t segAddress;
-	std::string name;
+	ZLimbType type = ZLimbType::Standard;
 
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
 	segptr_t dListPtr;
 
-	std::vector<ZLimbStandard*> children;
+	std::vector<ZLimb*> children;
 
-	ZLimbStandard(const std::vector<uint8_t>& nRawData, int rawDataIndex);
+	segptr_t farDListPtr; // LOD only
 
 public:
-	ZLimbStandard() = default;
-	~ZLimbStandard();
-	static ZLimbStandard* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
-	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
+	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);
+	~ZLimb();
+
+	void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseRawData() override;
+	static ZLimb* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	int GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;
 
+	ZLimbType GetLimbType();
+	static const char* GetSourceTypeName(ZLimbType limbType);
+
 	uint32_t GetFileAddress();
 
 	// protected: // ?
 	static std::string MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, uint32_t dListPtr, const std::vector<uint8_t>& rawData, ZFile* parent);
-};
-
-class ZLimbLOD : public ZLimbStandard
-{
-protected:
-	segptr_t farDListPtr;
-
-	ZLimbLOD(const std::vector<uint8_t>& nRawData, int rawDataIndex);
-
-public:
-	ZLimbLOD() = default;
-	//static ZLimbLOD* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
-	static ZLimbLOD* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
-	int GetRawDataSize() override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
-	std::string GetSourceTypeName() override;
 };
 
 
@@ -69,9 +58,10 @@ enum ZSkeletonType
 class ZSkeleton : public ZResource
 {
 public:
-	ZSkeletonType type;
-	std::vector<ZLimbStandard*> limbs;
-	ZLimbStandard* rootLimb;
+	ZSkeletonType type = ZSkeletonType::Normal;
+	ZLimbType limbType = ZLimbType::Standard;
+	std::vector<ZLimb*> limbs;
+	ZLimb* rootLimb;
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
 	ZSkeleton();

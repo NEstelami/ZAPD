@@ -237,10 +237,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		}
 		else if (string(child->Name()) == "Limb")
 		{
-			ZLimbStandard* limb = nullptr;
+			ZLimb* limb = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				limb = ZLimbStandard::FromXML(child, rawData, rawDataIndex, folderName, this);
+				limb = ZLimb::FromXML(child, rawData, rawDataIndex, folderName, this);
 
 			resources.push_back(limb);
 

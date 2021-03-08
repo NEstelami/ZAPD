@@ -173,6 +173,7 @@ int NewMain(int argc, char* argv[])
 		{
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 			signal(SIGSEGV, ErrorHandler);
+			signal(SIGABRT, ErrorHandler);
 #endif
 		}
 		else if (arg == "-v") // Verbose

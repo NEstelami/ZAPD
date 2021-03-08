@@ -438,7 +438,7 @@ int ZDisplayList::GetDListLength(vector<uint8_t> rawData, int rawDataIndex, DLis
 
 	while (true)
 	{
-		uint8_t opcode = (uint8_t)rawData[rawDataIndex + (i * 8)];
+		uint8_t opcode = (uint8_t)rawData.at(rawDataIndex + (i * 8));
 		i++;
 
 		if (opcode == endDLOpcode)
