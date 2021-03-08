@@ -20,11 +20,14 @@ protected:
 
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
-	segptr_t dListPtr;
+	segptr_t dListPtr = 0;
 
 	std::vector<ZLimb*> children;
 
-	segptr_t farDListPtr; // LOD only
+	segptr_t farDListPtr = 0; // LOD only
+
+	int32_t skinSegmentType = 0; // Skin only
+	segptr_t skinSegment = 0; // Skin only
 
 public:
 	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);

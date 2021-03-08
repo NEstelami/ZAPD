@@ -63,15 +63,15 @@ void ZLimb::ParseRawData()
 	childIndex = rawData.at(rawDataIndex + 6);
 	siblingIndex = rawData.at(rawDataIndex + 7);
 
-	dListPtr = BitConverter::ToInt32BE(rawData, rawDataIndex + 8);
 	switch (type) {
-	case ZLimbType::Standard:
-		break;
 	case ZLimbType::LOD:
-		farDListPtr = BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
+		farDListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+	case ZLimbType::Standard:
+		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 		break;
 	case ZLimbType::Skin:
-		// TODO
+		skinSegmentType = BitConverter::ToInt32BE(rawData, rawDataIndex + 8);
+		skinSegment = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
 		break;
 	}
 }
@@ -82,8 +82,8 @@ ZLimb* ZLimb::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataI
 
 	limb->relativePath = nRelPath;
 	limb->parent->AddDeclaration(
-		limb->GetFileAddress(), DeclarationAlignment::None, limb->GetRawDataSize(), limb->GetSourceTypeName(), 
-		StringHelper::Sprintf("%s", limb->name.c_str(), limb->GetFileAddress()), ""); // ?
+		limb->GetFileAddress(), DeclarationAlignment::None, limb->GetRawDataSize(), 
+		limb->GetSourceTypeName(), limb->name.c_str(), "");
 
 	return limb;
 }
@@ -105,24 +105,33 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 {
 	string dListStr = "NULL";
 	string dListStr2 = "NULL";
+	string skinSegmentStr = "NULL";
 
 	if (dListPtr != 0) {
 		dListStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
 	}
+	if (farDListPtr != 0) {
+		dListStr2 = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
+	}
+	if (skinSegment != 0) {
+		//skinSegmentStr = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
+		skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
+	}
 
-	string entryStr;
+	string entryStr = StringHelper::Sprintf("\n    { %i, %i, %i },\n    0x%02X, 0x%02X,\n",
+			transX, transY, transZ, childIndex, siblingIndex);
 
 	switch (type) {
 	case ZLimbType::Standard:
-		entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
-			transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str());
+		entryStr += StringHelper::Sprintf("    %s\n", dListStr.c_str());
 		break;
 	case ZLimbType::LOD:
-		if (farDListPtr != 0) {
-			dListStr2 = "&" + ZLimb::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
-		}
-		entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, { %s, %s }",
-			transX, transY, transZ, childIndex, siblingIndex, dListStr.c_str(), dListStr2.c_str());
+		entryStr += StringHelper::Sprintf("    { %s, %s }\n",
+			dListStr.c_str(), dListStr2.c_str());
+		break;
+	case ZLimbType::Skin:
+		entryStr += StringHelper::Sprintf("    0x%02X, %s\n",
+			skinSegmentType, skinSegmentStr.c_str());
 		break;
 	}
 
@@ -183,8 +192,9 @@ std::string ZLimb::MakeLimbDListSourceOutputCode(const std::string& prefix, cons
 	if (decl == nullptr) {
 		dListStr = StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(), dListOffset);
 
+		int dlistLength = ZDisplayList::GetDListLength(rawData, dListOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		// Does this need to be a pointer?
-		ZDisplayList* dList = new ZDisplayList(rawData, dListOffset, ZDisplayList::GetDListLength(rawData, dListOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX));
+		ZDisplayList* dList = new ZDisplayList(rawData, dListOffset, dlistLength);
 		dList->parent = parent;
 		dList->SetName(dListStr);
 		dList->GetSourceOutputCode(prefix);
@@ -225,7 +235,6 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 			skeletonType = ZSkeletonType::Skin;
 		else if (string(skelType) != "Normal")
 		{
-			// TODO: Print some error here...
 			fprintf(stderr, "ZSkeleton::FromXML: Error in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", skeleton->name.c_str(), skelType);
 		}
 	}
@@ -242,8 +251,8 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 			skeleton->limbType = ZLimbType::Skin;
 	}
 
-	limbCount = nRawData[rawDataIndex + 4];
-	skeleton->dListCount = nRawData[rawDataIndex + 8];
+	limbCount = nRawData.at(rawDataIndex + 4);
+	skeleton->dListCount = nRawData.at(rawDataIndex + 8);
 
 	string defaultPrefix = skeleton->name.c_str();
 	defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
@@ -311,7 +320,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 		for (int i = 0; i < limbs.size(); i++)
 		{
-			ZLimb* limb = limbs[i];
+			ZLimb* limb = limbs.at(i);
 
 			string decl = StringHelper::Sprintf("    &%s,", parent->GetDeclarationName(limb->GetFileAddress()).c_str());
 			if (i != (limbs.size() - 1)) {
@@ -353,6 +362,8 @@ std::string ZSkeleton::GetSourceTypeName()
 		return "SkeletonHeader";
 	case ZSkeletonType::Flex:
 		return "FlexSkeletonHeader";
+	case ZSkeletonType::Skin:
+		return "SkeletonHeader"; // ?
 	}
 	return "SkeletonHeader";
 }
