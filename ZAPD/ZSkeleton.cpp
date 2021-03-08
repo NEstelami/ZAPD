@@ -8,16 +8,28 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZLimbStandard::ZLimbStandard()
+ZLimbStandard::ZLimbStandard(const std::vector<uint8_t>& nRawData, int rawDataIndex)
 {
-	name = "";
-	transX = 0;
-	transY = 0;
-	transZ = 0;
-	childIndex = 0;
-	siblingIndex = 0;
-	dListPtr = 0;
-	children = vector<ZLimbStandard*>();
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = rawDataIndex;
+
+	segAddress = rawDataIndex;
+
+	transX = BitConverter::ToInt16BE(nRawData, rawDataIndex + 0);
+	transY = BitConverter::ToInt16BE(nRawData, rawDataIndex + 2);
+	transZ = BitConverter::ToInt16BE(nRawData, rawDataIndex + 4);
+
+	childIndex = nRawData[rawDataIndex + 6];
+	siblingIndex = nRawData[rawDataIndex + 7];
+
+	dListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 8);
+}
+
+ZLimbStandard::~ZLimbStandard()
+{
+	for (auto& child: children) {
+		delete child;
+	}
 }
 
 ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* parent)
@@ -47,22 +59,7 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 
 ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex)
 {
-	ZLimbStandard* limb = new ZLimbStandard();
-
-	limb->rawData.assign(nRawData.begin(), nRawData.end());
-	limb->rawDataIndex = rawDataIndex;
-
-	limb->segAddress = rawDataIndex;
-
-	limb->transX = BitConverter::ToInt16BE(nRawData, rawDataIndex + 0);
-	limb->transY = BitConverter::ToInt16BE(nRawData, rawDataIndex + 2);
-	limb->transZ = BitConverter::ToInt16BE(nRawData, rawDataIndex + 4);
-
-	limb->childIndex = nRawData[rawDataIndex + 6];
-	limb->siblingIndex = nRawData[rawDataIndex + 7];
-
-	limb->dListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 8);
-
+	ZLimbStandard* limb = new ZLimbStandard(nRawData, rawDataIndex);
 	return limb;
 }
 
@@ -315,30 +312,15 @@ ZResourceType ZSkeleton::GetResourceType()
 }
 
 
-ZLimbLOD::ZLimbLOD() : ZLimbStandard()
+ZLimbLOD::ZLimbLOD(const std::vector<uint8_t>& nRawData, int rawDataIndex) : ZLimbStandard(nRawData, rawDataIndex)
 {
-	farDListPtr = 0;
+	dListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 8);
+	farDListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 12);
 }
 
 ZLimbLOD* ZLimbLOD::FromRawData(vector<uint8_t> nRawData, int rawDataIndex)
 {
 	ZLimbLOD* limb = new ZLimbLOD();
-
-	limb->rawData.assign(nRawData.begin(), nRawData.end());
-	limb->rawDataIndex = rawDataIndex;
-
-	limb->segAddress = rawDataIndex;
-
-	limb->transX = BitConverter::ToInt16BE(nRawData, rawDataIndex + 0);
-	limb->transY = BitConverter::ToInt16BE(nRawData, rawDataIndex + 2);
-	limb->transZ = BitConverter::ToInt16BE(nRawData, rawDataIndex + 4);
-
-	limb->childIndex = nRawData[rawDataIndex + 6];
-	limb->siblingIndex = nRawData[rawDataIndex + 7];
-
-	limb->dListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 8);
-	limb->farDListPtr = BitConverter::ToInt32BE(nRawData, rawDataIndex + 12);
-
 	return limb;
 }
 

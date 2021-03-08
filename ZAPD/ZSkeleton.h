@@ -24,8 +24,11 @@ protected:
 
 	std::vector<ZLimbStandard*> children;
 
+	ZLimbStandard(const std::vector<uint8_t>& nRawData, int rawDataIndex);
+
 public:
-	ZLimbStandard();
+	ZLimbStandard() = default;
+	~ZLimbStandard();
 	static ZLimbStandard* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
 	int GetRawDataSize() override;
@@ -44,14 +47,17 @@ class ZLimbLOD : public ZLimbStandard
 protected:
 	segptr_t farDListPtr;
 
+	ZLimbLOD(const std::vector<uint8_t>& nRawData, int rawDataIndex);
+
 public:
-	ZLimbLOD();
+	ZLimbLOD() = default;
 	//static ZLimbLOD* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	static ZLimbLOD* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex);
 	int GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;
 };
+
 
 enum ZSkeletonType
 {
