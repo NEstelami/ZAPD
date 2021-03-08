@@ -243,15 +243,22 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 	assert(type == ZLimbType::Skin);
 	assert(skinSegmentType == ZLimbSkinType::SkinType_4);
 
+	if (skinSegment == 0) {
+		return "NULL";
+	}
+
 	// Hacky way. Change when the struct has a proper name.
 	#define SKINTYPE_4_STRUCT_TYPE "Struct_800A5E28"
-	#define SKINTYPE_4_STRUCT_TYPE_SIZE 0x0C
+	#define SKINTYPE_4_STRUCT_SIZE 0x0C
+	#define SKINTYPE_4_STRUCT_A598C_TYPE "Struct_800A598C"
+	#define SKINTYPE_4_STRUCT_A598C_SIZE 0x10
 
 	uint32_t skinSegmentOffset = Seg2Filespace(skinSegment, parent->baseAddress);
 
 	string struct_800A5E28_Str;
 	Declaration* decl = parent->GetDeclaration(skinSegmentOffset);
 	if (decl == nullptr) {
+		string entryStr;
 		struct_800A5E28_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_TYPE "_%06X", prefix.c_str(), skinSegmentOffset);
 
 		/*int dlistLength = ZDisplayList::GetDListLength(rawData, skinSegmentOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
@@ -266,6 +273,31 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		segptr_t Struct_800A5E28_unk_4 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 4); // Struct_800A598C*
 		segptr_t Struct_800A5E28_unk_8 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 8); // Gfx*
 
+		uint32_t Struct_800A5E28_unk_4_Offset = Seg2Filespace(Struct_800A5E28_unk_4, parent->baseAddress);
+		string Struct_800A5E28_unk_4_Str = "NULL";
+		// TODO: if (decl == nullptr) {
+		if (Struct_800A5E28_unk_4 != 0) {
+			Struct_800A5E28_unk_4_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A598C_TYPE "_%06X", prefix.c_str(), Struct_800A5E28_unk_4_Offset);
+
+			uint16_t Struct_800A598C_unk_0 = BitConverter::ToUInt16BE(rawData, Struct_800A5E28_unk_4_Offset + 0x00);
+			uint16_t Struct_800A598C_unk_2 = BitConverter::ToUInt16BE(rawData, Struct_800A5E28_unk_4_Offset + 0x02);
+			uint16_t Struct_800A598C_unk_4 = BitConverter::ToUInt16BE(rawData, Struct_800A5E28_unk_4_Offset + 0x04);
+			segptr_t Struct_800A598C_unk_8 = BitConverter::ToUInt32BE(rawData, Struct_800A5E28_unk_4_Offset + 0x08); // Struct_800A57C0*
+			segptr_t Struct_800A598C_unk_C = BitConverter::ToUInt32BE(rawData, Struct_800A5E28_unk_4_Offset + 0x0C); // Struct_800A598C_2*
+
+			entryStr = StringHelper::Sprintf("0x%04X, 0x%04X, 0x%04X, 0x%08X, 0x%08X", 
+				Struct_800A598C_unk_0, Struct_800A598C_unk_2, Struct_800A598C_unk_4,
+				Struct_800A598C_unk_8, Struct_800A598C_unk_C);
+
+			// TODO: Prevent adding the declaration to the header. 
+			parent->AddDeclaration(
+				Struct_800A5E28_unk_4_Offset, DeclarationAlignment::None, 
+				SKINTYPE_4_STRUCT_A598C_SIZE, SKINTYPE_4_STRUCT_A598C_TYPE, 
+				Struct_800A5E28_unk_4_Str, entryStr);
+			
+			Struct_800A5E28_unk_4_Str = "&" + Struct_800A5E28_unk_4_Str;
+		}
+
 		string Struct_800A5E28_unk_8_Str = "NULL";
 		if (Struct_800A5E28_unk_8 != 0) {
 			// TODO: Fix
@@ -273,12 +305,15 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 			Struct_800A5E28_unk_8_Str = StringHelper::Sprintf("0x%08X", Struct_800A5E28_unk_8);
 		}
 
-		string entryStr = StringHelper::Sprintf("0x%04X, 0x%04X, 0x%08X, %s", 
-			Struct_800A5E28_unk_0, Struct_800A5E28_unk_2, Struct_800A5E28_unk_4, Struct_800A5E28_unk_8_Str.c_str());
 
+		entryStr = StringHelper::Sprintf("0x%04X, 0x%04X, %s, %s", 
+			Struct_800A5E28_unk_0, Struct_800A5E28_unk_2, 
+			Struct_800A5E28_unk_4_Str.c_str(), Struct_800A5E28_unk_8_Str.c_str());
+
+		// TODO: Prevent adding the declaration to the header. 
 		parent->AddDeclaration(
 			skinSegmentOffset, DeclarationAlignment::None, 
-			SKINTYPE_4_STRUCT_TYPE_SIZE, SKINTYPE_4_STRUCT_TYPE, 
+			SKINTYPE_4_STRUCT_SIZE, SKINTYPE_4_STRUCT_TYPE, 
 			struct_800A5E28_Str, entryStr);
 	}
 	else {
