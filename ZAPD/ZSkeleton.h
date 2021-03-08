@@ -42,6 +42,8 @@ protected:
 	std::string GetSourceOutputCodeSkin(const std::string& prefix);
 	std::string GetSourceOutputCodeSkin_Type_4(const std::string& prefix);
 
+	
+	std::string GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
 	std::string GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
 	std::string GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
 

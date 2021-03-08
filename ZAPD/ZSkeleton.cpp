@@ -275,7 +275,7 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		dList->GetSourceOutputCode(prefix);*/
 
 		uint16_t Struct_800A5E28_unk_0 = BitConverter::ToUInt16BE(rawData, skinSegmentOffset + 0);
-		uint16_t Struct_800A5E28_unk_2 = BitConverter::ToUInt16BE(rawData, skinSegmentOffset + 2);
+		uint16_t Struct_800A5E28_unk_2 = BitConverter::ToUInt16BE(rawData, skinSegmentOffset + 2); // Length of Struct_800A5E28_unk_4
 		segptr_t Struct_800A5E28_unk_4 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 4); // Struct_800A598C*
 		segptr_t Struct_800A5E28_unk_8 = BitConverter::ToUInt32BE(rawData, skinSegmentOffset + 8); // Gfx*
 
@@ -285,67 +285,19 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		if (Struct_800A5E28_unk_4 != 0) {
 			Struct_800A5E28_unk_4_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A598C_TYPE "_%06X", prefix.c_str(), Struct_800A5E28_unk_4_Offset);
 
-			uint16_t Struct_800A598C_unk_0 = BitConverter::ToUInt16BE(rawData, Struct_800A5E28_unk_4_Offset + 0x00); // length of Struct_800A598C_unk_8
-			uint16_t Struct_800A598C_unk_2 = BitConverter::ToUInt16BE(rawData, Struct_800A5E28_unk_4_Offset + 0x02);
-			uint16_t Struct_800A598C_unk_4 = BitConverter::ToUInt16BE(rawData, Struct_800A5E28_unk_4_Offset + 0x04);
-			segptr_t Struct_800A598C_unk_8 = BitConverter::ToUInt32BE(rawData, Struct_800A5E28_unk_4_Offset + 0x08); // Struct_800A57C0*
-			segptr_t Struct_800A598C_unk_C = BitConverter::ToUInt32BE(rawData, Struct_800A5E28_unk_4_Offset + 0x0C); // Struct_800A598C_2*
-
-			uint32_t Struct_800A598C_unk_8_Offset = Seg2Filespace(Struct_800A598C_unk_8, parent->baseAddress);
-			string Struct_800A598C_unk_8_Str = "NULL";
-			// TODO: if (decl == nullptr) {
-			if (Struct_800A598C_unk_8 != 0) {
-				Struct_800A598C_unk_8_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A57C0_TYPE "_%06X", prefix.c_str(), Struct_800A598C_unk_8_Offset);
-
-				int arrayItemCnt = Struct_800A598C_unk_0;
-				entryStr = "";
-				for (uint16_t i = 0; i < arrayItemCnt; i++) {
-					entryStr += StringHelper::Sprintf("    { %s },%s", 
-						GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(prefix, Struct_800A598C_unk_8_Offset, i).c_str(), 
-						(i + 1 < arrayItemCnt) ? "\n" : "");
-				}
-
-				// TODO: Prevent adding the declaration to the header. 
-				parent->AddDeclarationArray(
-					Struct_800A598C_unk_8_Offset, DeclarationAlignment::None, 
-					SKINTYPE_4_STRUCT_A57C0_SIZE * arrayItemCnt, SKINTYPE_4_STRUCT_A57C0_TYPE, 
-					Struct_800A598C_unk_8_Str, arrayItemCnt, entryStr);
-
-				Struct_800A598C_unk_8_Str = "&" + Struct_800A598C_unk_8_Str;
+			int arrayItemCnt = Struct_800A5E28_unk_2;
+			entryStr = "";
+			for (uint16_t i = 0; i < arrayItemCnt; i++) {
+				entryStr += StringHelper::Sprintf("    { %s },%s", 
+					GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(prefix, Struct_800A5E28_unk_4_Offset, i).c_str(), 
+					(i + 1 < arrayItemCnt) ? "\n" : "");
 			}
-
-			uint32_t Struct_800A598C_unk_C_Offset = Seg2Filespace(Struct_800A598C_unk_C, parent->baseAddress);;
-			string Struct_800A598C_unk_C_Str = "NULL";
-			// TODO: if (decl == nullptr) {
-			if (Struct_800A598C_unk_C != 0) {
-				Struct_800A598C_unk_C_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A598C_2_TYPE "_%06X", prefix.c_str(), Struct_800A598C_unk_C_Offset);
-
-				int arrayItemCnt = Struct_800A598C_unk_2; // TODO: Check.
-				entryStr = "";
-				for (uint16_t i = 0; i < arrayItemCnt; i++) {
-					entryStr += StringHelper::Sprintf("    { %s },%s", 
-						GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(prefix, Struct_800A598C_unk_C_Offset, i).c_str(), 
-						(i + 1 < arrayItemCnt) ? "\n" : "");
-				}
-
-				// TODO: Prevent adding the declaration to the header. 
-				parent->AddDeclarationArray(
-					Struct_800A598C_unk_C_Offset, DeclarationAlignment::None, 
-					SKINTYPE_4_STRUCT_A598C_2_SIZE * arrayItemCnt, SKINTYPE_4_STRUCT_A598C_2_TYPE, 
-					Struct_800A598C_unk_C_Str, arrayItemCnt, entryStr);
-
-				Struct_800A598C_unk_C_Str = "&" + Struct_800A598C_unk_C_Str;
-			}
-
-			entryStr = StringHelper::Sprintf("0x%04X, 0x%04X, 0x%04X, %s, %s", 
-				Struct_800A598C_unk_0, Struct_800A598C_unk_2, Struct_800A598C_unk_4,
-				Struct_800A598C_unk_8_Str.c_str(), Struct_800A598C_unk_C_Str.c_str());
 
 			// TODO: Prevent adding the declaration to the header. 
-			parent->AddDeclaration(
+			parent->AddDeclarationArray(
 				Struct_800A5E28_unk_4_Offset, DeclarationAlignment::None, 
-				SKINTYPE_4_STRUCT_A598C_SIZE, SKINTYPE_4_STRUCT_A598C_TYPE, 
-				Struct_800A5E28_unk_4_Str, entryStr);
+				SKINTYPE_4_STRUCT_A598C_SIZE * arrayItemCnt, SKINTYPE_4_STRUCT_A598C_TYPE, 
+				Struct_800A5E28_unk_4_Str, arrayItemCnt, entryStr);
 			
 			Struct_800A5E28_unk_4_Str = "&" + Struct_800A5E28_unk_4_Str;
 		}
@@ -372,14 +324,78 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		struct_800A5E28_Str = decl->varName;
 	}
 
+	return struct_800A5E28_Str;
+}
+
+std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index)
+{
+	uint16_t Struct_800A598C_unk_0 = BitConverter::ToUInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_SIZE) + 0x00); // length of Struct_800A598C_unk_8
+	uint16_t Struct_800A598C_unk_2 = BitConverter::ToUInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_SIZE) + 0x02);
+	uint16_t Struct_800A598C_unk_4 = BitConverter::ToUInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_SIZE) + 0x04);
+	segptr_t Struct_800A598C_unk_8 = BitConverter::ToUInt32BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_SIZE) + 0x08); // Struct_800A57C0*
+	segptr_t Struct_800A598C_unk_C = BitConverter::ToUInt32BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_SIZE) + 0x0C); // Struct_800A598C_2*
+
+	string entryStr;
+
+	uint32_t Struct_800A598C_unk_8_Offset = Seg2Filespace(Struct_800A598C_unk_8, parent->baseAddress);
+	string Struct_800A598C_unk_8_Str = "NULL";
+	// TODO: if (decl == nullptr) {
+	if (Struct_800A598C_unk_8 != 0) {
+		Struct_800A598C_unk_8_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A57C0_TYPE "_%06X", prefix.c_str(), Struct_800A598C_unk_8_Offset);
+
+		int arrayItemCnt = Struct_800A598C_unk_0;
+		entryStr = "";
+		for (uint16_t i = 0; i < arrayItemCnt; i++) {
+			entryStr += StringHelper::Sprintf("    { %s },%s", 
+				GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(prefix, Struct_800A598C_unk_8_Offset, i).c_str(), 
+				(i + 1 < arrayItemCnt) ? "\n" : "");
+		}
+
+		// TODO: Prevent adding the declaration to the header. 
+		parent->AddDeclarationArray(
+			Struct_800A598C_unk_8_Offset, DeclarationAlignment::None, 
+			SKINTYPE_4_STRUCT_A57C0_SIZE * arrayItemCnt, SKINTYPE_4_STRUCT_A57C0_TYPE, 
+			Struct_800A598C_unk_8_Str, arrayItemCnt, entryStr);
+
+		Struct_800A598C_unk_8_Str = "&" + Struct_800A598C_unk_8_Str;
+	}
+
+	uint32_t Struct_800A598C_unk_C_Offset = Seg2Filespace(Struct_800A598C_unk_C, parent->baseAddress);;
+	string Struct_800A598C_unk_C_Str = "NULL";
+	// TODO: if (decl == nullptr) {
+	if (Struct_800A598C_unk_C != 0) {
+		Struct_800A598C_unk_C_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A598C_2_TYPE "_%06X", prefix.c_str(), Struct_800A598C_unk_C_Offset);
+
+		int arrayItemCnt = Struct_800A598C_unk_2; // TODO: Check.
+		entryStr = "";
+		for (uint16_t i = 0; i < arrayItemCnt; i++) {
+			entryStr += StringHelper::Sprintf("    { %s },%s", 
+				GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(prefix, Struct_800A598C_unk_C_Offset, i).c_str(), 
+				(i + 1 < arrayItemCnt) ? "\n" : "");
+		}
+
+		// TODO: Prevent adding the declaration to the header. 
+		parent->AddDeclarationArray(
+			Struct_800A598C_unk_C_Offset, DeclarationAlignment::None, 
+			SKINTYPE_4_STRUCT_A598C_2_SIZE * arrayItemCnt, SKINTYPE_4_STRUCT_A598C_2_TYPE, 
+			Struct_800A598C_unk_C_Str, arrayItemCnt, entryStr);
+
+		Struct_800A598C_unk_C_Str = "&" + Struct_800A598C_unk_C_Str;
+	}
+
+	//string Struct_800A598C_unk_8_Str = StringHelper::Sprintf("0x%08X", Struct_800A598C_unk_8);
+	//string Struct_800A598C_unk_C_Str = StringHelper::Sprintf("0x%08X", Struct_800A598C_unk_C);
+
+	return StringHelper::Sprintf("0x%04X, 0x%04X, 0x%04X, %s, %s", 
+		Struct_800A598C_unk_0, Struct_800A598C_unk_2, Struct_800A598C_unk_4,
+		Struct_800A598C_unk_8_Str.c_str(), Struct_800A598C_unk_C_Str.c_str());
+}
+
 	#undef SKINTYPE_4_STRUCT_TYPE
 	#undef SKINTYPE_4_STRUCT_TYPE_SIZE
 
 	#undef SKINTYPE_4_STRUCT_A598C_TYPE
 	#undef SKINTYPE_4_STRUCT_A598C_SIZE
-
-	return struct_800A5E28_Str;
-}
 
 std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index)
 {
