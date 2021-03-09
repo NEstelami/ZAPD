@@ -9,26 +9,26 @@
 using namespace std;
 using namespace tinyxml2;
 
-ZLimb::ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent)
+ZLimb::ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
-	this->rawDataIndex = rawDataIndex;
-	this->parent = parent;
+	rawDataIndex = nRawDataIndex;
+	parent = nParent;
 
-	segAddress = rawDataIndex;
+	segAddress = nRawDataIndex;
 
 	ParseXML(reader);
 	ParseRawData();
 }
 
-ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent)
+ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
-	this->rawDataIndex = rawDataIndex;
-	this->parent = parent;
+	rawDataIndex = nRawDataIndex;
+	parent = nParent;
 	type = limbType;
 
-	segAddress = rawDataIndex;
+	segAddress = nRawDataIndex;
 	name = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), GetFileAddress());
 
 	ParseRawData();
@@ -443,24 +443,32 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(uint32_t f
 #undef SKINTYPE_4_STRUCT_A598C_2_SIZE
 
 
-ZSkeleton::ZSkeleton() : ZResource()
+ZSkeleton::ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource()
 {
-	type = ZSkeletonType::Normal;
-	limbs = vector<ZLimb*>();
-	rootLimb = nullptr;
-	dListCount = 0;
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = nRawDataIndex;
+	parent = nParent;
+
+	ParseXML(reader);
+	ParseRawData();
 }
+
+// TODO
+//ZSkeleton(ZSkeletonType nSkelType, ZLimbType nLimbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
+//{
+//}
 
 void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	const char* skelType = reader->Attribute("Type");
-	if (skelType == nullptr) {
-		fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Type not found found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelType);
+	const char* skelTypeXml = reader->Attribute("Type");
+	if (skelTypeXml == nullptr) {
+		fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Type not found found. Defaulting to 'Normal'.\n", name.c_str());
+		type = ZSkeletonType::Normal;
 	}
 	else {
-		string skelTypeStr(skelType);
+		string skelTypeStr(skelTypeXml);
 		if (skelTypeStr == "Flex") {
 			type = ZSkeletonType::Flex;
 		}
@@ -468,49 +476,59 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 			type = ZSkeletonType::Skin;
 		}
 		else if (skelTypeStr != "Normal") {
-			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelType);
+			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelTypeXml);
 			type = ZSkeletonType::Normal;
 		}
 	}
 
-	if (reader->Attribute("LimbType") != nullptr) {
-		if (string(reader->Attribute("LimbType")) == "Standard")
+	const char* limbTypeXml = reader->Attribute("LimbType");
+	if (limbTypeXml == nullptr) {
+		fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t LimbType not found found. Defaulting to 'Standard'.\n", name.c_str());
+		limbType = ZLimbType::Standard;
+	}
+	else {
+		string limbTypeStr(limbTypeXml);
+		if (limbTypeStr == "Standard") {
 			limbType = ZLimbType::Standard;
-		else if (string(reader->Attribute("LimbType")) == "LOD")
+		}
+		else if (limbTypeStr == "LOD") {
 			limbType = ZLimbType::LOD;
-		else if (string(reader->Attribute("LimbType")) == "Skin")
+		}
+		else if (limbTypeStr == "Skin") {
 			limbType = ZLimbType::Skin;
+		}
+		else {
+			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid LimbType found: '%s'. Defaulting to 'Standard'.\n", name.c_str(), limbTypeXml);
+			limbType = ZLimbType::Standard;
+		}
 	}
 }
 
 void ZSkeleton::ParseRawData()
 {
-	// TODO
+	ZResource::ParseRawData();
+
+	limbsArrayAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex);
+	limbCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4);
+	dListCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 8);
 }
 
 ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
 {
-	ZSkeleton* skeleton = new ZSkeleton();
-	skeleton->rawData.assign(nRawData.begin(), nRawData.end());
-	skeleton->rawDataIndex = rawDataIndex;
-	skeleton->parent = nParent;
+	ZSkeleton* skeleton = new ZSkeleton(reader, nRawData, rawDataIndex, nParent);
 	skeleton->relativePath = std::move(nRelPath);
 
-	skeleton->ParseXML(reader);
-
-	int limbCount = nRawData.at(rawDataIndex + 4);
-	skeleton->dListCount = nRawData.at(rawDataIndex + 8);
-
-	string defaultPrefix = skeleton->name.c_str();
+	string defaultPrefix = skeleton->name;
 	defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
 	// TODO: Fix?
-	uint32_t ptr = (uint32_t)BitConverter::ToInt32BE(nRawData, rawDataIndex) & 0x00FFFFFF;
+	uint32_t ptr = Seg2Filespace(skeleton->limbsArrayAddress, skeleton->parent->baseAddress);
 
-	for (int i = 0; i < limbCount; i++)
+	for (size_t i = 0; i < skeleton->limbCount; i++)
 	{
-		uint32_t ptr2 = (uint32_t)BitConverter::ToInt32BE(nRawData, ptr) & 0x00FFFFFF;
+		// TODO: Fix?
+		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(skeleton->rawData, ptr), skeleton->parent->baseAddress);
 
-		ZLimb* limb = new ZLimb(reader, nRawData, ptr2, nParent);
+		ZLimb* limb = new ZLimb(reader, skeleton->rawData, ptr2, skeleton->parent);
 		limb->SetName(StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limb->GetFileAddress()));
 		skeleton->limbs.push_back(limb);
 

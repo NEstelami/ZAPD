@@ -51,8 +51,8 @@ protected:
 	std::string GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(uint32_t fileOffset, uint16_t index);
 
 public:
-	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);
-	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);
+	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	virtual ~ZLimb();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
@@ -83,10 +83,13 @@ public:
 	ZSkeletonType type = ZSkeletonType::Normal;
 	ZLimbType limbType = ZLimbType::Standard;
 	std::vector<ZLimb*> limbs;
-	ZLimb* rootLimb;
+	ZLimb* rootLimb = nullptr;
+	segptr_t limbsArrayAddress;
+	uint8_t limbCount;
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
-	ZSkeleton();
+	ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	//ZSkeleton(ZSkeletonType nSkelType, ZLimbType nLimbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
