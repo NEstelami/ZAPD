@@ -114,10 +114,10 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	string dListStr2 = "NULL";
 
 	if (dListPtr != 0) {
-		dListStr = ZLimb::MakeLimbDListSourceOutputCode(prefix, "", dListPtr, rawData, parent);
+		dListStr = GetLimbDListSourceOutputCode(prefix, "", dListPtr);
 	}
 	if (farDListPtr != 0) {
-		dListStr2 = ZLimb::MakeLimbDListSourceOutputCode(prefix, "Far", farDListPtr, rawData, parent);
+		dListStr2 = GetLimbDListSourceOutputCode(prefix, "Far", farDListPtr);
 	}
 
 	string entryStr = StringHelper::Sprintf("\n    { %i, %i, %i },\n    0x%02X, 0x%02X,\n",
@@ -180,7 +180,7 @@ uint32_t ZLimb::GetFileAddress()
 	return Seg2Filespace(segAddress, parent->baseAddress);
 }
 
-std::string ZLimb::MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr, const std::vector<uint8_t> &rawData, ZFile* parent)
+std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr)
 {
 	if (dListPtr == 0) {
 		return "NULL";
@@ -195,10 +195,10 @@ std::string ZLimb::MakeLimbDListSourceOutputCode(const std::string& prefix, cons
 
 		int dlistLength = ZDisplayList::GetDListLength(rawData, dListOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		// Does this need to be a pointer?
-		ZDisplayList* dList = new ZDisplayList(rawData, dListOffset, dlistLength);
-		dList->parent = parent;
-		dList->SetName(dListStr);
-		dList->GetSourceOutputCode(prefix);
+		auto& dList = dLists.emplace_back(rawData, dListOffset, dlistLength);
+		dList.parent = parent;
+		dList.SetName(dListStr);
+		dList.GetSourceOutputCode(prefix);
 	}
 	else {
 		dListStr = decl->varName;
@@ -219,7 +219,7 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 			skinSegmentStr = "&" + GetSourceOutputCodeSkin_Type_4(prefix);
 			break;
 		case ZLimbSkinType::SkinType_DList:
-			skinSegmentStr = ZLimb::MakeLimbDListSourceOutputCode(prefix, "Skin", skinSegment, rawData, parent);
+			skinSegmentStr = GetLimbDListSourceOutputCode(prefix, "Skin", skinSegment);
 			break;
 		default:
 			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type for SkinLimb: '%i'. \n\tPlease report this.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
@@ -285,7 +285,7 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		if (Struct_800A5E28_unk_4 != 0) {
 			Struct_800A5E28_unk_4_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A598C_TYPE "_%06X", prefix.c_str(), Struct_800A5E28_unk_4_Offset);
 
-			int arrayItemCnt = Struct_800A5E28_unk_2;
+			uint16_t arrayItemCnt = Struct_800A5E28_unk_2;
 			entryStr = "";
 			for (uint16_t i = 0; i < arrayItemCnt; i++) {
 				entryStr += StringHelper::Sprintf("    { %s },%s", 
@@ -303,10 +303,9 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		string Struct_800A5E28_unk_8_Str = "NULL";
 		if (Struct_800A5E28_unk_8 != 0) {
 			// TODO: Fix
-			// Struct_800A5E28_unk_8_Str = ZLimb::MakeLimbDListSourceOutputCode(prefix, SKINTYPE_4_STRUCT_TYPE, Struct_800A5E28_unk_8, rawData, parent);
+			// Struct_800A5E28_unk_8_Str = GetLimbDListSourceOutputCode(prefix, SKINTYPE_4_STRUCT_TYPE, Struct_800A5E28_unk_8, rawData, parent);
 			Struct_800A5E28_unk_8_Str = StringHelper::Sprintf("0x%08X", Struct_800A5E28_unk_8);
 		}
-
 
 		entryStr = StringHelper::Sprintf("\n    0x%04X, ARRAY_COUNTU(%s),\n    %s, %s\n", 
 			Struct_800A5E28_unk_0, Struct_800A5E28_unk_4_Str.c_str(), //Struct_800A5E28_unk_2, 
@@ -341,11 +340,11 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::s
 	if (Struct_800A598C_unk_8 != 0) {
 		Struct_800A598C_unk_8_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A57C0_TYPE "_%06X", prefix.c_str(), Struct_800A598C_unk_8_Offset);
 
-		int arrayItemCnt = Struct_800A598C_unk_0;
+		uint16_t arrayItemCnt = Struct_800A598C_unk_0;
 		entryStr = "";
 		for (uint16_t i = 0; i < arrayItemCnt; i++) {
 			entryStr += StringHelper::Sprintf("    { %s },%s", 
-				GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(prefix, Struct_800A598C_unk_8_Offset, i).c_str(), 
+				GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(Struct_800A598C_unk_8_Offset, i).c_str(), 
 				(i + 1 < arrayItemCnt) ? "\n" : "");
 		}
 
@@ -362,11 +361,11 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::s
 	if (Struct_800A598C_unk_C != 0) {
 		Struct_800A598C_unk_C_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A598C_2_TYPE "_%06X", prefix.c_str(), Struct_800A598C_unk_C_Offset);
 
-		int arrayItemCnt = Struct_800A598C_unk_2;
+		uint16_t arrayItemCnt = Struct_800A598C_unk_2;
 		entryStr = "";
 		for (uint16_t i = 0; i < arrayItemCnt; i++) {
 			entryStr += StringHelper::Sprintf("    { %s },%s", 
-				GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(prefix, Struct_800A598C_unk_C_Offset, i).c_str(), 
+				GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(Struct_800A598C_unk_C_Offset, i).c_str(), 
 				(i + 1 < arrayItemCnt) ? "\n" : "");
 		}
 
@@ -394,7 +393,7 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::s
 #undef SKINTYPE_4_STRUCT_A598C_TYPE
 #undef SKINTYPE_4_STRUCT_A598C_SIZE
 
-std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index)
+std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(uint32_t fileOffset, uint16_t index)
 {
 	uint16_t Struct_800A57C0_unk_0 = BitConverter::ToUInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A57C0_SIZE) + 0x00);
 	int16_t Struct_800A57C0_unk_2 = BitConverter::ToInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A57C0_SIZE) + 0x02);
@@ -411,7 +410,7 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(const std::s
 		Struct_800A57C0_unk_9);
 }
 
-std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index)
+std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(uint32_t fileOffset, uint16_t index)
 {
 	uint8_t Struct_800A598C_2_unk_0 = BitConverter::ToUInt8BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_2_SIZE) + 0x00);
 	int16_t Struct_800A598C_2_x = BitConverter::ToInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_2_SIZE) + 0x02);
@@ -444,6 +443,7 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 	ZSkeleton* skeleton = new ZSkeleton();
 	skeleton->name = reader->Attribute("Name");
 	skeleton->parent = nParent;
+	skeleton->relativePath = std::move(nRelPath);
 	ZSkeletonType skeletonType = ZSkeletonType::Normal;
 	int limbCount = 0;
 
@@ -543,7 +543,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		// Table
 		string tblStr = "";
 
-		for (int i = 0; i < limbs.size(); i++)
+		for (size_t i = 0; i < limbs.size(); i++)
 		{
 			ZLimb* limb = limbs.at(i);
 

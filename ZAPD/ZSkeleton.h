@@ -2,8 +2,9 @@
 
 #include <vector>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 #include "ZFile.h"
+#include "ZDisplayList.h"
 
 enum class ZLimbType
 {
@@ -32,6 +33,7 @@ protected:
 	segptr_t dListPtr = 0;
 
 	std::vector<ZLimb*> children;
+	std::vector<ZDisplayList> dLists;
 
 	segptr_t farDListPtr = 0; // LOD only
 
@@ -39,17 +41,18 @@ protected:
 	segptr_t skinSegment = 0; // Skin only
 
 
+	std::string GetLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr);
+
 	std::string GetSourceOutputCodeSkin(const std::string& prefix);
 	std::string GetSourceOutputCodeSkin_Type_4(const std::string& prefix);
 
-	
 	std::string GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
-	std::string GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
-	std::string GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
+	std::string GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(uint32_t fileOffset, uint16_t index);
+	std::string GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(uint32_t fileOffset, uint16_t index);
 
 public:
 	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);
-	~ZLimb();
+	virtual ~ZLimb();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
@@ -63,9 +66,6 @@ public:
 	static const char* GetSourceTypeName(ZLimbType limbType);
 
 	uint32_t GetFileAddress();
-
-	// protected: // ?
-	static std::string MakeLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr, const std::vector<uint8_t>& rawData, ZFile* parent);
 };
 
 
@@ -88,7 +88,7 @@ public:
 	ZSkeleton();
 	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
 	void Save(const std::string& outFolder) override;
-	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
+	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 
 	int GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
