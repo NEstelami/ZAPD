@@ -21,6 +21,19 @@ ZLimb::ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	ParseRawData();
 }
 
+ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent)
+{
+	rawData.assign(nRawData.begin(), nRawData.end());
+	this->rawDataIndex = rawDataIndex;
+	this->parent = parent;
+	type = limbType;
+
+	segAddress = rawDataIndex;
+	name = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), GetFileAddress());
+
+	ParseRawData();
+}
+
 ZLimb::~ZLimb()
 {
 	for (auto& child: children) {
@@ -438,44 +451,54 @@ ZSkeleton::ZSkeleton() : ZResource()
 	dListCount = 0;
 }
 
-ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
+void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 {
-	ZSkeleton* skeleton = new ZSkeleton();
-	skeleton->name = reader->Attribute("Name");
-	skeleton->parent = nParent;
-	skeleton->relativePath = std::move(nRelPath);
-	ZSkeletonType skeletonType = ZSkeletonType::Normal;
-	int limbCount = 0;
-
-	skeleton->rawData = nRawData;
-	skeleton->rawDataIndex = rawDataIndex;
+	ZResource::ParseXML(reader);
 
 	const char* skelType = reader->Attribute("Type");
-	if (skelType != nullptr)
-	{
-		if (string(skelType) == "Flex")
-			skeletonType = ZSkeletonType::Flex;
-		else if (string(skelType) == "Skin")
-			skeletonType = ZSkeletonType::Skin;
-		else if (string(skelType) != "Normal")
-		{
-			fprintf(stderr, "ZSkeleton::FromXML: Error in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", skeleton->name.c_str(), skelType);
+	if (skelType == nullptr) {
+		fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Type not found found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelType);
+	}
+	else {
+		string skelTypeStr(skelType);
+		if (skelTypeStr == "Flex") {
+			type = ZSkeletonType::Flex;
+		}
+		else if (skelTypeStr == "Skin") {
+			type = ZSkeletonType::Skin;
+		}
+		else if (skelTypeStr != "Normal") {
+			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelType);
+			type = ZSkeletonType::Normal;
 		}
 	}
 
-	skeleton->type = skeletonType;
-
-	if (reader->Attribute("LimbType") != nullptr)
-	{
+	if (reader->Attribute("LimbType") != nullptr) {
 		if (string(reader->Attribute("LimbType")) == "Standard")
-			skeleton->limbType = ZLimbType::Standard;
+			limbType = ZLimbType::Standard;
 		else if (string(reader->Attribute("LimbType")) == "LOD")
-			skeleton->limbType = ZLimbType::LOD;
+			limbType = ZLimbType::LOD;
 		else if (string(reader->Attribute("LimbType")) == "Skin")
-			skeleton->limbType = ZLimbType::Skin;
+			limbType = ZLimbType::Skin;
 	}
+}
 
-	limbCount = nRawData.at(rawDataIndex + 4);
+void ZSkeleton::ParseRawData()
+{
+	// TODO
+}
+
+ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
+{
+	ZSkeleton* skeleton = new ZSkeleton();
+	skeleton->rawData.assign(nRawData.begin(), nRawData.end());
+	skeleton->rawDataIndex = rawDataIndex;
+	skeleton->parent = nParent;
+	skeleton->relativePath = std::move(nRelPath);
+
+	skeleton->ParseXML(reader);
+
+	int limbCount = nRawData.at(rawDataIndex + 4);
 	skeleton->dListCount = nRawData.at(rawDataIndex + 8);
 
 	string defaultPrefix = skeleton->name.c_str();

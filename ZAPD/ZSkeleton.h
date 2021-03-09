@@ -52,6 +52,7 @@ protected:
 
 public:
 	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);
+	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int rawDataIndex, ZFile* parent);
 	virtual ~ZLimb();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
@@ -86,6 +87,8 @@ public:
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
 	ZSkeleton();
+	void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseRawData() override;
 	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
 	void Save(const std::string& outFolder) override;
 	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
