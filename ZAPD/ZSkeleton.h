@@ -45,6 +45,28 @@ public:
 	static std::string GetSourceTypeName();
 };
 
+
+class Struct_800A598C_2
+{
+protected:
+	uint8_t unk_0;
+	int16_t x;
+	int16_t y;
+	int16_t z;
+	uint8_t unk_8;
+
+public:
+	Struct_800A598C_2(const std::vector<uint8_t>& rawData, uint32_t fileOffset);
+	Struct_800A598C_2(const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
+
+	[[nodiscard]]
+	std::string GetSourceOutputCode() const;
+
+	static size_t GetRawDataSize();
+	static std::string GetSourceTypeName();
+};
+
+
 class ZLimb : public ZResource
 {
 protected:
@@ -70,7 +92,6 @@ protected:
 	std::string GetSourceOutputCodeSkin_Type_4(const std::string& prefix);
 
 	std::string GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
-	std::string GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(uint32_t fileOffset, uint16_t index);
 
 public:
 	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);

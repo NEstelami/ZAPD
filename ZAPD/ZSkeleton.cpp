@@ -25,6 +25,12 @@ Struct_800A57C0::Struct_800A57C0(const std::vector<uint8_t>& rawData, uint32_t f
 {
 }
 
+std::string Struct_800A57C0::GetSourceOutputCode() const
+{
+	return StringHelper::Sprintf("0x%02X, %i, %i, %i, %i, %i, 0x%02X", 
+		unk_0, unk_2, unk_4, unk_6, unk_7, unk_8, unk_9);
+}
+
 size_t Struct_800A57C0::GetRawDataSize()
 {
 	return 0x0A;
@@ -35,10 +41,34 @@ std::string Struct_800A57C0::GetSourceTypeName()
 	return "Struct_800A57C0";
 }
 
-std::string Struct_800A57C0::GetSourceOutputCode() const
+
+Struct_800A598C_2::Struct_800A598C_2(const std::vector<uint8_t>& rawData, uint32_t fileOffset)
 {
-	return StringHelper::Sprintf("0x%02X, %i, %i, %i, %i, %i, 0x%02X", 
-		unk_0, unk_2, unk_4, unk_6, unk_7, unk_8, unk_9);
+	unk_0 = BitConverter::ToUInt8BE(rawData, fileOffset + 0x00);
+	x = BitConverter::ToInt16BE(rawData, fileOffset + 0x02);
+	y = BitConverter::ToInt16BE(rawData, fileOffset + 0x04);
+	z = BitConverter::ToInt16BE(rawData, fileOffset + 0x06);
+	unk_8 = BitConverter::ToUInt8BE(rawData, fileOffset + 0x08);
+}
+Struct_800A598C_2::Struct_800A598C_2(const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index)
+	: Struct_800A598C_2(rawData, fileOffset + index * GetRawDataSize())
+{
+}
+
+std::string Struct_800A598C_2::GetSourceOutputCode() const
+{
+	return StringHelper::Sprintf("0x%02X, %i, %i, %i, 0x%02X", 
+		unk_0, x, y, z, unk_8);
+}
+
+size_t Struct_800A598C_2::GetRawDataSize()
+{
+	return 0x0A;
+}
+
+std::string Struct_800A598C_2::GetSourceTypeName()
+{
+	return "Struct_800A598C_2";
 }
 
 
@@ -300,9 +330,6 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 	#define SKINTYPE_4_STRUCT_A598C_TYPE "Struct_800A598C"
 	#define SKINTYPE_4_STRUCT_A598C_SIZE 0x10
 
-	#define SKINTYPE_4_STRUCT_A598C_2_TYPE "Struct_800A598C_2"
-	#define SKINTYPE_4_STRUCT_A598C_2_SIZE 0x0A
-
 	uint32_t skinSegmentOffset = Seg2Filespace(skinSegment, parent->baseAddress);
 
 	string struct_800A5E28_Str;
@@ -386,7 +413,7 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::s
 
 		uint16_t arrayItemCnt = Struct_800A598C_unk_0;
 		entryStr = "";
-		for (uint16_t i = 0; i < arrayItemCnt; i++) {
+		for (size_t i = 0; i < arrayItemCnt; i++) {
 			Struct_800A57C0 aux(rawData, Struct_800A598C_unk_8_Offset, i);
 
 			entryStr += StringHelper::Sprintf("    { %s },%s", 
@@ -405,20 +432,22 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::s
 	string Struct_800A598C_unk_C_Str = "NULL";
 	// TODO: if (decl == nullptr) {
 	if (Struct_800A598C_unk_C != 0) {
-		Struct_800A598C_unk_C_Str = StringHelper::Sprintf("%sSkinLimb" SKINTYPE_4_STRUCT_A598C_2_TYPE "_%06X", prefix.c_str(), Struct_800A598C_unk_C_Offset);
+		Struct_800A598C_unk_C_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C_2::GetSourceTypeName().c_str(), Struct_800A598C_unk_C_Offset);
 
 		uint16_t arrayItemCnt = Struct_800A598C_unk_2;
 		entryStr = "";
-		for (uint16_t i = 0; i < arrayItemCnt; i++) {
+		for (size_t i = 0; i < arrayItemCnt; i++) {
+			Struct_800A598C_2 aux(rawData, Struct_800A598C_unk_C_Offset, i);
+
 			entryStr += StringHelper::Sprintf("    { %s },%s", 
-				GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(Struct_800A598C_unk_C_Offset, i).c_str(), 
+				aux.GetSourceOutputCode().c_str(), 
 				(i + 1 < arrayItemCnt) ? "\n" : "");
 		}
 
 		// TODO: Prevent adding the declaration to the header. 
 		parent->AddDeclarationArray(
 			Struct_800A598C_unk_C_Offset, DeclarationAlignment::None, 
-			SKINTYPE_4_STRUCT_A598C_2_SIZE * arrayItemCnt, SKINTYPE_4_STRUCT_A598C_2_TYPE, 
+			arrayItemCnt * Struct_800A598C_2::GetRawDataSize(), Struct_800A598C_2::GetSourceTypeName(), 
 			Struct_800A598C_unk_C_Str, arrayItemCnt, entryStr);
 	}
 
@@ -438,24 +467,6 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::s
 
 #undef SKINTYPE_4_STRUCT_A598C_TYPE
 #undef SKINTYPE_4_STRUCT_A598C_SIZE
-
-
-std::string ZLimb::GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(uint32_t fileOffset, uint16_t index)
-{
-	uint8_t Struct_800A598C_2_unk_0 = BitConverter::ToUInt8BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_2_SIZE) + 0x00);
-	int16_t Struct_800A598C_2_x = BitConverter::ToInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_2_SIZE) + 0x02);
-	int16_t Struct_800A598C_2_y = BitConverter::ToInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_2_SIZE) + 0x04);
-	int16_t Struct_800A598C_2_z = BitConverter::ToInt16BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_2_SIZE) + 0x06);
-	uint8_t Struct_800A598C_2_unk_8 = BitConverter::ToUInt8BE(rawData, fileOffset + (index * SKINTYPE_4_STRUCT_A598C_2_SIZE) + 0x08);
-
-	return StringHelper::Sprintf("0x%02X, %i, %i, %i, 0x%02X", 
-		Struct_800A598C_2_unk_0, 
-		Struct_800A598C_2_x, Struct_800A598C_2_y, Struct_800A598C_2_z,
-		Struct_800A598C_2_unk_8);
-}
-
-#undef SKINTYPE_4_STRUCT_A598C_2_TYPE
-#undef SKINTYPE_4_STRUCT_A598C_2_SIZE
 
 
 ZSkeleton::ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
