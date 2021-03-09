@@ -17,9 +17,32 @@ enum class ZLimbType
 enum class ZLimbSkinType
 {
 	SkinType_0, // Segment = 0
-	SkinType_4 = 4, // Segment = segmented address // dunno what is it // Struct_800A5E28
+	SkinType_4 = 4, // Segment = segmented address // Struct_800A5E28
 	SkinType_5 = 5, // Segment = 0
 	SkinType_DList = 11,
+};
+
+
+class Struct_800A57C0
+{
+protected:
+	uint16_t unk_0;
+	int16_t unk_2;
+	int16_t unk_4;
+	int8_t unk_6;
+	int8_t unk_7;
+	int8_t unk_8;
+	uint8_t unk_9;
+
+public:
+	Struct_800A57C0(const std::vector<uint8_t>& rawData, uint32_t fileOffset);
+	Struct_800A57C0(const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
+
+	[[nodiscard]]
+	std::string GetSourceOutputCode() const;
+
+	static size_t GetRawDataSize();
+	static std::string GetSourceTypeName();
 };
 
 class ZLimb : public ZResource
@@ -47,7 +70,6 @@ protected:
 	std::string GetSourceOutputCodeSkin_Type_4(const std::string& prefix);
 
 	std::string GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
-	std::string GetSourceOutputCodeSkin_Type_4_StructA57C0_Entry(uint32_t fileOffset, uint16_t index);
 	std::string GetSourceOutputCodeSkin_Type_4_StructA598C_2_Entry(uint32_t fileOffset, uint16_t index);
 
 public:
@@ -82,7 +104,6 @@ public:
 	ZSkeletonType type = ZSkeletonType::Normal;
 	ZLimbType limbType = ZLimbType::Standard;
 	std::vector<ZLimb*> limbs;
-	ZLimb* rootLimb = nullptr;
 	segptr_t limbsArrayAddress;
 	uint8_t limbCount;
 	uint8_t dListCount; // FLEX SKELETON ONLY
