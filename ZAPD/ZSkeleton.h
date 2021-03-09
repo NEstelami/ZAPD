@@ -73,8 +73,7 @@ public:
 enum ZSkeletonType
 {
 	Normal,
-	Flex,
-	Skin
+	Flex
 };
 
 class ZSkeleton : public ZResource
@@ -102,4 +101,6 @@ public:
 
 	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;
+
+	segptr_t GetAddress();
 };
