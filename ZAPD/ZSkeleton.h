@@ -90,6 +90,7 @@ public:
 	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
 	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
 
+	void MakeInternalDeclarations(const std::string& prefix);
 	[[nodiscard]]
 	std::string GetSourceOutputCode(const std::string& prefix) const;
 
@@ -116,6 +117,7 @@ public:
 	Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
 	Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
 
+	void MakeInternalDeclarations(const std::string& prefix);
 	[[nodiscard]]
 	std::string GetSourceOutputCode(const std::string& prefix) const;
 
@@ -143,13 +145,10 @@ protected:
 	segptr_t skinSegment = 0; // Skin only
 	Struct_800A5E28 segmentStruct; // Skin only
 
-
 	std::string GetLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr);
 
 	std::string GetSourceOutputCodeSkin(const std::string& prefix);
 	std::string GetSourceOutputCodeSkin_Type_4(const std::string& prefix);
-
-	std::string GetSourceOutputCodeSkin_Type_4_StructA5E28_Entry(const std::string& prefix, uint32_t fileOffset, uint16_t index);
 
 public:
 	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);

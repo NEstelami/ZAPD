@@ -108,15 +108,13 @@ Struct_800A598C::Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawD
 {
 }
 
-std::string Struct_800A598C::GetSourceOutputCode(const std::string& prefix) const
+void Struct_800A598C::MakeInternalDeclarations(const std::string& prefix)
 {
-	string entryStr = "";
-
-	string unk_8_Str = "NULL";
+	string entryStr;
 	// TODO: if (decl == nullptr) {
 	if (unk_8 != 0) {
 		uint32_t unk_8_Offset = Seg2Filespace(unk_8, parent->baseAddress);
-		unk_8_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A57C0::GetSourceTypeName().c_str(), unk_8_Offset);
+		string unk_8_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A57C0::GetSourceTypeName().c_str(), unk_8_Offset);
 
 		uint16_t arrayItemCnt = unk_8_arr.size();
 		entryStr = "";
@@ -134,11 +132,10 @@ std::string Struct_800A598C::GetSourceOutputCode(const std::string& prefix) cons
 			unk_8_Str, arrayItemCnt, entryStr);
 	}
 
-	string unk_C_Str = "NULL";
 	// TODO: if (decl == nullptr) {
 	if (unk_C != 0) {
 		uint32_t unk_C_Offset = Seg2Filespace(unk_C, parent->baseAddress);
-		unk_C_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C_2::GetSourceTypeName().c_str(), unk_C_Offset);
+		string unk_C_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C_2::GetSourceTypeName().c_str(), unk_C_Offset);
 
 		uint16_t arrayItemCnt = unk_C_arr.size();
 		entryStr = "";
@@ -154,6 +151,25 @@ std::string Struct_800A598C::GetSourceOutputCode(const std::string& prefix) cons
 			unk_C_Offset, DeclarationAlignment::None, 
 			arrayItemCnt * Struct_800A598C_2::GetRawDataSize(), Struct_800A598C_2::GetSourceTypeName(), 
 			unk_C_Str, arrayItemCnt, entryStr);
+	}
+}
+
+std::string Struct_800A598C::GetSourceOutputCode(const std::string& prefix) const
+{
+	string entryStr = "";
+
+	string unk_8_Str = "NULL";
+	// TODO: if (decl == nullptr) {
+	if (unk_8 != 0) {
+		uint32_t unk_8_Offset = Seg2Filespace(unk_8, parent->baseAddress);
+		unk_8_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A57C0::GetSourceTypeName().c_str(), unk_8_Offset);
+	}
+
+	string unk_C_Str = "NULL";
+	// TODO: if (decl == nullptr) {
+	if (unk_C != 0) {
+		uint32_t unk_C_Offset = Seg2Filespace(unk_C, parent->baseAddress);
+		unk_C_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C_2::GetSourceTypeName().c_str(), unk_C_Offset);
 	}
 
 	//string unk_8_Str = StringHelper::Sprintf("0x%08X", unk_8);
@@ -211,20 +227,21 @@ Struct_800A5E28::Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& rawD
 {
 }
 
-std::string Struct_800A5E28::GetSourceOutputCode(const std::string& prefix) const
+void Struct_800A5E28::MakeInternalDeclarations(const std::string& prefix)
 {
-	string entryStr = "";
-	
-	string Struct_800A5E28_unk_4_Str = "NULL";
+	string entryStr;
+
 	// TODO: if (decl == nullptr) {
 	if (unk_4 != 0) {
 		uint32_t unk_4_Offset = Seg2Filespace(unk_4, parent->baseAddress);
-		Struct_800A5E28_unk_4_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C::GetSourceTypeName().c_str(), unk_4_Offset);
+		string Struct_800A5E28_unk_4_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C::GetSourceTypeName().c_str(), unk_4_Offset);
 
 		uint16_t arrayItemCnt = unk_4_arr.size();
 
 		size_t i;
 		for (auto& child: unk_4_arr) {
+			child.MakeInternalDeclarations(prefix);
+
 			entryStr += StringHelper::Sprintf("\n    { %s },%s", 
 				child.GetSourceOutputCode(prefix).c_str(), 
 				(++i < arrayItemCnt) ? "\n" : "");
@@ -235,6 +252,26 @@ std::string Struct_800A5E28::GetSourceOutputCode(const std::string& prefix) cons
 			unk_4_Offset, DeclarationAlignment::None, 
 			arrayItemCnt * Struct_800A598C::GetRawDataSize(), Struct_800A598C::GetSourceTypeName(), 
 			Struct_800A5E28_unk_4_Str, arrayItemCnt, entryStr);
+	}
+
+	string Struct_800A5E28_unk_8_Str = "NULL";
+	if (unk_8 != 0) {
+		// TODO: Fix
+		// Struct_800A5E28_unk_8_Str = GetLimbDListSourceOutputCode(prefix, SKINTYPE_4_STRUCT_TYPE, Struct_800A5E28_unk_8, rawData, parent);
+		Struct_800A5E28_unk_8_Str = StringHelper::Sprintf("0x%08X", unk_8);
+	}
+
+}
+
+std::string Struct_800A5E28::GetSourceOutputCode(const std::string& prefix) const
+{
+	string entryStr = "";
+
+	string Struct_800A5E28_unk_4_Str = "NULL";
+	// TODO: if (decl == nullptr) {
+	if (unk_4 != 0) {
+		uint32_t unk_4_Offset = Seg2Filespace(unk_4, parent->baseAddress);
+		Struct_800A5E28_unk_4_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C::GetSourceTypeName().c_str(), unk_4_Offset);
 	}
 
 	string Struct_800A5E28_unk_8_Str = "NULL";
@@ -525,6 +562,7 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 	if (decl == nullptr) {
 		struct_800A5E28_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A5E28::GetSourceTypeName().c_str(), skinSegmentOffset);
 
+		segmentStruct.MakeInternalDeclarations(prefix);
 		string entryStr = segmentStruct.GetSourceOutputCode(prefix);
 
 		// TODO: Prevent adding the declaration to the header. 
