@@ -26,6 +26,8 @@ enum class ZLimbSkinType
 class Struct_800A57C0
 {
 protected:
+	uint32_t offset;
+
 	uint16_t unk_0;
 	int16_t unk_2;
 	int16_t unk_4;
@@ -49,6 +51,8 @@ public:
 class Struct_800A598C_2
 {
 protected:
+	uint32_t offset;
+
 	uint8_t unk_0;
 	int16_t x;
 	int16_t y;
@@ -61,6 +65,59 @@ public:
 
 	[[nodiscard]]
 	std::string GetSourceOutputCode() const;
+
+	static size_t GetRawDataSize();
+	static std::string GetSourceTypeName();
+};
+
+
+class Struct_800A598C
+{
+protected:
+	uint32_t offset;
+	ZFile* parent;
+
+	uint16_t unk_0; // Length of unk_8
+	uint16_t unk_2; // Length of unk_C
+	uint16_t unk_4; // 0 or 1
+	segptr_t unk_8; // Struct_800A57C0*
+	segptr_t unk_C; // Struct_800A598C_2*
+
+	std::vector<Struct_800A57C0> unk_8_arr;
+	std::vector<Struct_800A598C_2> unk_C_arr;
+
+public:
+	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
+	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
+
+	[[nodiscard]]
+	std::string GetSourceOutputCode(const std::string& prefix) const;
+
+	static size_t GetRawDataSize();
+	static std::string GetSourceTypeName();
+};
+
+
+class Struct_800A5E28
+{
+protected:
+	uint32_t offset;
+	ZFile* parent;
+
+	uint16_t unk_0;
+	uint16_t unk_2; // Length of unk_4
+	segptr_t unk_4; // Struct_800A598C*
+	segptr_t unk_8; // Gfx*
+
+	std::vector<Struct_800A598C> unk_4_arr;
+
+public:
+	Struct_800A5E28() = default;
+	Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
+	Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
+
+	[[nodiscard]]
+	std::string GetSourceOutputCode(const std::string& prefix) const;
 
 	static size_t GetRawDataSize();
 	static std::string GetSourceTypeName();
@@ -84,6 +141,7 @@ protected:
 
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0; // Skin only
 	segptr_t skinSegment = 0; // Skin only
+	Struct_800A5E28 segmentStruct; // Skin only
 
 
 	std::string GetLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr);
