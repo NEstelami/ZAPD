@@ -31,7 +31,11 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 
 	if (!res->DoesSupportArray())
 	{
-		throw StringHelper::Sprintf("Error! Resource %s does not support being wrapped in an array!\n", res->GetName().c_str());
+		throw std::runtime_error(StringHelper::Sprintf("Error! Resource %s does not support being wrapped in an array!\n", res->GetName().c_str()));
+	}
+
+	if (res->GetResourceType() == ZResourceType::Symbol) {
+		return "";
 	}
 
 	for (int i = 0; i < arrayCnt; i++)
@@ -52,6 +56,16 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 	if (parent != nullptr)
 		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), res->GetSourceTypeName(), name, arrayCnt, output);
 
+	return "";
+}
+
+std::string ZArray::GetSourceOutputHeader(const std::string& prefix)
+{
+	ZResource* res = testFile->resources[0];
+	if (res->GetResourceType() == ZResourceType::Symbol) {
+		return StringHelper::Sprintf("extern %s %s[%i];\n", 
+			res->GetSourceTypeName().c_str(), name.c_str(), arrayCnt);
+	}
 	return "";
 }
 

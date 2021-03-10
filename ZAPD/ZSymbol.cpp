@@ -7,7 +7,6 @@ ZSymbol::ZSymbol(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawD
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
-    outputDeclaration = false;
 
     ParseXML(reader);
 }
@@ -46,8 +45,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 
 bool ZSymbol::DoesSupportArray()
 {
-    // return true; // TODO
-    return false;
+    return true;
 }
 
 int ZSymbol::GetRawDataSize()
