@@ -27,8 +27,6 @@ enum class ZLimbSkinType
 class Struct_800A57C0
 {
 protected:
-	uint32_t offset;
-
 	uint16_t unk_0;
 	int16_t unk_2;
 	int16_t unk_4;
@@ -52,8 +50,6 @@ public:
 class Struct_800A598C_2
 {
 protected:
-	uint32_t offset;
-
 	uint8_t unk_0;
 	int16_t x;
 	int16_t y;
@@ -75,12 +71,11 @@ public:
 class Struct_800A598C
 {
 protected:
-	uint32_t offset;
 	ZFile* parent;
 
 	uint16_t unk_0; // Length of unk_8
 	uint16_t unk_2; // Length of unk_C
-	uint16_t unk_4; // 0 or 1
+	uint16_t unk_4; // 0 or 1 // Used as an index for unk_C
 	segptr_t unk_8; // Struct_800A57C0*
 	segptr_t unk_C; // Struct_800A598C_2*
 
@@ -91,7 +86,7 @@ public:
 	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
 	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
 
-	void MakeInternalDeclarations(const std::string& prefix);
+	void PreGenSourceFiles(const std::string& prefix);
 	[[nodiscard]]
 	std::string GetSourceOutputCode(const std::string& prefix) const;
 
@@ -103,10 +98,9 @@ public:
 class Struct_800A5E28
 {
 protected:
-	uint32_t offset;
 	ZFile* parent;
 
-	uint16_t unk_0;
+	uint16_t unk_0; // Vtx count
 	uint16_t unk_2; // Length of unk_4
 	segptr_t unk_4; // Struct_800A598C*
 	segptr_t unk_8; // Gfx*
@@ -118,7 +112,7 @@ public:
 	Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
 	Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index);
 
-	void MakeInternalDeclarations(const std::string& prefix);
+	void PreGenSourceFiles(const std::string& prefix);
 	[[nodiscard]]
 	std::string GetSourceOutputCode(const std::string& prefix) const;
 
@@ -137,7 +131,6 @@ protected:
 	uint8_t childIndex, siblingIndex;
 	segptr_t dListPtr = 0;
 
-	std::vector<ZLimb*> children;
 	std::vector<ZDisplayList> dLists;
 
 	segptr_t farDListPtr = 0; // LOD only
@@ -154,12 +147,12 @@ protected:
 public:
 	ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
-	virtual ~ZLimb();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	static ZLimb* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	int GetRawDataSize() override;
+	void PreGenSourceFiles() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;
