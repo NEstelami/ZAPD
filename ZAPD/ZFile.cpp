@@ -4,6 +4,7 @@
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
 #include "ZAnimation.h"
+#include "ZLimb.h"
 #include "ZSkeleton.h"
 #include "ZCollision.h"
 #include "ZScalar.h"
