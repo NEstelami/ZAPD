@@ -1058,13 +1058,7 @@ string ZFile::ProcessExterns()
 {
 	string output = "";
 
-	auto declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
-	{
-		return lhs.first < rhs.first;
-	});
-
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<int32_t, Declaration*> item : declarations)
 	{
 		if (!StringHelper::StartsWith(item.second->varType, "static ") && item.second->varType != "")// && item.second->includePath == "")
 		{
