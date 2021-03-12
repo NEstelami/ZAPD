@@ -1448,51 +1448,61 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 {
 	ZDisplayList* instance = ZDisplayList::static_instance;
 	uint32_t vtxOffset = Seg2Filespace(seg, instance->parent->baseAddress);
+	string vtxName = "";
 
-	instance->references.push_back(vtxOffset);
-	
-	// Check for vertex intersections from other display lists
-	// TODO: These two could probably be condenced to one...
-	if (instance->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
+	if (!Globals::Instance->HasSegment(GETSEGNUM(seg))) // Probably an external asset we are unable to track
 	{
-		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
-		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
-		int diff = addr - vtxOffset;
-
-		if (diff > 0)
-			count = diff / 16;
-		else
-			count = 0;
+		vtxName = StringHelper::Sprintf("0x%08X", seg);
 	}
-
-	if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
+	else
 	{
-		Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
-		uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
-		int diff = addr - vtxOffset;
+		instance->references.push_back(vtxOffset);
 
-		if (diff > 0)
-			count = diff / 16;
-		else
-			count = 0;
-	}
-
-	if (count > 0)
-	{
-		vector<Vertex> vtxList = vector<Vertex>();
-		vtxList.reserve(count);
-
-		uint32_t currentPtr = vtxOffset;
-		for (int i = 0; i < count; i++)
+		// Check for vertex intersections from other display lists
+		// TODO: These two could probably be condenced to one...
+		if (instance->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
 		{
-			Vertex vtx = Vertex(instance->fileData, currentPtr);
-			vtxList.push_back(vtx);
-			currentPtr += 16;
+			Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
+			uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
+			int diff = addr - vtxOffset;
+
+			if (diff > 0)
+				count = diff / 16;
+			else
+				count = 0;
 		}
-		instance->vertices[vtxOffset] = vtxList;
+
+		if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
+		{
+			Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
+			uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
+			int diff = addr - vtxOffset;
+
+			if (diff > 0)
+				count = diff / 16;
+			else
+				count = 0;
+		}
+
+		if (count > 0)
+		{
+			vector<Vertex> vtxList = vector<Vertex>();
+			vtxList.reserve(count);
+
+			uint32_t currentPtr = vtxOffset;
+			for (int i = 0; i < count; i++)
+			{
+				Vertex vtx = Vertex(instance->fileData, currentPtr);
+				vtxList.push_back(vtx);
+				currentPtr += 16;
+			}
+			instance->vertices[vtxOffset] = vtxList;
+		}
+		
+		vtxName = "@r";
 	}
 
-	gfxd_puts("@r");
+	gfxd_puts(vtxName.c_str());
 
 	return 1;
 }
