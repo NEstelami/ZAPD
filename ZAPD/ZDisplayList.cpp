@@ -1444,6 +1444,9 @@ string ZDisplayList::GetSourceOutputHeader(const std::string& prefix)
 	return "";
 }
 
+// #define SEG2FILESPACE(x) (x & 0x00FFFFFF)
+// #define GETSEGNUM(x) ((x >> 24) & 0xFF)
+
 static int GfxdCallback_FormatSingleEntry(void)
 {
 	gfxd_puts("\t");
