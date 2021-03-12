@@ -1447,16 +1447,9 @@ static int GfxdCallback_FormatSingleEntry(void)
 static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 {
 	ZDisplayList* instance = ZDisplayList::static_instance;
-	uint32_t vtxOffset = GETSEGOFFSET(seg);
-
-	if (GETSEGNUM(seg) == 0x80) // Are these vertices defined in code?
-		vtxOffset -= GETSEGOFFSET(instance->parent->baseAddress);
+	uint32_t vtxOffset = Seg2Filespace(seg, instance->parent->baseAddress);
 
 	instance->references.push_back(vtxOffset);
-
-	uint32_t currentPtr = GETSEGOFFSET(seg);
-	if (GETSEGNUM(seg) == 0x80) // Are these vertices defined in code?
-		currentPtr -= GETSEGOFFSET(instance->parent->baseAddress);
 	
 	// Check for vertex intersections from other display lists
 	// TODO: These two could probably be condenced to one...
@@ -1489,6 +1482,7 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 		vector<Vertex> vtxList = vector<Vertex>();
 		vtxList.reserve(count);
 
+		uint32_t currentPtr = vtxOffset;
 		for (int i = 0; i < count; i++)
 		{
 			Vertex vtx = Vertex(instance->fileData, currentPtr);
@@ -1506,14 +1500,10 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int32_t width, int32_t height, int32_t pal)
 {
 	ZDisplayList* instance = ZDisplayList::static_instance;
-	uint32_t texOffset = GETSEGOFFSET(seg);
+	uint32_t texOffset = Seg2Filespace(seg, instance->parent->baseAddress);
 	uint32_t texSegNum = GETSEGNUM(seg);
 	Declaration* texDecl = nullptr;
 	string texName = "";
-
-	if (texSegNum == 0x80)
-		texOffset -= GETSEGOFFSET(instance->parent->baseAddress);
-
 
 	if (instance->parent != nullptr && texSegNum != 2) // HACK: Until we have declarations use segment addresses, we'll exclude scene references...
 	{
@@ -1550,14 +1540,10 @@ static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int32_t 
 static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 {
 	ZDisplayList* instance = ZDisplayList::static_instance;
-	uint32_t palOffset = GETSEGOFFSET(seg);
+	uint32_t palOffset = Seg2Filespace(seg, instance->parent->baseAddress);
 	uint32_t palSegNum = GETSEGNUM(seg);
 	Declaration* palDecl = nullptr;
 	string palName = "";
-
-	if (palSegNum == 0x80)
-		palOffset -= GETSEGOFFSET(instance->parent->baseAddress);
-
 
 	if (instance->parent != nullptr && palSegNum != 2) // HACK: Until we have declarations use segment addresses, we'll exclude scene references...
 	{
