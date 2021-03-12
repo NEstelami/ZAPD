@@ -27,9 +27,10 @@ public:
 	bool includeFilePrefix; // Include the file prefix in symbols
 	VerbosityLevel verbosity; // ZAPD outputs additional information
 	ZFileMode fileMode;
-	std::string baseRomPath, inputPath, outputPath, cfgPath;
+	std::string baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
 	TextureType texType;
 	ZGame game;
+	GameConfig* cfg;
 
 	std::vector<ZFile*> files;
 	std::vector<int> segments;
@@ -41,6 +42,7 @@ public:
 	Globals();
 	std::string FindSymbolSegRef(int segNumber, uint32_t symbolAddress);
 	void ReadConfigFile(const std::string& configFilePath);
+	void ReadTexturePool(const std::string& texturePoolXmlPath);
 	void GenSymbolMap(const std::string& symbolMapPath);
 	void AddSegment(int segment);
 	bool HasSegment(int segment);
@@ -54,6 +56,7 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 	std::vector<std::string> actorList;
 	std::vector<std::string> objectList;
+	std::map<uint32_t, std::string> texturePool; // Key = CRC, Value = Path to Shared Texture
 
 	GameConfig();
 

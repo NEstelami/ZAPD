@@ -31,7 +31,10 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 	std::string output = StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b, a);
 
 	if (parent != nullptr)
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(), GetSourceTypeName(), name, output);
+	{
+		Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(), GetSourceTypeName(), name, output);
+		decl->isExternal = true;
+	}
 
     return "";
 }
@@ -65,6 +68,16 @@ bool ZVtx::DoesSupportArray()
 ZResourceType ZVtx::GetResourceType()
 {
     return ZResourceType::Vertex;
+}
+
+bool ZVtx::IsExternalResource()
+{
+	return true;
+}
+
+std::string ZVtx::GetExternalExtension()
+{
+	return "vtx";
 }
 
 ZVtx* ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)

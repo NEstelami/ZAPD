@@ -207,6 +207,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="..\lib\stb\tinyxml2.h" />
     <ClInclude Include="..\lib\tinygtlf\tiny_gltf.h" />
     <ClInclude Include="BitConverter.h" />
+    <ClInclude Include="CRC32.h" />
     <ClInclude Include="Directory.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="Globals.h" />

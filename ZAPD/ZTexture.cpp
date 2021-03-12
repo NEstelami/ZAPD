@@ -5,11 +5,14 @@
 #include "ZTexture.h"
 #include "StringHelper.h"
 #include "BitConverter.h"
+#include "Globals.h"
 #include "Path.h"
 #include "File.h"
+#include "CRC32.h"
 
 #include "stb_image.h"
 #include "stb_image_write.h"
+#include <Directory.h>
 
 using namespace std;
 using namespace tinyxml2;
@@ -80,7 +83,7 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	return tex;
 }
 
-// BUILD MODE
+// Build Source File Mode
 ZTexture* ZTexture::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
 {
 	ZTexture* tex = new ZTexture(nullptr);
@@ -675,24 +678,38 @@ TextureType ZTexture::GetTextureType()
 
 void ZTexture::Save(const std::string& outFolder)
 {
+	CalcHash();
+
+	std::string outPath = outFolder;
+
+	// POOL CHECK
+	if (Globals::Instance->cfg->texturePool.find(hash) != Globals::Instance->cfg->texturePool.end())
+	{
+		outPath = Path::GetDirectoryName(Globals::Instance->cfg->texturePool[hash]);
+		outName = Path::GetFileNameWithoutExtension(Globals::Instance->cfg->texturePool[hash]);
+	}
+
+	if (!Directory::Exists(outPath))
+		Directory::CreateDirectory(outPath);
+
 	if (type == TextureType::RGBA32bpp)
-		stbi_write_png((outFolder + "/" + outName + ".rgba32.png").c_str(), width, height, 4, bmpRgba, width * 4);
+		stbi_write_png((outPath + "/" + outName + ".rgba32.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	else if (type == TextureType::RGBA16bpp)
-		stbi_write_png((outFolder + "/" + outName + ".rgb5a1.png").c_str(), width, height, 4, bmpRgba, width * 4);
+		stbi_write_png((outPath + "/" + outName + ".rgb5a1.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	else if (type == TextureType::Grayscale8bpp)
-		stbi_write_png((outFolder + "/" + outName + ".i8.png").c_str(), width, height, 3, bmpRgb, width * 3);
+		stbi_write_png((outPath + "/" + outName + ".i8.png").c_str(), width, height, 3, bmpRgb, width * 3);
 	else if (type == TextureType::Grayscale4bpp)
-		stbi_write_png((outFolder + "/" + outName + ".i4.png").c_str(), width, height, 3, bmpRgb, width * 3);
+		stbi_write_png((outPath + "/" + outName + ".i4.png").c_str(), width, height, 3, bmpRgb, width * 3);
 	else if (type == TextureType::GrayscaleAlpha16bpp)
-		stbi_write_png((outFolder + "/" + outName + ".ia16.png").c_str(), width, height, 4, bmpRgba, width * 4);
+		stbi_write_png((outPath + "/" + outName + ".ia16.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	else if (type == TextureType::GrayscaleAlpha8bpp)
-		stbi_write_png((outFolder + "/" + outName + ".ia8.png").c_str(), width, height, 4, bmpRgba, width * 4);
+		stbi_write_png((outPath + "/" + outName + ".ia8.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	else if (type == TextureType::GrayscaleAlpha4bpp)
-		stbi_write_png((outFolder + "/" + outName + ".ia4.png").c_str(), width, height, 4, bmpRgba, width * 4);
+		stbi_write_png((outPath + "/" + outName + ".ia4.png").c_str(), width, height, 4, bmpRgba, width * 4);
 	else if (type == TextureType::Palette4bpp)
-		stbi_write_png((outFolder + "/" + outName + ".ci4.png").c_str(), width, height, 3, bmpRgb, width * 3);
+		stbi_write_png((outPath + "/" + outName + ".ci4.png").c_str(), width, height, 3, bmpRgb, width * 3);
 	else if (type == TextureType::Palette8bpp)
-		stbi_write_png((outFolder + "/" + outName + ".ci8.png").c_str(), width, height, 3, bmpRgb, width * 3);
+		stbi_write_png((outPath + "/" + outName + ".ci8.png").c_str(), width, height, 3, bmpRgb, width * 3);
 
 	//if (outName != name && outName != "")
 		//File::WriteAllText(outFolder + "/" + outName + ".cfg", name.c_str());
@@ -707,6 +724,12 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 	//sourceOutput += line;
 
 	// TODO: TEMP
+	//if (StringHelper::StartsWith(relativePath, "assets/extracted/"))
+	//{
+		//relativePath = "assets/" + StringHelper::Split(relativePath, "assets/extracted/")[1];
+		//printf("REL PATH: %s\n", relativePath.c_str());
+	//}
+
 	relativePath = "build/assets/" + relativePath;
 	FixRawData();
 
@@ -717,7 +740,7 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 	for (int i = 0; i < rawData.size(); i += 8)
 	{
 		if (i % 32 == 0)
-			sourceOutput += "\t";
+			sourceOutput += "    ";
 
 		sourceOutput += StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(rawDataArr, i));
 
@@ -740,9 +763,16 @@ ZResourceType ZTexture::GetResourceType()
 	return ZResourceType::Texture;
 }
 
+std::string ZTexture::GetSourceTypeName()
+{
+	return "u64";
+}
+
 void ZTexture::CalcHash()
 {
-	hash = 0;
+	hash = CRC32B(rawData.data(), GetRawDataSize());
+	//File::WriteAllText(StringHelper::Sprintf("%s/%s.txt", Globals::Instance->outputPath.c_str(), outName.c_str()), StringHelper::Sprintf("%08lX", hash));
+	//hash = 0;
 }
 
 std::string ZTexture::GetExternalExtension()

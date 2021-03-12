@@ -445,7 +445,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
-	//sourceOutput += "#include <z64.h>\n";
 	sourceOutput += "#include \"segment_symbols.h\"\n";
 	sourceOutput += "#include \"command_macros_base.h\"\n";
 	sourceOutput += "#include \"z64cutscene_commands.h\"\n";
@@ -491,7 +490,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		parent->defines += defines;
-		//parent->externs[0xFFFFFFFF] = defines;
 	}
 
 	for (pair<int32_t, ZTexture*> item : textures)
@@ -563,6 +561,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	isArray = false;
 	arrayItemCnt = 0;
 	includePath = "";
+	isExternal = false;
 	references = vector<uint32_t>();
 }
 
@@ -586,6 +585,11 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string
 	varName = nVarName;
 	isArray = nIsArray;
 	arrayItemCnt = nArrayItemCnt;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText, bool nIsExternal) : Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
+{
+	isExternal = nIsExternal;
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, int nArrayItemCnt, string nText) : Declaration(nAlignment, nPadding, nSize, nText)

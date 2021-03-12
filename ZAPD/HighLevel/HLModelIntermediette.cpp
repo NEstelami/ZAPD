@@ -21,6 +21,7 @@ HLModelIntermediette::HLModelIntermediette()
 	startIndex = 0;
 	meshStartIndex = 0;
 	hasSkeleton = false;
+	lastTrans = Vec3s(0, 0, 0);
 }
 
 HLModelIntermediette::~HLModelIntermediette()
@@ -60,7 +61,6 @@ HLModelIntermediette* HLModelIntermediette::FromXML(tinyxml2::XMLElement* root)
 
 void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDisplayList* zDisplayList)
 {
-	//HLModelIntermediette* model = new HLModelIntermediette();
 	HLLimbIntermediette* limb = new HLLimbIntermediette();
 	limb->name = zDisplayList->GetName();
 
@@ -175,7 +175,7 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 
 			matCnt++;
 
-			if (matCnt > 1)
+			if (matCnt > 1 && mesh->commands.size() > 0)
 			{
 				model->blocks.push_back(lastMat);
 				limb->commands.push_back(new HLLimbCommand(mesh->name, lastMat->name));
@@ -249,21 +249,55 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	model->blocks.push_back(lastMat);
 	model->blocks.push_back(mesh);
 	model->blocks.push_back(limb);
-
-	//return model;
 }
 
 void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton* zSkeleton)
 {
 	model->hasSkeleton = true;
 
-	for (int i = 0; i < zSkeleton->limbs.size(); i++)
+	// Start at the root skeleton node, go down...
+	ProcessZSkeletonLimb(model, zSkeleton, zSkeleton->limbs[0]);
+
+	/*for (int i = 0; i < zSkeleton->limbs.size(); i++)
 	{
 		ZLimbStandard* limb = zSkeleton->limbs[i];
+
+		if (limb->dList == nullptr && limb->dListPtr != 0)
+			limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
+
+		if (limb->dList != nullptr)
+		{
+			auto cmdTrans = new HLSetTranslation(limb->transX, limb->transY, limb->transZ);
+			cmdTrans->parent = model;
+			model->blocks.push_back(cmdTrans);
+
+			FromZDisplayList(model, limb->dList);
+		}
+
 
 		for (int j = 0; j < model->blocks.size(); j++)
 		{
 		}
+	}*/
+}
+
+void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton, ZLimbStandard* limb)
+{
+	if(limb->dList == nullptr && limb->dListPtr != 0)
+		limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
+
+	if (limb->dList != nullptr)
+	{
+		auto cmdTrans = new HLSetTranslation(limb->transX, limb->transY, limb->transZ);
+		cmdTrans->parent = model;
+		model->blocks.push_back(cmdTrans);
+
+		FromZDisplayList(model, limb->dList);
+	}
+
+	for (ZLimbStandard* childLimb : limb->children)
+	{
+		ProcessZSkeletonLimb(model, zSkeleton, childLimb);
 	}
 }
 
@@ -285,7 +319,7 @@ string HLModelIntermediette::ToOBJFile()
 	return output;
 }
 
-string HLModelIntermediette::ToFBXFile()
+string HLModelIntermediette::ToAssimpFile()
 {
 #ifdef USE_ASSIMP
 	Assimp::Exporter exporter;
@@ -296,10 +330,14 @@ string HLModelIntermediette::ToFBXFile()
 
 	std::vector<aiVector3D> vertices;
 
+	int idx = 0;
+
 	for (HLIntermediette* block : blocks)
 	{
 		block->parent = this;
 		block->OutputAssimp(newScene, &vertices);
+		
+		idx++;
 	}
 
 	newScene->mRootNode->mNumChildren += newScene->mNumMeshes;
@@ -312,6 +350,7 @@ string HLModelIntermediette::ToFBXFile()
 		child->mNumMeshes = 1;
 		child->mMeshes = new unsigned int[1];
 		child->mMeshes[0] = i;
+		child->mTransformation.Translation(aiVector3D(meshTranslations[i].x * 10, meshTranslations[i].y * 10, meshTranslations[i].z * 10), child->mTransformation);
 		newScene->mRootNode->mChildren[i] = child;
 	}
 
@@ -476,7 +515,7 @@ string HLVerticesIntermediette::OutputCode(HLModelIntermediette* parent)
 
 	for (Vertex v : vertices)
 	{
-		output += StringHelper::Sprintf("\t{ %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", 
+		output += StringHelper::Sprintf("    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", 
 			v.x, v.y, v.z, v.flag, v.s, v.t, v.r, v.g, v.b, v.a);
 	}
 
@@ -766,18 +805,12 @@ string HLMeshCmdLoadVertices::OutputCode(HLModelIntermediette* parent)
 HLMaterialIntermediette::HLMaterialIntermediette()
 {
 	textureName = "";
-	//repeatH = false;
-	//repeatV = false;
 	clrR = 0;
 	clrG = 0;
 	clrB = 0;
 	clrA = 0;
 	clrM = 0;
 	clrL = 0;
-	//clampH = false;
-	//clampV = false;
-	//mirrorH = false;
-	//mirrorV = false;
 	cmtH = HLMaterialCmt::Wrap;
 	cmtV = HLMaterialCmt::Wrap;
 }
@@ -975,17 +1008,17 @@ string HLMeshIntermediette::OutputCode(string materialName)
 	HLMaterialIntermediette* mat = parent->FindByName<HLMaterialIntermediette>(materialName);
 	HLTextureIntermediette* tex = parent->FindByName<HLTextureIntermediette>(mat->textureName);
 
-	output += StringHelper::Sprintf("\tgsDPPipeSync(),\n");
-	output += StringHelper::Sprintf("\tgsDPSetPrimColor(%i, %i, %i, %i, %i, %i),\n", mat->clrL, mat->clrM, mat->clrR, mat->clrG, mat->clrB, mat->clrA);
-	output += StringHelper::Sprintf("\tgsDPPipeSync(),\n");
-	output += StringHelper::Sprintf("\tgsSPTexture(65535, 65535, 0, 0, G_ON),\n");
+	output += StringHelper::Sprintf("    gsDPPipeSync(),\n");
+	output += StringHelper::Sprintf("    gsDPSetPrimColor(%i, %i, %i, %i, %i, %i),\n", mat->clrL, mat->clrM, mat->clrR, mat->clrG, mat->clrB, mat->clrA);
+	output += StringHelper::Sprintf("    gsDPPipeSync(),\n");
+	output += StringHelper::Sprintf("    gsSPTexture(65535, 65535, 0, 0, G_ON),\n");
 
-	output += StringHelper::Sprintf("\tgsDPLoadMultiBlock(%s, 0, 0, %s, %s, %i, %i, 0, 0, 0, 5, 5, 0, 0),\n", mat->textureName.c_str(), 
+	output += StringHelper::Sprintf("    gsDPLoadMultiBlock(%s, 0, 0, %s, %s, %i, %i, 0, 0, 0, 5, 5, 0, 0),\n", mat->textureName.c_str(), 
 		tex->tex->GetIMFmtFromType().c_str(), tex->tex->GetIMSizFromType().c_str(), tex->tex->GetWidth(), tex->tex->GetHeight());
 
 
 	for (HLMeshCommand* cmd : commands)
-		output += "\t" + cmd->OutputCode(parent) + "\n";
+		output += "    " + cmd->OutputCode(parent) + "\n";
 
 	return output;
 }
@@ -1015,6 +1048,9 @@ void HLMeshIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* 
 	{
 		cmd->OutputAssimp(parent, scene, mesh);
 	}
+
+	parent->meshTranslations.push_back(parent->lastTrans);
+	//parent->objects.push_back(new HLModelObj(parent->lastTransX, ))
 
 	scene->mMeshes[scene->mNumMeshes++] = mesh;
 }
@@ -1068,7 +1104,7 @@ std::string HLLimbIntermediette::OutputCode()
 	for (HLLimbCommand* cmd : commands)
 		output += cmd->OutputCode(parent);
 
-	output += StringHelper::Sprintf("\tgsSPEndDisplayList(),\n");
+	output += StringHelper::Sprintf("    gsSPEndDisplayList(),\n");
 	output += StringHelper::Sprintf("};\n");
 
 	return output;
@@ -1149,4 +1185,39 @@ void HLTerminator::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
 	}
 
 	verts->clear();
+}
+
+HLSetTranslation::HLSetTranslation()
+{
+	transX = 0;
+	transY = 0;
+	transZ = 0;
+}
+
+HLSetTranslation::HLSetTranslation(float nTransX, float nTransY, float nTransZ)
+{
+	transX = nTransX;
+	transY = nTransY;
+	transZ = nTransZ;
+}
+
+HLSetTranslation::~HLSetTranslation()
+{
+}
+
+void HLSetTranslation::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
+{
+	parent->lastTrans = Vec3s(transX, transY, transZ);
+}
+
+HLModelObj::HLModelObj()
+{
+}
+
+HLModelObj::HLModelObj(Vec3s nPos, Vec3s nRot, std::vector<aiVector3D> nVerts, std::vector<int> nIndices)
+{
+	pos = nPos;
+	rot = nRot;
+	vertices = nVerts;
+	indices = nIndices;
 }

@@ -65,7 +65,7 @@ int NewMain(int argc, char* argv[])
 
 	if (argc < 2)
 	{
-		printf("ZAPD.exe [mode (b/btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n");
+		printf("ZAPD.exe [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n");
 		return 1;
 	}
 
@@ -73,9 +73,7 @@ int NewMain(int argc, char* argv[])
 	string buildMode = argv[1];
 	ZFileMode fileMode = ZFileMode::Invalid;
 
-	if (buildMode == "b")
-		fileMode = ZFileMode::Build;
-	else if (buildMode == "btex")
+	if (buildMode == "btex")
 		fileMode = ZFileMode::BuildTexture;
 	else if (buildMode == "bovl")
 		fileMode = ZFileMode::BuildOverlay;
@@ -114,6 +112,11 @@ int NewMain(int argc, char* argv[])
 		else if (arg == "-b" || arg == "--baserompath") // Set baserom path
 		{
 			Globals::Instance->baseRomPath = argv[i + 1];
+			i++;
+		}
+		else if (arg == "-osf") // Set source output path
+		{
+			Globals::Instance->sourceOutputPath = argv[i + 1];
 			i++;
 		}
 		else if (arg == "-gsf") // Generate source file during extraction
@@ -184,7 +187,7 @@ int NewMain(int argc, char* argv[])
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
-	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
+	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
 		Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
 	}
@@ -246,9 +249,7 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 
 	for (ZFile* file : Globals::Instance->files)
 	{
-		if (fileMode == ZFileMode::Build)
-			file->BuildResources();
-		else if (fileMode == ZFileMode::BuildSourceFile)
+		if (fileMode == ZFileMode::BuildSourceFile)
 			file->BuildSourceFile(outPath);
 		else
 			file->ExtractResources(outPath);

@@ -256,7 +256,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix, const s
 		else
 			sprintf(camSegLine, "0x%08X", entries[i]->cameraPosDataSeg);
 
-		declaration += StringHelper::Sprintf("\t{ 0x%04X, %i, %s },", entries[i]->cameraSType, entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
+		declaration += StringHelper::Sprintf("    { 0x%04X, %i, %s },", entries[i]->cameraSType, entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
 
 		if (i < entries.size() - 1)
 			declaration += "\n";
@@ -274,10 +274,10 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix, const s
 			CameraPositionData* data = new CameraPositionData(rawData, cameraPosDataOffset + (i * 6));
 			cameraPositionData.push_back(data);
 
-			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i }, // 0x%08X\n", data->x, data->y, data->z, cameraPosDataSeg + (i * 0x6));;
+			declaration += StringHelper::Sprintf("    { %6i, %6i, %6i }, // 0x%08X\n", data->x, data->y, data->z, cameraPosDataSeg + (i * 0x6));;
 		}
 
-		int cameraPosDataIndex = cameraPosDataSeg & 0x00FFFFFF;
+		int cameraPosDataIndex = SEG2FILESPACE(cameraPosDataSeg);
 		int entrySize = numDataTotal * 0x6;
 		parent->AddDeclarationArray(cameraPosDataIndex, DeclarationAlignment::None, entrySize, "Vec3s", StringHelper::Sprintf("%s_camPosData_%08X", prefix.c_str(), cameraPosDataIndex), numDataTotal, declaration);
 	}

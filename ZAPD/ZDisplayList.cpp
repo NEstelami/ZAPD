@@ -689,9 +689,10 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, int i, std::string prefix, char* l
 			sprintf(line, "gsSPDisplayList(%sDlist0x%06lX),", prefix.c_str(), SEG2FILESPACE(data));
 	}
 
-	int segmentNumber = (data & 0xFF000000) >> 24;
+	int segmentNumber = GETSEGNUM(data);
 
-	if (segmentNumber == 8 || segmentNumber == 9 || segmentNumber == 10 || segmentNumber == 11 || segmentNumber == 12 || segmentNumber == 13) // Used for runtime-generated display lists
+	//if (segmentNumber == 8 || segmentNumber == 9 || segmentNumber == 10 || segmentNumber == 11 || segmentNumber == 12 || segmentNumber == 13) // Used for runtime-generated display lists
+	if (!Globals::Instance->HasSegment(segmentNumber))
 	{
 		if (pp != 0)
 			sprintf(line, "gsSPBranchList(0x%08lX),", data & 0xFFFFFFFF);
@@ -700,9 +701,18 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, int i, std::string prefix, char* l
 	}
 	else
 	{
-		ZDisplayList* nList = new ZDisplayList(fileData, data & 0x00FFFFFF, GetDListLength(fileData, data & 0x00FFFFFF, dListType), parent);
-		nList->scene = scene;
-		otherDLists.push_back(nList);
+		ZDisplayList* nList = new ZDisplayList(fileData, SEG2FILESPACE(data), GetDListLength(fileData, SEG2FILESPACE(data), dListType), parent);
+		
+		//if (scene != nullptr)
+		{
+			nList->scene = scene;
+			otherDLists.push_back(nList);
+		}
+		//else
+		//{
+			//nList->SetName(StringHelper::Sprintf("%sDlist0x%06lX", prefix.c_str(), SEG2FILESPACE(data)));
+			//nList->GetSourceOutputCode(prefix);
+		//}
 	}
 }
 
@@ -1449,82 +1459,13 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		auto end = chrono::steady_clock::now();
 		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-#if _MSC_VER
-		//if (diff > 5)
-			//printf("F3DOP: 0x%02X, TIME: %ims\n", opcode, diff);
-#endif
+		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG && diff > 5)
+			printf("F3DOP: 0x%02X, TIME: %ims\n", opcode, diff);
 
 		sourceOutput += line;
 
 		if (i < instructions.size() - 1)
 			sourceOutput += "\n";
-	}
-
-	// Iterate through our vertex lists, connect intersecting lists.
-	if (vertices.size() > 0)
-	{
-		vector<pair<int32_t, vector<Vertex>>> verticesSorted(vertices.begin(), vertices.end());
-
-		sort(verticesSorted.begin(), verticesSorted.end(), [](const auto& lhs, const auto& rhs)
-			{
-				return lhs.first < rhs.first;
-			});
-
-		for (int i = 0; i < verticesSorted.size() - 1; i++)
-		{
-			//int vtxSize = verticesSorted[i].second.size() * 16;
-			int vtxSize = (int)vertices[verticesSorted[i].first].size() * 16;
-
-			if ((verticesSorted[i].first + vtxSize) > verticesSorted[i + 1].first)
-			{
-				int intersectAmt = (verticesSorted[i].first + vtxSize) - verticesSorted[i + 1].first;
-				int intersectIndex = intersectAmt / 16;
-
-				for (int j = intersectIndex; j < verticesSorted[i + 1].second.size(); j++)
-				{
-					vertices[verticesSorted[i].first].push_back(verticesSorted[i + 1].second[j]);
-				}
-
-				//defines += StringHelper::Sprintf("#define %sVtx_%06X ((u32)%sVtx_%06X + 0x%06X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
-
-				int nSize = (int)vertices[verticesSorted[i].first].size();
-
-				vertices.erase(verticesSorted[i + 1].first);
-				verticesSorted.erase(verticesSorted.begin() + i + 1);
-
-				i--;
-			}
-		}
-
-		if (scene == nullptr) // TODO: Bit of a hack but it works for now...
-			parent->defines += defines;
-
-		// Generate Vertex Declarations
-		for (pair<int32_t, vector<Vertex>> item : vertices)
-		{
-			string declaration = "";
-
-			int curAddr = item.first;
-
-			for (Vertex vtx : item.second)
-			{
-				if (curAddr != item.first)
-					declaration += "\n";
-
-				declaration += StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					vtx.x, vtx.y, vtx.z, vtx.s, vtx.t, vtx.r, vtx.g, vtx.b, vtx.a);
-
-				curAddr += 16;
-			}
-
-			vtxDeclarations[item.first] = declaration;
-
-			if (parent != nullptr)
-			{
-				parent->AddDeclarationArray(item.first, DeclarationAlignment::None, item.second.size() * 16, "static Vtx",
-					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first, item.second.size()), item.second.size(), declaration);
-			}
-		}
 	}
 
 	// Check for texture intersections
@@ -1611,15 +1552,24 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			{
 				if (parent->GetDeclaration(item.first) == nullptr)
 				{
-					if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-						printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
-
+					auto start = chrono::steady_clock::now();
 					item.second->Save(Globals::Instance->outputPath);
+					auto end = chrono::steady_clock::now();
+					auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-					parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
-						Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
-						item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
-						"u64", StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
+					if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+						printf("SAVED IMAGE TO %s in %ims\n", Globals::Instance->outputPath.c_str(), (int)diff);
+
+					std::string incStr = StringHelper::Sprintf("%s/%s.%s.inc.c", Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str());
+					std::string texName = StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
+
+					if (Globals::Instance->cfg->texturePool.find(item.second->hash) != Globals::Instance->cfg->texturePool.end())
+					{
+						incStr = Globals::Instance->cfg->texturePool[item.second->hash];
+						texName = Path::GetFileNameWithoutExtension(incStr);
+					}
+
+					parent->AddDeclarationIncludeArray(item.first, incStr, item.second->GetRawDataSize(), "u64", texName, 0);
 				}
 			}
 		}
@@ -1628,10 +1578,105 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 	if (parent != nullptr)
 	{
-		Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), "Gfx", StringHelper::Sprintf("%s", name.c_str()), 0, sourceOutput);
+		Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), "Gfx", StringHelper::Sprintf("%s", name.c_str()), 0, sourceOutput, true);
 		decl->references = references;
-		return "";
+		//return "";
+		//return sourceOutput;
 	}
+
+	// Iterate through our vertex lists, connect intersecting lists.
+	if (vertices.size() > 0)
+	{
+		vector<pair<int32_t, vector<Vertex>>> verticesSorted(vertices.begin(), vertices.end());
+
+		sort(verticesSorted.begin(), verticesSorted.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
+
+		for (int i = 0; i < verticesSorted.size() - 1; i++)
+		{
+			//int vtxSize = verticesSorted[i].second.size() * 16;
+			int vtxSize = (int)vertices[verticesSorted[i].first].size() * 16;
+
+			if ((verticesSorted[i].first + vtxSize) > verticesSorted[i + 1].first)
+			{
+				int intersectAmt = (verticesSorted[i].first + vtxSize) - verticesSorted[i + 1].first;
+				int intersectIndex = intersectAmt / 16;
+
+				for (int j = intersectIndex; j < verticesSorted[i + 1].second.size(); j++)
+					vertices[verticesSorted[i].first].push_back(verticesSorted[i + 1].second[j]);
+
+				int nSize = (int)vertices[verticesSorted[i].first].size();
+
+				vertices.erase(verticesSorted[i + 1].first);
+				verticesSorted.erase(verticesSorted.begin() + i + 1);
+
+				i--;
+			}
+		}
+
+		if (scene == nullptr) // TODO: Bit of a hack but it works for now...
+			parent->defines += defines;
+
+		// Generate Vertex Declarations
+		vector<int32_t> vtxKeys;
+
+		for (pair<int32_t, vector<Vertex>> item : vertices)
+			vtxKeys.push_back(item.first);
+
+		//for (pair<int32_t, vector<Vertex>> item : vertices)
+		for (int i = 0; i < vtxKeys.size(); i++)
+		{
+			vector<Vertex> item = vertices[vtxKeys[i]];
+
+			//if (i < vtxKeys.size() - 1)
+			//{
+			//	vector<Vertex> nextItem = vertices[vtxKeys[i + 1]];
+
+			//	int endAddr = (vtxKeys[i] + (item.size() * 16));
+			//	if (endAddr != vtxKeys[i + 1] && parent->GetDeclarationRanged(endAddr) == nullptr)
+			//	{
+			//		for (Vertex vtx : nextItem)
+			//		{
+			//			item.push_back(vtx);
+			//		}
+
+			//		vtxKeys.erase(vtxKeys.begin() + (i + 1));
+			//		vertices.erase(vertices.begin() + (i + 1));
+			//		//i--;
+			//	}
+			//}
+
+			string declaration = "";
+
+			int curAddr = vtxKeys[i];
+
+			for (Vertex vtx : item)
+			{
+				if (curAddr != vtxKeys[i])
+					declaration += "\n";
+
+				declaration += StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i),",
+					vtx.x, vtx.y, vtx.z, vtx.s, vtx.t, vtx.r, vtx.g, vtx.b, vtx.a);
+
+				curAddr += 16;
+			}
+
+			vtxDeclarations[vtxKeys[i]] = declaration;
+
+			if (parent != nullptr)
+			{
+				std::string vtxName = StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), vtxKeys[i]);
+				std::string incStr = StringHelper::Sprintf("%s/%s.%s.inc", Globals::Instance->outputPath.c_str(), vtxName.c_str(), "vtx");
+				parent->AddDeclarationArray(vtxKeys[i], DeclarationAlignment::None, item.size() * 16, "static Vtx",
+					vtxName, item.size(), declaration);
+
+				Declaration* vtxDecl = parent->AddDeclarationIncludeArray(vtxKeys[i], incStr, item.size() * 16, "static Vtx", vtxName, item.size());
+				vtxDecl->isExternal = true;
+			}
+		}
+	}
+
+	if (parent != nullptr)
+		return "";
 
 	return sourceOutput;
 }
@@ -1657,7 +1702,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 
 	if ((texSeg != 0 || texAddr != 0) && texWidth != 0 && texHeight != 0 && texLoaded && Globals::Instance->HasSegment(segmentNumber))
 	{
-		if (segmentNumber != 2) // Not from a scene file
+		if (segmentNumber != SEGMENT_SCENE)
 		{
 			ZTexture* tex = ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr, StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr), texWidth, texHeight, parent);
 			tex->isPalette = texIsPalette;
@@ -1696,7 +1741,6 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	}
 	else if (fmt == F3DZEXTexFormats::G_IM_FMT_CI)
 	{
-		//if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
 		return TextureType::Palette8bpp;
 	}
 	else if (fmt == F3DZEXTexFormats::G_IM_FMT_IA)
@@ -1722,6 +1766,8 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 
 void ZDisplayList::Save(const std::string& outFolder)
 {
+	//File::WriteAllText(StringHelper::Sprintf("%s/%s.%s.inc.c", outFolder.c_str(), name.c_str(), GetExternalExtension().c_str()), GetSourceOutputCode(""));
+
 	//HLModelIntermediette* mdl = HLModelIntermediette::FromZDisplayList(this);
 
 	// For testing purposes only at the moment...
@@ -1742,6 +1788,21 @@ void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
 	HLModelIntermediette::FromZDisplayList(mdl, this);
 	mdl->blocks.push_back(new HLTerminator());
+}
+
+bool ZDisplayList::IsExternalResource()
+{
+	return true;
+}
+
+std::string ZDisplayList::GetExternalExtension()
+{
+	return "dlist";
+}
+
+std::string ZDisplayList::GetSourceTypeName()
+{
+	return "Gfx";
 }
 
 ZResourceType ZDisplayList::GetResourceType()

@@ -14,6 +14,14 @@ ZResource::ZResource(ZFile* nParent)
 	outputDeclaration = true;
 }
 
+void ZResource::ExtractFromXML()
+{
+}
+
+void ZResource::ExtractFromFile()
+{
+}
+
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 {
 	if (reader->Attribute("Name") != nullptr)
@@ -25,6 +33,11 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		outName = reader->Attribute("OutName");
 	else
 		outName = name;
+
+	if (reader->Attribute("Custom") != nullptr)
+		isCustomAsset = true;
+	else
+		isCustomAsset = false;
 }
 
 void ZResource::Save(const std::string& outFolder)
@@ -112,7 +125,7 @@ void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 
 std::string ZResource::GetSourceTypeName()
 {
-	return "";
+	return "u8";
 }
 
 ZResourceType ZResource::GetResourceType()

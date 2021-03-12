@@ -5,6 +5,7 @@
 #include "../../StringHelper.h"
 #include <Path.h>
 #include <Globals.h>
+#include <chrono>
 
 using namespace std;
 
@@ -80,9 +81,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		for (int i = 0; i < meshHeader0->entries.size(); i++)
 		{
 			if (meshHeader0->entries[i]->opaqueDListAddr != 0)
-				declaration += StringHelper::Sprintf("\t{ (u32)%sDlist0x%06X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
+				declaration += StringHelper::Sprintf("    { (u32)%sDlist0x%06X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
 			else
-				declaration += "\t{ 0, ";
+				declaration += "    { 0, ";
 
 			if (meshHeader0->entries[i]->translucentDListAddr != 0)
 				declaration += StringHelper::Sprintf("(u32)%sDlist0x%06X },\n", zRoom->GetName().c_str(), meshHeader0->entries[i]->translucentDListAddr);
@@ -227,7 +228,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 		for (int i = 0; i < meshHeader2->entries.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, ", meshHeader2->entries[i]->playerXMax, meshHeader2->entries[i]->playerZMax, meshHeader2->entries[i]->playerXMin, meshHeader2->entries[i]->playerZMin);
+			declaration += StringHelper::Sprintf("    { %i, %i, %i, %i, ", meshHeader2->entries[i]->playerXMax, meshHeader2->entries[i]->playerZMax, meshHeader2->entries[i]->playerXMin, meshHeader2->entries[i]->playerZMin);
 
 			if (meshHeader2->entries[i]->opaqueDListAddr != 0)
 				declaration += StringHelper::Sprintf("(u32)%sDlist0x%06X, ", zRoom->GetName().c_str(), meshHeader2->entries[i]->opaqueDListAddr);
@@ -261,39 +262,17 @@ SetMesh::~SetMesh()
 
 void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList)
 {
-	string srcVarName = "";
-
-	//if (Globals::Instance->includeFilePrefix)
-		srcVarName = StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
-	//else
-		//srcVarName = StringHelper::Sprintf("%s", dList->GetName().c_str());
+	string srcVarName = StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
 	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName()); // HOTSPOT
 
-	//zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None, dList->GetRawDataSize(), "static Gfx", srcVarName, dList->GetRawDataSize() / 8, sourceOutput);
-
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
-
-	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
-	{
-		zRoom->parent->AddDeclarationArray(vtxEntry.first, DeclarationAlignment::Align8, dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
-			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first), dList->vertices[vtxEntry.first].size(), vtxEntry.second);
-	}
 
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 	{
 		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
-		
-		zRoom->textures[texEntry.first]->Save(Globals::Instance->outputPath);
-
-		zRoom->parent->AddDeclarationIncludeArray(texEntry.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
-			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(zRoom->textures[texEntry.first]->GetName()).c_str(), zRoom->textures[texEntry.first]->GetExternalExtension().c_str()), 
-			zRoom->textures[texEntry.first]->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", zRoom->textures[texEntry.first]->GetName().c_str(), texEntry.first), 0);
 	}
 }
 

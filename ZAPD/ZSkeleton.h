@@ -4,6 +4,7 @@
 #include <string>
 #include <stdint.h>
 #include "ZFile.h"
+#include "ZDisplayList.h"
 
 enum class ZLimbType
 {
@@ -11,14 +12,19 @@ enum class ZLimbType
 	LOD
 };
 
+class ZSkeleton;
+
 struct ZLimbStandard : public ZResource
 {
+	ZSkeleton* skeleton;
+	std::string skelName;
 	uint32_t address;
 	std::string name;
 
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
 	uint32_t dListPtr;
+	ZDisplayList* dList;
 
 	std::vector<ZLimbStandard*> children;
 

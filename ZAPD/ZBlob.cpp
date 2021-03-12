@@ -34,18 +34,18 @@ ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, const vector<uint8_t>& nRawData
 	return blob;
 }
 
-// BUILD MODE DEPRICATED
-//ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool readFile)
-//{
-//	ZBlob* blob = new ZBlob();
-//
-//	blob->ParseXML(reader);
-//
-//	if (readFile)
-//		blob->rawData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
-//
-//	return blob;
-//}
+// Build Source File Mode
+ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool readFile)
+{
+	ZBlob* blob = new ZBlob(nullptr);
+
+	blob->ParseXML(reader);
+
+	if (readFile)
+		blob->rawData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
+
+	return blob;
+}
 
 ZBlob* ZBlob::FromFile(const std::string& filePath)
 {
@@ -64,7 +64,7 @@ string ZBlob::GetSourceOutputCode(const std::string& prefix)
 	for (int i = 0; i < rawData.size(); i += 1)
 	{
 		if (i % 16 == 0)
-			sourceOutput += "\t";
+			sourceOutput += "    ";
 
 		sourceOutput += StringHelper::Sprintf("0x%02X, ", rawData[i]);
 

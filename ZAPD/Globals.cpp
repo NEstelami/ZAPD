@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "File.h"
+#include "Path.h"
 #include "tinyxml2.h"
 #include <algorithm>
 
@@ -78,18 +79,70 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 	if (root == nullptr)
 		return;
 
+	cfg = new GameConfig();
+
 	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "SymbolMap")
 		{
 			string fileName = string(child->Attribute("File"));
-			GenSymbolMap(fileName);
+			GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 		}
 		else if (string(child->Name()) == "Segment")
 		{
 			string fileName = string(child->Attribute("File"));
 			int segNumber = child->IntAttribute("Number");
 			segmentRefs[segNumber] = fileName;
+		}
+		else if (string(child->Name()) == "ActorList")
+		{
+			string fileName = string(child->Attribute("File"));
+			std::vector<std::string> lines = File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+			
+			for (std::string line : lines)
+			{
+				cfg->actorList.push_back(StringHelper::Strip(line, "\r"));
+			}
+		}
+		else if (string(child->Name()) == "ObjectList")
+		{
+			string fileName = string(child->Attribute("File"));
+			std::vector<std::string> lines = File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+
+			for (std::string line : lines)
+			{
+				cfg->objectList.push_back(StringHelper::Strip(line, "\r"));
+			}
+		}
+		else if (string(child->Name()) == "TexturePool")
+		{
+			string fileName = string(child->Attribute("File"));
+			ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+		}
+	}
+}
+
+void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
+{
+	XMLDocument doc;
+	XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
+
+	if (eResult != tinyxml2::XML_SUCCESS)
+		return;
+
+	XMLNode* root = doc.FirstChild();
+
+	if (root == nullptr)
+		return;
+
+	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
+	{
+		if (string(child->Name()) == "Texture")
+		{
+			string crcStr = string(child->Attribute("CRC"));
+			string texPath = string(child->Attribute("Path"));
+
+			cfg->texturePool[strtol(crcStr.c_str(), NULL, 16)] = texPath;
 		}
 	}
 }
@@ -126,4 +179,5 @@ GameConfig::GameConfig()
 	symbolMap = std::map<uint32_t, std::string>();
 	actorList = std::vector<std::string>();
 	objectList = std::vector<std::string>();
+	texturePool = std::map<uint32_t, std::string>();
 }

@@ -374,6 +374,9 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void Save(const std::string& outFolder) override;
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
+	bool IsExternalResource() override;
+	virtual std::string GetExternalExtension();
+	std::string GetSourceTypeName() override;
 
 	ZResourceType GetResourceType() override;
 };

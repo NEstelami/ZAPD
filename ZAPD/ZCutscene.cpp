@@ -91,17 +91,17 @@ string ZCutscene::GetSourceOutputCode(const std::string& prefix)
 	int32_t curPtr = 0;
 
 	//output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
-	output += StringHelper::Sprintf("\tCS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
+	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
 	for (int i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
-		output += "\t" + cmd->GenerateSourceCode(prefix, curPtr);
+		output += "    " + cmd->GenerateSourceCode(prefix, curPtr);
 		curPtr += (uint32_t)cmd->GetCommandSize();
 		size += (int)cmd->GetCommandSize();
 	}
 
-	output += StringHelper::Sprintf("\tCS_END(),\n", commands.size(), endFrame);
+	output += StringHelper::Sprintf("    CS_END(),\n", commands.size(), endFrame);
 
 	return output;
 }
@@ -287,7 +287,7 @@ string CutsceneCommandSetCameraPos::GenerateSourceCode(const std::string& roomNa
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\t%s(%i, %i, %i, 0x%06X, %i, %i, %i, %i),\n", posStr.c_str(), entries[i]->continueFlag, entries[i]->cameraRoll, entries[i]->nextPointFrame,
+		result += StringHelper::Sprintf("        %s(%i, %i, %i, 0x%06X, %i, %i, %i, %i),\n", posStr.c_str(), entries[i]->continueFlag, entries[i]->cameraRoll, entries[i]->nextPointFrame,
 			*(uint32_t*)&entries[i]->viewAngle, entries[i]->posX, entries[i]->posY, entries[i]->posZ, entries[i]->unused);
 	}
 
@@ -343,7 +343,7 @@ string CutsceneCommandFadeBGM::GenerateSourceCode(const std::string& roomName, i
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\tCS_FADE_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
+		result += StringHelper::Sprintf("        CS_FADE_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->unknown0, entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4, entries[i]->unknown5, entries[i]->unknown6, entries[i]->unknown7,
 			entries[i]->unknown8, entries[i]->unknown9, entries[i]->unknown10);
 	}
@@ -392,7 +392,7 @@ string CutsceneCommandPlayBGM::GenerateSourceCode(const std::string& roomName, i
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\tCS_PLAY_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->sequence, entries[i]->startFrame,
+		result += StringHelper::Sprintf("        CS_PLAY_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->sequence, entries[i]->startFrame,
 			entries[i]->endFrame, entries[i]->unknown0, entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4, entries[i]->unknown5,
 			entries[i]->unknown6, entries[i]->unknown7);
 	}
@@ -590,7 +590,7 @@ string CutsceneCommandUnknown::GenerateSourceCode(const std::string& roomName, i
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\tCS_UNK_DATA(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->unused0, entries[i]->unused1, entries[i]->unused2,
+		result += StringHelper::Sprintf("    CS_UNK_DATA(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->unused0, entries[i]->unused1, entries[i]->unused2,
 			entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
 			entries[i]->unused7, entries[i]->unused8, entries[i]->unused9, entries[i]->unused10, entries[i]->unused11);
 	}
@@ -644,7 +644,7 @@ string CutsceneCommandDayTime::GenerateSourceCode(const std::string& roomName, i
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\tCS_TIME(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
+		result += StringHelper::Sprintf("        CS_TIME(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->hour, entries[i]->minute, entries[i]->unused);
 	}
 
@@ -694,11 +694,11 @@ string CutsceneCommandTextbox::GenerateSourceCode(const std::string& roomName, i
 	{
 		if (entries[i]->base == 0xFFFF)
 		{
-			result += StringHelper::Sprintf("\t\tCS_TEXT_NONE(%i, %i),\n", entries[i]->startFrame, entries[i]->endFrame);
+			result += StringHelper::Sprintf("        CS_TEXT_NONE(%i, %i),\n", entries[i]->startFrame, entries[i]->endFrame);
 		}
 		else
 		{
-			result += StringHelper::Sprintf("\t\tCS_TEXT_DISPLAY_TEXTBOX(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
+			result += StringHelper::Sprintf("        CS_TEXT_DISPLAY_TEXTBOX(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->type,
 				entries[i]->textID1, entries[i]->textID2);
 		}
 	}
@@ -753,7 +753,7 @@ string CutsceneCommandActorAction::GenerateSourceCode(const std::string& roomNam
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\tCS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
+		result += StringHelper::Sprintf("    CS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX, entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY, entries[i]->endPosZ,
 			*(int32_t*)&entries[i]->normalX, *(int32_t*)&entries[i]->normalY, *(int32_t*)&entries[i]->normalZ);
 	}
@@ -867,7 +867,7 @@ string CutsceneCommandSpecialAction::GenerateSourceCode(const std::string& roomN
 
 	for (int i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("\t\tCS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
+		result += StringHelper::Sprintf("        CS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
 			entries[i]->unused7, entries[i]->unused8, entries[i]->unused9, entries[i]->unused10);
 	}

@@ -24,6 +24,8 @@ public:
 	int GetRawDataSize();
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType();
+	bool IsExternalResource() override;
+	virtual std::string GetExternalExtension();
 
 	static ZVtx* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
 

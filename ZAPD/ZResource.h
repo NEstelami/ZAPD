@@ -46,11 +46,12 @@ class ZResource
 public:
 	ZFile* parent;
 	bool outputDeclaration;
+	uint32_t hash;
 
 	ZResource(ZFile* nParent);
 
 	// Parsing from File
-	virtual void ExtractFromXML();
+	virtual void ExtractFromXML(); // Extract Mode
 	virtual void ExtractFromFile();
 
 	// Misc
@@ -87,7 +88,7 @@ protected:
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	std::string sourceOutput;
-	uint64_t hash;
+	bool isCustomAsset; // If set to true, create a reference for the asset in the file, but don't actually try to extract it from the file
 };
 
 enum class DeclarationAlignment
@@ -121,6 +122,7 @@ public:
 	std::string varType;
 	std::string varName;
 	std::string includePath;
+	bool isExternal;
 	bool isArray;
 	int arrayItemCnt;
 	std::vector<uint32_t> references;
@@ -128,6 +130,7 @@ public:
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText, bool nIsExternal);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
 	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType, std::string nVarName);
 

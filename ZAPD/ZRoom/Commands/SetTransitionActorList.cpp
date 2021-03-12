@@ -1,4 +1,5 @@
 #include "SetTransitionActorList.h"
+#include "../../Globals.h"
 #include "../ZRoom.h"
 #include "../ActorList.h"
 #include "../../ZFile.h"
@@ -45,12 +46,12 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 	{
 		string actorStr = "";
 
-		if (entry->actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
-			actorStr = ActorList[entry->actorNum];
+		if (entry->actorNum < sizeof(Globals::Instance->cfg->actorList) / sizeof(Globals::Instance->cfg->actorList[0]))
+			actorStr = Globals::Instance->cfg->actorList[entry->actorNum];
 		else
 			actorStr = StringHelper::Sprintf("0x%04X", entry->actorNum);
 
-		declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n", entry->frontObjectRoom, entry->frontTransitionReaction, entry->backObjectRoom, entry->backTransitionReaction, actorStr.c_str(), entry->posX, entry->posY, entry->posZ, entry->rotY, (uint16_t)entry->initVar);
+		declaration += StringHelper::Sprintf("    { %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n", entry->frontObjectRoom, entry->frontTransitionReaction, entry->backObjectRoom, entry->backTransitionReaction, actorStr.c_str(), entry->posX, entry->posY, entry->posZ, entry->rotY, (uint16_t)entry->initVar);
 	}
 
 	zRoom->parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, transitionActors.size() * 16, "TransitionActorEntry",

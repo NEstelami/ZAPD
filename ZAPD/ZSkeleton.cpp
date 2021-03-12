@@ -17,7 +17,9 @@ ZLimbStandard::ZLimbStandard(ZFile* nParent) : ZResource(nParent)
 	childIndex = 0;
 	siblingIndex = 0;
 	dListPtr = 0;
+	dList = nullptr;
 	children = vector<ZLimbStandard*>();
+	skeleton = nullptr;
 }
 
 ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* parent)
@@ -33,6 +35,9 @@ ZLimbStandard* ZLimbStandard::FromXML(XMLElement* reader, vector<uint8_t> nRawDa
 	limb->ParseXML(reader);
 	limb->name = limbName;
 	limb->address = limbAddress;
+
+	if (reader->Attribute("Skeleton") != nullptr)
+		limb->skelName = reader->Attribute("Skeleton");
 
 	string entryType = limbType == ZLimbType::LOD ? "LodLimb" : "StandardLimb";
 
@@ -61,6 +66,35 @@ ZLimbStandard* ZLimbStandard::FromRawData(std::vector<uint8_t> nRawData, int raw
 
 string ZLimbStandard::GetSourceOutputCode(const std::string& prefix)
 {
+	// Take this oppurtunity to add children...
+	if (skeleton == nullptr)
+	{
+		std::vector<ZResource*> skeletons = parent->GetResourcesOfType(ZResourceType::Skeleton);
+
+		for (ZResource* res : skeletons)
+		{
+			ZSkeleton* skel = (ZSkeleton*)res;
+
+			if (skel->GetName() == skelName)
+			{
+				skeleton = skel;
+				break;
+			}
+		}
+	}
+
+	if (skeleton != nullptr && childIndex != 0xFF)
+	{	
+		ZLimbStandard* childLimb = skeleton->limbs[childIndex];
+		children.push_back(childLimb);
+
+		while (childLimb->siblingIndex != 0xFF)
+		{
+			childLimb = skeleton->limbs[childLimb->siblingIndex];
+			children.push_back(childLimb);
+		}
+	}
+
 	string dListStr = dListPtr == 0 ? "NULL" : StringHelper::Sprintf("%s", parent->GetVarName(dListPtr).c_str());
 
 	string entryStr = StringHelper::Sprintf("{ %i, %i, %i }, %i, %i, %s",
@@ -89,7 +123,7 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
 	HLModelIntermediette::FromZSkeleton(mdl, this);
-	//mdl->blocks.push_back(new HLTerminator());
+	mdl->blocks.push_back(new HLTerminator());
 }
 
 ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent)
@@ -119,8 +153,6 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 
 	if (reader->Attribute("LimbType") != nullptr)
 	{
-		//printf("C3\n");
-
 		if (string(reader->Attribute("LimbType")) == "LOD")
 			limbType = ZLimbType::LOD;
 	}
@@ -139,11 +171,13 @@ ZSkeleton* ZSkeleton::FromXML(XMLElement* reader, vector<uint8_t> nRawData, int 
 		if (limbType == ZLimbType::Standard)
 		{
 			ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, ptr2, nParent);
+			limb->skeleton = skeleton;
 			skeleton->limbs.push_back(limb);
 		}
 		else
 		{
 			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2, nParent);
+			limb->skeleton = skeleton;
 			skeleton->limbs.push_back(limb);
 		}
 
@@ -172,6 +206,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 				ZDisplayList* dList = new ZDisplayList(rawData, limb->dListPtr, ZDisplayList::GetDListLength(rawData, limb->dListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), parent);
 				dList->SetName(StringHelper::Sprintf("%sLimbDL_%06X", defaultPrefix.c_str(), limb->dListPtr));
 				dList->GetSourceOutputCode(defaultPrefix);
+				limb->dList = dList;
 			}
 
 			string entryStr = "";
@@ -188,6 +223,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 					ZDisplayList* dList = new ZDisplayList(rawData, limbLOD->farDListPtr, ZDisplayList::GetDListLength(rawData, limbLOD->farDListPtr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), parent);
 					dList->SetName(StringHelper::Sprintf("%s_farLimbDlist_%06X", defaultPrefix.c_str(), limbLOD->farDListPtr));
 					dList->GetSourceOutputCode(defaultPrefix);
+					limb->dList = dList;
 				}
 
 				entryType = "LodLimb";

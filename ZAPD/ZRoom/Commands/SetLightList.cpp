@@ -23,7 +23,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 			params.push_back(BitConverter::ToInt16BE(rawData, this->segment + ((0xE * i) + 2 + (y * 2))));
 		}
 
-		declarations += StringHelper::Sprintf("\t{ 0x%02X, { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X } },\n", type, params[0], params[1], params[2], params[3], params[4], params[5]);
+		declarations += StringHelper::Sprintf("    { 0x%02X, { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X } },\n", type, params[0], params[1], params[2], params[3], params[4], params[5]);
 	}
 
 	declarations += "};\n";

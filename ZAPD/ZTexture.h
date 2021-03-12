@@ -54,6 +54,7 @@ protected:
 	float GetPixelMultiplyer();
 	bool IsExternalResource() override;
 	ZResourceType GetResourceType() override;
+	std::string GetSourceTypeName() override;
 	void CalcHash() override;
 
 public:
