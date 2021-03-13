@@ -155,7 +155,6 @@ public:
 	void ParseRawData() override;
 	static ZLimb* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
 	int GetRawDataSize() override;
-	void PreGenSourceFiles() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;

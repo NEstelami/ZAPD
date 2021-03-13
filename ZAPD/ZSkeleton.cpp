@@ -17,12 +17,9 @@ ZSkeleton::ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& n
 
 	string defaultPrefix = name;
 	defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
-	// TODO: Fix?
 	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
 
-	for (size_t i = 0; i < limbCount; i++)
-	{
-		// TODO: Fix?
+	for (size_t i = 0; i < limbCount; i++) {
 		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(rawData, ptr), parent->baseAddress);
 
 		ZLimb* limb = new ZLimb(reader, rawData, ptr2, parent);
@@ -32,11 +29,6 @@ ZSkeleton::ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& n
 		ptr += 4;
 	}
 }
-
-// TODO
-//ZSkeleton(ZSkeletonType nSkelType, ZLimbType nLimbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
-//{
-//}
 
 ZSkeleton::~ZSkeleton()
 {
@@ -111,7 +103,6 @@ ZSkeleton* ZSkeleton::FromXML(tinyxml2::XMLElement* reader, vector<uint8_t> nRaw
 
 void ZSkeleton::Save(const std::string& outFolder)
 {
-
 }
 
 void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
