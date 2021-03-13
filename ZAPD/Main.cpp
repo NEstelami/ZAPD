@@ -134,6 +134,11 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->testMode = string(argv[i + 1]) == "1";
 			i++;
 		}
+		else if (arg == "-ulzdl") // Use Legacy ZDisplay List
+		{
+			Globals::Instance->useLegacyZDList = string(argv[i + 1]) == "1";
+			i++;
+		}
 		else if (arg == "-profile") // Profile
 		{
 			Globals::Instance->profile = string(argv[i + 1]) == "1";

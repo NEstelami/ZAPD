@@ -720,20 +720,8 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
-	//sprintf(line, "%s:\n", name.c_str());
-	//sourceOutput += line;
-
-	// TODO: TEMP
-	//if (StringHelper::StartsWith(relativePath, "assets/extracted/"))
-	//{
-		//relativePath = "assets/" + StringHelper::Split(relativePath, "assets/extracted/")[1];
-		//printf("REL PATH: %s\n", relativePath.c_str());
-	//}
-
 	relativePath = "build/assets/" + relativePath;
 	FixRawData();
-
-	//sourceOutput += StringHelper::Sprintf("u64 %s[] = \n{\n", name.c_str());
 
 	uint8_t* rawDataArr = rawData.data();
 
@@ -747,8 +735,6 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 		if (i % 32 == 24)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));
 	}
-
-	//sourceOutput += "};\n";
 
 	return sourceOutput;
 }

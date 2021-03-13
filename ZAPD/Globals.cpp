@@ -23,6 +23,7 @@ Globals::Globals()
 	testMode = false;
 	profile = false;
 	includeFilePrefix = false;
+	useLegacyZDList = false;
 	useExternalResources = true;
 	lastScene = nullptr;
 	verbosity = VERBOSITY_SILENT;

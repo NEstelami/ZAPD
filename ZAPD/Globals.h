@@ -7,11 +7,12 @@
 #include "ZTexture.h"
 #include "ZRoom/ZRoom.h"
 
-typedef enum VerbosityLevel {
+enum VerbosityLevel 
+{
 	VERBOSITY_SILENT,
 	VERBOSITY_INFO,
 	VERBOSITY_DEBUG
-} VerbosityLevel;
+};
 
 class GameConfig;
 
@@ -25,6 +26,7 @@ public:
 	bool testMode; // Enables certain experimental features
 	bool profile; // Measure performance of certain operations
 	bool includeFilePrefix; // Include the file prefix in symbols
+	bool useLegacyZDList;
 	VerbosityLevel verbosity; // ZAPD outputs additional information
 	ZFileMode fileMode;
 	std::string baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
