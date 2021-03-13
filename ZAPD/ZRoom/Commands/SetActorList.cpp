@@ -11,7 +11,7 @@ using namespace std;
 SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numActors = rawData[rawDataIndex + 1];
-	segmentOffset = SEG2FILESPACE(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
+	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;

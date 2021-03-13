@@ -2,70 +2,42 @@
 
 #include <vector>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 #include "ZFile.h"
 #include "ZDisplayList.h"
-
-enum class ZLimbType
-{
-	Standard,
-	LOD
-};
-
-class ZSkeleton;
-
-struct ZLimbStandard : public ZResource
-{
-	ZSkeleton* skeleton;
-	std::string skelName;
-	uint32_t address;
-	std::string name;
-
-	int16_t transX, transY, transZ;
-	uint8_t childIndex, siblingIndex;
-	uint32_t dListPtr;
-	ZDisplayList* dList;
-
-	std::vector<ZLimbStandard*> children;
-
-	ZLimbStandard(ZFile* nParent);
-	static ZLimbStandard* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
-	static ZLimbStandard* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex, ZFile* nParent);
-	std::string GetSourceOutputCode(const std::string& prefix) override;
-	int GetRawDataSize() override;
-};
-
-struct ZLimbLOD : ZLimbStandard
-{
-	uint32_t farDListPtr;
-
-	ZLimbLOD(ZFile* nParent);
-	//static ZLimbLOD* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* parent);
-	static ZLimbLOD* FromRawData(std::vector<uint8_t> nRawData, int rawDataIndex, ZFile* nParent);
-	std::string GetSourceOutputCode(const std::string& prefix) override;
-	int GetRawDataSize() override;
-};
+#include "ZLimb.h"
 
 enum ZSkeletonType
 {
 	Normal,
-	Flex,
-	Skin
+	Flex
 };
 
 class ZSkeleton : public ZResource
 {
 public:
-	ZSkeletonType type;
-	std::vector<ZLimbStandard*> limbs;
-	ZLimbStandard* rootLimb;
+	ZSkeletonType type = ZSkeletonType::Normal;
+	ZLimbType limbType = ZLimbType::Standard;
+	std::vector<ZLimb*> limbs;
+	segptr_t limbsArrayAddress;
+	uint8_t limbCount;
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
 	ZSkeleton(ZFile* nParent);
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
+	ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	~ZSkeleton();
+	void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseRawData() override;
 	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
 	void Save(const std::string& outFolder) override;
+	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
+
+	int GetRawDataSize() override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+
+	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;
 
-	std::string GetSourceOutputCode(const std::string& prefix) override;
+	segptr_t GetAddress();
 };

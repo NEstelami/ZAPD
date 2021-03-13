@@ -260,7 +260,7 @@ void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton*
 
 	/*for (int i = 0; i < zSkeleton->limbs.size(); i++)
 	{
-		ZLimbStandard* limb = zSkeleton->limbs[i];
+		ZLimb* limb = zSkeleton->limbs[i];
 
 		if (limb->dList == nullptr && limb->dListPtr != 0)
 			limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
