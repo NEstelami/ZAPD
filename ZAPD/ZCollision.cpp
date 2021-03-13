@@ -120,7 +120,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 
 	if (polyTypeDefAddress != 0)
 		parent->AddDeclarationArray(polyTypeDefSegmentOffset, DeclarationAlignment::None, polygonTypes.size() * 8,
-			"SurfaceType", StringHelper::Sprintf("%s_polygonTypes_%08X", prefix.c_str(), polyTypeDefSegmentOffset), 0, declaration);
+			"SurfaceType", StringHelper::Sprintf("%s_surfaceType_%08X", prefix.c_str(), polyTypeDefSegmentOffset), 0, declaration);
 
 	declaration = "";
 
