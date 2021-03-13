@@ -812,6 +812,13 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* 
 		sprintf(line, "gsSPVertex(@r, %i, %i),", nn, _SHIFTR(hi, 17, 7));
 	}
 
+	// Hack: Don't extract vertices from a unknown segment.
+	if (!Globals::Instance->HasSegment(GETSEGNUM(data))) {
+		segptr_t segmented = data & 0xFFFFFFFF;
+		references.push_back(segmented);
+		parent->AddDeclaration(segmented, DeclarationAlignment::Align16, 16, "Vtx", StringHelper::Sprintf("0x%08X", segmented), "");
+		return;
+	}
 	references.push_back(vtxAddr);
 
 	{

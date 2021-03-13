@@ -977,6 +977,10 @@ string ZFile::ProcessDeclarations()
 	// Next, output the actual declarations
 	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
 	{
+		if (item.first < rangeStart || item.first >= rangeEnd) {
+			continue;
+		}
+
 		if (item.second->includePath != "")
 		{
 			//output += StringHelper::Sprintf("#include \"%s\"\n", item.second->includePath.c_str());
@@ -1080,6 +1084,10 @@ string ZFile::ProcessExterns()
 
 	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
 	{
+		if (item.first < rangeStart || item.first >= rangeEnd) {
+			continue;
+		}
+
 		if (!StringHelper::StartsWith(item.second->varType, "static ") && item.second->varType != "")// && item.second->includePath == "")
 		{
 			if (item.second->isArray)
