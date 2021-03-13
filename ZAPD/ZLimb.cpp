@@ -336,7 +336,13 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
+	// Reading from a <Skeleton/>
 	const char* limbType = reader->Attribute("LimbType");
+	if (limbType == nullptr) {
+		// Reading from a <Limb/>
+		limbType = reader->Attribute("Type");
+	}
+
 	if (limbType == nullptr) {
 		fprintf(stderr, "ZLimb::ParseXML: Warning in '%s'.\n\t Missing 'LimbType' attribute in xml. Defaulting to 'Standard'.\n", name.c_str());
 		type = ZLimbType::Standard;
@@ -504,36 +510,6 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix, const
 	return dListStr;
 }
 
-std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
-{
-	assert(type == ZLimbType::Skin);
-
-	string skinSegmentStr = "NULL";
-
-	if (skinSegment != 0) {
-		switch (skinSegmentType) {
-		case ZLimbSkinType::SkinType_4:
-			skinSegmentStr = "&" + GetSourceOutputCodeSkin_Type_4(prefix);
-			break;
-		case ZLimbSkinType::SkinType_DList:
-			skinSegmentStr = GetLimbDListSourceOutputCode(prefix, "Skin", skinSegment);
-			break;
-		default:
-			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type for SkinLimb: '%i'. \n\tPlease report this.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
-		case ZLimbSkinType::SkinType_0:
-		case ZLimbSkinType::SkinType_5:
-			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Segment type for SkinLimb not implemented: '%i'.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
-			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
-			break;
-		}
-	}
-
-	string entryStr = StringHelper::Sprintf("    0x%02X, %s\n",
-		skinSegmentType, skinSegmentStr.c_str());
-
-	return entryStr;
-}
-
 std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 {
 	assert(type == ZLimbType::Skin);
@@ -563,4 +539,34 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 	}
 
 	return struct_800A5E28_Str;
+}
+
+std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
+{
+	assert(type == ZLimbType::Skin);
+
+	string skinSegmentStr = "NULL";
+
+	if (skinSegment != 0) {
+		switch (skinSegmentType) {
+		case ZLimbSkinType::SkinType_4:
+			skinSegmentStr = "&" + GetSourceOutputCodeSkin_Type_4(prefix);
+			break;
+		case ZLimbSkinType::SkinType_DList:
+			skinSegmentStr = GetLimbDListSourceOutputCode(prefix, "Skin", skinSegment);
+			break;
+		default:
+			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type for SkinLimb: '%i'. \n\tPlease report this.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
+		case ZLimbSkinType::SkinType_0:
+		case ZLimbSkinType::SkinType_5:
+			fprintf(stderr, "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Segment type for SkinLimb not implemented: '%i'.\n", name.c_str(), static_cast<int32_t>(skinSegmentType));
+			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
+			break;
+		}
+	}
+
+	string entryStr = StringHelper::Sprintf("    0x%02X, %s\n",
+		skinSegmentType, skinSegmentStr.c_str());
+
+	return entryStr;
 }

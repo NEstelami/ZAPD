@@ -6,9 +6,6 @@ endif
 
 CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic
 
-CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O0 -rdynamic -Wall -Wextra -Wno-implicit-fallthrough
-
-
 UNAME := $(shell uname)
 
 FS_INC =
