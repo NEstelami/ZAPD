@@ -332,6 +332,6 @@ ASALocalRun/
 *.out
 *.o
 *.d
-**.a
+lib/libgfxd/libgfxd.a
 .vscode/
 ZAPD/BuildInfo.h
