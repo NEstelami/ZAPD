@@ -41,8 +41,9 @@ SetCutscenes::~SetCutscenes()
 string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string pass1 = ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress);
-	if (name != "") {
-		return StringHelper::Sprintf("%s 0, (u32)%s", pass1.c_str(), name.c_str());
+	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
+	if (decl != nullptr) {
+		return StringHelper::Sprintf("%s 0, (u32)%s", pass1.c_str(), decl->varName.c_str());
 	}
 	return StringHelper::Sprintf("%s 0, (u32)%sCutsceneData0x%06X", pass1.c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
