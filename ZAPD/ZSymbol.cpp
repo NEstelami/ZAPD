@@ -24,7 +24,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 
     const char* typeXml = reader->Attribute("Type");
     if (typeXml == nullptr) {
-		fprintf(stderr, "ZLimb::ParseXML: Warning in '%s'.\n\t Missing 'Type' attribute in xml. Defaulting to 'void*'.\n", name.c_str());
+		fprintf(stderr, "ZSymbol::ParseXML: Warning in '%s'.\n\t Missing 'Type' attribute in xml. Defaulting to 'void*'.\n", name.c_str());
         type = "void*";
     }
     else {
@@ -33,23 +33,29 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 
     const char* typeSizeXml = reader->Attribute("TypeSize");
     if (typeSizeXml == nullptr) {
-		fprintf(stderr, "ZLimb::ParseXML: Warning in '%s'.\n\t Missing 'TypeSize' attribute in xml. Defaulting to '4'.\n", name.c_str());
+		fprintf(stderr, "ZSymbol::ParseXML: Warning in '%s'.\n\t Missing 'TypeSize' attribute in xml. Defaulting to '4'.\n", name.c_str());
         typeSize = 4; // Size of a word.
     }
     else {
         typeSize = std::strtoul(typeSizeXml, nullptr, 0);
     }
+
+    const char* countXml = reader->Attribute("Count");
+    if (countXml != nullptr) {
+        isArray = true;
+        if (std::string(countXml) != "") {
+            count = std::strtoul(countXml, nullptr, 0);
+        }
+    }
 }
 
 //void ZSymbol::PreGenSourceFiles();
 
-bool ZSymbol::DoesSupportArray()
-{
-    return true;
-}
-
 int ZSymbol::GetRawDataSize()
 {
+    if (isArray) {
+        return count * typeSize;
+    }
     return typeSize;
 }
 
@@ -60,6 +66,12 @@ int ZSymbol::GetRawDataSize()
 */
 std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
 {
+    if (isArray) {
+        if (count == 0) {
+	        return StringHelper::Sprintf("extern %s %s[];\n", type.c_str(), name.c_str());
+        }
+        return StringHelper::Sprintf("extern %s %s[%i];\n", type.c_str(), name.c_str(), count);
+    }
 	return StringHelper::Sprintf("extern %s %s;\n", type.c_str(), name.c_str());
 }
 
