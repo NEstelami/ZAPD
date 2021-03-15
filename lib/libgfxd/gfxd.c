@@ -3,7 +3,13 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
+#ifdef _WIN32
+# include <io.h>
+# define read _read
+# define write _write
+#else
+# include <unistd.h>
+#endif
 #include "gbi.h"
 #include "gfxd.h"
 #include "priv.h"

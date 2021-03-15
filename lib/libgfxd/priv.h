@@ -3,7 +3,11 @@
 #include "gfxd.h"
 
 #ifdef CONFIG_MT
-# define TLOCAL _Thread_local
+# ifdef _MSC_VER
+#  define TLOCAL __declspec(thread)
+# else
+#  define TLOCAL _Thread_local
+# endif
 #else
 # define TLOCAL
 #endif
