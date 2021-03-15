@@ -238,12 +238,6 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 		ZRoomCommand* cmd = nullptr;
 
-		string declName = "";
-		Declaration* decl = parent->GetDeclaration(rawDataIndex);
-		if (decl != nullptr) {
-			declName = decl->varName;
-		}
-
 		auto start = chrono::steady_clock::now();
 
 		switch (opcode)
@@ -285,10 +279,6 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
 
-		if (declName != "") {
-			cmd->name = declName;
-		}
-
 		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
 
 		cmd->cmdIndex = currentIndex;
@@ -321,7 +311,6 @@ void ZRoom::ProcessCommandSets()
 			ZRoomCommand* cmd = setCommands[i];
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
-
 
 			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, 
 				i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, 

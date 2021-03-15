@@ -55,8 +55,9 @@ int32_t SetCutscenes::GetRawDataSize()
 
 string SetCutscenes::GenerateExterns()
 {
-	if (name != "") {
-		return StringHelper::Sprintf("extern s32 %s[];\n", name.c_str());
+	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
+	if (decl != nullptr && decl->varName != "") {
+		return StringHelper::Sprintf("extern s32 %s[];\n", decl->varName.c_str());
 	}
 	return StringHelper::Sprintf("extern s32 %sCutsceneData0x%06X[];\n", zRoom->GetName().c_str(), segmentOffset);
 }
