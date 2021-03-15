@@ -47,6 +47,7 @@ public:
 	int32_t cmdIndex;
 	int32_t cmdSet;
 	uint32_t commandSet;
+	std::string name = "";
 
 	ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 

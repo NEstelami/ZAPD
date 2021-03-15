@@ -279,6 +279,11 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
 
+		Declaration* decl = parent->GetDeclaration(rawDataIndex);
+		if (decl != nullptr) {
+			cmd->name = decl->varName;
+		}
+
 		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
 
 		cmd->cmdIndex = currentIndex;
