@@ -82,12 +82,12 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		for (int i = 0; i < meshHeader0->entries.size(); i++)
 		{
 			if (meshHeader0->entries[i]->opaqueDListAddr != 0)
-				declaration += StringHelper::Sprintf("\t{ (u32)%sDlist0x%06X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
+				declaration += StringHelper::Sprintf("\t{ (u32)%sDL_%06X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
 			else
 				declaration += "\t{ 0, ";
 
 			if (meshHeader0->entries[i]->translucentDListAddr != 0)
-				declaration += StringHelper::Sprintf("(u32)%sDlist0x%06X },\n", zRoom->GetName().c_str(), meshHeader0->entries[i]->translucentDListAddr);
+				declaration += StringHelper::Sprintf("(u32)%sDL_%06X },\n", zRoom->GetName().c_str(), meshHeader0->entries[i]->translucentDListAddr);
 			else
 				declaration += "0 },\n";
 		}
@@ -234,12 +234,12 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 			declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, ", meshHeader2->entries[i]->playerXMax, meshHeader2->entries[i]->playerZMax, meshHeader2->entries[i]->playerXMin, meshHeader2->entries[i]->playerZMin);
 
 			if (meshHeader2->entries[i]->opaqueDListAddr != 0)
-				declaration += StringHelper::Sprintf("(u32)%sDlist0x%06X, ", zRoom->GetName().c_str(), meshHeader2->entries[i]->opaqueDListAddr);
+				declaration += StringHelper::Sprintf("(u32)%sDL_%06X, ", zRoom->GetName().c_str(), meshHeader2->entries[i]->opaqueDListAddr);
 			else
 				declaration += "0, ";
 
 			if (meshHeader2->entries[i]->translucentDListAddr != 0)
-				declaration += StringHelper::Sprintf("(u32)%sDlist0x%06X },\n", zRoom->GetName().c_str(), meshHeader2->entries[i]->translucentDListAddr);
+				declaration += StringHelper::Sprintf("(u32)%sDL_%06X },\n", zRoom->GetName().c_str(), meshHeader2->entries[i]->translucentDListAddr);
 			else
 				declaration += "0 },\n";
 		}
@@ -306,9 +306,9 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	string sourceOutput = "";
 	
 	if (Globals::Instance->includeFilePrefix)
-		sourceOutput += StringHelper::Sprintf("extern Gfx %sDlist0x%06X[];\n", zRoom->GetName().c_str(), dList->GetRawDataIndex());
+		sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(), dList->GetRawDataIndex());
 	else
-		sourceOutput += StringHelper::Sprintf("extern Gfx dlist0x%06X[];\n", dList->GetRawDataIndex());
+		sourceOutput += StringHelper::Sprintf("extern Gfx DL_%06X[];\n", dList->GetRawDataIndex());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
