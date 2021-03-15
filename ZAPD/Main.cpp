@@ -7,7 +7,9 @@
 #include "Overlays/ZOverlay.h"
 #include "Path.h"
 #include "File.h"
+#include "Directory.h"
 #include "Globals.h"
+#include "BuildInfo.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <execinfo.h>
@@ -171,6 +173,7 @@ int NewMain(int argc, char* argv[])
 		{
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 			signal(SIGSEGV, ErrorHandler);
+			signal(SIGABRT, ErrorHandler);
 #endif
 		}
 		else if (arg == "-v") // Verbose
@@ -180,9 +183,7 @@ int NewMain(int argc, char* argv[])
 	}
 
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
-	{
-		printf("ZAPD: Zelda Asset Processor For Decomp\n");
-	}
+		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
@@ -239,7 +240,7 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	{
 		if (string(child->Name()) == "File")
 		{
-			ZFile* file = new ZFile(fileMode, child, basePath, outPath, false);
+			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", false);
 			Globals::Instance->files.push_back(file);
 		}
 	}

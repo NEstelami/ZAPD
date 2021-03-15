@@ -37,13 +37,16 @@ void ZAnimation::Save(const std::string& outFolder)
 void ZAnimation::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
-
-	name = reader->Attribute("Name");
 }
 
 string ZAnimation::GetSourceOutputCode(const std::string& prefix)
 {
 	return "";
+}
+
+ZResourceType ZAnimation::GetResourceType()
+{
+	return ZResourceType::Animation;
 }
 
 ZNormalAnimation::ZNormalAnimation() : ZAnimation()
@@ -180,6 +183,6 @@ void ZLinkAnimation::ParseRawData()
 
 	const uint8_t* data = rawData.data();
 
-	//segmentAddress = SEG2FILESPACE(BitConverter::ToInt32BE(data, rawDataIndex + 4));
+	//segmentAddress = GETSEGOFFSET(BitConverter::ToInt32BE(data, rawDataIndex + 4));
 	segmentAddress = (BitConverter::ToInt32BE(data, rawDataIndex + 4));
 }

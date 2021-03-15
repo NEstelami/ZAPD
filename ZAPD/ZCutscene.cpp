@@ -181,6 +181,11 @@ CutsceneCommands ZCutscene::GetCommandFromID(int id)
 	return CutsceneCommands::Error;
 }
 
+ZResourceType ZCutscene::GetResourceType()
+{
+	return ZResourceType::Cutscene;
+}
+
 CutsceneCommand::CutsceneCommand(const vector<uint8_t>& rawData, int rawDataIndex)
 {
 
@@ -908,7 +913,7 @@ CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const vector<uint8_t>& 
 
 string CutsceneCommandSceneTransFX::GenerateSourceCode(const std::string& roomName, int baseAddress)
 {
-	return StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i, %i),\n", base, startFrame, endFrame);
+	return StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i),\n", base, startFrame, endFrame);
 }
 
 string CutsceneCommandSceneTransFX::GetCName(const std::string& prefix)
