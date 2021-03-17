@@ -39,7 +39,8 @@ enum class ZResourceType
 	Scalar,
 	Vector,
 	Vertex,
-	CollisionHeader
+	CollisionHeader,
+	Symbol,
 };
 
 class ZResource
