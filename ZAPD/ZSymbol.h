@@ -13,7 +13,7 @@ protected:
 
 public:
     ZSymbol() = default;
-    ZSymbol(const std::string& nName, const std::string& nType, uint32_t nTypeSize, bool nIsArray, uint32_t nCount);
+    ZSymbol(const std::string& nName, int nRawDataIndex, const std::string& nType, uint32_t nTypeSize, bool nIsArray, uint32_t nCount);
     ZSymbol(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 
     static ZSymbol* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* parent);

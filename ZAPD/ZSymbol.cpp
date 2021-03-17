@@ -2,10 +2,11 @@
 #include "StringHelper.h"
 
 
-ZSymbol::ZSymbol(const std::string& nName, const std::string& nType, uint32_t nTypeSize, bool nIsArray, uint32_t nCount)
+ZSymbol::ZSymbol(const std::string& nName, int nRawDataIndex, const std::string& nType, uint32_t nTypeSize, bool nIsArray, uint32_t nCount)
     : type(nType), typeSize(nTypeSize), isArray(nIsArray), count(nCount)
 {
-    this->name = nName;
+    name = nName;
+    rawDataIndex = nRawDataIndex;
 }
 
 ZSymbol::ZSymbol(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
