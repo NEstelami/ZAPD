@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include <stdint.h>
 #include "tinyxml2.h"
 
