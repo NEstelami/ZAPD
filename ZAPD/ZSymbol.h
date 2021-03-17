@@ -12,16 +12,18 @@ protected:
     uint32_t count = 0;
 
 public:
-	ZSymbol(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+    ZSymbol() = default;
+    ZSymbol(const std::string& nName, const std::string& nType, uint32_t nTypeSize, bool nIsArray, uint32_t nCount);
+    ZSymbol(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 
-	static ZSymbol* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* parent);
+    static ZSymbol* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* parent);
 
-	void ParseXML(tinyxml2::XMLElement* reader) override;
+    void ParseXML(tinyxml2::XMLElement* reader) override;
 
-	int GetRawDataSize() override;
+    int GetRawDataSize() override;
 
-	std::string GetSourceOutputHeader(const std::string& prefix) override;
+    std::string GetSourceOutputHeader(const std::string& prefix) override;
 
-	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+    std::string GetSourceTypeName() override;
+    ZResourceType GetResourceType() override;
 };

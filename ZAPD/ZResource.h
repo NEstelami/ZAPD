@@ -40,7 +40,7 @@ enum class ZResourceType
 	Vector,
 	Vertex,
 	CollisionHeader,
-	Symbol
+	Symbol,
 };
 
 class ZResource
