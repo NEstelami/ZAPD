@@ -12,6 +12,7 @@
 #include "ZVtx.h"
 #include "ZCutscene.h"
 #include "ZArray.h"
+#include "ZSymbol.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -249,17 +250,15 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		}
 		else if (string(child->Name()) == "Symbol")
 		{
-			ZResource* res = nullptr;
+			ZSymbol* symbol = nullptr;
 
-			if (mode == ZFileMode::Extract)
-			{
-				res = new ZResource();
-				res->SetName(child->Attribute("Name"));
-				res->SetRawDataIndex(rawDataIndex);
-				res->outputDeclaration = false;
+			if (mode == ZFileMode::Extract) {
+				symbol = ZSymbol::ExtractFromXML(child, rawData, rawDataIndex, this);
 			}
 
-			resources.push_back(res);
+			if (symbol != nullptr) {
+				resources.push_back(symbol);
+			}
 		}
 		else if (string(child->Name()) == "Collision")
 		{
