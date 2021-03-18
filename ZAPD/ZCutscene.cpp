@@ -312,9 +312,9 @@ MusicFadeEntry::MusicFadeEntry(const vector<uint8_t>& rawData, int rawDataIndex)
 	unknown5 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
 	unknown6 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
 	unknown7 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
-	unknown8 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 36);
-	unknown9 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 40);
-	unknown10 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 44);
+	unknown8 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 36); // Macro hardcodes it as zero
+	unknown9 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 40); // Macro hardcodes it as zero
+	unknown10 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 44); // Macro hardcodes it as zero
 }
 
 CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const vector<uint8_t>& rawData, int rawDataIndex) : CutsceneCommand(rawData, rawDataIndex)
@@ -352,7 +352,7 @@ string CutsceneCommandFadeBGM::GenerateSourceCode(const std::string& roomName, i
 
 size_t CutsceneCommandFadeBGM::GetCommandSize()
 {
-	return CutsceneCommand::GetCommandSize() + 0x30;
+	return CutsceneCommand::GetCommandSize() + 0x30 * entries.size();
 }
 
 MusicChangeEntry::MusicChangeEntry(const vector<uint8_t>& rawData, int rawDataIndex)
