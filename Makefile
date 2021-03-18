@@ -26,7 +26,7 @@ genbuildinfo:
 
 clean:
 	rm -f $(O_FILES) ZAPD.out
-	rm -f lib/libgfxd/libgfxd.a
+	cd lib/libgfxd && $(MAKE) clean
 
 rebuild: clean all
 
