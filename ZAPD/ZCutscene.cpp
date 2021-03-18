@@ -70,7 +70,7 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 			case CutsceneCommands::SetTime: cmd = new CutsceneCommandDayTime(rawData, currentPtr); break;
 			case CutsceneCommands::Terminator: cmd = new CutsceneCommandTerminator(rawData, currentPtr); break;
 			case CutsceneCommands::End: cmd = new CutsceneCommandEnd(rawData, currentPtr); break;
-			case CutsceneCommands::Error: printf("Cutscene command error %d  %s  %d", (int)cmdID, __FILE__,__LINE__); break;
+			case CutsceneCommands::Error: fprintf(stderr, "Cutscene command error %d  %s  %d\n", (int)cmdID, __FILE__,__LINE__); break;
 			}
 
 			cmd->commandIndex = i;

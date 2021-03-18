@@ -116,7 +116,7 @@ ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 		case TextureType::GrayscaleAlpha16bpp: tex->PrepareRawDataGrayscaleAlpha16(pngFilePath); break;
 		case TextureType::Palette4bpp: tex->PrepareRawDataPalette4(pngFilePath); break;
 		case TextureType::Palette8bpp: tex->PrepareRawDataPalette8(pngFilePath); break;
-		default: throw "Format is not supported!";
+		default: throw std::runtime_error("Format is not supported!");
 	}
 
 	tex->FixRawData();
@@ -150,7 +150,7 @@ void ZTexture::ParseXML(XMLElement* reader)
 	type = GetTextureTypeFromString(formatStr);
 
 	if (type == TextureType::Error)
-		throw "Format " + formatStr + " is not supported!";
+		throw std::runtime_error("Format " + formatStr + " is not supported!");
 }
 
 void ZTexture::FixRawData()
@@ -191,7 +191,7 @@ void ZTexture::PrepareBitmap()
 	case TextureType::GrayscaleAlpha16bpp: PrepareBitmapGrayscaleAlpha16(); break;
 	case TextureType::Palette4bpp: PrepareBitmapPalette4(); break;
 	case TextureType::Palette8bpp: PrepareBitmapPalette8(); break;
-	default: throw "Format is not supported!";
+	default: throw std::runtime_error("Format is not supported!");
 	}
 }
 
@@ -390,7 +390,7 @@ void ZTexture::PrepareRawData(string inFolder)
 	case TextureType::Palette4bpp: PrepareRawDataPalette4(inFolder + "/" + outName + ".ci4.png"); break;
 	case TextureType::Palette8bpp: PrepareRawDataPalette8(inFolder + "/" + outName + ".ci8.png"); break;
 	default:
-		throw "Build Mode: Format is not supported!";
+		throw std::runtime_error("Build Mode: Format is not supported!");
 	}
 }
 
@@ -791,6 +791,6 @@ TextureType ZTexture::GetTextureTypeFromString(string str)
 	else if (str == "ci8")
 		texType = TextureType::Palette8bpp;
 	else 
-		printf("Encountered Unknown Texture Type %s \n",str.c_str());
+		fprintf(stderr, "Encountered Unknown Texture Type %s \n",str.c_str());
 	return texType;
 }

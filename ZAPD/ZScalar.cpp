@@ -181,6 +181,7 @@ void ZScalar::ParseRawData(const std::vector<uint8_t>& data, const int offset)
 		scalarData.f64 = BitConverter::ToDoubleBE(data, offset);
 		break;
 	case ZSCALAR_NONE:
+		fprintf(stderr, "Warning in ZScalar: Invalid type. %d %s %d\n", (int)scalarType, __FILE__,__LINE__);
 		break;
 	}
 }
