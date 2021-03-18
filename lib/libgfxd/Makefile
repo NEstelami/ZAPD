@@ -7,7 +7,7 @@ CPPFLAGS-$(MT) += -DCONFIG_MT
 CPPFLAGS += $(CPPFLAGS-y)
 
 .PHONY: all
-all: $(LIB)($(OBJ))
+all: $(LIB)
 
 .PHONY: clean
 clean:
@@ -17,3 +17,9 @@ clean:
 
 $(OBJ): gbi.h gfxd.h priv.h
 $(UC_OBJ): uc.c uc_argfn.c uc_argtbl.c uc_macrofn.c uc_macrotbl.c
+
+$(LIB): $(OBJ)
+	$(AR) rcs $@ $^
+
+%.o: %.c
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
