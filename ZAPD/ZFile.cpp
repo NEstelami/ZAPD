@@ -29,7 +29,7 @@ ZFile::ZFile()
 	resources = vector<ZResource*>();
 	basePath = "";
 	outputPath = Directory::GetCurrentDirectory();
-	declarations = map<int32_t, Declaration*>();
+	declarations = map<uint32_t, Declaration*>();
 	defines = "";
 	baseAddress = 0;
 	rangeStart = 0x000000000;
@@ -746,15 +746,15 @@ string ZFile::ProcessDeclarations()
 	if (declarations.size() == 0)
 		return output;
 
-	auto declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
+	auto declarationKeysSorted = vector<pair<uint32_t, Declaration*>>(declarations.begin(), declarations.end());
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
 	{
 		return lhs.first < rhs.first;
 	});
 
 	// Account for padding/alignment
-	int lastAddr = 0;
-	int lastSize = 0;
+	uint32_t lastAddr = 0;
+	uint32_t lastSize = 0;
 
 	//printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
@@ -788,12 +788,12 @@ string ZFile::ProcessDeclarations()
 	//	lastItem = curItem;
 	//}
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		ProcessDeclarationText(item.second);
 	}
 
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
 	{
 		while (declarations[item.first]->size % 4 != 0)
 		{
@@ -804,7 +804,7 @@ string ZFile::ProcessDeclarations()
 		{
 			if (item.second->alignment == DeclarationAlignment::Align16)
 			{
-				int lastAddrSizeTest = declarations[lastAddr]->size;
+				//int lastAddrSizeTest = declarations[lastAddr]->size;
 				int curPtr = lastAddr + declarations[lastAddr]->size;
 
 				while (curPtr % 4 != 0)
@@ -877,7 +877,7 @@ string ZFile::ProcessDeclarations()
 	// Handle unaccounted data
 	lastAddr = 0;
 	lastSize = 0;
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
 	{
 		if (item.first >= rangeStart && item.first < rangeEnd)
 		{
@@ -945,14 +945,14 @@ string ZFile::ProcessDeclarations()
 	}
 
 	// Go through include declarations
-	declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
+	declarationKeysSorted = vector<pair<uint32_t, Declaration*>>(declarations.begin(), declarations.end());
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
 	{
 		return lhs.first < rhs.first;
 	});
 
 	// First, handle the prototypes (static only for now)
-	int protoCnt = 0;
+	uint32_t protoCnt = 0;
 	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
 	{
 		if (item.second->includePath == "" && StringHelper::StartsWith(item.second->varType, "static ") && !StringHelper::StartsWith(item.second->varName, "unaccounted_"))
@@ -975,7 +975,7 @@ string ZFile::ProcessDeclarations()
 		output += "\n";
 
 	// Next, output the actual declarations
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd) {
 			continue;
@@ -1076,13 +1076,13 @@ string ZFile::ProcessExterns()
 {
 	string output = "";
 
-	auto declarationKeysSorted = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
+	auto declarationKeysSorted = vector<pair<uint32_t, Declaration*>>(declarations.begin(), declarations.end());
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
 	{
 		return lhs.first < rhs.first;
 	});
 
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd) {
 			continue;

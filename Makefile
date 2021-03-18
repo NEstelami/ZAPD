@@ -4,7 +4,7 @@ ifneq (, $(shell which ccache))
 CC := ccache $(CC)
 endif
 
-CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall
+CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic
 
 UNAME := $(shell uname)
 

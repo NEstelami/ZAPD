@@ -46,7 +46,6 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 		if (i < arrayCnt - 1)
 			output += ",\n";
 
-		int bp = 0;
 	}
 
 	if (parent != nullptr)

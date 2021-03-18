@@ -1,0 +1,443 @@
+python3 ZAPD/genbuildinfo.py
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZTexture.cpp -o ZAPD/ZTexture.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZLimb.cpp -o ZAPD/ZLimb.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZDisplayList.cpp -o ZAPD/ZDisplayList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZBlob.cpp -o ZAPD/ZBlob.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZAnimation.cpp -o ZAPD/ZAnimation.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/Main.cpp -o ZAPD/Main.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZCollision.cpp -o ZAPD/ZCollision.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZFile.cpp -o ZAPD/ZFile.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZSymbol.cpp -o ZAPD/ZSymbol.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZResource.cpp -o ZAPD/ZResource.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/OutputFormatter.cpp -o ZAPD/OutputFormatter.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZVtx.cpp -o ZAPD/ZVtx.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZArray.cpp -o ZAPD/ZArray.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/Globals.cpp -o ZAPD/Globals.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZSkeleton.cpp -o ZAPD/ZSkeleton.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZCutscene.cpp -o ZAPD/ZCutscene.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZScalar.cpp -o ZAPD/ZScalar.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZVector.cpp -o ZAPD/ZVector.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/ZRoomCommand.cpp -o ZAPD/ZRoom/ZRoomCommand.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/ZRoom.cpp -o ZAPD/ZRoom/ZRoom.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetRoomBehavior.cpp -o ZAPD/ZRoom/Commands/SetRoomBehavior.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetStartPositionList.cpp -o ZAPD/ZRoom/Commands/SetStartPositionList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetExitList.cpp -o ZAPD/ZRoom/Commands/SetExitList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetLightList.cpp -o ZAPD/ZRoom/Commands/SetLightList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetWind.cpp -o ZAPD/ZRoom/Commands/SetWind.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetCameraSettings.cpp -o ZAPD/ZRoom/Commands/SetCameraSettings.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetSkyboxSettings.cpp -o ZAPD/ZRoom/Commands/SetSkyboxSettings.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/Unused09.cpp -o ZAPD/ZRoom/Commands/Unused09.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetSkyboxModifier.cpp -o ZAPD/ZRoom/Commands/SetSkyboxModifier.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetMesh.cpp -o ZAPD/ZRoom/Commands/SetMesh.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetSpecialObjects.cpp -o ZAPD/ZRoom/Commands/SetSpecialObjects.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetLightingSettings.cpp -o ZAPD/ZRoom/Commands/SetLightingSettings.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetEntranceList.cpp -o ZAPD/ZRoom/Commands/SetEntranceList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetPathways.cpp -o ZAPD/ZRoom/Commands/SetPathways.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetCollisionHeader.cpp -o ZAPD/ZRoom/Commands/SetCollisionHeader.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetActorList.cpp -o ZAPD/ZRoom/Commands/SetActorList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetCutscenes.cpp -o ZAPD/ZRoom/Commands/SetCutscenes.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetObjectList.cpp -o ZAPD/ZRoom/Commands/SetObjectList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetEchoSettings.cpp -o ZAPD/ZRoom/Commands/SetEchoSettings.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/EndMarker.cpp -o ZAPD/ZRoom/Commands/EndMarker.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetTransitionActorList.cpp -o ZAPD/ZRoom/Commands/SetTransitionActorList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetRoomList.cpp -o ZAPD/ZRoom/Commands/SetRoomList.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetTimeSettings.cpp -o ZAPD/ZRoom/Commands/SetTimeSettings.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetSoundSettings.cpp -o ZAPD/ZRoom/Commands/SetSoundSettings.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/ZRoomCommandUnk.cpp -o ZAPD/ZRoom/Commands/ZRoomCommandUnk.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/ZRoom/Commands/SetAlternateHeaders.cpp -o ZAPD/ZRoom/Commands/SetAlternateHeaders.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/Overlays/ZOverlay.cpp -o ZAPD/Overlays/ZOverlay.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/HighLevel/HLAnimationIntermediette.cpp -o ZAPD/HighLevel/HLAnimationIntermediette.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/HighLevel/HLModelIntermediette.cpp -o ZAPD/HighLevel/HLModelIntermediette.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c ZAPD/HighLevel/HLTexture.cpp -o ZAPD/HighLevel/HLTexture.o
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall -c lib/tinyxml2/tinyxml2.cpp -o lib/tinyxml2/tinyxml2.o
+make -C lib/libgfxd -j
+make[1]: Entering directory '/home/louist103/decomp/ZAPD/lib/libgfxd'
+cc -Wall -O2 -g   -c -o gfxd.o gfxd.c
+cc -Wall -O2 -g   -c -o uc_f3d.o uc_f3d.c
+cc -Wall -O2 -g   -c -o uc_f3db.o uc_f3db.c
+cc -Wall -O2 -g   -c -o uc_f3dex.o uc_f3dex.c
+cc -Wall -O2 -g   -c -o uc_f3dexb.o uc_f3dexb.c
+cc -Wall -O2 -g   -c -o uc_f3dex2.o uc_f3dex2.c
+ZAPD/ZLimb.cpp: In destructor ‘Struct_800A5E28::~Struct_800A5E28()’:
+ZAPD/ZLimb.cpp:212:9: warning: deleting object of polymorphic class type ‘ZDisplayList’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  212 |  delete unk_8_dlist;
+      |         ^~~~~~~~~~~
+ZAPD/ZCollision.cpp: In constructor ‘ZCollisionHeader::ZCollisionHeader(ZFile*, const string&, const std::vector<unsigned char>&, int)’:
+ZAPD/ZCollision.cpp:84:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<WaterBoxHeader*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   84 |   for (int i = 0; i < waterBoxes.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~
+ZAPD/ZCollision.cpp:99:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<PolygonEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   99 |   for (int i = 0; i < polygons.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZCollision.cpp:113:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<long unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  113 |  for (int i = 0; i < polygonTypes.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZCollision.cpp:117:9: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<long unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  117 |   if (i < polygonTypes.size() - 1)
+      |       ~~^~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZCollision.cpp:131:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<VertexEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  131 |   for (int i = 0; i < vertices.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZCollision.cpp:135:10: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<VertexEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  135 |    if (i < vertices.size() - 1)
+      |        ~~^~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZCollision.cpp: In constructor ‘CameraDataList::CameraDataList(ZFile*, const string&, const std::vector<unsigned char>&, int, int, int)’:
+ZAPD/ZCollision.cpp:267:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<CameraDataEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  267 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCollision.cpp:281:9: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<CameraDataEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  281 |   if (i < entries.size() - 1)
+      |       ~~^~~~~~~~~~~~~~~~~~~~
+ZAPD/ZAnimation.cpp: In member function ‘virtual std::string ZNormalAnimation::GetSourceOutputCode(const string&)’:
+ZAPD/ZAnimation.cpp:75:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<short unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   75 |   for (int i = 0; i < rotationValues.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZAnimation.cpp:83:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<RotationIndex>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   83 |   for (int i = 0; i < rotationIndices.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZAnimation.cpp:87:10: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<RotationIndex>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   87 |    if (i != (rotationIndices.size() - 1))
+      |        ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In destructor ‘ZCutscene::~ZCutscene()’:
+ZAPD/ZCutscene.cpp:88:10: warning: deleting object of polymorphic class type ‘CutsceneCommand’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+   88 |   delete cmd;
+      |          ^~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string ZCutscene::GetSourceOutputCode(const string&)’:
+ZAPD/ZCutscene.cpp:100:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<CutsceneCommand*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  100 |  for (int i = 0; i < commands.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual int ZCutscene::GetRawDataSize()’:
+ZAPD/ZCutscene.cpp:120:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<CutsceneCommand*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  120 |  for (int i = 0; i < commands.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandSetCameraPos::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:292:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<CutsceneCameraPoint*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  292 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandFadeBGM::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:348:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<MusicFadeEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  348 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandPlayBGM::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:397:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<MusicChangeEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  397 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandStopBGM::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:436:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<MusicChangeEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  436 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandEnvLighting::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:490:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<EnvLightingEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  490 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandUnknown9::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:541:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Unknown9Entry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  541 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandUnknown::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:595:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<UnkEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  595 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandDayTime::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:649:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<DayTimeEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  649 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandTextbox::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:697:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<TextboxEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  697 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandActorAction::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:758:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ActorAction*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  758 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetPathways.cpp: In constructor ‘SetPathways::SetPathways(ZRoom*, std::vector<unsigned char>, int)’:
+ZAPD/ZRoom/Commands/SetPathways.cpp:19:11: warning: unused variable ‘currentPtr’ [-Wunused-variable]
+   19 |  uint32_t currentPtr = listSegmentOffset;
+      |           ^~~~~~~~~~
+ZAPD/ZCutscene.cpp: In member function ‘virtual std::string CutsceneCommandSpecialAction::GenerateSourceCode(const string&, int)’:
+ZAPD/ZCutscene.cpp:872:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<SpecialActionEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  872 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetPathways.cpp: In member function ‘virtual std::string SetPathways::GenerateSourceCodePass2(std::string, int)’:
+ZAPD/ZRoom/Commands/SetPathways.cpp:96:14: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<PathwayEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   96 |    if (index < pathways.size() - 1)
+      |        ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetStartPositionList.cpp: In member function ‘virtual std::string SetStartPositionList::GenerateSourceCodePass1(std::string, int)’:
+ZAPD/ZRoom/Commands/SetStartPositionList.cpp:38:7: warning: unused variable ‘line’ [-Wunused-variable]
+   38 |  char line[2048];
+      |       ^~~~
+ZAPD/HighLevel/HLAnimationIntermediette.cpp: In member function ‘std::string HLAnimationIntermediette::OutputXML()’:
+ZAPD/HighLevel/HLAnimationIntermediette.cpp:99:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<short unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   99 |  for (int i = 0; i < rotationValues.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/HighLevel/HLAnimationIntermediette.cpp:110:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<RotationIndex>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  110 |  for (int i = 0; i < rotationIndices.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetActorList.cpp: In member function ‘virtual std::string SetActorList::GenerateSourceCodePass2(std::string, int)’:
+ZAPD/ZRoom/Commands/SetActorList.cpp:84:14: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ActorSpawnEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   84 |    if (index < actors.size() - 1)
+      |        ~~~~~~^~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetObjectList.cpp: In member function ‘virtual std::string SetObjectList::GenerateSourceCodePass1(std::string, int)’:
+ZAPD/ZRoom/Commands/SetObjectList.cpp:41:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<short unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   41 |  for (int i = 0; i < objects.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetObjectList.cpp:46:9: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<short unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   46 |   if (i < objects.size() - 1)
+      |       ~~^~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetCutscenes.cpp: In constructor ‘SetCutscenes::SetCutscenes(ZRoom*, std::vector<unsigned char>, int)’:
+ZAPD/ZRoom/Commands/SetCutscenes.cpp:13:11: warning: unused variable ‘curPtr’ [-Wunused-variable]
+   13 |  uint32_t curPtr = segmentOffset;
+      |           ^~~~~~
+ZAPD/ZRoom/Commands/SetCutscenes.cpp: In destructor ‘SetCutscenes::~SetCutscenes()’:
+ZAPD/ZRoom/Commands/SetCutscenes.cpp:36:10: warning: deleting object of polymorphic class type ‘ZCutscene’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+   36 |   delete cutscene;
+      |          ^~~~~~~~
+ZAPD/ZVector.cpp: In member function ‘virtual void ZVector::ParseRawData()’:
+ZAPD/ZVector.cpp:44:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint32_t’ {aka ‘unsigned int’} [-Wsign-compare]
+   44 |  for (int i = 0; i < this->dimensions; i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~
+ZAPD/ZVector.cpp: In member function ‘virtual int ZVector::GetRawDataSize()’:
+ZAPD/ZVector.cpp:62:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ZScalar*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   62 |  for (int i = 0; i < this->scalars.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZVector.cpp: In member function ‘std::string ZVector::GetSourceValue()’:
+ZAPD/ZVector.cpp:100:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ZScalar*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  100 |  for (int i = 0; i < this->scalars.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZBlob.cpp: In static member function ‘static ZBlob* ZBlob::FromFile(const string&)’:
+ZAPD/ZBlob.cpp:51:6: warning: unused variable ‘comp’ [-Wunused-variable]
+   51 |  int comp;
+      |      ^~~~
+ZAPD/ZBlob.cpp: In member function ‘virtual std::string ZBlob::GetSourceOutputCode(const string&)’:
+ZAPD/ZBlob.cpp:64:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   64 |  for (int i = 0; i < rawData.size(); i += 1)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZSkeleton.cpp: In destructor ‘ZSkeleton::~ZSkeleton()’:
+ZAPD/ZSkeleton.cpp:36:10: warning: deleting object of polymorphic class type ‘ZLimb’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+   36 |   delete limb;
+      |          ^~~~
+ZAPD/ZTexture.cpp: In member function ‘void ZTexture::FixRawData()’:
+ZAPD/ZTexture.cpp:160:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  160 |   for (int i = 0; i < rawData.size(); i += 4)
+      |                   ~~^~~~~~~~~~~~~~~~
+ZAPD/ZTexture.cpp:169:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  169 |   for (int i = 0; i < rawData.size(); i += 2)
+      |                   ~~^~~~~~~~~~~~~~~~
+ZAPD/ZTexture.cpp: In member function ‘virtual std::string ZTexture::GetSourceOutputCode(const string&)’:
+ZAPD/ZTexture.cpp:716:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  716 |  for (int i = 0; i < rawData.size(); i += 8)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetMesh.cpp: In constructor ‘SetMesh::SetMesh(ZRoom*, std::vector<unsigned char>, int, int)’:
+ZAPD/ZRoom/Commands/SetMesh.cpp:82:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<MeshEntry0*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   82 |   for (int i = 0; i < meshHeader0->entries.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/Commands/SetMesh.cpp:232:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<MeshEntry2*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  232 |   for (int i = 0; i < meshHeader2->entries.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZDisplayList.cpp: In member function ‘bool ZDisplayList::SequenceCheck(std::vector<F3DZEXOpcode>, int)’:
+ZAPD/ZDisplayList.cpp:455:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<F3DZEXOpcode>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  455 |  for (int j = 0; j < sequence.size(); j++)
+      |                  ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp: In destructor ‘ZRoom::~ZRoom()’:
+ZAPD/ZRoom/ZRoom.cpp:54:10: warning: deleting object of polymorphic class type ‘ZRoomCommand’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+   54 |   delete cmd;
+      |          ^~~
+ZAPD/ZRoom/ZRoom.cpp: In static member function ‘static ZRoom* ZRoom::ExtractFromXML(tinyxml2::XMLElement*, std::vector<unsigned char>, int, std::string, ZFile*, ZRoom*)’:
+ZAPD/ZRoom/ZRoom.cpp:110:11: warning: deleting object of polymorphic class type ‘ZDisplayList’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  110 |    delete dList;
+      |           ^~~~~
+ZAPD/ZRoom/ZRoom.cpp:134:11: warning: deleting object of polymorphic class type ‘ZBlob’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  134 |    delete blob;
+      |           ^~~~
+ZAPD/Overlays/ZOverlay.cpp: In static member function ‘static ZOverlay* ZOverlay::FromBuild(std::string, std::string)’:
+ZAPD/Overlays/ZOverlay.cpp:47:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::__cxx11::basic_string<char> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   47 |  for (int i = 1; i < cfgLines.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp:156:11: warning: deleting object of polymorphic class type ‘ZCutscene’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  156 |    delete cutscene;
+      |           ^~~~~~~~
+ZAPD/Overlays/ZOverlay.cpp:59:11: warning: deleting object of polymorphic class type ‘ZOverlay’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+   59 |    delete ovl;
+      |           ^~~
+ZAPD/Overlays/ZOverlay.cpp: In member function ‘virtual std::string ZOverlay::GetSourceOutputCode(const string&)’:
+ZAPD/Overlays/ZOverlay.cpp:201:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<RelocationEntry*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  201 |  for (int i = 0; i < entries.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp:194:11: warning: deleting object of polymorphic class type ‘SetPathways’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  194 |    delete pathway;
+      |           ^~~~~~~
+ZAPD/ZRoom/ZRoom.cpp:213:11: warning: deleting object of polymorphic class type ‘ZTexture’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  213 |    delete tex;
+      |           ^~~
+ZAPD/ZRoom/ZRoom.cpp: In member function ‘void ZRoom::ProcessCommandSets()’:
+ZAPD/ZRoom/ZRoom.cpp:309:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ZRoomCommand*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  309 |   for (int i = 0; i < setCommands.size(); i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp: In member function ‘ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand)’:
+ZAPD/ZRoom/ZRoom.cpp:367:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ZRoomCommand*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  367 |  for (int i = 0; i < commands.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp: In member function ‘size_t ZRoom::GetDeclarationSizeFromNeighbor(int)’:
+ZAPD/ZRoom/ZRoom.cpp:386:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, Declaration*> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  386 |  for (int i = 0; i < declarationKeysSorted.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp:397:28: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, Declaration*> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  397 |   if (declarationIndex + 1 < declarationKeysSorted.size())
+      |       ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp: In member function ‘size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand*)’:
+ZAPD/ZRoom/ZRoom.cpp:410:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ZRoomCommand*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  410 |  for (int i = 0; i < commands.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp:421:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ZRoomCommand*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  421 |   if (cmdIndex + 1 < commands.size())
+      |       ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+ZAPD/ZFile.cpp: In destructor ‘ZFile::~ZFile()’:
+ZAPD/ZFile.cpp:63:10: warning: deleting object of polymorphic class type ‘ZResource’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+   63 |   delete res;
+      |          ^~~
+ZAPD/Main.cpp: In function ‘void ErrorHandler(int)’:
+ZAPD/Main.cpp:44:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+   44 |  for (int i = 1; i < size; i++)
+      |                  ~~^~~~~~
+ZAPD/ZRoom/ZRoom.cpp: In member function ‘virtual std::string ZRoom::GetSourceOutputCode(const string&)’:
+ZAPD/ZRoom/ZRoom.cpp:474:22: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<unsigned int, ZTexture*> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  474 |    for (int i = 0; i < texturesSorted.size() - 1; i++)
+      |                    ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZRoom/ZRoom.cpp:480:10: warning: unused variable ‘intersectAmt’ [-Wunused-variable]
+  480 |      int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+      |          ^~~~~~~~~~~~
+ZAPD/Main.cpp:46:10: warning: unused variable ‘len’ [-Wunused-variable]
+   46 |   size_t len = strlen(symbols[i]);
+      |          ^~~
+ZAPD/Main.cpp: In function ‘int main(int, char**)’:
+ZAPD/Main.cpp:58:11: warning: unused variable ‘g’ [-Wunused-variable]
+   58 |  Globals* g = new Globals();
+      |           ^
+ZAPD/Main.cpp: In function ‘void BuildAssetTexture(const string&, TextureType, const string&)’:
+ZAPD/Main.cpp:282:9: warning: deleting object of polymorphic class type ‘ZTexture’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  282 |  delete tex;
+      |         ^~~
+ZAPD/Main.cpp: In function ‘void BuildAssetBlob(const string&, const string&)’:
+ZAPD/Main.cpp:296:9: warning: deleting object of polymorphic class type ‘ZBlob’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  296 |  delete blob;
+      |         ^~~~
+ZAPD/Main.cpp: In function ‘void BuildAssetModelIntermediette(const string&, const string&)’:
+ZAPD/Main.cpp:302:11: warning: unused variable ‘eResult’ [-Wunused-variable]
+  302 |  XMLError eResult = doc.LoadFile(mdlPath.c_str());
+      |           ^~~~~~~
+ZAPD/ZDisplayList.cpp: In member function ‘virtual std::string ZDisplayList::GetSourceOutputCode(const string&)’:
+ZAPD/ZDisplayList.cpp:1685:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<int, std::vector<Vertex> > >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1685 |   for (int i = 0; i < verticesSorted.size() - 1; i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZDisplayList.cpp:1695:36: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Vertex>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1695 |     for (int j = intersectIndex; j < verticesSorted[i + 1].second.size(); j++)
+      |                                  ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/Main.cpp: In function ‘void BuildAssetAnimationIntermediette(const string&, const string&)’:
+ZAPD/Main.cpp:333:9: warning: deleting object of polymorphic class type ‘ZAnimation’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  333 |  delete zAnim;
+      |         ^~~~~
+ZAPD/ZDisplayList.cpp:1753:22: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<unsigned int, ZTexture*> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1753 |    for (int i = 0; i < texturesSorted.size() - 1; i++)
+      |                    ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZDisplayList.cpp:1759:10: warning: unused variable ‘intersectAmt’ [-Wunused-variable]
+ 1759 |      int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+      |          ^~~~~~~~~~~~
+ZAPD/ZDisplayList.cpp:1783:22: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::pair<unsigned int, ZTexture*> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1783 |    for (int i = 0; i < texturesSorted.size() - 1; i++)
+      |                    ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZDisplayList.cpp:1792:10: warning: unused variable ‘intersectAmt’ [-Wunused-variable]
+ 1792 |      int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+      |          ^~~~~~~~~~~~
+ZAPD/ZFile.cpp: In member function ‘std::string ZFile::ProcessDeclarations()’:
+ZAPD/ZFile.cpp:807:9: warning: unused variable ‘lastAddrSizeTest’ [-Wunused-variable]
+  807 |     int lastAddrSizeTest = declarations[lastAddr]->size;
+      |         ^~~~~~~~~~~~~~~~
+ZAPD/ZFile.cpp: In member function ‘void ZFile::ProcessDeclarationText(Declaration*)’:
+ZAPD/ZFile.cpp:1032:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::__cxx11::basic_string<char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1032 |   for (int i = 0; i < decl->text.size() - 1; i++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/ZFile.cpp:1039:18: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1039 |     if (refIndex >= decl->references.size())
+      |         ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp: In static member function ‘static void HLModelIntermediette::FromZDisplayList(HLModelIntermediette*, ZDisplayList*)’:
+ZAPD/HighLevel/HLModelIntermediette.cpp:74:14: warning: comparison of integer expressions of different signedness: ‘uint32_t’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+   74 |   if (vStart == -1) // TODO: Find a better way to do this
+      |       ~~~~~~~^~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:115:29: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<long unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  115 |  for (int i = startIndex; i < zDisplayList->instructions.size(); i++)
+      |                           ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:130:9: warning: unused variable ‘mode1’ [-Wunused-variable]
+  130 |     int mode1 = (dd & 0xCCCC0000) >> 0;
+      |         ^~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:131:9: warning: unused variable ‘mode2’ [-Wunused-variable]
+  131 |     int mode2 = (dd & 0x33330000) >> 0;
+      |         ^~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:160:8: warning: unused variable ‘fff’ [-Wunused-variable]
+  160 |    int fff = (data & 0b0000000011100000000000000000000000000000000000000000000000000000) >> 53;
+      |        ^~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:161:8: warning: unused variable ‘ii’ [-Wunused-variable]
+  161 |    int ii = (data & 0b0000000000011000000000000000000000000000000000000000000000000000) >> 51;
+      |        ^~
+ZAPD/HighLevel/HLModelIntermediette.cpp:162:8: warning: unused variable ‘nnnnnnnnn’ [-Wunused-variable]
+  162 |    int nnnnnnnnn = (data & 0b0000000000000011111111100000000000000000000000000000000000000000) >> 41;
+      |        ^~~~~~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:163:8: warning: unused variable ‘mmmmmmmmm’ [-Wunused-variable]
+  163 |    int mmmmmmmmm = (data & 0b0000000000000000000000011111111100000000000000000000000000000000) >> 32;
+      |        ^~~~~~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:164:8: warning: unused variable ‘ttt’ [-Wunused-variable]
+  164 |    int ttt = (data & 0b0000000000000000000000000000000000000111000000000000000000000000) >> 24;
+      |        ^~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:165:8: warning: unused variable ‘pppp’ [-Wunused-variable]
+  165 |    int pppp = (data & 0b0000000000000000000000000000000000000000111100000000000000000000) >> 20;
+      |        ^~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:167:8: warning: unused variable ‘aaaa’ [-Wunused-variable]
+  167 |    int aaaa = (data & 0b0000000000000000000000000000000000000000000000111100000000000000) >> 14;
+      |        ^~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:168:8: warning: unused variable ‘ssss’ [-Wunused-variable]
+  168 |    int ssss = (data & 0b0000000000000000000000000000000000000000000000000011110000000000) >> 10;
+      |        ^~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:170:8: warning: unused variable ‘bbbb’ [-Wunused-variable]
+  170 |    int bbbb = (data & 0b0000000000000000000000000000000000000000000000000000000011110000) >> 4;
+      |        ^~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:171:8: warning: unused variable ‘uuuu’ [-Wunused-variable]
+  171 |    int uuuu = (data & 0b0000000000000000000000000000000000000000000000000000000000001111);
+      |        ^~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:245:7: warning: unused variable ‘bp’ [-Wunused-variable]
+  245 |   int bp = 0;
+      |       ^~
+ZAPD/HighLevel/HLModelIntermediette.cpp: In static member function ‘static void HLModelIntermediette::FromZSkeleton(HLModelIntermediette*, ZSkeleton*)’:
+ZAPD/HighLevel/HLModelIntermediette.cpp:260:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<ZLimb*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  260 |  for (int i = 0; i < zSkeleton->limbs.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:264:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<HLIntermediette*>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  264 |   for (int j = 0; j < model->blocks.size(); j++)
+      |                   ~~^~~~~~~~~~~~~~~~~~~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp:262:10: warning: unused variable ‘limb’ [-Wunused-variable]
+  262 |   ZLimb* limb = zSkeleton->limbs[i];
+      |          ^~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp: In member function ‘virtual void HLVerticesIntermediette::OutputAssimp(aiScene*, std::vector<aiVector3t<float> >*)’:
+ZAPD/HighLevel/HLModelIntermediette.cpp:511:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Vertex>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  511 |  for (int i = 0; i < vertices.size(); i++)
+      |                  ~~^~~~~~~~~~~~~~~~~
+ZAPD/HighLevel/HLModelIntermediette.cpp: In member function ‘virtual std::string HLMeshCmdTriangle2::OutputOBJ(HLModelIntermediette*)’:
+ZAPD/HighLevel/HLModelIntermediette.cpp:669:27: warning: unused variable ‘verts’ [-Wunused-variable]
+  669 |  HLVerticesIntermediette* verts = parent->FindByName<HLVerticesIntermediette>("");
+      |                           ^~~~~
+ar rcs libgfxd.a gfxd.o uc_f3d.o uc_f3db.o uc_f3dex.o uc_f3dexb.o uc_f3dex2.o
+rm uc_f3dexb.o uc_f3d.o uc_f3dex2.o gfxd.o uc_f3dex.o uc_f3db.o
+make[1]: Leaving directory '/home/louist103/decomp/ZAPD/lib/libgfxd'
+In file included from ZAPD/Overlays/ZOverlay.cpp:1:
+ZAPD/Overlays/ZOverlay.h: In static member function ‘static ZOverlay* ZOverlay::FromBuild(std::string, std::string)’:
+ZAPD/Overlays/ZOverlay.h:34:18: warning: ‘type’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   34 |   relocationType = nRelType;
+      |   ~~~~~~~~~~~~~~~^~~~~~~~~~
+ZAPD/Overlays/ZOverlay.cpp:85:15: note: ‘type’ was declared here
+   85 |      Elf_Word type;
+      |               ^~~~
+ZAPD/Overlays/ZOverlay.cpp:100:25: warning: ‘symbol’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  100 |       symbols.get_symbol(symbol, curSymName, value, size, bind, type, curSymShndx, other);
+      |       ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZAPD/Overlays/ZOverlay.cpp:146:14: warning: ‘offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  146 |       offset += sectionOffs[sectionType];
+      |       ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+g++ -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic -Wall ZAPD/ZTexture.o ZAPD/ZLimb.o ZAPD/ZDisplayList.o ZAPD/ZBlob.o ZAPD/ZAnimation.o ZAPD/Main.o ZAPD/ZCollision.o ZAPD/ZFile.o ZAPD/ZSymbol.o ZAPD/ZResource.o ZAPD/OutputFormatter.o ZAPD/ZVtx.o ZAPD/ZArray.o ZAPD/Globals.o ZAPD/ZSkeleton.o ZAPD/ZCutscene.o ZAPD/ZScalar.o ZAPD/ZVector.o ZAPD/ZRoom/ZRoomCommand.o ZAPD/ZRoom/ZRoom.o ZAPD/ZRoom/Commands/SetRoomBehavior.o ZAPD/ZRoom/Commands/SetStartPositionList.o ZAPD/ZRoom/Commands/SetExitList.o ZAPD/ZRoom/Commands/SetLightList.o ZAPD/ZRoom/Commands/SetWind.o ZAPD/ZRoom/Commands/SetCameraSettings.o ZAPD/ZRoom/Commands/SetSkyboxSettings.o ZAPD/ZRoom/Commands/Unused09.o ZAPD/ZRoom/Commands/SetSkyboxModifier.o ZAPD/ZRoom/Commands/SetMesh.o ZAPD/ZRoom/Commands/SetSpecialObjects.o ZAPD/ZRoom/Commands/SetLightingSettings.o ZAPD/ZRoom/Commands/SetEntranceList.o ZAPD/ZRoom/Commands/SetPathways.o ZAPD/ZRoom/Commands/SetCollisionHeader.o ZAPD/ZRoom/Commands/SetActorList.o ZAPD/ZRoom/Commands/SetCutscenes.o ZAPD/ZRoom/Commands/SetObjectList.o ZAPD/ZRoom/Commands/SetEchoSettings.o ZAPD/ZRoom/Commands/EndMarker.o ZAPD/ZRoom/Commands/SetTransitionActorList.o ZAPD/ZRoom/Commands/SetRoomList.o ZAPD/ZRoom/Commands/SetTimeSettings.o ZAPD/ZRoom/Commands/SetSoundSettings.o ZAPD/ZRoom/Commands/ZRoomCommandUnk.o ZAPD/ZRoom/Commands/SetAlternateHeaders.o ZAPD/Overlays/ZOverlay.o ZAPD/HighLevel/HLAnimationIntermediette.o ZAPD/HighLevel/HLModelIntermediette.o ZAPD/HighLevel/HLTexture.o lib/tinyxml2/tinyxml2.o lib/libgfxd/libgfxd.a -o ZAPD.out  -lstdc++fs

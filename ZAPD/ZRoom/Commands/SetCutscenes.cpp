@@ -9,8 +9,7 @@ using namespace std;
 SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
-	
-	uint32_t curPtr = segmentOffset;
+
 	string output = "";
 
 	cutscene = new ZCutscene(rawData, segmentOffset, 9999);

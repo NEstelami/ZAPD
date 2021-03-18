@@ -507,7 +507,7 @@ int ZDisplayList::OptimizationCheck_LoadTextureBlock(int startIndex, string& out
 			uint64_t data = instructions[startIndex + 0];
 
 			int __ = (data & 0x00FF000000000000) >> 48;
-			int www = (data & 0x00000FFF00000000) >> 32;
+			//int www = (data & 0x00000FFF00000000) >> 32;
 
 			fmt = (__ & 0xE0) >> 5;
 			siz = (__ & 0x18) >> 3;
@@ -828,7 +828,7 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* 
 		// TODO: These two could probably be condenced to one...
 		if (parent->GetDeclarationRanged(vtxAddr + (nn * 16)) != nullptr)
 		{
-			Declaration* decl = parent->GetDeclarationRanged(vtxAddr + (nn * 16));
+			//Declaration* decl = parent->GetDeclarationRanged(vtxAddr + (nn * 16));
 			uint32_t addr = parent->GetDeclarationRangedAddress(vtxAddr + (nn * 16));
 			int diff = addr - vtxAddr;
 			if (diff > 0)
@@ -839,7 +839,7 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* 
 
 		if (parent->GetDeclarationRanged(vtxAddr) != nullptr)
 		{
-			Declaration* decl = parent->GetDeclarationRanged(vtxAddr);
+			//Declaration* decl = parent->GetDeclarationRanged(vtxAddr);
 			uint32_t addr = parent->GetDeclarationRangedAddress(vtxAddr);
 			int diff = addr - vtxAddr;
 			if (diff > 0)
@@ -1107,8 +1107,8 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string pre
 
 	if (sft == G_MDSFT_RENDERMODE)
 	{
-		int mode1 = (dd & 0xCCCC0000) >> 0;
-		int mode2 = (dd & 0x3333FFFF);
+		uint32_t mode1 = (dd & 0xCCCC0000) >> 0;
+		uint32_t mode2 = (dd & 0x3333FFFF);
 
 		// TODO: Jesus Christ This is Messy
 
@@ -1249,7 +1249,7 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string pre
 			{ G_RM_OPA_CI2, "G_RM_OPA_CI2" },
 		};
 
-		for (int k = 0; k < sizeof(tblA) / 4; k++)
+		for (uint32_t k = 0; k < sizeof(tblA) / 4; k++)
 		{
 			if ((dd & tblA[k]) == tblA[k])
 			{
@@ -1258,7 +1258,7 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string pre
 			}
 		}
 
-		for (int k = 0; k < sizeof(tblB) / 4; k++)
+		for (uint32_t k = 0; k < sizeof(tblB) / 4; k++)
 		{
 			if ((dd & tblB[k]) == tblB[k])
 			{
@@ -1469,7 +1469,7 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 		// TODO: These two could probably be condenced to one...
 		if (instance->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
 		{
-			Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
+			//Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset + (count * 16));
 			uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
 			int diff = addr - vtxOffset;
 
@@ -1481,7 +1481,7 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 
 		if (instance->parent->GetDeclarationRanged(vtxOffset) != nullptr)
 		{
-			Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
+			//Declaration* decl = instance->parent->GetDeclarationRanged(vtxOffset);
 			uint32_t addr = instance->parent->GetDeclarationRangedAddress(vtxOffset);
 			int diff = addr - vtxOffset;
 
@@ -1699,7 +1699,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 				//defines += StringHelper::Sprintf("#define %sVtx_%06X ((u32)%sVtx_%06X + 0x%06X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(), verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
 
-				int nSize = (int)vertices[verticesSorted[i].first].size();
+				//int nSize = (int)vertices[verticesSorted[i].first].size();
 
 				vertices.erase(verticesSorted[i + 1].first);
 				verticesSorted.erase(verticesSorted.begin() + i + 1);
@@ -1756,7 +1756,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 				{
-					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+					//int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
 
 					defines += StringHelper::Sprintf("#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", scene->GetName().c_str(), texturesSorted[i + 1].first, scene->GetName().c_str(),
 						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
@@ -1789,7 +1789,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 				{
-					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+					//int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
 
 					// If we're working with a palette, resize it to its "real" dimensions
 					if (texturesSorted[i].second->isPalette)
