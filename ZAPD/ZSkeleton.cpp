@@ -156,7 +156,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbCount,
-			StringHelper::Sprintf("static %s*", ZLimb::GetSourceTypeName(limbType)), 
+			"static void*", 
 			StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()), limbCount, tblStr);
 	}
 
