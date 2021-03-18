@@ -29,11 +29,15 @@ copycheck: ZAPD.out
 
 clean:
 	rm -f $(O_FILES) ZAPD.out
+	rm -f lib/libgfxd/libgfxd.a
 
 rebuild: clean all
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-ZAPD.out: $(O_FILES)
+libgfxd:
+	cd lib/libgfxd && $(MAKE) -j
+
+ZAPD.out: $(O_FILES) libgfxd
 	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC)

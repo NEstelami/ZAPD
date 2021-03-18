@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include <stdint.h>
 #include "tinyxml2.h"
 
@@ -38,7 +39,8 @@ enum class ZResourceType
 	Scalar,
 	Vector,
 	Vertex,
-	CollisionHeader
+	CollisionHeader,
+	Symbol,
 };
 
 class ZResource

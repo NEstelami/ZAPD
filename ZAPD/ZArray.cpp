@@ -31,7 +31,7 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 
 	if (!res->DoesSupportArray())
 	{
-		throw StringHelper::Sprintf("Error! Resource %s does not support being wrapped in an array!\n", res->GetName().c_str());
+		throw std::runtime_error(StringHelper::Sprintf("Error! Resource %s does not support being wrapped in an array!\n", res->GetName().c_str()));
 	}
 
 	for (int i = 0; i < arrayCnt; i++)

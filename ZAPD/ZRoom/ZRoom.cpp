@@ -267,7 +267,9 @@ void ZRoom::ProcessCommandSets()
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
-			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
+			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, 
+				i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, 
+				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
 				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
 				StringHelper::Sprintf("%s", pass1.c_str()));
 
@@ -283,9 +285,12 @@ void ZRoom::ProcessCommandSets()
 	for (ZRoomCommand* cmd : commands)
 	{
 		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
-
-		if (pass2 != "")
-			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()), StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
+		if (pass2 != "") {
+			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, 
+				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()), 
+				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex), 
+				StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
+		}
 	}
 }
 
