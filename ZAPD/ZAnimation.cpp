@@ -103,15 +103,12 @@ int ZNormalAnimation::GetRawDataSize()
 	return 16;
 }
 
-ZNormalAnimation* ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
+void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
 {
-	ZNormalAnimation* anim = new ZNormalAnimation(nParent);
-	anim->rawData = std::move(nRawData);
-	anim->rawDataIndex = rawDataIndex;
-	anim->ParseXML(reader);
-	anim->ParseRawData();
-
-	return anim;
+	rawData = std::move(nRawData);
+	rawDataIndex = nRawDataIndex;
+	ParseXML(reader);
+	ParseRawData();
 }
 
 void ZNormalAnimation::ParseRawData()
@@ -166,15 +163,12 @@ int ZLinkAnimation::GetRawDataSize()
 	return 8;
 }
 
-ZLinkAnimation* ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
+void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
 {
-	ZLinkAnimation* anim = new ZLinkAnimation(nParent);
-	anim->rawData = std::move(nRawData);
-	anim->rawDataIndex = rawDataIndex;
-	anim->ParseXML(reader);
-	anim->ParseRawData();
-
-	return anim;
+	rawData = std::move(nRawData);
+	rawDataIndex = nRawDataIndex;
+	ParseXML(reader);
+	ParseRawData();
 }
 
 void ZLinkAnimation::ParseRawData()

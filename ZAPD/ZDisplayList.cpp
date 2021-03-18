@@ -1,7 +1,7 @@
 #include "ZDisplayList.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
-#include "OutputFormatter.h"
+#include "GFXDFormatter.h"
 #include "HighLevel/HLModelIntermediette.h"
 #include "Globals.h"
 #include "gfxd.h"
@@ -13,6 +13,8 @@
 
 using namespace std;
 using namespace tinyxml2;
+
+ZDisplayList* ZDisplayList::Instance;
 
 ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 {
@@ -40,22 +42,20 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 }
 
 // EXTRACT MODE
-ZDisplayList* ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize, string nRelPath, ZFile* nParent)
+void ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
 {
-	ZDisplayList* dList = new ZDisplayList(nParent);
+	ParseXML(reader);
 
-	dList->ParseXML(reader);
+	//name = reader->Attribute("Name");
 
-	//dList->name = reader->Attribute("Name");
 
-	dList->rawData = nRawData;
-	dList->rawDataIndex = nRawDataIndex;
-	dList->fileData = dList->rawData;
-	dList->relativePath = nRelPath;
-	dList->rawData = vector<uint8_t>(dList->rawData.data() + dList->rawDataIndex, dList->rawData.data() + dList->rawDataIndex + rawDataSize);
-	dList->ParseRawData();
-
-	return dList;
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	int rawDataSize = ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+	fileData = rawData;
+	relativePath = nRelPath;
+	rawData = vector<uint8_t>(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + rawDataSize);
+	ParseRawData();
 }
 
 //ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
@@ -127,14 +127,10 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 	}
 	break;
 	case F3DZEXOpcode::G_VTX:
-	{
 		Opcode_G_VTX(data, i, prefix, line);
-	}
 	break;
 	case F3DZEXOpcode::G_SETTIMG: // HOTSPOT
-	{
 		Opcode_G_SETTIMG(data, i, prefix, line);
-	}
 	break;
 	case F3DZEXOpcode::G_GEOMETRYMODE:
 	{
@@ -688,11 +684,8 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, int i, std::string prefix, char* l
 			sprintf(line, "gsSPDisplayList(%sDlist0x%06lX),", prefix.c_str(), GETSEGOFFSET(data));
 	}
 
-	// TODO: This is the same as `segNum`. Consider resuing that variable instead of making a new one.
-	int segmentNumber = GETSEGNUM(data);
-
-	//if (segmentNumber == 8 || segmentNumber == 9 || segmentNumber == 10 || segmentNumber == 11 || segmentNumber == 12 || segmentNumber == 13) // Used for runtime-generated display lists
-	if (!Globals::Instance->HasSegment(segmentNumber))
+	//if (segNum == 8 || segNum == 9 || segNum == 10 || segNum == 11 || segNum == 12 || segNum == 13) // Used for runtime-generated display lists
+	if (!Globals::Instance->HasSegment(segNum))
 	{
 		if (pp != 0)
 			sprintf(line, "gsSPBranchList(0x%08lX),", data & 0xFFFFFFFF);
@@ -701,7 +694,7 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, int i, std::string prefix, char* l
 	}
 	else
 	{
-		ZDisplayList* nList = new ZDisplayList(fileData, SEG2FILESPACE(data), GetDListLength(fileData, SEG2FILESPACE(data), dListType), parent);
+		ZDisplayList* nList = new ZDisplayList(fileData, GETSEGOFFSET(data), GetDListLength(fileData, GETSEGOFFSET(data), dListType), parent);
 		
 		//if (scene != nullptr)
 		{
@@ -1461,7 +1454,7 @@ static int GfxdCallback_FormatSingleEntry(void)
 
 static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 {
-	ZDisplayList* instance = ZDisplayList::static_instance;
+	ZDisplayList* instance = ZDisplayList::Instance;
 	uint32_t vtxOffset = Seg2Filespace(seg, instance->parent->baseAddress);
 	string vtxName = "";
 
@@ -1526,7 +1519,7 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 
 static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int32_t width, int32_t height, int32_t pal)
 {
-	ZDisplayList* instance = ZDisplayList::static_instance;
+	ZDisplayList* instance = ZDisplayList::Instance;
 	uint32_t texOffset = Seg2Filespace(seg, instance->parent->baseAddress);
 	uint32_t texSegNum = GETSEGNUM(seg);
 	Declaration* texDecl = nullptr;
@@ -1566,7 +1559,7 @@ static int GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int32_t 
 
 static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 {
-	ZDisplayList* instance = ZDisplayList::static_instance;
+	ZDisplayList* instance = ZDisplayList::Instance;
 	uint32_t palOffset = Seg2Filespace(seg, instance->parent->baseAddress);
 	uint32_t palSegNum = GETSEGNUM(seg);
 	Declaration* palDecl = nullptr;
@@ -1606,7 +1599,7 @@ static int GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 
 static int GfxdCallback_DisplayList(uint32_t seg) 
 {
-	ZDisplayList* instance = ZDisplayList::static_instance;
+	ZDisplayList* instance = ZDisplayList::Instance;
 	uint32_t dListOffset = GETSEGOFFSET(seg);
 	uint32_t dListSegNum = GETSEGNUM(seg);
 	Declaration* dListDecl = nullptr;
@@ -1624,7 +1617,7 @@ static int GfxdCallback_DisplayList(uint32_t seg)
 
 	if (dListSegNum <= 6)
 	{
-		ZDisplayList* newDList = new ZDisplayList(instance->fileData, dListOffset, instance->GetDListLength(instance->fileData, dListOffset, instance->dListType));
+		ZDisplayList* newDList = new ZDisplayList(instance->fileData, dListOffset, instance->GetDListLength(instance->fileData, dListOffset, instance->dListType), instance->parent);
 		newDList->scene = instance->scene;
 		newDList->parent = instance->parent;
 		instance->otherDLists.push_back(newDList);
@@ -1649,38 +1642,14 @@ static int GfxdCallback_Matrix(uint32_t seg)
 	return 1;
 }
 
-ZDisplayList* ZDisplayList::static_instance;
-
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
-	OutputFormatter outputformatter;
 	string sourceOutput = "";
-	int dListSize = instructions.size() * sizeof(instructions[0]);
-
-	gfxd_input_buffer(instructions.data(), dListSize);
-	gfxd_endian(gfxd_endian_little, sizeof(uint64_t)); // tell gfxdis what format the data is
-
-	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // format for each command entry
-	gfxd_vtx_callback(GfxdCallback_Vtx); // handle vertices
-	gfxd_timg_callback(GfxdCallback_Texture); // handle textures
-	gfxd_tlut_callback(GfxdCallback_Palette); // handle palettes
-	gfxd_dl_callback(GfxdCallback_DisplayList); // handle child display lists
-	gfxd_mtx_callback(GfxdCallback_Matrix); // handle matrices
-	gfxd_output_callback(outputformatter.static_writer()); // convert tabs to 4 spaces and enforce 120 line limit
-
-	gfxd_enable(gfxd_emit_dec_color); // use decimal for colors
-
-	// set microcode. see gfxd.h for more options.
-	if (dListType == DListType::F3DZEX) {
-		gfxd_target(gfxd_f3dex2);
-	} else {
-		gfxd_target(gfxd_f3dex);
-	}
-
-	this->curPrefix = prefix;
-	static_instance = this;
-	gfxd_execute(); // generate display list
-	sourceOutput += outputformatter.get_output(); // write formatted display list 
+	
+	if (Globals::Instance->useLegacyZDList)
+		sourceOutput += ProcessLegacy(prefix);
+	else
+		sourceOutput += ProcessGfxDis(prefix);
 
 	// Iterate through our vertex lists, connect intersecting lists.
 	if (vertices.size() > 0)
@@ -1962,6 +1931,83 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	return sourceOutput;
 }
 
+std::string ZDisplayList::ProcessLegacy(const std::string& prefix)
+{
+	char line[4096];
+	string sourceOutput = "";
+
+	for (int i = 0; i < instructions.size(); i++)
+	{
+		uint8_t opcode = (uint8_t)(instructions[i] >> 56);
+		uint64_t data = instructions[i];
+		sourceOutput += "    ";
+
+		auto start = chrono::steady_clock::now();
+
+		int optimizationResult = OptimizationChecks(i, sourceOutput, prefix);
+
+		if (optimizationResult != -1)
+		{
+			i += optimizationResult - 1;
+			line[0] = '\0';
+		}
+		else
+		{
+			if (dListType == DListType::F3DZEX)
+				ParseF3DZEX((F3DZEXOpcode)opcode, data, i, prefix, line);
+			else
+				ParseF3DEX((F3DEXOpcode)opcode, data, i, prefix, line);
+		}
+
+		auto end = chrono::steady_clock::now();
+		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+
+		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG && diff > 5)
+			printf("F3DOP: 0x%02X, TIME: %ims\n", opcode, diff);
+
+		sourceOutput += line;
+
+		if (i < instructions.size() - 1)
+			sourceOutput += "\n";
+	}
+
+	return sourceOutput;
+}
+
+std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
+{
+	string sourceOutput = "";
+
+	GFXDFormatter outputformatter;
+	int dListSize = instructions.size() * sizeof(instructions[0]);
+
+	gfxd_input_buffer(instructions.data(), dListSize);
+	gfxd_endian(gfxd_endian_little, sizeof(uint64_t)); // tell gfxdis what format the data is
+
+	gfxd_macro_fn(GfxdCallback_FormatSingleEntry); // format for each command entry
+	gfxd_vtx_callback(GfxdCallback_Vtx); // handle vertices
+	gfxd_timg_callback(GfxdCallback_Texture); // handle textures
+	gfxd_tlut_callback(GfxdCallback_Palette); // handle palettes
+	gfxd_dl_callback(GfxdCallback_DisplayList); // handle child display lists
+	gfxd_mtx_callback(GfxdCallback_Matrix); // handle matrices
+	gfxd_output_callback(outputformatter.StaticWriter()); // convert tabs to 4 spaces and enforce 120 line limit
+
+	gfxd_enable(gfxd_emit_dec_color); // use decimal for colors
+
+	// set microcode. see gfxd.h for more options.
+	if (dListType == DListType::F3DZEX)
+		gfxd_target(gfxd_f3dex2);
+	else
+		gfxd_target(gfxd_f3dex);
+
+	this->curPrefix = prefix;
+	Instance = this;
+	gfxd_execute(); // generate display list
+	sourceOutput += outputformatter.GetOutput(); // write formatted display list 
+
+	return sourceOutput;
+}
+
 // HOTSPOT
 void ZDisplayList::TextureGenCheck(string prefix)
 {
@@ -2022,10 +2068,15 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	}
     else if (fmt == F3DZEXTexFormats::G_IM_FMT_CI)
     {
-    	if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
-        	return TextureType::Palette4bpp;
-		else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
-        	return TextureType::Palette8bpp;
+		if (Globals::Instance->useLegacyZDList)
+			return TextureType::Palette8bpp;
+		else
+		{
+			if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
+				return TextureType::Palette4bpp;
+			else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
+				return TextureType::Palette8bpp;
+		}
     }
 	else if (fmt == F3DZEXTexFormats::G_IM_FMT_IA)
 	{

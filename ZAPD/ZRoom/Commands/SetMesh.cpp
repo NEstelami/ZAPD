@@ -81,7 +81,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		for (int i = 0; i < meshHeader0->entries.size(); i++)
 		{
 			if (meshHeader0->entries[i]->opaqueDListAddr != 0)
-				declaration += StringHelper::Sprintf("    { (u32)%sDlist0x%06X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
+				declaration += StringHelper::Sprintf("    { (u32)%sDL_%06X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
 			else
 				declaration += "    { 0, ";
 

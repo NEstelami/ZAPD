@@ -23,6 +23,34 @@
 using namespace tinyxml2;
 using namespace std;
 
+std::map<std::string, ZResourceFactoryFunc*> nodeMap;
+
+REGISTER_ZFILENODE(Texture, ZTexture);
+REGISTER_ZFILENODE(Blob, ZBlob);
+REGISTER_ZFILENODE(DList, ZDisplayList);
+REGISTER_ZFILENODE(Room, ZRoom);
+REGISTER_ZFILENODE(Scene, ZRoom);
+REGISTER_ZFILENODE(Animation, ZNormalAnimation);
+REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
+REGISTER_ZFILENODE(Skeleton, ZSkeleton);
+REGISTER_ZFILENODE(Collision, ZCollisionHeader);
+
+//static ZResource* ZResourceFactory_ZTexture()						
+//{																		
+//	return static_cast<ZResource*>(new ZTexture(nullptr));						
+//}																		
+//																			
+//class ZRes_Texture													
+//{																		
+//	public:																
+//		ZRes_Texture()												
+//		{
+//			nodeMap["Texture"] = &ZResourceFactory_ZTexture;
+//		}																
+//};					
+
+//static ZRes_Texture inst_ZRes_Texture;						
+
 ZFile::ZFile()
 {
 	resources = vector<ZResource*>();
@@ -76,17 +104,13 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (reader->Attribute("Game") != nullptr)
 	{
 		if (string(gameStr) == "MM")
-		{
 			Globals::Instance->game = ZGame::MM_RETAIL;
-		}
 		else if (string(gameStr) == "SW97" || string(gameStr) == "OOTSW97")
-		{
 			Globals::Instance->game = ZGame::OOT_SW97;
-		}
+		else if (string(gameStr) == "OOT")
+			Globals::Instance->game = ZGame::OOT_RETAIL;
 		else
-		{
-			// TODO: Error here.
-		}
+			throw StringHelper::Sprintf("Error: Game type %s not supported.", gameStr);
 	}
 
 	if (reader->Attribute("BaseAddress") != NULL)
@@ -127,7 +151,43 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("%s: 0x%06X\n", child->Attribute("Name"), rawDataIndex);
 
-		if (string(child->Name()) == "Texture")
+		string nodeName = string(child->Name());
+
+		if (nodeMap.find(nodeName) != nodeMap.end())
+		{
+			ZResource* nRes = nodeMap[nodeName]();
+			nRes->parent = this;
+
+			if (mode == ZFileMode::Extract)
+				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
+			//else
+				//nRes->ExtractFromFile();
+
+			// TODO: See if we can make this part of the ZRoom code...
+			if (nRes->GetResourceType() == ZResourceType::Room)
+			{
+				if (nodeName == "Scene")
+				{
+					Globals::Instance->lastScene = (ZRoom*)nRes;
+
+					if (segment == -1)
+						segment = SEGMENT_SCENE;
+				}
+				else
+				{
+					if (segment == -1)
+						segment = SEGMENT_ROOM;
+				}
+
+				if (segment != -1)
+					Globals::Instance->AddSegment(segment);
+			}
+
+			resources.push_back(nRes);
+			rawDataIndex += nRes->GetRawDataSize();
+		}
+
+		/* if (string(child->Name()) == "Texture")
 		{
 			ZTexture* tex = nullptr;
 
@@ -237,7 +297,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			rawDataIndex += limb->GetRawDataSize();
 		}
-		else if (string(child->Name()) == "Symbol")
+		else */if (string(child->Name()) == "Symbol")
 		{
 			ZResource* res = nullptr;
 
@@ -251,7 +311,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(res);
 		}
-		else if (string(child->Name()) == "Collision")
+		/*else if (string(child->Name()) == "Collision")
 		{
 			ZCollisionHeader* res = nullptr;
 
@@ -264,7 +324,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(res);
 		}
-		else if (string(child->Name()) == "Scalar")
+		*/else if (string(child->Name()) == "Scalar")
 		{
 			ZScalar* scalar = nullptr;
 
@@ -344,7 +404,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				rawDataIndex += array->GetRawDataSize();
 			}
 		}
-		else
+		else if (nodeMap.find(nodeName) == nodeMap.end())
 		{
 			std::cerr << "ERROR bad type\n";
 			printf("Encountered unknown resource type: %s on line: %d\n", child->Name(), child->GetLineNum());

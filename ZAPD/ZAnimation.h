@@ -46,7 +46,7 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix);
 	int GetRawDataSize() override;
 
-	static ZNormalAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath) override;
 
 protected:
 	virtual void ParseRawData();
@@ -62,7 +62,7 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix);
 	int GetRawDataSize() override;
 
-	static ZLinkAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath) override;
 
 protected:
 	virtual void ParseRawData();

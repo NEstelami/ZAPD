@@ -7,7 +7,7 @@
 #include "ZDisplayList.h"
 #include "ZLimb.h"
 
-enum ZSkeletonType
+enum class ZSkeletonType
 {
 	Normal,
 	Flex
@@ -16,20 +16,20 @@ enum ZSkeletonType
 class ZSkeleton : public ZResource
 {
 public:
-	ZSkeletonType type = ZSkeletonType::Normal;
-	ZLimbType limbType = ZLimbType::Standard;
+	ZSkeletonType type;
+	ZLimbType limbType;
 	std::vector<ZLimb*> limbs;
+	ZLimb* rootLimb;
 	segptr_t limbsArrayAddress;
 	uint8_t limbCount;
 	uint8_t dListCount; // FLEX SKELETON ONLY
 
 	ZSkeleton(ZFile* nParent);
-	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
-	ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	//ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	~ZSkeleton();
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	static ZSkeleton* FromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath, ZFile* nParent);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath) override;
 	void Save(const std::string& outFolder) override;
 	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 

@@ -134,7 +134,7 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->testMode = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-ulzdl") // Use Legacy ZDisplay List
+		else if (arg == "-ulzdl") // Use Legacy ZDisplay List (Linux builds only)
 		{
 			Globals::Instance->useLegacyZDList = string(argv[i + 1]) == "1";
 			i++;
@@ -193,39 +193,46 @@ int NewMain(int argc, char* argv[])
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
-	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
+	try
 	{
-		Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
-	}
-	else if (fileMode == ZFileMode::BuildTexture)
-	{
-		TextureType texType = Globals::Instance->texType;
-		string pngFilePath = Globals::Instance->inputPath;
-		string outFilePath = Globals::Instance->outputPath;
+		if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
+		{
+			Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
+		}
+		else if (fileMode == ZFileMode::BuildTexture)
+		{
+			TextureType texType = Globals::Instance->texType;
+			string pngFilePath = Globals::Instance->inputPath;
+			string outFilePath = Globals::Instance->outputPath;
 
-		BuildAssetTexture(pngFilePath, texType, outFilePath);
-	}
-	else if (fileMode == ZFileMode::BuildBlob)
-	{
-		string blobFilePath = Globals::Instance->inputPath;
-		string outFilePath = Globals::Instance->outputPath;
+			BuildAssetTexture(pngFilePath, texType, outFilePath);
+		}
+		else if (fileMode == ZFileMode::BuildBlob)
+		{
+			string blobFilePath = Globals::Instance->inputPath;
+			string outFilePath = Globals::Instance->outputPath;
 
-		BuildAssetBlob(blobFilePath, outFilePath);
-	}
-	else if (fileMode == ZFileMode::BuildModelIntermediette)
-	{
-		BuildAssetModelIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
-	}
-	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
-	{
-		BuildAssetAnimationIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
-	}
-	else if (fileMode == ZFileMode::BuildOverlay)
-	{
-		ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath), Path::GetDirectoryName(Globals::Instance->cfgPath));
+			BuildAssetBlob(blobFilePath, outFilePath);
+		}
+		else if (fileMode == ZFileMode::BuildModelIntermediette)
+		{
+			BuildAssetModelIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
+		}
+		else if (fileMode == ZFileMode::BuildAnimationIntermediette)
+		{
+			BuildAssetAnimationIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
+		}
+		else if (fileMode == ZFileMode::BuildOverlay)
+		{
+			ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath), Path::GetDirectoryName(Globals::Instance->cfgPath));
 
-		if (overlay)
-			File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
+			if (overlay)
+				File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
+		}
+	}
+	catch (const char* msg)
+	{
+		printf("Exception occurred: %s\n", msg);
 	}
 
 	return 0;

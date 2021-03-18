@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)lib\tinyxml2;$(SolutionDir)lib\elfio;$(SolutionDir)lib\assimp\include;$(SolutionDir)lib\stb;$(ProjectDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)lib\assimp-built;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)lib\tinyxml2;$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\elfio;$(SolutionDir)lib\assimp\include;$(SolutionDir)lib\stb;$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\assimp-built;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(IncludePath)</IncludePath>
@@ -101,7 +101,7 @@
     </ClCompile>
     <Link>
       <Profile>true</Profile>
-      <AdditionalDependencies>assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mt.lib;libgfxd_win.a;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>cd ..
@@ -145,8 +145,10 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClCompile Include="HighLevel\HLModelIntermediette.cpp" />
     <ClCompile Include="HighLevel\HLTexture.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="GFXDFormatter.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="ZArray.cpp" />
+    <ClCompile Include="ZLimb.cpp" />
     <ClCompile Include="ZScalar.cpp" />
     <ClCompile Include="ZAnimation.cpp" />
     <ClCompile Include="ZBlob.cpp" />
@@ -216,6 +218,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="HighLevel\HLFileIntermediette.h" />
     <ClInclude Include="HighLevel\HLModelIntermediette.h" />
     <ClInclude Include="HighLevel\HLTexture.h" />
+    <ClInclude Include="GFXDFormatter.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="StringHelper.h" />
@@ -227,6 +230,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="ZCutscene.h" />
     <ClInclude Include="ZDisplayList.h" />
     <ClInclude Include="ZFile.h" />
+    <ClInclude Include="ZLimb.h" />
     <ClInclude Include="ZScalar.h" />
     <ClInclude Include="ZSkeleton.h" />
     <ClInclude Include="ZResource.h" />

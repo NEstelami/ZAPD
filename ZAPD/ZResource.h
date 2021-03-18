@@ -51,7 +51,7 @@ public:
 	ZResource(ZFile* nParent);
 
 	// Parsing from File
-	virtual void ExtractFromXML(); // Extract Mode
+	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath); // Extract Mode
 	virtual void ExtractFromFile();
 
 	// Misc
@@ -80,6 +80,7 @@ public:
 	virtual void SetRawDataIndex(int value);
 	virtual int GetRawDataSize();
 	virtual std::vector<uint8_t> GetRawData();
+	virtual void SetRawData(std::vector<uint8_t> nData);
 
 protected:
 	std::string name;

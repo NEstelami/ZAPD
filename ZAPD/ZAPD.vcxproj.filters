@@ -55,6 +55,9 @@
     <Filter Include="Header Files\Libraries\fbx">
       <UniqueIdentifier>{be9a5be0-ec6a-4200-8e39-bb58c7da7aa8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Libraries\libgfxd">
+      <UniqueIdentifier>{7ee79d97-c6a8-4e82-93ef-37981f4d7838}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -200,6 +203,12 @@
     </ClCompile>
     <ClCompile Include="ZVtx.cpp">
       <Filter>Source Files\Z64</Filter>
+    </ClCompile>
+    <ClCompile Include="ZLimb.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
+    <ClCompile Include="GFXDFormatter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -423,6 +432,12 @@
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
     <ClInclude Include="CRC32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZLimb.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="GFXDFormatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

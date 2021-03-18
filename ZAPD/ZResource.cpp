@@ -14,7 +14,7 @@ ZResource::ZResource(ZFile* nParent)
 	outputDeclaration = true;
 }
 
-void ZResource::ExtractFromXML()
+void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath)
 {
 }
 
@@ -87,6 +87,11 @@ string ZResource::GetRelativePath()
 vector<uint8_t> ZResource::GetRawData()
 {
 	return rawData;
+}
+
+void ZResource::SetRawData(std::vector<uint8_t> nData)
+{
+	rawData = nData;
 }
 
 int ZResource::GetRawDataIndex()

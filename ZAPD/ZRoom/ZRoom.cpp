@@ -54,114 +54,82 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex, string nRelPath, ZFile* nParent, ZRoom* nScene)
+void ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
 {
-	ZRoom* room = new ZRoom(nParent);
-
-	room->rawData = nRawData;
-	room->name = reader->Attribute("Name");
-
-	//printf("ZRoom: %s\n", name.c_str());
-
-	room->scene = nScene;
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	name = string(reader->Attribute("Name"));
+	//room->scene = nScene;
+	scene = Globals::Instance->lastScene;
 
 	if (string(reader->Name()) == "Scene")
 	{
-		room->scene = room;
-		Globals::Instance->lastScene = room;
+		scene = this;
+		Globals::Instance->lastScene = this;
 	}
 
 	Globals::Instance->AddSegment(SEGMENT_ROOM);
 	Globals::Instance->AddSegment(SEGMENT_SCENE);
 
-	//GenDefinitions();
-
 	int cmdCount = 999999;
 
-	if (room->name == "syotes_room_0")
+	if (name == "syotes_room_0")
 	{
-		room->SyotesRoomHack();
+		SyotesRoomHack();
 		cmdCount = 0;
 	}
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
+		string childName = child->Attribute("Name") == NULL ? "" : string(child->Attribute("Name"));
+		string childComment = child->Attribute("Comment") == NULL ? "" : "// " + string(child->Attribute("Comment")) + "\n";
+
 		// TODO: Bunch of repeated code between all of these that needs to be combined.
 		if (string(child->Name()) == "DListHint")
 		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZDisplayList* dList = new ZDisplayList(room->rawData, address, ZDisplayList::GetDListLength(room->rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), nParent);
-
-			if (child->Attribute("Name") != NULL)
-				name = string(child->Attribute("Name"));
-			else
-				name = room->name;
+			ZDisplayList* dList = new ZDisplayList(rawData, address, ZDisplayList::GetDListLength(rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), parent);
 
 			dList->GetSourceOutputCode(name);
 			delete dList;
 		}
 		else if (string(child->Name()) == "BlobHint")
 		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			string sizeStr = child->Attribute("Size");
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
-			ZBlob* blob = new ZBlob(room->rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", room->name.c_str(), address), nParent);
+			ZBlob* blob = new ZBlob(rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", name.c_str(), address), parent);
 			
 			if (child->Attribute("Name") != NULL)
-				name = string(child->Attribute("Name"));
+				childName = string(child->Attribute("Name"));
 			else
-				name = StringHelper::Sprintf("%s_%s", room->name.c_str(), blob->GetName().c_str());
+				childName = StringHelper::Sprintf("%s_%s", name.c_str(), blob->GetName().c_str());
 			
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(), "u8", name, 0, blob->GetSourceOutputCode(room->name));
+			parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(), "u8", childName, 0, blob->GetSourceOutputCode(name));
 			delete blob;
 		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999, room->parent);
+			ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 
 			if (child->Attribute("Name") != NULL)
-				name = string(child->Attribute("Name"));
+				childName = string(child->Attribute("Name"));
 			else
-				name = StringHelper::Sprintf("%sCutsceneData0x%06X", room->name.c_str(), cutscene->segmentOffset);
+				childName = StringHelper::Sprintf("%sCutsceneData0x%06X", name.c_str(), cutscene->segmentOffset);
 
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32",
-				name, 0, cutscene->GetSourceOutputCode(room->name));
+			parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32", childName, 0, cutscene->GetSourceOutputCode(name));
 			delete cutscene;
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
 		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
@@ -173,32 +141,22 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
 			}
 
-			room->commandSets.push_back(CommandSet(address, commandsCount));
+			commandSets.push_back(CommandSet(address, commandsCount));
 		}
 		else if (string(child->Name()) == "PathHint")
 		{
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(room, room->rawData, address);
+			SetPathways* pathway = new SetPathways(this, rawData, address);
 			pathway->InitList(address);
-			pathway->GenerateSourceCodePass1(room->name, 0);
-			pathway->GenerateSourceCodePass2(room->name, 0);
+			pathway->GenerateSourceCodePass1(name, 0);
+			pathway->GenerateSourceCodePass2(name, 0);
 
 			delete pathway;
 		}
 		else if (string(child->Name()) == "TextureHint")
 		{
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
@@ -206,18 +164,16 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
-			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address, StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height, nParent);
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
-				tex->GetSourceOutputCode(room->name));
+			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), rawData, address, StringHelper::Sprintf("%sTex_%06X", name.c_str(), address), width, height, parent);
+			parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
+				tex->GetSourceOutputCode(name));
 			delete tex;
 		}
 	}
 
 	//ParseCommands(rawDataIndex);
-	room->commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
-	room->ProcessCommandSets();
-
-	return room;
+	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
+	ProcessCommandSets();
 }
 
 void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)

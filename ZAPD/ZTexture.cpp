@@ -47,21 +47,21 @@ ZTexture::~ZTexture()
 }
 
 // EXTRACT MODE
-ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath, ZFile* nParent)
-{
-	ZTexture* tex = new ZTexture(nParent);
-
-	tex->ParseXML(reader);
-	tex->rawDataIndex = nRawDataIndex;
-	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + tex->rawDataIndex + tex->GetRawDataSize());
-
-	tex->relativePath = nRelPath;
-
-	tex->FixRawData();
-	tex->PrepareBitmap();
-
-	return tex;
-}
+//ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath, ZFile* nParent)
+//{
+//	ZTexture* tex = new ZTexture(nParent);
+//
+//	tex->ParseXML(reader);
+//	tex->rawDataIndex = nRawDataIndex;
+//	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + tex->rawDataIndex + tex->GetRawDataSize());
+//
+//	tex->relativePath = nRelPath;
+//
+//	tex->FixRawData();
+//	tex->PrepareBitmap();
+//
+//	return tex;
+//}
 
 ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nName, int nWidth, int nHeight, ZFile* nParent)
 {
@@ -175,6 +175,18 @@ void ZTexture::FixRawData()
 			rawData[i + 1] = tmp;
 		}
 	}
+}
+
+void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
+{
+	ParseXML(reader);
+	rawDataIndex = nRawDataIndex;
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
+
+	relativePath = nRelPath;
+
+	FixRawData();
+	PrepareBitmap();
 }
 
 void ZTexture::PrepareBitmap()

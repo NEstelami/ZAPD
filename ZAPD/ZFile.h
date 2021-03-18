@@ -65,6 +65,8 @@ public:
 	void GeneratePlaceholderDeclarations();
 
 protected:
+	//static std::map<int32_t, Declaration*> NodeTable;
+
 	std::vector<uint8_t> rawData;
 	std::string name;
 	std::string basePath;
@@ -80,3 +82,21 @@ protected:
 	void ProcessDeclarationText(Declaration* decl);
 	std::string ProcessExterns();
 };
+
+typedef ZResource* (ZResourceFactoryFunc)();
+
+#define REGISTER_ZFILENODE(nodeName, zResClass)										\
+	static ZResource* ZResourceFactory_##zResClass_##nodeName()						\
+	{																				\
+		return static_cast<ZResource*>(new zResClass(nullptr));						\
+	}																				\
+																					\
+	class ZRes_##nodeName															\
+	{																				\
+		public:																		\
+			ZRes_##nodeName()														\
+			{																		\
+				nodeMap[#nodeName] = &ZResourceFactory_##zResClass_##nodeName;		\
+			}																		\
+	};																				\
+	static ZRes_##nodeName inst_ZRes_##nodeName;				

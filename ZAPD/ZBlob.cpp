@@ -20,18 +20,14 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, 
 	name = std::move(nName);
 }
 
-ZBlob* ZBlob::ExtractFromXML(XMLElement* reader, const vector<uint8_t>& nRawData, int nRawDataIndex, string nRelPath, ZFile* nParent)
+void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
 {
-	ZBlob* blob = new ZBlob(nParent);
+	rawDataIndex = nRawDataIndex;
 
-	blob->rawDataIndex = nRawDataIndex;
-
-	blob->ParseXML(reader);
+	ParseXML(reader);
 	int size = strtol(reader->Attribute("Size"), NULL, 16);
-	blob->rawData = vector<uint8_t>(nRawData.data() + blob->rawDataIndex, nRawData.data() + blob->rawDataIndex + size);
-	blob->relativePath = std::move(nRelPath);
-
-	return blob;
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
+	relativePath = std::move(nRelPath);
 }
 
 // Build Source File Mode
