@@ -67,14 +67,14 @@ public:
 	int16_t absMinX, absMinY, absMinZ;
 	int16_t absMaxX, absMaxY, absMaxZ;
 	int16_t numVerts;
-	int32_t vtxSegmentOffset;
+	segptr_t vtxAddress;
 	int16_t numPolygons;
-	int32_t polySegmentOffset;
-	int32_t polyTypeDefSegmentOffset;
-	int32_t camDataSegmentOffset;
+	segptr_t polyAddress;
+	segptr_t polyTypeDefAddress;
+	segptr_t camDataAddress;
 
 	int32_t numWaterBoxes;
-	int32_t waterBoxSegmentOffset;
+	segptr_t waterBoxAddress;
 
 	std::vector<VertexEntry*> vertices;
 	std::vector<PolygonEntry*> polygons;
@@ -86,6 +86,8 @@ public:
 	//ZCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	ZCollisionHeader(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData, int rawDataIndex);
 	~ZCollisionHeader();
+
+	ZResourceType GetResourceType() override;
 
 	static ZCollisionHeader* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex);
 };
