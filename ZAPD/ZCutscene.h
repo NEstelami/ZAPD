@@ -417,5 +417,5 @@ protected:
 	int endFrame;
 	std::vector<CutsceneCommand*> commands;
 
-	void ParseRawData();
+	void ParseRawData() override;
 };

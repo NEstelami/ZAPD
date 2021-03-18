@@ -298,7 +298,7 @@ class ZDisplayList : public ZResource
 {
 protected:
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
-	void ParseRawData();
+	void ParseRawData() override;
 
 	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line);
 	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line);
@@ -370,7 +370,7 @@ public:
 	static bool TextureGenCheck(std::vector<uint8_t> fileData, std::map<uint32_t, ZTexture*>& textures, ZRoom* scene, ZFile* parent, std::string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette);
 	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex, DListType dListType);
 
-	std::vector<uint8_t> GetRawData();
+	std::vector<uint8_t> GetRawData() override;
 	int GetRawDataSize() override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;

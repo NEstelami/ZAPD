@@ -116,6 +116,7 @@ ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 		case TextureType::GrayscaleAlpha16bpp: tex->PrepareRawDataGrayscaleAlpha16(pngFilePath); break;
 		case TextureType::Palette4bpp: tex->PrepareRawDataPalette4(pngFilePath); break;
 		case TextureType::Palette8bpp: tex->PrepareRawDataPalette8(pngFilePath); break;
+		default: throw "Format is not supported!";
 	}
 
 	tex->FixRawData();
@@ -190,6 +191,7 @@ void ZTexture::PrepareBitmap()
 	case TextureType::GrayscaleAlpha16bpp: PrepareBitmapGrayscaleAlpha16(); break;
 	case TextureType::Palette4bpp: PrepareBitmapPalette4(); break;
 	case TextureType::Palette8bpp: PrepareBitmapPalette8(); break;
+	default: throw "Format is not supported!";
 	}
 }
 
@@ -607,9 +609,8 @@ float ZTexture::GetPixelMultiplyer()
 		case TextureType::Grayscale8bpp: case TextureType::GrayscaleAlpha8bpp: case TextureType::Palette8bpp: return 1;
 		case TextureType::GrayscaleAlpha16bpp: case TextureType::RGBA16bpp: return 2;
 		case TextureType::RGBA32bpp: return 4;
+		default: return -1;
 	}
-
-	return -1;
 }
 
 vector<uint8_t> ZTexture::GetRawData()
@@ -630,9 +631,8 @@ std::string ZTexture::GetIMFmtFromType()
 	case TextureType::Grayscale4bpp: case TextureType::Grayscale8bpp: return "G_IM_FMT_I";
 	case TextureType::Palette4bpp: case TextureType::Palette8bpp: return "G_IM_FMT_CI";
 	case TextureType::GrayscaleAlpha4bpp: case TextureType::GrayscaleAlpha8bpp: case TextureType::GrayscaleAlpha16bpp: return "G_IM_FMT_IA";
+	default: return "ERROR";
 	}
-
-	return "ERROR";
 }
 
 std::string ZTexture::GetIMSizFromType()
@@ -643,9 +643,8 @@ std::string ZTexture::GetIMSizFromType()
 	case TextureType::Palette8bpp: case TextureType::Grayscale8bpp: return "G_IM_SIZ_8b";
 	case TextureType::GrayscaleAlpha16bpp: case TextureType::RGBA16bpp: return "G_IM_SIZ_16b";
 	case TextureType::RGBA32bpp: return "G_IM_SIZ_32b";
+	default: return "ERROR";
 	}
-
-	return "ERROR";
 }
 
 int ZTexture::GetWidth()
@@ -758,9 +757,8 @@ std::string ZTexture::GetExternalExtension()
 		case TextureType::GrayscaleAlpha16bpp: return "ia16";
 		case TextureType::Palette4bpp: return "ci4";
 		case TextureType::Palette8bpp: return "ci8";
+		default: return "ERROR";
 	}
-
-	return "";
 }
 
 

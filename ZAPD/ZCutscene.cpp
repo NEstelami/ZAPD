@@ -39,12 +39,15 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 
 			switch (cmdID)
 			{
+			case CutsceneCommands::Cmd00: break;
 			case CutsceneCommands::SetCameraPos: cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr); break;
 			case CutsceneCommands::SetCameraFocus: cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr); break;
 			case CutsceneCommands::SpecialAction: cmd = new CutsceneCommandSpecialAction(rawData, currentPtr); break;
 			case CutsceneCommands::SetLighting: cmd = new CutsceneCommandEnvLighting(rawData, currentPtr); break;
 			case CutsceneCommands::SetCameraPosLink: cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr); break;
 			case CutsceneCommands::SetCameraFocusLink: cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr); break;
+			case CutsceneCommands::Cmd07: break;
+			case CutsceneCommands::Cmd08: break;
 			case CutsceneCommands::Textbox: cmd = new CutsceneCommandTextbox(rawData, currentPtr); break;
 			case CutsceneCommands::Cmd09: cmd = new CutsceneCommandUnknown9(rawData, currentPtr); break;
 			case CutsceneCommands::Unknown: cmd = new CutsceneCommandUnknown(rawData, currentPtr); break;
@@ -67,6 +70,7 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 			case CutsceneCommands::SetTime: cmd = new CutsceneCommandDayTime(rawData, currentPtr); break;
 			case CutsceneCommands::Terminator: cmd = new CutsceneCommandTerminator(rawData, currentPtr); break;
 			case CutsceneCommands::End: cmd = new CutsceneCommandEnd(rawData, currentPtr); break;
+			case CutsceneCommands::Error: printf("Cutscene command error %d  %s  %d",cmdID, __FILE__,__LINE__); break;
 			}
 
 			cmd->commandIndex = i;
