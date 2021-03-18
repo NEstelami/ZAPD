@@ -35,22 +35,6 @@ REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
 REGISTER_ZFILENODE(Skeleton, ZSkeleton);
 REGISTER_ZFILENODE(Collision, ZCollisionHeader);
 
-//static ZResource* ZResourceFactory_ZTexture()						
-//{																		
-//	return static_cast<ZResource*>(new ZTexture(nullptr));						
-//}																		
-//																			
-//class ZRes_Texture													
-//{																		
-//	public:																
-//		ZRes_Texture()												
-//		{
-//			nodeMap["Texture"] = &ZResourceFactory_ZTexture;
-//		}																
-//};					
-
-//static ZRes_Texture inst_ZRes_Texture;						
-
 ZFile::ZFile()
 {
 	resources = vector<ZResource*>();
