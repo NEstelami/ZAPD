@@ -48,8 +48,8 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 			case CutsceneCommands::SetCameraFocusLink: cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr); break;
 			case CutsceneCommands::Cmd07: break;
 			case CutsceneCommands::Cmd08: break;
-			case CutsceneCommands::Textbox: cmd = new CutsceneCommandTextbox(rawData, currentPtr); break;
 			case CutsceneCommands::Cmd09: cmd = new CutsceneCommandUnknown9(rawData, currentPtr); break;
+			case CutsceneCommands::Textbox: cmd = new CutsceneCommandTextbox(rawData, currentPtr); break;
 			case CutsceneCommands::Unknown: cmd = new CutsceneCommandUnknown(rawData, currentPtr); break;
 			case CutsceneCommands::SetActorAction0:
 			case CutsceneCommands::SetActorAction1:
