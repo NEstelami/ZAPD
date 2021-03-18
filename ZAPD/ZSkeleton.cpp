@@ -51,7 +51,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		if (skelTypeStr == "Flex") {
 			type = ZSkeletonType::Flex;
 		}
-		else if (skelTypeStr != "Normal") {
+		else if (skelTypeStr != "Normal" && skelTypeStr != "Standard") {
 			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelTypeXml);
 			type = ZSkeletonType::Normal;
 		}
