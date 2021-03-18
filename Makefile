@@ -38,3 +38,4 @@ libgfxd:
 
 ZAPD.out: $(O_FILES) libgfxd
 	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC)
+
