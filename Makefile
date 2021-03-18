@@ -26,15 +26,15 @@ genbuildinfo:
 
 clean:
 	rm -f $(O_FILES) ZAPD.out
-	rm -f lib/libgfxd/libgfxd.a
+	cd lib/libgfxd && $(MAKE) clean
 
 rebuild: clean all
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-libgfxd:
-	cd lib/libgfxd && $(MAKE) -j
+lib/libgfxd/libgfxd.a:
+	$(MAKE) -C lib/libgfxd -j
 
-ZAPD.out: $(O_FILES) libgfxd
+ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
 	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC)
