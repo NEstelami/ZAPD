@@ -55,7 +55,7 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	//Globals* g = new Globals();
+	Globals* g = new Globals();
 	return NewMain(argc, argv);
 }
 
