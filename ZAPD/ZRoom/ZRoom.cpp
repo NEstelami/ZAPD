@@ -392,7 +392,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 		}
 	}
 
-	if (declarationIndex != -1)
+	if ((int)declarationIndex != -1)
 	{
 		if (declarationIndex + 1 < declarationKeysSorted.size())
 			return declarationKeysSorted[declarationIndex + 1].first - declarationKeysSorted[declarationIndex].first;
@@ -416,7 +416,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		}
 	}
 
-	if (cmdIndex != -1)
+	if ((int)cmdIndex != -1)
 	{
 		if (cmdIndex + 1 < commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
