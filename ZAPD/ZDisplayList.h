@@ -297,14 +297,8 @@ public:
 class ZDisplayList : public ZResource
 {
 protected:
-	uint32_t lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg;
-	F3DZEXTexFormats lastTexFmt;
-	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
-	bool lastTexLoaded;
-	bool lastTexIsPalette;
-
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
-	void ParseRawData();
+	void ParseRawData() override;
 
 	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line);
 	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line);
@@ -341,6 +335,13 @@ public:
 	std::string sceneSegName;
 	ZRoom* scene;
 	std::vector<uint64_t> instructions;
+	std::string curPrefix;
+
+	uint32_t lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg;
+	F3DZEXTexFormats lastTexFmt;
+	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
+	bool lastTexLoaded;
+	bool lastTexIsPalette;
 
 	DListType dListType;
 
@@ -361,6 +362,7 @@ public:
 	ZDisplayList();
 	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
 
+	static ZDisplayList* static_instance;
 	static ZDisplayList* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, std::string nRelPath);
 	static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool readFile);
 
@@ -368,7 +370,7 @@ public:
 	static bool TextureGenCheck(std::vector<uint8_t> fileData, std::map<uint32_t, ZTexture*>& textures, ZRoom* scene, ZFile* parent, std::string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette);
 	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex, DListType dListType);
 
-	std::vector<uint8_t> GetRawData();
+	std::vector<uint8_t> GetRawData() override;
 	int GetRawDataSize() override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;

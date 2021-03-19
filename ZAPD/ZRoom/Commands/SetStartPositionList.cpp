@@ -9,7 +9,7 @@ using namespace std;
 
 SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex) : ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numActors = rawData[rawDataIndex + 1];
+	uint8_t numActors = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 	
 	if (segmentOffset != 0)
@@ -35,7 +35,6 @@ SetStartPositionList::~SetStartPositionList()
 string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	char line[2048];
 
 	sourceOutput += StringHelper::Sprintf("%s 0x%02X, (u32)&%sStartPositionList0x%06X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), actors.size(), zRoom->GetName().c_str(), segmentOffset);
 

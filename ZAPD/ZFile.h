@@ -28,7 +28,7 @@ enum class ZGame
 class ZFile
 {
 public:
-	std::map<int32_t, Declaration*> declarations;
+	std::map<uint32_t, Declaration*> declarations;
 	std::string defines;
 	std::vector<ZResource*> resources;
 	uint32_t baseAddress, rangeStart, rangeEnd;

@@ -98,9 +98,9 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 
 		for (int i = 0; i < polygons.size(); i++)
 		{
-			sprintf(line, "   { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X }, // 0x%08X\n",
+			sprintf(line, "   { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },\n",
 				(uint16_t)polygons[i]->type, (uint16_t)polygons[i]->vtxA, (uint16_t)polygons[i]->vtxB, (uint16_t)polygons[i]->vtxC,
-				(uint16_t)polygons[i]->a, (uint16_t)polygons[i]->b, (uint16_t)polygons[i]->c, (uint16_t)polygons[i]->d, polySegmentOffset + (i * 16));
+				(uint16_t)polygons[i]->a, (uint16_t)polygons[i]->b, (uint16_t)polygons[i]->c, (uint16_t)polygons[i]->d);
 			declaration += line;
 		}
 
@@ -112,7 +112,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 	declaration = "";
 	for (int i = 0; i < polygonTypes.size(); i++)
 	{
-		declaration += StringHelper::Sprintf("   0x%08lX, 0x%08lX,", polygonTypes[i] >> 32, polygonTypes[i] & 0xFFFFFFFF);
+		declaration += StringHelper::Sprintf("    { 0x%08lX, 0x%08lX },", polygonTypes[i] >> 32, polygonTypes[i] & 0xFFFFFFFF);
 
 		if (i < polygonTypes.size() - 1)
 			declaration += "\n";
@@ -120,7 +120,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 
 	if (polyTypeDefAddress != 0)
 		parent->AddDeclarationArray(polyTypeDefSegmentOffset, DeclarationAlignment::None, polygonTypes.size() * 8,
-			"u32", StringHelper::Sprintf("%s_polygonTypes_%08X", prefix.c_str(), polyTypeDefSegmentOffset), 0, declaration);
+			"SurfaceType", StringHelper::Sprintf("%s_surfaceType_%08X", prefix.c_str(), polyTypeDefSegmentOffset), 0, declaration);
 
 	declaration = "";
 
@@ -130,7 +130,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 
 		for (int i = 0; i < vertices.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("   { %i, %i, %i }, // 0x%08X", vertices[i]->x, vertices[i]->y, vertices[i]->z, vtxSegmentOffset + (i * 6));
+			declaration += StringHelper::Sprintf("   { %i, %i, %i },", vertices[i]->x, vertices[i]->y, vertices[i]->z);
 
 			if (i < vertices.size() - 1)
 				declaration += "\n";
@@ -157,7 +157,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix, con
 		absMinX, absMinY, absMinZ,
 		absMaxX, absMaxY, absMaxZ);
 
-	declaration += StringHelper::Sprintf("    %i,\n    %s_vtx_%08X,\n    %i,\n    %s_polygons_%08X,\n    %s_polygonTypes_%08X,\n    &%s_camDataList_%08X,\n    %i,\n    %s\n",
+	declaration += StringHelper::Sprintf("    %i,\n    %s_vtx_%08X,\n    %i,\n    %s_polygons_%08X,\n    %s_surfaceType_%08X,\n    %s_camDataList_%08X,\n    %i,\n    %s\n",
 		numVerts, prefix.c_str(), vtxSegmentOffset, numPolygons,
 		prefix.c_str(), polySegmentOffset, prefix.c_str(), polyTypeDefSegmentOffset,
 		prefix.c_str(), camDataSegmentOffset, numWaterBoxes, waterBoxStr);
@@ -276,7 +276,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix, const s
 		else
 			sprintf(camSegLine, "0x%08X", entries[i]->cameraPosDataSeg);
 
-		declaration += StringHelper::Sprintf("\t{ 0x%04X, %i, %s },", entries[i]->cameraSType, entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
+		declaration += StringHelper::Sprintf("    { 0x%04X, %i, %s },", entries[i]->cameraSType, entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
 
 		if (i < entries.size() - 1)
 			declaration += "\n";
@@ -294,7 +294,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix, const s
 			CameraPositionData* data = new CameraPositionData(rawData, cameraPosDataOffset + (i * 6));
 			cameraPositionData.push_back(data);
 
-			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i }, // 0x%08X\n", data->x, data->y, data->z, cameraPosDataSeg + (i * 0x6));;
+			declaration += StringHelper::Sprintf("    { %6i, %6i, %6i },\n", data->x, data->y, data->z);
 		}
 
 		int cameraPosDataIndex = cameraPosDataSeg & 0x00FFFFFF;

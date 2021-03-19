@@ -312,7 +312,8 @@ void ZRoom::ProcessCommandSets()
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
-			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
+			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, 
+				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
 				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
 				StringHelper::Sprintf("%s", pass1.c_str()));
 
@@ -330,7 +331,9 @@ void ZRoom::ProcessCommandSets()
 		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
 
 		if (pass2 != "")
-			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()), StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
+			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()), 
+			StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID), 
+			StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
 	}
 }
 
@@ -345,12 +348,12 @@ void ZRoom::SyotesRoomHack()
 		0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08
 	};
 
-	for (int i = 0; i < sizeof(headerData); i++)
+	for (uint32_t i = 0; i < sizeof(headerData); i++)
 		rawData.insert(rawData.begin() + i, headerData[i]);
 
 	SetMesh* cmdSetMesh = new SetMesh(this, rawData, 0, -8);
 
-	for (int i = 0; i < sizeof(headerData); i++)
+	for (uint32_t i = 0; i < sizeof(headerData); i++)
 		rawData.erase(rawData.begin());
 
 	cmdSetMesh->cmdIndex = 0;
@@ -361,7 +364,7 @@ void ZRoom::SyotesRoomHack()
 
 ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 {
-	for (int i = 0; i < commands.size(); i++)
+	for (uint32_t i = 0; i < commands.size(); i++)
 	{
 		if (commands[i]->cmdID == cmdType)
 			return commands[i];
@@ -404,7 +407,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 {
 	int cmdIndex = -1;
 
-	for (int i = 0; i < commands.size(); i++)
+	for (uint32_t i = 0; i < commands.size(); i++)
 	{
 		if (commands[i] == cmd)
 		{
@@ -474,7 +477,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 				{
-					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+					//int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
 
 					defines += StringHelper::Sprintf("#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
 						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);

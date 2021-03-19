@@ -4,6 +4,7 @@
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
 #include "ZAnimation.h"
+#include "ZLimb.h"
 #include "ZSkeleton.h"
 #include "ZCollision.h"
 #include "ZScalar.h"
@@ -11,6 +12,7 @@
 #include "ZVtx.h"
 #include "ZCutscene.h"
 #include "ZArray.h"
+#include "ZSymbol.h"
 #include "Path.h"
 #include "File.h"
 #include "Directory.h"
@@ -27,7 +29,7 @@ ZFile::ZFile()
 	resources = vector<ZResource*>();
 	basePath = "";
 	outputPath = Directory::GetCurrentDirectory();
-	declarations = map<int32_t, Declaration*>();
+	declarations = map<uint32_t, Declaration*>();
 	defines = "";
 	baseAddress = 0;
 	rangeStart = 0x000000000;
@@ -225,6 +227,20 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			rawDataIndex += anim->GetRawDataSize();
 		}
+		else if (string(child->Name()) == "CurveAnimation")
+		{
+			ZCurveAnimation* anim = nullptr;
+
+			if (mode == ZFileMode::Extract) {
+				anim = ZCurveAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
+			}
+
+			if (anim == nullptr) {
+				throw std::runtime_error("Couldn't create ZCurveAnimation.");
+			}
+			resources.push_back(anim);
+			rawDataIndex += anim->GetRawDataSize();
+		}
 		else if (string(child->Name()) == "Skeleton")
 		{
 			ZSkeleton* skeleton = nullptr;
@@ -232,33 +248,37 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			if (mode == ZFileMode::Extract)
 				skeleton = ZSkeleton::FromXML(child, rawData, rawDataIndex, folderName, this);
 
+			if (skeleton == nullptr) {
+				throw std::runtime_error("Couldn't create ZSkeleton.");
+			}
 			resources.push_back(skeleton);
 			rawDataIndex += skeleton->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Limb")
 		{
-			ZLimbStandard* limb = nullptr;
+			ZLimb* limb = nullptr;
 
 			if (mode == ZFileMode::Extract)
-				limb = ZLimbStandard::FromXML(child, rawData, rawDataIndex, folderName, this);
+				limb = ZLimb::FromXML(child, rawData, rawDataIndex, folderName, this);
 
+			if (limb == nullptr) {
+				throw std::runtime_error("Couldn't create ZLimb.");
+			}
 			resources.push_back(limb);
-
 			rawDataIndex += limb->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Symbol")
 		{
-			ZResource* res = nullptr;
+			ZSymbol* symbol = nullptr;
 
-			if (mode == ZFileMode::Extract)
-			{
-				res = new ZResource();
-				res->SetName(child->Attribute("Name"));
-				res->SetRawDataIndex(rawDataIndex);
-				res->outputDeclaration = false;
+			if (mode == ZFileMode::Extract) {
+				symbol = ZSymbol::ExtractFromXML(child, rawData, rawDataIndex, this);
 			}
 
-			resources.push_back(res);
+			if (symbol == nullptr) {
+				throw std::runtime_error("Couldn't create ZSymbol.");
+			}
+			resources.push_back(symbol);
 		}
 		else if (string(child->Name()) == "Collision")
 		{
@@ -747,8 +767,8 @@ string ZFile::ProcessDeclarations()
 		return output;
 
 	// Account for padding/alignment
-	int lastAddr = 0;
-	int lastSize = 0;
+	uint32_t lastAddr = 0;
+	uint32_t lastSize = 0;
 
 	//printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
@@ -782,7 +802,7 @@ string ZFile::ProcessDeclarations()
 	//	lastItem = curItem;
 	//}
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		ProcessDeclarationText(item.second);
 	}
@@ -798,7 +818,7 @@ string ZFile::ProcessDeclarations()
 		{
 			if (item.second->alignment == DeclarationAlignment::Align16)
 			{
-				int lastAddrSizeTest = declarations[lastAddr]->size;
+				//int lastAddrSizeTest = declarations[lastAddr]->size;
 				int curPtr = lastAddr + declarations[lastAddr]->size;
 
 				while (curPtr % 4 != 0)
@@ -963,6 +983,10 @@ string ZFile::ProcessDeclarations()
 	// Next, output the actual declarations
 	for (pair<int32_t, Declaration*> item : declarations)
 	{
+		if (item.first < rangeStart || item.first >= rangeEnd) {
+			continue;
+		}
+
 		if (item.second->includePath != "")
 		{
 			//output += StringHelper::Sprintf("#include \"%s\"\n", item.second->includePath.c_str());
@@ -1060,6 +1084,10 @@ string ZFile::ProcessExterns()
 
 	for (pair<int32_t, Declaration*> item : declarations)
 	{
+		if (item.first < rangeStart || item.first >= rangeEnd) {
+			continue;
+		}
+
 		if (!StringHelper::StartsWith(item.second->varType, "static ") && item.second->varType != "")// && item.second->includePath == "")
 		{
 			if (item.second->isArray)

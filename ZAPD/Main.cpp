@@ -43,7 +43,7 @@ void ErrorHandler(int sig)
 
 	for (int i = 1; i < size; i++)
 	{
-		size_t len = strlen(symbols[i]);
+		//size_t len = strlen(symbols[i]);
 		cout << symbols[i] << "\n";
 	}
 
@@ -173,6 +173,7 @@ int NewMain(int argc, char* argv[])
 		{
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 			signal(SIGSEGV, ErrorHandler);
+			signal(SIGABRT, ErrorHandler);
 #endif
 		}
 		else if (arg == "-v") // Verbose
@@ -186,7 +187,10 @@ int NewMain(int argc, char* argv[])
 
 	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
-		Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
+		bool parseSuccessful =  Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
+		if (!parseSuccessful) {
+			return 1;
+		}
 	}
 	else if (fileMode == ZFileMode::BuildTexture)
 	{
@@ -227,13 +231,17 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	XMLDocument doc;
 	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());
 
-	if (eResult != tinyxml2::XML_SUCCESS)
+	if (eResult != tinyxml2::XML_SUCCESS) {
+		fprintf(stderr, "Invalid xml file: '%s'\n", xmlFilePath.c_str());
 		return false;
+	}
 
 	XMLNode* root = doc.FirstChild();
 
-	if (root == nullptr)
+	if (root == nullptr) {
+		fprintf(stderr, "Missing Root tag in xml file: '%s'\n", xmlFilePath.c_str());
 		return false;
+	}
 
 	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
@@ -298,7 +306,7 @@ void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath)
 {
 	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(mdlPath.c_str());
+	//XMLError eResult = doc.LoadFile(mdlPath.c_str());
 
 	vector<string> split = StringHelper::Split(outPath, "/");
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
