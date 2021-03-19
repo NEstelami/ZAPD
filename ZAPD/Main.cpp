@@ -187,7 +187,10 @@ int NewMain(int argc, char* argv[])
 
 	if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
-		Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
+		bool parseSuccessful =  Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
+		if (!parseSuccessful) {
+			return 1;
+		}
 	}
 	else if (fileMode == ZFileMode::BuildTexture)
 	{
@@ -228,13 +231,17 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	XMLDocument doc;
 	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());
 
-	if (eResult != tinyxml2::XML_SUCCESS)
+	if (eResult != tinyxml2::XML_SUCCESS) {
+		fprintf(stderr, "Invalid xml file: '%s'\n", xmlFilePath.c_str());
 		return false;
+	}
 
 	XMLNode* root = doc.FirstChild();
 
-	if (root == nullptr)
+	if (root == nullptr) {
+		fprintf(stderr, "Missing Root tag in xml file: '%s'\n", xmlFilePath.c_str());
 		return false;
+	}
 
 	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
 	{
