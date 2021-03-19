@@ -358,6 +358,9 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 		else if(limbTypeStr == "Skin") {
 			type = ZLimbType::Skin;
 		}
+		else if(limbTypeStr == "Curve") {
+			type = ZLimbType::Curve;
+		}
 		else {
 			fprintf(stderr, "ZLimb::ParseXML: Warning in '%s'.\n\t Invalid LimbType found: '%s'. Defaulting to 'Standard'.\n", name.c_str(), limbType);
 			type = ZLimbType::Standard;
@@ -367,6 +370,15 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZLimb::ParseRawData()
 {
+	if (type == ZLimbType::Curve) {
+		childIndex = rawData.at(rawDataIndex + 0);
+		siblingIndex = rawData.at(rawDataIndex + 1);
+
+		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+		return;
+	}
+
 	transX = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	transY = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	transZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
@@ -376,7 +388,7 @@ void ZLimb::ParseRawData()
 
 	switch (type) {
 	case ZLimbType::LOD:
-		farDListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
 	case ZLimbType::Standard:
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 		break;
@@ -404,6 +416,7 @@ int ZLimb::GetRawDataSize()
 {
 	switch (type) {
 	case ZLimbType::Standard:
+	case ZLimbType::Curve:
 		return 0x0C;
 	case ZLimbType::LOD:
 	case ZLimbType::Skin:
@@ -418,20 +431,29 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	string dListStr2 = "NULL";
 
 	if (dListPtr != 0) {
-		dListStr = GetLimbDListSourceOutputCode(prefix, "", dListPtr);
+		string limbPrefix = type == ZLimbType::Curve ? "Curve" : "";
+		dListStr = GetLimbDListSourceOutputCode(prefix, limbPrefix, dListPtr);
 	}
-	if (farDListPtr != 0) {
-		dListStr2 = GetLimbDListSourceOutputCode(prefix, "Far", farDListPtr);
+	if (dList2Ptr != 0) {
+		string limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
+		dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
 	}
 
-	string entryStr = StringHelper::Sprintf("\n    { %i, %i, %i },\n    0x%02X, 0x%02X,\n",
-			transX, transY, transZ, childIndex, siblingIndex);
+	string entryStr = "";
+	if (type != ZLimbType::Curve) {
+		entryStr += StringHelper::Sprintf("\n    { %i, %i, %i },",
+			transX, transY, transZ);
+	}
+
+	entryStr += StringHelper::Sprintf("\n    0x%02X, 0x%02X,\n",
+			childIndex, siblingIndex);
 
 	switch (type) {
 	case ZLimbType::Standard:
 		entryStr += StringHelper::Sprintf("    %s\n", dListStr.c_str());
 		break;
 	case ZLimbType::LOD:
+	case ZLimbType::Curve:
 		entryStr += StringHelper::Sprintf("    { %s, %s }\n",
 			dListStr.c_str(), dListStr2.c_str());
 		break;
@@ -475,6 +497,8 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 		return "LodLimb";
 	case ZLimbType::Skin:
 		return "SkinLimb";
+	case ZLimbType::Curve:
+		return "SkelCurveLimb";
 	}
 	return "StandardLimb";
 }
