@@ -72,6 +72,9 @@ string ZBlob::GetSourceOutputCode(const std::string& prefix)
 			sourceOutput += "\n";
 	}
 
+	// Ensure there's always a trailing line feed to prevent dumb warnings.
+	sourceOutput += "\n";
+
 	//sourceOutput += "};\n";
 
 	return sourceOutput;

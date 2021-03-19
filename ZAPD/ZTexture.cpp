@@ -725,6 +725,9 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));
 	}
 
+	// Ensure there's always a trailing line feed to prevent dumb warnings.
+	sourceOutput += "\n";
+
 	//sourceOutput += "};\n";
 
 	return sourceOutput;
