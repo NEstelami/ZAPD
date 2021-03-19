@@ -66,9 +66,9 @@ class ZCollisionHeader : public ZResource
 public:
 	int16_t absMinX, absMinY, absMinZ;
 	int16_t absMaxX, absMaxY, absMaxZ;
-	int16_t numVerts;
+	uint16_t numVerts;
 	segptr_t vtxAddress;
-	int16_t numPolygons;
+	uint16_t numPolygons;
 	segptr_t polyAddress;
 	segptr_t polyTypeDefAddress;
 	segptr_t camDataAddress;

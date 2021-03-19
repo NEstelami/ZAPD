@@ -14,7 +14,7 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int ra
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < objectCnt; i++)
+	for (uint8_t i = 0; i < objectCnt; i++)
 	{
 		uint16_t objectIndex = BitConverter::ToInt16BE(rawData, currentPtr);
 		objects.push_back(objectIndex);
@@ -38,7 +38,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 	string declaration = "";
 
-	for (int i = 0; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 	{
 		uint16_t objectIndex = objects[i];
 		declaration += StringHelper::Sprintf("\t%s,", ObjectList[objectIndex].c_str());

@@ -79,7 +79,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 		declaration = "";
 
-		for (int i = 0; i < meshHeader0->entries.size(); i++)
+		for (size_t i = 0; i < meshHeader0->entries.size(); i++)
 		{
 			if (meshHeader0->entries[i]->opaqueDListAddr != 0)
 				declaration += StringHelper::Sprintf("\t{ (u32)%sDL_%06X, ", zRoom->GetName().c_str(), meshHeader0->entries[i]->opaqueDListAddr);
@@ -229,7 +229,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 
 		declaration = "";
 
-		for (int i = 0; i < meshHeader2->entries.size(); i++)
+		for (size_t i = 0; i < meshHeader2->entries.size(); i++)
 		{
 			declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, ", meshHeader2->entries[i]->playerXMax, meshHeader2->entries[i]->playerZMax, meshHeader2->entries[i]->playerXMin, meshHeader2->entries[i]->playerZMin);
 

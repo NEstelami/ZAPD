@@ -96,7 +96,7 @@ string HLAnimationIntermediette::OutputXML()
 
 	XMLElement* rotValues = doc.NewElement("RotationValues");
 	
-	for (int i = 0; i < rotationValues.size(); i++)
+	for (size_t i = 0; i < rotationValues.size(); i++)
 	{
 		XMLElement* rotValue = doc.NewElement("Value");
 		rotValue->SetText(rotationValues[i]);
@@ -107,7 +107,7 @@ string HLAnimationIntermediette::OutputXML()
 
 	XMLElement* rotIndices = doc.NewElement("RotationIndices");
 
-	for (int i = 0; i < rotationIndices.size(); i++)
+	for (size_t i = 0; i < rotationIndices.size(); i++)
 	{
 		XMLElement* rotIndex = doc.NewElement("Value");
 		rotIndex->SetAttribute("X", rotationIndices[i].x);

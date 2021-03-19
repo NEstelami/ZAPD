@@ -86,7 +86,7 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 	{
 		string declaration = "";
 
-		int index = 0;
+		size_t index = 0;
 		for (PathwayEntry* entry : pathways)
 		{
 			declaration += StringHelper::Sprintf("    { %i, %i, %i }, //0x%06X", entry->x, entry->y, entry->z, listSegmentOffset + (index * 6));

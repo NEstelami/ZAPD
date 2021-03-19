@@ -67,9 +67,9 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	// Go through verts
 	vector<Vertex> finalVerts = vector<Vertex>();
 
-	uint32_t vStart = -1;
+	int32_t vStart = -1;
 
-	for (pair<uint32_t, vector<Vertex>> pair : zDisplayList->vertices)
+	for (pair<int32_t, vector<Vertex>> pair : zDisplayList->vertices)
 	{
 		if (vStart == -1) // TODO: Find a better way to do this
 			vStart = pair.first;
@@ -112,7 +112,7 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 
 	startIndex = 0;
 
-	for (int i = startIndex; i < zDisplayList->instructions.size(); i++)
+	for (size_t i = startIndex; i < zDisplayList->instructions.size(); i++)
 	{
 		uint64_t data = zDisplayList->instructions[i];
 		F3DZEXOpcode opcode = (F3DZEXOpcode)(data >> 56);
@@ -121,7 +121,7 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 		{
 			int ss = (data & 0x0000FF0000000000) >> 40;
 			int nn = (data & 0x000000FF00000000) >> 32;
-			int dd = (data & 0xFFFFFFFF);
+			//int dd = (data & 0xFFFFFFFF);
 
 			int sft = 32 - (nn + 1) - ss;
 
@@ -257,11 +257,11 @@ void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton*
 {
 	model->hasSkeleton = true;
 
-	for (int i = 0; i < zSkeleton->limbs.size(); i++)
+	for (size_t i = 0; i < zSkeleton->limbs.size(); i++)
 	{
 		//ZLimb* limb = zSkeleton->limbs[i];
 
-		for (int j = 0; j < model->blocks.size(); j++)
+		for (size_t j = 0; j < model->blocks.size(); j++)
 		{
 		}
 	}
@@ -508,7 +508,7 @@ void HLVerticesIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3
 
 	verts->clear();
 
-	for (int i = 0; i < vertices.size(); i++)
+	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		verts->push_back(aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z));
 		//normals[i] = aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z);

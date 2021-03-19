@@ -42,11 +42,11 @@ string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
-	int numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
+	size_t numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
 	actors = vector<ActorSpawnEntry*>();
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numActorsReal; i++)
+	for (size_t i = 0; i < numActorsReal; i++)
 	{
 		ActorSpawnEntry* entry = new ActorSpawnEntry(_rawData, currentPtr);
 		actors.push_back(entry);
@@ -61,7 +61,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	string declaration = "";
 
-	int index = 0;
+	size_t index = 0;
 	for (ActorSpawnEntry* entry : actors)
 	{
 		uint16_t actorNum = entry->actorNum;
@@ -99,9 +99,9 @@ int32_t SetActorList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + ((int)actors.size() * 16);
 }
 
-int SetActorList::GetActorListArraySize()
+size_t SetActorList::GetActorListArraySize()
 {
-	int actorCount = 0;
+	size_t actorCount = 0;
 
 	// Doing an else-if here so we only do the loop when the game is SW97.
 	// Actor 0x22 is removed from SW97, so we need to ensure that we don't increment the actor count for it.
@@ -115,7 +115,7 @@ int SetActorList::GetActorListArraySize()
 	}
 	else
 	{
-		actorCount = (int)actors.size();
+		actorCount = actors.size();
 	}
 
 	return actorCount;
