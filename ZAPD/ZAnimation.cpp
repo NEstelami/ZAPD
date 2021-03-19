@@ -235,30 +235,33 @@ ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector
 		nRawData, Seg2Filespace(skelOffset, parent->baseAddress), nParent);
 
 	size_t transformDataSize = 0;
+	size_t copyValuesSize = 0;
 	if (refIndex != 0) {
 		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
-		size_t i = 0;
-		for (; i < 3 * 3 * skel->GetLimbCount(); i++) {
+		for (size_t i = 0; i < 3 * 3 * skel->GetLimbCount(); i++) {
 			uint8_t ref = BitConverter::ToUInt8BE(nRawData, refIndexOffset + i);
-			transformDataSize += ref;
+			if (ref == 0) {
+				copyValuesSize++;
+			}
+			else {
+				transformDataSize += ref;
+			}
 			refIndexArr.emplace_back(ref);
 		}
 	}
 
 	if (transformData != 0) {
 		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
-		size_t i = 0;
-		for (; i < transformDataSize; i++) { // TODO: Figure out how big is this array
+		for (size_t i = 0; i < transformDataSize; i++) {
 			transformDataArr.emplace_back(parent, nRawData, transformDataOffset, i);
 		}
 	}
 
 	if (copyValues != 0) {
 		uint32_t copyValuesOffset = Seg2Filespace(copyValues, parent->baseAddress);
-		size_t i = 0;
-		//for (; i < ; i++) { // TODO: Figure out how big is this array
+		for (size_t i = 0; i < copyValuesSize; i++) {
 			copyValuesArr.emplace_back(BitConverter::ToInt16BE(nRawData, copyValuesOffset + i*2));
-		//}
+		}
 	}
 }
 
@@ -369,7 +372,7 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 
 		size_t i = 0;
 		for (auto& child: copyValuesArr) {
-			entryStr += StringHelper::Sprintf("%i, %s", 
+			entryStr += StringHelper::Sprintf("% 6i, %s", 
 				child, 
 				(i++ % 8 == 7) ? "\n    " : "");
 		}
