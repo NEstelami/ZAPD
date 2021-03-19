@@ -143,6 +143,8 @@ protected:
 	segptr_t skinSegment = 0; // Skin only
 	Struct_800A5E28 segmentStruct; // Skin only
 
+	segptr_t dList2Ptr = 0; // Curve only
+
 	std::string GetLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr);
 
 	std::string GetSourceOutputCodeSkin(const std::string& prefix);
