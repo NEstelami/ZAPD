@@ -388,7 +388,7 @@ void ZLimb::ParseRawData()
 
 	switch (type) {
 	case ZLimbType::LOD:
-		farDListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
 	case ZLimbType::Standard:
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 		break;
@@ -416,12 +416,11 @@ int ZLimb::GetRawDataSize()
 {
 	switch (type) {
 	case ZLimbType::Standard:
+	case ZLimbType::Curve:
 		return 0x0C;
 	case ZLimbType::LOD:
 	case ZLimbType::Skin:
 		return 0x10;
-	case ZLimbType::Curve:
-		return 0x08; // size >= 0x8
 	}
 	return 0x0C;
 }
@@ -435,9 +434,9 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 		string limbPrefix = type == ZLimbType::Curve ? "Curve" : "";
 		dListStr = GetLimbDListSourceOutputCode(prefix, limbPrefix, dListPtr);
 	}
-	if (farDListPtr != 0) {
+	if (dList2Ptr != 0) {
 		string limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
-		dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, farDListPtr);
+		dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
 	}
 
 	string entryStr = "";

@@ -137,13 +137,11 @@ protected:
 
 	std::vector<ZDisplayList> dLists;
 
-	segptr_t farDListPtr = 0; // LOD only
+	segptr_t dList2Ptr = 0; // LOD and Curve only
 
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0; // Skin only
 	segptr_t skinSegment = 0; // Skin only
 	Struct_800A5E28 segmentStruct; // Skin only
-
-	segptr_t dList2Ptr = 0; // Curve only
 
 	std::string GetLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr);
 
