@@ -7,6 +7,8 @@
 
 using namespace std;
 
+REGISTER_ZFILENODE(Collision, ZCollisionHeader);
+
 ZCollisionHeader::ZCollisionHeader(ZFile* nParent) : ZResource(nParent)
 {
 
@@ -14,11 +16,11 @@ ZCollisionHeader::ZCollisionHeader(ZFile* nParent) : ZResource(nParent)
 
 ZCollisionHeader::~ZCollisionHeader()
 {
-	for (VertexEntry* vtx : vertices)
-		delete vtx;
+	//for (VertexEntry* vtx : vertices)
+		//delete vtx;
 
-	for (PolygonEntry* poly : polygons)
-		delete poly;
+	//for (PolygonEntry* poly : polygons)
+		//delete poly;
 
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
@@ -29,7 +31,7 @@ ZResourceType ZCollisionHeader::GetResourceType()
 	return ZResourceType::CollisionHeader;
 }
 
-void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelDir)
+void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	name = reader->Attribute("Name");
 	rawData = nRawData;
@@ -66,20 +68,21 @@ void ZCollisionHeader::ParseRawData()
 	camDataSegmentOffset = Seg2Filespace(camDataAddress, parent->baseAddress);
 	waterBoxSegmentOffset = Seg2Filespace(waterBoxAddress, parent->baseAddress);
 
-	// HOTSPOT
-	for (int i = 0; i < numVerts; i++)
-		vertices.push_back(new VertexEntry(rawData, vtxSegmentOffset + (i * 6)));
+	vertices.reserve(numVerts);
+	polygons.reserve(numPolygons);
 
-	// HOTSPOT
+	for (int i = 0; i < numVerts; i++)
+		vertices.push_back(VertexEntry(rawData, vtxSegmentOffset + (i * 6)));
+
 	for (int i = 0; i < numPolygons; i++)
-		polygons.push_back(new PolygonEntry(rawData, polySegmentOffset + (i * 16)));
+		polygons.push_back(PolygonEntry(rawData, polySegmentOffset + (i * 16)));
 
 	int highestPolyType = 0;
 
-	for (PolygonEntry* poly : polygons)
+	for (PolygonEntry poly : polygons)
 	{
-		if (poly->type > highestPolyType)
-			highestPolyType = poly->type;
+		if (poly.type > highestPolyType)
+			highestPolyType = poly.type;
 	}
 
 	//if (highestPolyType > 0)
@@ -120,8 +123,8 @@ void ZCollisionHeader::ParseRawData()
 		for (int i = 0; i < polygons.size(); i++)
 		{
 			declaration += StringHelper::Sprintf("   { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },",
-				(uint16_t)polygons[i]->type, (uint16_t)polygons[i]->vtxA, (uint16_t)polygons[i]->vtxB, (uint16_t)polygons[i]->vtxC,
-				(uint16_t)polygons[i]->a, (uint16_t)polygons[i]->b, (uint16_t)polygons[i]->c, (uint16_t)polygons[i]->d);
+				(uint16_t)polygons[i].type, (uint16_t)polygons[i].vtxA, (uint16_t)polygons[i].vtxB, (uint16_t)polygons[i].vtxC,
+				(uint16_t)polygons[i].a, (uint16_t)polygons[i].b, (uint16_t)polygons[i].c, (uint16_t)polygons[i].d);
 		}
 
 		if (polyAddress != 0) {
@@ -150,7 +153,7 @@ void ZCollisionHeader::ParseRawData()
 
 		for (int i = 0; i < vertices.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("   { %i, %i, %i },", vertices[i]->x, vertices[i]->y, vertices[i]->z);
+			declaration += StringHelper::Sprintf("   { %i, %i, %i },", vertices[i].x, vertices[i].y, vertices[i].z);
 
 			if (i < vertices.size() - 1)
 				declaration += "\n";

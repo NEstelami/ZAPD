@@ -53,7 +53,7 @@ public:
 	ZResource(ZFile* nParent);
 
 	// Parsing from File
-	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath); // Extract Mode
+	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath); // Extract Mode
 	virtual void ExtractFromFile();
 
 	// Misc
@@ -143,3 +143,21 @@ protected:
 
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
+
+typedef ZResource* (ZResourceFactoryFunc)();
+
+#define REGISTER_ZFILENODE(nodeName, zResClass)												\
+	static ZResource* ZResourceFactory_##zResClass_##nodeName()								\
+	{																						\
+		return static_cast<ZResource*>(new zResClass(nullptr));								\
+	}																						\
+																							\
+	class ZRes_##nodeName																	\
+	{																						\
+		public:																				\
+			ZRes_##nodeName()																\
+			{																				\
+				ZFile::RegisterNode(#nodeName, &ZResourceFactory_##zResClass_##nodeName);	\
+			}																				\
+	};																						\
+	static ZRes_##nodeName inst_ZRes_##nodeName;				

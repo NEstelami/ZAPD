@@ -39,5 +39,5 @@ rebuild: clean all
 libgfxd:
 	cd lib/libgfxd && $(MAKE) -j
 
-ZAPD.out: $(O_FILES) libgfxd
+ZAPD.out: libgfxd $(O_FILES)
 	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC)

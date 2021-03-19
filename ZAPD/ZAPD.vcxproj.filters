@@ -210,6 +210,9 @@
     <ClCompile Include="GFXDFormatter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZSymbol.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Path.h">
@@ -439,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="GFXDFormatter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZSymbol.h">
+      <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,8 @@
 using namespace tinyxml2;
 using namespace std;
 
+REGISTER_ZFILENODE(Blob, ZBlob);
+
 ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 {
 
@@ -20,7 +22,7 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, 
 	name = std::move(nName);
 }
 
-void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
+void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawDataIndex = nRawDataIndex;
 

@@ -393,7 +393,7 @@ void ZLimb::ParseRawData()
 	}
 }
 
-void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
+void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	//ZLimb* limb = new ZLimb(reader, nRawData, rawDataIndex, parent);
 	

@@ -78,8 +78,8 @@ public:
 
 	uint32_t vtxSegmentOffset, polySegmentOffset, polyTypeDefSegmentOffset, camDataSegmentOffset, waterBoxSegmentOffset;
 
-	std::vector<VertexEntry*> vertices;
-	std::vector<PolygonEntry*> polygons;
+	std::vector<VertexEntry> vertices;
+	std::vector<PolygonEntry> polygons;
 	std::vector<uint64_t> polygonTypes;
 	std::vector<WaterBoxHeader*> waterBoxes;
 	CameraDataList* camData;
@@ -89,6 +89,6 @@ public:
 
 	ZResourceType GetResourceType() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelDir) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
 	void ParseRawData();
 };

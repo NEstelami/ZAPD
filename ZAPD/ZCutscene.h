@@ -4,6 +4,7 @@
 #include <string>
 #include <stdint.h>
 #include "ZResource.h"
+#include "ZFile.h"
 #include "tinyxml2.h"
 
 enum class CutsceneCommands
@@ -400,9 +401,7 @@ public:
 class ZCutscene : public ZResource
 {
 public:
-	uint32_t segmentOffset;
-
-	ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, ZFile* nParent);
+	ZCutscene(ZFile* parent);
 	~ZCutscene();
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
@@ -411,7 +410,9 @@ public:
 
 	ZResourceType GetResourceType() override;
 
-	static ZCutscene* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+
+	bool isFromXML;
 protected:
 	int numCommands;
 	int endFrame;

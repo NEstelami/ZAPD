@@ -3,6 +3,8 @@
 #include "StringHelper.h"
 #include "BitConverter.h"
 
+REGISTER_ZFILENODE(Vtx, ZVtx);
+
 ZVtx::ZVtx(ZFile* nParent) : ZResource(nParent)
 {
 	x = 0;
@@ -80,12 +82,9 @@ std::string ZVtx::GetExternalExtension()
 	return "vtx";
 }
 
-ZVtx* ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
+void ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-    ZVtx* vtx = new ZVtx(nParent);
-	vtx->rawData = nRawData;
-	vtx->rawDataIndex = rawDataIndex;
-    vtx->ParseRawData();
-
-    return vtx;
+    rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+    ParseRawData();
 }

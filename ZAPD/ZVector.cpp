@@ -6,6 +6,8 @@
 #include "Globals.h"
 #include <assert.h>
 
+REGISTER_ZFILENODE(Vector, ZVector);
+
 ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 {
 	scalars = std::vector<ZScalar*>();
@@ -13,15 +15,12 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 	this->dimensions = 0;
 }
 
-ZVector* ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
+void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	ZVector* vector = new ZVector(nParent);
-	vector->rawData = nRawData;
-	vector->rawDataIndex = rawDataIndex;
-	vector->ParseXML(reader);
-	vector->ParseRawData();
-
-	return vector;
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	ParseXML(reader);
+	ParseRawData();
 }
 
 void ZVector::ParseXML(tinyxml2::XMLElement* reader)
@@ -59,8 +58,10 @@ void ZVector::ParseRawData()
 int ZVector::GetRawDataSize()
 {
 	int size = 0;
+	
 	for (int i = 0; i < this->scalars.size(); i++)
 		size += this->scalars[i]->GetRawDataSize();
+	
 	return size;
 }
 
@@ -72,17 +73,11 @@ bool ZVector::DoesSupportArray()
 std::string ZVector::GetSourceTypeName()
 {
 	if (dimensions == 3 && scalarType == ZSCALAR_F32)
-	{
 		return "Vec3f";
-	}
 	else if (dimensions == 3 && scalarType == ZSCALAR_S16)
-	{
 		return "Vec3s";
-	}
 	else if (dimensions == 3 && scalarType == ZSCALAR_S32)
-	{
 		return "Vec3i";
-	}
 	else
 	{
 		std::string output = StringHelper::Sprintf("Encountered unsupported vector type: %d dimensions, %s type", dimensions, ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
@@ -97,8 +92,10 @@ std::string ZVector::GetSourceTypeName()
 std::string ZVector::GetSourceValue()
 {
 	std::vector<std::string> strings = std::vector<std::string>();
+
 	for (int i = 0; i < this->scalars.size(); i++)
 		strings.push_back(scalars[i]->GetSourceValue());
+	
 	return "{ " + StringHelper::Implode(strings, ", ") + " }";
 }
 

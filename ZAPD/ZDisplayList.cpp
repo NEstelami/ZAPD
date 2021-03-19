@@ -14,6 +14,8 @@
 using namespace std;
 using namespace tinyxml2;
 
+REGISTER_ZFILENODE(DList, ZDisplayList);
+
 ZDisplayList* ZDisplayList::Instance;
 
 ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
@@ -42,13 +44,11 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 }
 
 // EXTRACT MODE
-void ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
+void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	ParseXML(reader);
 
 	//name = reader->Attribute("Name");
-
-
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	int rawDataSize = ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
@@ -2008,7 +2008,6 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 	return sourceOutput;
 }
 
-// HOTSPOT
 void ZDisplayList::TextureGenCheck(string prefix)
 {
 	if (TextureGenCheck(fileData, textures, scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette))
@@ -2019,7 +2018,6 @@ void ZDisplayList::TextureGenCheck(string prefix)
 	}
 }
 
-// HOTSPOT
 bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZTexture*>& textures, ZRoom* scene, ZFile* parent, string prefix, uint32_t texWidth, uint32_t texHeight, uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette)
 {
 	int segmentNumber = GETSEGNUM(texSeg);

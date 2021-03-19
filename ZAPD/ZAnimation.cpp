@@ -9,6 +9,9 @@
 
 using namespace std;
 
+REGISTER_ZFILENODE(Animation, ZNormalAnimation);
+REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
+
 ZAnimation::ZAnimation(ZFile* nParent) : ZResource(nParent)
 {
 	frameCount = 0;
@@ -103,7 +106,7 @@ int ZNormalAnimation::GetRawDataSize()
 	return 16;
 }
 
-void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
+void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -163,7 +166,7 @@ int ZLinkAnimation::GetRawDataSize()
 	return 8;
 }
 
-void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
+void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;

@@ -39,6 +39,9 @@
 using namespace std;
 using namespace tinyxml2;
 
+REGISTER_ZFILENODE(Room, ZRoom);
+REGISTER_ZFILENODE(Scene, ZRoom);
+
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
 	textures = map<int32_t, ZTexture*>();
@@ -54,7 +57,7 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-void ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
+void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
@@ -118,12 +121,15 @@ void ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRa
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
+			//ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
+			ZCutscene* cutscene = new ZCutscene(parent);
+			cutscene->isFromXML = false;
+			cutscene->ExtractFromXML(reader, rawData, address, ""); // TODO: Make this use ExtractFromFile() once that's been implemented
 
 			if (child->Attribute("Name") != NULL)
 				childName = string(child->Attribute("Name"));
 			else
-				childName = StringHelper::Sprintf("%sCutsceneData0x%06X", name.c_str(), cutscene->segmentOffset);
+				childName = StringHelper::Sprintf("%sCutsceneData0x%06X", name.c_str(), cutscene->GetRawDataIndex());
 
 			parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32", childName, 0, cutscene->GetSourceOutputCode(name));
 			delete cutscene;

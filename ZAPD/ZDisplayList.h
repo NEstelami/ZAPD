@@ -363,7 +363,7 @@ public:
 	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, ZFile* nParent);
 
 	static ZDisplayList* Instance;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int rawDataIndex, std::string nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
 	//static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool readFile, ZFile* nParent);
 
 	void TextureGenCheck(std::string prefix);

@@ -17,6 +17,8 @@
 using namespace std;
 using namespace tinyxml2;
 
+REGISTER_ZFILENODE(Texture, ZTexture);
+
 ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 {
 	bmpRgb = nullptr;
@@ -46,22 +48,17 @@ ZTexture::~ZTexture()
 	type = TextureType::Error;
 }
 
-// EXTRACT MODE
-//ZTexture* ZTexture::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath, ZFile* nParent)
-//{
-//	ZTexture* tex = new ZTexture(nParent);
-//
-//	tex->ParseXML(reader);
-//	tex->rawDataIndex = nRawDataIndex;
-//	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + tex->rawDataIndex + tex->GetRawDataSize());
-//
-//	tex->relativePath = nRelPath;
-//
-//	tex->FixRawData();
-//	tex->PrepareBitmap();
-//
-//	return tex;
-//}
+void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+{
+	ParseXML(reader);
+	rawDataIndex = nRawDataIndex;
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
+
+	relativePath = nRelPath;
+
+	FixRawData();
+	PrepareBitmap();
+}
 
 ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nName, int nWidth, int nHeight, ZFile* nParent)
 {
@@ -175,18 +172,6 @@ void ZTexture::FixRawData()
 			rawData[i + 1] = tmp;
 		}
 	}
-}
-
-void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath)
-{
-	ParseXML(reader);
-	rawDataIndex = nRawDataIndex;
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
-
-	relativePath = nRelPath;
-
-	FixRawData();
-	PrepareBitmap();
 }
 
 void ZTexture::PrepareBitmap()
@@ -727,7 +712,6 @@ void ZTexture::Save(const std::string& outFolder)
 		//File::WriteAllText(outFolder + "/" + outName + ".cfg", name.c_str());
 }
 
-// HOTSPOT
 string ZTexture::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";

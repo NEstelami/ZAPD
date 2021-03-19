@@ -46,7 +46,7 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix);
 	int GetRawDataSize() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
 	virtual void ParseRawData();
@@ -62,7 +62,7 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix);
 	int GetRawDataSize() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData, int nRawDataIndex, std::string nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
 	virtual void ParseRawData();

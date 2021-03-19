@@ -3,6 +3,8 @@
 #include "Globals.h"
 #include "StringHelper.h"
 
+REGISTER_ZFILENODE(Array, ZArray);
+
 ZArray::ZArray(ZFile* nParent) : ZResource(nParent)
 {
 
@@ -60,13 +62,10 @@ int ZArray::GetRawDataSize()
     return arrayCnt * testFile->resources[0]->GetRawDataSize();
 }
 
-ZArray* ZArray::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
+void ZArray::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	ZArray* arr = new ZArray(nParent);
-	arr->rawData = nRawData;
-	arr->rawDataIndex = rawDataIndex;
-	arr->ParseXML(reader);
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	ParseXML(reader);
 	//arr->ParseRawData();
-
-	return arr;
 }

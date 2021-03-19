@@ -24,18 +24,6 @@
 using namespace tinyxml2;
 using namespace std;
 
-std::map<std::string, ZResourceFactoryFunc*> nodeMap;
-
-REGISTER_ZFILENODE(Texture, ZTexture);
-REGISTER_ZFILENODE(Blob, ZBlob);
-REGISTER_ZFILENODE(DList, ZDisplayList);
-REGISTER_ZFILENODE(Room, ZRoom);
-REGISTER_ZFILENODE(Scene, ZRoom);
-REGISTER_ZFILENODE(Animation, ZNormalAnimation);
-REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
-REGISTER_ZFILENODE(Skeleton, ZSkeleton);
-REGISTER_ZFILENODE(Collision, ZCollisionHeader);
-
 ZFile::ZFile()
 {
 	resources = vector<ZResource*>();
@@ -126,6 +114,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		rawData = File::ReadAllBytes(basePath + "/" + name);
 	}
 
+	auto nodeMap = *GetNodeMap();
+
 	int rawDataIndex = 0;
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
@@ -170,6 +160,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(nRes);
 			rawDataIndex += nRes->GetRawDataSize();
+		}
+		else
+		{
+
 		}
 
 		/* if (string(child->Name()) == "Texture")
@@ -282,18 +276,16 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			rawDataIndex += limb->GetRawDataSize();
 		}
-		else */if (string(child->Name()) == "Symbol")
+		else if (string(child->Name()) == "Symbol")
 		{
 			ZSymbol* symbol = nullptr;
 
-			if (mode == ZFileMode::Extract) {
+			if (mode == ZFileMode::Extract)
 				symbol = ZSymbol::ExtractFromXML(child, rawData, rawDataIndex, this);
-			}
 
-			if (symbol != nullptr) {
+			if (symbol != nullptr)
 				resources.push_back(symbol);
-			}
-		}
+		}*/
 		/*else if (string(child->Name()) == "Collision")
 		{
 			ZCollisionHeader* res = nullptr;
@@ -307,7 +299,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(res);
 		}
-		*/else if (string(child->Name()) == "Scalar")
+		else if (string(child->Name()) == "Scalar")
 		{
 			ZScalar* scalar = nullptr;
 
@@ -393,6 +385,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			printf("Encountered unknown resource type: %s on line: %d\n", child->Name(), child->GetLineNum());
 			std::exit(EXIT_FAILURE);
 		}
+		*/
 	}
 }
 
@@ -842,6 +835,18 @@ void ZFile::GeneratePlaceholderDeclarations()
 		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
 			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
 	}
+}
+
+std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
+{
+	static std::map<std::string, ZResourceFactoryFunc*> nodeMap;
+	return &nodeMap;
+}
+
+void ZFile::RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc)
+{
+	std::map<std::string, ZResourceFactoryFunc*>* nodeMap = GetNodeMap();
+	(*nodeMap)[nodeName] = nodeFunc;
 }
 
 string ZFile::ProcessDeclarations()

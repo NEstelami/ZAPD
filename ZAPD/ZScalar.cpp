@@ -5,16 +5,7 @@
 #include "File.h"
 #include "Globals.h"
 
-ZScalar* ZScalar::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
-{
-	ZScalar* scalar = new ZScalar(nParent);
-	scalar->rawData = nRawData;
-	scalar->rawDataIndex = rawDataIndex;
-	scalar->ParseXML(reader);
-	scalar->ParseRawData();
-
-	return scalar;
-}
+REGISTER_ZFILENODE(Scalar, ZScalar);
 
 ZScalar::ZScalar(ZFile* nParent) : ZResource(nParent)
 {
@@ -25,6 +16,14 @@ ZScalar::ZScalar(ZFile* nParent) : ZResource(nParent)
 ZScalar::ZScalar(const ZScalarType scalarType, ZFile* nParent) : ZScalar(nParent)
 {
 	this->scalarType = scalarType;
+}
+
+void ZScalar::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+{
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	ParseXML(reader);
+	ParseRawData();
 }
 
 void ZScalar::ParseXML(tinyxml2::XMLElement* reader)

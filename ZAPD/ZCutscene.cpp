@@ -4,11 +4,74 @@
 
 using namespace std;
 
-ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, ZFile* nParent) : ZResource(nParent)
-{
-	rawData = std::move(nRawData);
-	segmentOffset = rawDataIndex;
+REGISTER_ZFILENODE(Cutscene, ZCutscene);
 
+ZCutscene::ZCutscene(ZFile* parent) : ZResource(parent)
+{
+	isFromXML = true;
+}
+
+ZCutscene::~ZCutscene()
+{
+	for (CutsceneCommand* cmd : commands)
+		delete cmd;
+}
+
+string ZCutscene::GetSourceOutputCode(const std::string& prefix)
+{
+	string output = "";
+	int size = 0;
+	int32_t curPtr = 0;
+
+	//output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
+	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
+
+	for (int i = 0; i < commands.size(); i++)
+	{
+		CutsceneCommand* cmd = commands[i];
+		output += "    " + cmd->GenerateSourceCode(prefix, curPtr);
+		curPtr += (uint32_t)cmd->GetCommandSize();
+		size += (int)cmd->GetCommandSize();
+	}
+
+	output += StringHelper::Sprintf("    CS_END(),\n", commands.size(), endFrame);
+
+	return output;
+}
+
+int ZCutscene::GetRawDataSize()
+{
+	int size = 0;
+
+	// Beginning
+	size += 8;
+
+	for (int i = 0; i < commands.size(); i++)
+	{
+		CutsceneCommand* cmd = commands[i];
+		size += (int)cmd->GetCommandSize();
+		size += 4;
+	}
+
+	// End
+	size += 8;
+
+	return size;
+}
+
+void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+{
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+
+	if (isFromXML)
+		ParseXML(reader);
+	
+	ParseRawData();
+}
+
+void ZCutscene::ParseRawData()
+{
 	numCommands = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
 	commands = vector<CutsceneCommand*>();
 
@@ -76,69 +139,6 @@ ZCutscene::ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDat
 			commands.push_back(cmd);
 		}
 	}
-}
-
-ZCutscene::~ZCutscene()
-{
-	for (CutsceneCommand* cmd : commands)
-		delete cmd;
-}
-
-string ZCutscene::GetSourceOutputCode(const std::string& prefix)
-{
-	string output = "";
-	int size = 0;
-	int32_t curPtr = 0;
-
-	//output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
-	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
-
-	for (int i = 0; i < commands.size(); i++)
-	{
-		CutsceneCommand* cmd = commands[i];
-		output += "    " + cmd->GenerateSourceCode(prefix, curPtr);
-		curPtr += (uint32_t)cmd->GetCommandSize();
-		size += (int)cmd->GetCommandSize();
-	}
-
-	output += StringHelper::Sprintf("    CS_END(),\n", commands.size(), endFrame);
-
-	return output;
-}
-
-int ZCutscene::GetRawDataSize()
-{
-	int size = 0;
-
-	// Beginning
-	size += 8;
-
-	for (int i = 0; i < commands.size(); i++)
-	{
-		CutsceneCommand* cmd = commands[i];
-		size += (int)cmd->GetCommandSize();
-		size += 4;
-	}
-
-	// End
-	size += 8;
-
-	return size;
-}
-
-ZCutscene* ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath, ZFile* nParent)
-{
-	ZCutscene* cs = new ZCutscene(nRawData, rawDataIndex, 9999, nParent);
-	cs->rawData = nRawData;
-	cs->rawDataIndex = rawDataIndex;
-	cs->ParseXML(reader);
-	cs->ParseRawData();
-
-	return cs;
-}
-
-void ZCutscene::ParseRawData()
-{
 }
 
 CutsceneCommands ZCutscene::GetCommandFromID(int id)

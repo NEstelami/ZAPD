@@ -5,6 +5,8 @@
 
 using namespace std;
 
+REGISTER_ZFILENODE(Skeleton, ZSkeleton);
+
 //ZSkeleton::ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource(nParent)
 //{
 //	rawData.assign(nRawData.begin(), nRawData.end());
@@ -85,7 +87,7 @@ void ZSkeleton::ParseRawData()
 	dListCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 8);
 }
 
-void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, vector<uint8_t> nRawData, int nRawDataIndex, string nRelPath)
+void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	name = reader->Attribute("Name");
 	relativePath = std::move(nRelPath);

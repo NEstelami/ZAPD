@@ -178,7 +178,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 		int8_t numEntries = rawData[segmentOffset + 1];
 		uint32_t currentPtr = meshHeader2->dListStart;
 
-		// HOTSPOT
 		for (int i = 0; i < numEntries; i++)
 		{
 			MeshEntry2* entry = new MeshEntry2();
@@ -194,14 +193,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, 
 			{
 				entry->opaqueDList = new ZDisplayList(rawData, entry->opaqueDListAddr, ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), zRoom->parent);
 				entry->opaqueDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->opaqueDList); // HOTSPOT
+				GenDListDeclarations(rawData, entry->opaqueDList);
 			}
 
 			if (entry->translucentDListAddr != 0)
 			{
 				entry->translucentDList = new ZDisplayList(rawData, entry->translucentDListAddr, ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), zRoom->parent);
 				entry->translucentDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->translucentDList); // HOTSPOT
+				GenDListDeclarations(rawData, entry->translucentDList);
 			}
 
 			meshHeader2->entries.push_back(entry);
@@ -265,7 +264,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	string srcVarName = StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
-	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName()); // HOTSPOT
+	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
