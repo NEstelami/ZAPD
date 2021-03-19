@@ -112,9 +112,9 @@ protected:
     ///* 0x000E */ s16 unk_10;
 	int16_t unk_10;
 
-	// std::vector<uint8_t> refIndexArr;
+	std::vector<uint8_t> refIndexArr;
 	std::vector<TransformData> transformDataArr;
-	// std::vector<int16_t> copyValues;
+	std::vector<int16_t> copyValuesArr;
 
 public:
 	ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);

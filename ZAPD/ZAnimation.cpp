@@ -231,10 +231,27 @@ ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector
 	ParseXML(reader);
 	ParseRawData();
 
+	if (refIndex != 0) {
+		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
+		size_t i = 0;
+		//for () { // TODO: Figure out how big is this array
+			refIndexArr.emplace_back(BitConverter::ToUInt8BE(nRawData, refIndexOffset + i));
+		//}
+	}
+
 	if (transformData != 0) {
 		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
+		size_t i = 0;
 		//for () { // TODO: Figure out how big is this array
-			transformDataArr.emplace_back(parent, nRawData, transformDataOffset, 0);
+			transformDataArr.emplace_back(parent, nRawData, transformDataOffset, i);
+		//}
+	}
+
+	if (copyValues != 0) {
+		uint32_t copyValuesOffset = Seg2Filespace(copyValues, parent->baseAddress);
+		size_t i = 0;
+		//for () { // TODO: Figure out how big is this array
+			copyValuesArr.emplace_back(BitConverter::ToInt16BE(nRawData, copyValuesOffset + i*2));
 		//}
 	}
 }
@@ -264,12 +281,38 @@ ZCurveAnimation* ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, c
 
 void ZCurveAnimation::PreGenValues(const std::string& prefix)
 {
+	if (refIndex != 0) {
+		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
+		string refIndexStr = StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(), "Ref", refIndexOffset);
+
+		string entryStr = "    ";
+		uint16_t arrayItemCnt = refIndexArr.size();
+
+		size_t i = 0;
+		for (auto& child: refIndexArr) {
+			entryStr += StringHelper::Sprintf("0x%02X, %s", 
+				child, 
+				(++i % 8 == 7) ? "\n    " : "");
+		}
+
+		Declaration* decl = parent->GetDeclaration(refIndexOffset);
+		if (decl == nullptr) {
+			parent->AddDeclarationArray(
+				refIndexOffset, DeclarationAlignment::None, 
+				arrayItemCnt * 1, "u8", 
+				refIndexStr, arrayItemCnt, entryStr);
+		}
+		else {
+			decl->text = entryStr;
+		}
+	}
+
 	if (transformData != 0) {
 		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
 		string transformDataStr = StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(), TransformData::GetSourceTypeName().c_str(), transformDataOffset);
 
 		string entryStr = "";
-		uint16_t arrayItemCnt = 1; // TODO
+		uint16_t arrayItemCnt = transformDataArr.size();
 
 		size_t i = 0;
 		for (auto& child: transformDataArr) {
@@ -289,6 +332,32 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 			decl->text = entryStr;
 		}
 	}
+
+	if (copyValues != 0) {
+		uint32_t copyValuesOffset = Seg2Filespace(copyValues, parent->baseAddress);
+		string copyValuesStr = StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(), "Copy", copyValuesOffset);
+
+		string entryStr = "    ";
+		uint16_t arrayItemCnt = copyValuesArr.size();
+
+		size_t i = 0;
+		for (auto& child: copyValuesArr) {
+			entryStr += StringHelper::Sprintf("%i, %s", 
+				child, 
+				(++i % 8 == 7) ? "\n    " : "");
+		}
+
+		Declaration* decl = parent->GetDeclaration(copyValuesOffset);
+		if (decl == nullptr) {
+			parent->AddDeclarationArray(
+				copyValuesOffset, DeclarationAlignment::None, 
+				arrayItemCnt * 2, "s16", 
+				copyValuesStr, arrayItemCnt, entryStr);
+		}
+		else {
+			decl->text = entryStr;
+		}
+	}
 }
 
 int ZCurveAnimation::GetRawDataSize()
@@ -303,6 +372,18 @@ std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 
 	PreGenValues(prefix);
 
+	string refIndexStr = "NULL";
+	if (refIndex != 0) {
+		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
+		Declaration* decl = parent->GetDeclaration(refIndexOffset);
+		if (decl == nullptr) {
+			refIndexStr = StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(), "Ref", refIndexOffset);
+		}
+		else {
+			refIndexStr = decl->varName;
+		}
+	}
+
 	string transformDataStr = "NULL";
 	if (transformData != 0) {
 		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
@@ -315,9 +396,21 @@ std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 		}
 	}
 
+	string copyValuesStr = "NULL";
+	if (copyValues != 0) {
+		uint32_t copyValuesOffset = Seg2Filespace(copyValues, parent->baseAddress);
+		Declaration* decl = parent->GetDeclaration(copyValuesOffset);
+		if (decl == nullptr) {
+			copyValuesStr = StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(), "Copy", copyValuesOffset);
+		}
+		else {
+			copyValuesStr = decl->varName;
+		}
+	}
 
-	bodyStr = StringHelper::Sprintf("0x%08X, %s, 0x%08X, %i, %i", 
-		refIndex, transformDataStr.c_str(), copyValues, unk_0C, unk_10);
+
+	bodyStr = StringHelper::Sprintf("\n    %s,\n    %s,\n    %s,\n    %i, %i\n", 
+		refIndexStr.c_str(), transformDataStr.c_str(), copyValuesStr.c_str(), unk_0C, unk_10);
 
 	Declaration* decl = parent->GetDeclaration(address);
 	if (decl == nullptr) {
