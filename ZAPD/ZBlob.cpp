@@ -48,7 +48,6 @@ ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool
 
 ZBlob* ZBlob::FromFile(const std::string& filePath)
 {
-	int comp;
 	ZBlob* blob = new ZBlob();
 	blob->name = StringHelper::Split(Path::GetFileNameWithoutExtension(filePath), ".")[0];
 	blob->rawData = File::ReadAllBytes(filePath);
@@ -61,7 +60,7 @@ string ZBlob::GetSourceOutputCode(const std::string& prefix)
 	sourceOutput = "";
 	//sourceOutput += StringHelper::Sprintf("u8 %s_%s[] = \n{\n", prefix.c_str(), name.c_str());
 
-	for (int i = 0; i < rawData.size(); i += 1)
+	for (uint32_t i = 0; i < rawData.size(); i += 1)
 	{
 		if (i % 16 == 0)
 			sourceOutput += "\t";

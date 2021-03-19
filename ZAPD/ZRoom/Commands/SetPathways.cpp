@@ -16,8 +16,6 @@ SetPathways::SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 
 	InitList(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)));
 
-	uint32_t currentPtr = listSegmentOffset;
-
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 }

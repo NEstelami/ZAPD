@@ -43,8 +43,8 @@ public:
 	bool startsWithClearGeometryMode;
 	bool lerpBeforeTextureBlock;
 
-	int startIndex;
-	int meshStartIndex;
+	uint32_t startIndex;
+	uint32_t meshStartIndex;
 
 	HLModelIntermediette();
 	~HLModelIntermediette();

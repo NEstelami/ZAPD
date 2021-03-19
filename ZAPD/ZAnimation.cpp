@@ -127,7 +127,7 @@ void ZNormalAnimation::ParseRawData()
 	uint32_t currentPtr = rotationValuesSeg;
 
 	// Read the Rotation Values
-	for (int i = 0; i < ((rotationIndicesSeg - rotationValuesSeg) / 2); i++)
+	for (uint32_t i = 0; i < ((rotationIndicesSeg - rotationValuesSeg) / 2); i++)
 	{
 		rotationValues.push_back(BitConverter::ToInt16BE(data, currentPtr));
 		currentPtr += 2;
@@ -136,7 +136,7 @@ void ZNormalAnimation::ParseRawData()
 	currentPtr = rotationIndicesSeg;
 
 	// Read the Rotation Indices
-	for (int i = 0; i < ((rawDataIndex - rotationIndicesSeg) / 6); i++)
+	for (uint32_t i = 0; i < ((rawDataIndex - rotationIndicesSeg) / 6); i++)
 	{
 		rotationIndices.push_back(RotationIndex(BitConverter::ToInt16BE(data, currentPtr), BitConverter::ToInt16BE(data, currentPtr + 2), BitConverter::ToInt16BE(data, currentPtr + 4)));
 		currentPtr += 6;

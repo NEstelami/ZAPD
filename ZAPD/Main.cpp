@@ -43,7 +43,7 @@ void ErrorHandler(int sig)
 
 	for (int i = 1; i < size; i++)
 	{
-		size_t len = strlen(symbols[i]);
+		//size_t len = strlen(symbols[i]);
 		cout << symbols[i] << "\n";
 	}
 
@@ -306,7 +306,7 @@ void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath)
 {
 	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(mdlPath.c_str());
+	//XMLError eResult = doc.LoadFile(mdlPath.c_str());
 
 	vector<string> split = StringHelper::Split(outPath, "/");
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());

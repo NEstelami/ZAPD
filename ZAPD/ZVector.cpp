@@ -41,7 +41,7 @@ void ZVector::ParseRawData()
 
 	scalars.clear();
 
-	for (int i = 0; i < this->dimensions; i++) 
+	for (uint32_t i = 0; i < this->dimensions; i++) 
 	{
 		ZScalar* scalar = new ZScalar(this->scalarType);
 		scalar->rawDataIndex = currentRawDataIndex;
