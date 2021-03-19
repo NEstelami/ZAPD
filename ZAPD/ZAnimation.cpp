@@ -316,7 +316,7 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 		for (auto& child: refIndexArr) {
 			entryStr += StringHelper::Sprintf("0x%02X, %s", 
 				child, 
-				(++i % 8 == 7) ? "\n    " : "");
+				(i++ % 8 == 7) ? "\n    " : "");
 		}
 
 		Declaration* decl = parent->GetDeclaration(refIndexOffset);
@@ -368,7 +368,7 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 		for (auto& child: copyValuesArr) {
 			entryStr += StringHelper::Sprintf("%i, %s", 
 				child, 
-				(++i % 8 == 7) ? "\n    " : "");
+				(i++ % 8 == 7) ? "\n    " : "");
 		}
 
 		Declaration* decl = parent->GetDeclaration(copyValuesOffset);
