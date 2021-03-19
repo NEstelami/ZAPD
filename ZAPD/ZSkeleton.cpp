@@ -30,6 +30,32 @@ ZSkeleton::ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& n
 	}
 }
 
+ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
+{
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = nRawDataIndex;
+	parent = nParent;
+
+	name = StringHelper::Sprintf("%sSkel_%06X", prefix.c_str(), rawDataIndex);
+	type = nType;
+	limbType = nLimbType;
+
+	ParseRawData();
+
+	string defaultPrefix = name;
+	defaultPrefix.replace(0, 1, "s"); // replace g prefix with s for local variables
+	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
+
+	for (size_t i = 0; i < limbCount; i++) {
+		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(rawData, ptr), parent->baseAddress);
+
+		ZLimb* limb = new ZLimb(limbType, prefix, rawData, ptr2, parent);
+		limbs.push_back(limb);
+
+		ptr += 4;
+	}
+}
+
 ZSkeleton::~ZSkeleton()
 {
 	for (auto& limb: limbs) {
@@ -210,4 +236,9 @@ ZResourceType ZSkeleton::GetResourceType()
 segptr_t ZSkeleton::GetAddress()
 {
 	return rawDataIndex;
+}
+
+uint8_t ZSkeleton::GetLimbCount()
+{
+	return limbCount;
 }

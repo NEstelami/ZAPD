@@ -231,12 +231,15 @@ ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector
 	ParseXML(reader);
 	ParseRawData();
 
+	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", 
+		nRawData, Seg2Filespace(skelOffset, parent->baseAddress), nParent);
+
 	if (refIndex != 0) {
 		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
 		size_t i = 0;
-		//for () { // TODO: Figure out how big is this array
+		for (; i < 3 * 3 * skel->GetLimbCount(); i++) { // TODO: Figure out how big is this array
 			refIndexArr.emplace_back(BitConverter::ToUInt8BE(nRawData, refIndexOffset + i));
-		//}
+		}
 	}
 
 	if (transformData != 0) {
@@ -254,6 +257,22 @@ ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector
 			copyValuesArr.emplace_back(BitConverter::ToInt16BE(nRawData, copyValuesOffset + i*2));
 		//}
 	}
+}
+
+ZCurveAnimation::~ZCurveAnimation()
+{
+	delete skel;
+}
+
+void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
+{
+	ZAnimation::ParseXML(reader);
+
+    const char* skelOffsetXml = reader->Attribute("SkelOffset");
+    if (skelOffsetXml == nullptr) {
+        throw std::runtime_error("ZCurveAnimation::ParseXML: Fatal error in '%s'. Missing 'SkelOffset' attribute in xml.");
+    }
+	skelOffset = std::strtoul(skelOffsetXml, nullptr, 0);
 }
 
 void ZCurveAnimation::ParseRawData()
@@ -281,6 +300,11 @@ ZCurveAnimation* ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, c
 
 void ZCurveAnimation::PreGenValues(const std::string& prefix)
 {
+	Declaration* decl = parent->GetDeclaration(skelOffset);
+	if (decl == nullptr) {
+		skel->GetSourceOutputCode(prefix);
+	}
+
 	if (refIndex != 0) {
 		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
 		string refIndexStr = StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(), "Ref", refIndexOffset);

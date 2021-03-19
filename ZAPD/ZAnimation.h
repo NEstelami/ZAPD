@@ -6,6 +6,7 @@
 #include "ZResource.h"
 #include "Vec3s.h"
 #include "tinyxml2.h"
+#include "ZSkeleton.h"
 
 struct RotationIndex
 {
@@ -101,6 +102,8 @@ public:
 class ZCurveAnimation : public ZAnimation
 {
 protected:
+	segptr_t skelOffset = 0;
+
     ///* 0x0000 */ u8* refIndex;
 	segptr_t refIndex = 0;
     ///* 0x0004 */ TransformData* transformData;
@@ -112,12 +115,17 @@ protected:
     ///* 0x000E */ s16 unk_10;
 	int16_t unk_10;
 
+	ZSkeleton* skel;
+
 	std::vector<uint8_t> refIndexArr;
 	std::vector<TransformData> transformDataArr;
 	std::vector<int16_t> copyValuesArr;
 
 public:
+	ZCurveAnimation() = default;
 	ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	~ZCurveAnimation();
+	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	static ZCurveAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, std::string nRelPath, ZFile* nParent);
 
