@@ -229,6 +229,20 @@ int ZCurveAnimation::GetRawDataSize()
 
 std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 {
+	string bodyStr = "";
+	uint32_t address = Seg2Filespace(rawDataIndex, parent->baseAddress);
+
+	bodyStr = StringHelper::Sprintf("0x%08X, 0x%08X, 0x%08X, %i, %i", refIndex, transformData, copyValues, unk_0C, unk_10);
+
+	Declaration* decl = parent->GetDeclaration(address);
+	if (decl == nullptr) {
+		parent->AddDeclaration(address, DeclarationAlignment::None, 
+			GetRawDataSize(), GetSourceTypeName(), name, bodyStr);
+	}
+	else {
+		decl->text = bodyStr;
+	}
+
 	return "";
 }
 
