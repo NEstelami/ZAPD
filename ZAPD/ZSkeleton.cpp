@@ -51,7 +51,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		if (skelTypeStr == "Flex") {
 			type = ZSkeletonType::Flex;
 		}
-		else if (skelTypeStr != "Normal") {
+		else if (skelTypeStr != "Normal" && skelTypeStr != "Standard") {
 			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelTypeXml);
 			type = ZSkeletonType::Normal;
 		}
@@ -156,7 +156,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbCount,
-			StringHelper::Sprintf("static %s*", ZLimb::GetSourceTypeName(limbType)), 
+			"static void*", 
 			StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()), limbCount, tblStr);
 	}
 
