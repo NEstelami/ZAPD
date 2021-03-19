@@ -67,3 +67,30 @@ public:
 protected:
 	virtual void ParseRawData();
 };
+
+
+class ZCurveAnimation : public ZAnimation
+{
+protected:
+    ///* 0x0000 */ u8* refIndex;
+	segptr_t refIndex;
+    ///* 0x0004 */ TransformData* transformData;
+	segptr_t transformData;
+    ///* 0x0008 */ s16* copyValues;
+	segptr_t copyValues;
+    ///* 0x000C */ s16 unk_0C;
+	int16_t unk_0C;
+    ///* 0x000E */ s16 unk_10;
+	int16_t unk_10;
+
+public:
+	ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	void ParseRawData() override;
+	static ZCurveAnimation* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, std::string nRelPath, ZFile* nParent);
+
+	int GetRawDataSize() override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+
+	std::string GetSourceTypeName() override;
+};
+// TransformUpdateIndex

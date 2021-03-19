@@ -186,3 +186,53 @@ void ZLinkAnimation::ParseRawData()
 	//segmentAddress = GETSEGOFFSET(BitConverter::ToInt32BE(data, rawDataIndex + 4));
 	segmentAddress = (BitConverter::ToInt32BE(data, rawDataIndex + 4));
 }
+
+
+
+ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
+{
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = nRawDataIndex;
+	parent = nParent;
+
+	ParseXML(reader);
+	ParseRawData();
+}
+
+void ZCurveAnimation::ParseRawData()
+{
+	ZAnimation::ParseRawData();
+
+	refIndex = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
+	transformData = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+	copyValues = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+	unk_0C = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
+	unk_10 = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
+}
+
+ZCurveAnimation* ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, std::string nRelPath, ZFile* nParent)
+{
+	ZCurveAnimation* curve = new ZCurveAnimation(reader, nRawData, nRawDataIndex, nParent);
+	curve->relativePath = std::move(nRelPath);
+
+	curve->parent->AddDeclaration(
+		curve->rawDataIndex, DeclarationAlignment::Align16, curve->GetRawDataSize(), 
+		curve->GetSourceTypeName(), curve->name, "");
+
+	return curve;
+}
+
+int ZCurveAnimation::GetRawDataSize()
+{
+	return 0x10;
+}
+
+std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
+{
+	return "";
+}
+
+std::string ZCurveAnimation::GetSourceTypeName()
+{
+	return "TransformUpdateIndex";
+}
