@@ -11,7 +11,8 @@ enum class ZLimbType
 {
 	Standard,
 	LOD,
-	Skin
+	Skin,
+	Curve,
 };
 
 // TODO: check if more types exists

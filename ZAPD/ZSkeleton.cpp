@@ -51,6 +51,9 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		if (skelTypeStr == "Flex") {
 			type = ZSkeletonType::Flex;
 		}
+		else if (skelTypeStr == "Curve") {
+			type = ZSkeletonType::Curve;
+		}
 		else if (skelTypeStr != "Normal") {
 			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. Defaulting to 'Normal'.\n", name.c_str(), skelTypeXml);
 			type = ZSkeletonType::Normal;
@@ -72,6 +75,9 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		}
 		else if (limbTypeStr == "Skin") {
 			limbType = ZLimbType::Skin;
+		}
+		else if (limbTypeStr == "Curve") {
+			limbType = ZLimbType::Curve;
 		}
 		else {
 			fprintf(stderr, "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid LimbType found: '%s'. Defaulting to 'Standard'.\n", name.c_str(), limbTypeXml);
@@ -115,10 +121,10 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 int ZSkeleton::GetRawDataSize()
 {
 	switch (type) {
-	case ZSkeletonType::Normal:
-		return 0x8;
 	case ZSkeletonType::Flex:
 		return 0xC;
+	case ZSkeletonType::Normal:
+	case ZSkeletonType::Curve:
 	default:
 		return 0x8;
 	}
@@ -163,6 +169,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 	string headerStr;
 	switch (type) {
 	case ZSkeletonType::Normal:
+	case ZSkeletonType::Curve:
 		headerStr = StringHelper::Sprintf("%sLimbs, %i", defaultPrefix.c_str(), limbCount);
 		break;
 	case ZSkeletonType::Flex:
@@ -189,6 +196,8 @@ std::string ZSkeleton::GetSourceTypeName()
 		return "SkeletonHeader";
 	case ZSkeletonType::Flex:
 		return "FlexSkeletonHeader";
+	case ZSkeletonType::Curve:
+		return "SkelCurveLimbList";
 	}
 	return "SkeletonHeader";
 }

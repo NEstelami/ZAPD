@@ -10,7 +10,8 @@
 enum ZSkeletonType
 {
 	Normal,
-	Flex
+	Flex,
+	Curve,
 };
 
 class ZSkeleton : public ZResource
