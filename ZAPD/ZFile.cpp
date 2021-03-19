@@ -227,6 +227,20 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			rawDataIndex += anim->GetRawDataSize();
 		}
+		else if (string(child->Name()) == "CurveAnimation")
+		{
+			ZCurveAnimation* anim = nullptr;
+
+			if (mode == ZFileMode::Extract) {
+				anim = ZCurveAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
+			}
+
+			if (anim == nullptr) {
+				throw std::runtime_error("Couldn't create ZCurveAnimation.");
+			}
+			resources.push_back(anim);
+			rawDataIndex += anim->GetRawDataSize();
+		}
 		else if (string(child->Name()) == "Skeleton")
 		{
 			ZSkeleton* skeleton = nullptr;
@@ -234,6 +248,9 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			if (mode == ZFileMode::Extract)
 				skeleton = ZSkeleton::FromXML(child, rawData, rawDataIndex, folderName, this);
 
+			if (skeleton == nullptr) {
+				throw std::runtime_error("Couldn't create ZSkeleton.");
+			}
 			resources.push_back(skeleton);
 			rawDataIndex += skeleton->GetRawDataSize();
 		}
@@ -244,8 +261,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			if (mode == ZFileMode::Extract)
 				limb = ZLimb::FromXML(child, rawData, rawDataIndex, folderName, this);
 
+			if (limb == nullptr) {
+				throw std::runtime_error("Couldn't create ZLimb.");
+			}
 			resources.push_back(limb);
-
 			rawDataIndex += limb->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Symbol")
@@ -256,9 +275,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				symbol = ZSymbol::ExtractFromXML(child, rawData, rawDataIndex, this);
 			}
 
-			if (symbol != nullptr) {
-				resources.push_back(symbol);
+			if (symbol == nullptr) {
+				throw std::runtime_error("Couldn't create ZSymbol.");
 			}
+			resources.push_back(symbol);
 		}
 		else if (string(child->Name()) == "Collision")
 		{

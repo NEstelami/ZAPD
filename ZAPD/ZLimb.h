@@ -11,7 +11,8 @@ enum class ZLimbType
 {
 	Standard,
 	LOD,
-	Skin
+	Skin,
+	Curve,
 };
 
 // TODO: check if more types exists
@@ -136,7 +137,7 @@ protected:
 
 	std::vector<ZDisplayList> dLists;
 
-	segptr_t farDListPtr = 0; // LOD only
+	segptr_t dList2Ptr = 0; // LOD and Curve only
 
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0; // Skin only
 	segptr_t skinSegment = 0; // Skin only
