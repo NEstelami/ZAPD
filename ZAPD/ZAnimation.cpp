@@ -234,26 +234,29 @@ ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector
 	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", 
 		nRawData, Seg2Filespace(skelOffset, parent->baseAddress), nParent);
 
+	size_t transformDataSize = 0;
 	if (refIndex != 0) {
 		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
 		size_t i = 0;
-		for (; i < 3 * 3 * skel->GetLimbCount(); i++) { // TODO: Figure out how big is this array
-			refIndexArr.emplace_back(BitConverter::ToUInt8BE(nRawData, refIndexOffset + i));
+		for (; i < 3 * 3 * skel->GetLimbCount(); i++) {
+			uint8_t ref = BitConverter::ToUInt8BE(nRawData, refIndexOffset + i);
+			transformDataSize += ref;
+			refIndexArr.emplace_back(ref);
 		}
 	}
 
 	if (transformData != 0) {
 		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
 		size_t i = 0;
-		//for () { // TODO: Figure out how big is this array
+		for (; i < transformDataSize; i++) { // TODO: Figure out how big is this array
 			transformDataArr.emplace_back(parent, nRawData, transformDataOffset, i);
-		//}
+		}
 	}
 
 	if (copyValues != 0) {
 		uint32_t copyValuesOffset = Seg2Filespace(copyValues, parent->baseAddress);
 		size_t i = 0;
-		//for () { // TODO: Figure out how big is this array
+		//for (; i < ; i++) { // TODO: Figure out how big is this array
 			copyValuesArr.emplace_back(BitConverter::ToInt16BE(nRawData, copyValuesOffset + i*2));
 		//}
 	}
@@ -270,7 +273,7 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 
     const char* skelOffsetXml = reader->Attribute("SkelOffset");
     if (skelOffsetXml == nullptr) {
-        throw std::runtime_error("ZCurveAnimation::ParseXML: Fatal error in '%s'. Missing 'SkelOffset' attribute in xml.");
+        throw std::runtime_error("ZCurveAnimation::ParseXML: Fatal error in '%s'. Missing 'SkelOffset' attribute in xml. You need to provide the offset of the curve skeleton.");
     }
 	skelOffset = std::strtoul(skelOffsetXml, nullptr, 0);
 }
