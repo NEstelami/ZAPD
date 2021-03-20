@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #if __has_include(<filesystem>)
 #include <filesystem>
@@ -10,6 +11,8 @@ namespace fs = std::filesystem;
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #endif
+
+#include "StringHelper.h"
 
 class Directory
 {
