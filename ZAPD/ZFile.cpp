@@ -766,12 +766,6 @@ string ZFile::ProcessDeclarations()
 	if (declarations.size() == 0)
 		return output;
 
-	auto declarationKeysSorted = vector<pair<uint32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
-	{
-		return lhs.first < rhs.first;
-	});
-
 	// Account for padding/alignment
 	uint32_t lastAddr = 0;
 	uint32_t lastSize = 0;
@@ -813,11 +807,11 @@ string ZFile::ProcessDeclarations()
 		ProcessDeclarationText(item.second);
 	}
 
-	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<int32_t, Declaration*> item : declarations)
 	{
-		while (declarations[item.first]->size % 4 != 0)
+		while (item.second->size % 4 != 0)
 		{
-			declarations[item.first]->size++;
+			item.second->size++;
 		}
 
 		if (lastAddr != 0)
@@ -830,7 +824,7 @@ string ZFile::ProcessDeclarations()
 				while (curPtr % 4 != 0)
 				{
 					declarations[lastAddr]->size++;
-					//declarations[item.first]->size++;
+					//item.second->size++;
 					curPtr++;
 				}
 
@@ -839,7 +833,7 @@ string ZFile::ProcessDeclarations()
 					char buffer[2048];
 
 					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
-					declarations[item.first]->text = buffer + declarations[item.first]->text;
+					item.second->text = buffer + item.second->text;
 
 					declarations[lastAddr]->size += 4;
 					curPtr += 4;
@@ -853,7 +847,6 @@ string ZFile::ProcessDeclarations()
 				{
 					declarations[lastAddr]->size++;
 					//item.second->size++;
-					//declarations[item.first]->size++;
 					curPtr++;
 				}
 
@@ -862,11 +855,10 @@ string ZFile::ProcessDeclarations()
 					char buffer[2048];
 
 					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
-					declarations[item.first]->preText = buffer + declarations[item.first]->preText;
+					item.second->preText = buffer + item.second->preText;
 
 					declarations[lastAddr]->size += 4;
 					//item.second->size += 4;
-					//declarations[item.first]->size += 4;
 					curPtr += 4;
 				}
 			}
@@ -884,7 +876,7 @@ string ZFile::ProcessDeclarations()
 
 			while (curPtr % 16 != 0)
 			{
-				declarations[item.first]->postText += StringHelper::Sprintf("static u32 pad%02X = 0;\n", curPtr);
+				item.second->postText += StringHelper::Sprintf("static u32 pad%02X = 0;\n", curPtr);
 
 				item.second->size += 4;
 				curPtr += 4;
@@ -897,7 +889,7 @@ string ZFile::ProcessDeclarations()
 	// Handle unaccounted data
 	lastAddr = 0;
 	lastSize = 0;
-	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<int32_t, Declaration*> item : declarations)
 	{
 		if (item.first >= rangeStart && item.first < rangeEnd)
 		{
@@ -965,15 +957,9 @@ string ZFile::ProcessDeclarations()
 	}
 
 	// Go through include declarations
-	declarationKeysSorted = vector<pair<uint32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
-	{
-		return lhs.first < rhs.first;
-	});
-
 	// First, handle the prototypes (static only for now)
-	uint32_t protoCnt = 0;
-	for (pair<int32_t, Declaration*> item : declarationKeysSorted)
+	int protoCnt = 0;
+	for (pair<int32_t, Declaration*> item : declarations)
 	{
 		if (item.second->includePath == "" && StringHelper::StartsWith(item.second->varType, "static ") && !StringHelper::StartsWith(item.second->varName, "unaccounted_"))
 		{
@@ -995,7 +981,7 @@ string ZFile::ProcessDeclarations()
 		output += "\n";
 
 	// Next, output the actual declarations
-	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<int32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd) {
 			continue;
@@ -1096,13 +1082,7 @@ string ZFile::ProcessExterns()
 {
 	string output = "";
 
-	auto declarationKeysSorted = vector<pair<uint32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs)
-	{
-		return lhs.first < rhs.first;
-	});
-
-	for (pair<uint32_t, Declaration*> item : declarationKeysSorted)
+	for (pair<int32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd) {
 			continue;
