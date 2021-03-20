@@ -7,13 +7,6 @@ using namespace std;
 
 REGISTER_ZFILENODE(Skeleton, ZSkeleton);
 
-//ZSkeleton::ZSkeleton(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource(nParent)
-//{
-//	rawData.assign(nRawData.begin(), nRawData.end());
-//	rawDataIndex = nRawDataIndex;
-//	parent = nParent;
-//}
-
 ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 {
 	type = ZSkeletonType::Normal;
@@ -23,8 +16,7 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 	dListCount = 0;
 }
 
-ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
-                     const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
+ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -171,43 +163,6 @@ int ZSkeleton::GetRawDataSize()
 	default:
 		return 0x8;
 	}
-
-	/*skeleton->type = skeletonType;
-
-	if (reader->Attribute("LimbType") != nullptr)
-	{
-		if (string(reader->Attribute("LimbType")) == "LOD")
-			limbType = ZLimbType::LOD;
-	}
-
-	limbCount = nRawData[rawDataIndex + 4];
-	skeleton->dListCount = nRawData[rawDataIndex + 8];
-
-	ZLimbStandard* currentLimb = nullptr;
-
-	uint32_t ptr = (uint32_t)BitConverter::ToInt32BE(nRawData, rawDataIndex) & 0x00FFFFFF;
-
-	for (int i = 0; i < limbCount; i++)
-	{
-		uint32_t ptr2 = (uint32_t)BitConverter::ToInt32BE(nRawData, ptr) & 0x00FFFFFF;
-
-		if (limbType == ZLimbType::Standard)
-		{
-			ZLimbStandard* limb = ZLimbStandard::FromRawData(nRawData, ptr2, nParent);
-			limb->skeleton = skeleton;
-			skeleton->limbs.push_back(limb);
-		}
-		else
-		{
-			ZLimbLOD* limb = ZLimbLOD::FromRawData(nRawData, ptr2, nParent);
-			limb->skeleton = skeleton;
-			skeleton->limbs.push_back(limb);
-		}
-
-		ptr += 4;
-	}
-
-	return skeleton;*/
 }
 
 std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)

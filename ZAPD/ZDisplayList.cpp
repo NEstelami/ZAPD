@@ -6,12 +6,9 @@
 #include <math.h>
 #include "BitConverter.h"
 #include "Globals.h"
-#include "HighLevel/HLModelIntermediette.h"
-#include "OutputFormatter.h"
 #include "StringHelper.h"
 #include "GFXDFormatter.h"
 #include "HighLevel/HLModelIntermediette.h"
-#include "Globals.h"
 #include "gfxd.h"
 
 using namespace std;

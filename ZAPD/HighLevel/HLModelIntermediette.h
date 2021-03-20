@@ -10,6 +10,7 @@
 #include <tinyxml2.h>
 #include <assimp/scene.h>
 #include <Vec3s.h>
+#include "HLFileIntermediette.h"
 
 /*
  * An intermediette format for models. Goes from FBX<-->Intermediette<-->Display List C Code.

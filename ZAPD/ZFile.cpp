@@ -911,11 +911,14 @@ string ZFile::ProcessDeclarations()
 	// printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
 	// Optimization: See if there are any arrays side by side that can be merged...
-	pair<int32_t, Declaration*> lastItem = declarationKeysSorted[0];
+	auto declarationKeys = vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
+	sort(declarationKeys.begin(), declarationKeys.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
-	for (int i = 1; i < declarationKeysSorted.size(); i++)
+	pair<int32_t, Declaration*> lastItem = declarationKeys[0];
+
+	for (int i = 1; i < declarationKeys.size(); i++)
 	{
-		pair<int32_t, Declaration*> curItem = declarationKeysSorted[i];
+		pair<int32_t, Declaration*> curItem = declarationKeys[i];
 
 		if (curItem.second->isArray && lastItem.second->isArray)
 		{
@@ -933,7 +936,7 @@ string ZFile::ProcessDeclarations()
 						lastItem.second->arrayItemCnt += curItem.second->arrayItemCnt;
 						lastItem.second->text += "\n" + curItem.second->text;
 						declarations.erase(curItem.first);
-						declarationKeysSorted.erase(declarationKeysSorted.begin() + i);
+						declarationKeys.erase(declarationKeys.begin() + i);
 						i--;
 						continue;
 					}
@@ -945,16 +948,12 @@ string ZFile::ProcessDeclarations()
 	}
 
 	for (pair<uint32_t, Declaration*> item : declarations)
-	{
 		ProcessDeclarationText(item.second);
-	}
 
 	for (pair<int32_t, Declaration*> item : declarations)
 	{
 		while (item.second->size % 4 != 0)
-		{
 			item.second->size++;
-		}
 
 		if (lastAddr != 0)
 		{

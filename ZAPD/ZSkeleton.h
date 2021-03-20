@@ -26,6 +26,7 @@ public:
 	uint8_t dListCount;  // FLEX SKELETON ONLY
 
 	ZSkeleton(ZFile* nParent);
+	ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	~ZSkeleton();
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;

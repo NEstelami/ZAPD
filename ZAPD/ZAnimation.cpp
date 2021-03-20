@@ -233,8 +233,7 @@ std::string TransformData::GetSourceTypeName()
 	return "TransformData";
 }
 
-ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                                 int nRawDataIndex, ZFile* nParent)
+ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZAnimation(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -243,8 +242,7 @@ ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector
 	ParseXML(reader);
 	ParseRawData();
 
-	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData,
-	                     Seg2Filespace(skelOffset, parent->baseAddress), nParent);
+	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData, Seg2Filespace(skelOffset, parent->baseAddress), nParent);
 
 	size_t transformDataSize = 0;
 	size_t copyValuesSize = 0;
