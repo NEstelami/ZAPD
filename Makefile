@@ -1,11 +1,5 @@
 CC := g++
-
-ifneq (, $(shell which ccache))
-CC := ccache $(CC)
-endif
-
 CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic
-
 UNAME := $(shell uname)
 
 FS_INC =
@@ -29,15 +23,15 @@ copycheck: ZAPD.out
 
 clean:
 	rm -f $(O_FILES) ZAPD.out
-	rm -f lib/libgfxd/libgfxd.a
+	$(MAKE) -C lib/libgfxd clean
 
 rebuild: clean all
 
-%.o: %.cpp
+%.o: %.cpp genbuildinfo
 	$(CC) $(CFLAGS) -c $< -o $@
 
-libgfxd:
-	cd lib/libgfxd && $(MAKE) -j
+lib/libgfxd/libgfxd.a:
+	$(MAKE) -C lib/libgfxd -j
 
-ZAPD.out: libgfxd $(O_FILES)
+ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
 	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC)

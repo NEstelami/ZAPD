@@ -1,16 +1,17 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <cstdint>
-#include "ZFile.h"
+#include <string>
+#include <vector>
 #include "ZDisplayList.h"
+#include "ZFile.h"
 #include "ZLimb.h"
 
 enum class ZSkeletonType
 {
 	Normal,
-	Flex
+	Flex,
+	Curve,
 };
 
 class ZSkeleton : public ZResource
@@ -22,7 +23,7 @@ public:
 	ZLimb* rootLimb;
 	segptr_t limbsArrayAddress;
 	uint8_t limbCount;
-	uint8_t dListCount; // FLEX SKELETON ONLY
+	uint8_t dListCount;  // FLEX SKELETON ONLY
 
 	ZSkeleton(ZFile* nParent);
 	~ZSkeleton();
@@ -39,4 +40,5 @@ public:
 	ZResourceType GetResourceType() override;
 
 	segptr_t GetAddress();
+	uint8_t GetLimbCount();
 };

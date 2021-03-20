@@ -1,10 +1,10 @@
 #include "ZVector.h"
-#include "ZFile.h"
+#include <assert.h>
 #include "BitConverter.h"
-#include "StringHelper.h"
 #include "File.h"
 #include "Globals.h"
-#include <assert.h>
+#include "StringHelper.h"
+#include "ZFile.h"
 
 REGISTER_ZFILENODE(Vector, ZVector);
 
@@ -40,7 +40,7 @@ void ZVector::ParseRawData()
 
 	scalars.clear();
 
-	for (int i = 0; i < this->dimensions; i++) 
+	for (uint32_t i = 0; i < this->dimensions; i++)
 	{
 		ZScalar* scalar = new ZScalar(this->scalarType, this->parent);
 		scalar->rawDataIndex = currentRawDataIndex;
@@ -80,7 +80,9 @@ std::string ZVector::GetSourceTypeName()
 		return "Vec3i";
 	else
 	{
-		std::string output = StringHelper::Sprintf("Encountered unsupported vector type: %d dimensions, %s type", dimensions, ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
+		std::string output = StringHelper::Sprintf(
+			"Encountered unsupported vector type: %d dimensions, %s type", dimensions,
+			ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
 
 		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 			printf("%s\n", output.c_str());
@@ -102,7 +104,8 @@ std::string ZVector::GetSourceValue()
 std::string ZVector::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), GetName(), GetSourceValue());
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		                       GetSourceTypeName(), GetName(), GetSourceValue());
 
 	return "";
 }

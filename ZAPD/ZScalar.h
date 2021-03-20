@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include "ZResource.h"
 #include "tinyxml2.h"
 
@@ -37,7 +37,8 @@ typedef union ZScalarData
 
 class ZScalar : public ZResource
 {
-friend class ZVector;
+	friend class ZVector;
+
 public:
 	ZScalarData scalarData;
 	ZScalarType scalarType;

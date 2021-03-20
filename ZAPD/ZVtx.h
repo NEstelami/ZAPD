@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include "ZResource.h"
 #include "ZScalar.h"
 #include "tinyxml2.h"
@@ -17,11 +17,11 @@ public:
 
 	ZVtx(ZFile* nParent);
 
-	void ParseXML(tinyxml2::XMLElement* reader);
+	void ParseXML(tinyxml2::XMLElement* reader) override;
 	std::string GetSourceTypeName() override;
-	std::string GetSourceOutputCode(const std::string& prefix);
+	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void ParseRawData() override;
-	int GetRawDataSize();
+	int GetRawDataSize() override;
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType();
 	bool IsExternalResource() override;

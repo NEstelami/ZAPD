@@ -1,7 +1,7 @@
 #include "ZVtx.h"
-#include "ZFile.h"
-#include "StringHelper.h"
 #include "BitConverter.h"
+#include "StringHelper.h"
+#include "ZFile.h"
 
 REGISTER_ZFILENODE(Vtx, ZVtx);
 
@@ -30,7 +30,8 @@ std::string ZVtx::GetSourceTypeName()
 
 std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string output = StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b, a);
+	std::string output =
+		StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b, a);
 
 	if (parent != nullptr)
 	{
@@ -38,7 +39,7 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 		decl->isExternal = true;
 	}
 
-    return "";
+	return "";
 }
 
 void ZVtx::ParseRawData()
@@ -59,17 +60,17 @@ void ZVtx::ParseRawData()
 
 int ZVtx::GetRawDataSize()
 {
-    return 16;
+	return 16;
 }
 
 bool ZVtx::DoesSupportArray()
 {
-    return true;
+	return true;
 }
 
 ZResourceType ZVtx::GetResourceType()
 {
-    return ZResourceType::Vertex;
+	return ZResourceType::Vertex;
 }
 
 bool ZVtx::IsExternalResource()

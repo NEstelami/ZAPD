@@ -1,9 +1,9 @@
 #include "ZBlob.h"
-#include "File.h"
-#include "ZFile.h"
 #include "BitConverter.h"
+#include "File.h"
 #include "Path.h"
 #include "StringHelper.h"
+#include "ZFile.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -12,13 +12,13 @@ REGISTER_ZFILENODE(Blob, ZBlob);
 
 ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 {
-
 }
 
 ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, std::string nName, ZFile* nParent) : ZBlob(nParent)
 {
 	rawDataIndex = nRawDataIndex;
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
+	rawData =
+		vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
 	name = std::move(nName);
 }
 
@@ -59,7 +59,7 @@ string ZBlob::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
-	for (int i = 0; i < rawData.size(); i += 1)
+	for (uint32_t i = 0; i < rawData.size(); i += 1)
 	{
 		if (i % 16 == 0)
 			sourceOutput += "    ";
@@ -80,7 +80,7 @@ string ZBlob::GetSourceOutputHeader(const std::string& prefix)
 
 void ZBlob::Save(const std::string& outFolder)
 {
-	//printf("NAME = %s\n", name.c_str());
+	// printf("NAME = %s\n", name.c_str());
 	File::WriteAllBytes(outFolder + "/" + name + ".bin", rawData);
 }
 

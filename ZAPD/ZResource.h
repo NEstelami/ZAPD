@@ -1,10 +1,10 @@
 #pragma once
 
 #include <map>
-#include <string>
-#include <vector>
 #include <stdexcept>
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include "tinyxml2.h"
 
 #define SEGMENT_SCENE 2
@@ -138,9 +138,9 @@ public:
 	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType, std::string nVarName);
 
 protected:
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	            std::string nText);
 };
-
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
 

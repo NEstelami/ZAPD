@@ -30,12 +30,12 @@ void ZSymbol::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uin
     rawData = nRawData;
     rawDataIndex = nRawDataIndex;
 
-    ParseXML(reader);
+	ParseXML(reader);
 }
 
 void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 {
-    ZResource::ParseXML(reader);
+	ZResource::ParseXML(reader);
 
     const char* typeXml = reader->Attribute("Type");
 
@@ -93,11 +93,10 @@ std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
 
 std::string ZSymbol::GetSourceTypeName()
 {
-    return type;
+	return type;
 }
 
 ZResourceType ZSymbol::GetResourceType()
 {
-    return ZResourceType::Symbol;
+	return ZResourceType::Symbol;
 }
-

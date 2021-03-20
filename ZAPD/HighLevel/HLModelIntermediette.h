@@ -1,10 +1,10 @@
 #pragma once
 
+#include <assimp/scene.h>
 #include <stdint.h>
-#include <vector>
 #include <string>
-#include "HLTexture.h"
-#include "HLFileIntermediette.h"
+#include <tinyxml2.h>
+#include <vector>
 #include "../ZDisplayList.h"
 #include "../ZSkeleton.h"
 #include <tinyxml2.h>
@@ -59,8 +59,8 @@ public:
 	bool startsWithClearGeometryMode;
 	bool lerpBeforeTextureBlock;
 
-	int startIndex;
-	int meshStartIndex;
+	uint32_t startIndex;
+	uint32_t meshStartIndex;
 
 	HLModelIntermediette();
 	~HLModelIntermediette();
@@ -127,10 +127,10 @@ class HLMaterialIntermediette : public HLIntermediette
 {
 public:
 	std::string textureName;
-	//int32_t repeatH, repeatV;
+	// int32_t repeatH, repeatV;
 	uint8_t clrR, clrG, clrB, clrA, clrM, clrL;
-	//bool clampH, clampV;
-	//bool mirrorH, mirrorV;
+	// bool clampH, clampV;
+	// bool mirrorH, mirrorV;
 	HLMaterialCmt cmtH, cmtV;
 
 	// TODO: Remember to add lerp params here...
@@ -159,7 +159,7 @@ public:
 	std::vector<Vertex> vertices;
 
 	HLVerticesIntermediette();
-	
+
 	virtual void InitFromXML(tinyxml2::XMLElement* verticesElement);
 	void InitFromVertices(std::vector<Vertex> dispListVertices);
 	virtual std::string OutputCode(HLModelIntermediette* parent);
@@ -188,7 +188,8 @@ public:
 	int32_t v0, v1, v2, flag0, v10, v11, v12, flag1;
 
 	HLMeshCmdTriangle2();
-	HLMeshCmdTriangle2(int32_t nV0, int32_t nV1, int32_t nV2, int32_t nFlag0, int32_t nV10, int32_t nV11, int32_t nV12, int32_t nFlag1);
+	HLMeshCmdTriangle2(int32_t nV0, int32_t nV1, int32_t nV2, int32_t nFlag0, int32_t nV10,
+	                   int32_t nV11, int32_t nV12, int32_t nFlag1);
 
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
 	virtual std::string OutputCode(HLModelIntermediette* parent);

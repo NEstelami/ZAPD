@@ -6,10 +6,10 @@
 class ZSymbol : public ZResource
 {
 protected:
-    std::string type;
-    uint32_t typeSize;
-    bool isArray = false;
-    uint32_t count = 0;
+	std::string type;
+	uint32_t typeSize;
+	bool isArray = false;
+	uint32_t count = 0;
 
 public:
     ZSymbol(ZFile* nParent);
@@ -18,12 +18,12 @@ public:
 
     void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
 
-    void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseXML(tinyxml2::XMLElement* reader) override;
 
-    int GetRawDataSize() override;
+	int GetRawDataSize() override;
 
-    std::string GetSourceOutputHeader(const std::string& prefix) override;
+	std::string GetSourceOutputHeader(const std::string& prefix) override;
 
-    std::string GetSourceTypeName() override;
-    ZResourceType GetResourceType() override;
+	std::string GetSourceTypeName() override;
+	ZResourceType GetResourceType() override;
 };

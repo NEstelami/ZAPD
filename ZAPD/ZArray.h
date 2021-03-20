@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include "ZResource.h"
 #include "tinyxml2.h"
 
@@ -21,5 +21,5 @@ protected:
 	int arrayCnt;
 	ZFile* testFile;
 
-	//void ParseRawData(const std::vector<uint8_t>& data, const int offset);
+	// void ParseRawData(const std::vector<uint8_t>& data, const int offset);
 };

@@ -1,40 +1,40 @@
+#include "ZRoom.h"
+#include <Path.h>
 #include <algorithm>
 #include <chrono>
-#include "ZRoom.h"
-#include "ZFile.h"
-#include "ZCutscene.h"
-#include "../ZBlob.h"
-#include "ObjectList.h"
 #include "../File.h"
-#include "../StringHelper.h"
 #include "../Globals.h"
-#include "Commands/SetRoomList.h"
-#include "Commands/SetEchoSettings.h"
-#include "Commands/SetSoundSettings.h"
-#include "Commands/SetWind.h"
-#include "Commands/SetTimeSettings.h"
-#include "Commands/SetSpecialObjects.h"
-#include "Commands/SetSkyboxSettings.h"
-#include "Commands/SetSkyboxModifier.h"
-#include "Commands/SetRoomBehavior.h"
-#include "Commands/SetCameraSettings.h"
-#include "Commands/SetStartPositionList.h"
+#include "../StringHelper.h"
+#include "../ZBlob.h"
+#include "Commands/EndMarker.h"
 #include "Commands/SetActorList.h"
-#include "Commands/SetTransitionActorList.h"
+#include "Commands/SetAlternateHeaders.h"
+#include "Commands/SetCameraSettings.h"
+#include "Commands/SetCollisionHeader.h"
+#include "Commands/SetCutscenes.h"
+#include "Commands/SetEchoSettings.h"
 #include "Commands/SetEntranceList.h"
 #include "Commands/SetExitList.h"
-#include "Commands/SetAlternateHeaders.h"
-#include "Commands/SetCollisionHeader.h"
-#include "Commands/SetObjectList.h"
-#include "Commands/SetMesh.h"
-#include "Commands/SetLightingSettings.h"
-#include "Commands/SetPathways.h"
-#include "Commands/Unused09.h"
-#include "Commands/SetCutscenes.h"
-#include "Commands/EndMarker.h"
 #include "Commands/SetLightList.h"
+#include "Commands/SetLightingSettings.h"
+#include "Commands/SetMesh.h"
+#include "Commands/SetObjectList.h"
+#include "Commands/SetPathways.h"
+#include "Commands/SetRoomBehavior.h"
+#include "Commands/SetRoomList.h"
+#include "Commands/SetSkyboxModifier.h"
+#include "Commands/SetSkyboxSettings.h"
+#include "Commands/SetSoundSettings.h"
+#include "Commands/SetSpecialObjects.h"
+#include "Commands/SetStartPositionList.h"
+#include "Commands/SetTimeSettings.h"
+#include "Commands/SetTransitionActorList.h"
+#include "Commands/SetWind.h"
+#include "Commands/Unused09.h"
 #include "Commands/ZRoomCommandUnk.h"
-#include <Path.h>
+#include "ObjectList.h"
+#include "ZCutscene.h"
+#include "ZFile.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -82,7 +82,8 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		cmdCount = 0;
 	}
 
-	for (XMLElement* child = reader->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
+	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
+	     child = child->NextSiblingElement())
 	{
 		string childName = child->Attribute("Name") == NULL ? "" : string(child->Attribute("Name"));
 		string childComment = child->Attribute("Comment") == NULL ? "" : "// " + string(child->Attribute("Comment")) + "\n";
@@ -203,32 +204,83 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 		switch (opcode)
 		{
-		case RoomCommand::SetStartPositionList: cmd = new SetStartPositionList(this, rawData, rawDataIndex); break; // 0x00
-		case RoomCommand::SetActorList: cmd = new SetActorList(this, rawData, rawDataIndex); break; // 0x01
-		case RoomCommand::SetCollisionHeader: cmd = new SetCollisionHeader(this, rawData, rawDataIndex); break; // 0x03
-		case RoomCommand::SetRoomList: cmd = new SetRoomList(this, rawData, rawDataIndex); break; // 0x04
-		case RoomCommand::SetWind: cmd = new SetWind(this, rawData, rawDataIndex); break; // 0x05
-		case RoomCommand::SetEntranceList: cmd = new SetEntranceList(this, rawData, rawDataIndex); break; // 0x06
-		case RoomCommand::SetSpecialObjects: cmd = new SetSpecialObjects(this, rawData, rawDataIndex); break; // 0x07
-		case RoomCommand::SetRoomBehavior: cmd = new SetRoomBehavior(this, rawData, rawDataIndex); break; // 0x08
-		case RoomCommand::Unused09: cmd = new Unused09(this, rawData, rawDataIndex); break; // 0x09
-		case RoomCommand::SetMesh: cmd = new SetMesh(this, rawData, rawDataIndex, 0); break; // 0x0A
-		case RoomCommand::SetObjectList: cmd = new SetObjectList(this, rawData, rawDataIndex); break; // 0x0B
-		case RoomCommand::SetLightList: cmd = new SetLightList(this, rawData, rawDataIndex); break; // 0x0C (MM-ONLY)
-		case RoomCommand::SetPathways: cmd = new SetPathways(this, rawData, rawDataIndex); break; // 0x0D
-		case RoomCommand::SetTransitionActorList: cmd = new SetTransitionActorList(this, rawData, rawDataIndex); break; // 0x0E
-		case RoomCommand::SetLightingSettings: cmd = new SetLightingSettings(this, rawData, rawDataIndex); break; // 0x0F
-		case RoomCommand::SetTimeSettings: cmd = new SetTimeSettings(this, rawData, rawDataIndex); break; // 0x10
-		case RoomCommand::SetSkyboxSettings: cmd = new SetSkyboxSettings(this, rawData, rawDataIndex); break; // 0x11
-		case RoomCommand::SetSkyboxModifier: cmd = new SetSkyboxModifier(this, rawData, rawDataIndex); break; // 0x12
-		case RoomCommand::SetExitList: cmd = new SetExitList(this, rawData, rawDataIndex); break; // 0x13
-		case RoomCommand::EndMarker: cmd = new EndMarker(this, rawData, rawDataIndex); break; // 0x14
-		case RoomCommand::SetSoundSettings: cmd = new SetSoundSettings(this, rawData, rawDataIndex); break; // 0x15
-		case RoomCommand::SetEchoSettings: cmd = new SetEchoSettings(this, rawData, rawDataIndex); break; // 0x16
-		case RoomCommand::SetCutscenes: cmd = new SetCutscenes(this, rawData, rawDataIndex); break; // 0x17
-		case RoomCommand::SetAlternateHeaders: cmd = new SetAlternateHeaders(this, rawData, rawDataIndex); break; // 0x18
-		case RoomCommand::SetCameraSettings: cmd = new SetCameraSettings(this, rawData, rawDataIndex); break; // 0x19
-		default: cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
+		case RoomCommand::SetStartPositionList:
+			cmd = new SetStartPositionList(this, rawData, rawDataIndex);
+			break;  // 0x00
+		case RoomCommand::SetActorList:
+			cmd = new SetActorList(this, rawData, rawDataIndex);
+			break;  // 0x01
+		case RoomCommand::SetCollisionHeader:
+			cmd = new SetCollisionHeader(this, rawData, rawDataIndex);
+			break;  // 0x03
+		case RoomCommand::SetRoomList:
+			cmd = new SetRoomList(this, rawData, rawDataIndex);
+			break;  // 0x04
+		case RoomCommand::SetWind:
+			cmd = new SetWind(this, rawData, rawDataIndex);
+			break;  // 0x05
+		case RoomCommand::SetEntranceList:
+			cmd = new SetEntranceList(this, rawData, rawDataIndex);
+			break;  // 0x06
+		case RoomCommand::SetSpecialObjects:
+			cmd = new SetSpecialObjects(this, rawData, rawDataIndex);
+			break;  // 0x07
+		case RoomCommand::SetRoomBehavior:
+			cmd = new SetRoomBehavior(this, rawData, rawDataIndex);
+			break;  // 0x08
+		case RoomCommand::Unused09:
+			cmd = new Unused09(this, rawData, rawDataIndex);
+			break;  // 0x09
+		case RoomCommand::SetMesh:
+			cmd = new SetMesh(this, rawData, rawDataIndex, 0);
+			break;  // 0x0A
+		case RoomCommand::SetObjectList:
+			cmd = new SetObjectList(this, rawData, rawDataIndex);
+			break;  // 0x0B
+		case RoomCommand::SetLightList:
+			cmd = new SetLightList(this, rawData, rawDataIndex);
+			break;  // 0x0C (MM-ONLY)
+		case RoomCommand::SetPathways:
+			cmd = new SetPathways(this, rawData, rawDataIndex);
+			break;  // 0x0D
+		case RoomCommand::SetTransitionActorList:
+			cmd = new SetTransitionActorList(this, rawData, rawDataIndex);
+			break;  // 0x0E
+		case RoomCommand::SetLightingSettings:
+			cmd = new SetLightingSettings(this, rawData, rawDataIndex);
+			break;  // 0x0F
+		case RoomCommand::SetTimeSettings:
+			cmd = new SetTimeSettings(this, rawData, rawDataIndex);
+			break;  // 0x10
+		case RoomCommand::SetSkyboxSettings:
+			cmd = new SetSkyboxSettings(this, rawData, rawDataIndex);
+			break;  // 0x11
+		case RoomCommand::SetSkyboxModifier:
+			cmd = new SetSkyboxModifier(this, rawData, rawDataIndex);
+			break;  // 0x12
+		case RoomCommand::SetExitList:
+			cmd = new SetExitList(this, rawData, rawDataIndex);
+			break;  // 0x13
+		case RoomCommand::EndMarker:
+			cmd = new EndMarker(this, rawData, rawDataIndex);
+			break;  // 0x14
+		case RoomCommand::SetSoundSettings:
+			cmd = new SetSoundSettings(this, rawData, rawDataIndex);
+			break;  // 0x15
+		case RoomCommand::SetEchoSettings:
+			cmd = new SetEchoSettings(this, rawData, rawDataIndex);
+			break;  // 0x16
+		case RoomCommand::SetCutscenes:
+			cmd = new SetCutscenes(this, rawData, rawDataIndex);
+			break;  // 0x17
+		case RoomCommand::SetAlternateHeaders:
+			cmd = new SetAlternateHeaders(this, rawData, rawDataIndex);
+			break;  // 0x18
+		case RoomCommand::SetCameraSettings:
+			cmd = new SetCameraSettings(this, rawData, rawDataIndex);
+			break;  // 0x19
+		default:
+			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
 		}
 
 		auto end = chrono::steady_clock::now();
@@ -240,7 +292,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
 
-		//printf("OP: %s\n", cmd->GetCommandCName().c_str());
+		// printf("OP: %s\n", cmd->GetCommandCName().c_str());
 
 		cmd->cmdIndex = currentIndex;
 		cmd->cmdSet = rawDataIndex;
@@ -267,16 +319,18 @@ void ZRoom::ProcessCommandSets()
 		ParseCommands(setCommands, commandSets[0]);
 		commandSets.erase(commandSets.begin());
 
-		for (int i = 0; i < setCommands.size(); i++)
+		for (size_t i = 0; i < setCommands.size(); i++)
 		{
 			ZRoomCommand* cmd = setCommands[i];
 			cmd->commandSet = commandSet & 0x00FFFFFF;
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
-			Declaration* decl = parent->AddDeclaration(cmd->cmdAddress, 
-				i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8, 
+			Declaration* decl = parent->AddDeclaration(
+				cmd->cmdAddress,
+				i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8,
 				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
-				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
+				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF,
+			                          cmd->cmdIndex, cmd->cmdID),
 				StringHelper::Sprintf("%s", pass1.c_str()));
 
 			decl->rightText = StringHelper::Sprintf("// 0x%04X", cmd->cmdAddress);
@@ -291,32 +345,32 @@ void ZRoom::ProcessCommandSets()
 	for (ZRoomCommand* cmd : commands)
 	{
 		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
-		if (pass2 != "") {
-			parent->AddDeclaration(cmd->cmdAddress, DeclarationAlignment::None, 8, 
-				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()), 
-				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex), 
+
+		if (pass2 != "")
+			parent->AddDeclaration(
+				cmd->cmdAddress, DeclarationAlignment::None, 8,
+				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
+				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
+			                          cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
 				StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
-		}
 	}
 }
 
 /*
- * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates back to very early in the game's development.
- * Since this room is a special case, this hack adds back a header so that the room can be processed properly.
+ * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates back to very
+ * early in the game's development. Since this room is a special case, this hack adds back a header
+ * so that the room can be processed properly.
  */
 void ZRoom::SyotesRoomHack()
 {
-	char headerData[] =
-	{
-		0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08
-	};
+	char headerData[] = {0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08};
 
-	for (int i = 0; i < sizeof(headerData); i++)
+	for (size_t i = 0; i < sizeof(headerData); i++)
 		rawData.insert(rawData.begin() + i, headerData[i]);
 
 	SetMesh* cmdSetMesh = new SetMesh(this, rawData, 0, -8);
 
-	for (int i = 0; i < sizeof(headerData); i++)
+	for (size_t i = 0; i < sizeof(headerData); i++)
 		rawData.erase(rawData.begin());
 
 	cmdSetMesh->cmdIndex = 0;
@@ -327,7 +381,7 @@ void ZRoom::SyotesRoomHack()
 
 ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 {
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		if (commands[i]->cmdID == cmdType)
 			return commands[i];
@@ -338,15 +392,17 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 
 size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 {
-	int declarationIndex = -1;
+	size_t declarationIndex = -1;
 
 	// Copy it into a vector.
-	vector<pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(), parent->declarations.end());
+	vector<pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(),
+	                                                          parent->declarations.end());
 
 	// Sort the vector according to the word count in descending order.
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
+	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(),
+	     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
-	for (int i = 0; i < declarationKeysSorted.size(); i++)
+	for (size_t i = 0; i < declarationKeysSorted.size(); i++)
 	{
 		if (declarationKeysSorted[i].first == declarationAddress)
 		{
@@ -355,10 +411,11 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 		}
 	}
 
-	if (declarationIndex != -1)
+	if ((int)declarationIndex != -1)
 	{
 		if (declarationIndex + 1 < declarationKeysSorted.size())
-			return declarationKeysSorted[declarationIndex + 1].first - declarationKeysSorted[declarationIndex].first;
+			return declarationKeysSorted[declarationIndex + 1].first -
+				   declarationKeysSorted[declarationIndex].first;
 		else
 			return rawData.size() - declarationKeysSorted[declarationIndex].first;
 	}
@@ -368,9 +425,9 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 
 size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 {
-	int cmdIndex = -1;
+	size_t cmdIndex = -1;
 
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		if (commands[i] == cmd)
 		{
@@ -379,7 +436,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		}
 	}
 
-	if (cmdIndex != -1)
+	if ((int)cmdIndex != -1)
 	{
 		if (cmdIndex + 1 < commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
@@ -417,7 +474,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	if (scene != nullptr)
 		sourceOutput += scene->parent->GetHeaderInclude();
 
-	//sourceOutput += "\n";
+	// sourceOutput += "\n";
 
 	ProcessCommandSets();
 
@@ -428,21 +485,22 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		{
 			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
 
-			sort(texturesSorted.begin(), texturesSorted.end(), [](const auto& lhs, const auto& rhs)
-			{
-				return lhs.first < rhs.first;
-			});
+			sort(texturesSorted.begin(), texturesSorted.end(),
+			     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
-			for (int i = 0; i < texturesSorted.size() - 1; i++)
+			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
 			{
 				int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
 
 				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 				{
-					int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i + 1].first;
+					// int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
+					// 1].first;
 
-					defines += StringHelper::Sprintf("#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(), texturesSorted[i + 1].first, prefix.c_str(),
-						texturesSorted[i].first, texturesSorted[i + 1].first - texturesSorted[i].first);
+					defines += StringHelper::Sprintf(
+						"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
+						texturesSorted[i + 1].first, prefix.c_str(), texturesSorted[i].first,
+						texturesSorted[i + 1].first - texturesSorted[i].first);
 
 					parent->declarations.erase(texturesSorted[i + 1].first);
 					textures.erase(texturesSorted[i + 1].first);
@@ -467,12 +525,16 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 		item.second->Save(Globals::Instance->outputPath);
 
-		parent->AddDeclarationIncludeArray(item.first, StringHelper::Sprintf("%s/%s.%s.inc.c",
-			Globals::Instance->outputPath.c_str(), Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(), item.second->GetExternalExtension().c_str()), item.second->GetRawDataSize(),
-			"u64", StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
+		parent->AddDeclarationIncludeArray(
+			item.first,
+			StringHelper::Sprintf("%s/%s.%s.inc.c", Globals::Instance->outputPath.c_str(),
+		                          Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
+		                          item.second->GetExternalExtension().c_str()),
+			item.second->GetRawDataSize(), "u64",
+			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
 	}
 
-	//sourceOutput += "\n";
+	// sourceOutput += "\n";
 
 	return sourceOutput;
 }
@@ -509,7 +571,8 @@ void ZRoom::PreGenSourceFiles()
 		cmd->PreGenSourceFiles();
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
+                         uint32_t nSize, string nText)
 {
 	alignment = nAlignment;
 	padding = nPadding;
@@ -529,21 +592,28 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	references = vector<uint32_t>();
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, string nText) : Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType,
+                         string nVarName, bool nIsArray, string nText)
+	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
 	varName = nVarName;
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, string nText) : Declaration(nAlignment, nPadding, nSize, nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
+                         uint32_t nSize, string nVarType, string nVarName, bool nIsArray,
+                         string nText)
+	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
 	varName = nVarName;
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, int nArrayItemCnt, string nText) : Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType,
+                         string nVarName, bool nIsArray, int nArrayItemCnt, string nText)
+	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
 	varName = nVarName;
@@ -564,7 +634,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(std::string nIncludePath, uint32_t nSize, string nVarType, string nVarName) : Declaration(DeclarationAlignment::None, DeclarationPadding::None, nSize, "")
+Declaration::Declaration(std::string nIncludePath, uint32_t nSize, string nVarType, string nVarName)
+	: Declaration(DeclarationAlignment::None, DeclarationPadding::None, nSize, "")
 {
 	includePath = nIncludePath;
 	varType = nVarType;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ZResource.h"
 #include "HighLevel/HLTexture.h"
+#include "ZResource.h"
 #include "tinyxml2.h"
 
 #include <vector>

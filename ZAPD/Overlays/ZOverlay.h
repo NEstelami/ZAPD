@@ -1,7 +1,8 @@
 #pragma once
 
-#include <tinyxml2.h>
 #include <elfio/elfio.hpp>
+#include <tinyxml2.h>
+#include "../ZResource.h"
 
 enum SectionType
 {
@@ -62,5 +63,5 @@ private:
 	ZOverlay();
 
 	static SectionType GetSectionTypeFromStr(std::string sectionName);
-	//static std::string GetOverlayNameFromElf(ELFIO::elfio& reader);
+	// static std::string GetOverlayNameFromElf(ELFIO::elfio& reader);
 };

@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include "ZFile.h"
-#include "ZTexture.h"
 #include "ZRoom/ZRoom.h"
+#include "ZTexture.h"
 
 enum VerbosityLevel 
 {
@@ -21,7 +21,7 @@ class Globals
 public:
 	static Globals* Instance;
 
-	bool genSourceFile; // Used for extraction
+	bool genSourceFile;  // Used for extraction
 	bool useExternalResources;
 	bool testMode; // Enables certain experimental features
 	bool profile; // Measure performance of certain operations
@@ -63,11 +63,11 @@ public:
 	GameConfig();
 
 private:
-
 };
 
 /*
- * Note: In being able to track references across files, there are a few major files that make use of segments...
+ * Note: In being able to track references across files, there are a few major files that make use
+ * of segments...
  * Segment 1: nintendo_rogo_static/title_static
  * Segment 2: parameter_static
  * Segment 4: gameplay_keep

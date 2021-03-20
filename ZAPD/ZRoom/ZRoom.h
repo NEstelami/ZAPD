@@ -1,13 +1,13 @@
 #pragma once
 
+#include <tinyxml2.h>
 #include "../ZResource.h"
 #include "ZRoomCommand.h"
 #include "ZTexture.h"
-#include <tinyxml2.h>
 
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 
 class ZRoom : public ZResource
 {
@@ -44,7 +44,7 @@ public:
 struct CommandSet
 {
 	int32_t address;
-	int32_t commandCount; // Only used if explicitly specified in the XML
+	int32_t commandCount;  // Only used if explicitly specified in the XML
 
 	CommandSet(int32_t nAddress);
 	CommandSet(int32_t nAddress, int32_t nCommandCount);
