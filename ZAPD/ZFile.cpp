@@ -1031,11 +1031,11 @@ string ZFile::ProcessDeclarations()
 
 void ZFile::ProcessDeclarationText(Declaration* decl)
 {
-	int refIndex = 0;
+	size_t refIndex = 0;
 
 	if (decl->references.size() > 0)
 	{
-		for (int i = 0; i < decl->text.size() - 1; i++)
+		for (size_t i = 0; i < decl->text.size() - 1; i++)
 		{
 			char c = decl->text[i];
 			char c2 = decl->text[i + 1];

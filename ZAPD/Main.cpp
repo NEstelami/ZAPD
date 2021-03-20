@@ -41,7 +41,7 @@ void ErrorHandler(int sig)
 	size = backtrace(array, 4096);
 	symbols = backtrace_symbols(array, 4096);
 
-	for (int i = 1; i < size; i++)
+	for (size_t i = 1; i < size; i++)
 	{
 		//size_t len = strlen(symbols[i]);
 		cout << symbols[i] << "\n";

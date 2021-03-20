@@ -59,7 +59,7 @@ void ZVector::ParseRawData()
 int ZVector::GetRawDataSize()
 {
 	int size = 0;
-	for (int i = 0; i < this->scalars.size(); i++)
+	for (size_t i = 0; i < this->scalars.size(); i++)
 		size += this->scalars[i]->GetRawDataSize();
 	return size;
 }
@@ -97,7 +97,7 @@ std::string ZVector::GetSourceTypeName()
 std::string ZVector::GetSourceValue()
 {
 	std::vector<std::string> strings = std::vector<std::string>();
-	for (int i = 0; i < this->scalars.size(); i++)
+	for (size_t i = 0; i < this->scalars.size(); i++)
 		strings.push_back(scalars[i]->GetSourceValue());
 	return "{ " + StringHelper::Implode(strings, ", ") + " }";
 }

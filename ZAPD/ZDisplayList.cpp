@@ -452,7 +452,7 @@ bool ZDisplayList::SequenceCheck(vector<F3DZEXOpcode> sequence, int startIndex)
 {
 	bool success = true;
 
-	for (int j = 0; j < sequence.size(); j++)
+	for (size_t j = 0; j < sequence.size(); j++)
 	{
 		F3DZEXOpcode opcode = (F3DZEXOpcode)(instructions[startIndex + j] >> 56);
 
@@ -1645,7 +1645,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
 	OutputFormatter outputformatter;
 	string sourceOutput = "";
-	int dListSize = instructions.size() * sizeof(instructions[0]);
+	size_t dListSize = instructions.size() * sizeof(instructions[0]);
 
 	gfxd_input_buffer(instructions.data(), dListSize);
 	gfxd_endian(gfxd_endian_little, sizeof(uint64_t)); // tell gfxdis what format the data is
@@ -1682,17 +1682,17 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				return lhs.first < rhs.first;
 			});
 
-		for (int i = 0; i < verticesSorted.size() - 1; i++)
+		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
 			//int vtxSize = verticesSorted[i].second.size() * 16;
-			int vtxSize = (int)vertices[verticesSorted[i].first].size() * 16;
+			size_t vtxSize = vertices[verticesSorted[i].first].size() * 16;
 
-			if ((verticesSorted[i].first + vtxSize) > verticesSorted[i + 1].first)
+			if ((verticesSorted[i].first + (int)vtxSize) > verticesSorted[i + 1].first)
 			{
 				int intersectAmt = (verticesSorted[i].first + vtxSize) - verticesSorted[i + 1].first;
 				int intersectIndex = intersectAmt / 16;
 
-				for (int j = intersectIndex; j < verticesSorted[i + 1].second.size(); j++)
+				for (size_t j = intersectIndex; j < verticesSorted[i + 1].second.size(); j++)
 				{
 					vertices[verticesSorted[i].first].push_back(verticesSorted[i + 1].second[j]);
 				}
@@ -1750,7 +1750,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					return lhs.first < rhs.first;
 				});
 
-			for (int i = 0; i < texturesSorted.size() - 1; i++)
+			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
 			{
 				int texSize = scene->textures[texturesSorted[i].first]->GetRawDataSize();
 
@@ -1780,7 +1780,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					return lhs.first < rhs.first;
 				});
 
-			for (int i = 0; i < texturesSorted.size() - 1; i++)
+			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
 			{
 				if (texturesSorted.size() == 0) // ?????
 					break;

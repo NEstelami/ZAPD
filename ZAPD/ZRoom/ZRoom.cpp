@@ -306,7 +306,7 @@ void ZRoom::ProcessCommandSets()
 		ParseCommands(setCommands, commandSets[0]);
 		commandSets.erase(commandSets.begin());
 
-		for (int i = 0; i < setCommands.size(); i++)
+		for (size_t i = 0; i < setCommands.size(); i++)
 		{
 			ZRoomCommand* cmd = setCommands[i];
 			cmd->commandSet = commandSet & 0x00FFFFFF;
@@ -348,12 +348,12 @@ void ZRoom::SyotesRoomHack()
 		0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08
 	};
 
-	for (uint32_t i = 0; i < sizeof(headerData); i++)
+	for (size_t i = 0; i < sizeof(headerData); i++)
 		rawData.insert(rawData.begin() + i, headerData[i]);
 
 	SetMesh* cmdSetMesh = new SetMesh(this, rawData, 0, -8);
 
-	for (uint32_t i = 0; i < sizeof(headerData); i++)
+	for (size_t i = 0; i < sizeof(headerData); i++)
 		rawData.erase(rawData.begin());
 
 	cmdSetMesh->cmdIndex = 0;
@@ -364,7 +364,7 @@ void ZRoom::SyotesRoomHack()
 
 ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 {
-	for (uint32_t i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		if (commands[i]->cmdID == cmdType)
 			return commands[i];
@@ -375,7 +375,7 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 
 size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 {
-	int declarationIndex = -1;
+	size_t declarationIndex = -1;
 
 	// Copy it into a vector.
 	vector<pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(), parent->declarations.end());
@@ -383,7 +383,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 	// Sort the vector according to the word count in descending order.
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
-	for (int i = 0; i < declarationKeysSorted.size(); i++)
+	for (size_t i = 0; i < declarationKeysSorted.size(); i++)
 	{
 		if (declarationKeysSorted[i].first == declarationAddress)
 		{
@@ -392,7 +392,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 		}
 	}
 
-	if (declarationIndex != -1)
+	if ((int)declarationIndex != -1)
 	{
 		if (declarationIndex + 1 < declarationKeysSorted.size())
 			return declarationKeysSorted[declarationIndex + 1].first - declarationKeysSorted[declarationIndex].first;
@@ -405,9 +405,9 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 
 size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 {
-	int cmdIndex = -1;
+	size_t cmdIndex = -1;
 
-	for (uint32_t i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		if (commands[i] == cmd)
 		{
@@ -416,7 +416,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		}
 	}
 
-	if (cmdIndex != -1)
+	if ((int)cmdIndex != -1)
 	{
 		if (cmdIndex + 1 < commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
@@ -471,7 +471,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 				return lhs.first < rhs.first;
 			});
 
-			for (int i = 0; i < texturesSorted.size() - 1; i++)
+			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
 			{
 				int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
 

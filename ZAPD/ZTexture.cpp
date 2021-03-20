@@ -157,7 +157,7 @@ void ZTexture::FixRawData()
 {
 	if (type == TextureType::RGBA32bpp)
 	{
-		for (int i = 0; i < rawData.size(); i += 4)
+		for (size_t i = 0; i < rawData.size(); i += 4)
 		{
 			uint8_t tmp = rawData[i];
 			rawData[i] = rawData[i + 2];
@@ -166,7 +166,7 @@ void ZTexture::FixRawData()
 	}
 	else if (type == TextureType::RGBA16bpp)// || type == TextureType::GrayscaleAlpha16bpp)
 	{
-		for (int i = 0; i < rawData.size(); i += 2)
+		for (size_t i = 0; i < rawData.size(); i += 2)
 		{
 			uint8_t tmp = rawData[i];
 			rawData[i] = rawData[i + 1];
@@ -713,7 +713,7 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 
 	uint8_t* rawDataArr = rawData.data();
 
-	for (int i = 0; i < rawData.size(); i += 8)
+	for (size_t i = 0; i < rawData.size(); i += 8)
 	{
 		if (i % 32 == 0)
 			sourceOutput += "\t";

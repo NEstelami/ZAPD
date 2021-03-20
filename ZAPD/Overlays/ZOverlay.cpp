@@ -44,7 +44,7 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 
 	// get the elf files
 	vector<elfio*> readers;
-	for (int i = 1; i < cfgLines.size(); i++)
+	for (size_t i = 1; i < cfgLines.size(); i++)
 	{
 		string elfPath = buildPath + "/" + cfgLines[i].substr(0, cfgLines[i].size()-2) + ".o";
 		elfio* reader = new elfio();
@@ -198,7 +198,7 @@ string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 
 	output += StringHelper::Sprintf(".word %i\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		RelocationEntry* reloc = entries[i];
 		output += StringHelper::Sprintf(".word 0x%08X\n", reloc->CalcRelocationWord());

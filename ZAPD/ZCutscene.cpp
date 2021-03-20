@@ -91,18 +91,18 @@ ZCutscene::~ZCutscene()
 string ZCutscene::GetSourceOutputCode(const std::string& prefix)
 {
 	string output = "";
-	int size = 0;
+	size_t size = 0;
 	int32_t curPtr = 0;
 
 	//output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
 	output += StringHelper::Sprintf("\tCS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
 		output += "\t" + cmd->GenerateSourceCode(prefix, curPtr);
 		curPtr += (uint32_t)cmd->GetCommandSize();
-		size += (int)cmd->GetCommandSize();
+		size += cmd->GetCommandSize();
 	}
 
 	output += StringHelper::Sprintf("\tCS_END(),\n", commands.size(), endFrame);
@@ -117,7 +117,7 @@ int ZCutscene::GetRawDataSize()
 	// Beginning
 	size += 8;
 
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
 		size += (int)cmd->GetCommandSize();
@@ -289,7 +289,7 @@ string CutsceneCommandSetCameraPos::GenerateSourceCode(const std::string& roomNa
 
 	result += StringHelper::Sprintf("%s(%i, %i),\n", listStr.c_str(), startFrame, endFrame);
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\t%s(%i, %i, %i, 0x%06X, %i, %i, %i, %i),\n", posStr.c_str(), entries[i]->continueFlag, entries[i]->cameraRoll, entries[i]->nextPointFrame,
 			*(uint32_t*)&entries[i]->viewAngle, entries[i]->posX, entries[i]->posY, entries[i]->posZ, entries[i]->unused);
@@ -345,7 +345,7 @@ string CutsceneCommandFadeBGM::GenerateSourceCode(const std::string& roomName, i
 
 	result += StringHelper::Sprintf("CS_FADE_BGM_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_FADE_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->unknown0, entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4, entries[i]->unknown5, entries[i]->unknown6, entries[i]->unknown7);
@@ -393,7 +393,7 @@ string CutsceneCommandPlayBGM::GenerateSourceCode(const std::string& roomName, i
 
 	result += StringHelper::Sprintf("CS_PLAY_BGM_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_PLAY_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->sequence, entries[i]->startFrame,
 			entries[i]->endFrame, entries[i]->unknown0, entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4, entries[i]->unknown5,
@@ -432,7 +432,7 @@ string CutsceneCommandStopBGM::GenerateSourceCode(const std::string& roomName, i
 
 	result += StringHelper::Sprintf("CS_STOP_BGM_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_STOP_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->sequence, entries[i]->startFrame,
 			entries[i]->endFrame, entries[i]->unknown0, entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4, entries[i]->unknown5,
@@ -486,7 +486,7 @@ string CutsceneCommandEnvLighting::GenerateSourceCode(const std::string& roomNam
 
 	result += StringHelper::Sprintf("CS_LIGHTING_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_LIGHTING(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->setting, entries[i]->startFrame,
 			entries[i]->endFrame, entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4, entries[i]->unused5,
@@ -537,7 +537,7 @@ string CutsceneCommandUnknown9::GenerateSourceCode(const std::string& roomName, 
 
 	result += StringHelper::Sprintf("CS_CMD_09_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_CMD_09(%i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->unk2,
 			entries[i]->unk3, entries[i]->unk4, entries[i]->unused0, entries[i]->unused1);
@@ -591,7 +591,7 @@ string CutsceneCommandUnknown::GenerateSourceCode(const std::string& roomName, i
 
 	result += StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%02X, %i),\n", commandID, entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_UNK_DATA(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->unused0, entries[i]->unused1, entries[i]->unused2,
 			entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
@@ -645,7 +645,7 @@ string CutsceneCommandDayTime::GenerateSourceCode(const std::string& roomName, i
 
 	result += StringHelper::Sprintf("CS_TIME_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_TIME(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->hour, entries[i]->minute, entries[i]->unused);
@@ -693,7 +693,7 @@ string CutsceneCommandTextbox::GenerateSourceCode(const std::string& roomName, i
 
 	result += StringHelper::Sprintf("CS_TEXT_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		if (entries[i]->base == 0xFFFF)
 		{
@@ -762,7 +762,7 @@ string CutsceneCommandActorAction::GenerateSourceCode(const std::string& roomNam
 		subCommand = "CS_NPC_ACTION";
 	}
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n",
 			subCommand.c_str(), entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
@@ -879,7 +879,7 @@ string CutsceneCommandSpecialAction::GenerateSourceCode(const std::string& roomN
 
 	result += StringHelper::Sprintf("CS_MISC_LIST(%i),\n", entries.size());
 
-	for (int i = 0; i < entries.size(); i++)
+	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
