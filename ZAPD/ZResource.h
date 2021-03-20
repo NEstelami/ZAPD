@@ -1,10 +1,10 @@
 #pragma once
 
 #include <map>
-#include <string>
-#include <vector>
 #include <stdexcept>
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include "tinyxml2.h"
 
 #define SEGMENT_SCENE 2
@@ -60,7 +60,7 @@ public:
 	std::string GetRelativePath();
 	virtual std::vector<uint8_t> GetRawData();
 	virtual bool IsExternalResource();
-	virtual bool DoesSupportArray(); // Can this type be wrapped in an <Array> node?
+	virtual bool DoesSupportArray();  // Can this type be wrapped in an <Array> node?
 	virtual std::string GetExternalExtension();
 	virtual int GetRawDataIndex();
 	virtual int GetRawDataSize();
@@ -118,15 +118,21 @@ public:
 	int arrayItemCnt;
 	std::vector<uint32_t> references;
 
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
-	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType, std::string nVarName);
+	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+	            std::string nVarName, bool nIsArray, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+	            std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt,
+	            std::string nText);
+	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType,
+	            std::string nVarName);
 
 protected:
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	            std::string nText);
 };
-
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
