@@ -15,6 +15,8 @@
 #include <execinfo.h>
 #include <signal.h>
 #include <unistd.h>
+#include <dlfcn.h>     // for dladdr
+#include <cxxabi.h>    // for __cxa_demangle
 #endif
 
 #include <string>
@@ -38,16 +40,48 @@ int NewMain(int argc, char* argv[]);
 void ErrorHandler(int sig)
 {
 	void* array[4096];
+	const int nMaxFrames = sizeof(array) / sizeof(array[0]);
+	char buf[1024];
 	char** symbols;
 	size_t size;
 	size = backtrace(array, 4096);
 	symbols = backtrace_symbols(array, 4096);
 
+	std::ostringstream trace_buf;
 	for (size_t i = 1; i < size; i++)
 	{
+		Dl_info info;
+		if (dladdr(array[i], &info)) {
+			char *demangled = NULL;
+			int status;
+			demangled = abi::__cxa_demangle(info.dli_sname, NULL, 0, &status);
+			/*snprintf(buf, sizeof(buf), "%-3d %*0p %s + %zd\n",
+					 i,
+					 2 + sizeof(void*) * 2, 
+					 array[i],
+					 status == 0 ? demangled : info.dli_sname,
+					 (char *)array[i] - (char *)info.dli_saddr);*/
+			printf("%i: %s\n", i, demangled);
+			printf("\t%0p\n", array[i]);
+			printf("\t%s\n", info.dli_sname);
+			printf("\t%zd\n", (char *)array[i] - (char *)info.dli_saddr);
+			free(demangled);
+		}
+		else {
+			snprintf(buf, sizeof(buf), "%-3d %*0p\n",
+					 i, 2 + sizeof(void*) * 2, array[i]);
+		}
+
+		trace_buf << buf;
+
+		snprintf(buf, sizeof(buf), "%s\n", symbols[i]);
+		trace_buf << buf;
+
 		// size_t len = strlen(symbols[i]);
-		cout << symbols[i] << "\n";
+		//cout << symbols[i] << "\n";
 	}
+
+	//cout << trace_buf.str() << "\n";
 
 	// cout << "Error: signal " << sig << ":\n";
 	backtrace_symbols_fd(array, size, STDERR_FILENO);
