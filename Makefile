@@ -16,7 +16,7 @@ O_FILES   := $(CPP_FILES:.cpp=.o)
 
 all: ZAPD.out
 
-genbuildinfo:
+ZAPD/BuildInfo.h:
 	python3 ZAPD/genbuildinfo.py
 
 clean:
@@ -25,7 +25,7 @@ clean:
 
 rebuild: clean all
 
-%.o: %.cpp genbuildinfo
+%.o: %.cpp ZAPD/BuildInfo.h
 	$(CC) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
 
 lib/libgfxd/libgfxd.a:
