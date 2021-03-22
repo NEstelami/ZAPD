@@ -1,6 +1,7 @@
 CC := g++
-CFLAGS := -g  -fpic -Wl,-export-dynamic -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O0 -rdynamic
-LDFLAGS := -ldl -export-dynamic
+INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
+CFLAGS := -g -g3 -fpic -Wl,-export-dynamic -std=c++17 -O2 -rdynamic
+LDFLAGS := -ldl
 UNAME := $(shell uname)
 
 FS_INC =
@@ -16,7 +17,7 @@ O_FILES   := $(CPP_FILES:.cpp=.o)
 
 all: ZAPD.out
 
-ZAPD/BuildInfo.h:
+genbuildinfo:
 	python3 ZAPD/genbuildinfo.py
 
 clean:
@@ -25,11 +26,11 @@ clean:
 
 rebuild: clean all
 
-%.o: %.cpp ZAPD/BuildInfo.h
-	$(CC) $(CFLAGS) -c $< -o $@ $(LDFLAGS)
+%.o: %.cpp
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@ $(LDFLAGS)
 
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd -j
 
-ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
-	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)
+ZAPD.out: genbuildinfo $(O_FILES) lib/libgfxd/libgfxd.a
+	$(CC) $(CFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)
