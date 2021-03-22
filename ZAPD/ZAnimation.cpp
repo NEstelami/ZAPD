@@ -170,7 +170,7 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 								   segmentAddress, StringHelper::Sprintf("%sSeg%06X", name.c_str(),
 		                                                                 segmentAddress));
 		string headerStr = StringHelper::Sprintf("{ %i }, 0x%08X", frameCount, segmentAddress);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, 16, "LinkAnimationHeader",
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), "LinkAnimationHeader",
 		                       StringHelper::Sprintf("%s", name.c_str()), headerStr);
 	}
 
