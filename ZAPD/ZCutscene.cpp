@@ -356,7 +356,7 @@ CutsceneCommands ZCutscene::GetCommandFromID(int id)
 		return CutsceneCommands::Unknown;
 	}
 
-	printf("WARNING: Could not identify cutscene command ID 0x%04X\n", id);
+	fprintf(stderr, "WARNING: Could not identify cutscene command ID 0x%04X\n", id);
 
 	return CutsceneCommands::Error;
 }
