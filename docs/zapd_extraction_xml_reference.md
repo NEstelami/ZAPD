@@ -1,4 +1,4 @@
-# XML files
+# ZAPD extraction xml reference
 
 This document aims to be a small reference of how to create a compatible xml file for ZAPD.
 
@@ -221,7 +221,7 @@ Example:
 
 Attributes:
 
-- `Name`: Required. Suxffixed by `TODO`.
+- `Name`: Required. Suxffixed by ~~`TODO`~~.
 - `Type`: Required. Specifies the vector's type (`Vec3s`, `Vec3i` and `Vec3f`). Valid values: `s16`, `s32` and `f32`.
 - `Dimensions`: Required. The amount of dimensions of the vector. Valid values: `3`.
 
