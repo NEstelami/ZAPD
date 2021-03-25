@@ -32,7 +32,7 @@ The following will be a list of the resources/tags supported by ZAPD, and the at
 
 For most tags inside a `<File>` tag you should also set an `Offset` attribute. This is the offset (within the file) of the resource you are exporting.
 
-### `File`
+## `File`
 
 Example of this tag:
 
@@ -48,7 +48,7 @@ Attributes:
 - `RangeEnd`: Optional. File offset where the extraction will end. Hex. Default value: `0xFFFFFFFF`.
 - `Game`: Optional. Valid values: `OOT`, `MM`, `SW97` and `OOTSW97`. Default value: `OOT`.
 
-### `Texture`
+## `Texture`
 
 Example:
 
@@ -65,12 +65,12 @@ Attributes:
 - `Height`: Required. Height in pixels of the image.
 
 
-### `Blob`
+## `Blob`
 
 TODO.
 
 
-### `DList`
+## `DList`
 
 Example:
 
@@ -83,12 +83,12 @@ Attributes:
 - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `DL`.
 
 
-### `Scene` and `Room`
+## `Scene` and `Room`
 
 TODO. I'm hopping somebody else will do this.
 
 
-### `Animation`
+## `Animation`
 
 Example:
 
@@ -101,7 +101,7 @@ Attributes:
 - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Anim`.
 
 
-### `PlayerAnimation`
+## `PlayerAnimation`
 
 Example:
 
@@ -114,7 +114,7 @@ Attributes:
 - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
 
 
-### `CurveAnimation`
+## `CurveAnimation`
 
 Example:
 
@@ -128,7 +128,7 @@ Attributes:
 - `SkelOffset`: Required. Offset of the `CurveSkeleton` related to this Animation.
 
 
-### `Skeleton`
+## `Skeleton`
 
 Example:
 
@@ -143,7 +143,7 @@ Attributes:
 - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
 
 
-### `Limb`
+## `Limb`
 
 Example:
 
@@ -157,12 +157,12 @@ Attributes:
 - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
 
 
-### `Symbol`
+## `Symbol`
 
 TODO.
 
 
-### `Collision`
+## `Collision`
 
 Example:
 
@@ -175,7 +175,7 @@ Attributes:
 - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Col`.
 
 
-### `Scalar`
+## `Scalar`
 
 Example:
 
@@ -189,7 +189,7 @@ Attributes:
 - `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32`, `f64`
 
 
-### `Vector`
+## `Vector`
 
 Example:
 
@@ -205,7 +205,7 @@ Attributes:
 
 Can be wrapped in an `<Array/>` tag.
 
-### `Vtx`
+## `Vtx`
 
 Example:
 
@@ -220,7 +220,7 @@ Attributes:
 Can be wrapped in an `<Array/>` tag.
 
 
-### `Cutscene`
+## `Cutscene`
 
 Example:
 
@@ -233,6 +233,6 @@ Attributes:
 - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Cs`.
 
 
-### `Array`
+## `Array`
 
 TODO.
