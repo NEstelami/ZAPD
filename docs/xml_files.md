@@ -30,7 +30,7 @@ Every xml must have a `<Root>` tag. It must have at least one `<File>` child.
 
 The following will be a list of the resources/tags supported by ZAPD, and the attributes needed by each one. It's worth noting that every tag expects a `Name="gNameOfTheVariable"`.
 
-For most tags inside a `<File>` tag you should also set a `Offset` attribute. This is the offset (within the file) of the resource you are exporting.
+For most tags inside a `<File>` tag you should also set an `Offset` attribute. This is the offset (within the file) of the resource you are exporting.
 
 ### `File`
 
@@ -43,9 +43,10 @@ Example of this tag:
 Attributes:
 
 - `Segment`: Required. This is the segment number of the current file. Expects a decimal number, usually 6 if it is an object, or 128 for overlays.
-- `BaseAddress`: Optional. RAM address of the file. Expects a hex number (with `0x` prefix).
-- `RangeStart`: Optional. File offset where the extraction will begin. Hex.
-- `RangeEnd`: Optional. File offset where the extraction will end. Hex.
+- `BaseAddress`: Optional. RAM address of the file. Expects a hex number (with `0x` prefix). Default value: `0`.
+- `RangeStart`: Optional. File offset where the extraction will begin. Hex. Default value: `0x000000000`.
+- `RangeEnd`: Optional. File offset where the extraction will end. Hex. Default value: `0xFFFFFFFF`.
+- `Game`: Optional. Valid values: `OOT`, `MM`, `SW97` and `OOTSW97`. Default value: `OOT`.
 
 ### `Texture`
 
@@ -63,61 +64,174 @@ Attributes:
 - `Width`: Required. Width in pixels of the image.
 - `Height`: Required. Height in pixels of the image.
 
+
 ### `Blob`
 
 TODO.
 
+
 ### `DList`
 
-TODO.
+Example:
+
+```xml
+<DList TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `DL`.
+
 
 ### `Scene` and `Room`
 
-TODO.
+TODO. I'm hopping somebody else will do this.
+
 
 ### `Animation`
 
-TODO.
+Example:
+
+```xml
+<Animation TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Anim`.
+
 
 ### `PlayerAnimation`
 
-TODO.
+Example:
+
+```xml
+<PlayerAnimation TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
+
 
 ### `CurveAnimation`
 
-TODO.
+Example:
+
+```xml
+<CurveAnimation TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
+- `SkelOffset`: Required. Offset of the `CurveSkeleton` related to this Animation.
+
 
 ### `Skeleton`
 
-TODO.
+Example:
+
+```xml
+<Skeleton TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Skel`.
+- `Type`: Required. Valid values: `Normal`, `Flex` and `Curve`.
+- `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
+
 
 ### `Limb`
 
-TODO.
+Example:
+
+```xml
+<Limb TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Limb`.
+- `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
+
 
 ### `Symbol`
 
 TODO.
 
+
 ### `Collision`
 
-TODO.
+Example:
+
+```xml
+<Collision TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Col`.
+
 
 ### `Scalar`
 
-TODO.
+Example:
+
+```xml
+<Scalar TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
+- `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32`, `f64`
+
 
 ### `Vector`
 
-TODO.
+Example:
+
+```xml
+<Vector TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
+- `Type`: Required. Valid values: `s16`, `s32`, `f32`.
+- `Dimensions`: Required. The amount of dimensions of the vector. Valid values: `3`.
+
+Can be wrapped in an `<Array/>` tag.
 
 ### `Vtx`
 
-TODO.
+Example:
+
+```xml
+<Vtx TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Vtx`.
+
+Can be wrapped in an `<Array/>` tag.
+
 
 ### `Cutscene`
 
-TODO.
+Example:
+
+```xml
+<Cutscene TODO/>
+```
+
+Attributes:
+
+- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Cs`.
+
 
 ### `Array`
 
