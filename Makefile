@@ -29,8 +29,11 @@ rebuild: clean all
 %.o: %.cpp
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@ $(LDFLAGS)
 
+ZAPD/Main.o: genbuildinfo ZAPD/Main.cpp
+	$(CC) $(CFLAGS) $(INC) -c ZAPD/Main.cpp -o $@ $(LDFLAGS)
+
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd -j
 
-ZAPD.out: genbuildinfo $(O_FILES) lib/libgfxd/libgfxd.a
+ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
 	$(CC) $(CFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)
