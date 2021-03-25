@@ -100,7 +100,6 @@ Attributes:
 
 TODO. I'm hopping somebody else will do this.
 
-
 ## Animation
 
 Example:
@@ -138,13 +137,12 @@ Attributes:
 - `Name`: Required. Suxffixed by `Anim`.
 - `SkelOffset`: Required. Offset of the `CurveSkeleton` related to this Animation.
 
-
 ## Skeleton
 
 Example:
 
 ```xml
-<Skeleton TODO/>
+<Skeleton Name="gEnBoxCurveSkel" Type="Curve" LimbType="Curve" Offset="0x5EB8"/>
 ```
 
 Attributes:
@@ -168,7 +166,19 @@ Attributes:
 
 ## Symbol
 
-TODO.
+A special element that allows declaring a variable without actually extracting it from the current file. Useful when a resource references an element from another file. The symbol will be declared as `extern`.
+
+Example:
+
+```xml
+<Symbol Name="gJsjutanShadowTex" Type="u8" Size="1" Count="0x800" Offset="0x4E70"/>
+```
+
+Attributes:
+
+- `Type`: The type of the declared variable. If missing, then it will default to `void*`.
+- `TypeSize`: The size in bytes of the type. If missing, then it will default to `4` (the size of a word and a pointer). Integer or hex value.
+- `Count`: Optional. If it is present, the variable will be declared as an array instead of a plain variable. The value of this attribute specifies the length of the array. If `Count` is present but it has no value (`Count=""`), then the length of the array will not be specified either in the declared variable. Integer or hex value.
 
 ## Collision
 
@@ -195,7 +205,7 @@ Example:
 Attributes:
 
 - `Name`: Required. Suxffixed by ~~`TODO`~~.
-- `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32`, `f64`
+- `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32` and `f64`.
 
 ## Vector
 
@@ -204,13 +214,15 @@ Attributes:
 Example:
 
 ```xml
-<Vector TODO/>
+<Array Name="D_04002040" Count="24" Offset="0x2040">
+    <Vector Type="s16" Dimensions="3" />
+</Array>
 ```
 
 Attributes:
 
 - `Name`: Required. Suxffixed by `TODO`.
-- `Type`: Required. Valid values: `s16`, `s32`, `f32`.
+- `Type`: Required. Specifies the vector's type (`Vec3s`, `Vec3i` and `Vec3f`). Valid values: `s16`, `s32` and `f32`.
 - `Dimensions`: Required. The amount of dimensions of the vector. Valid values: `3`.
 
 ## Vtx
@@ -220,7 +232,9 @@ Attributes:
 Example:
 
 ```xml
-<Vtx TODO/>
+<Array Name="gTriforceVtx" Count="32" Offset="0x0000">
+    <Vtx/>
+</Array>
 ```
 
 Attributes:
@@ -238,7 +252,6 @@ Example:
 Attributes:
 
 - `Name`: Required. Suxffixed by `Cs`.
-
 
 ## Array
 
