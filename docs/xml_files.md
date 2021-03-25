@@ -28,9 +28,11 @@ Every xml must have a `<Root>` tag. It must have at least one `<File>` child.
 
 ## Resources types
 
-The following will be a list of the resources/tags supported by ZAPD, and the attributes needed by each one. It's worth noting that every tag expects a `Name="gNameOfTheVariable"`.
+The following is a list of the resources/tags supported by ZAPD, and the attributes needed by each one.
 
 For most tags inside a `<File>` tag you should also set an `Offset` attribute. This is the offset (within the file) of the resource you are exporting.
+
+It's worth noting that every tag expects a `Name="gNameOfTheVariable"`. This is will be the name of the extracted variable. Every variable must be prefixed with `g` and the suffix should represent the type of the variable.
 
 ## File
 
@@ -42,6 +44,7 @@ Example of this tag:
 
 Attributes:
 
+- `Name`: Required. The name of the file in `baserom/` that will be extracted.
 - `Segment`: Required. This is the segment number of the current file. Expects a decimal number, usually 6 if it is an object, or 128 for overlays.
 - `BaseAddress`: Optional. RAM address of the file. Expects a hex number (with `0x` prefix). Default value: `0`.
 - `RangeStart`: Optional. File offset where the extraction will begin. Hex. Default value: `0x000000000`.
@@ -49,6 +52,8 @@ Attributes:
 - `Game`: Optional. Valid values: `OOT`, `MM`, `SW97` and `OOTSW97`. Default value: `OOT`.
 
 ## Texture
+
+Textures are extracted as `.png` files.
 
 Example:
 
@@ -58,30 +63,38 @@ Example:
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Tex`.
+- `Name`: Required. Suxffixed by `Tex`.
 - `OutName`: Required. The filename of the extracted `.png` file.
-- `Format`: Required. The format of the image. For more info on the existing formats, see [here](TODO: add link).
+- `Format`: Required. The format of the image. Valid values: `rgba32`, `rgb5a1`, `i4`, `i8`, `ia4`, `ia8`, `ia16`, `ci4` and `ci8`.
 - `Width`: Required. Width in pixels of the image.
 - `Height`: Required. Height in pixels of the image.
 
-
 ## Blob
 
-TODO.
+Blob are extracted as `.bin` files.
 
+Example:
+
+```xml
+<Blob Name="gFireTempleBlob_00CCC0" Size="0x10E" Offset="0xCCC0"/>
+```
+
+Attributes:
+
+- `Name`: Required. Suxffixed by `Blob`.
+- `Size`: Required. Amount of bytes to extract. Hex.
 
 ## DList
 
 Example:
 
 ```xml
-<DList TODO/>
+<DList Name="gGiGreenRupeeInnerColorDL" Offset="0x04A0"/>
 ```
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `DL`.
-
+- `Name`: Required. Suxffixed by `DL`.
 
 ## Scene and Room
 
@@ -93,38 +106,36 @@ TODO. I'm hopping somebody else will do this.
 Example:
 
 ```xml
-<Animation TODO/>
+<Animation Name="gWallmasterDamageAnim" Offset="0x590"/>
 ```
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Anim`.
-
+- `Name`: Required. Suxffixed by `Anim`.
 
 ## PlayerAnimation
 
 Example:
 
 ```xml
-<PlayerAnimation TODO/>
+<PlayerAnimation Name="gPlayer3Anim" Offset="0x2310"/>
 ```
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
-
+- `Name`: Required. Suxffixed by `Anim`.
 
 ## CurveAnimation
 
 Example:
 
 ```xml
-<CurveAnimation TODO/>
+<CurveAnimation Name="gEnBoxCurveAnim_4B60" SkelOffset="0x5EB8" Offset="0x4B60"/>
 ```
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
+- `Name`: Required. Suxffixed by `Anim`.
 - `SkelOffset`: Required. Offset of the `CurveSkeleton` related to this Animation.
 
 
@@ -138,59 +149,57 @@ Example:
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Skel`.
+- `Name`: Required. Suxffixed by `Skel`.
 - `Type`: Required. Valid values: `Normal`, `Flex` and `Curve`.
 - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
-
 
 ## Limb
 
 Example:
 
 ```xml
-<Limb TODO/>
+<Limb Name="gChuGirlHeadLimb" LimbType="Standard" Offset="0x6E34"/>
 ```
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Limb`.
+- `Name`: Required. Suxffixed by `Limb`.
 - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
-
 
 ## Symbol
 
 TODO.
-
 
 ## Collision
 
 Example:
 
 ```xml
-<Collision TODO/>
+<Collision Name="gDesertColossusBombableWallCol" Offset="0x1A58"/>
 ```
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Col`.
-
+- `Name`: Required. Suxffixed by `Col`.
 
 ## Scalar
+
+✅ Can be wrapped in an [`Array`](#Array) tag.
 
 Example:
 
 ```xml
-<Scalar TODO/>
+<Scalar Type="u64" Name="pad34F8"/>
 ```
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
+- `Name`: Required. Suxffixed by ~~`TODO`~~.
 - `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32`, `f64`
 
-✅ Can be wrapped in an [`Array`](#Array) tag.
-
 ## Vector
+
+✅ Can be wrapped in an [`Array`](#Array) tag.
 
 Example:
 
@@ -200,13 +209,13 @@ Example:
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `TODO`.
+- `Name`: Required. Suxffixed by `TODO`.
 - `Type`: Required. Valid values: `s16`, `s32`, `f32`.
 - `Dimensions`: Required. The amount of dimensions of the vector. Valid values: `3`.
 
-✅ Can be wrapped in an [`Array`](#Array) tag.
-
 ## Vtx
+
+✅ Can be wrapped in an [`Array`](#Array) tag.
 
 Example:
 
@@ -216,10 +225,7 @@ Example:
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Vtx`.
-
-✅ Can be wrapped in an [`Array`](#Array) tag.
-
+- `Name`: Required. Suxffixed by `Vtx`.
 
 ## Cutscene
 
@@ -231,7 +237,7 @@ Example:
 
 Attributes:
 
-- `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g` and suxfixed by `Cs`.
+- `Name`: Required. Suxffixed by `Cs`.
 
 
 ## Array
