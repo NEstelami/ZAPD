@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include "ZResource.h"
 #include "ZScalar.h"
 #include "tinyxml2.h"
@@ -25,7 +25,9 @@ public:
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType() override;
 
-	static ZVector* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int rawDataIndex, const std::string& nRelPath);
+	static ZVector* ExtractFromXML(tinyxml2::XMLElement* reader,
+	                               const std::vector<uint8_t>& nRawData, const int rawDataIndex,
+	                               const std::string& nRelPath);
 
 protected:
 };

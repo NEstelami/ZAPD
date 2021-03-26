@@ -13,7 +13,7 @@ CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 CPP_FILES += lib/tinyxml2/tinyxml2.cpp
 O_FILES   := $(CPP_FILES:.cpp=.o)
 
-all: genbuildinfo ZAPD.out
+all: ZAPD.out
 
 genbuildinfo:
 	python3 ZAPD/genbuildinfo.py
@@ -24,7 +24,7 @@ clean:
 
 rebuild: clean all
 
-%.o: %.cpp
+%.o: %.cpp genbuildinfo
 	$(CC) $(CFLAGS) -c $< -o $@
 
 lib/libgfxd/libgfxd.a:
