@@ -8,18 +8,22 @@ An example of an object xml:
 
 ```xml
 <Root>
-    <File Name="object_blkobj" Segment="6">
-        <!-- Illusion Room Collision -->
-        <Collision Name="gIllusionRoomCol" Offset="0x7564"/>
+    <File Name="object_jj" Segment="6">
 
-        <!-- Illusion Room DLists -->
-        <DList Name="gIllusionRoomNormalDL" Offset="0x14E0"/>
-        <DList Name="gIllusionRoomIllusionDL" Offset="0x53D0"/>
-        
-        <!-- Unused Content -->
+        <Animation Name="gJabuJabuAnim" Offset="0x1F4C"/>
 
-        <!-- Illusion room DLists -->
-        <DList Name="gIllusionRoomTreeDL" Offset="0x7EB0"/>
+        <Skeleton Name="gJabuJabuSkel" Type="Flex" LimbType="Standard" Offset="0xB9A8"/>
+            
+        <!-- Jabu Jabu eye textures -->
+        <Texture Name="gJabuJabuEyeOpenTex" OutName="jabu_jabu_eye_open" Format="rgb5a1" Width="16" Height="32" Offset="0x7698"/>
+        <Texture Name="gJabuJabuEyeHalfTex" OutName="jabu_jabu_eye_half" Format="rgb5a1" Width="16" Height="32" Offset="0x7A98"/>
+        <Texture Name="gJabuJabuEyeClosedTex" OutName="jabu_jabu_eye_closed" Format="rgb5a1" Width="16" Height="32" Offset="0x7E98"/>
+
+
+        <Collision Name="gJabuJabu1Col" Offset="0x0A1C"/>
+        <Collision Name="gJabuJabu2Col" Offset="0x1830"/>
+        <Collision Name="gJabuJabu3Col" Offset="0xBA8C"/>
+
     </File>
 </Root>
 ```
