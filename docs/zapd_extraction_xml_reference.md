@@ -34,7 +34,7 @@ Every xml must have a `<Root>` tag. It must have at least one `<File>` child.
 
 The following is a list of the resources/tags supported by ZAPD, and the attributes needed by each one.
 
-For most tags inside a `<File>` tag you should also set an `Offset` attribute. This is the offset (within the file) of the resource you are exporting.
+For most resources inside a `<File>` tag **you should also set an `Offset` attribute**. This is the offset (within the file) of the resource you are exporting.
 
 It's worth noting that every tag expects a `Name="gNameOfTheVariable"`. This is will be the name of the extracted variable. Every variable must be prefixed with `g` and the suffix should represent the type of the variable.
 
@@ -75,7 +75,7 @@ Attributes:
 
 ## Blob
 
-Blob are extracted as `.bin` files.
+Blob are binary data that will be extracted as `.bin` files.
 
 Example:
 
@@ -88,7 +88,11 @@ Attributes:
 - `Name`: Required. Suxffixed by `Blob`.
 - `Size`: Required. Amount of bytes to extract. Hex.
 
+※ We usually use blobs when we can't figure out the content's type of chunk of data.
+
 ## DList
+
+A.k.a.: Display list, or Gfx.
 
 Example:
 
@@ -155,6 +159,8 @@ Attributes:
 - `Type`: Required. Valid values: `Normal`, `Flex` and `Curve`.
 - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
 
+※ There are no restrictions in the `Type` and `LimbType` attributes besides the valid values, so any skeleton type can be combined with any limb type.
+
 ## Limb
 
 Example:
@@ -198,7 +204,7 @@ Attributes:
 
 ## Scalar
 
-✅ Can be wrapped in an [`Array`](#Array) tag.
+Allows the extraction of a single number.
 
 Example:
 
@@ -211,9 +217,13 @@ Attributes:
 - `Name`: Required. Suxffixed by ~~`TODO`~~.
 - `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32` and `f64`.
 
+※ Can be wrapped in an [`Array`](#Array) tag.
+
 ## Vector
 
-✅ Can be wrapped in an [`Array`](#Array) tag.
+Extracts a vector.
+
+Current supported types are `Vec3s`, `Vec3i` or `Vec3f`.
 
 Example:
 
@@ -229,9 +239,9 @@ Attributes:
 - `Type`: Required. Specifies the vector's type (`Vec3s`, `Vec3i` and `Vec3f`). Valid values: `s16`, `s32` and `f32`.
 - `Dimensions`: Required. The amount of dimensions of the vector. Valid values: `3`.
 
-## Vtx
+※ Can be wrapped in an [`Array`](#Array) tag.
 
-✅ Can be wrapped in an [`Array`](#Array) tag.
+## Vtx
 
 Example:
 
@@ -245,12 +255,14 @@ Attributes:
 
 - `Name`: Required. Suxffixed by `Vtx`.
 
+※ Can be wrapped in an [`Array`](#Array) tag.
+
 ## Cutscene
 
 Example:
 
 ```xml
-<Cutscene TODO/>
+<Cutscene TODO/> <!-- Currently there are 0 xml in the repo using this tag. -->
 ```
 
 Attributes:
@@ -259,7 +271,7 @@ Attributes:
 
 ## Array
 
-The `Array` element is special, because it needs an inner element to work. It will declare an array of it's inner element.
+The `Array` element is special, because it needs an inner element to work. It will declare an array of its inner element.
 
 Currently, only [`Scalar`](#Scalar), [`Vector`](#Vector) and [`Vtx`](#Vtx) support being wrapped in an array.
 
