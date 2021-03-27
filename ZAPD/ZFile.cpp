@@ -122,7 +122,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	}
 
 	auto nodeMap = *GetNodeMap();
-
 	int rawDataIndex = 0;
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
@@ -174,281 +173,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		{
 
 		}
-
-		/* if (string(child->Name()) == "Texture")
-		{
-			ZTexture* tex = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				tex = ZTexture::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-			else
-				tex = ZTexture::BuildFromXML(child, folderName, mode == ZFileMode::Build);
-
-			tex->SetRawDataIndex(rawDataIndex);
-			
-			resources.push_back(tex);
-			rawDataIndex += tex->GetRawDataSize();
-		}
-		else if (string(child->Name()) == "Blob")
-		{
-			ZBlob* blob = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				blob = ZBlob::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-			else
-				blob = ZBlob::BuildFromXML(child, folderName, mode == ZFileMode::Build);
-
-			if (blob != nullptr)
-			{
-				resources.push_back(blob);
-				rawDataIndex += blob->GetRawDataSize();
-			}
-		}
-		else if (string(child->Name()) == "DList")
-		{
-			ZResource* dList = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				dList = ZDisplayList::ExtractFromXML(child, rawData, rawDataIndex, ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), folderName, this);
-
-			if (dList != nullptr)
-			{
-				resources.push_back(dList);
-				rawDataIndex += dList->GetRawDataSize();
-			}
-		}
-		else if (string(child->Name()) == "Scene" || string(child->Name()) == "Room")
-		{
-			ZRoom* room = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				room = ZRoom::ExtractFromXML(child, rawData, rawDataIndex, folderName, this,
-				                             Globals::Instance->lastScene);
-
-			if (string(child->Name()) == "Scene")
-			{
-				Globals::Instance->lastScene = room;
-
-				if (segment == -1)
-					segment = SEGMENT_SCENE;
-			}
-			else
-			{
-				if (segment == -1)
-					segment = SEGMENT_ROOM;
-			}
-
-			if (segment != -1)
-				Globals::Instance->AddSegment(segment);
-
-			resources.push_back(room);
-
-			rawDataIndex += room->GetRawDataSize();
-		}
-		else if (string(child->Name()) == "Animation")
-		{
-			ZAnimation* anim = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				anim = ZNormalAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-
-			resources.push_back(anim);
-			rawDataIndex += anim->GetRawDataSize();
-		}
-		else if (string(child->Name()) == "PlayerAnimation")
-		{
-			ZLinkAnimation* anim = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				anim = ZLinkAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-
-			resources.push_back(anim);
-			rawDataIndex += anim->GetRawDataSize();
-		}
-		else if (string(child->Name()) == "CurveAnimation")
-		{
-			ZCurveAnimation* anim = nullptr;
-
-			if (mode == ZFileMode::Extract)
-			{
-				anim =
-					ZCurveAnimation::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-			}
-
-			if (anim == nullptr)
-			{
-				throw std::runtime_error("Couldn't create ZCurveAnimation.");
-			}
-			resources.push_back(anim);
-			rawDataIndex += anim->GetRawDataSize();
-		}
-		else if (string(child->Name()) == "Skeleton")
-		{
-			ZSkeleton* skeleton = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				skeleton = ZSkeleton::FromXML(child, rawData, rawDataIndex, folderName, this);
-
-			if (skeleton == nullptr)
-			{
-				throw std::runtime_error("Couldn't create ZSkeleton.");
-			}
-			resources.push_back(skeleton);
-			rawDataIndex += skeleton->GetRawDataSize();
-		}
-		else if (string(child->Name()) == "Limb")
-		{
-			ZLimb* limb = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				limb = ZLimb::FromXML(child, rawData, rawDataIndex, folderName, this);
-
-			if (limb == nullptr)
-			{
-				throw std::runtime_error("Couldn't create ZLimb.");
-			}
-			resources.push_back(limb);
-			rawDataIndex += limb->GetRawDataSize();
-		}
-		else if (string(child->Name()) == "Symbol")
-		{
-			ZSymbol* symbol = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				symbol = ZSymbol::ExtractFromXML(child, rawData, rawDataIndex, this);
-
-			if (symbol != nullptr)
-				resources.push_back(symbol);
-		}*/
-		/*else if (string(child->Name()) == "Collision")
-		{
-			ZCollisionHeader* res = nullptr;
-
-			if (mode == ZFileMode::Extract)
-			{
-				res = new ZCollisionHeader(this, child->Attribute("Name"), rawData, rawDataIndex);
-				res->SetName(child->Attribute("Name"));
-				res->SetRawDataIndex(rawDataIndex);
-			}
-
-			resources.push_back(res);
-		}
-		else if (string(child->Name()) == "Scalar")
-		{
-			ZScalar* scalar = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				scalar = ZScalar::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-
-			if (scalar != nullptr)
-			{
-				resources.push_back(scalar);
-				rawDataIndex += scalar->GetRawDataSize();
-			}
-			else
-			{
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-					printf("No ZScalar created!!");
-			}
-		}
-		else if (string(child->Name()) == "Vector")
-		{
-			ZVector* vector = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				vector = ZVector::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-
-			if (vector != nullptr)
-			{
-				resources.push_back(vector);
-				rawDataIndex += vector->GetRawDataSize();
-			}
-			else
-			{
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-					printf("No ZVector created!!");
-			}
-		}
-		else if (string(child->Name()) == "Vtx")
-		{
-			ZVtx* vtx = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				vtx = ZVtx::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-
-			if (vtx != nullptr)
-			{
-				resources.push_back(vtx);
-				rawDataIndex += vtx->GetRawDataSize();
-			}
-			else
-			{
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-					printf("No ZVtx created!!");
-			}
-		}
-		else if (string(child->Name()) == "Cutscene")
-		{
-			ZCutscene* cs = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				cs = ZCutscene::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-
-			if (cs != nullptr)
-			{
-				resources.push_back(cs);
-				rawDataIndex += cs->GetRawDataSize();
-			}
-		}
-		else if (string(child->Name()) == "Array")
-		{
-			ZArray* array = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				array = ZArray::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
-
-			if (array != nullptr)
-			{
-				resources.push_back(array);
-				rawDataIndex += array->GetRawDataSize();
-			}
-		}
-		else if (nodeMap.find(nodeName) == nodeMap.end())
-		{
-			std::cerr << "ERROR bad type\n";
-			printf("Encountered unknown resource type: %s on line: %d\n", child->Name(),
-			       child->GetLineNum());
-			std::exit(EXIT_FAILURE);
-		}
-		*/
 	}
-}
-
-void ZFile::BuildResources()
-{
-	cout << "Building resources " << name << "\n";
-
-	int size = 0;
-
-	for (ZResource* res : resources)
-		size += res->GetRawDataSize();
-
-	// Make sure size is 16 byte aligned
-	if (size % 16 != 0)
-		size = ((size / 16) + 1) * 16;
-
-	vector<uint8_t> file = vector<uint8_t>(size);
-	int fileIndex = 0;
-
-	for (ZResource* res : resources)
-	{
-		// Console.WriteLine("Building resource " + res.GetName());
-		memcpy(file.data() + fileIndex, res->GetRawData().data(), res->GetRawData().size());
-		// Array.Copy(res.GetRawData(), 0, file, fileIndex, res.GetRawData().Length);
-		fileIndex += res->GetRawData().size();
-	}
-
-	File::WriteAllBytes(basePath + "/" + name, file);
 }
 
 void ZFile::BuildSourceFile(string outputDir)
@@ -1173,12 +898,16 @@ string ZFile::ProcessDeclarations()
 
 			// Do not asm_process vertex arrays. They have no practical use being overridden.
 			//if (item.second->varType == "Vtx" || item.second->varType == "static Vtx")
+			if (item.second->varType != "u64" && item.second->varType != "static u64")
 			{
-				output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "assets/extracted/").c_str());
+				output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "../assets/extracted/").c_str());
 				//output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), Path::GetFileName(item.second->includePath).c_str());
 			}
-			//else
+			else
+			{
 				//output += StringHelper::Sprintf("%s %s[] = {\n    #pragma INC_ASSET(\"%s\")\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->includePath.c_str());
+				output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "assets/extracted/").c_str());
+			}
 		}
 		else if (item.second->varType != "")
 		{

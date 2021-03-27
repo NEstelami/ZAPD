@@ -7,7 +7,6 @@
 
 enum class ZFileMode
 {
-	Build, // DEPRICATED!
 	BuildTexture,
 	BuildOverlay,
 	BuildModelIntermediette,
@@ -41,7 +40,6 @@ public:
 	std::string GetVarName(int address);
 	std::string GetName();
 	void ExtractResources(std::string outputDir);
-	void BuildResources();
 	void BuildSourceFile(std::string outputDir);
 	void AddResource(ZResource* res);
 	ZResource* FindResource(uint32_t rawDataIndex);

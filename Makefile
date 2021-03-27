@@ -27,7 +27,7 @@ clean:
 
 rebuild: clean all
 
-%.o: %.cpp genbuildinfo
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 lib/libgfxd/libgfxd.a:

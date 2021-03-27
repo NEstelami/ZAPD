@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
 int NewMain(int argc, char* argv[])
 {
-	// Syntax: ZAPD.exe [mode (b/btex/bovl/e)] (Arbritrary Number of Arguments)
+	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
 
 	if (argc < 2)
 	{
@@ -198,7 +198,7 @@ int NewMain(int argc, char* argv[])
 
 	try
 	{
-        if (fileMode == ZFileMode::Build || fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
+        if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 		{
 			bool parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
 
