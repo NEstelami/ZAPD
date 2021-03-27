@@ -939,8 +939,8 @@ string ZFile::ProcessDeclarations()
 			if (lastAddr != 0 && declarations.find(lastAddr) != declarations.end() &&
 			    lastAddr + declarations[lastAddr]->size > item.first)
 			{
-				fprintf(stderr, "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X\n",
-				       lastAddr, lastAddr + declarations[lastAddr]->size, item.first);
+				fprintf(stderr, "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X (%s)\n",
+				       lastAddr, lastAddr + declarations[lastAddr]->size, item.first, item.second->varName.c_str());
 			}
 
 			uint8_t* rawDataArr = rawData.data();
