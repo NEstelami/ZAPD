@@ -12,11 +12,11 @@
 #include "ZTexture.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-#include <execinfo.h>
 #include <csignal>
+#include <cxxabi.h>  // for __cxa_demangle
+#include <dlfcn.h>   // for dladdr
+#include <execinfo.h>
 #include <unistd.h>
-#include <dlfcn.h>     // for dladdr
-#include <cxxabi.h>    // for __cxa_demangle
 #endif
 
 #include <string>
@@ -50,16 +50,19 @@ void ErrorHandler(int sig)
 		int gotAddress = dladdr(array[i], &info);
 		string functionName(symbols[i]);
 
-		if (gotAddress != 0 && info.dli_sname != nullptr) {
+		if (gotAddress != 0 && info.dli_sname != nullptr)
+		{
 			int status;
 			char* demangled = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
 			const char* nameFound = info.dli_sname;
 
-			if (status == 0) {
+			if (status == 0)
+			{
 				nameFound = demangled;
 			}
 
-			functionName = StringHelper::Sprintf("%s (+0x%X)", nameFound, (char *)array[i] - (char *)info.dli_saddr);
+			functionName = StringHelper::Sprintf("%s (+0x%X)", nameFound,
+			                                     (char*)array[i] - (char*)info.dli_saddr);
 			free(demangled);
 		}
 

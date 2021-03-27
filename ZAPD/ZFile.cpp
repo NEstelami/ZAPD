@@ -120,7 +120,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	{
 		if (!File::Exists(basePath + "/" + name))
 			throw std::runtime_error(StringHelper::Sprintf("Error! File %s does not exist.",
-			                            (basePath + "/" + name).c_str()));
+			                                               (basePath + "/" + name).c_str()));
 
 		rawData = File::ReadAllBytes(basePath + "/" + name);
 	}
@@ -939,8 +939,11 @@ string ZFile::ProcessDeclarations()
 			if (lastAddr != 0 && declarations.find(lastAddr) != declarations.end() &&
 			    lastAddr + declarations[lastAddr]->size > item.first)
 			{
-				fprintf(stderr, "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X (%s)\n",
-				       lastAddr, lastAddr + declarations[lastAddr]->size, item.first, item.second->varName.c_str());
+				fprintf(stderr,
+				        "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X "
+				        "(%s)\n",
+				        lastAddr, lastAddr + declarations[lastAddr]->size, item.first,
+				        item.second->varName.c_str());
 			}
 
 			uint8_t* rawDataArr = rawData.data();
