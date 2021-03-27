@@ -58,6 +58,9 @@
     <Filter Include="Source Files\Libraries\libgfxd">
       <UniqueIdentifier>{7ee79d97-c6a8-4e82-93ef-37981f4d7838}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Libraries\libgfxd">
+      <UniqueIdentifier>{85600275-99fe-491d-8189-bcc3dc1a8903}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -212,6 +215,27 @@
     </ClCompile>
     <ClCompile Include="ZSymbol.cpp">
       <Filter>Source Files\Z64</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\libgfxd\gfxd.c">
+      <Filter>Source Files\Libraries\libgfxd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\libgfxd\uc.c">
+      <Filter>Source Files\Libraries\libgfxd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\libgfxd\uc_f3d.c">
+      <Filter>Source Files\Libraries\libgfxd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\libgfxd\uc_f3db.c">
+      <Filter>Source Files\Libraries\libgfxd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\libgfxd\uc_f3dex.c">
+      <Filter>Source Files\Libraries\libgfxd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\libgfxd\uc_f3dex2.c">
+      <Filter>Source Files\Libraries\libgfxd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\libgfxd\uc_f3dexb.c">
+      <Filter>Source Files\Libraries\libgfxd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -445,6 +469,15 @@
     </ClInclude>
     <ClInclude Include="ZSymbol.h">
       <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\libgfxd\gbi.h">
+      <Filter>Header Files\Libraries\libgfxd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\libgfxd\gfxd.h">
+      <Filter>Header Files\Libraries\libgfxd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\libgfxd\priv.h">
+      <Filter>Header Files\Libraries\libgfxd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

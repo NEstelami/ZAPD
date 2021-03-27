@@ -98,10 +98,11 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;USE_ASSIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <Profile>true</Profile>
-      <AdditionalDependencies>assimp-vc142-mt.lib;libgfxd_win.a;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>cd ..
@@ -139,6 +140,13 @@ python3 ZAPD/genbuildinfo.py</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\libgfxd\gfxd.c" />
+    <ClCompile Include="..\lib\libgfxd\uc.c" />
+    <ClCompile Include="..\lib\libgfxd\uc_f3d.c" />
+    <ClCompile Include="..\lib\libgfxd\uc_f3db.c" />
+    <ClCompile Include="..\lib\libgfxd\uc_f3dex.c" />
+    <ClCompile Include="..\lib\libgfxd\uc_f3dex2.c" />
+    <ClCompile Include="..\lib\libgfxd\uc_f3dexb.c" />
     <ClCompile Include="..\lib\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="HighLevel\HLAnimationIntermediette.cpp" />
@@ -205,6 +213,9 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="..\lib\elfio\elfio\elfio_utils.hpp" />
     <ClInclude Include="..\lib\elfio\elfio\elf_types.hpp" />
     <ClInclude Include="..\lib\json\include\nlohmann\json.hpp" />
+    <ClInclude Include="..\lib\libgfxd\gbi.h" />
+    <ClInclude Include="..\lib\libgfxd\gfxd.h" />
+    <ClInclude Include="..\lib\libgfxd\priv.h" />
     <ClInclude Include="..\lib\stb\stb_image.h" />
     <ClInclude Include="..\lib\stb\stb_image_write.h" />
     <ClInclude Include="..\lib\stb\tinyxml2.h" />
