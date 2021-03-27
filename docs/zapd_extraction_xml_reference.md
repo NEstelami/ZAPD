@@ -111,8 +111,6 @@ u64 gCraterSmokeConeTex[] = {
 
 The following is a list of the texture formats the Nintendo 64 supports, with their gfxdis names and ZAPD format names.
 
-<center>
-
 | Format name                                     | Typing in `gsDPLoadTextureBlock` | "Format" in xml |
 | ----------------------------------------------- | -------------------------------- | --------------- |
 | 4-bit intensity (I)                             | `G_IM_FMT_I, G_IM_SIZ_4b`        | `i4`            |
@@ -125,8 +123,6 @@ The following is a list of the texture formats the Nintendo 64 supports, with th
 | 16-bit IA (8/8)                                 | `G_IM_FMT_IA, G_IM_SIZ_16b`      | `ia16`          |
 | 16-bit YUV (Luminance, Blue-Y, Red-Y)           | `G_IM_FMT_YUV, G_IM_SIZ_16b`     | (not used)      |
 | 32-bit RGBA (8/8/8/8)                           | `G_IM_FMT_RGBA, G_IM_SIZ_32b`    | `rgba8`         |
-
-</center>
 
 If you want to know more about this formats, you can check [`gsDPLoadTextureBlock`](http://n64devkit.square7.ch/n64man/gdp/gDPLoadTextureBlock.htm) for most formats, or [`gDPLoadTextureBlock_4b`](http://n64devkit.square7.ch/n64man/gdp/gDPLoadTextureBlock_4b.htm) for the 4-bit formats.
 
