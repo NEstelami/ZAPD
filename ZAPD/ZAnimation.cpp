@@ -114,6 +114,11 @@ int ZNormalAnimation::GetRawDataSize()
 	return 16;
 }
 
+std::string ZNormalAnimation::GetSourceTypeName()
+{
+	return "AnimationHeader";
+}
+
 void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = std::move(nRawData);
@@ -178,6 +183,11 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 int ZLinkAnimation::GetRawDataSize()
 {
 	return 8;
+}
+
+std::string ZLinkAnimation::GetSourceTypeName()
+{
+	return "LinkAnimationHeader";
 }
 
 void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)

@@ -24,9 +24,7 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 	std::string output = "";
 
 	if (testFile->resources.size() <= 0)
-	{
 		throw StringHelper::Sprintf("Error! Array needs at least one sub-element.\n");
-	}
 
 	ZResource* res = testFile->resources[0];
 	int resSize = res->GetRawDataSize();
