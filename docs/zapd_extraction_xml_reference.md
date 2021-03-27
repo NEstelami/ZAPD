@@ -93,6 +93,14 @@ Textures are extracted as `.png` files.
 <Texture Name="gCraterSmokeConeTex" OutName="crater_smoke_cone" Format="ia8" Width="32" Height="32" Offset="0xC30"/>
 ```
 
+Will be defined as:
+
+```c
+u64 gCraterSmokeConeTex[] = {
+#include "assets/objects/object_spot17_obj/crater_smoke_cone.ia8.inc.c"
+};
+```
+
 - Attributes:
 
   - `Name`: Required. Suxffixed by `Tex`.
@@ -111,6 +119,15 @@ Blob are binary data that will be extracted as `.bin` files.
 
 ```xml
 <Blob Name="gFireTempleBlob_00CCC0" Size="0x10E" Offset="0xCCC0"/>
+```
+
+Will be defined as:
+
+```c
+
+u8 gFireTempleBlob_00CCC0[] = {
+#include "assets/objects/object_hidan_objects/gFireTempleBlob_00CCC0.bin.inc.c"
+};
 ```
 
 - Attributes:
@@ -230,10 +247,16 @@ A special element that allows declaring a variable without actually extracting i
 <Symbol Name="gJsjutanShadowTex" Type="u8" Size="1" Count="0x800" Offset="0x4E70"/>
 ```
 
+Will be declared as:
+
+```c
+extern u8 gJsjutanShadowTex[2048];
+```
+
 - Attributes:
 
-  - `Type`: The type of the declared variable. If missing, then it will default to `void*`.
-  - `TypeSize`: The size in bytes of the type. If missing, then it will default to `4` (the size of a word and a pointer). Integer or hex value.
+  - `Type`: The type of the declared variable. If missing, it will default to `void*`.
+  - `TypeSize`: The size in bytes of the type. If missing, it will default to `4` (the size of a word and a pointer). Integer or hex value.
   - `Count`: Optional. If it is present, the variable will be declared as an array instead of a plain variable. The value of this attribute specifies the length of the array. If `Count` is present but it has no value (`Count=""`), then the length of the array will not be specified either in the declared variable. Integer or hex value.
 
 -------------------------
@@ -262,6 +285,12 @@ Allows the extraction of a single number.
 <Scalar Type="u64" Name="pad34F8"/>
 ```
 
+Will be extracted as:
+
+```c
+u64 pad34F8 = { 0 }; 
+```
+
 - Attributes:
 
   - `Name`: Required. Suxffixed by ~~`TODO`~~.
@@ -283,6 +312,37 @@ Current supported types are `Vec3s`, `Vec3i` or `Vec3f`.
 <Array Name="D_04002040" Count="24" Offset="0x2040">
     <Vector Type="s16" Dimensions="3" />
 </Array>
+```
+
+Will be extracted as:
+
+```c
+Vec3s D_04002040[24] = {
+    { -37, 2346, 93 },
+    { 0, 11995, 0 },
+    { -16385, -305, -16333 },
+    { 0, 51, 12 },
+    { 3761, 2263, -384 },
+    { 0, 0, 3786 },
+    { 1594, 1384, -18344 },
+    { -2288, -2428, -1562 },
+    { 0, 0, 3219 },
+    { -2148, -5, -16840 },
+    { 15365, -1708, 15611 },
+    { 1761, 8365, 17711 },
+    { 0, 0, 18859 },
+    { 0, 0, 0 },
+    { -9392, -9579, 28686 },
+    { 0, 0, -7093 },
+    { -2748, 685, -14092 },
+    { 213, 6553, -32212 },
+    { 0, 0, -1877 },
+    { 3267, 3309, -16090 },
+    { -18101, 25946, -2670 },
+    { -104, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 }
+}; 
 ```
 
 - Attributes:
