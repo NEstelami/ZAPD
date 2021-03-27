@@ -58,15 +58,15 @@ Every xml must have a `<Root>` tag. It must have at least one `<File>` child.
 
 The following is a list of the resources/tags supported by ZAPD, and the attributes needed by each one.
 
-For most resources inside a `<File>` tag **you should also set an `Offset` attribute**. This is the offset (within the file) of the resource you are exporting.
+For most resources inside a `<File>` tag **you should also set an `Offset` attribute**. This is the offset (within the file) of the resource you are exporting. The `Offset` attribute is expected to be in hexadecimal, for example `Offset="0x41F0"`.
 
-It's worth noting that every tag expects a `Name="gNameOfTheVariable"`. This is will be the name of the extracted variable. Every variable must be prefixed with `g` and the suffix should represent the type of the variable.
+It's worth noting that every tag expects a `Name="gNameOfTheAsset"`. This is will be the name of the extracted variable in the output C code. Every asset must be prefixed with `g` and the suffix should represent the type of the variable.
 
 -------------------------
 
 ### File
 
--  Example of this tag:
+- Example of this tag:
 
 ```xml
 <File Name="object_gi_fire" Segment="6">
@@ -75,7 +75,7 @@ It's worth noting that every tag expects a `Name="gNameOfTheVariable"`. This is 
 - Attributes:
 
   - `Name`: Required. The name of the file in `baserom/` which will be extracted.
-  - `Segment`: Required. This is the segment number of the current file. Expects a decimal number, usually 6 if it is an object, or 128 for overlays.
+  - `Segment`: Required. This is the segment number of the current file. Expects a decimal number, usually 6 if it is an object, or 128 for overlays (It's kinda a whacky hack to get around of the `0x80` addresses).
   - `BaseAddress`: Optional. RAM address of the file. Expects a hex number (with `0x` prefix). Default value: `0`.
   - `RangeStart`: Optional. File offset where the extraction will begin. Hex. Default value: `0x000000000`.
   - `RangeEnd`: Optional. File offset where the extraction will end. Hex. Default value: `0xFFFFFFFF`.
@@ -108,6 +108,27 @@ u64 gCraterSmokeConeTex[] = {
   - `Format`: Required. The format of the image. Valid values: `rgba32`, `rgb5a1`, `i4`, `i8`, `ia4`, `ia8`, `ia16`, `ci4` and `ci8`.
   - `Width`: Required. Width in pixels of the image.
   - `Height`: Required. Height in pixels of the image.
+
+The following is a list of the texture formats the Nintendo 64 supports, with their gfxdis names and ZAPD format names.
+
+<center>
+
+| Format name                                     | Typing in `gsDPLoadTextureBlock` | "Format" in xml |
+| ----------------------------------------------- | -------------------------------- | --------------- |
+| 4-bit intensity (I)                             | `G_IM_FMT_I, G_IM_SIZ_4b`        | `i4`            |
+| 4-bit intensity with alpha (I/A) (3/1)          | `G_IM_FMT_IA, G_IM_SIZ_4b`       | `ia4`           |
+| 4-bit color index (CI)                          | `G_IM_FMT_CI, G_IM_SIZ_4b`       | `ci4`           |
+| 8-bit I                                         | `G_IM_FMT_I, G_IM_SIZ_4b`        | `i8`            |
+| 8-bit IA (4/4)                                  | `G_IM_FMT_IA, G_IM_SIZ_4b`       | `ia8`           |
+| 8-bit CI                                        | `G_IM_FMT_CI, G_IM_SIZ_4b`       | `ci8`           |
+| 16-bit red, green, blue, alpha (RGBA) (5/5/5/1) | `G_IM_FMT_RGBA, G_IM_SIZ_16b`    | `rgb5a1`        |
+| 16-bit IA (8/8)                                 | `G_IM_FMT_IA, G_IM_SIZ_16b`      | `ia16`          |
+| 16-bit YUV (Luminance, Blue-Y, Red-Y)           | `G_IM_FMT_YUV, G_IM_SIZ_16b`     | (not used)      |
+| 32-bit RGBA (8/8/8/8)                           | `G_IM_FMT_RGBA, G_IM_SIZ_32b`    | `rgba8`         |
+
+</center>
+
+If you want to know more about this formats, you can check [`gsDPLoadTextureBlock`](http://n64devkit.square7.ch/n64man/gdp/gDPLoadTextureBlock.htm) for most formats, or [`gDPLoadTextureBlock_4b`](http://n64devkit.square7.ch/n64man/gdp/gDPLoadTextureBlock_4b.htm) for the 4-bit formats.
 
 -------------------------
 
@@ -157,7 +178,7 @@ A.k.a. Display list, or Gfx.
 
 ### Scene and Room
 
-TODO. I'm hopping somebody else will do this.
+TODO. I'm hoping somebody else will do this.
 
 -------------------------
 
@@ -391,7 +412,7 @@ Vec3s D_04002040[24] = {
 
 The `Array` element is special, because it needs an inner element to work. It will declare an array of its inner element.
 
-Currently, only [`Scalar`](#Scalar), [`Vector`](#Vector) and [`Vtx`](#Vtx) support being wrapped in an array.
+Currently, only [`Scalar`](#scalar), [`Vector`](#vector) and [`Vtx`](#vtx) support being wrapped in an array.
 
 - Example:
 
