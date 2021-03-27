@@ -2,6 +2,34 @@
 
 This document aims to be a small reference of how to create a compatible xml file for ZAPD.
 
+-------------------------
+
+## Table of contents
+
+- [ZAPD extraction xml reference](#zapd-extraction-xml-reference)
+  - [Table of contents](#table-of-contents)
+  - [Basic XML](#basic-xml)
+  - [Resources types](#resources-types)
+    - [File](#file)
+    - [Texture](#texture)
+    - [Blob](#blob)
+    - [DList](#dlist)
+    - [Scene and Room](#scene-and-room)
+    - [Animation](#animation)
+    - [PlayerAnimation](#playeranimation)
+    - [CurveAnimation](#curveanimation)
+    - [Skeleton](#skeleton)
+    - [Limb](#limb)
+    - [Symbol](#symbol)
+    - [Collision](#collision)
+    - [Scalar](#scalar)
+    - [Vector](#vector)
+    - [Vtx](#vtx)
+    - [Cutscene](#cutscene)
+    - [Array](#array)
+
+-------------------------
+
 ## Basic XML
 
 An example of an object xml:
@@ -30,6 +58,8 @@ An example of an object xml:
 
 Every xml must have a `<Root>` tag. It must have at least one `<File>` child.
 
+-------------------------
+
 ## Resources types
 
 The following is a list of the resources/tags supported by ZAPD, and the attributes needed by each one.
@@ -38,7 +68,9 @@ For most resources inside a `<File>` tag **you should also set an `Offset` attri
 
 It's worth noting that every tag expects a `Name="gNameOfTheVariable"`. This is will be the name of the extracted variable. Every variable must be prefixed with `g` and the suffix should represent the type of the variable.
 
-## File
+-------------------------
+
+### File
 
 Example of this tag:
 
@@ -55,7 +87,9 @@ Attributes:
 - `RangeEnd`: Optional. File offset where the extraction will end. Hex. Default value: `0xFFFFFFFF`.
 - `Game`: Optional. Valid values: `OOT`, `MM`, `SW97` and `OOTSW97`. Default value: `OOT`.
 
-## Texture
+-------------------------
+
+### Texture
 
 Textures are extracted as `.png` files.
 
@@ -73,7 +107,9 @@ Attributes:
 - `Width`: Required. Width in pixels of the image.
 - `Height`: Required. Height in pixels of the image.
 
-## Blob
+-------------------------
+
+### Blob
 
 Blob are binary data that will be extracted as `.bin` files.
 
@@ -90,7 +126,9 @@ Attributes:
 
 ※ We usually use blobs when we can't figure out the content's type of chunk of data.
 
-## DList
+-------------------------
+
+### DList
 
 A.k.a.: Display list, or Gfx.
 
@@ -104,11 +142,15 @@ Attributes:
 
 - `Name`: Required. Suxffixed by `DL`.
 
-## Scene and Room
+-------------------------
+
+### Scene and Room
 
 TODO. I'm hopping somebody else will do this.
 
-## Animation
+-------------------------
+
+### Animation
 
 Example:
 
@@ -120,7 +162,9 @@ Attributes:
 
 - `Name`: Required. Suxffixed by `Anim`.
 
-## PlayerAnimation
+-------------------------
+
+### PlayerAnimation
 
 Example:
 
@@ -132,7 +176,9 @@ Attributes:
 
 - `Name`: Required. Suxffixed by `Anim`.
 
-## CurveAnimation
+-------------------------
+
+### CurveAnimation
 
 Example:
 
@@ -143,9 +189,11 @@ Example:
 Attributes:
 
 - `Name`: Required. Suxffixed by `Anim`.
-- `SkelOffset`: Required. Offset of the `CurveSkeleton` related to this Animation.
+- `SkelOffset`: Required. Offset of the `CurveSkeleton` (I.e. a [`Skeleton`](#skeleton) resource with `Type="Curve"`) related to this animation.
 
-## Skeleton
+-------------------------
+
+### Skeleton
 
 Example:
 
@@ -161,7 +209,9 @@ Attributes:
 
 ※ There are no restrictions in the `Type` and `LimbType` attributes besides the valid values, so any skeleton type can be combined with any limb type.
 
-## Limb
+-------------------------
+
+### Limb
 
 Example:
 
@@ -174,7 +224,9 @@ Attributes:
 - `Name`: Required. Suxffixed by `Limb`.
 - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
 
-## Symbol
+-------------------------
+
+### Symbol
 
 A special element that allows declaring a variable without actually extracting it from the current file. Useful when a resource references an element from another file. The symbol will be declared as `extern`.
 
@@ -190,7 +242,9 @@ Attributes:
 - `TypeSize`: The size in bytes of the type. If missing, then it will default to `4` (the size of a word and a pointer). Integer or hex value.
 - `Count`: Optional. If it is present, the variable will be declared as an array instead of a plain variable. The value of this attribute specifies the length of the array. If `Count` is present but it has no value (`Count=""`), then the length of the array will not be specified either in the declared variable. Integer or hex value.
 
-## Collision
+-------------------------
+
+### Collision
 
 Example:
 
@@ -202,7 +256,9 @@ Attributes:
 
 - `Name`: Required. Suxffixed by `Col`.
 
-## Scalar
+-------------------------
+
+### Scalar
 
 Allows the extraction of a single number.
 
@@ -217,9 +273,11 @@ Attributes:
 - `Name`: Required. Suxffixed by ~~`TODO`~~.
 - `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32` and `f64`.
 
-※ Can be wrapped in an [`Array`](#Array) tag.
+※ Can be wrapped in an [`Array`](#array) tag.
 
-## Vector
+-------------------------
+
+### Vector
 
 Extracts a vector.
 
@@ -239,9 +297,11 @@ Attributes:
 - `Type`: Required. Specifies the vector's type (`Vec3s`, `Vec3i` and `Vec3f`). Valid values: `s16`, `s32` and `f32`.
 - `Dimensions`: Required. The amount of dimensions of the vector. Valid values: `3`.
 
-※ Can be wrapped in an [`Array`](#Array) tag.
+※ Can be wrapped in an [`Array`](#array) tag.
 
-## Vtx
+-------------------------
+
+### Vtx
 
 Example:
 
@@ -255,9 +315,11 @@ Attributes:
 
 - `Name`: Required. Suxffixed by `Vtx`.
 
-※ Can be wrapped in an [`Array`](#Array) tag.
+※ Can be wrapped in an [`Array`](#array) tag.
 
-## Cutscene
+-------------------------
+
+### Cutscene
 
 Example:
 
@@ -269,7 +331,9 @@ Attributes:
 
 - `Name`: Required. Suxffixed by `Cs`.
 
-## Array
+-------------------------
+
+### Array
 
 The `Array` element is special, because it needs an inner element to work. It will declare an array of its inner element.
 
@@ -287,3 +351,5 @@ Attributes:
 
 - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g`. The sufix is mandated by the element contained.
 - `Count`: Required. Amount of elements. Integer.
+
+-------------------------
