@@ -181,6 +181,10 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 	{
 		// Table
 		string tblStr = "";
+		string limbArrTypeStr = "static void*";
+		if (limbType == ZLimbType::Curve) {
+			limbArrTypeStr = StringHelper::Sprintf("static %s*", ZLimb::GetSourceTypeName(limbType));
+		}
 
 		for (size_t i = 0; i < limbs.size(); i++)
 		{
@@ -196,7 +200,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 			tblStr += decl;
 		}
 
-		parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbCount, "static void*",
+		parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbCount, limbArrTypeStr,
 		                            StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()),
 		                            limbCount, tblStr);
 	}
