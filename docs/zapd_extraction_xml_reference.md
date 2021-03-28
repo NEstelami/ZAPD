@@ -103,7 +103,7 @@ u64 gCraterSmokeConeTex[] = {
 
 - Attributes:
 
-  - `Name`: Required. Suxffixed by `Tex`.
+  - `Name`: Required. Suxffixed by `Tex`, unless it is a palette, in that case it is suffixed by `TLUT`.
   - `OutName`: Required. The filename of the extracted `.png` file.
   - `Format`: Required. The format of the image. Valid values: `rgba32`, `rgb5a1`, `i4`, `i8`, `ia4`, `ia8`, `ia16`, `ci4` and `ci8`.
   - `Width`: Required. Width in pixels of the image.
