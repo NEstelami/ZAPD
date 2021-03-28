@@ -69,7 +69,7 @@ void ErrorHandler(int sig)
 		fprintf(stderr, "%-3zd %s\n", i, functionName.c_str());
 	}
 
-	backtrace_symbols_fd(array, size, STDERR_FILENO);
+	//backtrace_symbols_fd(array, size, STDERR_FILENO);
 	free(symbols);
 	exit(1);
 }
