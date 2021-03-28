@@ -5,6 +5,7 @@
 
 ZArray::ZArray()
 {
+	canHaveInner = true;
 }
 
 void ZArray::ParseXML(tinyxml2::XMLElement* reader)

@@ -1,4 +1,5 @@
 #include "ZResource.h"
+#include "StringHelper.h"
 
 using namespace std;
 
@@ -25,6 +26,11 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		outName = reader->Attribute("OutName");
 	else
 		outName = name;
+
+	if (!canHaveInner && !reader->NoChildren())
+	{
+		throw std::runtime_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource with inner element/child detected.\n", name.c_str()));
+	}
 }
 
 void ZResource::Save(const std::string& outFolder)

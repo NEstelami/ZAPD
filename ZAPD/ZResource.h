@@ -81,6 +81,7 @@ protected:
 	int rawDataIndex;
 	std::string sourceOutput;
 	uint64_t hash;
+	bool canHaveInner = false; // Can this type have an inner node?
 };
 
 enum class DeclarationAlignment
