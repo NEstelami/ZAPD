@@ -47,8 +47,6 @@ ZDisplayList* ZDisplayList::ExtractFromXML(XMLElement* reader, vector<uint8_t> n
 
 	dList->ParseXML(reader);
 
-	// dList->name = reader->Attribute("Name");
-
 	dList->rawData = nRawData;
 	dList->rawDataIndex = nRawDataIndex;
 	dList->fileData = dList->rawData;
@@ -64,7 +62,7 @@ ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bo
 {
 	ZDisplayList* dList = new ZDisplayList();
 
-	dList->SetName(reader->Attribute("Name"));
+	dList->ParseXML(reader);
 	return dList;
 }
 
