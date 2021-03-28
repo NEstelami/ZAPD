@@ -165,19 +165,20 @@ void ZTexture::ParseXML(XMLElement* reader)
 	if (reader->Attribute("Width") != nullptr)
 	{
 		width = atoi(reader->Attribute("Width"));
-	} 
+	}
 	else
 	{
-		throw std::runtime_error("Width == nullptr");
+		throw std::runtime_error("Width == nullptr for asset " + (string)reader->Attribute("Name")	);
 	}
 
-	if (reader->Attribute("Height") != nullptr) 
+	if (reader->Attribute("Height") != nullptr)
 	{
 		height = atoi(reader->Attribute("Height"));
 	}
 	else
 	{
-		throw std::runtime_error("Height == nullptr");
+		throw std::runtime_error("Height == nullptr for asset " +
+		                         (string)reader->Attribute("Name"));
 	}
 
 	string formatStr = reader->Attribute("Format");

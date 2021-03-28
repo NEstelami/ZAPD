@@ -850,7 +850,7 @@ string ZFile::ProcessDeclarations()
 		ProcessDeclarationText(item.second);
 	}
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		while (item.second->size % 4 != 0)
 		{
@@ -932,7 +932,7 @@ string ZFile::ProcessDeclarations()
 	// Handle unaccounted data
 	lastAddr = 0;
 	lastSize = 0;
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first >= rangeStart && item.first < rangeEnd)
 		{
@@ -1018,7 +1018,7 @@ string ZFile::ProcessDeclarations()
 	// Go through include declarations
 	// First, handle the prototypes (static only for now)
 	int protoCnt = 0;
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.second->includePath == "" &&
 		    StringHelper::StartsWith(item.second->varType, "static ") &&
@@ -1046,7 +1046,7 @@ string ZFile::ProcessDeclarations()
 		output += "\n";
 
 	// Next, output the actual declarations
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
 		{
@@ -1158,7 +1158,7 @@ string ZFile::ProcessExterns()
 {
 	string output = "";
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
 		{
