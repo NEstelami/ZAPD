@@ -163,10 +163,22 @@ void ZTexture::ParseXML(XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	if (reader->Attribute("Width") != nullptr)
+	{
 		width = atoi(reader->Attribute("Width"));
+	} 
+	else
+	{
+		throw std::runtime_error("Width == nullptr");
+	}
 
-	if (reader->Attribute("Height") != nullptr)
+	if (reader->Attribute("Height") != nullptr) 
+	{
 		height = atoi(reader->Attribute("Height"));
+	}
+	else
+	{
+		throw std::runtime_error("Height == nullptr");
+	}
 
 	string formatStr = reader->Attribute("Format");
 
