@@ -436,6 +436,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				rawDataIndex += array->GetRawDataSize();
 			}
 		}
+		else if (string(child->Name()) == "File")
+		{
+			throw std::runtime_error(StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n", name.c_str()));
+		}
 		else
 		{
 			std::cerr << "ERROR bad type\n";
