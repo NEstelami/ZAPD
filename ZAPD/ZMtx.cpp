@@ -70,12 +70,12 @@ std::string ZMtx::GetBodySourceCode()
 	std::string bodyStr = "\n";
     for (const auto& row: mtx)
     {
-        bodyStr += "    { ";
+        bodyStr += "    ";
         for (int32_t val: row)
         {
             bodyStr += StringHelper::Sprintf("%-11i, ", val);
         }
-        bodyStr += "},\n";
+        bodyStr += "\n";
     }
     return bodyStr;
 }
