@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O0 -rdynamic
+CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic
 UNAME := $(shell uname)
 
 FS_INC =
@@ -24,11 +24,11 @@ clean:
 
 rebuild: clean all
 
-%.o: %.cpp 
+%.o: %.cpp genbuildinfo
 	$(CC) $(CFLAGS) -c $< -o $@
 
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd -j
 
-ZAPD.out: genbuildinfo $(O_FILES) lib/libgfxd/libgfxd.a
+ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
 	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC)
