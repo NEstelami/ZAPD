@@ -1,9 +1,8 @@
 #pragma once
 
-#include <cstdint>
 #include <array>
+#include <cstdint>
 #include "ZResource.h"
-
 
 class ZMtx : public ZResource
 {
@@ -13,12 +12,12 @@ protected:
 public:
 	ZMtx() = default;
 	ZMtx(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	          ZFile* nParent);
-	ZMtx(const std::string& prefix,
-	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	     ZFile* nParent);
+	ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	     ZFile* nParent);
 	void ParseRawData() override;
-	static ZMtx* ExtractFromXML(tinyxml2::XMLElement* reader,
-				const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	static ZMtx* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                            int nRawDataIndex, ZFile* nParent);
 
 	int GetRawDataSize() override;
 
