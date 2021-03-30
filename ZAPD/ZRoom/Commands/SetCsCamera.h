@@ -3,25 +3,22 @@
 #include "../../Vec3s.h"
 #include "../ZRoomCommand.h"
 
-class PathwayEntry
+class CsCameraEntry
 {
 public:
-	int16_t x, y, z;
+	CsCameraEntry(std::vector<uint8_t> rawData, int rawDataIndex);
 
-	PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex);
-
+	int baseOffset;
+	int type;
 	int numPoints;
-	int8_t unk1; // (MM Only)
-	int16_t unk2; // (MM Only)
-	uint32_t listSegmentOffset;
-	std::vector<Vec3s> points;
+	uint32_t segmentOffset;
 };
 
-class SetPathways : public ZRoomCommand
+class SetCsCamera : public ZRoomCommand
 {
 public:
-	SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetPathways();
+	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	~SetCsCamera();
 
 	std::string GetSourceOutputCode(std::string prefix);
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
@@ -33,7 +30,8 @@ public:
 
 private:
 	uint32_t segmentOffset;
-	std::vector<PathwayEntry*> pathways;
+	std::vector<CsCameraEntry*> cameras;
+	std::vector<Vec3s> points;
 	std::vector<uint8_t> _rawData;
 	int _rawDataIndex;
 };

@@ -3,7 +3,7 @@
 #include "../../Globals.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
-#include "../ActorList.h"
+#include "../ZNames.h"
 #include "../ZRoom.h"
 
 using namespace std;
@@ -84,10 +84,10 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 			if (Globals::Instance->game == ZGame::OOT_SW97 && actorNum >= 0x23)
 				actorNum--;
 
-			if (actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
+			if (actorNum < ZNames::GetNumActors())
 				declaration +=
 					StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
-				                          ActorList[actorNum].c_str(), entry->posX, entry->posY,
+				                          ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY,
 				                          entry->posZ, entry->rotX, entry->rotY, entry->rotZ,
 				                          (uint16_t)entry->initVar, segmentOffset + (index * 16));
 			else

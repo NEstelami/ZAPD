@@ -1,25 +1,23 @@
 #pragma once
 
-#include "../../ZCutscene.h"
-#include "../../ZCutsceneMM.h"
 #include "../ZRoomCommand.h"
 
-class CutsceneEntry
+// TODO move into header and add all types
+class AnimatedTexture
 {
 public:
-	CutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	AnimatedTexture(std::vector<uint8_t> rawData, int rawDataIndex);
 
+	int8_t segment;
+	int16_t type;
 	uint32_t segmentOffset;
-	uint16_t exit;
-	uint8_t entrance;
-	uint8_t flag;
 };
 
-class SetCutscenes : public ZRoomCommand
+class SetAnimatedTextureList : public ZRoomCommand
 {
 public:
-	SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetCutscenes();
+	SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	~SetAnimatedTextureList();
 
 	std::string GetSourceOutputCode(std::string prefix);
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
@@ -29,10 +27,8 @@ public:
 	virtual std::string GenerateExterns();
 
 private:
-	std::vector<ZCutsceneBase*> cutscenes;
-	std::vector<CutsceneEntry*> cutsceneEntries; // (MM Only)
 	uint32_t segmentOffset;
-	uint8_t numCutscenes; // (MM Only)
+	std::vector<AnimatedTexture*> textures;
 	std::vector<uint8_t> _rawData;
 	int _rawDataIndex;
 };

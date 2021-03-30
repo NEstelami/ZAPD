@@ -852,9 +852,19 @@ string ZFile::ProcessDeclarations()
 
 	for (pair<uint32_t, Declaration*> item : declarations)
 	{
-		while (item.second->size % 4 != 0)
+		if (item.second->alignment == DeclarationAlignment::Align2)
 		{
-			item.second->size++;
+			while (item.second->size % 2 != 0)
+			{
+				item.second->size++;
+			}
+		}
+		else
+		{	
+			while (item.second->size % 4 != 0)
+			{
+				item.second->size++;
+			}
 		}
 
 		if (lastAddr != 0)
@@ -903,6 +913,17 @@ string ZFile::ProcessDeclarations()
 					declarations[lastAddr]->size += 4;
 					// item.second->size += 4;
 					curPtr += 4;
+				}
+			}
+			else if (item.second->alignment == DeclarationAlignment::Align4)
+			{
+				int curPtr = lastAddr + declarations[lastAddr]->size;
+
+				while (curPtr % 4 != 0)
+				{
+					declarations[lastAddr]->size++;
+					// item.second->size++;
+					curPtr++;
 				}
 			}
 		}

@@ -8,15 +8,19 @@
 #include "../ZBlob.h"
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorList.h"
+#include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetAlternateHeaders.h"
+#include "Commands/SetAnimatedTextureList.h"
 #include "Commands/SetCameraSettings.h"
 #include "Commands/SetCollisionHeader.h"
+#include "Commands/SetCsCamera.h"
 #include "Commands/SetCutscenes.h"
 #include "Commands/SetEchoSettings.h"
 #include "Commands/SetEntranceList.h"
 #include "Commands/SetExitList.h"
 #include "Commands/SetLightList.h"
 #include "Commands/SetLightingSettings.h"
+#include "Commands/SetMinimapList.h"
 #include "Commands/SetMesh.h"
 #include "Commands/SetObjectList.h"
 #include "Commands/SetPathways.h"
@@ -31,6 +35,7 @@
 #include "Commands/SetTransitionActorList.h"
 #include "Commands/SetWind.h"
 #include "Commands/Unused09.h"
+#include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
 #include "ObjectList.h"
 #include "ZCutscene.h"
@@ -46,6 +51,7 @@ ZRoom::ZRoom() : ZResource()
 	commandSets = vector<CommandSet>();
 	extDefines = "";
 	scene = nullptr;
+	roomCount = -1;
 }
 
 ZRoom::~ZRoom()
@@ -201,7 +207,6 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			SetPathways* pathway = new SetPathways(room, room->rawData, address);
-			pathway->InitList(address);
 			pathway->GenerateSourceCodePass1(room->name, 0);
 			pathway->GenerateSourceCodePass2(room->name, 0);
 
@@ -266,6 +271,9 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::SetActorList:
 			cmd = new SetActorList(this, rawData, rawDataIndex);
 			break;  // 0x01
+		case RoomCommand::SetCsCamera:
+			cmd = new SetCsCamera(this, rawData, rawDataIndex);
+			break;  // 0x02 (MM-ONLY)
 		case RoomCommand::SetCollisionHeader:
 			cmd = new SetCollisionHeader(this, rawData, rawDataIndex);
 			break;  // 0x03
@@ -334,7 +342,24 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			break;  // 0x18
 		case RoomCommand::SetCameraSettings:
 			cmd = new SetCameraSettings(this, rawData, rawDataIndex);
+			// TODO SCmdWorldMapVisited for MM
 			break;  // 0x19
+		case RoomCommand::SetAnimatedTextureList:
+			cmd = new SetAnimatedTextureList(this, rawData, rawDataIndex);
+			break;  // 0x1A (MM-ONLY)
+		case RoomCommand::SetActorCutsceneList:
+			cmd = new SetActorCutsceneList(this, rawData, rawDataIndex);
+			break;  // 0x1B (MM-ONLY)
+		case RoomCommand::SetMinimapList:
+			cmd = new SetMinimapList(this, rawData, rawDataIndex);
+			break;  // 0x1C (MM-ONLY)
+		case RoomCommand::Unused1D:
+			cmd = new Unused1D(this, rawData, rawDataIndex);
+			break;  // 0x1D
+		case RoomCommand::SetMinimapChest:
+			//cmd = new SetCameraSettings(this, rawData, rawDataIndex);
+			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
+			break;  // 0x1E (MM-ONLY)
 		default:
 			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
 		}

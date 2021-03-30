@@ -2,7 +2,7 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
-#include "../ActorList.h"
+#include "../ZNames.h"
 #include "../ZRoom.h"
 
 using namespace std;
@@ -50,8 +50,8 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 	{
 		string actorStr = "";
 
-		if (entry->actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
-			actorStr = ActorList[entry->actorNum];
+		if (entry->actorNum < ZNames::GetNumActors())
+			actorStr = ZNames::GetActorName(entry->actorNum);
 		else
 			actorStr = StringHelper::Sprintf("0x%04X", entry->actorNum);
 
