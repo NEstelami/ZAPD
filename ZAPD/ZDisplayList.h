@@ -3,6 +3,7 @@
 #include "ZResource.h"
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
+#include "ZMtx.h"
 #include "tinyxml2.h"
 
 #include <map>
@@ -360,6 +361,7 @@ public:
 
 	std::string defines;  // Hack for special cases where vertex arrays intersect...
 	std::vector<uint8_t> fileData;
+	std::vector<ZMtx> mtxList;
 
 	ZDisplayList();
 	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
