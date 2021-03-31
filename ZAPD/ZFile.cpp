@@ -160,11 +160,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			if (mode == ZFileMode::Extract)
 			{
-				back = ZBackground::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
+				back = ZBackground::ExtractFromXML(child, rawData, rawDataIndex, this);
 			}
 			else
 			{
-				back = ZBackground::BuildFromXML(child, folderName, folderName, this, mode == ZFileMode::Build);
+				back = ZBackground::BuildFromXML(child, folderName, this, mode == ZFileMode::Build);
 			}
 
 			if (back == nullptr)

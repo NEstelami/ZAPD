@@ -6,33 +6,31 @@
 #include "File.h"
 
 
-ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath, ZFile* nParent)
+ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
-    relativePath = nRelPath;
 
 	ParseXML(reader);
 	ParseRawData();
 }
 
-ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::string& nRelPath, ZFile* nParent)
+ZBackground::ZBackground(tinyxml2::XMLElement* reader, ZFile* nParent)
 {
 	parent = nParent;
-    relativePath = nRelPath;
 
 	ParseXML(reader);
 }
 
-ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath, ZFile* nParent)
+ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
-    relativePath = nRelPath;
 
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+    outName = name;
 
 	ParseRawData();
 }
@@ -66,19 +64,19 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 }
 
 ZBackground* ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader,
-            const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPat, ZFile* nParent)
+            const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
-	ZBackground* mtx = new ZBackground(reader, nRawData, nRawDataIndex, nRelPat, nParent);
+	ZBackground* mtx = new ZBackground(reader, nRawData, nRawDataIndex, nParent);
 
     mtx->DeclareVar("", "");
 
 	return mtx;
 }
 
-ZBackground* ZBackground::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, const std::string& nRelPath, ZFile* nParent,
+ZBackground* ZBackground::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, ZFile* nParent,
 	                              bool readFile)
 {
-	ZBackground* back = new ZBackground(reader, nRelPath, nParent);
+	ZBackground* back = new ZBackground(reader, nParent);
 
 	back->ParseXML(reader);
 
@@ -149,8 +147,6 @@ std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
 {
     std::string bodyStr = GetBodySourceCode();
 
-    printf("%s\n", bodyStr.c_str());
-
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr)
 	{
@@ -167,7 +163,7 @@ std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
 std::string ZBackground::GetDefaultName(const std::string& prefix, uint32_t address)
 {
     // TODO: change Jfif, probably
-    return StringHelper::Sprintf("%sJfif_%06X", prefix.c_str(), address);
+    return StringHelper::Sprintf("%sPrerender_%06X", prefix.c_str(), address);
 }
 
 std::string ZBackground::GetSourceTypeName()

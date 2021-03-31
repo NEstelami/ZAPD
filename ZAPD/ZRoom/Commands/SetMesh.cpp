@@ -5,6 +5,7 @@
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 #include "../ZRoom.h"
+#include "ZBackground.h"
 
 using namespace std;
 
@@ -138,6 +139,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 		if (fmt == 1)  // Single Format
 		{
 			MeshHeader1Single* headerSingle = new MeshHeader1Single();
+			std::string headerSingleStr = StringHelper::Sprintf("%sMeshHeader0x%06X",
+			                                                    zRoom->GetName().c_str(),
+			                                                    segmentOffset);
 
 			headerSingle->headerType = 1;
 			headerSingle->format = fmt;
@@ -155,21 +159,40 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			headerSingle->imagePal = BitConverter::ToInt16BE(rawData, segmentOffset + 26);
 			headerSingle->imageFlip = BitConverter::ToInt16BE(rawData, segmentOffset + 28);
 
-			declaration += StringHelper::Sprintf("{ { 1 }, 1, 0x%06X  }, 0x%06X, ",
-			                                     headerSingle->entryRecord, headerSingle->imagePtr);
+			declaration = "\n";
+			declaration += StringHelper::Sprintf("    { { 1 }, 1, 0x%06X }, \n",
+			                                     headerSingle->entryRecord);
 
-			declaration += StringHelper::Sprintf("0x%06X, 0x%06X, %i, %i, %i, %i, %i, %i\n",
-			                                     headerSingle->unknown, headerSingle->unknown2,
+			std::string imagePtrStr = "NULL";
+			if (headerSingle->imagePtr != 0)
+			{
+				uint32_t imagePtrAddress = Seg2Filespace(headerSingle->imagePtr, zRoom->parent->baseAddress);
+				Declaration* decl = zRoom->parent->GetDeclaration(imagePtrAddress);
+				
+				if (decl == nullptr)
+				{
+					ZBackground* prerender = new ZBackground(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
+					prerender->DeclareVar(headerSingleStr, "");
+					zRoom->parent->resources.push_back(prerender);
+					imagePtrStr = prerender->GetName();
+				}
+				else
+				{
+					imagePtrStr = decl->varName;
+				}
+			}
+			declaration += StringHelper::Sprintf("    %s, \n", imagePtrStr.c_str());
+
+			declaration += StringHelper::Sprintf("    0x%06X, 0x%06X, \n",
+			                                     headerSingle->unknown, headerSingle->unknown2);
+			declaration += StringHelper::Sprintf("    %i, %i, %i, %i, %i, %i\n",
 			                                     headerSingle->bgWidth, headerSingle->bgHeight,
 			                                     headerSingle->imageFormat, headerSingle->imageSize,
 			                                     headerSingle->imagePal, headerSingle->imageFlip);
 
 			zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None,
 			                              DeclarationPadding::Pad16, 0x1E, "MeshHeader1Single",
-			                              StringHelper::Sprintf("%sMeshHeader0x%06X",
-			                                                    zRoom->GetName().c_str(),
-			                                                    segmentOffset),
-			                              declaration);
+			                              headerSingleStr, declaration);
 
 			meshHeader1 = headerSingle;
 		}
