@@ -8,6 +8,7 @@
 #include "Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
+#include "ZBackground.h"
 #include "ZBlob.h"
 #include "ZCollision.h"
 #include "ZCutscene.h"
@@ -152,6 +153,26 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(tex);
 			rawDataIndex += tex->GetRawDataSize();
+		}
+		else if (string(child->Name()) == "Background")
+		{
+			ZBackground* back = nullptr;
+
+			if (mode == ZFileMode::Extract)
+			{
+				back = ZBackground::ExtractFromXML(child, rawData, rawDataIndex, folderName, this);
+			}
+			else
+			{
+				// back = ZBackground::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+			}
+
+			if (back == nullptr)
+			{
+				throw std::runtime_error("Couldn't create ZBackground.");
+			}
+			resources.push_back(back);
+			rawDataIndex += back->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Blob")
 		{

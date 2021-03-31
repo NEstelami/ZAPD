@@ -35,6 +35,7 @@
 #include "ObjectList.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
+#include "ZBackground.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -229,6 +230,19 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			                                  StringHelper::Sprintf("%s", tex->GetName().c_str()),
 			                                  0, tex->GetSourceOutputCode(room->name));
 			delete tex;
+		}
+		else if (string(child->Name()) == "BackgroundHint")
+		{
+			string comment = "";
+
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Offset");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			ZBackground* back = ZBackground::ExtractFromXML(child, room->rawData, address, nRelPath, room->parent);
+			room->parent->resources.push_back(back);
 		}
 	}
 
