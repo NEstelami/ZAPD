@@ -17,7 +17,7 @@ public:
 	ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	ZBackground(tinyxml2::XMLElement* reader, ZFile* nParent);
 	ZBackground(const std::string& prefix,
-	          const std::vector<uint8_t>& nRawData, int nRawDataIndex,ZFile* nParent);
+	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
 	static ZBackground* ExtractFromXML(tinyxml2::XMLElement* reader,

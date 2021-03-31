@@ -2,8 +2,8 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "ZFile.h"
-#include <filesystem>
 #include "File.h"
+#include "Path.h"
 
 
 ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
@@ -55,7 +55,7 @@ void ZBackground::ParseRawData()
 
 void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutName)
 {
-    std::filesystem::path filepath(inFolder);
+    fs::path filepath(inFolder);
     if (appendOutName)
     {
         filepath = filepath / (outName + ".jfif");
@@ -98,13 +98,13 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
     {
         auxName = GetDefaultName(prefix, rawDataIndex);
     }
-    /*parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+    parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
                             GetSourceTypeName(), auxName, 0, bodyStr);
-    parent->AddDeclarationIncludeArray(rawDataIndex,
+    /*parent->AddDeclarationIncludeArray(rawDataIndex,
         StringHelper::Sprintf("%s/%s.%s.inc.c", outputDir.c_str(),
-                                Path::GetFileNameWithoutExtension(res->GetOutName()).c_str(),
-                                res->GetExternalExtension().c_str()),
-        res->GetRawDataSize(), declType, res->GetName(), 0);*/
+                                Path::GetFileNameWithoutExtension(GetOutName()).c_str(),
+                                GetExternalExtension().c_str()),
+        GetRawDataSize(), GetSourceTypeName(), GetName(), 0);*/
 }
 
 bool ZBackground::IsExternalResource()
@@ -119,8 +119,8 @@ std::string ZBackground::GetExternalExtension()
 
 void ZBackground::Save(const std::string& outFolder)
 {
-    std::filesystem::path folder(outFolder);
-    std::filesystem::path filepath = folder / (outName + ".jfif");
+    fs::path folder(outFolder);
+    fs::path filepath = folder / (outName + ".jfif");
 	File::WriteAllBytes(filepath, data);
 }
 
@@ -162,7 +162,6 @@ std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
 
 std::string ZBackground::GetDefaultName(const std::string& prefix, uint32_t address)
 {
-    // TODO: change Jfif, probably
     return StringHelper::Sprintf("%sPrerender_%06X", prefix.c_str(), address);
 }
 

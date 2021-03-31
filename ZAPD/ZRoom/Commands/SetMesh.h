@@ -98,6 +98,35 @@ public:
 	uint32_t dListEnd;
 };
 
+class PolygonDlist
+{
+protected:
+	segptr_t opa; // Gfx*
+	segptr_t xlu; // Gfx*
+
+	std::vector<uint8_t> rawData;
+	int rawDataIndex;
+	ZFile* parent;
+	std::string name;
+
+	void ParseRawData();
+
+public:
+	PolygonDlist(const std::string& prefix,
+	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+
+	int GetRawDataSize();
+
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+
+	std::string GetBodySourceCode();
+	void DeclareAndGenerateOutputCode();
+
+	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	std::string GetSourceTypeName();
+	std::string GetName();
+};
+
 class SetMesh : public ZRoomCommand
 {
 public:
