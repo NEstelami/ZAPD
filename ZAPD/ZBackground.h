@@ -17,17 +17,22 @@ public:
 	ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, 
 				const std::string& nRelPath,
 	          ZFile* nParent);
+	ZBackground(tinyxml2::XMLElement* reader, const std::string& nRelPath, ZFile* nParent);
 	ZBackground(const std::string& prefix,
 	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath, ZFile* nParent);
 	void ParseRawData() override;
+	void ParseBinaryFile(const std::string& inFolder);
 	static ZBackground* ExtractFromXML(tinyxml2::XMLElement* reader,
 				const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath, ZFile* nParent);
+	static ZBackground* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, const std::string& nRelPath, ZFile* nParent,
+	                              bool readFile);
 
 	int GetRawDataSize() override;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	bool IsExternalResource() override;
+	std::string GetExternalExtension() override;
 	void Save(const std::string& outFolder) override;
 
 	std::string GetBodySourceCode();

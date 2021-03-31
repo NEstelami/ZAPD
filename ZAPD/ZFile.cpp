@@ -164,7 +164,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			else
 			{
-				// back = ZBackground::BuildFromXML(child, folderName, mode == ZFileMode::Build);
+				back = ZBackground::BuildFromXML(child, folderName, folderName, this, mode == ZFileMode::Build);
 			}
 
 			if (back == nullptr)

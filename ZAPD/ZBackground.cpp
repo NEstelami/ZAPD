@@ -17,6 +17,14 @@ ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t
 	ParseRawData();
 }
 
+ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::string& nRelPath, ZFile* nParent)
+{
+	parent = nParent;
+    relativePath = nRelPath;
+
+	ParseXML(reader);
+}
+
 ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
@@ -47,6 +55,11 @@ void ZBackground::ParseRawData()
     }
 }
 
+void ParseBinaryFile(const std::string& inFolder)
+{
+
+}
+
 ZBackground* ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader,
             const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPat, ZFile* nParent)
 {
@@ -55,6 +68,19 @@ ZBackground* ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader,
     mtx->DeclareVar("", "");
 
 	return mtx;
+}
+
+ZBackground* ZBackground::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, const std::string& nRelPath, ZFile* nParent,
+	                              bool readFile)
+{
+	ZBackground* back = new ZBackground(reader, nRelPath, nParent);
+
+	back->ParseXML(reader);
+
+	if (readFile)
+		back->ParseBinaryFile(inFolder);
+
+	return back;
 }
 
 int ZBackground::GetRawDataSize()
@@ -81,6 +107,11 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
 bool ZBackground::IsExternalResource()
 {
     return true;
+}
+
+std::string ZBackground::GetExternalExtension()
+{
+    return "jfif";
 }
 
 void ZBackground::Save(const std::string& outFolder)
