@@ -55,9 +55,14 @@ void ZBackground::ParseRawData()
     }
 }
 
-void ParseBinaryFile(const std::string& inFolder)
+void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutName)
 {
-
+    std::filesystem::path filepath(inFolder);
+    if (appendOutName)
+    {
+        filepath = filepath / (outName + ".jfif");
+    }
+    data = File::ReadAllBytes(filepath);
 }
 
 ZBackground* ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader,
@@ -78,7 +83,7 @@ ZBackground* ZBackground::BuildFromXML(tinyxml2::XMLElement* reader, std::string
 	back->ParseXML(reader);
 
 	if (readFile)
-		back->ParseBinaryFile(inFolder);
+		back->ParseBinaryFile(inFolder, true);
 
 	return back;
 }
@@ -123,19 +128,28 @@ void ZBackground::Save(const std::string& outFolder)
 
 std::string ZBackground::GetBodySourceCode()
 {
-	std::string bodyStr = "\n";
-    /*
-    for (const auto& val: data)
+	std::string bodyStr = "    ";
+
+    for (size_t i = 0; i < data.size(); ++i)
     {
-        // TODO
+        bodyStr += StringHelper::Sprintf("0x%02X, ", data.at(i));
+
+        if (i % 16 == 15)
+        {
+            bodyStr += "\n    ";
+        }
     }
-    */
+
+    bodyStr += "\n";
+
     return bodyStr;
 }
 
 std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
 {
     std::string bodyStr = GetBodySourceCode();
+
+    printf("%s\n", bodyStr.c_str());
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr)

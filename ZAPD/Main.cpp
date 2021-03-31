@@ -10,6 +10,7 @@
 #include "ZBlob.h"
 #include "ZFile.h"
 #include "ZTexture.h"
+#include "ZBackground.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <execinfo.h>
@@ -28,6 +29,7 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 
 void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
                        const std::string& outPath);
+void BuildAssetPrerender(const std::string& imageFilePath, const std::string& outPath);
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath);
 void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath);
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
@@ -79,6 +81,8 @@ int NewMain(int argc, char* argv[])
 		fileMode = ZFileMode::Build;
 	else if (buildMode == "btex")
 		fileMode = ZFileMode::BuildTexture;
+	else if (buildMode == "bren")
+		fileMode = ZFileMode::BuildPrerender;
 	else if (buildMode == "bovl")
 		fileMode = ZFileMode::BuildOverlay;
 	else if (buildMode == "bsf")
@@ -206,6 +210,13 @@ int NewMain(int argc, char* argv[])
 
 		BuildAssetTexture(pngFilePath, texType, outFilePath);
 	}
+	else if (fileMode == ZFileMode::BuildPrerender)
+	{
+		string imageFilePath = Globals::Instance->inputPath;
+		string outFilePath = Globals::Instance->outputPath;
+
+		BuildAssetPrerender(imageFilePath, outFilePath);
+	}
 	else if (fileMode == ZFileMode::BuildBlob)
 	{
 		string blobFilePath = Globals::Instance->inputPath;
@@ -302,6 +313,17 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
 	File::WriteAllText(outPath, src);
 
 	delete tex;
+}
+
+void BuildAssetPrerender(const std::string& imageFilePath, const std::string& outPath)
+{
+	ZBackground prerender;
+
+	prerender.ParseBinaryFile(imageFilePath, false);
+
+	string src = prerender.GetBodySourceCode();
+
+	File::WriteAllText(outPath, src);
 }
 
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
