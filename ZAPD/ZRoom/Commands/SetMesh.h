@@ -104,12 +104,16 @@ protected:
 	segptr_t opa; // Gfx*
 	segptr_t xlu; // Gfx*
 
+	ZDisplayList* opaDList; // Gfx*
+	ZDisplayList* xluDList; // Gfx*
+
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	ZFile* parent;
 	std::string name;
 
 	void ParseRawData();
+	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
 
 public:
 	PolygonDlist(const std::string& prefix,
