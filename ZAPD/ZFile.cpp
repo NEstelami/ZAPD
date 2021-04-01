@@ -8,7 +8,7 @@
 #include "Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
-#include "ZBackground.h"
+#include "ZPrerender.h"
 #include "ZBlob.h"
 #include "ZCollision.h"
 #include "ZCutscene.h"
@@ -156,20 +156,20 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		}
 		else if (string(child->Name()) == "Background")
 		{
-			ZBackground* back = nullptr;
+			ZPrerender* back = nullptr;
 
 			if (mode == ZFileMode::Extract)
 			{
-				back = ZBackground::ExtractFromXML(child, rawData, rawDataIndex, this);
+				back = ZPrerender::ExtractFromXML(child, rawData, rawDataIndex, this);
 			}
 			else
 			{
-				back = ZBackground::BuildFromXML(child, folderName, this, mode == ZFileMode::Build);
+				back = ZPrerender::BuildFromXML(child, folderName, this, mode == ZFileMode::Build);
 			}
 
 			if (back == nullptr)
 			{
-				throw std::runtime_error("Couldn't create ZBackground.");
+				throw std::runtime_error("Couldn't create ZPrerender.");
 			}
 			resources.push_back(back);
 			rawDataIndex += back->GetRawDataSize();

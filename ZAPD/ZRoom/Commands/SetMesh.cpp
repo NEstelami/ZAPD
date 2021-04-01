@@ -5,7 +5,7 @@
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 #include "../ZRoom.h"
-#include "ZBackground.h"
+#include "ZPrerender.h"
 
 using namespace std;
 
@@ -187,7 +187,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 				
 				if (decl == nullptr)
 				{
-					ZBackground* prerender = new ZBackground(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
+					ZPrerender* prerender = new ZPrerender(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
 					prerender->DeclareVar(headerSingleStr, "");
 					zRoom->parent->resources.push_back(prerender);
 					imagePtrStr = prerender->GetName();
@@ -555,8 +555,11 @@ PolygonDlist::PolygonDlist(const std::string& prefix,
 
 	ParseRawData();
 
-	opaDList = MakeDlist(opa, prefix);
-	xluDList = MakeDlist(xlu, prefix);
+	// TODO: ZAPD refuses to extract this DList for some reason.
+	// (not even a crash/error, it just simply doesn't do it).
+	// For now, it will just export the address.
+	//opaDList = MakeDlist(opa, prefix);
+	//xluDList = MakeDlist(xlu, prefix);
 }
 
 void PolygonDlist::ParseRawData()

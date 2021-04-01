@@ -10,7 +10,7 @@
 #include "ZBlob.h"
 #include "ZFile.h"
 #include "ZTexture.h"
-#include "ZBackground.h"
+#include "ZPrerender.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <execinfo.h>
@@ -317,7 +317,7 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
 
 void BuildAssetPrerender(const std::string& imageFilePath, const std::string& outPath)
 {
-	ZBackground prerender;
+	ZPrerender prerender;
 
 	prerender.ParseBinaryFile(imageFilePath, false);
 

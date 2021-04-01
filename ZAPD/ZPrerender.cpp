@@ -1,4 +1,4 @@
-#include "ZBackground.h"
+#include "ZPrerender.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "ZFile.h"
@@ -6,7 +6,7 @@
 #include "Path.h"
 
 
-ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
+ZPrerender::ZPrerender(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -16,14 +16,14 @@ ZBackground::ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t
 	ParseRawData();
 }
 
-ZBackground::ZBackground(tinyxml2::XMLElement* reader, ZFile* nParent)
+ZPrerender::ZPrerender(tinyxml2::XMLElement* reader, ZFile* nParent)
 {
 	parent = nParent;
 
 	ParseXML(reader);
 }
 
-ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
+ZPrerender::ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -35,7 +35,7 @@ ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& 
 	ParseRawData();
 }
 
-void ZBackground::ParseRawData()
+void ZPrerender::ParseRawData()
 {
 	ZResource::ParseRawData();
 
@@ -53,7 +53,7 @@ void ZBackground::ParseRawData()
     }
 }
 
-void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutName)
+void ZPrerender::ParseBinaryFile(const std::string& inFolder, bool appendOutName)
 {
     fs::path filepath(inFolder);
     if (appendOutName)
@@ -63,20 +63,20 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
     data = File::ReadAllBytes(filepath);
 }
 
-ZBackground* ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader,
+ZPrerender* ZPrerender::ExtractFromXML(tinyxml2::XMLElement* reader,
             const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
 {
-	ZBackground* mtx = new ZBackground(reader, nRawData, nRawDataIndex, nParent);
+	ZPrerender* mtx = new ZPrerender(reader, nRawData, nRawDataIndex, nParent);
 
     mtx->DeclareVar("", "");
 
 	return mtx;
 }
 
-ZBackground* ZBackground::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, ZFile* nParent,
+ZPrerender* ZPrerender::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, ZFile* nParent,
 	                              bool readFile)
 {
-	ZBackground* back = new ZBackground(reader, nParent);
+	ZPrerender* back = new ZPrerender(reader, nParent);
 
 	back->ParseXML(reader);
 
@@ -86,12 +86,12 @@ ZBackground* ZBackground::BuildFromXML(tinyxml2::XMLElement* reader, std::string
 	return back;
 }
 
-int ZBackground::GetRawDataSize()
+int ZPrerender::GetRawDataSize()
 {
     return data.size();
 }
 
-void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void ZPrerender::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
     std::string auxName = name;
     if (name == "")
@@ -107,24 +107,24 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
         GetRawDataSize(), GetSourceTypeName(), GetName(), 0);*/
 }
 
-bool ZBackground::IsExternalResource()
+bool ZPrerender::IsExternalResource()
 {
     return true;
 }
 
-std::string ZBackground::GetExternalExtension()
+std::string ZPrerender::GetExternalExtension()
 {
     return "jfif";
 }
 
-void ZBackground::Save(const std::string& outFolder)
+void ZPrerender::Save(const std::string& outFolder)
 {
     fs::path folder(outFolder);
     fs::path filepath = folder / (outName + ".jfif");
 	File::WriteAllBytes(filepath, data);
 }
 
-std::string ZBackground::GetBodySourceCode()
+std::string ZPrerender::GetBodySourceCode()
 {
 	std::string bodyStr = "    ";
 
@@ -143,7 +143,7 @@ std::string ZBackground::GetBodySourceCode()
     return bodyStr;
 }
 
-std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
+std::string ZPrerender::GetSourceOutputCode(const std::string& prefix)
 {
     std::string bodyStr = GetBodySourceCode();
 
@@ -160,17 +160,17 @@ std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
     return "";
 }
 
-std::string ZBackground::GetDefaultName(const std::string& prefix, uint32_t address)
+std::string ZPrerender::GetDefaultName(const std::string& prefix, uint32_t address)
 {
     return StringHelper::Sprintf("%sPrerender_%06X", prefix.c_str(), address);
 }
 
-std::string ZBackground::GetSourceTypeName()
+std::string ZPrerender::GetSourceTypeName()
 {
     return "u8";
 }
 
-ZResourceType ZBackground::GetResourceType()
+ZResourceType ZPrerender::GetResourceType()
 {
     return ZResourceType::Background;
 }
