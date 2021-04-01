@@ -241,7 +241,8 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZPrerender* back = ZPrerender::ExtractFromXML(child, room->rawData, address, room->parent);
+			ZPrerender* back =
+				ZPrerender::ExtractFromXML(child, room->rawData, address, room->parent);
 			room->parent->resources.push_back(back);
 		}
 	}

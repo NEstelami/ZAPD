@@ -4,7 +4,6 @@
 #include <vector>
 #include "ZResource.h"
 
-
 class ZPrerender : public ZResource
 {
 protected:
@@ -12,16 +11,18 @@ protected:
 
 public:
 	ZPrerender() = default;
-	ZPrerender(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	ZPrerender(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	           int nRawDataIndex, ZFile* nParent);
 	ZPrerender(tinyxml2::XMLElement* reader, ZFile* nParent);
-	ZPrerender(const std::string& prefix,
-	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	           ZFile* nParent);
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
 	static ZPrerender* ExtractFromXML(tinyxml2::XMLElement* reader,
-				const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
-	static ZPrerender* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, ZFile* nParent,
-	                              bool readFile);
+	                                  const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	                                  ZFile* nParent);
+	static ZPrerender* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
+	                                ZFile* nParent, bool readFile);
 
 	int GetRawDataSize() override;
 

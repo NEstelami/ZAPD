@@ -9,8 +9,8 @@
 #include "ZAnimation.h"
 #include "ZBlob.h"
 #include "ZFile.h"
-#include "ZTexture.h"
 #include "ZPrerender.h"
+#include "ZTexture.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <csignal>
@@ -71,7 +71,7 @@ void ErrorHandler(int sig)
 		fprintf(stderr, "%-3zd %s\n", i, functionName.c_str());
 	}
 
-	//backtrace_symbols_fd(array, size, STDERR_FILENO);
+	// backtrace_symbols_fd(array, size, STDERR_FILENO);
 	free(symbols);
 	exit(1);
 }

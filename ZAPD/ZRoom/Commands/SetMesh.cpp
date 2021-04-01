@@ -139,9 +139,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 		if (fmt == 1)  // Single Format
 		{
 			MeshHeader1Single* headerSingle = new MeshHeader1Single();
-			std::string headerSingleStr = StringHelper::Sprintf("%sMeshHeader0x%06X",
-			                                                    zRoom->GetName().c_str(),
-			                                                    segmentOffset);
+			std::string headerSingleStr = StringHelper::Sprintf(
+				"%sMeshHeader0x%06X", zRoom->GetName().c_str(), segmentOffset);
 
 			headerSingle->headerType = 1;
 			headerSingle->format = fmt;
@@ -163,12 +162,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			std::string entryRecordStr = "NULL";
 			if (headerSingle->entryRecord != 0)
 			{
-				uint32_t entryRecordAddress = Seg2Filespace(headerSingle->entryRecord, zRoom->parent->baseAddress);
+				uint32_t entryRecordAddress =
+					Seg2Filespace(headerSingle->entryRecord, zRoom->parent->baseAddress);
 				Declaration* decl = zRoom->parent->GetDeclaration(entryRecordAddress);
-				
+
 				if (decl == nullptr)
 				{
-					PolygonDlist* gfxList = new PolygonDlist(headerSingleStr, rawData, entryRecordAddress, zRoom->parent);
+					PolygonDlist* gfxList = new PolygonDlist(headerSingleStr, rawData,
+					                                         entryRecordAddress, zRoom->parent);
 					gfxList->DeclareAndGenerateOutputCode();
 					entryRecordStr = "&" + gfxList->GetName();
 				}
@@ -177,17 +178,20 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 					entryRecordStr = "&" + decl->varName;
 				}
 			}
-			declaration += StringHelper::Sprintf("    { { 1 }, 1, %s }, \n", entryRecordStr.c_str());
+			declaration +=
+				StringHelper::Sprintf("    { { 1 }, 1, %s }, \n", entryRecordStr.c_str());
 
 			std::string imagePtrStr = "NULL";
 			if (headerSingle->imagePtr != 0)
 			{
-				uint32_t imagePtrAddress = Seg2Filespace(headerSingle->imagePtr, zRoom->parent->baseAddress);
+				uint32_t imagePtrAddress =
+					Seg2Filespace(headerSingle->imagePtr, zRoom->parent->baseAddress);
 				Declaration* decl = zRoom->parent->GetDeclaration(imagePtrAddress);
-				
+
 				if (decl == nullptr)
 				{
-					ZPrerender* prerender = new ZPrerender(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
+					ZPrerender* prerender =
+						new ZPrerender(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
 					prerender->DeclareVar(headerSingleStr, "");
 					zRoom->parent->resources.push_back(prerender);
 					imagePtrStr = prerender->GetName();
@@ -199,8 +203,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			}
 			declaration += StringHelper::Sprintf("    %s, \n", imagePtrStr.c_str());
 
-			declaration += StringHelper::Sprintf("    0x%06X, 0x%06X, \n",
-			                                     headerSingle->unknown, headerSingle->unknown2);
+			declaration += StringHelper::Sprintf("    0x%06X, 0x%06X, \n", headerSingle->unknown,
+			                                     headerSingle->unknown2);
 			declaration += StringHelper::Sprintf("    %i, %i, %i, %i, %i, %i\n",
 			                                     headerSingle->bgWidth, headerSingle->bgHeight,
 			                                     headerSingle->imageFormat, headerSingle->imageSize,
@@ -386,7 +390,8 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());  // HOTSPOT
 
 	// zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None,
-	// dList->GetRawDataSize(), "static Gfx", srcVarName, dList->GetRawDataSize() / 8, sourceOutput);
+	// dList->GetRawDataSize(), "static Gfx", srcVarName, dList->GetRawDataSize() / 8,
+	// sourceOutput);
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
@@ -543,9 +548,8 @@ RoomCommand SetMesh::GetRoomCommand()
 	return RoomCommand::SetMesh;
 }
 
-
-PolygonDlist::PolygonDlist(const std::string& prefix,
-	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent)
+PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+                           int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -558,8 +562,8 @@ PolygonDlist::PolygonDlist(const std::string& prefix,
 	// TODO: ZAPD refuses to extract this DList for some reason.
 	// (not even a crash/error, it just simply doesn't do it).
 	// For now, it will just export the address.
-	//opaDList = MakeDlist(opa, prefix);
-	//xluDList = MakeDlist(xlu, prefix);
+	// opaDList = MakeDlist(opa, prefix);
+	// xluDList = MakeDlist(xlu, prefix);
 }
 
 void PolygonDlist::ParseRawData()
@@ -587,7 +591,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	dlist->SetName(dListStr);
 	dlist->GetSourceOutputCode(prefix + "PolygonDlist");
 
-	//parent->resources.push_back(dlist);
+	// parent->resources.push_back(dlist);
 	return dlist;
 }
 
@@ -598,13 +602,13 @@ int PolygonDlist::GetRawDataSize()
 
 void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-    std::string auxName = name;
-    if (name == "")
-    {
-        auxName = GetDefaultName(prefix, rawDataIndex);
-    }
-    parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-                            GetSourceTypeName(), auxName, bodyStr);
+	std::string auxName = name;
+	if (name == "")
+	{
+		auxName = GetDefaultName(prefix, rawDataIndex);
+	}
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                       GetSourceTypeName(), auxName, bodyStr);
 }
 
 std::string PolygonDlist::GetBodySourceCode()
@@ -646,12 +650,12 @@ std::string PolygonDlist::GetBodySourceCode()
 
 void PolygonDlist::DeclareAndGenerateOutputCode()
 {
-    std::string bodyStr = GetBodySourceCode();
+	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr)
 	{
-        DeclareVar("", bodyStr);
+		DeclareVar("", bodyStr);
 	}
 	else
 	{
@@ -661,7 +665,7 @@ void PolygonDlist::DeclareAndGenerateOutputCode()
 
 std::string PolygonDlist::GetDefaultName(const std::string& prefix, uint32_t address)
 {
-    return StringHelper::Sprintf("%sPolyDlist_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%sPolyDlist_%06X", prefix.c_str(), address);
 }
 
 std::string PolygonDlist::GetSourceTypeName()

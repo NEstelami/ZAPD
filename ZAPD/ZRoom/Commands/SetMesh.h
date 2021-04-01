@@ -101,11 +101,11 @@ public:
 class PolygonDlist
 {
 protected:
-	segptr_t opa; // Gfx*
-	segptr_t xlu; // Gfx*
+	segptr_t opa;  // Gfx*
+	segptr_t xlu;  // Gfx*
 
-	ZDisplayList* opaDList; // Gfx*
-	ZDisplayList* xluDList; // Gfx*
+	ZDisplayList* opaDList;  // Gfx*
+	ZDisplayList* xluDList;  // Gfx*
 
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
@@ -116,8 +116,8 @@ protected:
 	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
 
 public:
-	PolygonDlist(const std::string& prefix,
-	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZFile* nParent);
 
 	int GetRawDataSize();
 
