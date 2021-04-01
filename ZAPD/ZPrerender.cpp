@@ -59,7 +59,7 @@ void ZPrerender::ParseBinaryFile(const std::string& inFolder, bool appendOutName
 	fs::path filepath(inFolder);
 	if (appendOutName)
 	{
-		filepath = filepath / (outName + ".jfif");
+		filepath = filepath / (outName + "." + GetExternalExtension());
 	}
 	data = File::ReadAllBytes(filepath);
 }
@@ -116,13 +116,13 @@ bool ZPrerender::IsExternalResource()
 
 std::string ZPrerender::GetExternalExtension()
 {
-	return "jfif";
+	return "jpg";
 }
 
 void ZPrerender::Save(const std::string& outFolder)
 {
 	fs::path folder(outFolder);
-	fs::path filepath = folder / (outName + ".jfif");
+	fs::path filepath = folder / (outName + "." + GetExternalExtension());
 	File::WriteAllBytes(filepath, data);
 }
 
