@@ -157,6 +157,7 @@ public:
 	ZResourceType GetResourceType() override;
 
 	ZLimbType GetLimbType();
+	void SetLimbType(ZLimbType value);
 	static const char* GetSourceTypeName(ZLimbType limbType);
 
 	uint32_t GetFileAddress();

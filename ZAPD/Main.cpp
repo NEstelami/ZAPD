@@ -67,7 +67,7 @@ int NewMain(int argc, char* argv[])
 
 	if (argc < 2)
 	{
-		printf("ZAPD.exe [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n");
+		printf("ZAPD.exe (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
 		return 1;
 	}
 
@@ -104,6 +104,10 @@ int NewMain(int argc, char* argv[])
 		if (arg == "-o" || arg == "--outputpath")  // Set output path
 		{
 			Globals::Instance->outputPath = argv[i + 1];
+
+			if (Globals::Instance->sourceOutputPath == "")
+				Globals::Instance->sourceOutputPath = Globals::Instance->outputPath;
+
 			i++;
 		}
 		else if (arg == "-i" || arg == "--inputpath")  // Set input path
@@ -185,6 +189,8 @@ int NewMain(int argc, char* argv[])
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 			signal(SIGSEGV, ErrorHandler);
 			signal(SIGABRT, ErrorHandler);
+#else
+			printf("Warning: Tried to set error handler, but this build lacks support for one.\n");
 #endif
 		}
 		else if (arg == "-v")  // Verbose

@@ -127,14 +127,11 @@ protected:
 
 public:
 	ZCurveAnimation() = default;
-	ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                int nRawDataIndex, ZFile* nParent);
+	ZCurveAnimation(ZFile* nParent);
 	~ZCurveAnimation();
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	static ZCurveAnimation* ExtractFromXML(tinyxml2::XMLElement* reader,
-	                                       const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	                                       std::string nRelPath, ZFile* nParent);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
 
 	void PreGenValues(const std::string& prefix);
 	int GetRawDataSize() override;

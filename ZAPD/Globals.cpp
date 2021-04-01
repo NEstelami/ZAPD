@@ -74,7 +74,10 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 	XMLError eResult = doc.LoadFile(configFilePath.c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
+	{
+		throw std::runtime_error("Error: Unable to read config file.");
 		return;
+	}
 
 	XMLNode* root = doc.FirstChild();
 

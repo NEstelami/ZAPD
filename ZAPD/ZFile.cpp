@@ -528,6 +528,10 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 				incStr += ".c";
 			}
+			else if (res->GetResourceType() == ZResourceType::Blob)
+			{
+				incStr += ".c";
+			}
 
 			AddDeclarationIncludeArray(res->GetRawDataIndex(), incStr, res->GetRawDataSize(), declType, res->GetName(), 0);
 		}
@@ -898,15 +902,17 @@ string ZFile::ProcessDeclarations()
 
 			// Do not asm_process vertex arrays. They have no practical use being overridden.
 			//if (item.second->varType == "Vtx" || item.second->varType == "static Vtx")
-			if (item.second->varType != "u64" && item.second->varType != "static u64")
+			if (item.second->varType != "u64" && item.second->varType != "static u64" && item.second->varType != "u8" && item.second->varType != "static u8")
 			{
-				output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "../assets/extracted/").c_str());
+				//output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "../assets/extracted/").c_str());
+				output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "../assets/").c_str());
 				//output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), Path::GetFileName(item.second->includePath).c_str());
 			}
 			else
 			{
 				//output += StringHelper::Sprintf("%s %s[] = {\n    #pragma INC_ASSET(\"%s\")\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->includePath.c_str());
-				output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "assets/extracted/").c_str());
+				//output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), StringHelper::Replace(item.second->includePath, "assets/", "assets/extracted/").c_str());
+				output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(), item.second->varName.c_str(), item.second->includePath.c_str());
 			}
 		}
 		else if (item.second->varType != "")

@@ -422,6 +422,7 @@ void ZLimb::ParseRawData()
 		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
 	case ZLimbType::Standard:
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+
 		break;
 	case ZLimbType::Skin:
 		skinSegmentType =
@@ -433,8 +434,6 @@ void ZLimb::ParseRawData()
 
 void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	//ZLimb* limb = new ZLimb(reader, nRawData, rawDataIndex, parent);
-	
 	relativePath = std::move(nRelPath);
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -533,6 +532,11 @@ ZResourceType ZLimb::GetResourceType()
 ZLimbType ZLimb::GetLimbType()
 {
 	return type;
+}
+
+void ZLimb::SetLimbType(ZLimbType value)
+{
+	type = value;
 }
 
 const char* ZLimb::GetSourceTypeName(ZLimbType limbType)

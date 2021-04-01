@@ -11,6 +11,7 @@ using namespace std;
 
 REGISTER_ZFILENODE(Animation, ZNormalAnimation);
 REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
+REGISTER_ZFILENODE(CurveAnimation, ZCurveAnimation);
 
 ZAnimation::ZAnimation(ZFile* nParent) : ZResource(nParent)
 {
@@ -243,54 +244,8 @@ std::string TransformData::GetSourceTypeName()
 	return "TransformData";
 }
 
-ZCurveAnimation::ZCurveAnimation(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZAnimation(nParent)
+ZCurveAnimation::ZCurveAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-
-	ParseXML(reader);
-	ParseRawData();
-
-	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData, Seg2Filespace(skelOffset, parent->baseAddress), nParent);
-
-	size_t transformDataSize = 0;
-	size_t copyValuesSize = 0;
-	if (refIndex != 0)
-	{
-		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
-		for (size_t i = 0; i < 3 * 3 * skel->GetLimbCount(); i++)
-		{
-			uint8_t ref = BitConverter::ToUInt8BE(nRawData, refIndexOffset + i);
-			if (ref == 0)
-			{
-				copyValuesSize++;
-			}
-			else
-			{
-				transformDataSize += ref;
-			}
-			refIndexArr.emplace_back(ref);
-		}
-	}
-
-	if (transformData != 0)
-	{
-		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
-		for (size_t i = 0; i < transformDataSize; i++)
-		{
-			transformDataArr.emplace_back(parent, nRawData, transformDataOffset, i);
-		}
-	}
-
-	if (copyValues != 0)
-	{
-		uint32_t copyValuesOffset = Seg2Filespace(copyValues, parent->baseAddress);
-		for (size_t i = 0; i < copyValuesSize; i++)
-		{
-			copyValuesArr.emplace_back(BitConverter::ToInt16BE(nRawData, copyValuesOffset + i * 2));
-		}
-	}
 }
 
 ZCurveAnimation::~ZCurveAnimation()
@@ -323,19 +278,51 @@ void ZCurveAnimation::ParseRawData()
 	unk_10 = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
 }
 
-ZCurveAnimation* ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                                 const std::vector<uint8_t>& nRawData,
-                                                 int nRawDataIndex, std::string nRelPath,
-                                                 ZFile* nParent)
+void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	ZCurveAnimation* curve = new ZCurveAnimation(reader, nRawData, nRawDataIndex, nParent);
-	curve->relativePath = std::move(nRelPath);
+	rawData = std::move(nRawData);
+	rawDataIndex = nRawDataIndex;
+	relativePath = std::move(nRelPath);
+	ParseXML(reader);
+	ParseRawData();
 
-	curve->parent->AddDeclaration(curve->rawDataIndex, DeclarationAlignment::Align16,
-	                              curve->GetRawDataSize(), curve->GetSourceTypeName(), curve->name,
-	                              "");
+	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData, Seg2Filespace(skelOffset, parent->baseAddress), parent);
 
-	return curve;
+	size_t transformDataSize = 0;
+	size_t copyValuesSize = 0;
+	if (refIndex != 0)
+	{
+		uint32_t refIndexOffset = Seg2Filespace(refIndex, parent->baseAddress);
+		for (size_t i = 0; i < 3 * 3 * skel->GetLimbCount(); i++)
+		{
+			uint8_t ref = BitConverter::ToUInt8BE(nRawData, refIndexOffset + i);
+			if (ref == 0)
+				copyValuesSize++;
+			else
+				transformDataSize += ref;
+
+			refIndexArr.emplace_back(ref);
+		}
+	}
+
+	if (transformData != 0)
+	{
+		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
+
+		for (size_t i = 0; i < transformDataSize; i++)
+			transformDataArr.emplace_back(parent, nRawData, transformDataOffset, i);
+	}
+
+	if (copyValues != 0)
+	{
+		uint32_t copyValuesOffset = Seg2Filespace(copyValues, parent->baseAddress);
+
+		for (size_t i = 0; i < copyValuesSize; i++)
+			copyValuesArr.emplace_back(BitConverter::ToInt16BE(nRawData, copyValuesOffset + i * 2));
+	}
+
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16,
+	                              GetRawDataSize(), GetSourceTypeName(), name, "");
 }
 
 void ZCurveAnimation::PreGenValues(const std::string& prefix)

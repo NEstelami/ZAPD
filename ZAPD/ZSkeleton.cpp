@@ -133,6 +133,7 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 		//ZLimb* limb = new ZLimb(reader, rawData, ptr2, parent);
 		ZLimb* limb = new ZLimb(parent);
 		limb->isFromXML = false;
+		limb->SetLimbType(limbType);
 		limb->SetName(StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), ptr2));
 		limb->ExtractFromXML(reader, rawData, ptr2, nRelPath);
 		limbs.push_back(limb);
