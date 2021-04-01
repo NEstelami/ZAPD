@@ -120,8 +120,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (mode == ZFileMode::Extract)
 	{
 		if (!File::Exists(basePath + "/" + name))
-			throw StringHelper::Sprintf("Error! File %s does not exist.",
-			                            (basePath + "/" + name).c_str());
+			throw std::runtime_error(StringHelper::Sprintf("Error! File %s does not exist.",
+			                                               (basePath + "/" + name).c_str()));
 
 		rawData = File::ReadAllBytes(basePath + "/" + name);
 	}
@@ -871,7 +871,7 @@ string ZFile::ProcessDeclarations()
 		ProcessDeclarationText(item.second);
 	}
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		while (item.second->size % 4 != 0)
 		{
@@ -953,15 +953,18 @@ string ZFile::ProcessDeclarations()
 	// Handle unaccounted data
 	lastAddr = 0;
 	lastSize = 0;
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first >= rangeStart && item.first < rangeEnd)
 		{
 			if (lastAddr != 0 && declarations.find(lastAddr) != declarations.end() &&
 			    lastAddr + declarations[lastAddr]->size > item.first)
 			{
-				printf("WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X\n",
-				       lastAddr, lastAddr + declarations[lastAddr]->size, item.first);
+				fprintf(stderr,
+				        "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X "
+				        "(%s)\n",
+				        lastAddr, lastAddr + declarations[lastAddr]->size, item.first,
+				        item.second->varName.c_str());
 			}
 
 			uint8_t* rawDataArr = rawData.data();
@@ -1039,7 +1042,7 @@ string ZFile::ProcessDeclarations()
 	// Go through include declarations
 	// First, handle the prototypes (static only for now)
 	int protoCnt = 0;
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.second->includePath == "" &&
 		    StringHelper::StartsWith(item.second->varType, "static ") &&
@@ -1067,7 +1070,7 @@ string ZFile::ProcessDeclarations()
 		output += "\n";
 
 	// Next, output the actual declarations
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
 		{
@@ -1179,7 +1182,7 @@ string ZFile::ProcessExterns()
 {
 	string output = "";
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
 		{
