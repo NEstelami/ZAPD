@@ -56,8 +56,11 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 			Declaration* decl = zRoom->parent->GetDeclaration(cutscene->getSegmentOffset());
 			if (decl == nullptr)
 			{
+				DeclarationPadding padding = (Globals::Instance->game == ZGame::MM_RETAIL) ?
+					DeclarationPadding::None : DeclarationPadding::Pad16;
+
 				zRoom->parent->AddDeclarationArray(
-					cutscene->getSegmentOffset(), DeclarationAlignment::None, DeclarationPadding::Pad16,
+					cutscene->getSegmentOffset(), DeclarationAlignment::None, padding,
 					cutscene->GetRawDataSize(), "s32",
 					StringHelper::Sprintf("%sCutsceneData0x%06X", zRoom->GetName().c_str(),
 											cutscene->getSegmentOffset()),

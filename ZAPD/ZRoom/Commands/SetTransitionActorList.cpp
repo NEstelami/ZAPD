@@ -48,17 +48,10 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 
 	for (TransitionActorEntry* entry : transitionActors)
 	{
-		string actorStr = "";
-
-		if (entry->actorNum < ZNames::GetNumActors())
-			actorStr = ZNames::GetActorName(entry->actorNum);
-		else
-			actorStr = StringHelper::Sprintf("0x%04X", entry->actorNum);
-
 		declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n",
 		                                     entry->frontObjectRoom, entry->frontTransitionReaction,
 		                                     entry->backObjectRoom, entry->backTransitionReaction,
-		                                     actorStr.c_str(), entry->posX, entry->posY,
+		                                     ZNames::GetActorName(entry->actorNum).c_str(), entry->posX, entry->posY,
 		                                     entry->posZ, entry->rotY, (uint16_t)entry->initVar);
 	}
 

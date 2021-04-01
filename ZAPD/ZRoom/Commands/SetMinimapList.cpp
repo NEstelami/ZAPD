@@ -51,7 +51,7 @@ string SetMinimapList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	                          roomName.c_str(), segmentOffset, unk4);
 
 	{
-		string declaration = StringHelper::Sprintf("(u32)%sMinimapEntryList0x%06X, %i",
+		string declaration = StringHelper::Sprintf("(u32)%sMinimapEntryList0x%06X, 0x%08X",
 		                                           roomName.c_str(), listSegmentOffset, unk4);
 
 		zRoom->parent->AddDeclaration(
@@ -66,10 +66,10 @@ string SetMinimapList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		for (MinimapEntry* entry : minimaps)
 		{
 			declaration +=
-				StringHelper::Sprintf("\t{ 0x%08X, 0x%08X, 0x%08X },\n", entry->unk0, entry->unk4, entry->unk8);
+				StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },", entry->unk0, entry->unk2, entry->unk4, entry->unk6, entry->unk8);
 
 			if (index < minimaps.size() - 1)
-				declaration += "\n"; // TODO doen't work
+				declaration += "\n";
 
 			index++;
 		}
@@ -111,8 +111,10 @@ std::string SetMinimapList::Save()
 }
 
 MinimapEntry::MinimapEntry(std::vector<uint8_t> rawData, int rawDataIndex) :
-    unk0(BitConverter::ToInt32BE(rawData, rawDataIndex + 0)),
-    unk4(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)),
-    unk8(BitConverter::ToInt16BE(rawData, rawDataIndex + 8))
+    unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
+    unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
+    unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),
+    unk6(BitConverter::ToUInt16BE(rawData, rawDataIndex + 6)),
+    unk8(BitConverter::ToUInt16BE(rawData, rawDataIndex + 8))
 {
 }

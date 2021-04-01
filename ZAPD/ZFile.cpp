@@ -466,6 +466,11 @@ std::string ZFile::GetName()
 	return name;
 }
 
+size_t ZFile::GetSize()
+{
+	return rawData.size();
+}
+
 void ZFile::ExtractResources(string outputDir)
 {
 	string folderName = Path::GetFileNameWithoutExtension(outputPath);

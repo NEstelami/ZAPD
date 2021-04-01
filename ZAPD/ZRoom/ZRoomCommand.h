@@ -42,7 +42,7 @@ enum class RoomCommand : uint8_t
 	SetActorCutsceneList = 0x1B,
 	SetMinimapList = 0x1C,
 	Unused1D = 0x1D,
-	SetMinimapChest = 0x1E,
+	SetMinimapChests = 0x1E,
 
 	Error = 0xFF
 };

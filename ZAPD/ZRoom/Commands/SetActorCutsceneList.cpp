@@ -24,6 +24,9 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> r
 
 		currentPtr += 16;
 	}
+
+	if (segmentOffset != 0)
+		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 SetActorCutsceneList::~SetActorCutsceneList()

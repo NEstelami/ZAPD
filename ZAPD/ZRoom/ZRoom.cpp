@@ -20,6 +20,7 @@
 #include "Commands/SetExitList.h"
 #include "Commands/SetLightList.h"
 #include "Commands/SetLightingSettings.h"
+#include "Commands/SetMinimapChests.h"
 #include "Commands/SetMinimapList.h"
 #include "Commands/SetMesh.h"
 #include "Commands/SetObjectList.h"
@@ -229,11 +230,12 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			ZTexture* tex = ZTexture::FromBinary(
 				ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address,
 				StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height);
+				
+			room->textures[address] = tex;
 			room->parent->AddDeclarationArray(address, DeclarationAlignment::None,
 			                                  tex->GetRawDataSize(), "u64",
 			                                  StringHelper::Sprintf("%s", tex->GetName().c_str()),
 			                                  0, tex->GetSourceOutputCode(room->name));
-			delete tex;
 		}
 	}
 
@@ -356,9 +358,8 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::Unused1D:
 			cmd = new Unused1D(this, rawData, rawDataIndex);
 			break;  // 0x1D
-		case RoomCommand::SetMinimapChest:
-			//cmd = new SetCameraSettings(this, rawData, rawDataIndex);
-			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
+		case RoomCommand::SetMinimapChests:
+			cmd = new SetMinimapChests(this, rawData, rawDataIndex);
 			break;  // 0x1E (MM-ONLY)
 		default:
 			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);

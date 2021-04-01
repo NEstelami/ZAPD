@@ -16,12 +16,34 @@ ZCutsceneMM::ZCutsceneMM(std::vector<uint8_t> nRawData, int rawDataIndex, int ra
 	uint32_t currentPtr = rawDataIndex + 8;
 	uint32_t lastData = 0;
 
-	do
+	bool doContinue = true;
+
+	while (doContinue)
 	{
-		lastData = BitConverter::ToInt32BE(rawData, currentPtr);
-		data.push_back(lastData);
-		currentPtr += 4;
-	} while (lastData != 0xFFFFFFFF);
+		do
+		{
+			lastData = BitConverter::ToInt32BE(rawData, currentPtr);
+			data.push_back(lastData);
+			currentPtr += 4;
+		} while (lastData != 0xFFFFFFFF);
+
+		doContinue = false;
+
+		// It seems cutscenes are padded to be a multiple of 16 bytes, even though it isn't aligned as such
+		// TODO check that these are 0
+		while (((data.size() + 2) % 4) != 0)
+		{
+			lastData = BitConverter::ToInt32BE(rawData, currentPtr);
+			if (lastData != 0)
+			{
+				doContinue = true;
+				break;
+			}
+			data.push_back(lastData);
+			currentPtr += 4;
+
+		}
+	}
 }
 
 ZCutsceneMM::~ZCutsceneMM()

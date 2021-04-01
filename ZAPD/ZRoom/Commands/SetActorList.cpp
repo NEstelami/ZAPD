@@ -84,17 +84,11 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 			if (Globals::Instance->game == ZGame::OOT_SW97 && actorNum >= 0x23)
 				actorNum--;
 
-			if (actorNum < ZNames::GetNumActors())
-				declaration +=
-					StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
-				                          ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY,
-				                          entry->posZ, entry->rotX, entry->rotY, entry->rotZ,
-				                          (uint16_t)entry->initVar, segmentOffset + (index * 16));
-			else
-				declaration += StringHelper::Sprintf(
-					"\t{ 0x%04X, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X", actorNum, entry->posX,
-					entry->posY, entry->posZ, entry->rotX, entry->rotY, entry->rotZ,
-					(uint16_t)entry->initVar, segmentOffset + (index * 16));
+			declaration +=
+				StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
+										ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY,
+										entry->posZ, entry->rotX, entry->rotY, entry->rotZ,
+										(uint16_t)entry->initVar, segmentOffset + (index * 16));
 
 			if (index < actors.size() - 1)
 				declaration += "\n";

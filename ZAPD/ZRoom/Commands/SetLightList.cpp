@@ -27,11 +27,12 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 		}
 
 		declarations += StringHelper::Sprintf(
-			"\t{ 0x%02X, { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X } },\n", type, params[0],
+			"\t{ 0x%02X, { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X } },", type, params[0],
 			params[1], params[2], params[3], params[4], params[5]);
-	}
 
-	declarations += "};\n";
+		if (i < this->numLights - 1)
+			declarations += "\n";
+	}
 
 	this->ptrRoom->parent->AddDeclarationArray(
 		this->segment, DeclarationAlignment::None, this->numLights * 0xE, "LightInfo",
@@ -42,7 +43,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 string SetLightList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	return StringHelper::Sprintf(
-		"%s %i, &%sLightInfo0x%06X};",
+		"%s %i, &%sLightInfo0x%06X",
 		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), this->numLights,
 		this->ptrRoom->GetName().c_str(), this->segment);
 }

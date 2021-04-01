@@ -2,6 +2,7 @@
 
 #include "ActorList.h"
 #include "../Globals.h"
+#include "../StringHelper.h"
 #include "ObjectList.h"
 //#include "RoomList.h"
 
@@ -38,9 +39,25 @@ public:
 		{
 		case ZGame::OOT_RETAIL:
 		case ZGame::OOT_SW97:
-			return ActorList[id];
+			if (id < ZNames::GetNumActors())
+				return ActorList[id];
+			else
+				return StringHelper::Sprintf("0x%04X", id);
 		case ZGame::MM_RETAIL:
-			return ActorListMM[id];
+			{
+				int flags = id & 0xF000;
+				id &= 0xFFF;
+				std::string name = "";
+				if (id < ZNames::GetNumActors())
+					name = ActorListMM[id];
+				else
+					name = StringHelper::Sprintf("0x%04X", id);
+
+				if (flags == 0)
+				    return name;
+				else
+					return StringHelper::Sprintf("%s | 0x%04X", name.c_str(), flags);
+			}
 		}
 
 		return "";

@@ -100,7 +100,7 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 		}
 
 		zRoom->parent->AddDeclarationArray(
-			entry->listSegmentOffset, DeclarationAlignment::Align2, DeclarationPadding::None,
+			entry->listSegmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad4,
 			entry->points.size() * 6, "Vec3s",
 			StringHelper::Sprintf("%sPathwayList0x%06X", roomName.c_str(), entry->listSegmentOffset),
 			entry->points.size(), declaration);

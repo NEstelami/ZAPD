@@ -2,7 +2,7 @@
 
 #include "../ZRoomCommand.h"
 
-class MinimapEntry
+class MinimapChest
 {
 public:
 	uint16_t unk0;
@@ -11,14 +11,14 @@ public:
 	uint16_t unk6;
 	uint16_t unk8;
 
-	MinimapEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	MinimapChest(std::vector<uint8_t> rawData, int rawDataIndex);
 };
 
-class SetMinimapList : public ZRoomCommand
+class SetMinimapChests : public ZRoomCommand
 {
 public:
-	SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetMinimapList();
+	SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	~SetMinimapChests();
 
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
 	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
@@ -29,9 +29,6 @@ public:
 	virtual std::string Save();
 
 private:
-	std::vector<MinimapEntry*> minimaps;
+	std::vector<MinimapChest*> chests;
 	uint32_t segmentOffset;
-
-	uint32_t listSegmentOffset;
-	uint32_t unk4;
 };
