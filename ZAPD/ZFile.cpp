@@ -154,7 +154,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			resources.push_back(tex);
 			rawDataIndex += tex->GetRawDataSize();
 		}
-		else if (string(child->Name()) == "Background")
+		else if (string(child->Name()) == "Prerender")
 		{
 			ZPrerender* back = nullptr;
 

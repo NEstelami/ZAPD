@@ -231,7 +231,7 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			                                  0, tex->GetSourceOutputCode(room->name));
 			delete tex;
 		}
-		else if (string(child->Name()) == "BackgroundHint")
+		else if (string(child->Name()) == "PrerenderHint")
 		{
 			string comment = "";
 

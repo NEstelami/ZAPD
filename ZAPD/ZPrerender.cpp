@@ -172,5 +172,5 @@ std::string ZPrerender::GetSourceTypeName()
 
 ZResourceType ZPrerender::GetResourceType()
 {
-    return ZResourceType::Background;
+    return ZResourceType::Prerender;
 }
