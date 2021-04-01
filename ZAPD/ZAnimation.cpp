@@ -66,8 +66,9 @@ std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
 		string headerStr =
 			StringHelper::Sprintf("{ %i }, %sFrameData, %sJointIndices, %i", frameCount,
 		                          defaultPrefix.c_str(), defaultPrefix.c_str(), limit);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(),
-		                       StringHelper::Sprintf("%s", name.c_str()), headerStr);
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
+		                       headerStr);
 
 		string indicesStr = "";
 		string valuesStr = "    ";
@@ -175,8 +176,9 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 								   segmentAddress, StringHelper::Sprintf("%sSeg%06X", name.c_str(),
 		                                                                 segmentAddress));
 		string headerStr = StringHelper::Sprintf("{ %i }, 0x%08X", frameCount, segmentAddress);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(),
-		                       StringHelper::Sprintf("%s", name.c_str()), headerStr);
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
+		                       headerStr);
 	}
 
 	return "";
@@ -314,9 +316,10 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 	const char* skelOffsetXml = reader->Attribute("SkelOffset");
 	if (skelOffsetXml == nullptr)
 	{
-		throw std::runtime_error(
+		throw std::runtime_error(StringHelper::Sprintf(
 			"ZCurveAnimation::ParseXML: Fatal error in '%s'. Missing 'SkelOffset' attribute in "
-		    "xml. You need to provide the offset of the curve skeleton.");
+			"ZCurveAnimation. You need to provide the offset of the curve skeleton.",
+			name.c_str()));
 	}
 	skelOffset = std::strtoul(skelOffsetXml, nullptr, 0);
 }

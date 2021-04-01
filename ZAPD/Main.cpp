@@ -12,8 +12,10 @@
 #include "ZTexture.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
+#include <csignal>
+#include <cxxabi.h>  // for __cxa_demangle
+#include <dlfcn.h>   // for dladdr
 #include <execinfo.h>
-#include <signal.h>
 #include <unistd.h>
 #endif
 
@@ -38,19 +40,37 @@ int NewMain(int argc, char* argv[]);
 void ErrorHandler(int sig)
 {
 	void* array[4096];
-	char** symbols;
-	size_t size;
-	size = backtrace(array, 4096);
-	symbols = backtrace_symbols(array, 4096);
+	const int nMaxFrames = sizeof(array) / sizeof(array[0]);
+	size_t size = backtrace(array, nMaxFrames);
+	char** symbols = backtrace_symbols(array, nMaxFrames);
 
 	for (size_t i = 1; i < size; i++)
 	{
-		// size_t len = strlen(symbols[i]);
-		cout << symbols[i] << "\n";
+		Dl_info info;
+		int gotAddress = dladdr(array[i], &info);
+		string functionName(symbols[i]);
+
+		if (gotAddress != 0 && info.dli_sname != nullptr)
+		{
+			int status;
+			char* demangled = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
+			const char* nameFound = info.dli_sname;
+
+			if (status == 0)
+			{
+				nameFound = demangled;
+			}
+
+			functionName = StringHelper::Sprintf("%s (+0x%X)", nameFound,
+			                                     (char*)array[i] - (char*)info.dli_saddr);
+			free(demangled);
+		}
+
+		fprintf(stderr, "%-3zd %s\n", i, functionName.c_str());
 	}
 
-	// cout << "Error: signal " << sig << ":\n";
-	backtrace_symbols_fd(array, size, STDERR_FILENO);
+	//backtrace_symbols_fd(array, size, STDERR_FILENO);
+	free(symbols);
 	exit(1);
 }
 #endif

@@ -93,7 +93,7 @@ std::string ZVector::GetSourceTypeName()
 		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 			printf("%s\n", output.c_str());
 
-		throw output;
+		throw std::runtime_error(output);
 	}
 }
 
