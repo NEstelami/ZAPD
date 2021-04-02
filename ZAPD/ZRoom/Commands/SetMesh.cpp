@@ -355,7 +355,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
 	{
 		zRoom->parent->AddDeclarationArray(
-			vtxEntry.first, DeclarationAlignment::Align8,
+			vtxEntry.first, DeclarationAlignment::None,
 			dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
