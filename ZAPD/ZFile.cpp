@@ -13,6 +13,7 @@
 #include "ZCutscene.h"
 #include "ZDisplayList.h"
 #include "ZLimb.h"
+#include "ZMtx.h"
 #include "ZPrerender.h"
 #include "ZRoom/ZRoom.h"
 #include "ZScalar.h"
@@ -169,6 +170,21 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(nRes);
 			rawDataIndex += nRes->GetRawDataSize();
+		}
+		else if (string(child->Name()) == "Mtx")
+		{
+			ZMtx* mtx = nullptr;
+
+			if (mode == ZFileMode::Extract)
+			{
+				mtx = ZMtx::ExtractFromXML(child, rawData, rawDataIndex, this);
+			}
+
+			if (mtx == nullptr)
+			{
+				throw std::runtime_error("Couldn't create ZMtx.");
+			}
+			resources.push_back(mtx);
 		}
 		else
 		{
