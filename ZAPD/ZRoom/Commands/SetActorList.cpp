@@ -55,9 +55,9 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	}
 
 	sourceOutput +=
-		StringHelper::Sprintf("%s 0x%02X, (u32)%sActorList0x%06X };",
-							  ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-							  numActors, roomName.c_str(), segmentOffset);
+		StringHelper::Sprintf("\n    %s 0x%02X, (u32)%sActorList0x%06X \n};",
+	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
+	                          numActors, roomName.c_str(), segmentOffset);
 
 	// zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None,
 	// DeclarationPadding::None, GetRawDataSize(), "SCmdActorList",

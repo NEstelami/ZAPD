@@ -392,7 +392,7 @@ void ZRoom::ProcessCommandSets()
 				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
 				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF,
 			                          cmd->cmdIndex, cmd->cmdID),
-				StringHelper::Sprintf("%s", pass1.c_str()));
+				StringHelper::Sprintf("\n    %s\n", pass1.c_str()));
 
 			decl->rightText = StringHelper::Sprintf("// 0x%04X", cmd->cmdAddress);
 		}
