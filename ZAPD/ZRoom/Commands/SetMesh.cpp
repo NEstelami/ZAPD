@@ -170,6 +170,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 				{
 					PolygonDlist gfxList(headerSingleStr, rawData,
 					                                         entryRecordAddress, zRoom->parent);
+					if (gfxList.opaDList != nullptr)
+					{
+						GenDListDeclarations(rawData, gfxList.opaDList);
+					}
+					if (gfxList.xluDList != nullptr)
+					{
+						GenDListDeclarations(rawData, gfxList.xluDList);
+					}
 					gfxList.DeclareAndGenerateOutputCode();
 					entryRecordStr = "&" + gfxList.GetName();
 				}
@@ -240,10 +248,17 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 				if (decl == nullptr)
 				{
-					PolygonDlist* gfxList = new PolygonDlist(headerMultiStr, rawData,
-					                                         entryRecordAddress, zRoom->parent);
-					gfxList->DeclareAndGenerateOutputCode();
-					entryRecordStr = "&" + gfxList->GetName();
+					PolygonDlist gfxList(headerMultiStr, rawData, entryRecordAddress, zRoom->parent);
+					if (gfxList.opaDList != nullptr)
+					{
+						GenDListDeclarations(rawData, gfxList.opaDList);
+					}
+					if (gfxList.xluDList != nullptr)
+					{
+						GenDListDeclarations(rawData, gfxList.xluDList);
+					}
+					gfxList.DeclareAndGenerateOutputCode();
+					entryRecordStr = "&" + gfxList.GetName();
 				}
 				else
 				{
@@ -591,11 +606,8 @@ PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>
 
 	ParseRawData();
 
-	// TODO: ZAPD refuses to extract this DList for some reason.
-	// (not even a crash/error, it just simply doesn't do it).
-	// For now, it will just export the address.
-	// opaDList = MakeDlist(opa, prefix);
-	// xluDList = MakeDlist(xlu, prefix);
+	opaDList = MakeDlist(opa, prefix);
+	xluDList = MakeDlist(xlu, prefix);
 }
 
 void PolygonDlist::ParseRawData()
@@ -620,9 +632,8 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 
 	string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
 	dlist->SetName(dListStr);
-	dlist->GetSourceOutputCode(prefix + "PolygonDlist");
+	dlist->GetSourceOutputCode("PolygonDlist");
 
-	// parent->resources.push_back(dlist);
 	return dlist;
 }
 
@@ -651,6 +662,7 @@ std::string PolygonDlist::GetBodySourceCode()
 	if (opa != 0)
 	{
 		Declaration* decl = parent->GetDeclaration(Seg2Filespace(opa, parent->baseAddress));
+		printf("%s\n", opaDList->GetName().c_str());
 		if (decl != nullptr)
 		{
 			opaStr = decl->varName;
@@ -663,6 +675,7 @@ std::string PolygonDlist::GetBodySourceCode()
 	if (xlu != 0)
 	{
 		Declaration* decl = parent->GetDeclaration(Seg2Filespace(xlu, parent->baseAddress));
+		printf("%s\n", xluDList->GetName().c_str());
 		if (decl != nullptr)
 		{
 			xluStr = decl->varName;

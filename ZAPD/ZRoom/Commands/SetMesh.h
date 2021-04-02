@@ -105,9 +105,6 @@ protected:
 	segptr_t opa;  // Gfx*
 	segptr_t xlu;  // Gfx*
 
-	ZDisplayList* opaDList;  // Gfx*
-	ZDisplayList* xluDList;  // Gfx*
-
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	ZFile* parent;
@@ -130,6 +127,9 @@ public:
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	std::string GetSourceTypeName();
 	std::string GetName();
+
+	ZDisplayList* opaDList;  // Gfx*
+	ZDisplayList* xluDList;  // Gfx*
 };
 
 class BgImage
