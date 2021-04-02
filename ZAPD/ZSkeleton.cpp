@@ -113,12 +113,13 @@ void ZSkeleton::ParseRawData()
 
 void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	name = reader->Attribute("Name");
-	relativePath = std::move(nRelPath);
-	rawData = std::move(nRawData);
-	rawDataIndex = nRawDataIndex;
-	ParseXML(reader);
-	ParseRawData();
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	//name = reader->Attribute("Name");
+	//relativePath = std::move(nRelPath);
+	//rawData = std::move(nRawData);
+	//rawDataIndex = nRawDataIndex;
+	//ParseXML(reader);
+	//ParseRawData();
 
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(), GetSourceTypeName(), name, "");
 
@@ -132,10 +133,9 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 
 		//ZLimb* limb = new ZLimb(reader, rawData, ptr2, parent);
 		ZLimb* limb = new ZLimb(parent);
-		limb->isFromXML = false;
 		limb->SetLimbType(limbType);
 		limb->SetName(StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), ptr2));
-		limb->ExtractFromXML(reader, rawData, ptr2, nRelPath);
+		limb->ExtractFromXML(nullptr, rawData, ptr2, nRelPath);
 		limbs.push_back(limb);
 
 		ptr += 4;

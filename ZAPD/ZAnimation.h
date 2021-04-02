@@ -32,7 +32,7 @@ public:
 	ZResourceType GetResourceType() override;
 
 protected:
-	virtual void ParseRawData() override;
+	void ParseRawData() override;
 	void Save(const std::string& outFolder) override;
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 };

@@ -41,7 +41,7 @@ enum class ZResourceType
 	Vertex,
 	CollisionHeader,
 	Symbol,
-	Prerender,
+	Prerender
 };
 
 class ZResource
@@ -78,6 +78,7 @@ public:
 	std::string GetName();
 	void SetName(std::string nName);
 	std::string GetOutName();
+	void SetOutName(std::string nName);
 	std::string GetRelativePath();
 	virtual int GetRawDataIndex();
 	virtual void SetRawDataIndex(int value);

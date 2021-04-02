@@ -176,8 +176,11 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 				if (decl == nullptr)
 				{
-					ZPrerender* prerender =
-						new ZPrerender(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
+					//ZPrerender* prerender = new ZPrerender(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
+					ZPrerender* prerender = new ZPrerender(zRoom->parent);
+					prerender->ExtractFromXML(nullptr, rawData, imagePtrAddress, "");
+					prerender->SetName(prerender->GetDefaultName(headerSingleStr.c_str(), imagePtrAddress));
+					prerender->SetOutName(prerender->GetName());
 					prerender->DeclareVar(headerSingleStr, "");
 					zRoom->parent->resources.push_back(prerender);
 					imagePtrStr = prerender->GetName();
@@ -519,8 +522,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	int dlistLength = ZDisplayList::GetDListLength(
 		rawData, dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength);
-	dlist->parent = parent;
+	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength, parent);
 
 	string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
 	dlist->SetName(dListStr);

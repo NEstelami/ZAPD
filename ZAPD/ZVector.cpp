@@ -17,10 +17,11 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 
 void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	rawData = nRawData;
-	rawDataIndex = nRawDataIndex;
-	ParseXML(reader);
-	ParseRawData();
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	//rawData = nRawData;
+	//rawDataIndex = nRawDataIndex;
+	//ParseXML(reader);
+	//ParseRawData();
 }
 
 void ZVector::ParseXML(tinyxml2::XMLElement* reader)

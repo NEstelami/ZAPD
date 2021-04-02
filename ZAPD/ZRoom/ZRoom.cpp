@@ -187,9 +187,10 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZPrerender* back =
-				ZPrerender::ExtractFromXML(child, room->rawData, address, room->parent);
-			room->parent->resources.push_back(back);
+			ZPrerender* back = new ZPrerender(parent);
+			back->ExtractFromXML(reader, rawData, address, "");
+			//ZPrerender* back = ZPrerender::ExtractFromXML(child, rawData, address, parent);
+			parent->resources.push_back(back);
 		}
 	}
 

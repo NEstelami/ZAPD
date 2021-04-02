@@ -336,7 +336,6 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 {
 	dListPtr = 0;
 	dList2Ptr = 0;
-	isFromXML = true;
 }
 
 ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource(nParent)
@@ -434,15 +433,16 @@ void ZLimb::ParseRawData()
 
 void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	relativePath = std::move(nRelPath);
-	rawData = std::move(nRawData);
-	rawDataIndex = nRawDataIndex;
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	//relativePath = std::move(nRelPath);
+	//rawData = std::move(nRawData);
+	//rawDataIndex = nRawDataIndex;
 	segAddress = nRawDataIndex;
 
-	if (isFromXML)
-		ParseXML(reader);
+	//if (isFromXML)
+		//ParseXML(reader);
 	
-	ParseRawData();
+	//ParseRawData();
 
 	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), name, "");
 

@@ -228,12 +228,12 @@ int NewMain(int argc, char* argv[])
 
 	try
 	{
-        if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
+		if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 		{
 			bool parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
 
-            if (!parseSuccessful)
-                return 1;
+			if (!parseSuccessful)
+				return 1;
 		}
 		else if (fileMode == ZFileMode::BuildTexture)
 		{
@@ -241,19 +241,19 @@ int NewMain(int argc, char* argv[])
 			string pngFilePath = Globals::Instance->inputPath;
 			string outFilePath = Globals::Instance->outputPath;
 
-		BuildAssetTexture(pngFilePath, texType, outFilePath);
-	}
-	else if (fileMode == ZFileMode::BuildPrerender)
-	{
-		string imageFilePath = Globals::Instance->inputPath;
-		string outFilePath = Globals::Instance->outputPath;
+			BuildAssetTexture(pngFilePath, texType, outFilePath);
+		}
+		else if (fileMode == ZFileMode::BuildPrerender)
+		{
+			string imageFilePath = Globals::Instance->inputPath;
+			string outFilePath = Globals::Instance->outputPath;
 
-		BuildAssetPrerender(imageFilePath, outFilePath);
-	}
-	else if (fileMode == ZFileMode::BuildBlob)
-	{
-		string blobFilePath = Globals::Instance->inputPath;
-		string outFilePath = Globals::Instance->outputPath;
+			BuildAssetPrerender(imageFilePath, outFilePath);
+		}
+		else if (fileMode == ZFileMode::BuildBlob)
+		{
+			string blobFilePath = Globals::Instance->inputPath;
+			string outFilePath = Globals::Instance->outputPath;
 
 			BuildAssetBlob(blobFilePath, outFilePath);
 		}
@@ -350,7 +350,7 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
 
 void BuildAssetPrerender(const std::string& imageFilePath, const std::string& outPath)
 {
-	ZPrerender prerender;
+	ZPrerender prerender = ZPrerender(nullptr);
 
 	prerender.ParseBinaryFile(imageFilePath, false);
 

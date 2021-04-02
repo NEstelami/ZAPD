@@ -16,6 +16,14 @@ ZResource::ZResource(ZFile* nParent)
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	relativePath = nRelPath;
+
+	if (reader != nullptr)
+		ParseXML(reader);
+	
+	ParseRawData();
 }
 
 void ZResource::ExtractFromFile()
@@ -24,20 +32,23 @@ void ZResource::ExtractFromFile()
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 {
-	if (reader->Attribute("Name") != nullptr)
-		name = reader->Attribute("Name");
-	else
-		name = "";
+	if (reader != nullptr)
+	{
+		if (reader->Attribute("Name") != nullptr)
+			name = reader->Attribute("Name");
+		else
+			name = "";
 
-	if (reader->Attribute("OutName") != nullptr)
-		outName = reader->Attribute("OutName");
-	else
-		outName = name;
+		if (reader->Attribute("OutName") != nullptr)
+			outName = reader->Attribute("OutName");
+		else
+			outName = name;
 
-	if (reader->Attribute("Custom") != nullptr)
-		isCustomAsset = true;
-	else
-		isCustomAsset = false;
+		if (reader->Attribute("Custom") != nullptr)
+			isCustomAsset = true;
+		else
+			isCustomAsset = false;
+	}
 }
 
 void ZResource::Save(const std::string& outFolder)
@@ -56,6 +67,11 @@ string ZResource::GetName()
 std::string ZResource::GetOutName()
 {
 	return outName;
+}
+
+void ZResource::SetOutName(std::string nName)
+{
+	outName = nName;
 }
 
 void ZResource::SetName(string nName)

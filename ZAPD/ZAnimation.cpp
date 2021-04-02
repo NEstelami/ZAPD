@@ -283,12 +283,8 @@ void ZCurveAnimation::ParseRawData()
 
 void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
-	rawData = std::move(nRawData);
-	rawDataIndex = nRawDataIndex;
-	relativePath = std::move(nRelPath);
-	ParseXML(reader);
-	ParseRawData();
-
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	
 	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData, Seg2Filespace(skelOffset, parent->baseAddress), parent);
 
 	size_t transformDataSize = 0;

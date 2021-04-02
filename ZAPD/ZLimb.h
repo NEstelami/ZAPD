@@ -142,7 +142,6 @@ public:
 	uint8_t childIndex, siblingIndex;
 	std::vector<ZDisplayList*> dLists;
 	std::vector<ZLimb*> children;
-	bool isFromXML;
 
 	ZLimb(ZFile* nParent);
 	//ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
