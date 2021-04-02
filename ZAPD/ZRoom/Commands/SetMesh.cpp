@@ -720,6 +720,7 @@ BgImage::BgImage(const std::string& prefix, const std::vector<uint8_t>& nRawData
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
 
 	ParseRawData();
+	sourceBackground = MakeBackground(source, prefix);
 }
 
 void BgImage::ParseRawData()
@@ -735,6 +736,22 @@ void BgImage::ParseRawData()
 	siz = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x15);
 	mode0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x16);
 	tlutCount = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x18);
+}
+
+ZPrerender* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
+{
+	if (ptr == 0)
+	{
+		return nullptr;
+	}
+
+	uint32_t backAddress = Seg2Filespace(ptr, parent->baseAddress);
+
+	ZPrerender* background = new ZPrerender(prefix, rawData, backAddress, parent);
+	background->DeclareVar(prefix, "");
+	parent->resources.push_back(background);
+
+	return background;
 }
 
 int BgImage::GetRawDataSize()
@@ -765,7 +782,28 @@ std::string BgImage::GetBodySourceCode(bool arrayElement)
 
 	bodyStr += StringHelper::Sprintf("0x%04X, ", unk_00);
 	bodyStr += StringHelper::Sprintf("%i, ", id);
-	bodyStr += StringHelper::Sprintf("0x%08X, ", source);
+	bodyStr += "\n    ";
+	if (arrayElement)
+	{
+		bodyStr += "    ";
+	}
+
+	std::string backgroundName = "NULL";
+	if (source != 0)
+	{
+		uint32_t address = Seg2Filespace(source, parent->baseAddress);
+		Declaration* decl = parent->GetDeclaration(address);
+
+		if (decl == nullptr)
+		{
+			backgroundName += StringHelper::Sprintf("0x%08X, ", source);
+		}
+		else
+		{
+			backgroundName = decl->varName;
+		}
+	}
+	bodyStr += StringHelper::Sprintf("%s, ", backgroundName.c_str());
 	bodyStr += "\n    ";
 	if (arrayElement)
 	{

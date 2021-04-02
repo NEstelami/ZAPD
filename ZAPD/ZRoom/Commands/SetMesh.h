@@ -2,6 +2,7 @@
 
 #include "../../ZDisplayList.h"
 #include "../ZRoomCommand.h"
+#include "ZPrerender.h"
 
 class MeshHeaderBase
 {
@@ -136,7 +137,7 @@ class BgImage
 protected:
     uint16_t   unk_00;
     uint8_t    id;
-    uint32_t   source;
+    segptr_t   source;
     uint32_t   unk_0C;
     uint32_t   tlut;
     uint16_t   width;
@@ -146,12 +147,15 @@ protected:
     uint16_t   mode0;
     uint16_t   tlutCount;
 
+	ZPrerender* sourceBackground;
+
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	ZFile* parent;
 	std::string name;
 
 	void ParseRawData();
+	ZPrerender* MakeBackground(segptr_t ptr, const std::string& prefix);
 
 public:
 	BgImage(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
