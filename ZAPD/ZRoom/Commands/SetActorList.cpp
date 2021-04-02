@@ -61,7 +61,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	// zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None,
 	// DeclarationPadding::None, GetRawDataSize(), "SCmdActorList",
-	//ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress), sourceOutput);
+	// ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress), sourceOutput);
 
 	string declaration = "";
 

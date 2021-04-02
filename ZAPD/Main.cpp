@@ -9,11 +9,14 @@
 #include "ZAnimation.h"
 #include "ZBlob.h"
 #include "ZFile.h"
+#include "ZPrerender.h"
 #include "ZTexture.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
+#include <csignal>
+#include <cxxabi.h>  // for __cxa_demangle
+#include <dlfcn.h>   // for dladdr
 #include <execinfo.h>
-#include <signal.h>
 #include <unistd.h>
 #endif
 
@@ -28,6 +31,7 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 
 void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
                        const std::string& outPath);
+void BuildAssetPrerender(const std::string& imageFilePath, const std::string& outPath);
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath);
 void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath);
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
@@ -38,19 +42,37 @@ int NewMain(int argc, char* argv[]);
 void ErrorHandler(int sig)
 {
 	void* array[4096];
-	char** symbols;
-	size_t size;
-	size = backtrace(array, 4096);
-	symbols = backtrace_symbols(array, 4096);
+	const int nMaxFrames = sizeof(array) / sizeof(array[0]);
+	size_t size = backtrace(array, nMaxFrames);
+	char** symbols = backtrace_symbols(array, nMaxFrames);
 
 	for (size_t i = 1; i < size; i++)
 	{
-		// size_t len = strlen(symbols[i]);
-		cout << symbols[i] << "\n";
+		Dl_info info;
+		int gotAddress = dladdr(array[i], &info);
+		string functionName(symbols[i]);
+
+		if (gotAddress != 0 && info.dli_sname != nullptr)
+		{
+			int status;
+			char* demangled = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
+			const char* nameFound = info.dli_sname;
+
+			if (status == 0)
+			{
+				nameFound = demangled;
+			}
+
+			functionName = StringHelper::Sprintf("%s (+0x%X)", nameFound,
+			                                     (char*)array[i] - (char*)info.dli_saddr);
+			free(demangled);
+		}
+
+		fprintf(stderr, "%-3zd %s\n", i, functionName.c_str());
 	}
 
-	// cout << "Error: signal " << sig << ":\n";
-	backtrace_symbols_fd(array, size, STDERR_FILENO);
+	// backtrace_symbols_fd(array, size, STDERR_FILENO);
+	free(symbols);
 	exit(1);
 }
 #endif
@@ -79,6 +101,8 @@ int NewMain(int argc, char* argv[])
 		fileMode = ZFileMode::Build;
 	else if (buildMode == "btex")
 		fileMode = ZFileMode::BuildTexture;
+	else if (buildMode == "bren")
+		fileMode = ZFileMode::BuildPrerender;
 	else if (buildMode == "bovl")
 		fileMode = ZFileMode::BuildOverlay;
 	else if (buildMode == "bsf")
@@ -206,6 +230,13 @@ int NewMain(int argc, char* argv[])
 
 		BuildAssetTexture(pngFilePath, texType, outFilePath);
 	}
+	else if (fileMode == ZFileMode::BuildPrerender)
+	{
+		string imageFilePath = Globals::Instance->inputPath;
+		string outFilePath = Globals::Instance->outputPath;
+
+		BuildAssetPrerender(imageFilePath, outFilePath);
+	}
 	else if (fileMode == ZFileMode::BuildBlob)
 	{
 		string blobFilePath = Globals::Instance->inputPath;
@@ -302,6 +333,17 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
 	File::WriteAllText(outPath, src);
 
 	delete tex;
+}
+
+void BuildAssetPrerender(const std::string& imageFilePath, const std::string& outPath)
+{
+	ZPrerender prerender;
+
+	prerender.ParseBinaryFile(imageFilePath, false);
+
+	string src = prerender.GetBodySourceCode();
+
+	File::WriteAllText(outPath, src);
 }
 
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)

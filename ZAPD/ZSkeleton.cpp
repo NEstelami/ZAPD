@@ -208,8 +208,10 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		// Table
 		string tblStr = "";
 		string limbArrTypeStr = "static void*";
-		if (limbType == ZLimbType::Curve) {
-			limbArrTypeStr = StringHelper::Sprintf("static %s*", ZLimb::GetSourceTypeName(limbType));
+		if (limbType == ZLimbType::Curve)
+		{
+			limbArrTypeStr =
+				StringHelper::Sprintf("static %s*", ZLimb::GetSourceTypeName(limbType));
 		}
 
 		for (size_t i = 0; i < limbs.size(); i++)

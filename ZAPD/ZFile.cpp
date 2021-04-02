@@ -14,6 +14,7 @@
 #include "ZDisplayList.h"
 #include "ZLimb.h"
 #include "ZMtx.h"
+#include "ZPrerender.h"
 #include "ZRoom/ZRoom.h"
 #include "ZScalar.h"
 #include "ZSkeleton.h"
@@ -120,8 +121,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (mode == ZFileMode::Extract)
 	{
 		if (!File::Exists(basePath + "/" + name))
-			throw StringHelper::Sprintf("Error! File %s does not exist.",
-			                            (basePath + "/" + name).c_str());
+			throw std::runtime_error(StringHelper::Sprintf("Error! File %s does not exist.",
+			                                               (basePath + "/" + name).c_str()));
 
 		rawData = File::ReadAllBytes(basePath + "/" + name);
 	}
@@ -153,6 +154,26 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(tex);
 			rawDataIndex += tex->GetRawDataSize();
+		}
+		else if (string(child->Name()) == "Prerender")
+		{
+			ZPrerender* back = nullptr;
+
+			if (mode == ZFileMode::Extract)
+			{
+				back = ZPrerender::ExtractFromXML(child, rawData, rawDataIndex, this);
+			}
+			else
+			{
+				back = ZPrerender::BuildFromXML(child, folderName, this, mode == ZFileMode::Build);
+			}
+
+			if (back == nullptr)
+			{
+				throw std::runtime_error("Couldn't create ZPrerender.");
+			}
+			resources.push_back(back);
+			rawDataIndex += back->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "Blob")
 		{
@@ -866,7 +887,7 @@ string ZFile::ProcessDeclarations()
 		ProcessDeclarationText(item.second);
 	}
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		while (item.second->size % 4 != 0)
 		{
@@ -948,15 +969,18 @@ string ZFile::ProcessDeclarations()
 	// Handle unaccounted data
 	lastAddr = 0;
 	lastSize = 0;
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first >= rangeStart && item.first < rangeEnd)
 		{
 			if (lastAddr != 0 && declarations.find(lastAddr) != declarations.end() &&
 			    lastAddr + declarations[lastAddr]->size > item.first)
 			{
-				printf("WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X\n",
-				       lastAddr, lastAddr + declarations[lastAddr]->size, item.first);
+				fprintf(stderr,
+				        "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X "
+				        "(%s)\n",
+				        lastAddr, lastAddr + declarations[lastAddr]->size, item.first,
+				        item.second->varName.c_str());
 			}
 
 			uint8_t* rawDataArr = rawData.data();
@@ -1034,7 +1058,7 @@ string ZFile::ProcessDeclarations()
 	// Go through include declarations
 	// First, handle the prototypes (static only for now)
 	int protoCnt = 0;
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.second->includePath == "" &&
 		    StringHelper::StartsWith(item.second->varType, "static ") &&
@@ -1062,7 +1086,7 @@ string ZFile::ProcessDeclarations()
 		output += "\n";
 
 	// Next, output the actual declarations
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
 		{
@@ -1174,7 +1198,7 @@ string ZFile::ProcessExterns()
 {
 	string output = "";
 
-	for (pair<int32_t, Declaration*> item : declarations)
+	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
 		{
