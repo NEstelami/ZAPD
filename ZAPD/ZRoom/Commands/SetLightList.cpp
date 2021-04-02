@@ -15,20 +15,23 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	// this->ptrRoom->GetName().c_str(), this->segment);
 	string declarations = "";
 
+	int32_t currentPtr = this->segment;
 	for (int i = 0; i < this->numLights; i++)
 	{
-		uint8_t type = rawData[this->segment + ((0xE * i) + 0)];
-		std::vector<uint16_t> params;
+		uint8_t type = rawData[currentPtr + 0];
+		int16_t x = BitConverter::ToInt16BE(rawData, currentPtr + 2);
+		int16_t y = BitConverter::ToInt16BE(rawData, currentPtr + 4);
+		int16_t z = BitConverter::ToInt16BE(rawData, currentPtr + 6);
+		uint8_t r = rawData[currentPtr + 8];
+		uint8_t g = rawData[currentPtr + 9];
+		uint8_t b = rawData[currentPtr + 10];
+		uint8_t drawGlow = rawData[currentPtr + 11];
+		int16_t radius = BitConverter::ToInt16BE(rawData, currentPtr + 12);
 
-		for (int y = 0; y < 6; y++)
-		{
-			params.push_back(
-				BitConverter::ToInt16BE(rawData, this->segment + ((0xE * i) + 2 + (y * 2))));
-		}
+		currentPtr += 14;
 
 		declarations += StringHelper::Sprintf(
-			"\t{ 0x%02X, { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X } },", type, params[0],
-			params[1], params[2], params[3], params[4], params[5]);
+			"\t{ 0x%02X, { %i, %i, %i, { 0x%02X, 0x%02X, 0x%02X }, 0x%02X, 0x%04X } },", type, x, y, z, r, g, b, drawGlow, radius);
 
 		if (i < this->numLights - 1)
 			declarations += "\n";

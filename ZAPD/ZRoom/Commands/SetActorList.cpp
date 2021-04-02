@@ -98,7 +98,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	}
 
 	zRoom->parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16, actors.size() * 16,
+		segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, actors.size() * 16,
 		"ActorEntry", StringHelper::Sprintf("%sActorList0x%06X", roomName.c_str(), segmentOffset),
 		GetActorListArraySize(), declaration);
 
