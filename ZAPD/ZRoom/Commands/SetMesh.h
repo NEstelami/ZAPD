@@ -161,7 +161,7 @@ public:
 
 	//void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
-	std::string GetBodySourceCode();
+	std::string GetBodySourceCode(bool arrayElement);
 	//void DeclareAndGenerateOutputCode();
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);

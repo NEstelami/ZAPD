@@ -270,13 +270,13 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 						{
 							bgRecordPtrStr = bg.GetName();
 						}
-						bgImageArrayBody += "  { " + bg.GetBodySourceCode() + "}, ";
+
+						bgImageArrayBody += bg.GetBodySourceCode(true);
 						if (i+1 < headerMulti->bgCnt)
 						{
 							bgImageArrayBody += "\n";
 						}
 					}
-					printf("%s\n", bgImageArrayBody.c_str());
 					zRoom->parent->AddDeclarationArray(bgRecordPtrAddress, DeclarationAlignment::Align4, headerMulti->bgCnt * BgImage::GetRawDataSize(),
 										BgImage::GetSourceTypeName(), bgRecordPtrStr, headerMulti->bgCnt, bgImageArrayBody);
 				}
@@ -755,25 +755,53 @@ void BgImage::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 }
 */
 
-std::string BgImage::GetBodySourceCode()
+std::string BgImage::GetBodySourceCode(bool arrayElement)
 {
 	std::string bodyStr = "";
+	if (arrayElement)
+	{
+		bodyStr += "    { \n        ";
+	}
 
 	bodyStr += StringHelper::Sprintf("0x%04X, ", unk_00);
 	bodyStr += StringHelper::Sprintf("%i, ", id);
 	bodyStr += StringHelper::Sprintf("0x%08X, ", source);
-	bodyStr += StringHelper::Sprintf("0x%08X, ", unk_0C);
 	bodyStr += "\n    ";
+	if (arrayElement)
+	{
+		bodyStr += "    ";
+	}
 
+	bodyStr += StringHelper::Sprintf("0x%08X, ", unk_0C);
 	bodyStr += StringHelper::Sprintf("0x%08X, ", tlut);
-	bodyStr += StringHelper::Sprintf("0x%04X, ", width);
-	bodyStr += StringHelper::Sprintf("0x%04X, ", height);
-	bodyStr += StringHelper::Sprintf("0x%02X, ", fmt);
-	bodyStr += StringHelper::Sprintf("0x%02X, ", siz);
 	bodyStr += "\n    ";
+	if (arrayElement)
+	{
+		bodyStr += "    ";
+	}
+
+	bodyStr += StringHelper::Sprintf("%i, ", width);
+	bodyStr += StringHelper::Sprintf("%i, ", height);
+	bodyStr += "\n    ";
+	if (arrayElement)
+	{
+		bodyStr += "    ";
+	}
+
+	bodyStr += StringHelper::Sprintf("%i, ", fmt);
+	bodyStr += StringHelper::Sprintf("%i, ", siz);
+	bodyStr += "\n    ";
+	if (arrayElement)
+	{
+		bodyStr += "    ";
+	}
 
 	bodyStr += StringHelper::Sprintf("0x%04X, ", mode0);
 	bodyStr += StringHelper::Sprintf("0x%04X, ", tlutCount);
+	if (arrayElement)
+	{
+		bodyStr += " \n    }, ";
+	}
 
 	return bodyStr;
 }
