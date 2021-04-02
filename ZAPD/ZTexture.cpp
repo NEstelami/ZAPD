@@ -168,7 +168,7 @@ void ZTexture::ParseXML(XMLElement* reader)
 	}
 	else
 	{
-		throw std::runtime_error("Width == nullptr for asset " + (string)reader->Attribute("Name")	);
+		throw std::runtime_error("Width == nullptr for asset " + (string)reader->Attribute("Name"));
 	}
 
 	if (reader->Attribute("Height") != nullptr)
