@@ -75,7 +75,7 @@ ZOverlay* ZOverlay::FromBuild(string buildPath, string cfgFolderPath)
 				SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
 
 				if (sectionType == SectionType::ERROR)
-					printf("WARNING: One of the section types returned ERROR\n");
+					fprintf(stderr, "WARNING: One of the section types returned ERROR\n");
 
 				relocation_section_accessor relocs(*curReader, pSec);
 				for (Elf_Xword j = 0; j < relocs.get_entries_num(); j++)

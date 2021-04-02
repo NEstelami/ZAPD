@@ -182,10 +182,12 @@ void ZCollisionHeader::ParseRawData()
 	declaration += StringHelper::Sprintf("    { %i, %i, %i },\n    { %i, %i, %i },\n", absMinX,
 	                                     absMinY, absMinZ, absMaxX, absMaxY, absMaxZ);
 
-	declaration += StringHelper::Sprintf("    %i,\n    %s_vtx_%08X,\n    %i,\n    %s_polygons_%08X,\n    %s_surfaceType_%08X,\n    &%s_camDataList_%08X,\n    %i,\n    %s\n",
-		numVerts, name.c_str(), vtxSegmentOffset, numPolygons,
-		name.c_str(), polySegmentOffset, name.c_str(), polyTypeDefSegmentOffset,
-		name.c_str(), camDataSegmentOffset, numWaterBoxes, waterBoxStr);
+	declaration += StringHelper::Sprintf(
+		"    %i,\n    %s_vtx_%08X,\n    %i,\n    %s_polygons_%08X,\n    %s_surfaceType_%08X,\n    "
+		"%s_camDataList_%08X,\n    %i,\n    %s\n",
+		numVerts, prefix.c_str(), vtxSegmentOffset, numPolygons, prefix.c_str(), polySegmentOffset,
+		prefix.c_str(), polyTypeDefSegmentOffset, prefix.c_str(), camDataSegmentOffset,
+		numWaterBoxes, waterBoxStr);
 
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16, 44, "CollisionHeader", StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
 }

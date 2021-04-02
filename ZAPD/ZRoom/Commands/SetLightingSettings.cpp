@@ -22,7 +22,10 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 
 		for (int i = 0; i < numLights; i++)
 		{
-			declaration += StringHelper::Sprintf("    { 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X }, // 0x%06X \n",
+			declaration += StringHelper::Sprintf(
+				"\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, "
+				"0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, "
+				"0x%04X }, // 0x%06X \n",
 				settings[i]->ambientClrR, settings[i]->ambientClrG, settings[i]->ambientClrB,
 				settings[i]->diffuseClrA_R, settings[i]->diffuseClrA_G, settings[i]->diffuseClrA_B,
 				settings[i]->diffuseDirA_X, settings[i]->diffuseDirA_Y, settings[i]->diffuseDirA_Z,

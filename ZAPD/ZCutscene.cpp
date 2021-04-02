@@ -354,7 +354,7 @@ CutsceneCommands ZCutscene::GetCommandFromID(int id)
 		return CutsceneCommands::Unknown;
 	}
 
-	printf("WARNING: Could not identify cutscene command ID 0x%04X\n", id);
+	fprintf(stderr, "WARNING: Could not identify cutscene command ID 0x%04X\n", id);
 
 	return CutsceneCommands::Error;
 }
@@ -1085,9 +1085,13 @@ string CutsceneCommandSpecialAction::GenerateSourceCode(const std::string& roomN
 
 	for (size_t i = 0; i < entries.size(); i++)
 	{
-		result += StringHelper::Sprintf("        CS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
-			entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4, entries[i]->unused5, entries[i]->unused6,
-			entries[i]->unused7, entries[i]->unused8, entries[i]->unused9, entries[i]->unused10);
+		result += StringHelper::Sprintf(
+			"\t\tCS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, "
+			"%i),\n",
+			entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->unused0,
+			entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4,
+			entries[i]->unused5, entries[i]->unused6, entries[i]->unused7, entries[i]->unused8,
+			entries[i]->unused9, entries[i]->unused10);
 	}
 
 	return result;

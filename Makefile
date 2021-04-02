@@ -1,5 +1,7 @@
 CC := g++
-CFLAGS := -g -std=c++17 -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -O2 -rdynamic
+INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
+CFLAGS := -g -g3 -fpic -Wl,-export-dynamic -std=c++17 -O2 -rdynamic
+LDFLAGS := -ldl
 UNAME := $(shell uname)
 
 FS_INC =
@@ -28,10 +30,13 @@ clean:
 rebuild: clean all
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@ $(LDFLAGS)
+
+ZAPD/Main.o: genbuildinfo ZAPD/Main.cpp
+	$(CC) $(CFLAGS) $(INC) -c ZAPD/Main.cpp -o $@ $(LDFLAGS)
 
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd -j
 
 ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
-	$(CC) $(CFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC)
+	$(CC) $(CFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)

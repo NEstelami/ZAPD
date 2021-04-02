@@ -35,6 +35,7 @@
 #include "ObjectList.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
+#include "ZPrerender.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -175,6 +176,20 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
 				tex->GetSourceOutputCode(name));
 			delete tex;
+		}
+		else if (string(child->Name()) == "PrerenderHint")
+		{
+			string comment = "";
+
+			if (child->Attribute("Comment") != NULL)
+				comment = "// " + string(child->Attribute("Comment")) + "\n";
+
+			string addressStr = child->Attribute("Offset");
+			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+
+			ZPrerender* back =
+				ZPrerender::ExtractFromXML(child, room->rawData, address, room->parent);
+			room->parent->resources.push_back(back);
 		}
 	}
 
