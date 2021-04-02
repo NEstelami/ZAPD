@@ -131,6 +131,44 @@ public:
 	std::string GetName();
 };
 
+class BgImage
+{
+protected:
+    uint16_t   unk_00;
+    uint8_t    id;
+    uint32_t   source;
+    uint32_t   unk_0C;
+    uint32_t   tlut;
+    uint16_t   width;
+    uint16_t   height;
+    uint8_t    fmt;
+    uint8_t    siz;
+    uint16_t   mode0;
+    uint16_t   tlutCount;
+
+	std::vector<uint8_t> rawData;
+	int rawDataIndex;
+	ZFile* parent;
+	std::string name;
+
+	void ParseRawData();
+
+public:
+	BgImage(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZFile* nParent);
+
+	static int GetRawDataSize();
+
+	//void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+
+	std::string GetBodySourceCode();
+	//void DeclareAndGenerateOutputCode();
+
+	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	static std::string GetSourceTypeName();
+	std::string GetName();
+};
+
 class SetMesh : public ZRoomCommand
 {
 public:

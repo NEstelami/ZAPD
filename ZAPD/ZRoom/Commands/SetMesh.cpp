@@ -168,10 +168,10 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 				if (decl == nullptr)
 				{
-					PolygonDlist* gfxList = new PolygonDlist(headerSingleStr, rawData,
+					PolygonDlist gfxList(headerSingleStr, rawData,
 					                                         entryRecordAddress, zRoom->parent);
-					gfxList->DeclareAndGenerateOutputCode();
-					entryRecordStr = "&" + gfxList->GetName();
+					gfxList.DeclareAndGenerateOutputCode();
+					entryRecordStr = "&" + gfxList.GetName();
 				}
 				else
 				{
@@ -219,6 +219,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 		else if (fmt == 2)  // Multi-Format
 		{
 			MeshHeader1Multi* headerMulti = new MeshHeader1Multi();
+			std::string headerMultiStr = StringHelper::Sprintf(
+				"%sMeshHeader0x%06X", zRoom->GetName().c_str(), segmentOffset);
 
 			headerMulti->headerType = 1;
 			headerMulti->format = fmt;
@@ -228,16 +230,69 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			headerMulti->bgCnt = rawData[segmentOffset + 8];
 			headerMulti->bgRecordPtr = BitConverter::ToInt32BE(rawData, segmentOffset + 12);
 
-			declaration += StringHelper::Sprintf("{ { 1 }, 2, 0x%06X }, 0x%06X, 0x%06X",
-			                                     headerMulti->entryRecord, headerMulti->bgCnt,
-			                                     headerMulti->bgRecordPtr);
+			declaration = "\n";
+			std::string entryRecordStr = "NULL";
+			if (headerMulti->entryRecord != 0)
+			{
+				uint32_t entryRecordAddress =
+					Seg2Filespace(headerMulti->entryRecord, zRoom->parent->baseAddress);
+				Declaration* decl = zRoom->parent->GetDeclaration(entryRecordAddress);
+
+				if (decl == nullptr)
+				{
+					PolygonDlist* gfxList = new PolygonDlist(headerMultiStr, rawData,
+					                                         entryRecordAddress, zRoom->parent);
+					gfxList->DeclareAndGenerateOutputCode();
+					entryRecordStr = "&" + gfxList->GetName();
+				}
+				else
+				{
+					entryRecordStr = "&" + decl->varName;
+				}
+			}
+			declaration +=
+				StringHelper::Sprintf("    { { 1 }, 2, %s }, \n", entryRecordStr.c_str());
+
+			std::string bgRecordPtrStr = "NULL";
+			if (headerMulti->bgCnt > 0 && headerMulti->bgRecordPtr != 0)
+			{
+				uint32_t bgRecordPtrAddress =
+					Seg2Filespace(headerMulti->bgRecordPtr, zRoom->parent->baseAddress);
+				Declaration* decl = zRoom->parent->GetDeclaration(bgRecordPtrAddress);
+
+				if (decl == nullptr)
+				{
+					std::string bgImageArrayBody = "";
+					for (size_t i = 0; i < headerMulti->bgCnt; ++i)
+					{
+						BgImage bg(headerMultiStr, rawData, bgRecordPtrAddress + i * BgImage::GetRawDataSize(), zRoom->parent);
+						if (bgRecordPtrStr == "" || bgRecordPtrStr == "NULL")
+						{
+							bgRecordPtrStr = bg.GetName();
+						}
+						bgImageArrayBody += "  { " + bg.GetBodySourceCode() + "}, ";
+						if (i+1 < headerMulti->bgCnt)
+						{
+							bgImageArrayBody += "\n";
+						}
+					}
+					printf("%s\n", bgImageArrayBody.c_str());
+					zRoom->parent->AddDeclarationArray(bgRecordPtrAddress, DeclarationAlignment::Align4, headerMulti->bgCnt * BgImage::GetRawDataSize(),
+										BgImage::GetSourceTypeName(), bgRecordPtrStr, headerMulti->bgCnt, bgImageArrayBody);
+				}
+				else
+				{
+					bgRecordPtrStr = decl->varName;
+				}
+			}
+
+			declaration += StringHelper::Sprintf("    %i, %s, \n",
+			                                     headerMulti->bgCnt,
+			                                     bgRecordPtrStr.c_str());
 
 			zRoom->parent->AddDeclaration(segmentOffset, DeclarationAlignment::None,
 			                              DeclarationPadding::Pad16, 16, "MeshHeader1Multi",
-			                              StringHelper::Sprintf("%sMeshHeader0x%06X",
-			                                                    zRoom->GetName().c_str(),
-			                                                    segmentOffset),
-			                              declaration);
+			                              headerMultiStr, declaration);
 
 			meshHeader1 = headerMulti;
 		}
@@ -650,6 +705,107 @@ std::string PolygonDlist::GetSourceTypeName()
 }
 
 std::string PolygonDlist::GetName()
+{
+	return name;
+}
+
+
+BgImage::BgImage(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZFile* nParent)
+{
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = nRawDataIndex;
+	parent = nParent;
+
+	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+
+	ParseRawData();
+}
+
+void BgImage::ParseRawData()
+{
+	unk_00 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x00);
+	id = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x02);
+	source = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x04);
+	unk_0C = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x08);
+	tlut = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x0C);
+	width = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x10);
+	height = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x12);
+	fmt = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x14);
+	siz = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x15);
+	mode0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x16);
+	tlutCount = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x18);
+}
+
+int BgImage::GetRawDataSize()
+{
+	return 0x1C;
+}
+
+/*
+void BgImage::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+	if (name == "")
+	{
+		auxName = GetDefaultName(prefix, rawDataIndex);
+	}
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                       GetSourceTypeName(), auxName, bodyStr);
+}
+*/
+
+std::string BgImage::GetBodySourceCode()
+{
+	std::string bodyStr = "";
+
+	bodyStr += StringHelper::Sprintf("0x%04X, ", unk_00);
+	bodyStr += StringHelper::Sprintf("%i, ", id);
+	bodyStr += StringHelper::Sprintf("0x%08X, ", source);
+	bodyStr += StringHelper::Sprintf("0x%08X, ", unk_0C);
+	bodyStr += "\n    ";
+
+	bodyStr += StringHelper::Sprintf("0x%08X, ", tlut);
+	bodyStr += StringHelper::Sprintf("0x%04X, ", width);
+	bodyStr += StringHelper::Sprintf("0x%04X, ", height);
+	bodyStr += StringHelper::Sprintf("0x%02X, ", fmt);
+	bodyStr += StringHelper::Sprintf("0x%02X, ", siz);
+	bodyStr += "\n    ";
+
+	bodyStr += StringHelper::Sprintf("0x%04X, ", mode0);
+	bodyStr += StringHelper::Sprintf("0x%04X, ", tlutCount);
+
+	return bodyStr;
+}
+
+/*
+void BgImage::DeclareAndGenerateOutputCode()
+{
+	std::string bodyStr = GetBodySourceCode();
+
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+	if (decl == nullptr)
+	{
+		DeclareVar("", bodyStr);
+	}
+	else
+	{
+		decl->text = bodyStr;
+	}
+}
+*/
+
+std::string BgImage::GetDefaultName(const std::string& prefix, uint32_t address)
+{
+	return StringHelper::Sprintf("%sBgImage_%06X", prefix.c_str(), address);
+}
+
+std::string BgImage::GetSourceTypeName()
+{
+	return "BgImage";
+}
+
+std::string BgImage::GetName()
 {
 	return name;
 }
