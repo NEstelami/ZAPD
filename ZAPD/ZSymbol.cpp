@@ -28,10 +28,6 @@ ZSymbol::ZSymbol(ZFile* nParent) : ZResource(nParent)
 void ZSymbol::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
     ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
-    //rawData = nRawData;
-    //rawDataIndex = nRawDataIndex;
-
-	//ParseXML(reader);
 }
 
 void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)

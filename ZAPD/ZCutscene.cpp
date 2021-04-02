@@ -62,13 +62,6 @@ int ZCutscene::GetRawDataSize()
 void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
-	/*rawData = nRawData;
-	rawDataIndex = nRawDataIndex;
-
-	if (isFromXML)
-		ParseXML(reader);
-	
-	ParseRawData();*/
 }
 
 void ZCutscene::ParseRawData()

@@ -176,7 +176,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 				if (decl == nullptr)
 				{
-					//ZPrerender* prerender = new ZPrerender(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
 					ZPrerender* prerender = new ZPrerender(zRoom->parent);
 					prerender->ExtractFromXML(nullptr, rawData, imagePtrAddress, "");
 					prerender->SetName(prerender->GetDefaultName(headerSingleStr.c_str(), imagePtrAddress));

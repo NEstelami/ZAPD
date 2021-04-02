@@ -49,11 +49,9 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vecto
 	ParseXML(reader);
 
 	//name = reader->Attribute("Name");
-	rawData = nRawData;
-	rawDataIndex = nRawDataIndex;
-	int rawDataSize = ZDisplayList::GetDListLength(rawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	fileData = rawData;
 	relativePath = nRelPath;
+	int rawDataSize = ZDisplayList::GetDListLength(nRawData, nRawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	rawData = vector<uint8_t>(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }

@@ -114,12 +114,6 @@ void ZSkeleton::ParseRawData()
 void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
-	//name = reader->Attribute("Name");
-	//relativePath = std::move(nRelPath);
-	//rawData = std::move(nRawData);
-	//rawDataIndex = nRawDataIndex;
-	//ParseXML(reader);
-	//ParseRawData();
 
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(), GetSourceTypeName(), name, "");
 
