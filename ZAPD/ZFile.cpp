@@ -86,7 +86,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		else if (string(gameStr) == "OOT")
 			Globals::Instance->game = ZGame::OOT_RETAIL;
 		else
-			throw StringHelper::Sprintf("Error: Game type %s not supported.", gameStr);
+			throw std::runtime_error(StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
 	}
 
 	if (reader->Attribute("BaseAddress") != NULL)
@@ -115,8 +115,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (mode == ZFileMode::Extract)
 	{
 		if (!File::Exists(basePath + "/" + name))
-			throw StringHelper::Sprintf("Error! File %s does not exist.",
-			                            (basePath + "/" + name).c_str());
+			throw std::runtime_error(StringHelper::Sprintf("Error! File %s does not exist.",
+			                            (basePath + "/" + name).c_str()));
 
 		rawData = File::ReadAllBytes(basePath + "/" + name);
 	}

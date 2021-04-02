@@ -242,9 +242,9 @@ int NewMain(int argc, char* argv[])
 				File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
 		}
 	}
-	catch (const char* msg)
+	catch (std::runtime_error e)
 	{
-		printf("Exception occurred: %s\n", msg);
+		printf("Exception occurred: %s\n", e.what());
 	}
 
 	return 0;
