@@ -125,8 +125,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			//ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->isFromXML = false;
-			cutscene->ExtractFromXML(reader, rawData, address, ""); // TODO: Make this use ExtractFromFile() once that's been implemented
+			cutscene->ExtractFromXML(nullptr, rawData, address, ""); // TODO: Make this use ExtractFromFile() once that's been implemented
 
 			if (child->Attribute("Name") != NULL)
 				childName = string(child->Attribute("Name"));

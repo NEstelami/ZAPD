@@ -14,8 +14,7 @@ public:
 	//ZPrerender(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	           //int nRawDataIndex, ZFile* nParent);
 	ZPrerender(ZFile* nParent);
-	//ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	           //ZFile* nParent);
+	ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath) override;

@@ -46,13 +46,14 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 // EXTRACT MODE
 void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
 {
+	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
 
 	//name = reader->Attribute("Name");
-	fileData = rawData;
+	fileData = nRawData;
 	relativePath = nRelPath;
-	int rawDataSize = ZDisplayList::GetDListLength(nRawData, nRawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	rawData = vector<uint8_t>(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + rawDataSize);
+	int rawDataSize = ZDisplayList::GetDListLength(nRawData, rawDataIndex, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
 
@@ -1776,7 +1777,7 @@ static int GfxdCallback_DisplayList(uint32_t seg)
 static int GfxdCallback_Matrix(uint32_t seg)
 {
 	string mtxName = "";
-	ZDisplayList* instance = ZDisplayList::static_instance;
+	ZDisplayList* instance = ZDisplayList::Instance;
 
 	if (Globals::Instance->symbolMap.find(seg) != Globals::Instance->symbolMap.end())
 		mtxName = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[seg].c_str());
@@ -1788,6 +1789,7 @@ static int GfxdCallback_Matrix(uint32_t seg)
 		{
 			ZMtx mtx(instance->GetName(), instance->fileData,
 			         Seg2Filespace(seg, instance->parent->baseAddress), instance->parent);
+
 			mtx.GetSourceOutputCode(instance->GetName());
 			instance->mtxList.push_back(mtx);
 			mtxName = "&" + mtx.GetName();
@@ -2308,7 +2310,7 @@ void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 
 bool ZDisplayList::IsExternalResource()
 {
-	return true;
+	return false;
 }
 
 std::string ZDisplayList::GetExternalExtension()

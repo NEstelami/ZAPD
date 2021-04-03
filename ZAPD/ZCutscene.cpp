@@ -8,7 +8,6 @@ REGISTER_ZFILENODE(Cutscene, ZCutscene);
 
 ZCutscene::ZCutscene(ZFile* parent) : ZResource(parent)
 {
-	isFromXML = true;
 }
 
 ZCutscene::~ZCutscene()

@@ -240,6 +240,9 @@
     <ClCompile Include="ZPrerender.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
+    <ClCompile Include="ZMtx.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Path.h">
@@ -483,6 +486,9 @@
       <Filter>Header Files\Libraries\libgfxd</Filter>
     </ClInclude>
     <ClInclude Include="ZPrerender.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="ZMtx.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,34 +7,18 @@
 
 REGISTER_ZFILENODE(Prerender, ZPrerender);
 
-//ZPrerender::ZPrerender(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-//                       int nRawDataIndex, ZFile* nParent)
-//{
-//	rawData.assign(nRawData.begin(), nRawData.end());
-//	rawDataIndex = nRawDataIndex;
-//	parent = nParent;
-//
-//	ParseXML(reader);
-//	ParseRawData();
-//}
-
 ZPrerender::ZPrerender(ZFile* nParent) : ZResource(nParent)
 {
 	//ParseXML(reader);
 }
 
-//ZPrerender::ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-//                       int nRawDataIndex, ZFile* nParent)
-//{
-//	rawData.assign(nRawData.begin(), nRawData.end());
-//	rawDataIndex = nRawDataIndex;
-//	parent = nParent;
-//
-//	name = GetDefaultName(prefix.c_str(), rawDataIndex);
-//	outName = name;
-//
-//	ParseRawData();
-//}
+ZPrerender::ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource(nParent)
+{
+	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+	outName = name;
+
+	ExtractFromXML(nullptr, nRawData, nRawDataIndex, "");
+}
 
 void ZPrerender::ParseRawData()
 {

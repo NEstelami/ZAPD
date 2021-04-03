@@ -176,10 +176,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 				if (decl == nullptr)
 				{
-					ZPrerender* prerender = new ZPrerender(zRoom->parent);
-					prerender->ExtractFromXML(nullptr, rawData, imagePtrAddress, "");
-					prerender->SetName(prerender->GetDefaultName(headerSingleStr.c_str(), imagePtrAddress));
-					prerender->SetOutName(prerender->GetName());
+					ZPrerender* prerender = new ZPrerender(headerSingleStr, rawData, imagePtrAddress, zRoom->parent);
 					prerender->DeclareVar(headerSingleStr, "");
 					zRoom->parent->resources.push_back(prerender);
 					imagePtrStr = prerender->GetName();

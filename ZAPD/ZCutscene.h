@@ -411,8 +411,6 @@ public:
 	ZResourceType GetResourceType() override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
-
-	bool isFromXML;
 protected:
 	int numCommands;
 	int endFrame;
