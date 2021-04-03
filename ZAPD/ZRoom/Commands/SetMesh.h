@@ -4,26 +4,52 @@
 #include "../ZRoomCommand.h"
 #include "ZPrerender.h"
 
+
+class PolygonDlist
+{
+protected:
+	segptr_t opa = 0;  // Gfx*
+	segptr_t xlu = 0;  // Gfx*
+
+	std::vector<uint8_t> rawData;
+	int rawDataIndex;
+	ZFile* parent;
+	ZRoom* room;
+	std::string name;
+
+	void ParseRawData();
+	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
+
+public:
+	PolygonDlist() = default;
+	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZFile* nParent, ZRoom* nRoom);
+
+	int GetRawDataSize();
+
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+
+	std::string GetBodySourceCode(bool arrayElement);
+	void DeclareAndGenerateOutputCode();
+
+	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	std::string GetSourceTypeName();
+	std::string GetName();
+
+	ZDisplayList* opaDList = nullptr;  // Gfx*
+	ZDisplayList* xluDList = nullptr;  // Gfx*
+};
+
 class MeshHeaderBase
 {
 public:
 	int8_t headerType;  // 0x00
 };
 
-class MeshEntry0
-{
-public:
-	int32_t opaqueDListAddr;
-	int32_t translucentDListAddr;
-
-	ZDisplayList* opaqueDList;
-	ZDisplayList* translucentDList;
-};
-
 class MeshHeader0 : public MeshHeaderBase
 {
 public:
-	std::vector<MeshEntry0*> entries;
+	std::vector<PolygonDlist> entries;
 	uint32_t dListStart;
 	uint32_t dListEnd;
 };
@@ -66,40 +92,6 @@ public:
 	std::vector<MeshEntry2*> entries;
 	uint32_t dListStart;
 	uint32_t dListEnd;
-};
-
-class PolygonDlist
-{
-protected:
-	segptr_t opa = 0;  // Gfx*
-	segptr_t xlu = 0;  // Gfx*
-
-	std::vector<uint8_t> rawData;
-	int rawDataIndex;
-	ZFile* parent;
-	std::string name;
-
-	void ParseRawData();
-	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
-
-public:
-	PolygonDlist() = default;
-	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	             ZFile* nParent);
-
-	int GetRawDataSize();
-
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
-
-	std::string GetBodySourceCode();
-	void DeclareAndGenerateOutputCode();
-
-	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
-	std::string GetSourceTypeName();
-	std::string GetName();
-
-	ZDisplayList* opaDList = nullptr;  // Gfx*
-	ZDisplayList* xluDList = nullptr;  // Gfx*
 };
 
 class BgImage
@@ -170,7 +162,7 @@ protected:
 
 public:
 	PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	             ZFile* nParent);
+	             ZFile* nParent, ZRoom* nRoom);
 
 	int GetRawDataSize();
 

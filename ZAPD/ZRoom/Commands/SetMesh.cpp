@@ -23,7 +23,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 	{
 		MeshHeader0* meshHeader0 = new MeshHeader0();
 		meshHeader0->headerType = 0;
-		meshHeader0->entries = vector<MeshEntry0*>();
 
 		meshHeader0->dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
 		meshHeader0->dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
@@ -38,101 +37,73 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			segmentOffset--;
 		}
 
-		for (int i = 0; i < numEntries; i++)
+		if (numEntries > 0)
 		{
-			MeshEntry0* entry = new MeshEntry0();
-			entry->opaqueDListAddr = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 0));
-			entry->translucentDListAddr =
-				GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 4));
+			std::string polyGfxBody = "";
+			std::string polyGfxType = "";
+			int polyGfxSize = 0;
 
-			if (entry->opaqueDListAddr != 0)
+			for (int i = 0; i < numEntries; i++)
 			{
-				entry->opaqueDList = new ZDisplayList(
-					rawData, entry->opaqueDListAddr,
-					ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr,
-				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
-                                                     DListType::F3DEX :
-                                                     DListType::F3DZEX),
-					zRoom->parent);
-				entry->opaqueDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->opaqueDList);
+				PolygonDlist polyGfxList(zRoom->GetName(), rawData, currentPtr, zRoom->parent, zRoom);
+				if (polyGfxList.opaDList != nullptr)
+				{
+					GenDListDeclarations(rawData, polyGfxList.opaDList);
+				}
+				if (polyGfxList.xluDList != nullptr)
+				{
+					GenDListDeclarations(rawData, polyGfxList.xluDList);
+				}
+				polyGfxBody += polyGfxList.GetBodySourceCode(true);
+				polyGfxType = polyGfxList.GetSourceTypeName();
+				polyGfxSize = polyGfxList.GetRawDataSize();
+
+				currentPtr += polyGfxList.GetRawDataSize();
 			}
 
-			if (entry->translucentDListAddr != 0)
-			{
-				entry->translucentDList = new ZDisplayList(
-					rawData, entry->translucentDListAddr,
-					ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr,
-				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
-                                                     DListType::F3DEX :
-                                                     DListType::F3DZEX),
-					zRoom->parent);
-				entry->translucentDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->translucentDList);
-			}
-
-			meshHeader0->entries.push_back(entry);
-
-			currentPtr += 8;
+			zRoom->parent->AddDeclarationArray(
+				meshHeader0->dListStart, DeclarationAlignment::Align4,
+				numEntries * polyGfxSize, polyGfxType,
+				StringHelper::Sprintf("%s%s0x%06X", zRoom->GetName().c_str(), polyGfxType.c_str(),
+									meshHeader0->dListStart),
+				numEntries, polyGfxBody);
 		}
 
-		declaration += StringHelper::Sprintf("{ 0 }, 0x%02X, ", meshHeader0->entries.size());
+		declaration = "\n    ";
+		declaration += StringHelper::Sprintf("{ 0 }, 0x%02X, ", numEntries);
+		declaration += "\n    ";
+
+		std::string entriesStr = "NULL";
 
 		if (meshHeader0->dListStart != 0)
-			declaration += StringHelper::Sprintf("(u32)&%sMeshDListEntry0x%06X, ",
-			                                     zRoom->GetName().c_str(), meshHeader0->dListStart);
-		else
-			declaration += "0, ";
+		{
+			entriesStr = zRoom->parent->GetDeclaration(meshHeader0->dListStart)->varName;
+		}
+		declaration += StringHelper::Sprintf("%s, ", entriesStr.c_str());
+		declaration += "\n    ";
 
 		if (meshHeader0->dListEnd != 0)
 			declaration += StringHelper::Sprintf(
-				"(u32)&(%sMeshDListEntry0x%06X) + sizeof(%sMeshDListEntry0x%06X)",
-				zRoom->GetName().c_str(), meshHeader0->dListStart, zRoom->GetName().c_str(),
-				meshHeader0->dListStart);
+				"%s + ARRAY_COUNT(%s), ",
+				entriesStr.c_str(), entriesStr.c_str());
 		else
-			declaration += "0";
+			declaration += "NULL, ";
+		declaration += "\n";
 
 		zRoom->parent->AddDeclaration(
 			segmentOffset, DeclarationAlignment::Align16, 12, "MeshHeader0",
 			StringHelper::Sprintf("%sMeshHeader0x%06X", zRoom->GetName().c_str(), segmentOffset),
 			declaration);
 
-		declaration = "";
-
-		for (size_t i = 0; i < meshHeader0->entries.size(); i++)
-		{
-			if (meshHeader0->entries[i]->opaqueDListAddr != 0)
-				declaration +=
-					StringHelper::Sprintf("    { (u32)%sDL_%06X, ", zRoom->GetName().c_str(),
-				                          meshHeader0->entries[i]->opaqueDListAddr);
-			else
-				declaration += "    { 0, ";
-
-			if (meshHeader0->entries[i]->translucentDListAddr != 0)
-				declaration +=
-					StringHelper::Sprintf("(u32)%sDL_%06X },\n", zRoom->GetName().c_str(),
-				                          meshHeader0->entries[i]->translucentDListAddr);
-			else
-				declaration += "0 },\n";
-		}
-
-		zRoom->parent->AddDeclarationArray(
-			meshHeader0->dListStart, DeclarationAlignment::None, DeclarationPadding::None,
-			(meshHeader0->entries.size() * 8) + 0, "MeshEntry0",
-			StringHelper::Sprintf("%sMeshDListEntry0x%06X", zRoom->GetName().c_str(),
-		                          meshHeader0->dListStart),
-			meshHeader0->entries.size(), declaration);
-
-		zRoom->parent->AddDeclaration(meshHeader0->dListStart + (meshHeader0->entries.size() * 8) +
-		                                  0,
+		zRoom->parent->AddDeclaration(meshHeader0->dListStart + (numEntries * 8),
 		                              DeclarationAlignment::None, DeclarationPadding::Pad16, 4,
-		                              "static s32", "terminatorMaybe", " 0x01000000 ");
+		                              "static s32", "terminatorMaybe", "0x01000000");
 
 		meshHeader = meshHeader0;
 	}
 	else if (meshHeaderType == 1)
 	{
-		PolygonType1 polygon1(zRoom->GetName().c_str(), rawData, segmentOffset, zRoom->parent);
+		PolygonType1 polygon1(zRoom->GetName().c_str(), rawData, segmentOffset, zRoom->parent, zRoom);
 		if (polygon1.polyGfxList.opaDList != nullptr)
 		{
 			GenDListDeclarations(rawData, polygon1.polyGfxList.opaDList);
@@ -212,6 +183,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 				meshHeader2->dListStart);
 		else
 			declaration += "0";
+		declaration += "\n";
 
 		zRoom->parent->AddDeclaration(
 			segmentOffset, DeclarationAlignment::None, 12, "MeshHeader2",
@@ -332,57 +304,7 @@ string SetMesh::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 string SetMesh::GenerateExterns()
 {
-	string sourceOutput = "";
-
-	if (meshHeaderType == 0)
-	{
-		MeshHeader0* meshHeader0 = (MeshHeader0*)meshHeader;
-
-		sourceOutput += StringHelper::Sprintf("extern MeshHeader0 %sMeshHeader0x%06X;\n",
-		                                      zRoom->GetName().c_str(), segmentOffset);
-		sourceOutput += StringHelper::Sprintf("extern MeshEntry0 %sMeshDListEntry0x%06X[%i];\n",
-		                                      zRoom->GetName().c_str(), meshHeader0->dListStart,
-		                                      meshHeader0->entries.size());
-
-		for (MeshEntry0* entry : meshHeader0->entries)
-		{
-			if (entry->opaqueDList != nullptr)
-				sourceOutput += GenDListExterns(entry->opaqueDList);
-
-			if (entry->translucentDList != nullptr)
-				sourceOutput += GenDListExterns(entry->translucentDList);
-		}
-	}
-	else if (meshHeaderType == 1)
-	{
-		sourceOutput += StringHelper::Sprintf("extern PolygonType1 %sPolygonType1_0x%06X;\n",
-			                                      zRoom->GetName().c_str(), segmentOffset);
-	}
-	else if (meshHeaderType == 2)
-	{
-		MeshHeader2* meshHeader2 = (MeshHeader2*)meshHeader;
-
-		sourceOutput += StringHelper::Sprintf("extern MeshHeader2 %sMeshHeader0x%06X;\n",
-		                                      zRoom->GetName().c_str(), segmentOffset);
-		sourceOutput += StringHelper::Sprintf("extern MeshEntry2 %sMeshDListEntry0x%06X[%i];\n",
-		                                      zRoom->GetName().c_str(), meshHeader2->dListStart,
-		                                      meshHeader2->entries.size());
-
-		for (MeshEntry2* entry : meshHeader2->entries)
-		{
-			if (entry->opaqueDList != nullptr)
-				sourceOutput += GenDListExterns(entry->opaqueDList);
-
-			if (entry->translucentDList != nullptr)
-				sourceOutput += GenDListExterns(entry->translucentDList);
-		}
-	}
-	else
-	{
-		// sourceOutput += "// SetMesh UNIMPLEMENTED HEADER TYPE!\n";
-	}
-
-	return sourceOutput;
+	return "";
 }
 
 int32_t SetMesh::GetRawDataSize()
@@ -401,11 +323,12 @@ RoomCommand SetMesh::GetRoomCommand()
 }
 
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                           int nRawDataIndex, ZFile* nParent)
+                           int nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
+	room = nRoom;
 
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
 
@@ -437,7 +360,8 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 
 	string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
 	dlist->SetName(dListStr);
-	dlist->GetSourceOutputCode("PolygonDlist");
+	dlist->scene = room->scene;
+	dlist->GetSourceOutputCode(prefix);
 
 	return dlist;
 }
@@ -458,11 +382,19 @@ void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& body
 	                       GetSourceTypeName(), auxName, bodyStr);
 }
 
-std::string PolygonDlist::GetBodySourceCode()
+std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 {
-	std::string bodyStr = "\n";
+	std::string bodyStr = "";
 	std::string opaStr = "NULL";
 	std::string xluStr = "NULL";
+	if (arrayElement)
+	{
+		bodyStr += "    { \n    ";
+	}
+	else
+	{
+		bodyStr += "\n";
+	}
 
 	if (opa != 0)
 	{
@@ -490,14 +422,24 @@ std::string PolygonDlist::GetBodySourceCode()
 	}
 
 	bodyStr += StringHelper::Sprintf("    %s, \n", opaStr.c_str());
+	if (arrayElement)
+	{
+		bodyStr += "    ";
+	}
+
 	bodyStr += StringHelper::Sprintf("    %s, \n", xluStr.c_str());
+
+	if (arrayElement)
+	{
+		bodyStr += "    },";
+	}
 
 	return bodyStr;
 }
 
 void PolygonDlist::DeclareAndGenerateOutputCode()
 {
-	std::string bodyStr = GetBodySourceCode();
+	std::string bodyStr = GetBodySourceCode(false);
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr)
@@ -704,7 +646,7 @@ std::string BgImage::GetName()
 
 
 PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                           int nRawDataIndex, ZFile* nParent)
+                           int nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -716,7 +658,7 @@ PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>
 
 	if (dlist != 0)
 	{
-		polyGfxList = PolygonDlist(prefix, rawData, Seg2Filespace(dlist, parent->baseAddress), parent);
+		polyGfxList = PolygonDlist(prefix, rawData, Seg2Filespace(dlist, parent->baseAddress), parent, nRoom);
 	}
 
 	uint32_t listAddress;
