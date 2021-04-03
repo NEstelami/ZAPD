@@ -42,7 +42,7 @@ public:
 	std::vector<aiVector3D> vertices;
 	std::vector<int> indices;
 
-	HLModelObj();
+	HLModelObj() = default;
 	HLModelObj(Vec3s nPos, Vec3s nRot, std::vector<aiVector3D> nVerts, std::vector<int> nIndices);
 };
 

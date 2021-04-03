@@ -1,6 +1,6 @@
-#include "GFXDFormatter.h"
+#include "OutputFormatter.h"
 
-int GFXDFormatter::Write(const char *buf, int count)
+int OutputFormatter::Write(const char *buf, int count)
 {
 	for (int i = 0; i < count; i++)
 	{
@@ -63,20 +63,20 @@ int GFXDFormatter::Write(const char *buf, int count)
 	return count;
 }
 
-GFXDFormatter* GFXDFormatter::Instance;
+OutputFormatter* OutputFormatter::Instance;
 
-int GFXDFormatter::WriteStatic(const char *buf, int count)
+int OutputFormatter::WriteStatic(const char *buf, int count)
 {
 	return Instance->Write(buf, count);
 }
 
-int (*GFXDFormatter::StaticWriter())(const char *buf, int count)
+int (*OutputFormatter::StaticWriter())(const char *buf, int count)
 {
 	Instance = this;
 	return &WriteStatic;
 }
 
-GFXDFormatter::GFXDFormatter(int tabSize , int defaultIndent, int lineLimit)
+OutputFormatter::OutputFormatter(int tabSize , int defaultIndent, int lineLimit)
 	:
 	tabSize{tabSize},
 	defaultIndent{defaultIndent},
@@ -90,7 +90,7 @@ GFXDFormatter::GFXDFormatter(int tabSize , int defaultIndent, int lineLimit)
 {
 }
 
-std::string GFXDFormatter::GetOutput()
+std::string OutputFormatter::GetOutput()
 {
 	str.append(space, spaceP - space);
 	spaceP = space;

@@ -153,7 +153,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClCompile Include="HighLevel\HLModelIntermediette.cpp" />
     <ClCompile Include="HighLevel\HLTexture.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="GFXDFormatter.cpp" />
+    <ClCompile Include="OutputFormatter.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="ZArray.cpp" />
     <ClCompile Include="ZLimb.cpp" />
@@ -232,7 +232,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="HighLevel\HLFileIntermediette.h" />
     <ClInclude Include="HighLevel\HLModelIntermediette.h" />
     <ClInclude Include="HighLevel\HLTexture.h" />
-    <ClInclude Include="GFXDFormatter.h" />
+    <ClInclude Include="OutputFormatter.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="StringHelper.h" />

@@ -1233,10 +1233,6 @@ void HLSetTranslation::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* ver
 	parent->lastTrans = Vec3s(transX, transY, transZ);
 }
 
-HLModelObj::HLModelObj()
-{
-}
-
 HLModelObj::HLModelObj(Vec3s nPos, Vec3s nRot, std::vector<aiVector3D> nVerts, std::vector<int> nIndices)
 {
 	pos = nPos;

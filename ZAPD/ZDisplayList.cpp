@@ -7,7 +7,7 @@
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
-#include "GFXDFormatter.h"
+#include "OutputFormatter.h"
 #include "HighLevel/HLModelIntermediette.h"
 #include "gfxd.h"
 
@@ -2152,7 +2152,7 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 {
 	string sourceOutput = "";
 
-	GFXDFormatter outputformatter;
+	OutputFormatter outputformatter;
 	int dListSize = instructions.size() * sizeof(instructions[0]);
 
 	gfxd_input_buffer(instructions.data(), dListSize);

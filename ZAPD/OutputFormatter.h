@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-class GFXDFormatter
+class OutputFormatter
 {
 private:
 	const int tabSize;
@@ -25,11 +25,11 @@ private:
 
 	int Write(const char *buf, int count);
 
-	static GFXDFormatter *Instance;
+	static OutputFormatter *Instance;
 	static int WriteStatic(const char *buf, int count);
 
 public:
-	GFXDFormatter(int tabSize = 4, int defaultIndent = 4, int lineLimit = 120);
+	OutputFormatter(int tabSize = 4, int defaultIndent = 4, int lineLimit = 120);
 
 	int (*StaticWriter())(const char *buf, int count);
 

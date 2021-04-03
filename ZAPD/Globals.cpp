@@ -133,7 +133,10 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 	XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
+	{
+		printf("Warning: Unable to read texture pool XML with error code %i\n", eResult);
 		return;
+	}
 
 	XMLNode* root = doc.FirstChild();
 

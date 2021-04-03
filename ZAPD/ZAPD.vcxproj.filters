@@ -210,7 +210,7 @@
     <ClCompile Include="ZLimb.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
-    <ClCompile Include="GFXDFormatter.cpp">
+    <ClCompile Include="OutputFormatter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZSymbol.cpp">
@@ -470,7 +470,7 @@
     <ClInclude Include="ZLimb.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
-    <ClInclude Include="GFXDFormatter.h">
+    <ClInclude Include="OutputFormatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZSymbol.h">
