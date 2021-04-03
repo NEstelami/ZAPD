@@ -28,37 +28,6 @@ public:
 	uint32_t dListEnd;
 };
 
-class MeshHeader1Base : public MeshHeaderBase
-{
-public:
-	int8_t format;         // 0x01
-	uint32_t entryRecord;  // 0x04
-};
-
-class MeshHeader1Single : public MeshHeader1Base
-{
-public:
-	uint32_t imagePtr;  // 0x08
-
-	uint32_t unknown;   // 0x0C
-	uint32_t unknown2;  // 0x10
-
-	uint16_t bgWidth;   // 0x14
-	uint16_t bgHeight;  // 0x16
-
-	uint8_t imageFormat;  // 0x18
-	uint8_t imageSize;    // 0x19
-	uint16_t imagePal;    // 0x1A
-	uint16_t imageFlip;   // 0x1C
-};
-
-class MeshHeader1Multi : public MeshHeader1Base
-{
-public:
-	uint8_t bgCnt;         // 0x08
-	uint32_t bgRecordPtr;  // 0x0C
-};
-
 class BackgroundRecord
 {
 public:
@@ -102,8 +71,8 @@ public:
 class PolygonDlist
 {
 protected:
-	segptr_t opa;  // Gfx*
-	segptr_t xlu;  // Gfx*
+	segptr_t opa = 0;  // Gfx*
+	segptr_t xlu = 0;  // Gfx*
 
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
@@ -114,6 +83,7 @@ protected:
 	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
 
 public:
+	PolygonDlist() = default;
 	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	             ZFile* nParent);
 
@@ -128,8 +98,8 @@ public:
 	std::string GetSourceTypeName();
 	std::string GetName();
 
-	ZDisplayList* opaDList;  // Gfx*
-	ZDisplayList* xluDList;  // Gfx*
+	ZDisplayList* opaDList = nullptr;  // Gfx*
+	ZDisplayList* xluDList = nullptr;  // Gfx*
 };
 
 class BgImage
@@ -153,12 +123,14 @@ protected:
 	int rawDataIndex;
 	ZFile* parent;
 	std::string name;
+	bool isSubStruct;
 
 	void ParseRawData();
 	ZPrerender* MakeBackground(segptr_t ptr, const std::string& prefix);
 
 public:
-	BgImage(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	BgImage() = default;
+	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	             ZFile* nParent);
 
 	static int GetRawDataSize();
@@ -171,6 +143,47 @@ public:
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	static std::string GetSourceTypeName();
 	std::string GetName();
+};
+
+class PolygonType1
+{
+protected:
+	uint8_t type;
+	uint8_t format;
+	segptr_t dlist;
+
+	// single
+	BgImage single;
+
+	// multi
+	uint8_t count;
+	segptr_t list; // BgImage*
+	std::vector<BgImage> multiList;
+
+
+	std::vector<uint8_t> rawData;
+	int rawDataIndex;
+	ZFile* parent;
+	std::string name;
+
+	void ParseRawData();
+
+public:
+	PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZFile* nParent);
+
+	int GetRawDataSize();
+
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+
+	std::string GetBodySourceCode();
+	void DeclareAndGenerateOutputCode();
+
+	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	std::string GetSourceTypeName();
+	std::string GetName();
+
+	PolygonDlist polyGfxList;
 };
 
 class SetMesh : public ZRoomCommand
@@ -191,6 +204,7 @@ private:
 	MeshHeaderBase* meshHeader;
 	uint32_t segmentOffset;
 	uint8_t data;
+	uint8_t meshHeaderType;
 
 	void GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList);
 	std::string GenDListExterns(ZDisplayList* dList);
