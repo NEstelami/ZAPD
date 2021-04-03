@@ -41,7 +41,7 @@
 #include "Commands/ZRoomCommandUnk.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
-#include "ZPrerender.h"
+#include "ZBackground.h"
 
 using namespace std;
 using namespace tinyxml2;
@@ -202,7 +202,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			                            0, tex->GetSourceOutputCode(name));
 			delete tex;
 		}
-		else if (string(child->Name()) == "PrerenderHint")
+		else if (string(child->Name()) == "BackgroundHint")
 		{
 			string comment = "";
 
@@ -212,7 +212,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZPrerender* back = new ZPrerender(parent);
+			ZBackground* back = new ZBackground(parent);
 			back->ExtractFromXML(reader, rawData, address, "");
 			parent->resources.push_back(back);
 		}

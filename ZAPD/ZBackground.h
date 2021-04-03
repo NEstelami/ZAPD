@@ -4,23 +4,23 @@
 #include <vector>
 #include "ZResource.h"
 
-class ZPrerender : public ZResource
+class ZBackground : public ZResource
 {
 protected:
 	std::vector<uint8_t> data;
 
 public:
-	// ZPrerender() = default;
-	// ZPrerender(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	// ZBackground() = default;
+	// ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	// int nRawDataIndex, ZFile* nParent);
-	ZPrerender(ZFile* nParent);
-	ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	ZBackground(ZFile* nParent);
+	ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	           ZFile* nParent);
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    int nRawDataIndex, const std::string& nRelPath) override;
-	// static ZPrerender* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
+	// static ZBackground* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
 	// ZFile* nParent, bool readFile);
 
 	int GetRawDataSize() override;

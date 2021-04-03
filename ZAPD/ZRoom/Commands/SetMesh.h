@@ -2,7 +2,7 @@
 
 #include "../../ZDisplayList.h"
 #include "../ZRoomCommand.h"
-#include "ZPrerender.h"
+#include "ZBackground.h"
 
 
 class PolygonDlist
@@ -109,7 +109,7 @@ protected:
     uint16_t   mode0;
     uint16_t   tlutCount;
 
-	ZPrerender* sourceBackground;
+	ZBackground* sourceBackground;
 
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
@@ -118,7 +118,7 @@ protected:
 	bool isSubStruct;
 
 	void ParseRawData();
-	ZPrerender* MakeBackground(segptr_t ptr, const std::string& prefix);
+	ZBackground* MakeBackground(segptr_t ptr, const std::string& prefix);
 
 public:
 	BgImage() = default;

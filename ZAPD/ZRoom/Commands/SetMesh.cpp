@@ -5,7 +5,7 @@
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 #include "../ZRoom.h"
-#include "ZPrerender.h"
+#include "ZBackground.h"
 
 using namespace std;
 
@@ -503,7 +503,7 @@ void BgImage::ParseRawData()
 	tlutCount = BitConverter::ToUInt16BE(rawData, rawDataIndex + pad + 0x14);
 }
 
-ZPrerender* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
+ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 {
 	if (ptr == 0)
 	{
@@ -512,7 +512,7 @@ ZPrerender* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 
 	uint32_t backAddress = Seg2Filespace(ptr, parent->baseAddress);
 
-	ZPrerender* background = new ZPrerender(prefix, rawData, backAddress, parent);
+	ZBackground* background = new ZBackground(prefix, rawData, backAddress, parent);
 	background->DeclareVar(prefix, "");
 	parent->resources.push_back(background);
 
@@ -768,7 +768,7 @@ std::string PolygonType1::GetBodySourceCode()
 	switch (format)
 	{
 	case 1:
-		bodyStr += single.GetBodySourceCode(false);
+		bodyStr += "    " + single.GetBodySourceCode(false) + "\n";
 		break;
 	case 2:
 		if (list != 0)
