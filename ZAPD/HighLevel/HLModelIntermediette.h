@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Vec3s.h>
 #include <assimp/scene.h>
 #include <stdint.h>
 #include <string>
@@ -7,9 +8,6 @@
 #include <vector>
 #include "../ZDisplayList.h"
 #include "../ZSkeleton.h"
-#include <tinyxml2.h>
-#include <assimp/scene.h>
-#include <Vec3s.h>
 #include "HLFileIntermediette.h"
 
 /*
@@ -69,7 +67,8 @@ public:
 	static HLModelIntermediette* FromXML(tinyxml2::XMLElement* root);
 	static void FromZDisplayList(HLModelIntermediette* model, ZDisplayList* zDisplayList);
 	static void FromZSkeleton(HLModelIntermediette* model, ZSkeleton* zSkeleton);
-	static void ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton, ZLimb* limb);
+	static void ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton,
+	                                 ZLimb* limb);
 	std::string ToOBJFile();
 	std::string ToAssimpFile();
 

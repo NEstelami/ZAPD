@@ -2,7 +2,7 @@
 //
 //#include <string>
 //
-//static const std::string ActorList[] =
+// static const std::string ActorList[] =
 //{
 //    /* 0x0000 */ "ACTOR_PLAYER",
 //    /* 0x0001 */ "ACTOR_UNSET_1",

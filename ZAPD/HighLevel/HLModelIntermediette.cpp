@@ -166,9 +166,9 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 			// 0b0000000000000011111111100000000000000000000000000000000000000000) >> 41; int
 			// mmmmmmmmm = (data &
 			// 0b0000000000000000000000011111111100000000000000000000000000000000) >> 32; int ttt =
-			// (data & 0b0000000000000000000000000000000000000111000000000000000000000000) >> 24; int
-			// pppp = (data & 0b0000000000000000000000000000000000000000111100000000000000000000) >>
-			// 20;
+			// (data & 0b0000000000000000000000000000000000000111000000000000000000000000) >> 24;
+			// int pppp = (data &
+			// 0b0000000000000000000000000000000000000000111100000000000000000000) >> 20;
 			int cc =
 				(data & 0b0000000000000000000000000000000000000000000011000000000000000000) >> 18;
 			// int aaaa = (data &
@@ -271,28 +271,29 @@ void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton*
 
 	/*for (int i = 0; i < zSkeleton->limbs.size(); i++)
 	{
-		// ZLimb* limb = zSkeleton->limbs[i];
+	    // ZLimb* limb = zSkeleton->limbs[i];
 
-		if (limb->dList == nullptr && limb->dListPtr != 0)
-			limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
+	    if (limb->dList == nullptr && limb->dListPtr != 0)
+	        limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
 
-		if (limb->dList != nullptr)
-		{
-			auto cmdTrans = new HLSetTranslation(limb->transX, limb->transY, limb->transZ);
-			cmdTrans->parent = model;
-			model->blocks.push_back(cmdTrans);
+	    if (limb->dList != nullptr)
+	    {
+	        auto cmdTrans = new HLSetTranslation(limb->transX, limb->transY, limb->transZ);
+	        cmdTrans->parent = model;
+	        model->blocks.push_back(cmdTrans);
 
-			FromZDisplayList(model, limb->dList);
-		}
+	        FromZDisplayList(model, limb->dList);
+	    }
 
 
-		for (int j = 0; j < model->blocks.size(); j++)
-		{
-		}
+	    for (int j = 0; j < model->blocks.size(); j++)
+	    {
+	    }
 	}*/
 }
 
-void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton, ZLimb* limb)
+void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton,
+                                                ZLimb* limb)
 {
 	if (limb->dList == nullptr && limb->dListPtr != 0)
 		limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
@@ -347,7 +348,7 @@ string HLModelIntermediette::ToAssimpFile()
 	{
 		block->parent = this;
 		block->OutputAssimp(newScene, &vertices);
-		
+
 		idx++;
 	}
 
@@ -361,7 +362,10 @@ string HLModelIntermediette::ToAssimpFile()
 		child->mNumMeshes = 1;
 		child->mMeshes = new unsigned int[1];
 		child->mMeshes[0] = i;
-		child->mTransformation.Translation(aiVector3D(meshTranslations[i].x * 10, meshTranslations[i].y * 10, meshTranslations[i].z * 10), child->mTransformation);
+		child->mTransformation.Translation(aiVector3D(meshTranslations[i].x * 10,
+		                                              meshTranslations[i].y * 10,
+		                                              meshTranslations[i].z * 10),
+		                                   child->mTransformation);
 		newScene->mRootNode->mChildren[i] = child;
 	}
 
@@ -524,8 +528,8 @@ string HLVerticesIntermediette::OutputCode(HLModelIntermediette* parent)
 
 	for (Vertex v : vertices)
 	{
-		output += StringHelper::Sprintf("    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", 
-			v.x, v.y, v.z, v.flag, v.s, v.t, v.r, v.g, v.b, v.a);
+		output += StringHelper::Sprintf("    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", v.x,
+		                                v.y, v.z, v.flag, v.s, v.t, v.r, v.g, v.b, v.a);
 	}
 
 	output += StringHelper::Sprintf("};\n");
@@ -1031,12 +1035,15 @@ string HLMeshIntermediette::OutputCode(string materialName)
 	HLTextureIntermediette* tex = parent->FindByName<HLTextureIntermediette>(mat->textureName);
 
 	output += StringHelper::Sprintf("    gsDPPipeSync(),\n");
-	output += StringHelper::Sprintf("    gsDPSetPrimColor(%i, %i, %i, %i, %i, %i),\n", mat->clrL, mat->clrM, mat->clrR, mat->clrG, mat->clrB, mat->clrA);
+	output += StringHelper::Sprintf("    gsDPSetPrimColor(%i, %i, %i, %i, %i, %i),\n", mat->clrL,
+	                                mat->clrM, mat->clrR, mat->clrG, mat->clrB, mat->clrA);
 	output += StringHelper::Sprintf("    gsDPPipeSync(),\n");
 	output += StringHelper::Sprintf("    gsSPTexture(65535, 65535, 0, 0, G_ON),\n");
 
-	output += StringHelper::Sprintf("    gsDPLoadMultiBlock(%s, 0, 0, %s, %s, %i, %i, 0, 0, 0, 5, 5, 0, 0),\n", mat->textureName.c_str(), 
-		tex->tex->GetIMFmtFromType().c_str(), tex->tex->GetIMSizFromType().c_str(), tex->tex->GetWidth(), tex->tex->GetHeight());
+	output += StringHelper::Sprintf(
+		"    gsDPLoadMultiBlock(%s, 0, 0, %s, %s, %i, %i, 0, 0, 0, 5, 5, 0, 0),\n",
+		mat->textureName.c_str(), tex->tex->GetIMFmtFromType().c_str(),
+		tex->tex->GetIMSizFromType().c_str(), tex->tex->GetWidth(), tex->tex->GetHeight());
 
 	for (HLMeshCommand* cmd : commands)
 		output += "    " + cmd->OutputCode(parent) + "\n";
@@ -1072,7 +1079,7 @@ void HLMeshIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* 
 	}
 
 	parent->meshTranslations.push_back(parent->lastTrans);
-	//parent->objects.push_back(new HLModelObj(parent->lastTransX, ))
+	// parent->objects.push_back(new HLModelObj(parent->lastTransX, ))
 
 	scene->mMeshes[scene->mNumMeshes++] = mesh;
 }
@@ -1233,7 +1240,8 @@ void HLSetTranslation::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* ver
 	parent->lastTrans = Vec3s(transX, transY, transZ);
 }
 
-HLModelObj::HLModelObj(Vec3s nPos, Vec3s nRot, std::vector<aiVector3D> nVerts, std::vector<int> nIndices)
+HLModelObj::HLModelObj(Vec3s nPos, Vec3s nRot, std::vector<aiVector3D> nVerts,
+                       std::vector<int> nIndices)
 {
 	pos = nPos;
 	rot = nRot;

@@ -58,12 +58,13 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                           const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	name = string(reader->Attribute("Name"));
-	//room->scene = nScene;
+	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
 
 	if (string(reader->Name()) == "Scene")
@@ -87,7 +88,9 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	     child = child->NextSiblingElement())
 	{
 		string childName = child->Attribute("Name") == NULL ? "" : string(child->Attribute("Name"));
-		string childComment = child->Attribute("Comment") == NULL ? "" : "// " + string(child->Attribute("Comment")) + "\n";
+		string childComment = child->Attribute("Comment") == NULL ?
+                                  "" :
+                                  "// " + string(child->Attribute("Comment")) + "\n";
 
 		// TODO: Bunch of repeated code between all of these that needs to be combined.
 		if (string(child->Name()) == "DListHint")
@@ -95,7 +98,13 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZDisplayList* dList = new ZDisplayList(rawData, address, ZDisplayList::GetDListLength(rawData, address, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX), parent);
+			ZDisplayList* dList = new ZDisplayList(
+				rawData, address,
+				ZDisplayList::GetDListLength(rawData, address,
+			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
+                                                 DListType::F3DEX :
+                                                 DListType::F3DZEX),
+				parent);
 
 			dList->GetSourceOutputCode(name);
 			delete dList;
@@ -108,14 +117,17 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string sizeStr = child->Attribute("Size");
 			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
 
-			ZBlob* blob = new ZBlob(rawData, address, size, StringHelper::Sprintf("%sBlob0x%06X", name.c_str(), address), parent);
-			
+			ZBlob* blob =
+				new ZBlob(rawData, address, size,
+			              StringHelper::Sprintf("%sBlob0x%06X", name.c_str(), address), parent);
+
 			if (child->Attribute("Name") != NULL)
 				childName = string(child->Attribute("Name"));
 			else
 				childName = StringHelper::Sprintf("%s_%s", name.c_str(), blob->GetName().c_str());
-			
-			parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(), "u8", childName, 0, blob->GetSourceOutputCode(name));
+
+			parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(),
+			                            "u8", childName, 0, blob->GetSourceOutputCode(name));
 			delete blob;
 		}
 		else if (string(child->Name()) == "CutsceneHint")
@@ -123,16 +135,21 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			//ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
+			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->ExtractFromXML(nullptr, rawData, address, ""); // TODO: Make this use ExtractFromFile() once that's been implemented
+			cutscene->ExtractFromXML(
+				nullptr, rawData, address,
+				"");  // TODO: Make this use ExtractFromFile() once that's been implemented
 
 			if (child->Attribute("Name") != NULL)
 				childName = string(child->Attribute("Name"));
 			else
-				childName = StringHelper::Sprintf("%sCutsceneData0x%06X", name.c_str(), cutscene->GetRawDataIndex());
+				childName = StringHelper::Sprintf("%sCutsceneData0x%06X", name.c_str(),
+				                                  cutscene->GetRawDataIndex());
 
-			parent->AddDeclarationArray(address, DeclarationAlignment::None, DeclarationPadding::Pad16, cutscene->GetRawDataSize(), "s32", childName, 0, cutscene->GetSourceOutputCode(name));
+			parent->AddDeclarationArray(address, DeclarationAlignment::None,
+			                            DeclarationPadding::Pad16, cutscene->GetRawDataSize(),
+			                            "s32", childName, 0, cutscene->GetSourceOutputCode(name));
 			delete cutscene;
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
@@ -171,9 +188,12 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
 			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
 
-			ZTexture* tex = ZTexture::FromBinary(ZTexture::GetTextureTypeFromString(typeStr), rawData, address, StringHelper::Sprintf("%sTex_%06X", name.c_str(), address), width, height, parent);
-			parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(), "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()), 0,
-				tex->GetSourceOutputCode(name));
+			ZTexture* tex = ZTexture::FromBinary(
+				ZTexture::GetTextureTypeFromString(typeStr), rawData, address,
+				StringHelper::Sprintf("%sTex_%06X", name.c_str(), address), width, height, parent);
+			parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(),
+			                            "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()),
+			                            0, tex->GetSourceOutputCode(name));
 			delete tex;
 		}
 		else if (string(child->Name()) == "PrerenderHint")
@@ -192,7 +212,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		}
 	}
 
-	//ParseCommands(rawDataIndex);
+	// ParseCommands(rawDataIndex);
 	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
 	ProcessCommandSets();
 }
@@ -635,12 +655,18 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText, bool nIsExternal) : Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+                         std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText,
+                         bool nIsExternal)
+	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
 	isExternal = nIsExternal;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, string nVarType, string nVarName, bool nIsArray, int nArrayItemCnt, string nText) : Declaration(nAlignment, nPadding, nSize, nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
+                         uint32_t nSize, string nVarType, string nVarName, bool nIsArray,
+                         int nArrayItemCnt, string nText)
+	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
 	varName = nVarName;

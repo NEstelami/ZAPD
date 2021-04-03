@@ -55,7 +55,9 @@ public:
 	ZResource(ZFile* nParent);
 
 	// Parsing from File
-	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath); // Extract Mode
+	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                            const int nRawDataIndex,
+	                            const std::string& nRelPath);  // Extract Mode
 	virtual void ExtractFromFile();
 
 	// Misc
@@ -70,7 +72,7 @@ public:
 
 	// Properties
 	virtual bool IsExternalResource();
-	virtual bool DoesSupportArray(); // Can this type be wrapped in an <Array> node?
+	virtual bool DoesSupportArray();  // Can this type be wrapped in an <Array> node?
 	virtual std::string GetSourceTypeName();
 	virtual ZResourceType GetResourceType();
 	virtual std::string GetExternalExtension();
@@ -94,7 +96,8 @@ protected:
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	std::string sourceOutput;
-	bool isCustomAsset; // If set to true, create a reference for the asset in the file, but don't actually try to extract it from the file
+	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
+	                     // actually try to extract it from the file
 };
 
 enum class DeclarationAlignment
@@ -133,12 +136,20 @@ public:
 	int arrayItemCnt;
 	std::vector<uint32_t> references;
 
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText, bool nIsExternal);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize, std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
-	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType, std::string nVarName);
+	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+	            std::string nVarName, bool nIsArray, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+	            std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+	            std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText,
+	            bool nIsExternal);
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt,
+	            std::string nText);
+	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType,
+	            std::string nVarName);
 
 protected:
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
@@ -147,20 +158,20 @@ protected:
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
 
-typedef ZResource* (ZResourceFactoryFunc)();
+typedef ZResource*(ZResourceFactoryFunc)();
 
-#define REGISTER_ZFILENODE(nodeName, zResClass)												\
-	static ZResource* ZResourceFactory_##zResClass_##nodeName()								\
-	{																						\
-		return static_cast<ZResource*>(new zResClass(nullptr));								\
-	}																						\
-																							\
-	class ZRes_##nodeName																	\
-	{																						\
-		public:																				\
-			ZRes_##nodeName()																\
-			{																				\
-				ZFile::RegisterNode(#nodeName, &ZResourceFactory_##zResClass_##nodeName);	\
-			}																				\
-	};																						\
-	static ZRes_##nodeName inst_ZRes_##nodeName;				
+#define REGISTER_ZFILENODE(nodeName, zResClass)                                                    \
+	static ZResource* ZResourceFactory_##zResClass_##nodeName()                                    \
+	{                                                                                              \
+		return static_cast<ZResource*>(new zResClass(nullptr));                                    \
+	}                                                                                              \
+                                                                                                   \
+	class ZRes_##nodeName                                                                          \
+	{                                                                                              \
+	public:                                                                                        \
+		ZRes_##nodeName()                                                                          \
+		{                                                                                          \
+			ZFile::RegisterNode(#nodeName, &ZResourceFactory_##zResClass_##nodeName);              \
+		}                                                                                          \
+	};                                                                                             \
+	static ZRes_##nodeName inst_ZRes_##nodeName;

@@ -10,13 +10,14 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
-	
+
 	uint32_t curPtr = segmentOffset;
 	string output = "";
 
-	//cutscene = new ZCutscene(rawData, segmentOffset, 9999, nullptr);
+	// cutscene = new ZCutscene(rawData, segmentOffset, 9999, nullptr);
 	cutscene = new ZCutscene(nZRoom->parent);
-	cutscene->ExtractFromXML(nullptr, rawData, segmentOffset, ""); // TODO: Use ExtractFromFile() here when that gets implemented
+	cutscene->ExtractFromXML(nullptr, rawData, segmentOffset,
+	                         "");  // TODO: Use ExtractFromFile() here when that gets implemented
 
 	output += cutscene->GetSourceOutputCode(zRoom->GetName());
 

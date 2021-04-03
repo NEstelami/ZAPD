@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
-#include "ZResource.h"
 #include "ZFile.h"
+#include "ZResource.h"
 #include "tinyxml2.h"
 
 enum class CutsceneCommands
@@ -410,7 +410,9 @@ public:
 
 	ZResourceType GetResourceType() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
+
 protected:
 	int numCommands;
 	int endFrame;

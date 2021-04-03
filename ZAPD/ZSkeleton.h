@@ -26,11 +26,13 @@ public:
 	uint8_t dListCount;  // FLEX SKELETON ONLY
 
 	ZSkeleton(ZFile* nParent);
-	ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
+	          const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
 	~ZSkeleton();
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 	void Save(const std::string& outFolder) override;
 	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 

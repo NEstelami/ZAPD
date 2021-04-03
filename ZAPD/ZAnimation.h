@@ -52,7 +52,8 @@ public:
 	int GetRawDataSize() override;
 	std::string GetSourceTypeName() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
 	virtual void ParseRawData() override;
@@ -69,7 +70,8 @@ public:
 	int GetRawDataSize() override;
 	std::string GetSourceTypeName() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
 	virtual void ParseRawData() override;
@@ -131,7 +133,8 @@ public:
 	~ZCurveAnimation();
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 	void PreGenValues(const std::string& prefix);
 	int GetRawDataSize() override;

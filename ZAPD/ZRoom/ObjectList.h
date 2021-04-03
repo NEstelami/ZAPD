@@ -2,7 +2,7 @@
 //
 //#include <string>
 //
-//static const std::string ObjectList[] =
+// static const std::string ObjectList[] =
 //{
 //    /* 0x0000 */ "OBJECT_UNSET_0",
 //    /* 0x0001 */ "OBJECT_GAMEPLAY_KEEP",

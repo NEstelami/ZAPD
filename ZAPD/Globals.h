@@ -7,7 +7,7 @@
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
 
-enum VerbosityLevel 
+enum VerbosityLevel
 {
 	VERBOSITY_SILENT,
 	VERBOSITY_INFO,
@@ -23,11 +23,11 @@ public:
 
 	bool genSourceFile;  // Used for extraction
 	bool useExternalResources;
-	bool testMode; // Enables certain experimental features
-	bool profile; // Measure performance of certain operations
-	bool includeFilePrefix; // Include the file prefix in symbols
+	bool testMode;           // Enables certain experimental features
+	bool profile;            // Measure performance of certain operations
+	bool includeFilePrefix;  // Include the file prefix in symbols
 	bool useLegacyZDList;
-	VerbosityLevel verbosity; // ZAPD outputs additional information
+	VerbosityLevel verbosity;  // ZAPD outputs additional information
 	ZFileMode fileMode;
 	std::string baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
 	TextureType texType;
@@ -58,7 +58,7 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 	std::vector<std::string> actorList;
 	std::vector<std::string> objectList;
-	std::map<uint32_t, std::string> texturePool; // Key = CRC, Value = Path to Shared Texture
+	std::map<uint32_t, std::string> texturePool;  // Key = CRC, Value = Path to Shared Texture
 
 	GameConfig();
 

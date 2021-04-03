@@ -1,6 +1,6 @@
 #include "OutputFormatter.h"
 
-int OutputFormatter::Write(const char *buf, int count)
+int OutputFormatter::Write(const char* buf, int count)
 {
 	for (int i = 0; i < count; i++)
 	{
@@ -65,28 +65,20 @@ int OutputFormatter::Write(const char *buf, int count)
 
 OutputFormatter* OutputFormatter::Instance;
 
-int OutputFormatter::WriteStatic(const char *buf, int count)
+int OutputFormatter::WriteStatic(const char* buf, int count)
 {
 	return Instance->Write(buf, count);
 }
 
-int (*OutputFormatter::StaticWriter())(const char *buf, int count)
+int (*OutputFormatter::StaticWriter())(const char* buf, int count)
 {
 	Instance = this;
 	return &WriteStatic;
 }
 
-OutputFormatter::OutputFormatter(int tabSize , int defaultIndent, int lineLimit)
-	:
-	tabSize{tabSize},
-	defaultIndent{defaultIndent},
-	lineLimit{lineLimit},
-	col{0},
-	nest{0},
-	nestIndent{defaultIndent},
-	currentIndent{defaultIndent},
-	wordP{word},
-	spaceP{space}
+OutputFormatter::OutputFormatter(int tabSize, int defaultIndent, int lineLimit)
+	: tabSize{tabSize}, defaultIndent{defaultIndent}, lineLimit{lineLimit}, col{0}, nest{0},
+	  nestIndent{defaultIndent}, currentIndent{defaultIndent}, wordP{word}, spaceP{space}
 {
 }
 

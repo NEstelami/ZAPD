@@ -46,11 +46,20 @@ public:
 	ZResource* FindResource(uint32_t rawDataIndex);
 	std::vector<ZResource*> GetResourcesOfType(ZResourceType resType);
 
-	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, std::string body);
-	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, std::string varType, std::string varName, std::string body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, int arrayItemCnt, std::string body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, uint32_t size, std::string varType, std::string varName, int arrayItemCnt, std::string body, bool isExternal);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, DeclarationPadding padding, uint32_t size, std::string varType, std::string varName, int arrayItemCnt, std::string body);
+	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size,
+	                            std::string varType, std::string varName, std::string body);
+	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment,
+	                            DeclarationPadding padding, uint32_t size, std::string varType,
+	                            std::string varName, std::string body);
+	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+	                                 uint32_t size, std::string varType, std::string varName,
+	                                 int arrayItemCnt, std::string body);
+	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+	                                 uint32_t size, std::string varType, std::string varName,
+	                                 int arrayItemCnt, std::string body, bool isExternal);
+	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+	                                 DeclarationPadding padding, uint32_t size, std::string varType,
+	                                 std::string varName, int arrayItemCnt, std::string body);
 	Declaration* AddDeclarationPlaceholder(uint32_t address);
 	Declaration* AddDeclarationPlaceholder(uint32_t address, std::string varName);
 	Declaration* AddDeclarationInclude(uint32_t address, std::string includePath, uint32_t size,

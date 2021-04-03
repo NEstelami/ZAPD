@@ -9,10 +9,12 @@ REGISTER_ZFILENODE(Prerender, ZPrerender);
 
 ZPrerender::ZPrerender(ZFile* nParent) : ZResource(nParent)
 {
-	//ParseXML(reader);
+	// ParseXML(reader);
 }
 
-ZPrerender::ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource(nParent)
+ZPrerender::ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+                       int nRawDataIndex, ZFile* nParent)
+	: ZResource(nParent)
 {
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
 	outName = name;
@@ -50,13 +52,14 @@ void ZPrerender::ParseBinaryFile(const std::string& inFolder, bool appendOutName
 	data = File::ReadAllBytes(filepath.string());
 }
 
-void ZPrerender::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath)
+void ZPrerender::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                                int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar("", "");
 }
 
-//ZPrerender* ZPrerender::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
+// ZPrerender* ZPrerender::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
 //                                     ZFile* nParent, bool readFile)
 //{
 //	ZPrerender* back = new ZPrerender(reader, nParent);
@@ -80,7 +83,7 @@ void ZPrerender::DeclareVar(const std::string& prefix, const std::string& bodySt
 
 	if (name == "")
 		auxName = GetDefaultName(prefix, rawDataIndex);
-	
+
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, 0, bodyStr);
 
@@ -130,7 +133,7 @@ std::string ZPrerender::GetSourceOutputCode(const std::string& prefix)
 	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	
+
 	if (decl == nullptr)
 		DeclareVar(prefix, bodyStr);
 	else

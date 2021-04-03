@@ -86,7 +86,8 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 
 	cfg = new GameConfig();
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
+	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	     child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "SymbolMap")
 		{
@@ -102,8 +103,9 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		else if (string(child->Name()) == "ActorList")
 		{
 			string fileName = string(child->Attribute("File"));
-			std::vector<std::string> lines = File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-			
+			std::vector<std::string> lines =
+				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+
 			for (std::string line : lines)
 			{
 				cfg->actorList.push_back(StringHelper::Strip(line, "\r"));
@@ -112,7 +114,8 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		else if (string(child->Name()) == "ObjectList")
 		{
 			string fileName = string(child->Attribute("File"));
-			std::vector<std::string> lines = File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+			std::vector<std::string> lines =
+				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
 			for (std::string line : lines)
 			{
@@ -143,7 +146,8 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 	if (root == nullptr)
 		return;
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
+	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	     child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "Texture")
 		{
