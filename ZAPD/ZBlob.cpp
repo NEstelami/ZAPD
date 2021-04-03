@@ -14,7 +14,9 @@ ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, std::string nName, ZFile* nParent) : ZBlob(nParent)
+ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, std::string nName,
+             ZFile* nParent)
+	: ZBlob(nParent)
 {
 	rawDataIndex = nRawDataIndex;
 	rawData =
@@ -22,13 +24,15 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, 
 	name = std::move(nName);
 }
 
-void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                           const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawDataIndex = nRawDataIndex;
 
 	ParseXML(reader);
 	int size = strtol(reader->Attribute("Size"), NULL, 16);
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
+	rawData =
+		vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
 	relativePath = std::move(nRelPath);
 }
 

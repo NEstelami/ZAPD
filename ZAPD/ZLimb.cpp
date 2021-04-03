@@ -67,7 +67,9 @@ std::string Struct_800A598C_2::GetSourceTypeName()
 	return "Struct_800A598C_2";
 }
 
-Struct_800A598C::Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset) : parent(parent)
+Struct_800A598C::Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData,
+                                 uint32_t fileOffset)
+	: parent(parent)
 {
 	unk_0 = BitConverter::ToUInt16BE(rawData, fileOffset + 0x00);
 	unk_2 = BitConverter::ToUInt16BE(rawData, fileOffset + 0x02);
@@ -93,8 +95,9 @@ Struct_800A598C::Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawD
 		}
 	}
 }
-Struct_800A598C::Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset, size_t index)
-: Struct_800A598C(parent, rawData, fileOffset + index * GetRawDataSize())
+Struct_800A598C::Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData,
+                                 uint32_t fileOffset, size_t index)
+	: Struct_800A598C(parent, rawData, fileOffset + index * GetRawDataSize())
 {
 }
 
@@ -137,17 +140,18 @@ void Struct_800A598C::PreGenSourceFiles(const std::string& prefix)
 	if (unk_C != 0)
 	{
 		uint32_t unk_C_Offset = Seg2Filespace(unk_C, parent->baseAddress);
-		string unk_C_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C_2::GetSourceTypeName().c_str(), unk_C_Offset);
+		string unk_C_Str =
+			StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(),
+		                          Struct_800A598C_2::GetSourceTypeName().c_str(), unk_C_Offset);
 
 		size_t arrayItemCnt = unk_C_arr.size();
 		entryStr = "";
 		size_t i = 0;
 
-		for (auto& child : unk_C_arr) 
+		for (auto& child : unk_C_arr)
 		{
-			entryStr += StringHelper::Sprintf("    { %s },%s",
-				child.GetSourceOutputCode().c_str(),
-				(++i < arrayItemCnt) ? "\n" : "");
+			entryStr += StringHelper::Sprintf("    { %s },%s", child.GetSourceOutputCode().c_str(),
+			                                  (++i < arrayItemCnt) ? "\n" : "");
 		}
 
 		Declaration* decl = parent->GetDeclaration(unk_C_Offset);
@@ -189,8 +193,10 @@ std::string Struct_800A598C::GetSourceOutputCode(const std::string& prefix) cons
 		                          Struct_800A598C_2::GetSourceTypeName().c_str(), unk_C_Offset);
 	}
 
-	entryStr = StringHelper::Sprintf("\n        ARRAY_COUNTU(%s), ARRAY_COUNTU(%s),\n", unk_8_Str.c_str(), unk_C_Str.c_str());
-	entryStr += StringHelper::Sprintf("        %i, %s, %s\n   ", unk_4, unk_8_Str.c_str(), unk_C_Str.c_str());
+	entryStr = StringHelper::Sprintf("\n        ARRAY_COUNTU(%s), ARRAY_COUNTU(%s),\n",
+	                                 unk_8_Str.c_str(), unk_C_Str.c_str());
+	entryStr += StringHelper::Sprintf("        %i, %s, %s\n   ", unk_4, unk_8_Str.c_str(),
+	                                  unk_C_Str.c_str());
 	entryStr = StringHelper::Sprintf("\n        ARRAY_COUNTU(%s), ARRAY_COUNTU(%s),\n",
 	                                 unk_8_Str.c_str(), unk_C_Str.c_str());
 	entryStr += StringHelper::Sprintf("        %i, %s, %s\n   ", unk_4, unk_8_Str.c_str(),
@@ -209,7 +215,9 @@ std::string Struct_800A598C::GetSourceTypeName()
 	return "Struct_800A598C";
 }
 
-Struct_800A5E28::Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& nRawData, uint32_t fileOffset) : parent(parent), rawData(nRawData)
+Struct_800A5E28::Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& nRawData,
+                                 uint32_t fileOffset)
+	: parent(parent), rawData(nRawData)
 {
 	unk_0 = BitConverter::ToUInt16BE(nRawData, fileOffset + 0x00);
 	unk_2 = BitConverter::ToUInt16BE(nRawData, fileOffset + 0x02);
@@ -249,7 +257,9 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 		for (auto& child : unk_4_arr)
 		{
 			child.PreGenSourceFiles(prefix);
-			entryStr += StringHelper::Sprintf("    { %s },%s", child.GetSourceOutputCode(prefix).c_str(), (++i < arrayItemCnt) ? "\n" : "");
+			entryStr +=
+				StringHelper::Sprintf("    { %s },%s", child.GetSourceOutputCode(prefix).c_str(),
+			                          (++i < arrayItemCnt) ? "\n" : "");
 		}
 
 		Declaration* decl = parent->GetDeclaration(unk_4_Offset);
@@ -295,7 +305,9 @@ std::string Struct_800A5E28::GetSourceOutputCode(const std::string& prefix) cons
 
 		if (decl == nullptr)
 		{
-			unk_4_Str = StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(), Struct_800A598C::GetSourceTypeName().c_str(), unk_4_Offset);
+			unk_4_Str =
+				StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(),
+			                          Struct_800A598C::GetSourceTypeName().c_str(), unk_4_Offset);
 		}
 		else
 		{
@@ -319,7 +331,8 @@ std::string Struct_800A5E28::GetSourceOutputCode(const std::string& prefix) cons
 		}
 	}
 
-	return StringHelper::Sprintf("\n    %i, ARRAY_COUNTU(%s),\n    %s, %s\n", unk_0, unk_4_Str.c_str(), unk_4_Str.c_str(), unk_8_Str.c_str());
+	return StringHelper::Sprintf("\n    %i, ARRAY_COUNTU(%s),\n    %s, %s\n", unk_0,
+	                             unk_4_Str.c_str(), unk_4_Str.c_str(), unk_8_Str.c_str());
 }
 
 size_t Struct_800A5E28::GetRawDataSize()
@@ -338,7 +351,9 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 	dList2Ptr = 0;
 }
 
-ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent) : ZResource(nParent)
+ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+             int nRawDataIndex, ZFile* nParent)
+	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -357,12 +372,15 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 
 	// Reading from a <Skeleton/>
 	const char* limbType = reader->Attribute("LimbType");
-	if (limbType == nullptr) // Reading from a <Limb/>
+	if (limbType == nullptr)  // Reading from a <Limb/>
 		limbType = reader->Attribute("Type");
 
-	if (limbType == nullptr) 
+	if (limbType == nullptr)
 	{
-		fprintf(stderr, "ZLimb::ParseXML: Warning in '%s'.\n\t Missing 'LimbType' attribute in xml. Defaulting to 'Standard'.\n", name.c_str());
+		fprintf(stderr,
+		        "ZLimb::ParseXML: Warning in '%s'.\n\t Missing 'LimbType' attribute in xml. "
+		        "Defaulting to 'Standard'.\n",
+		        name.c_str());
 		type = ZLimbType::Standard;
 	}
 	else
@@ -431,16 +449,18 @@ void ZLimb::ParseRawData()
 	}
 }
 
-void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                           const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	segAddress = nRawDataIndex;
 
-	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), name, "");
+	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),
+	                       GetSourceTypeName(), name, "");
 
-	if (type == ZLimbType::Skin) 
+	if (type == ZLimbType::Skin)
 	{
-		if (skinSegmentType == ZLimbSkinType::SkinType_4 && skinSegment != 0) 
+		if (skinSegmentType == ZLimbSkinType::SkinType_4 && skinSegment != 0)
 		{
 			uint32_t skinSegmentOffset = Seg2Filespace(skinSegment, parent->baseAddress);
 			segmentStruct = Struct_800A5E28(parent, rawData, skinSegmentOffset);
@@ -504,7 +524,8 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(GetFileAddress());
 
 	if (decl == nullptr)
-		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(), GetSourceTypeName(), name, entryStr);
+		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),
+		                       GetSourceTypeName(), name, entryStr);
 	else
 		decl->text = entryStr;
 
@@ -544,7 +565,7 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 	case ZLimbType::Curve:
 		return "SkelCurveLimb";
 	}
-	
+
 	return "StandardLimb";
 }
 
@@ -553,7 +574,8 @@ uint32_t ZLimb::GetFileAddress()
 	return Seg2Filespace(segAddress, parent->baseAddress);
 }
 
-std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix, const std::string& limbPrefix, segptr_t dListPtr)
+std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
+                                                const std::string& limbPrefix, segptr_t dListPtr)
 {
 	if (dListPtr == 0)
 		return "NULL";
@@ -563,9 +585,12 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix, const
 	Declaration* decl = parent->GetDeclaration(dListOffset);
 	if (decl == nullptr)
 	{
-		dListStr = StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(), dListOffset);
+		dListStr = StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(),
+		                                 dListOffset);
 
-		int dlistLength = ZDisplayList::GetDListLength(rawData, dListOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		int dlistLength = ZDisplayList::GetDListLength(
+			rawData, dListOffset,
+			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		auto dList = new ZDisplayList(rawData, dListOffset, dlistLength, parent);
 		dLists.push_back(dList);
 		dList->SetName(dListStr);
@@ -644,7 +669,8 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 		}
 	}
 
-	string entryStr = StringHelper::Sprintf("    0x%02X, %s\n", skinSegmentType, skinSegmentStr.c_str());
+	string entryStr =
+		StringHelper::Sprintf("    0x%02X, %s\n", skinSegmentType, skinSegmentStr.c_str());
 
 	return entryStr;
 }

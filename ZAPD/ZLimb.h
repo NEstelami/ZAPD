@@ -123,10 +123,10 @@ protected:
 	segptr_t segAddress;
 	ZLimbType type = ZLimbType::Standard;
 
-	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0; // Skin only
-	segptr_t skinSegment = 0; // Skin only
-	Struct_800A5E28 segmentStruct; // Skin only
-    segptr_t dList2Ptr; // LOD and Curve Only
+	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
+	segptr_t skinSegment = 0;                                   // Skin only
+	Struct_800A5E28 segmentStruct;                              // Skin only
+	segptr_t dList2Ptr;                                         // LOD and Curve Only
 
 	std::string GetLimbDListSourceOutputCode(const std::string& prefix,
 	                                         const std::string& limbPrefix, segptr_t dListPtr);
@@ -137,19 +137,22 @@ protected:
 public:
 	ZDisplayList* dList;
 	segptr_t dListPtr = 0;
-	segptr_t farDListPtr = 0; // LOD only
+	segptr_t farDListPtr = 0;  // LOD only
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
 	std::vector<ZDisplayList*> dLists;
 	std::vector<ZLimb*> children;
 
 	ZLimb(ZFile* nParent);
-	//ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
-	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent);
+	// ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	// ZFile* nParent);
+	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+	      int nRawDataIndex, ZFile* nParent);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 	int GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;

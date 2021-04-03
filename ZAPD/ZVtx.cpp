@@ -35,7 +35,9 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 
 	if (parent != nullptr)
 	{
-		Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(), GetSourceTypeName(), name, output);
+		Declaration* decl =
+			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+		                           GetSourceTypeName(), name, output);
 		decl->isExternal = true;
 	}
 
@@ -83,7 +85,8 @@ std::string ZVtx::GetExternalExtension()
 	return "vtx";
 }
 
-void ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                          const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }

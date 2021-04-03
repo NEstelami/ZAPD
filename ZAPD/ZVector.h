@@ -25,7 +25,8 @@ public:
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
 };

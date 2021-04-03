@@ -121,7 +121,9 @@ std::string ZNormalAnimation::GetSourceTypeName()
 	return "AnimationHeader";
 }
 
-void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
+                                      const std::vector<uint8_t>& nRawData, const int nRawDataIndex,
+                                      const std::string& nRelPath)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -193,7 +195,9 @@ std::string ZLinkAnimation::GetSourceTypeName()
 	return "LinkAnimationHeader";
 }
 
-void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
+                                    const std::vector<uint8_t>& nRawData, const int nRawDataIndex,
+                                    const std::string& nRelPath)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -281,11 +285,14 @@ void ZCurveAnimation::ParseRawData()
 	unk_10 = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
 }
 
-void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
+                                     const std::vector<uint8_t>& nRawData, const int nRawDataIndex,
+                                     const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
-	
-	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData, Seg2Filespace(skelOffset, parent->baseAddress), parent);
+
+	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData,
+	                     Seg2Filespace(skelOffset, parent->baseAddress), parent);
 
 	size_t transformDataSize = 0;
 	size_t copyValuesSize = 0;
@@ -320,8 +327,8 @@ void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, const std::ve
 			copyValuesArr.emplace_back(BitConverter::ToInt16BE(nRawData, copyValuesOffset + i * 2));
 	}
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16,
-	                              GetRawDataSize(), GetSourceTypeName(), name, "");
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+	                       GetSourceTypeName(), name, "");
 }
 
 void ZCurveAnimation::PreGenValues(const std::string& prefix)

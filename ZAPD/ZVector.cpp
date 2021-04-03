@@ -15,7 +15,8 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 	this->dimensions = 0;
 }
 
-void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                             const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }
@@ -55,10 +56,10 @@ void ZVector::ParseRawData()
 int ZVector::GetRawDataSize()
 {
 	int size = 0;
-	
+
 	for (int i = 0; i < this->scalars.size(); i++)
 		size += this->scalars[i]->GetRawDataSize();
-	
+
 	return size;
 }
 
@@ -94,7 +95,7 @@ std::string ZVector::GetSourceValue()
 
 	for (int i = 0; i < this->scalars.size(); i++)
 		strings.push_back(scalars[i]->GetSourceValue());
-	
+
 	return "{ " + StringHelper::Implode(strings, ", ") + " }";
 }
 

@@ -144,12 +144,12 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->baseRomPath = argv[i + 1];
 			i++;
 		}
-		else if (arg == "-osf") // Set source output path
+		else if (arg == "-osf")  // Set source output path
 		{
 			Globals::Instance->sourceOutputPath = argv[i + 1];
 			i++;
 		}
-		else if (arg == "-gsf") // Generate source file during extraction
+		else if (arg == "-gsf")  // Generate source file during extraction
 		{
 			Globals::Instance->genSourceFile = string(argv[i + 1]) == "1";
 			i++;
@@ -164,12 +164,12 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->testMode = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-ulzdl") // Use Legacy ZDisplay List (Linux builds only)
+		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List (Linux builds only)
 		{
 			Globals::Instance->useLegacyZDList = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-profile") // Profile
+		else if (arg == "-profile")  // Profile
 		{
 			Globals::Instance->profile = string(argv[i + 1]) == "1";
 			i++;
@@ -230,7 +230,9 @@ int NewMain(int argc, char* argv[])
 	{
 		if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 		{
-			bool parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, Globals::Instance->outputPath, fileMode);
+			bool parseSuccessful =
+				Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
+			          Globals::Instance->outputPath, fileMode);
 
 			if (!parseSuccessful)
 				return 1;
@@ -259,15 +261,19 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (fileMode == ZFileMode::BuildModelIntermediette)
 		{
-			BuildAssetModelIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
+			BuildAssetModelIntermediette(Globals::Instance->inputPath,
+			                             Globals::Instance->outputPath);
 		}
 		else if (fileMode == ZFileMode::BuildAnimationIntermediette)
 		{
-			BuildAssetAnimationIntermediette(Globals::Instance->inputPath, Globals::Instance->outputPath);
+			BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
+			                                 Globals::Instance->outputPath);
 		}
 		else if (fileMode == ZFileMode::BuildOverlay)
 		{
-			ZOverlay* overlay = ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath), Path::GetDirectoryName(Globals::Instance->cfgPath));
+			ZOverlay* overlay =
+				ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath),
+			                        Path::GetDirectoryName(Globals::Instance->cfgPath));
 
 			if (overlay)
 				File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));

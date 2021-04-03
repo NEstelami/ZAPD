@@ -1,9 +1,6 @@
 #include "SetStartPositionList.h"
-#include "../../Globals.h"
-#include "../ZRoom.h"
-#include "../ActorList.h"
-#include "../../ZFile.h"
 #include "../../BitConverter.h"
+#include "../../Globals.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 #include "../ActorList.h"
@@ -51,8 +48,10 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAd
 
 	for (ActorSpawnEntry* entry : actors)
 	{
-		declaration += StringHelper::Sprintf("    { %s, %i, %i, %i, %i, %i, %i, 0x%04X },\n", Globals::Instance->cfg->actorList[entry->actorNum].c_str(), entry->posX, entry->posY, entry->posZ,
-			entry->rotX, entry->rotY, entry->rotZ, entry->initVar);
+		declaration += StringHelper::Sprintf(
+			"    { %s, %i, %i, %i, %i, %i, %i, 0x%04X },\n",
+			Globals::Instance->cfg->actorList[entry->actorNum].c_str(), entry->posX, entry->posY,
+			entry->posZ, entry->rotX, entry->rotY, entry->rotZ, entry->initVar);
 	}
 
 	zRoom->parent->AddDeclarationArray(

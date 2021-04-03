@@ -77,7 +77,8 @@ public:
 	int32_t numWaterBoxes;
 	segptr_t waterBoxAddress;
 
-	uint32_t vtxSegmentOffset, polySegmentOffset, polyTypeDefSegmentOffset, camDataSegmentOffset, waterBoxSegmentOffset;
+	uint32_t vtxSegmentOffset, polySegmentOffset, polyTypeDefSegmentOffset, camDataSegmentOffset,
+		waterBoxSegmentOffset;
 
 	std::vector<VertexEntry> vertices;
 	std::vector<PolygonEntry> polygons;
@@ -90,6 +91,7 @@ public:
 
 	ZResourceType GetResourceType() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 	void ParseRawData();
 };

@@ -24,7 +24,8 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 	std::string output = "";
 
 	if (testFile->resources.size() <= 0)
-		throw std::runtime_error(StringHelper::Sprintf("Error! Array needs at least one sub-element.\n"));
+		throw std::runtime_error(
+			StringHelper::Sprintf("Error! Array needs at least one sub-element.\n"));
 
 	ZResource* res = testFile->resources[0];
 	int resSize = res->GetRawDataSize();
@@ -61,10 +62,11 @@ int ZArray::GetRawDataSize()
 	return arrayCnt * testFile->resources[0]->GetRawDataSize();
 }
 
-void ZArray::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, const int nRawDataIndex, const std::string& nRelPath)
+void ZArray::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                            const int nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
-	//arr->ParseRawData();
+	// arr->ParseRawData();
 }
