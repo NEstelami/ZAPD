@@ -21,14 +21,13 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 	if (meshHeaderType == 0)
 	{
-		MeshHeader0* meshHeader0 = new MeshHeader0();
-		meshHeader0->headerType = 0;
-
-		meshHeader0->dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
-		meshHeader0->dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
+		uint32_t dListStart = Seg2Filespace(BitConverter::ToInt32BE(rawData, segmentOffset + 4),
+		                                    zRoom->parent->baseAddress);
+		uint32_t dListEnd = Seg2Filespace(BitConverter::ToInt32BE(rawData, segmentOffset + 8),
+		                                  zRoom->parent->baseAddress);
 
 		int8_t numEntries = rawData[segmentOffset + 1];
-		uint32_t currentPtr = meshHeader0->dListStart;
+		uint32_t currentPtr = dListStart;
 
 		// Hack for Syotes
 		for (int i = 0; i < abs(segAddressOffset); i++)
@@ -63,10 +62,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			}
 
 			zRoom->parent->AddDeclarationArray(
-				meshHeader0->dListStart, DeclarationAlignment::Align4, numEntries * polyGfxSize,
-				polyGfxType,
+				dListStart, DeclarationAlignment::Align4, numEntries * polyGfxSize, polyGfxType,
 				StringHelper::Sprintf("%s%s0x%06X", zRoom->GetName().c_str(), polyGfxType.c_str(),
-			                          meshHeader0->dListStart),
+			                          dListStart),
 				numEntries, polyGfxBody);
 		}
 
@@ -76,14 +74,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 		std::string entriesStr = "NULL";
 
-		if (meshHeader0->dListStart != 0)
+		if (dListStart != 0)
 		{
-			entriesStr = zRoom->parent->GetDeclaration(meshHeader0->dListStart)->varName;
+			entriesStr = zRoom->parent->GetDeclaration(dListStart)->varName;
 		}
 		declaration += StringHelper::Sprintf("%s, ", entriesStr.c_str());
 		declaration += "\n    ";
 
-		if (meshHeader0->dListEnd != 0)
+		if (dListEnd != 0)
 			declaration += StringHelper::Sprintf("%s + ARRAY_COUNT(%s), ", entriesStr.c_str(),
 			                                     entriesStr.c_str());
 		else
@@ -95,11 +93,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			StringHelper::Sprintf("%sMeshHeader0x%06X", zRoom->GetName().c_str(), segmentOffset),
 			declaration);
 
-		zRoom->parent->AddDeclaration(meshHeader0->dListStart + (numEntries * 8),
-		                              DeclarationAlignment::None, DeclarationPadding::Pad16, 4,
-		                              "static s32", "terminatorMaybe", "0x01000000");
-
-		meshHeader = meshHeader0;
+		zRoom->parent->AddDeclaration(dListStart + (numEntries * 8), DeclarationAlignment::None,
+		                              DeclarationPadding::Pad16, 4, "static s32", "terminatorMaybe",
+		                              "0x01000000");
 	}
 	else if (meshHeaderType == 1)
 	{
@@ -524,19 +520,6 @@ int BgImage::GetRawDataSize()
 	return 0x1C;
 }
 
-/*
-void BgImage::DeclareVar(const std::string& prefix, const std::string& bodyStr)
-{
-    std::string auxName = name;
-    if (name == "")
-    {
-        auxName = GetDefaultName(prefix, rawDataIndex);
-    }
-    parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-                           GetSourceTypeName(), auxName, bodyStr);
-}
-*/
-
 std::string BgImage::GetBodySourceCode(bool arrayElement)
 {
 	std::string bodyStr = "";
@@ -612,23 +595,6 @@ std::string BgImage::GetBodySourceCode(bool arrayElement)
 	return bodyStr;
 }
 
-/*
-void BgImage::DeclareAndGenerateOutputCode()
-{
-    std::string bodyStr = GetBodySourceCode();
-
-    Declaration* decl = parent->GetDeclaration(rawDataIndex);
-    if (decl == nullptr)
-    {
-        DeclareVar("", bodyStr);
-    }
-    else
-    {
-        decl->text = bodyStr;
-    }
-}
-*/
-
 std::string BgImage::GetDefaultName(const std::string& prefix, uint32_t address)
 {
 	return StringHelper::Sprintf("%sBgImage_%06X", prefix.c_str(), address);
@@ -697,8 +663,8 @@ PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>
 		break;
 
 	default:
-		// TODO: better error message.
-		throw std::runtime_error("Unexpected format.");
+		throw std::runtime_error(StringHelper::Sprintf(
+			"Error in PolygonType1::PolygonType1\n\t Unknown format: %i\n", format));
 		break;
 	}
 }

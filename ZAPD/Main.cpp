@@ -359,9 +359,7 @@ void BuildAssetBackground(const std::string& imageFilePath, const std::string& o
 	ZBackground background(nullptr);
 	background.ParseBinaryFile(imageFilePath, false);
 
-	string src = background.GetBodySourceCode();
-
-	File::WriteAllText(outPath, src);
+	File::WriteAllText(outPath, background.GetBodySourceCode());
 }
 
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)

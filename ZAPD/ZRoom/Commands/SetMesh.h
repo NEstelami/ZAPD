@@ -4,6 +4,33 @@
 #include "../ZRoomCommand.h"
 #include "ZBackground.h"
 
+class MeshHeaderBase
+{
+public:
+	int8_t headerType;  // 0x00
+};
+
+class MeshEntry2
+{
+public:
+	int16_t playerXMax, playerZMax;
+	int16_t playerXMin, playerZMin;
+
+	int32_t opaqueDListAddr;
+	int32_t translucentDListAddr;
+
+	ZDisplayList* opaqueDList;
+	ZDisplayList* translucentDList;
+};
+
+class MeshHeader2 : public MeshHeaderBase
+{
+public:
+	std::vector<MeshEntry2*> entries;
+	uint32_t dListStart;
+	uint32_t dListEnd;
+};
+
 class PolygonDlist
 {
 protected:
@@ -39,60 +66,6 @@ public:
 	ZDisplayList* xluDList = nullptr;  // Gfx*
 };
 
-class MeshHeaderBase
-{
-public:
-	int8_t headerType;  // 0x00
-};
-
-class MeshHeader0 : public MeshHeaderBase
-{
-public:
-	std::vector<PolygonDlist> entries;
-	uint32_t dListStart;
-	uint32_t dListEnd;
-};
-
-class BackgroundRecord
-{
-public:
-	uint16_t unknown;  // 0x00
-	int8_t bgID;       // 0x02
-
-	uint32_t imagePtr;  // 0x04
-	uint32_t unknown2;  // 0x08
-	uint32_t unknown3;  // 0x0C
-
-	uint16_t bgWidth;   // 0x10
-	uint16_t bgHeight;  // 0x12
-
-	uint8_t imageFmt;    // 0x14
-	uint8_t imageSize;   // 0x15
-	uint16_t imagePal;   // 0x16
-	uint16_t imageFlip;  // 0x18
-};
-
-class MeshEntry2
-{
-public:
-	int16_t playerXMax, playerZMax;
-	int16_t playerXMin, playerZMin;
-
-	int32_t opaqueDListAddr;
-	int32_t translucentDListAddr;
-
-	ZDisplayList* opaqueDList;
-	ZDisplayList* translucentDList;
-};
-
-class MeshHeader2 : public MeshHeaderBase
-{
-public:
-	std::vector<MeshEntry2*> entries;
-	uint32_t dListStart;
-	uint32_t dListEnd;
-};
-
 class BgImage
 {
 protected:
@@ -126,10 +99,7 @@ public:
 
 	static int GetRawDataSize();
 
-	// void DeclareVar(const std::string& prefix, const std::string& bodyStr);
-
 	std::string GetBodySourceCode(bool arrayElement);
-	// void DeclareAndGenerateOutputCode();
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	static std::string GetSourceTypeName();
@@ -191,7 +161,7 @@ public:
 	virtual int32_t GetRawDataSize();
 
 private:
-	MeshHeaderBase* meshHeader;
+	MeshHeaderBase* meshHeader = nullptr;
 	uint32_t segmentOffset;
 	uint8_t data;
 	uint8_t meshHeaderType;
