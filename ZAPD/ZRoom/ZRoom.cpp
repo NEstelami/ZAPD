@@ -41,7 +41,6 @@
 #include "Commands/ZRoomCommandUnk.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
-#include "ZBackground.h"
 
 using namespace std;
 using namespace tinyxml2;

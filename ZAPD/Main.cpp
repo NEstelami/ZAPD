@@ -7,9 +7,9 @@
 #include "Overlays/ZOverlay.h"
 #include "Path.h"
 #include "ZAnimation.h"
+#include "ZBackground.h"
 #include "ZBlob.h"
 #include "ZFile.h"
-#include "ZBackground.h"
 #include "ZTexture.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)

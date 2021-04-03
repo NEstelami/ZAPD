@@ -45,7 +45,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 			for (int i = 0; i < numEntries; i++)
 			{
-				PolygonDlist polyGfxList(zRoom->GetName(), rawData, currentPtr, zRoom->parent, zRoom);
+				PolygonDlist polyGfxList(zRoom->GetName(), rawData, currentPtr, zRoom->parent,
+				                         zRoom);
 				if (polyGfxList.opaDList != nullptr)
 				{
 					GenDListDeclarations(rawData, polyGfxList.opaDList);
@@ -62,10 +63,10 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			}
 
 			zRoom->parent->AddDeclarationArray(
-				meshHeader0->dListStart, DeclarationAlignment::Align4,
-				numEntries * polyGfxSize, polyGfxType,
+				meshHeader0->dListStart, DeclarationAlignment::Align4, numEntries * polyGfxSize,
+				polyGfxType,
 				StringHelper::Sprintf("%s%s0x%06X", zRoom->GetName().c_str(), polyGfxType.c_str(),
-									meshHeader0->dListStart),
+			                          meshHeader0->dListStart),
 				numEntries, polyGfxBody);
 		}
 
@@ -83,9 +84,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 		declaration += "\n    ";
 
 		if (meshHeader0->dListEnd != 0)
-			declaration += StringHelper::Sprintf(
-				"%s + ARRAY_COUNT(%s), ",
-				entriesStr.c_str(), entriesStr.c_str());
+			declaration += StringHelper::Sprintf("%s + ARRAY_COUNT(%s), ", entriesStr.c_str(),
+			                                     entriesStr.c_str());
 		else
 			declaration += "NULL, ";
 		declaration += "\n";
@@ -103,7 +103,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 	}
 	else if (meshHeaderType == 1)
 	{
-		PolygonType1 polygon1(zRoom->GetName().c_str(), rawData, segmentOffset, zRoom->parent, zRoom);
+		PolygonType1 polygon1(zRoom->GetName().c_str(), rawData, segmentOffset, zRoom->parent,
+		                      zRoom);
 		if (polygon1.polyGfxList.opaDList != nullptr)
 		{
 			GenDListDeclarations(rawData, polygon1.polyGfxList.opaDList);
@@ -135,7 +136,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			entry->playerZMin = BitConverter::ToInt16BE(rawData, currentPtr + 6);
 
 			entry->opaqueDListAddr = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 8));
-			entry->translucentDListAddr = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 12));
+			entry->translucentDListAddr =
+				GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 12));
 
 			if (entry->opaqueDListAddr != 0)
 			{
@@ -294,10 +296,9 @@ string SetMesh::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
 
-	sourceOutput +=
-		StringHelper::Sprintf("%s %i, &%s",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          data, decl->varName.c_str());
+	sourceOutput += StringHelper::Sprintf(
+		"%s %i, &%s", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), data,
+		decl->varName.c_str());
 
 	return sourceOutput;
 }
@@ -467,9 +468,8 @@ std::string PolygonDlist::GetName()
 	return name;
 }
 
-
-BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	             ZFile* nParent)
+BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+                 int nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -527,13 +527,13 @@ int BgImage::GetRawDataSize()
 /*
 void BgImage::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	std::string auxName = name;
-	if (name == "")
-	{
-		auxName = GetDefaultName(prefix, rawDataIndex);
-	}
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
+    std::string auxName = name;
+    if (name == "")
+    {
+        auxName = GetDefaultName(prefix, rawDataIndex);
+    }
+    parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+                           GetSourceTypeName(), auxName, bodyStr);
 }
 */
 
@@ -615,17 +615,17 @@ std::string BgImage::GetBodySourceCode(bool arrayElement)
 /*
 void BgImage::DeclareAndGenerateOutputCode()
 {
-	std::string bodyStr = GetBodySourceCode();
+    std::string bodyStr = GetBodySourceCode();
 
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	if (decl == nullptr)
-	{
-		DeclareVar("", bodyStr);
-	}
-	else
-	{
-		decl->text = bodyStr;
-	}
+    Declaration* decl = parent->GetDeclaration(rawDataIndex);
+    if (decl == nullptr)
+    {
+        DeclareVar("", bodyStr);
+    }
+    else
+    {
+        decl->text = bodyStr;
+    }
 }
 */
 
@@ -644,7 +644,6 @@ std::string BgImage::GetName()
 	return name;
 }
 
-
 PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                            int nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
@@ -658,7 +657,8 @@ PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>
 
 	if (dlist != 0)
 	{
-		polyGfxList = PolygonDlist(prefix, rawData, Seg2Filespace(dlist, parent->baseAddress), parent, nRoom);
+		polyGfxList =
+			PolygonDlist(prefix, rawData, Seg2Filespace(dlist, parent->baseAddress), parent, nRoom);
 	}
 
 	uint32_t listAddress;
@@ -675,24 +675,27 @@ PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>
 			listAddress = Seg2Filespace(list, parent->baseAddress);
 			for (size_t i = 0; i < count; ++i)
 			{
-				BgImage bg(false, prefix, rawData, listAddress + i * BgImage::GetRawDataSize(), parent);
+				BgImage bg(false, prefix, rawData, listAddress + i * BgImage::GetRawDataSize(),
+				           parent);
 				multiList.push_back(bg);
 				bgImageArrayBody += bg.GetBodySourceCode(true);
-				if (i+1 < count)
+				if (i + 1 < count)
 				{
 					bgImageArrayBody += "\n";
 				}
 			}
-			
+
 			Declaration* decl = parent->GetDeclaration(listAddress);
 			if (decl == nullptr)
 			{
-				parent->AddDeclarationArray(listAddress, DeclarationAlignment::Align4, count * BgImage::GetRawDataSize(),
-								BgImage::GetSourceTypeName(), multiList.at(0).GetName().c_str(), count, bgImageArrayBody);	
+				parent->AddDeclarationArray(
+					listAddress, DeclarationAlignment::Align4, count * BgImage::GetRawDataSize(),
+					BgImage::GetSourceTypeName(), multiList.at(0).GetName().c_str(), count,
+					bgImageArrayBody);
 			}
 		}
 		break;
-	
+
 	default:
 		// TODO: better error message.
 		throw std::runtime_error("Unexpected format.");
@@ -764,7 +767,7 @@ std::string PolygonType1::GetBodySourceCode()
 	bodyStr += "}, \n";
 
 	std::string listStr = "NULL";
-	//bodyStr += "    { \n";
+	// bodyStr += "    { \n";
 	switch (format)
 	{
 	case 1:
@@ -790,7 +793,7 @@ std::string PolygonType1::GetBodySourceCode()
 	default:
 		break;
 	}
-	//bodyStr += "    } \n";
+	// bodyStr += "    } \n";
 
 	return bodyStr;
 }
@@ -826,7 +829,7 @@ std::string PolygonType1::GetSourceTypeName()
 		return "MeshHeader1Multi";
 	}
 	return "ERROR";
-	//return "PolygonType1";
+	// return "PolygonType1";
 }
 
 std::string PolygonType1::GetName()

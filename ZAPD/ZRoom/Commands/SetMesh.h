@@ -4,7 +4,6 @@
 #include "../ZRoomCommand.h"
 #include "ZBackground.h"
 
-
 class PolygonDlist
 {
 protected:
@@ -97,17 +96,17 @@ public:
 class BgImage
 {
 protected:
-    uint16_t   unk_00;
-    uint8_t    id;
-    segptr_t   source;
-    uint32_t   unk_0C;
-    uint32_t   tlut;
-    uint16_t   width;
-    uint16_t   height;
-    uint8_t    fmt;
-    uint8_t    siz;
-    uint16_t   mode0;
-    uint16_t   tlutCount;
+	uint16_t unk_00;
+	uint8_t id;
+	segptr_t source;
+	uint32_t unk_0C;
+	uint32_t tlut;
+	uint16_t width;
+	uint16_t height;
+	uint8_t fmt;
+	uint8_t siz;
+	uint16_t mode0;
+	uint16_t tlutCount;
 
 	ZBackground* sourceBackground;
 
@@ -122,15 +121,15 @@ protected:
 
 public:
 	BgImage() = default;
-	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	             ZFile* nParent);
+	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+	        int nRawDataIndex, ZFile* nParent);
 
 	static int GetRawDataSize();
 
-	//void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	// void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	std::string GetBodySourceCode(bool arrayElement);
-	//void DeclareAndGenerateOutputCode();
+	// void DeclareAndGenerateOutputCode();
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	static std::string GetSourceTypeName();
@@ -149,9 +148,8 @@ protected:
 
 	// multi
 	uint8_t count;
-	segptr_t list; // BgImage*
+	segptr_t list;  // BgImage*
 	std::vector<BgImage> multiList;
-
 
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
