@@ -540,7 +540,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 				incStr += ".c";
 			}
 			else if (res->GetResourceType() == ZResourceType::Blob ||
-			         res->GetResourceType() == ZResourceType::Prerender)
+			         res->GetResourceType() == ZResourceType::Background)
 			{
 				incStr += ".c";
 			}

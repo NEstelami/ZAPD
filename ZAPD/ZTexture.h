@@ -91,4 +91,7 @@ public:
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;
+
+	std::string GetSourceTypeName() override;
+	ZResourceType GetResourceType() override;
 };
