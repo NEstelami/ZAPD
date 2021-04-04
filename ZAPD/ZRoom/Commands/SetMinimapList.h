@@ -20,13 +20,12 @@ public:
 	SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetMinimapList();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
-	virtual RoomCommand GetRoomCommand();
-	virtual std::string PreGenSourceFiles();
-	virtual std::string Save();
+	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
+	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
+	std::string GetCommandCName() override;
+	std::string GenerateExterns() override;
+	RoomCommand GetRoomCommand() override;
+	int32_t GetRawDataSize() override;
 
 private:
 	std::vector<MinimapEntry*> minimaps;

@@ -13,9 +13,9 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	numCutscenes = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
-    if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
+	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
 	{
-	    cutscenes.push_back(new ZCutscene(rawData, segmentOffset, 9999));
+		cutscenes.push_back(new ZCutscene(rawData, segmentOffset, 9999));
 	}
 	else
 	{
@@ -29,7 +29,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 			currentPtr += 8;
 
 			declaration += StringHelper::Sprintf("\t{ %sCutsceneData0x%06X, 0x%04X, 0x%02X, 0x%02X },", zRoom->GetName().c_str(),
-			                          entry->segmentOffset, entry->exit, entry->entrance, entry->flag);
+									  entry->segmentOffset, entry->exit, entry->entrance, entry->flag);
 
 			if (i <numCutscenes - 1)
 				declaration += "\n";
@@ -41,7 +41,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 				segmentOffset, DeclarationAlignment::None, DeclarationPadding::None,
 				cutsceneEntries.size() * 8, "CutsceneEntry",
 				StringHelper::Sprintf("%sCutsceneEntryList0x%06X", zRoom->GetName().c_str(),
-			                          segmentOffset),
+									  segmentOffset),
 				cutsceneEntries.size(), declaration);
 	}
 
@@ -92,7 +92,7 @@ string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
 		return StringHelper::Sprintf("%s %i, (u32)%s", pass1.c_str(), numCutscenes, decl->varName.c_str());
 	}
 	return StringHelper::Sprintf("%s %i, (u32)%sCutsceneData0x%06X", pass1.c_str(),
-	                             numCutscenes, zRoom->GetName().c_str(), segmentOffset);
+								 numCutscenes, zRoom->GetName().c_str(), segmentOffset);
 }
 
 int32_t SetCutscenes::GetRawDataSize()
@@ -105,7 +105,7 @@ string SetCutscenes::GenerateExterns()
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
 		return StringHelper::Sprintf("extern CutsceneEntry %sCutsceneEntryList0x%06X[];\n", zRoom->GetName().c_str(),
-	                             	segmentOffset);
+								 	segmentOffset);
 	}
 
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
@@ -114,7 +114,7 @@ string SetCutscenes::GenerateExterns()
 		return StringHelper::Sprintf("extern s32 %s[];\n", decl->varName.c_str());
 	}
 	return StringHelper::Sprintf("extern s32 %sCutsceneData0x%06X[];\n", zRoom->GetName().c_str(),
-	                             segmentOffset);
+								 segmentOffset);
 }
 
 string SetCutscenes::GetCommandCName()

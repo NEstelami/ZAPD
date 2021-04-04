@@ -32,10 +32,7 @@ SetMinimapChests::~SetMinimapChests()
 
 string SetMinimapChests::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, (u32)%sMinimapChests0x%06X };",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), chests.size(),
-		roomName.c_str(), segmentOffset);
+	return std::string();
 }
 
 string SetMinimapChests::GenerateSourceCodePass2(string roomName, int baseAddress)
@@ -76,7 +73,7 @@ string SetMinimapChests::GenerateSourceCodePass2(string roomName, int baseAddres
 string SetMinimapChests::GenerateExterns()
 {
 	return StringHelper::Sprintf("extern MinimapChest %sMinimapChests0x%06X[%i];\n", zRoom->GetName().c_str(),
-	                             segmentOffset, chests.size());
+								 segmentOffset, chests.size());
 }
 
 string SetMinimapChests::GetCommandCName()
@@ -89,21 +86,16 @@ RoomCommand SetMinimapChests::GetRoomCommand()
 	return RoomCommand::SetMinimapChests;
 }
 
-std::string SetMinimapChests::PreGenSourceFiles()
+int32_t SetMinimapChests::GetRawDataSize()
 {
-	return std::string();
-}
-
-std::string SetMinimapChests::Save()
-{
-	return std::string();
+	return ZRoomCommand::GetRawDataSize() + (chests.size() * 10);
 }
 
 MinimapChest::MinimapChest(std::vector<uint8_t> rawData, int rawDataIndex) :
-    unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
-    unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
-    unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),
-    unk6(BitConverter::ToUInt16BE(rawData, rawDataIndex + 6)),
-    unk8(BitConverter::ToUInt16BE(rawData, rawDataIndex + 8))
+	unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
+	unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
+	unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),
+	unk6(BitConverter::ToUInt16BE(rawData, rawDataIndex + 6)),
+	unk8(BitConverter::ToUInt16BE(rawData, rawDataIndex + 8))
 {
 }

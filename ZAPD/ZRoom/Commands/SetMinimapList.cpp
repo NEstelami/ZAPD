@@ -47,12 +47,12 @@ string SetMinimapList::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	sourceOutput +=
 		StringHelper::Sprintf("%s 0, (u32)&%sMinimapList0x%06X };",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          roomName.c_str(), segmentOffset, unk4);
+							  ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
+							  roomName.c_str(), segmentOffset, unk4);
 
 	{
 		string declaration = StringHelper::Sprintf("(u32)%sMinimapEntryList0x%06X, 0x%08X",
-		                                           roomName.c_str(), listSegmentOffset, unk4);
+												   roomName.c_str(), listSegmentOffset, unk4);
 
 		zRoom->parent->AddDeclaration(
 			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::None, 8, "MinimapList",
@@ -87,7 +87,7 @@ string SetMinimapList::GenerateSourceCodePass2(string roomName, int baseAddress)
 string SetMinimapList::GenerateExterns()
 {
 	return StringHelper::Sprintf("extern MinimapList %sMinimapList0x%06X;\n", zRoom->GetName().c_str(),
-	                             listSegmentOffset);
+								 listSegmentOffset);
 }
 
 string SetMinimapList::GetCommandCName()
@@ -100,21 +100,16 @@ RoomCommand SetMinimapList::GetRoomCommand()
 	return RoomCommand::SetMinimapList;
 }
 
-std::string SetMinimapList::PreGenSourceFiles()
+int32_t SetMinimapList::GetRawDataSize()
 {
-	return std::string();
-}
-
-std::string SetMinimapList::Save()
-{
-	return std::string();
+	return ZRoomCommand::GetRawDataSize() + (minimaps.size() * 10);
 }
 
 MinimapEntry::MinimapEntry(std::vector<uint8_t> rawData, int rawDataIndex) :
-    unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
-    unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
-    unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),
-    unk6(BitConverter::ToUInt16BE(rawData, rawDataIndex + 6)),
-    unk8(BitConverter::ToUInt16BE(rawData, rawDataIndex + 8))
+	unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
+	unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
+	unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),
+	unk6(BitConverter::ToUInt16BE(rawData, rawDataIndex + 6)),
+	unk8(BitConverter::ToUInt16BE(rawData, rawDataIndex + 8))
 {
 }

@@ -1599,7 +1599,7 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	ZDisplayList* instance = ZDisplayList::static_instance;
 	uint32_t vtxOffset = Seg2Filespace(seg, instance->parent->baseAddress);
 	string vtxName = "";
-	
+
 	if (!Globals::Instance->HasSegment(
 			GETSEGNUM(seg)))  // Probably an external asset we are unable to track
 	{

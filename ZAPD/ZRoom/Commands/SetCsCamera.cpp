@@ -70,8 +70,8 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	sourceOutput +=
 		StringHelper::Sprintf("%s %i, (u32)&%sCsCameraList0x%06X };",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                           cameras.size(), roomName.c_str(), segmentOffset);
+							  ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
+							   cameras.size(), roomName.c_str(), segmentOffset);
 
 	if (points.size() > 0)
 	{
@@ -79,7 +79,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 		size_t index = 0;
 		for (Vec3s point : points)
 		{
-			declaration += StringHelper::Sprintf("    { %i, %i, %i }, //0x%06X", point.x, point.y,
+			declaration += StringHelper::Sprintf("	{ %i, %i, %i }, //0x%06X", point.x, point.y,
 												point.z, cameras[0]->segmentOffset + (index * 6));
 
 			if (index < points.size() - 1)
@@ -102,8 +102,8 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 		size_t pointsIndex = 0;
 		for (CsCameraEntry* entry : cameras)
 		{
-			declaration += StringHelper::Sprintf("    %i, %i, (u32)&%sCsCameraPoints0x%06X[%i],", entry->type,
-		                                           entry->numPoints, roomName.c_str(), cameras[0]->segmentOffset, pointsIndex);
+			declaration += StringHelper::Sprintf("\t%i, %i, (u32)&%sCsCameraPoints0x%06X[%i],", entry->type,
+												   entry->numPoints, roomName.c_str(), cameras[0]->segmentOffset, pointsIndex);
 
 			if (index < cameras.size() - 1)
 				declaration += "\n";
@@ -124,7 +124,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 int32_t SetCsCamera::GetRawDataSize()
 {
-	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8);
+	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }
 
 string SetCsCamera::GenerateExterns()
@@ -143,9 +143,9 @@ RoomCommand SetCsCamera::GetRoomCommand()
 }
 
 CsCameraEntry::CsCameraEntry(std::vector<uint8_t> rawData, int rawDataIndex) :
-    baseOffset(rawDataIndex),
-    type(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
-    numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
+	baseOffset(rawDataIndex),
+	type(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
+	numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
 }

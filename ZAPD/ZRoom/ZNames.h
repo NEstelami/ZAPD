@@ -4,21 +4,12 @@
 #include "../Globals.h"
 #include "../StringHelper.h"
 #include "ObjectList.h"
-//#include "RoomList.h"
 
 #include <string>
 
 class ZNames
 {
 public:
-	//static std::string GetRoomName(int offset)
-	//{
-	//	if (Globals::Instance->game == ZGame::OOT)
-	//		return RoomList[offset];
-	//	else
-	//		return RoomListMM[offset];
-	//}
-
 	static std::string GetObjectName(int id)
 	{
 		switch (Globals::Instance->game)
@@ -54,7 +45,7 @@ public:
 					name = StringHelper::Sprintf("0x%04X", id);
 
 				if (flags == 0)
-				    return name;
+					return name;
 				else
 					return StringHelper::Sprintf("%s | 0x%04X", name.c_str(), flags);
 			}

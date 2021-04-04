@@ -466,11 +466,6 @@ std::string ZFile::GetName()
 	return name;
 }
 
-size_t ZFile::GetSize()
-{
-	return rawData.size();
-}
-
 void ZFile::ExtractResources(string outputDir)
 {
 	string folderName = Path::GetFileNameWithoutExtension(outputPath);
@@ -927,7 +922,6 @@ string ZFile::ProcessDeclarations()
 				while (curPtr % 4 != 0)
 				{
 					declarations[lastAddr]->size++;
-					// item.second->size++;
 					curPtr++;
 				}
 			}

@@ -40,7 +40,6 @@ public:
 
 	std::string GetVarName(int address);
 	std::string GetName();
-	size_t GetSize();
 	void ExtractResources(std::string outputDir);
 	void BuildResources();
 	void BuildSourceFile(std::string outputDir);

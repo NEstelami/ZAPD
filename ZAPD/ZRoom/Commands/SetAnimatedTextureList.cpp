@@ -28,7 +28,6 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 			currentPtr += 8;
 			textures.push_back(lastTexture);
 
-			// TODO add params declations
 			string textureName = (lastTexture->segmentOffset != 0) ?
 				StringHelper::Sprintf("&%sAnimatedTextureParams0x%06X", zRoom->GetName().c_str(), lastTexture->segmentOffset) : "NULL";
 
@@ -92,24 +91,27 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 SetAnimatedTextureList::~SetAnimatedTextureList()
 {
 	for (AnimatedTexture* texture : textures) 
-	    delete texture;
+		delete texture;
 }
 
 string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string pass1 = ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress);
-	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
-	if (decl != nullptr)
-	{
-		return StringHelper::Sprintf("%s 0, (u32)%s", pass1.c_str(), decl->varName.c_str());
-	}
-	return StringHelper::Sprintf("%s 0, (u32)%sAnimatedTextureList0x%06X", pass1.c_str(),
-	                             zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s 0, (u32)%sAnimatedTextureList0x%06X", 
+		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 int32_t SetAnimatedTextureList::GetRawDataSize()
 {
-	return ZRoomCommand::GetRawDataSize() + (0);
+	int32_t paramsSize = 0;
+	for (AnimatedTexture* texture : textures)
+	{
+		for (AnitmatedTextureParams* param : texture->params)
+		{
+			paramsSize += param->GetParamsSize();
+		}
+	}
+
+	return ZRoomCommand::GetRawDataSize() + paramsSize;
 }
 
 string SetAnimatedTextureList::GenerateExterns()
@@ -133,26 +135,26 @@ string SetAnimatedTextureList::GetSourceOutputCode(std::string prefix)
 }
 
 AnimatedTexture::AnimatedTexture(std::vector<uint8_t> rawData, int rawDataIndex) :
-    segment(rawData[rawDataIndex]),
-    type(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
-    segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
+	segment(rawData[rawDataIndex]),
+	type(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
+	segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
 	switch (type)
 	{
 	case 0:
-	    params.push_back(new ScrollingTexture(rawData, segmentOffset));
+		params.push_back(new ScrollingTexture(rawData, segmentOffset));
 		break;
 	case 1:
-	    params.push_back(new ScrollingTexture(rawData, segmentOffset));
-	    params.push_back(new ScrollingTexture(rawData, segmentOffset + 4));
+		params.push_back(new ScrollingTexture(rawData, segmentOffset));
+		params.push_back(new ScrollingTexture(rawData, segmentOffset + 4));
 		break;
 	case 2:
 	case 3:
 	case 4:
-	    params.push_back(new FlashingTexture(rawData, segmentOffset, type));
+		params.push_back(new FlashingTexture(rawData, segmentOffset, type));
 		break;
 	case 5:
-	    params.push_back(new CyclingTextureParams(rawData, segmentOffset));
+		params.push_back(new CyclingTextureParams(rawData, segmentOffset));
 		break;
 	case 6: // Some terminator when there are no animated textures?
 		break;
@@ -162,7 +164,7 @@ AnimatedTexture::AnimatedTexture(std::vector<uint8_t> rawData, int rawDataIndex)
 AnimatedTexture::~AnimatedTexture()
 {
 	for (AnitmatedTextureParams* param : params) 
-	    delete param;
+		delete param;
 }
 
 ScrollingTexture::ScrollingTexture(std::vector<uint8_t> rawData, int rawDataIndex) :
@@ -184,19 +186,19 @@ size_t ScrollingTexture::GetParamsSize()
 }
 
 FlashingTexturePrimColor::FlashingTexturePrimColor(std::vector<uint8_t> rawData, int rawDataIndex) :
-    r(rawData[rawDataIndex + 0]),
-    g(rawData[rawDataIndex + 1]),
-    b(rawData[rawDataIndex + 2]),
-    a(rawData[rawDataIndex + 3]),
-    lodFrac(rawData[rawDataIndex + 4])
+	r(rawData[rawDataIndex + 0]),
+	g(rawData[rawDataIndex + 1]),
+	b(rawData[rawDataIndex + 2]),
+	a(rawData[rawDataIndex + 3]),
+	lodFrac(rawData[rawDataIndex + 4])
 {
 }
 
 FlashingTextureEnvColor::FlashingTextureEnvColor(std::vector<uint8_t> rawData, int rawDataIndex) :
-    r(rawData[rawDataIndex + 0]),
-    g(rawData[rawDataIndex + 1]),
-    b(rawData[rawDataIndex + 2]),
-    a(rawData[rawDataIndex + 3])
+	r(rawData[rawDataIndex + 0]),
+	g(rawData[rawDataIndex + 1]),
+	b(rawData[rawDataIndex + 2]),
+	a(rawData[rawDataIndex + 3])
 {
 }
 
@@ -243,9 +245,9 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 			declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X },", color.r, color.g, color.b, color.a, color.lodFrac);
 
 			if (index < primColors.size() - 1)
-			    declaration += "\n";
+				declaration += "\n";
 				
-		     index++;
+			 index++;
 		}
 
 		zRoom->parent->AddDeclarationArray(
@@ -265,9 +267,9 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 			declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X },", color.r, color.g, color.b, color.a);
 
 			if (index < envColors.size() - 1)
-			    declaration += "\n";
+				declaration += "\n";
 				
-		     index++;
+			 index++;
 		}
 
 		zRoom->parent->AddDeclarationArray(
@@ -287,9 +289,9 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 			declaration += StringHelper::Sprintf("\t0x%02X,", keyFrame);
 
 			if (index < keyFrames.size() - 1)
-			    declaration += "\n";
+				declaration += "\n";
 				
-		     index++;
+			 index++;
 		}
 
 		zRoom->parent->AddDeclarationArray(
@@ -347,9 +349,9 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 			declaration += StringHelper::Sprintf("\t%sTex_%06X,", zRoom->GetName().c_str(), offset);
 
 			if (index < textureSegmentOffsets.size() - 1)
-			    declaration += "\n";
+				declaration += "\n";
 				
-		     index++;
+			 index++;
 		}
 
 		zRoom->parent->AddDeclarationArray(
@@ -369,9 +371,9 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 			declaration += StringHelper::Sprintf("\t0x%02X,", textureIndex);
 
 			if (index < textureIndices.size() - 1)
-			    declaration += "\n";
+				declaration += "\n";
 				
-		     index++;
+			 index++;
 		}
 
 		zRoom->parent->AddDeclarationArray(
