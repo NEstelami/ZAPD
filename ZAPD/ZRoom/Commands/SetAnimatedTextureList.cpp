@@ -177,7 +177,7 @@ ScrollingTexture::ScrollingTexture(std::vector<uint8_t> rawData, int rawDataInde
 
 std::string ScrollingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 {
-	return StringHelper::Sprintf("\t{ %i, %i, 0x%02X, 0x%02X },", xStep, yStep, width, height);
+	return StringHelper::Sprintf("    { %i, %i, 0x%02X, 0x%02X },", xStep, yStep, width, height);
 }
 
 size_t ScrollingTexture::GetParamsSize()
@@ -242,7 +242,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 
 		for (FlashingTexturePrimColor& color : primColors)
 		{
-			declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X },", color.r, color.g, color.b, color.a, color.lodFrac);
+			declaration += StringHelper::Sprintf("    { 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X },", color.r, color.g, color.b, color.a, color.lodFrac);
 
 			if (index < primColors.size() - 1)
 				declaration += "\n";
@@ -264,7 +264,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 
 		for (FlashingTextureEnvColor& color : envColors)
 		{
-			declaration += StringHelper::Sprintf("\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X },", color.r, color.g, color.b, color.a);
+			declaration += StringHelper::Sprintf("    { 0x%02X, 0x%02X, 0x%02X, 0x%02X },", color.r, color.g, color.b, color.a);
 
 			if (index < envColors.size() - 1)
 				declaration += "\n";
@@ -286,7 +286,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 
 		for (uint16_t keyFrame : keyFrames)
 		{
-			declaration += StringHelper::Sprintf("\t0x%02X,", keyFrame);
+			declaration += StringHelper::Sprintf("    0x%02X,", keyFrame);
 
 			if (index < keyFrames.size() - 1)
 				declaration += "\n";
@@ -346,7 +346,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 
 		for (uint32_t offset : textureSegmentOffsets)
 		{
-			declaration += StringHelper::Sprintf("\t%sTex_%06X,", zRoom->GetName().c_str(), offset);
+			declaration += StringHelper::Sprintf("    %sTex_%06X,", zRoom->GetName().c_str(), offset);
 
 			if (index < textureSegmentOffsets.size() - 1)
 				declaration += "\n";
@@ -368,7 +368,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 
 		for (uint8_t textureIndex : textureIndices)
 		{
-			declaration += StringHelper::Sprintf("\t0x%02X,", textureIndex);
+			declaration += StringHelper::Sprintf("    0x%02X,", textureIndex);
 
 			if (index < textureIndices.size() - 1)
 				declaration += "\n";

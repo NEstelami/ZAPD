@@ -30,7 +30,7 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> r
 	for (ActorCutsceneEntry* entry : cutscenes)
 	{
 		declaration +=
-			StringHelper::Sprintf("\t{ %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", entry->priority,
+			StringHelper::Sprintf("    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", entry->priority,
 				entry->length, entry->unk4, entry->unk6, entry->additionalCutscene, entry->sound,
 				entry->unkB, entry->unkC, entry->unkE, entry->letterboxSize);
 

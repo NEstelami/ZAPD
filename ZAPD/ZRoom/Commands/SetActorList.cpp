@@ -73,7 +73,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		// SW97 Actor 0x22 was removed, so we want to not output a working actor.
 		if (actorNum == 0x22 && Globals::Instance->game == ZGame::OOT_SW97)
 			declaration += StringHelper::Sprintf(
-				"\t//{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
+				"    //{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
 				/*StringHelper::Sprintf("SW_REMOVED_0x%04X", actorNum).c_str()*/
 				"ACTOR_DUNGEON_KEEP", entry->posX, entry->posY, entry->posZ, entry->rotX,
 				entry->rotY, entry->rotZ, (uint16_t)entry->initVar, segmentOffset + (index * 16));
@@ -85,7 +85,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 				actorNum--;
 
 			declaration +=
-				StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
+				StringHelper::Sprintf("    { %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
 										ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY,
 										entry->posZ, entry->rotX, entry->rotY, entry->rotZ,
 										(uint16_t)entry->initVar, segmentOffset + (index * 16));

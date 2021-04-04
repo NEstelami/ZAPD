@@ -46,7 +46,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		uint16_t objectIndex = objects[i];
-		declaration += StringHelper::Sprintf("\t%s,", ZNames::GetObjectName(objectIndex).c_str());
+		declaration += StringHelper::Sprintf("    %s,", ZNames::GetObjectName(objectIndex).c_str());
 
 		if (i < objects.size() - 1)
 			declaration += "\n";

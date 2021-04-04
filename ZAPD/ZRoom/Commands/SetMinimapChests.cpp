@@ -11,7 +11,7 @@ SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, 
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	int numChests = rawData[rawDataIndex + 1];
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	int32_t currentPtr = segmentOffset;
 
@@ -52,7 +52,7 @@ string SetMinimapChests::GenerateSourceCodePass2(string roomName, int baseAddres
 		for (MinimapChest* chest : chests)
 		{
 			declaration +=
-				StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },", chest->unk0, chest->unk2, chest->unk4, chest->unk6, chest->unk8);
+				StringHelper::Sprintf("    { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },", chest->unk0, chest->unk2, chest->unk4, chest->unk6, chest->unk8);
 
 			if (index < chests.size() - 1)
 				declaration += "\n";

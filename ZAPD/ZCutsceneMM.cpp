@@ -37,13 +37,13 @@ string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
 	size_t size = 0;
 	int32_t curPtr = 0;
 
-	output += StringHelper::Sprintf("\tCS_BEGIN_CUTSCENE(%i, %i),\n", numCommands, endFrame);
+	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),", numCommands, endFrame);
 
 	for (size_t i = 0; i < data.size(); i++)
 	{
-		output += StringHelper::Sprintf("\t0x%08X,", data[i]);
-		if ((i % 4) == 3)
-			output += "\n";
+		if ((i % 4) == 0)
+			output += "\n    ";
+		output += StringHelper::Sprintf("0x%08X,", data[i]);
 	}
 
 	return output;

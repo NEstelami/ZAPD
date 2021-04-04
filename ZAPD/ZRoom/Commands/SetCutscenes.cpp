@@ -28,7 +28,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 			cutsceneEntries.push_back(entry);
 			currentPtr += 8;
 
-			declaration += StringHelper::Sprintf("\t{ %sCutsceneData0x%06X, 0x%04X, 0x%02X, 0x%02X },", zRoom->GetName().c_str(),
+			declaration += StringHelper::Sprintf("    { %sCutsceneData0x%06X, 0x%04X, 0x%02X, 0x%02X },", zRoom->GetName().c_str(),
 									  entry->segmentOffset, entry->exit, entry->entrance, entry->flag);
 
 			if (i <numCutscenes - 1)

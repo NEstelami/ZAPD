@@ -10,8 +10,8 @@ using namespace std;
 SetMinimapList::SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
-	listSegmentOffset = BitConverter::ToInt32BE(rawData, segmentOffset + 0) & 0x00FFFFFF;
+	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
+	listSegmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 0));
 	unk4 = BitConverter::ToInt32BE(rawData, segmentOffset + 4);
 
 	minimaps = vector<MinimapEntry*>();
@@ -66,7 +66,7 @@ string SetMinimapList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		for (MinimapEntry* entry : minimaps)
 		{
 			declaration +=
-				StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },", entry->unk0, entry->unk2, entry->unk4, entry->unk6, entry->unk8);
+				StringHelper::Sprintf("    { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },", entry->unk0, entry->unk2, entry->unk4, entry->unk6, entry->unk8);
 
 			if (index < minimaps.size() - 1)
 				declaration += "\n";

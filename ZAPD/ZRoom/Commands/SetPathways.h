@@ -22,7 +22,7 @@ struct PathwayList
 public:
 	PathwayList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int length);
 	~PathwayList();
-	
+
 	void GetSourceOutputCode(std::string prefix);
 	int32_t GetRawDataSize();
 	std::string GenerateExterns();

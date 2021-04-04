@@ -48,7 +48,7 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 
 	for (TransitionActorEntry* entry : transitionActors)
 	{
-		declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n",
+		declaration += StringHelper::Sprintf("    { %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n",
 											 entry->frontObjectRoom, entry->frontTransitionReaction,
 											 entry->backObjectRoom, entry->backTransitionReaction,
 											 ZNames::GetActorName(entry->actorNum).c_str(), entry->posX, entry->posY,

@@ -102,7 +102,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 		size_t pointsIndex = 0;
 		for (CsCameraEntry* entry : cameras)
 		{
-			declaration += StringHelper::Sprintf("\t%i, %i, (u32)&%sCsCameraPoints0x%06X[%i],", entry->type,
+			declaration += StringHelper::Sprintf("    %i, %i, (u32)&%sCsCameraPoints0x%06X[%i],", entry->type,
 												   entry->numPoints, roomName.c_str(), cameras[0]->segmentOffset, pointsIndex);
 
 			if (index < cameras.size() - 1)
