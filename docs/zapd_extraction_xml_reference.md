@@ -23,6 +23,7 @@ This document aims to be a small reference of how to create a compatible xml fil
     - [Scalar](#scalar)
     - [Vector](#vector)
     - [Vtx](#vtx)
+    - [Mtx](#mtx)
     - [Cutscene](#cutscene)
     - [Array](#array)
 
@@ -310,7 +311,7 @@ u64 pad34F8 = { 0 };
 
 - Attributes:
 
-  - `Name`: Required. Suxffixed by ~~`TODO`~~.
+  - `Name`: Required. Suxffixed by ~~`TBD`~~.
   - `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32` and `f64`.
 
 ※ Can be wrapped in an [`Array`](#array) tag.
@@ -364,7 +365,7 @@ Vec3s D_04002040[24] = {
 
 - Attributes:
 
-  - `Name`: Required. Suxffixed by ~~`TODO`~~.
+  - `Name`: Required. Suxffixed by ~~`TBD`~~.
   - `Type`: Required. Specifies the vector's type (`Vec3s`, `Vec3i` and `Vec3f`). Valid values: `s16`, `s32` and `f32`.
   - `Dimensions`: Required. The amount of dimensions of the vector. Valid values: `3`.
 
@@ -387,6 +388,20 @@ Vec3s D_04002040[24] = {
   - `Name`: Required. Suxffixed by `Vtx`.
 
 ※ Can be wrapped in an [`Array`](#array) tag.
+
+-------------------------
+
+### Mtx
+
+- Example:
+
+```xml
+<Mtx Name="gBdanMtx_000C40" Offset="0xC40" />
+```
+
+- Attributes:
+
+  - `Name`: Required. Suxffixed by `Mtx`.
 
 -------------------------
 
