@@ -35,6 +35,7 @@
 #include "Commands/SetTimeSettings.h"
 #include "Commands/SetTransitionActorList.h"
 #include "Commands/SetWind.h"
+#include "Commands/SetWorldMapVisited.h"
 #include "Commands/Unused09.h"
 #include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
@@ -343,8 +344,14 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new SetAlternateHeaders(this, rawData, rawDataIndex);
 			break;  // 0x18
 		case RoomCommand::SetCameraSettings:
-			cmd = new SetCameraSettings(this, rawData, rawDataIndex);
-			// TODO SCmdWorldMapVisited for MM
+			if (Globals::Instance->game == ZGame::MM_RETAIL)
+			{
+				cmd = new SetWorldMapVisited(this, rawData, rawDataIndex);
+			}
+			 else
+			 {
+				cmd = new SetCameraSettings(this, rawData, rawDataIndex);
+			 }
 			break;  // 0x19
 		case RoomCommand::SetAnimatedTextureList:
 			cmd = new SetAnimatedTextureList(this, rawData, rawDataIndex);
