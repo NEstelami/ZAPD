@@ -17,6 +17,23 @@ public:
 	std::vector<Vec3s> points;
 };
 
+struct PathwayList
+{
+public:
+	PathwayList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int length);
+	~PathwayList();
+	
+	void GetSourceOutputCode(std::string prefix);
+	int32_t GetRawDataSize();
+	std::string GenerateExterns();
+
+private:
+	ZRoom* zRoom;
+	std::vector<PathwayEntry*> pathways;
+	std::vector<uint8_t> _rawData;
+	int _rawDataIndex;
+};
+
 class SetPathways : public ZRoomCommand
 {
 public:
@@ -33,7 +50,7 @@ public:
 
 private:
 	uint32_t segmentOffset;
-	std::vector<PathwayEntry*> pathways;
+	PathwayList* pathwayList;
 	std::vector<uint8_t> _rawData;
 	int _rawDataIndex;
 };

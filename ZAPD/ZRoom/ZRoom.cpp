@@ -208,9 +208,8 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(room, room->rawData, address);
-			pathway->GenerateSourceCodePass1(room->name, 0);
-			pathway->GenerateSourceCodePass2(room->name, 0);
+			PathwayList* pathway = new PathwayList(room, room->rawData, address, 1);
+			pathway->GetSourceOutputCode(room->name);
 
 			delete pathway;
 		}
