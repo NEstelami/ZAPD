@@ -180,7 +180,7 @@ ZCollisionHeader::ZCollisionHeader(ZFile* parent, const std::string& prefix,
 
 	declaration += StringHelper::Sprintf(
 		"    %i,\n    %s_vtx_%08X,\n    %i,\n    %s_polygons_%08X,\n    %s_surfaceType_%08X,\n    "
-	    "%s_camDataList_%08X,\n    %i,\n    %s\n",
+		"%s_camDataList_%08X,\n    %i,\n    %s\n",
 		numVerts, prefix.c_str(), vtxSegmentOffset, numPolygons, prefix.c_str(), polySegmentOffset,
 		prefix.c_str(), polyTypeDefSegmentOffset, prefix.c_str(), camDataSegmentOffset,
 		numWaterBoxes, waterBoxStr);

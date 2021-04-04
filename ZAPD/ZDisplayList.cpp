@@ -1784,9 +1784,27 @@ static int GfxdCallback_DisplayList(uint32_t seg)
 static int GfxdCallback_Matrix(uint32_t seg)
 {
 	string mtxName = "";
+	ZDisplayList* instance = ZDisplayList::static_instance;
 
 	if (Globals::Instance->symbolMap.find(seg) != Globals::Instance->symbolMap.end())
 		mtxName = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[seg].c_str());
+	else if (Globals::Instance->HasSegment(GETSEGNUM(seg)))
+	{
+		Declaration* decl =
+			instance->parent->GetDeclaration(Seg2Filespace(seg, instance->parent->baseAddress));
+		if (decl == nullptr)
+		{
+			ZMtx mtx(instance->GetName(), instance->fileData,
+			         Seg2Filespace(seg, instance->parent->baseAddress), instance->parent);
+			mtx.GetSourceOutputCode(instance->GetName());
+			instance->mtxList.push_back(mtx);
+			mtxName = "&" + mtx.GetName();
+		}
+		else
+		{
+			mtxName = "&" + decl->varName;
+		}
+	}
 	else
 		mtxName = StringHelper::Sprintf("0x%08X", seg);
 
