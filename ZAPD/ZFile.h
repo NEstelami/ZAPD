@@ -36,7 +36,7 @@ public:
 
 	ZFile(std::string nOutPath, std::string nName);
 	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath,
-	      std::string filename, bool placeholderMode);
+	      std::string filename, const std::string& nXmlFilePath, bool placeholderMode);
 	~ZFile();
 
 	std::string GetVarName(int address);
@@ -79,6 +79,7 @@ protected:
 	std::string basePath;
 	std::string outputPath;
 	std::string sourceOutput;
+	std::string xmlFilePath;
 
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,

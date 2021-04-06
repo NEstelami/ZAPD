@@ -45,9 +45,10 @@ ZFile::ZFile(string nOutPath, string nName) : ZFile()
 }
 
 ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath,
-             std::string filename, bool placeholderMode)
+             std::string filename, const std::string& nXmlFilePath, bool placeholderMode)
 	: ZFile()
 {
+	xmlFilePath = nXmlFilePath;
 	if (nBasePath == "")
 		basePath = Directory::GetCurrentDirectory();
 	else
@@ -983,13 +984,14 @@ string ZFile::ProcessDeclarations()
 				        item.second->varName.c_str());
 			}
 
-			uint8_t* rawDataArr = rawData.data();
+			uint32_t unaccountedAddress = lastAddr + lastSize;
 
-			if (lastAddr + lastSize != item.first && lastAddr >= rangeStart &&
-			    lastAddr + lastSize < rangeEnd)
+			if (unaccountedAddress != item.first && lastAddr >= rangeStart &&
+			    unaccountedAddress < rangeEnd)
 			{
 				// int diff = item.first - (lastAddr + declarations[lastAddr]->size);
-				int diff = item.first - (lastAddr + lastSize);
+				int diff = item.first - unaccountedAddress;
+				bool nonZeroUnaccounted = false;
 
 				string src = "    ";
 
@@ -997,13 +999,18 @@ string ZFile::ProcessDeclarations()
 				{
 					// src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr +
 					// declarations[lastAddr]->size + i]);
-					src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr + lastSize + i]);
+					uint8_t val = rawData.at(unaccountedAddress + i);
+					src += StringHelper::Sprintf("0x%02X, ", val);
+					if (val != 0x00)
+					{
+						nonZeroUnaccounted = true;
+					}
 
 					if ((i % 16 == 15) && (i != (diff - 1)))
 						src += "\n    ";
 				}
 
-				if (declarations.find(lastAddr + lastSize) == declarations.end())
+				if (declarations.find(unaccountedAddress) == declarations.end())
 				{
 					if (diff > 0)
 					{
@@ -1012,9 +1019,23 @@ string ZFile::ProcessDeclarations()
 						// StringHelper::Sprintf("unaccounted_%06X", lastAddr +
 						// declarations[lastAddr]->size), diff, src);
 						AddDeclarationArray(
-							lastAddr + lastSize, DeclarationAlignment::None, diff, "static u8",
-							StringHelper::Sprintf("unaccounted_%06X", lastAddr + lastSize), diff,
+							unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
+							StringHelper::Sprintf("unaccounted_%06X", unaccountedAddress), diff,
 							src);
+						if (nonZeroUnaccounted)
+						{
+							fprintf(stderr, "Warning in file: %s\n"
+								    "\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+								    "\t Block size: '0x%X'.\n", 
+									xmlFilePath.c_str(), unaccountedAddress, diff);
+						}
+						else if (diff >= 16)
+						{
+							fprintf(stderr, "Warning in file: %s\n"
+								    "\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
+								    "\t Block size: '0x%X'.\n", 
+									xmlFilePath.c_str(),unaccountedAddress, diff);
+						}
 					}
 				}
 			}

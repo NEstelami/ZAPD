@@ -52,7 +52,7 @@ string Globals::FindSymbolSegRef(int segNumber, uint32_t symbolAddress)
 			{
 				if (string(child->Name()) == "File")
 				{
-					ZFile* file = new ZFile(fileMode, child, "", "", "", true);
+					ZFile* file = new ZFile(fileMode, child, "", "", "", "...", true);
 					file->GeneratePlaceholderDeclarations();
 					segmentRefFiles[segNumber] = file;
 					break;
