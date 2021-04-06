@@ -89,7 +89,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 		}
 
 		zRoom->parent->AddDeclarationArray(
-			cameras[0]->segmentOffset, DeclarationAlignment::Align2, DeclarationPadding::None,
+			cameras[0]->segmentOffset, DeclarationAlignment::None, DeclarationPadding::None,
 			points.size() * 6, "Vec3s",
 			StringHelper::Sprintf("%sCsCameraPoints0x%06X", roomName.c_str(), cameras[0]->segmentOffset),
 			points.size(), declaration);

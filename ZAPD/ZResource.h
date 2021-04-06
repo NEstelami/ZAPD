@@ -86,7 +86,6 @@ protected:
 enum class DeclarationAlignment
 {
 	None,
-	Align2,
 	Align4,
 	Align8,
 	Align16
