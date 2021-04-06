@@ -23,6 +23,8 @@ public:
 	// static ZBackground* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
 	// ZFile* nParent, bool readFile);
 
+	void CheckValidJpeg(const std::string& filepath);
+
 	int GetRawDataSize() override;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);

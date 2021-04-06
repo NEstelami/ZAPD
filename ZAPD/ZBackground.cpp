@@ -6,6 +6,13 @@
 #include "ZFile.h"
 
 REGISTER_ZFILENODE(Background, ZBackground);
+// TODO: make this a configurable value when ZAPD has a configuration file.
+#define SCREEN_WIDTH  320
+#define SCREEN_HEIGHT 240
+
+#define JPEG_MARKER   0xFFD8FFE0
+#define MARKER_DQT    0xFFDB
+
 
 ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 {
@@ -52,10 +59,8 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 	data = File::ReadAllBytes(filepath.string());
 
 	// Add padding.
-	while (data.size() < GetRawDataSize())
-	{
-		data.push_back(0x00);
-	}
+	data.insert(data.end(), GetRawDataSize() - data.size(), 0x00);
+	CheckValidJpeg(filepath);
 }
 
 void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -78,10 +83,67 @@ void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector
 //	return back;
 //}
 
+void ZBackground::CheckValidJpeg(const std::string& filepath)
+{
+	std::string filename = outName;
+	if (filepath != "")
+	{
+		filename = filepath;
+	}
+
+	uint32_t jpegMarker = BitConverter::ToUInt32BE(data, 0);
+	if (jpegMarker != JPEG_MARKER)
+	{
+		fprintf(stderr,
+				"ZBackground::CheckValidJpeg: Warning.\n"
+				"\t Missing jpeg marker at the beginning of file: '%s'.\n"
+				"\t The game will skip this jpeg.\n",
+				filename.c_str());
+	}
+	if (data.at(6) != 'J' || data.at(7) != 'F' || data.at(8) != 'I' || data.at(9) != 'F' || data.at(10) != '\0')
+	{
+		std::string jfifIdentifier(data.begin()+6, data.begin()+6+5);
+		fprintf(stderr,
+				"ZBackground::CheckValidJpeg: Warning.\n"
+				"\t Missing 'JFIF' identifier. File: '%s'.\n"
+				"\t This image may be corrupted or not be a jpeg iamge.\n"
+				"\t The identifier found was '%s'.\n",
+				filename.c_str(), jfifIdentifier.c_str());
+	}
+	uint8_t majorVersion = data.at(11);
+	uint8_t minorVersion = data.at(12);
+	if (majorVersion != 0x01 || minorVersion != 0x01)
+	{
+		fprintf(stderr,
+				"ZBackground::CheckValidJpeg: Warning.\n"
+				"\t Wrong JFIF version '%i.%02i'. File: '%s'.\n"
+				"\t The expected version is '1.01'. The game may not be able to decode this image properly.\n",
+				majorVersion, minorVersion, filename.c_str());
+	}
+	if (BitConverter::ToUInt16BE(data, 20) != MARKER_DQT)
+	{
+		// This may happen when creating the image with Exif, XMP, thumbnail, progressive, etc. enabled.
+		fprintf(stderr,
+				"ZBackground::CheckValidJpeg: Warning.\n"
+				"\t There seems to be extra data before the image data in file: '%s'.\n"
+				"\t The game may not be able to decode this image properly.\n",
+				filename.c_str());
+	}
+	if (data.size() > GetRawDataSize())
+	{
+		fprintf(stderr,
+				"ZBackground::CheckValidJpeg: Warning.\n"
+				"\t The image is bigger than the screen buffer. File: '%s'.\n"
+				"\t Image size: %zu bytes.\n",
+				"\t Screen buffer size: %zu bytes.\n",
+				filename.c_str(), data.size(), GetRawDataSize());
+	}
+}
+
 int ZBackground::GetRawDataSize()
 {
-	// Jpgs seems to add padding until reaching this size.
-	return 0x25800;
+	// Jpgs use the whole sceen buffer, which is a u16 matrix.
+	return SCREEN_HEIGHT * SCREEN_WIDTH * 2;
 }
 
 void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
