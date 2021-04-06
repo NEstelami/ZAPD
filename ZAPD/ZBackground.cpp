@@ -134,8 +134,8 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		fprintf(stderr,
 				"ZBackground::CheckValidJpeg: Warning.\n"
 				"\t The image is bigger than the screen buffer. File: '%s'.\n"
-				"\t Image size: %zu bytes.\n",
-				"\t Screen buffer size: %zu bytes.\n",
+				"\t Image size: %zu bytes.\n"
+				"\t Screen buffer size: %i bytes.\n",
 				filename.c_str(), data.size(), GetRawDataSize());
 	}
 }
