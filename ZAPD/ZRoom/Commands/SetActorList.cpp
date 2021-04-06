@@ -70,8 +70,16 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	{
 		uint16_t actorNum = entry->actorNum;
 
+		if (Globals::Instance->game == ZGame::MM_RETAIL)
+		{
+			declaration += StringHelper::Sprintf(
+				"    { %s, %i, %i, %i, SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X), 0x%04X }, //0x%06X",
+				/*StringHelper::Sprintf("SW_REMOVED_0x%04X", actorNum).c_str()*/
+				ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY, entry->posZ, (entry->rotX >> 7) & 0b111111111, entry->rotX & 0b1111111,
+				(entry->rotY >> 7) & 0b111111111, entry->rotY & 0b1111111, (entry->rotZ >> 7) & 0b111111111, entry->rotZ & 0b1111111, (uint16_t)entry->initVar, segmentOffset + (index * 16));
+		}
 		// SW97 Actor 0x22 was removed, so we want to not output a working actor.
-		if (actorNum == 0x22 && Globals::Instance->game == ZGame::OOT_SW97)
+		else if (actorNum == 0x22 && Globals::Instance->game == ZGame::OOT_SW97)
 			declaration += StringHelper::Sprintf(
 				"    //{ %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
 				/*StringHelper::Sprintf("SW_REMOVED_0x%04X", actorNum).c_str()*/
@@ -89,10 +97,10 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 										ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY,
 										entry->posZ, entry->rotX, entry->rotY, entry->rotZ,
 										(uint16_t)entry->initVar, segmentOffset + (index * 16));
-
-			if (index < actors.size() - 1)
-				declaration += "\n";
 		}
+
+		if (index < actors.size() - 1)
+			declaration += "\n";
 
 		index++;
 	}
