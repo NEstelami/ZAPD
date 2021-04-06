@@ -107,8 +107,12 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		index++;
 	}
 
+	DeclarationPadding padding = DeclarationPadding::Pad16;
+	if (Globals::Instance->game == ZGame::MM_RETAIL)
+		padding = DeclarationPadding::None;
+
 	zRoom->parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, actors.size() * 16,
+		segmentOffset, DeclarationAlignment::None, padding, actors.size() * 16,
 		"ActorEntry", StringHelper::Sprintf("%sActorList0x%06X", roomName.c_str(), segmentOffset),
 		GetActorListArraySize(), declaration);
 
