@@ -1045,33 +1045,55 @@ string ZFile::ProcessDeclarations()
 		lastSize = item.second->size;
 	}
 
+	uint32_t unaccountedAddress = lastAddr + declarations[lastAddr]->size;
+
 	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
-	if (lastAddr + declarations[lastAddr]->size < rawData.size() &&
-	    lastAddr + declarations[lastAddr]->size >= rangeStart &&
-	    lastAddr + declarations[lastAddr]->size < rangeEnd)
+	if (unaccountedAddress < rawData.size() &&
+	    unaccountedAddress >= rangeStart &&
+	    unaccountedAddress < rangeEnd)
 	{
-		int diff = (int)(rawData.size() - (lastAddr + declarations[lastAddr]->size));
+		int diff = (int)(rawData.size() - unaccountedAddress);
+		bool nonZeroUnaccounted = false;
 
 		string src = "    ";
 
 		for (int i = 0; i < diff; i++)
 		{
-			src += StringHelper::Sprintf("0x%02X, ",
-			                             rawData[lastAddr + declarations[lastAddr]->size + i]);
+			uint8_t val = rawData.at(unaccountedAddress + i);
+			src += StringHelper::Sprintf("0x%02X, ", val);
+
+			if (val != 0x00)
+			{
+				nonZeroUnaccounted = true;
+			}
 
 			if (i % 16 == 15)
 				src += "\n    ";
 		}
 
-		if (declarations.find(lastAddr + declarations[lastAddr]->size) == declarations.end())
+		if (declarations.find(unaccountedAddress) == declarations.end())
 		{
 			if (diff > 0)
 			{
-				AddDeclarationArray(lastAddr + declarations[lastAddr]->size,
+				AddDeclarationArray(unaccountedAddress,
 				                    DeclarationAlignment::None, diff, "static u8",
 				                    StringHelper::Sprintf("unaccounted_%06X",
-				                                          lastAddr + declarations[lastAddr]->size),
+				                                          unaccountedAddress),
 				                    diff, src);
+				if (nonZeroUnaccounted)
+				{
+					fprintf(stderr, "Warning in file: %s\n"
+							"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+							"\t Block size: '0x%X'.\n", 
+							xmlFilePath.c_str(), unaccountedAddress, diff);
+				}
+				else if (diff >= 16)
+				{
+					fprintf(stderr, "Warning in file: %s\n"
+							"\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
+							"\t Block size: '0x%X'.\n", 
+							xmlFilePath.c_str(),unaccountedAddress, diff);
+				}
 			}
 		}
 	}
