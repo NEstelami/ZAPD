@@ -397,7 +397,13 @@ public:
 	size_t GetCommandSize();
 };
 
-class ZCutscene : public ZResource
+class ZCutsceneBase : public ZResource
+{
+public:
+	virtual uint32_t getSegmentOffset() = 0;
+};
+
+class ZCutscene : public ZCutsceneBase
 {
 public:
 	uint32_t segmentOffset;
@@ -408,6 +414,7 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
 	CutsceneCommands GetCommandFromID(int id);
+	uint32_t getSegmentOffset() override { return segmentOffset; }
 
 	ZResourceType GetResourceType() override;
 

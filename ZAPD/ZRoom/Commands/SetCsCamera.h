@@ -1,38 +1,37 @@
 #pragma once
 
-#include "../../ZCutscene.h"
-#include "../../ZCutsceneMM.h"
+#include "../../Vec3s.h"
 #include "../ZRoomCommand.h"
 
-class CutsceneEntry
+class CsCameraEntry
 {
 public:
-	CutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	CsCameraEntry(std::vector<uint8_t> rawData, int rawDataIndex);
 
+	int baseOffset;
+	int type;
+	int numPoints;
 	uint32_t segmentOffset;
-	uint16_t exit;
-	uint8_t entrance;
-	uint8_t flag;
 };
 
-class SetCutscenes : public ZRoomCommand
+class SetCsCamera : public ZRoomCommand
 {
 public:
-	SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetCutscenes();
+	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	~SetCsCamera();
 
 	std::string GetSourceOutputCode(std::string prefix);
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
+	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
 	virtual RoomCommand GetRoomCommand();
 	virtual int32_t GetRawDataSize();
 	virtual std::string GetCommandCName();
 	virtual std::string GenerateExterns();
 
 private:
-	std::vector<ZCutsceneBase*> cutscenes;
-	std::vector<CutsceneEntry*> cutsceneEntries; // (MM Only)
 	uint32_t segmentOffset;
-	uint8_t numCutscenes; // (MM Only)
+	std::vector<CsCameraEntry*> cameras;
+	std::vector<Vec3s> points;
 	std::vector<uint8_t> _rawData;
 	int _rawDataIndex;
 };

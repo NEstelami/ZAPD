@@ -340,7 +340,7 @@ public:
 	std::vector<uint64_t> instructions;
 	std::string curPrefix;
 
-	uint32_t lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg;
+	int32_t lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg;
 	F3DZEXTexFormats lastTexFmt;
 	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
 	bool lastTexLoaded;
@@ -375,8 +375,8 @@ public:
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(std::vector<uint8_t> fileData,
 	                            std::map<uint32_t, ZTexture*>& textures, ZRoom* scene,
-	                            ZFile* parent, std::string prefix, uint32_t texWidth,
-	                            uint32_t texHeight, uint32_t texAddr, uint32_t texSeg,
+	                            ZFile* parent, std::string prefix, int32_t texWidth,
+	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
 	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
 	                            bool texIsPalette);
 	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex, DListType dListType);
