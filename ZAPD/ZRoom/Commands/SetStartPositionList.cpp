@@ -2,7 +2,7 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
-#include "../ActorList.h"
+#include "../ZNames.h"
 #include "../ZRoom.h"
 
 using namespace std;
@@ -48,7 +48,7 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAd
 	for (ActorSpawnEntry* entry : actors)
 	{
 		declaration += StringHelper::Sprintf("\t{ %s, %i, %i, %i, %i, %i, %i, 0x%04X },\n",
-		                                     ActorList[entry->actorNum].c_str(), entry->posX,
+		                                     ZNames::GetActorName(entry->actorNum).c_str(), entry->posX,
 		                                     entry->posY, entry->posZ, entry->rotX, entry->rotY,
 		                                     entry->rotZ, entry->initVar);
 	}
