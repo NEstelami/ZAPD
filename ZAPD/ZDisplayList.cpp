@@ -1773,7 +1773,7 @@ static int GfxdCallback_DisplayList(uint32_t seg)
 	else
 		dListName = StringHelper::Sprintf("%sDL_%06X", instance->curPrefix.c_str(), dListOffset);
 
-	if (dListSegNum <= 6)
+	if ((dListSegNum <= 6) && Globals::Instance->HasSegment(dListSegNum))
 	{
 		ZDisplayList* newDList = new ZDisplayList(
 			instance->fileData, dListOffset,
@@ -2227,8 +2227,8 @@ void ZDisplayList::TextureGenCheck(string prefix)
 }
 
 bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZTexture*>& textures,
-                                   ZRoom* scene, ZFile* parent, string prefix, uint32_t texWidth,
-                                   uint32_t texHeight, uint32_t texAddr, uint32_t texSeg,
+                                   ZRoom* scene, ZFile* parent, string prefix, int32_t texWidth,
+                                   int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
                                    F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
                                    bool texIsPalette)
 {
@@ -2238,7 +2238,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		printf("TextureGenCheck seg=%i width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber,
 		       texWidth, texHeight, texIsPalette, texAddr);
 
-	if ((texSeg != 0 || texAddr != 0) && texWidth != 0 && texHeight != 0 && texLoaded &&
+	if ((texSeg != 0 || texAddr != 0) && texWidth > 0 && texHeight > 0 && texLoaded &&
 	    Globals::Instance->HasSegment(segmentNumber))
 	{
 		if (segmentNumber != SEGMENT_SCENE)

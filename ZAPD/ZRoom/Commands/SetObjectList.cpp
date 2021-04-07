@@ -3,7 +3,7 @@
 #include "../../Globals.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
-#include "../ObjectList.h"
+#include "../ZNames.h"
 #include "../ZRoom.h"
 
 using namespace std;

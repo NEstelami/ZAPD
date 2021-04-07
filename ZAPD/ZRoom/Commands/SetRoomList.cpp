@@ -24,6 +24,8 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 
 		currentPtr += 8;
 	}
+
+	zRoom->roomCount = numRooms;
 }
 
 SetRoomList::~SetRoomList()
