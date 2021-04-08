@@ -1024,17 +1024,17 @@ string ZFile::ProcessDeclarations()
 							src);
 						if (nonZeroUnaccounted)
 						{
-							fprintf(stderr, "Warning in file: %s\n"
+							fprintf(stderr, "Warning in file: %s (%s)\n"
 								    "\t A non-zero unaccounted block was found at address '0x%06X'.\n"
 								    "\t Block size: '0x%X'.\n", 
-									xmlFilePath.c_str(), unaccountedAddress, diff);
+									xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 						}
 						else if (diff >= 16)
 						{
-							fprintf(stderr, "Warning in file: %s\n"
+							fprintf(stderr, "Warning in file: %s (%s)\n"
 								    "\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
 								    "\t Block size: '0x%X'.\n", 
-									xmlFilePath.c_str(),unaccountedAddress, diff);
+									xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 						}
 					}
 				}
@@ -1082,17 +1082,17 @@ string ZFile::ProcessDeclarations()
 				                    diff, src);
 				if (nonZeroUnaccounted)
 				{
-					fprintf(stderr, "Warning in file: %s\n"
+					fprintf(stderr, "Warning in file: %s (%s)\n"
 							"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
 							"\t Block size: '0x%X'.\n", 
-							xmlFilePath.c_str(), unaccountedAddress, diff);
+							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 				}
 				else if (diff >= 16)
 				{
-					fprintf(stderr, "Warning in file: %s\n"
+					fprintf(stderr, "Warning in file: %s (%s)\n"
 							"\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
 							"\t Block size: '0x%X'.\n", 
-							xmlFilePath.c_str(),unaccountedAddress, diff);
+							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 				}
 			}
 		}
