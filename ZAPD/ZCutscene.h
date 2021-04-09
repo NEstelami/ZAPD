@@ -401,19 +401,20 @@ public:
 class ZCutsceneBase : public ZResource
 {
 public:
+	ZCutsceneBase(ZFile* nParent);
 	virtual uint32_t getSegmentOffset() = 0;
 };
 
 class ZCutscene : public ZCutsceneBase
 {
 public:
-	ZCutscene(ZFile* parent);
+	ZCutscene(ZFile* nParent);
 	~ZCutscene();
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
 	CutsceneCommands GetCommandFromID(int id);
-	uint32_t getSegmentOffset() override { return segmentOffset; }
+	uint32_t getSegmentOffset() override { return rawDataIndex; }
 
 	ZResourceType GetResourceType() override;
 

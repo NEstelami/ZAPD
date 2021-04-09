@@ -243,6 +243,30 @@
     <ClCompile Include="ZMtx.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetWorldMapVisited.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\Unused1D.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetActorCutsceneList.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetAnimatedTextureList.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetCsCamera.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetMinimapChests.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetMinimapList.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ZCutsceneMM.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Path.h">
@@ -489,6 +513,30 @@
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
     <ClInclude Include="ZMtx.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetWorldMapVisited.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetActorCutsceneList.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\Unused1D.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetAnimatedTextureList.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetCsCamera.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetMinimapChests.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetMinimapList.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCutsceneMM.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>

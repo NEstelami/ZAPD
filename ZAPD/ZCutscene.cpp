@@ -1,12 +1,13 @@
 #include "ZCutscene.h"
 #include "BitConverter.h"
 #include "StringHelper.h"
+#include "ZResource.h"
 
 using namespace std;
 
 REGISTER_ZFILENODE(Cutscene, ZCutscene);
 
-ZCutscene::ZCutscene(ZFile* parent) : ZResource(parent)
+ZCutscene::ZCutscene(ZFile* nParent) : ZCutsceneBase(nParent)
 {
 }
 
@@ -1162,4 +1163,8 @@ string CutsceneCommandSceneTransFX::GetCName(const std::string& prefix)
 size_t CutsceneCommandSceneTransFX::GetCommandSize()
 {
 	return CutsceneCommand::GetCommandSize() + 8;
+}
+
+ZCutsceneBase::ZCutsceneBase(ZFile* nParent) : ZResource(nParent)
+{
 }

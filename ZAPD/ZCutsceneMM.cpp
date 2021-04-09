@@ -4,25 +4,8 @@
 
 using namespace std;
 
-ZCutsceneMM::ZCutsceneMM(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize)
+ZCutsceneMM::ZCutsceneMM(ZFile* nParent) : ZCutsceneBase(nParent)
 {
-	rawData = std::move(nRawData);
-	segmentOffset = rawDataIndex;
-
-	numCommands = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
-	commands = vector<CutsceneCommand*>();
-
-	endFrame = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
-	uint32_t currentPtr = rawDataIndex + 8;
-	uint32_t lastData = 0;
-
-	// TODO currently cutscenes aren't being parsed, so just consume words until we see an end marker.
-	do
-	{
-		lastData = BitConverter::ToInt32BE(rawData, currentPtr);
-		data.push_back(lastData);
-		currentPtr += 4;
-	} while (lastData != 0xFFFFFFFF);
 }
 
 ZCutsceneMM::~ZCutsceneMM()
@@ -52,6 +35,27 @@ string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
 int ZCutsceneMM::GetRawDataSize()
 {
 	return 8 + data.size() * 4;
+}
+
+void ZCutsceneMM::ParseRawData()
+{
+	segmentOffset = rawDataIndex;
+
+	numCommands = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
+	commands = vector<CutsceneCommand*>();
+
+	endFrame = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
+	uint32_t currentPtr = rawDataIndex + 8;
+	uint32_t lastData = 0;
+
+	// TODO currently cutscenes aren't being parsed, so just consume words until we see an end marker.
+	do
+	{
+		lastData = BitConverter::ToInt32BE(rawData, currentPtr);
+		data.push_back(lastData);
+		currentPtr += 4;
+	} 
+	while (lastData != 0xFFFFFFFF);
 }
 
 ZResourceType ZCutsceneMM::GetResourceType()
