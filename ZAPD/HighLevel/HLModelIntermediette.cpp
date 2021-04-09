@@ -1231,10 +1231,6 @@ HLSetTranslation::HLSetTranslation(float nTransX, float nTransY, float nTransZ)
 	transZ = nTransZ;
 }
 
-HLSetTranslation::~HLSetTranslation()
-{
-}
-
 void HLSetTranslation::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
 {
 	parent->lastTrans = Vec3s(transX, transY, transZ);

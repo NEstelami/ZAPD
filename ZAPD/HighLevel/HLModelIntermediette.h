@@ -102,7 +102,6 @@ public:
 
 	HLSetTranslation();
 	HLSetTranslation(float nTransX, float nTransY, float nTransZ);
-	~HLSetTranslation();
 
 	virtual void OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts);
 };

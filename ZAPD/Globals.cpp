@@ -137,7 +137,7 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
-		printf("Warning: Unable to read texture pool XML with error code %i\n", eResult);
+		fprintf(stderr, "Warning: Unable to read texture pool XML with error code %i\n", eResult);
 		return;
 	}
 
