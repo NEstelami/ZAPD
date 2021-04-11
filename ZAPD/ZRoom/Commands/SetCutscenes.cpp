@@ -41,7 +41,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 				declaration += "\n";
 
 			ZCutsceneMM* cutscene = new ZCutsceneMM(nZRoom->parent);
-			cutscene->ExtractFromXML(nullptr, rawData, segmentOffset,
+			cutscene->ExtractFromXML(nullptr, rawData, entry->segmentOffset,
 				"");  // TODO: Use ExtractFromFile() here when that gets implemented
 			cutscenes.push_back(cutscene);
 
