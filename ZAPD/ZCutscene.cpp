@@ -22,8 +22,7 @@ string ZCutscene::GetSourceOutputCode(const std::string& prefix)
 	string output = "";
 	int size = 0;
 	int32_t curPtr = 0;
-
-	// output += StringHelper::Sprintf("// SIZE = 0x%04X\n", GetRawDataSize());
+	
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
 	for (int i = 0; i < commands.size(); i++)

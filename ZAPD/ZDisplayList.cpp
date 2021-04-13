@@ -1657,8 +1657,6 @@ static int GfxdCallback_Vtx(uint32_t seg, int32_t count)
 
 		vtxName = "@r";
 	}
-	// if (Globals::Instance->verbosity >= VERBOSITY_DEBUG && diff > 5)
-	// printf("F3DOP: 0x%02X, TIME: %ims\n", opcode, diff);
 
 	gfxd_puts(vtxName.c_str());
 

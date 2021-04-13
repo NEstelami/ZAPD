@@ -565,19 +565,9 @@ void ZFile::GenerateSourceFiles(string outputDir)
 	while (StringHelper::EndsWith(sourceOutDir, "/"))
 		sourceOutDir = sourceOutDir.substr(0, sourceOutDir.length() - 1);
 
-	// string buildPath = "build/" + outputDir + "/" + "basefile.txt";
 	string outPath = sourceOutDir + "/" + Path::GetFileNameWithoutExtension(name) + ".c";
-	// printf("WRITING %s\n", buildPath.c_str());
-	// printf("WRITING %s\n", outPath.c_str());
-
-	// if (!Directory::Exists(Path::GetPath(outPath)))
-	// Directory::CreateDirectory(Path::GetPath(outPath));
-
-	// if (!Directory::Exists(Path::GetPath(buildPath)))
-	// Directory::CreateDirectory(Path::GetPath(buildPath));
 
 	File::WriteAllText(outPath, sourceOutput);
-	// File::WriteAllText(buildPath, outPath);
 
 	// Generate Header
 	sourceOutput = "";
