@@ -7,13 +7,16 @@
 
 using namespace std;
 
-SetPathways::SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetPathways::SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, bool isFromHeader)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
 
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
+	if (isFromHeader)
+		segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
+	else
+		segmentOffset = _rawDataIndex;
 
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
@@ -32,7 +35,7 @@ string SetPathways::GetSourceOutputCode(std::string prefix)
 
 string SetPathways::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	int numPaths =  (Globals::Instance->game != ZGame::MM_RETAIL) ? 1 : zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
+	int numPaths = (Globals::Instance->game != ZGame::MM_RETAIL) ? 1 : zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
 
 	pathwayList = new PathwayList(zRoom, _rawData, segmentOffset, numPaths);
 
@@ -88,7 +91,6 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex) :
 	listSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
 	uint32_t currentPtr = listSegmentOffset;
-
 	uint8_t* data = rawData.data();
 
 	for (int i = 0; i < numPoints; i++)
@@ -98,7 +100,6 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex) :
 		z = BitConverter::ToInt16BE(data, currentPtr + 4);
 
 		Vec3s point = Vec3s(x, y, z);
-
 		points.push_back(point);
 
 		currentPtr += 6;
@@ -120,7 +121,6 @@ PathwayList::PathwayList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	_rawDataIndex = rawDataIndex;
 
 	uint32_t currentPtr = rawDataIndex;
-
 	uint8_t* data = rawData.data();
 
 	for (int pathIndex = 0; pathIndex < length; pathIndex++)
