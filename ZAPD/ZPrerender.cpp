@@ -5,35 +5,21 @@
 #include "StringHelper.h"
 #include "ZFile.h"
 
-ZPrerender::ZPrerender(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                       int nRawDataIndex, ZFile* nParent)
+REGISTER_ZFILENODE(Prerender, ZPrerender);
+
+ZPrerender::ZPrerender(ZFile* nParent) : ZResource(nParent)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-
-	ParseXML(reader);
-	ParseRawData();
-}
-
-ZPrerender::ZPrerender(tinyxml2::XMLElement* reader, ZFile* nParent)
-{
-	parent = nParent;
-
-	ParseXML(reader);
+	// ParseXML(reader);
 }
 
 ZPrerender::ZPrerender(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                        int nRawDataIndex, ZFile* nParent)
+	: ZResource(nParent)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
 	outName = name;
 
-	ParseRawData();
+	ExtractFromXML(nullptr, nRawData, nRawDataIndex, "");
 }
 
 void ZPrerender::ParseRawData()
@@ -45,11 +31,13 @@ void ZPrerender::ParseRawData()
 	{
 		uint8_t val = rawData.at(rawDataIndex + i);
 		data.push_back(val);
+
 		if (BitConverter::ToUInt16BE(rawData, rawDataIndex + i) == 0xFFD9)
 		{
 			data.push_back(rawData.at(rawDataIndex + i + 1));
 			break;
 		}
+
 		i++;
 	}
 }
@@ -61,32 +49,28 @@ void ZPrerender::ParseBinaryFile(const std::string& inFolder, bool appendOutName
 	{
 		filepath = filepath / (outName + "." + GetExternalExtension());
 	}
-	data = File::ReadAllBytes(filepath);
+	data = File::ReadAllBytes(filepath.string());
 }
 
-ZPrerender* ZPrerender::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                       const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-                                       ZFile* nParent)
+void ZPrerender::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                                int nRawDataIndex, const std::string& nRelPath)
 {
-	ZPrerender* mtx = new ZPrerender(reader, nRawData, nRawDataIndex, nParent);
-
-	mtx->DeclareVar("", "");
-
-	return mtx;
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	DeclareVar("", "");
 }
 
-ZPrerender* ZPrerender::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
-                                     ZFile* nParent, bool readFile)
-{
-	ZPrerender* back = new ZPrerender(reader, nParent);
-
-	back->ParseXML(reader);
-
-	if (readFile)
-		back->ParseBinaryFile(inFolder, true);
-
-	return back;
-}
+// ZPrerender* ZPrerender::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
+//                                     ZFile* nParent, bool readFile)
+//{
+//	ZPrerender* back = new ZPrerender(reader, nParent);
+//
+//	back->ParseXML(reader);
+//
+//	if (readFile)
+//		back->ParseBinaryFile(inFolder, true);
+//
+//	return back;
+//}
 
 int ZPrerender::GetRawDataSize()
 {
@@ -96,12 +80,13 @@ int ZPrerender::GetRawDataSize()
 void ZPrerender::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
 	std::string auxName = name;
+
 	if (name == "")
-	{
 		auxName = GetDefaultName(prefix, rawDataIndex);
-	}
+
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, 0, bodyStr);
+
 	/*parent->AddDeclarationIncludeArray(rawDataIndex,
 	    StringHelper::Sprintf("%s/%s.%s.inc.c", outputDir.c_str(),
 	                            Path::GetFileNameWithoutExtension(GetOutName()).c_str(),
@@ -123,7 +108,7 @@ void ZPrerender::Save(const std::string& outFolder)
 {
 	fs::path folder(outFolder);
 	fs::path filepath = folder / (outName + "." + GetExternalExtension());
-	File::WriteAllBytes(filepath, data);
+	File::WriteAllBytes(filepath.string(), data);
 }
 
 std::string ZPrerender::GetBodySourceCode()
@@ -135,9 +120,7 @@ std::string ZPrerender::GetBodySourceCode()
 		bodyStr += StringHelper::Sprintf("0x%02X, ", data.at(i));
 
 		if (i % 16 == 15)
-		{
 			bodyStr += "\n    ";
-		}
 	}
 
 	bodyStr += "\n";
@@ -150,14 +133,11 @@ std::string ZPrerender::GetSourceOutputCode(const std::string& prefix)
 	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+
 	if (decl == nullptr)
-	{
 		DeclareVar(prefix, bodyStr);
-	}
 	else
-	{
 		decl->text = bodyStr;
-	}
 
 	return "";
 }

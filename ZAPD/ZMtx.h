@@ -10,14 +10,13 @@ protected:
 	std::array<std::array<int32_t, 4>, 4> mtx;
 
 public:
-	ZMtx() = default;
-	ZMtx(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	     ZFile* nParent);
+	// ZMtx() = default;
+	ZMtx(ZFile* nParent);
 	ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	     ZFile* nParent);
 	void ParseRawData() override;
-	static ZMtx* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            int nRawDataIndex, ZFile* nParent);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    int nRawDataIndex, const std::string& nRelPath) override;
 
 	int GetRawDataSize() override;
 

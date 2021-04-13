@@ -1,5 +1,6 @@
 #include "SetObjectList.h"
 #include "../../BitConverter.h"
+#include "../../Globals.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 #include "../ZNames.h"
@@ -46,7 +47,8 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		uint16_t objectIndex = objects[i];
-		declaration += StringHelper::Sprintf("    %s,", ZNames::GetObjectName(objectIndex).c_str());
+		declaration += StringHelper::Sprintf(
+			"    %s,", Globals::Instance->cfg->objectList[objectIndex].c_str());
 
 		if (i < objects.size() - 1)
 			declaration += "\n";

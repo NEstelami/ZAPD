@@ -309,7 +309,8 @@ protected:
 	bool SequenceCheck(std::vector<F3DZEXOpcode> sequence, int startIndex);
 	int OptimizationChecks(int startIndex, std::string& output, std::string prefix);
 	int OptimizationCheck_LoadTextureBlock(int startIndex, std::string& output, std::string prefix);
-	int OptimizationCheck_LoadMultiBlock(int startIndex, std::string& output, std::string prefix);
+	// int OptimizationCheck_LoadMultiBlock(int startIndex, std::string& output, std::string
+	// prefix);
 
 	// F3DEX Specific Opcode Values
 	void Opcode_F3DEX_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line);
@@ -363,14 +364,14 @@ public:
 	std::vector<uint8_t> fileData;
 	std::vector<ZMtx> mtxList;
 
-	ZDisplayList();
-	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
+	ZDisplayList(ZFile* nParent);
+	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, ZFile* nParent);
 
-	static ZDisplayList* static_instance;
-	static ZDisplayList* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData,
-	                                    int rawDataIndex, int rawDataSize, std::string nRelPath);
-	static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
-	                                  bool readFile);
+	static ZDisplayList* Instance;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
+	// static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool
+	// readFile, ZFile* nParent);
 
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(std::vector<uint8_t> fileData,
@@ -385,8 +386,14 @@ public:
 	int GetRawDataSize() override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string ProcessLegacy(const std::string& prefix);
+	std::string ProcessGfxDis(const std::string& prefix);
+
 	void Save(const std::string& outFolder) override;
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
+	bool IsExternalResource() override;
+	virtual std::string GetExternalExtension();
+	std::string GetSourceTypeName() override;
 
 	ZResourceType GetResourceType() override;
 };

@@ -3,27 +3,20 @@
 #include "StringHelper.h"
 #include "ZFile.h"
 
-ZMtx::ZMtx(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-           ZFile* nParent)
-{
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
+REGISTER_ZFILENODE(Mtx, ZMtx);
 
-	ParseXML(reader);
-	ParseRawData();
+ZMtx::ZMtx(ZFile* nParent) : ZResource(nParent)
+{
 }
 
 ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
            ZFile* nParent)
+	: ZResource(nParent)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+	ExtractFromXML(nullptr, nRawData, nRawDataIndex, "");
 
-	ParseRawData();
+	// ParseRawData();
 }
 
 void ZMtx::ParseRawData()
@@ -31,22 +24,15 @@ void ZMtx::ParseRawData()
 	ZResource::ParseRawData();
 
 	for (size_t i = 0; i < 4; ++i)
-	{
 		for (size_t j = 0; j < 4; ++j)
-		{
 			mtx[i][j] = BitConverter::ToInt32BE(rawData, rawDataIndex + (i * 4 + j) * 4);
-		}
-	}
 }
 
-ZMtx* ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           int nRawDataIndex, ZFile* nParent)
+void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                          int nRawDataIndex, const std::string& nRelPath)
 {
-	ZMtx* mtx = new ZMtx(reader, nRawData, nRawDataIndex, nParent);
-
-	mtx->DeclareVar("", "");
-
-	return mtx;
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	DeclareVar("", "");
 }
 
 int ZMtx::GetRawDataSize()
@@ -57,10 +43,10 @@ int ZMtx::GetRawDataSize()
 void ZMtx::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
 	std::string auxName = name;
+
 	if (name == "")
-	{
 		auxName = GetDefaultName(prefix, rawDataIndex);
-	}
+
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                       GetSourceTypeName(), auxName, bodyStr);
 }
@@ -68,15 +54,17 @@ void ZMtx::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 std::string ZMtx::GetBodySourceCode()
 {
 	std::string bodyStr = "\n";
+
 	for (const auto& row : mtx)
 	{
 		bodyStr += "    ";
+
 		for (int32_t val : row)
-		{
 			bodyStr += StringHelper::Sprintf("%-11i, ", val);
-		}
+
 		bodyStr += "\n";
 	}
+
 	return bodyStr;
 }
 
@@ -85,14 +73,11 @@ std::string ZMtx::GetSourceOutputCode(const std::string& prefix)
 	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+
 	if (decl == nullptr)
-	{
 		DeclareVar(prefix, bodyStr);
-	}
 	else
-	{
 		decl->text = bodyStr;
-	}
 
 	return "";
 }

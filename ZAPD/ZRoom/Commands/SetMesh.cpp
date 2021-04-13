@@ -52,9 +52,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 					ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
-                                                     DListType::F3DZEX));
+                                                     DListType::F3DZEX),
+					zRoom->parent);
 				entry->opaqueDList->scene = zRoom->scene;
-				entry->opaqueDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->opaqueDList);
 			}
 
@@ -65,9 +65,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 					ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
-                                                     DListType::F3DZEX));
+                                                     DListType::F3DZEX),
+					zRoom->parent);
 				entry->translucentDList->scene = zRoom->scene;
-				entry->translucentDList->parent = zRoom->parent;
 				GenDListDeclarations(rawData, entry->translucentDList);
 			}
 
@@ -103,10 +103,10 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 		{
 			if (meshHeader0->entries[i]->opaqueDListAddr != 0)
 				declaration +=
-					StringHelper::Sprintf("\t{ (u32)%sDL_%06X, ", zRoom->GetName().c_str(),
+					StringHelper::Sprintf("    { (u32)%sDL_%06X, ", zRoom->GetName().c_str(),
 				                          meshHeader0->entries[i]->opaqueDListAddr);
 			else
-				declaration += "\t{ 0, ";
+				declaration += "    { 0, ";
 
 			if (meshHeader0->entries[i]->translucentDListAddr != 0)
 				declaration +=
@@ -265,7 +265,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 		int8_t numEntries = rawData[segmentOffset + 1];
 		uint32_t currentPtr = meshHeader2->dListStart;
 
-		// HOTSPOT
 		for (int i = 0; i < numEntries; i++)
 		{
 			MeshEntry2* entry = new MeshEntry2();
@@ -285,10 +284,10 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 					ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
-                                                     DListType::F3DZEX));
+                                                     DListType::F3DZEX),
+					zRoom->parent);
 				entry->opaqueDList->scene = zRoom->scene;
-				entry->opaqueDList->parent = zRoom->parent;
-				GenDListDeclarations(rawData, entry->opaqueDList);  // HOTSPOT
+				GenDListDeclarations(rawData, entry->opaqueDList);
 			}
 
 			if (entry->translucentDListAddr != 0)
@@ -298,10 +297,10 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 					ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
-                                                     DListType::F3DZEX));
+                                                     DListType::F3DZEX),
+					zRoom->parent);
 				entry->translucentDList->scene = zRoom->scene;
-				entry->translucentDList->parent = zRoom->parent;
-				GenDListDeclarations(rawData, entry->translucentDList);  // HOTSPOT
+				GenDListDeclarations(rawData, entry->translucentDList);
 			}
 
 			meshHeader2->entries.push_back(entry);
@@ -335,7 +334,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 		for (size_t i = 0; i < meshHeader2->entries.size(); i++)
 		{
 			declaration += StringHelper::Sprintf(
-				"\t{ %i, %i, %i, %i, ", meshHeader2->entries[i]->playerXMax,
+				"    { %i, %i, %i, %i, ", meshHeader2->entries[i]->playerXMax,
 				meshHeader2->entries[i]->playerZMax, meshHeader2->entries[i]->playerXMin,
 				meshHeader2->entries[i]->playerZMin);
 
@@ -379,19 +378,11 @@ SetMesh::~SetMesh()
 
 void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList)
 {
-	string srcVarName = "";
-
-	// if (Globals::Instance->includeFilePrefix)
-	srcVarName = StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
-	// else
-	// srcVarName = StringHelper::Sprintf("%s", dList->GetName().c_str());
+	string srcVarName =
+		StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
-	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());  // HOTSPOT
-
-	// zRoom->parent->AddDeclarationArray(dList->GetRawDataIndex(), DeclarationAlignment::None,
-	// dList->GetRawDataSize(), "static Gfx", srcVarName, dList->GetRawDataSize() / 8,
-	// sourceOutput);
+	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
@@ -411,23 +402,6 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
 	{
 		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
-
-		zRoom->textures[texEntry.first]->Save(Globals::Instance->outputPath);
-
-		zRoom->parent->AddDeclarationIncludeArray(
-			texEntry.first,
-			StringHelper::Sprintf(
-				"%s/%s.%s.inc.c", Globals::Instance->outputPath.c_str(),
-				Path::GetFileNameWithoutExtension(zRoom->textures[texEntry.first]->GetName())
-					.c_str(),
-				zRoom->textures[texEntry.first]->GetExternalExtension().c_str()),
-			zRoom->textures[texEntry.first]->GetRawDataSize(), "u64",
-			StringHelper::Sprintf("%s", zRoom->textures[texEntry.first]->GetName().c_str(),
-		                          texEntry.first),
-			0);
 	}
 }
 
@@ -587,8 +561,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	int dlistLength = ZDisplayList::GetDListLength(
 		rawData, dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength);
-	dlist->parent = parent;
+	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength, parent);
 
 	string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
 	dlist->SetName(dListStr);

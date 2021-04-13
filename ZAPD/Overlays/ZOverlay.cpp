@@ -220,11 +220,6 @@ string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 	return output;
 }
 
-ZResourceType ZOverlay::GetResourceType()
-{
-	return ZResourceType::Overlay;
-}
-
 SectionType ZOverlay::GetSectionTypeFromStr(string sectionName)
 {
 	if (sectionName == ".rel.text" || sectionName == ".text")
