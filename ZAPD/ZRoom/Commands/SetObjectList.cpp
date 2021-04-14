@@ -48,7 +48,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	{
 		uint16_t objectIndex = objects[i];
 		declaration += StringHelper::Sprintf(
-			"    %s,", Globals::Instance->cfg->objectList[objectIndex].c_str());
+			"    %s,", ZNames::GetObjectName(objectIndex).c_str());
 
 		if (i < objects.size() - 1)
 			declaration += "\n";

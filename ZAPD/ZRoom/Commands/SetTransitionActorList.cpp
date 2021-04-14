@@ -49,13 +49,7 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 
 	for (TransitionActorEntry* entry : transitionActors)
 	{
-		string actorStr = "";
-
-		if (entry->actorNum < sizeof(Globals::Instance->cfg->actorList) /
-		                          sizeof(Globals::Instance->cfg->actorList[0]))
-			actorStr = Globals::Instance->cfg->actorList[entry->actorNum];
-		else
-			actorStr = StringHelper::Sprintf("0x%04X", entry->actorNum);
+		string actorStr = ZNames::GetActorName(entry->actorNum);
 
 		declaration += StringHelper::Sprintf(
 			"    { %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n", entry->frontObjectRoom,

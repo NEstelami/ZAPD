@@ -780,10 +780,10 @@ void ZTexture::Save(const std::string& outFolder)
 	std::string outPath = outFolder;
 
 	// POOL CHECK
-	if (Globals::Instance->cfg->texturePool.find(hash) != Globals::Instance->cfg->texturePool.end())
+	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
 	{
-		outPath = Path::GetDirectoryName(Globals::Instance->cfg->texturePool[hash]);
-		outName = Path::GetFileNameWithoutExtension(Globals::Instance->cfg->texturePool[hash]);
+		outPath = Path::GetDirectoryName(Globals::Instance->cfg.texturePool[hash]);
+		outName = Path::GetFileNameWithoutExtension(Globals::Instance->cfg.texturePool[hash]);
 	}
 
 	if (!Directory::Exists(outPath))

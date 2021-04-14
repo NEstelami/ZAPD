@@ -10,7 +10,9 @@ class ZNames
 public:
 	static std::string GetObjectName(int id)
 	{
-		return Globals::Instance->cfg->objectList[id];
+		if (id >= Globals::Instance->cfg.objectList.size())
+			return StringHelper::Sprintf("0x%04X", id);
+		return Globals::Instance->cfg.objectList.at(id);
 	}
 
 	static std::string GetActorName(int id)
@@ -20,7 +22,7 @@ public:
 		case ZGame::OOT_RETAIL:
 		case ZGame::OOT_SW97:
 			if (id < ZNames::GetNumActors())
-				return Globals::Instance->cfg->actorList[id];
+				return Globals::Instance->cfg.actorList.at(id);
 			else
 				return StringHelper::Sprintf("0x%04X", id);
 		case ZGame::MM_RETAIL:
@@ -29,7 +31,7 @@ public:
 				id &= 0xFFF;
 				std::string name = "";
 				if (id < ZNames::GetNumActors())
-					name = Globals::Instance->cfg->actorList[id];
+					name = Globals::Instance->cfg.actorList.at(id);
 				else
 					name = StringHelper::Sprintf("0x%04X", id);
 
@@ -45,6 +47,6 @@ public:
 
 	static int GetNumActors()
 	{
-		return Globals::Instance->cfg->actorList.size();
+		return Globals::Instance->cfg.actorList.size();
 	}
 };

@@ -2006,10 +2006,10 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					std::string texName =
 						StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
 
-					if (Globals::Instance->cfg->texturePool.find(item.second->hash) !=
-					    Globals::Instance->cfg->texturePool.end())
+					if (Globals::Instance->cfg.texturePool.find(item.second->hash) !=
+					    Globals::Instance->cfg.texturePool.end())
 					{
-						incStr = Globals::Instance->cfg->texturePool[item.second->hash];
+						incStr = Globals::Instance->cfg.texturePool[item.second->hash];
 						texName = Path::GetFileNameWithoutExtension(incStr);
 					}
 

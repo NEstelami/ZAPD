@@ -530,10 +530,10 @@ void ZFile::GenerateSourceFiles(string outputDir)
 				ZTexture* tex = (ZTexture*)res;
 
 				// POOL CHECK
-				if (Globals::Instance->cfg->texturePool.find(tex->hash) !=
-				    Globals::Instance->cfg->texturePool.end())
+				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
+				    Globals::Instance->cfg.texturePool.end())
 				{
-					incStr = Globals::Instance->cfg->texturePool[tex->hash];
+					incStr = Globals::Instance->cfg.texturePool[tex->hash];
 					res->SetName(Path::GetFileNameWithoutExtension(incStr));
 				}
 
