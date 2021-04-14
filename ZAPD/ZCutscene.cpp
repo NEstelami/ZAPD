@@ -526,11 +526,10 @@ string CutsceneCommandFadeBGM::GenerateSourceCode(const std::string& roomName, i
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf(
-			"        CS_FADE_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n",
+			"        CS_FADE_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n",
 			entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->unknown0,
 			entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4,
-			entries[i]->unknown5, entries[i]->unknown6, entries[i]->unknown7, entries[i]->unknown8,
-			entries[i]->unknown9, entries[i]->unknown10);
+			entries[i]->unknown5, entries[i]->unknown6, entries[i]->unknown7);
 	}
 
 	return result;
