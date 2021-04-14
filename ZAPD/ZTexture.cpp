@@ -926,8 +926,3 @@ TextureType ZTexture::GetTextureTypeFromString(string str)
 		fprintf(stderr, "Encountered Unknown Texture Type %s \n", str.c_str());
 	return texType;
 }
-
-std::string ZTexture::GetSourceTypeName()
-{
-	return "u64";
-}
