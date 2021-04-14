@@ -10,9 +10,6 @@ protected:
 	std::vector<uint8_t> data;
 
 public:
-	// ZBackground() = default;
-	// ZBackground(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	// int nRawDataIndex, ZFile* nParent);
 	ZBackground(ZFile* nParent);
 	ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	            ZFile* nParent);
@@ -20,8 +17,6 @@ public:
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    int nRawDataIndex, const std::string& nRelPath) override;
-	// static ZBackground* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
-	// ZFile* nParent, bool readFile);
 
 	void CheckValidJpeg(const std::string& filepath);
 

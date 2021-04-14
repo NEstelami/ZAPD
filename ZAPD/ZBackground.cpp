@@ -16,17 +16,18 @@ REGISTER_ZFILENODE(Background, ZBackground);
 
 ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 {
-	// ParseXML(reader);
 }
 
 ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                        int nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = nRawDataIndex;
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
 	outName = name;
 
-	ExtractFromXML(nullptr, nRawData, nRawDataIndex, "");
+	ParseRawData();
 }
 
 void ZBackground::ParseRawData()
@@ -69,19 +70,6 @@ void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar("", "");
 }
-
-// ZBackground* ZBackground::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
-//                                     ZFile* nParent, bool readFile)
-//{
-//	ZBackground* back = new ZBackground(reader, nParent);
-//
-//	back->ParseXML(reader);
-//
-//	if (readFile)
-//		back->ParseBinaryFile(inFolder, true);
-//
-//	return back;
-//}
 
 void ZBackground::CheckValidJpeg(const std::string& filepath)
 {
