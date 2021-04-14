@@ -2109,6 +2109,11 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				curAddr += 16;
 			}
 
+			// Ensure there's always a trailing line feed to prevent dumb warnings.
+			// Please don't remove this line, unless you somehow made a way to prevent
+			// that warning when building the OoT repo.
+			declaration += "\n";
+
 			vtxDeclarations[vtxKeys[i]] = declaration;
 
 			if (parent != nullptr)

@@ -842,6 +842,11 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));
 	}
 
+	// Ensure there's always a trailing line feed to prevent dumb warnings.
+	// Please don't remove this line, unless you somehow made a way to prevent
+	// that warning when building the OoT repo.
+	sourceOutput += "\n";
+
 	return sourceOutput;
 }
 
