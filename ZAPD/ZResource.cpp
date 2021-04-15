@@ -110,17 +110,17 @@ void ZResource::SetRawData(std::vector<uint8_t> nData)
 	rawData = nData;
 }
 
-int ZResource::GetRawDataIndex()
+uint32_t ZResource::GetRawDataIndex()
 {
 	return rawDataIndex;
 }
 
-int ZResource::GetRawDataSize()
+size_t ZResource::GetRawDataSize()
 {
 	return rawData.size();
 }
 
-void ZResource::SetRawDataIndex(int value)
+void ZResource::SetRawDataIndex(uint32_t value)
 {
 	rawDataIndex = value;
 }
@@ -166,4 +166,8 @@ uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 		currentPtr -= GETSEGOFFSET(parentBaseAddress);
 
 	return currentPtr;
+}
+
+ZResource::~ZResource(){
+
 }

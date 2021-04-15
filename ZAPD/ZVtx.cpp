@@ -60,7 +60,7 @@ void ZVtx::ParseRawData()
 	a = data[rawDataIndex + 15];
 }
 
-int ZVtx::GetRawDataSize()
+size_t ZVtx::GetRawDataSize()
 {
 	return 16;
 }

@@ -605,9 +605,9 @@ vector<uint8_t> ZRoom::GetRawData()
 	return rawData;
 }
 
-int ZRoom::GetRawDataSize()
+size_t ZRoom::GetRawDataSize()
 {
-	int32_t size = 0;
+	size_t size = 0;
 
 	for (ZRoomCommand* cmd : commands)
 		size += cmd->GetRawDataSize();

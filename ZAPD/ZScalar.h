@@ -50,7 +50,7 @@ public:
 	std::string GetSourceTypeName() override;
 	std::string GetSourceValue();
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	ZResourceType GetResourceType() override;
 	bool DoesSupportArray() override;
 	void ParseRawData() override;

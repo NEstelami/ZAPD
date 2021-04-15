@@ -700,9 +700,9 @@ vector<uint8_t> ZTexture::GetRawData()
 	return rawData;
 }
 
-int ZTexture::GetRawDataSize()
+size_t ZTexture::GetRawDataSize()
 {
-	return (int)(width * height * GetPixelMultiplyer());
+	return (width * height * GetPixelMultiplyer());
 }
 
 std::string ZTexture::GetIMFmtFromType()

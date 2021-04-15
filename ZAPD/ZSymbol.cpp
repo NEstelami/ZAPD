@@ -75,7 +75,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-int ZSymbol::GetRawDataSize()
+size_t ZSymbol::GetRawDataSize()
 {
 	if (isArray)
 		return count * typeSize;

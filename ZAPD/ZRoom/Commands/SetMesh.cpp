@@ -510,7 +510,7 @@ string SetMesh::GenerateExterns()
 	return sourceOutput;
 }
 
-int32_t SetMesh::GetRawDataSize()
+size_t SetMesh::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize();
 }
@@ -571,7 +571,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	return dlist;
 }
 
-int PolygonDlist::GetRawDataSize()
+size_t PolygonDlist::GetRawDataSize()
 {
 	return 0x08;
 }

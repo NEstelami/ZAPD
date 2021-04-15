@@ -25,7 +25,7 @@ public:
 	std::string GetCommandCName() override;
 	std::string GenerateExterns() override;
 	RoomCommand GetRoomCommand() override;
-	int32_t GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 
 private:
 	std::vector<MinimapChest*> chests;

@@ -35,7 +35,7 @@ void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_
 	DeclareVar("", "");
 }
 
-int ZMtx::GetRawDataSize()
+size_t ZMtx::GetRawDataSize()
 {
 	return 64;
 }

@@ -57,9 +57,9 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 	return sourceOutput;
 }
 
-int32_t SetPathways::GetRawDataSize()
+size_t SetPathways::GetRawDataSize()
 {
-	int32_t size = 0;
+	size_t size = 0;
 	if (pathwayList != nullptr)
 	    size += pathwayList->GetRawDataSize();
 
@@ -121,7 +121,6 @@ PathwayList::PathwayList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	_rawDataIndex = rawDataIndex;
 
 	uint32_t currentPtr = rawDataIndex;
-	uint8_t* data = rawData.data();
 
 	for (int pathIndex = 0; pathIndex < length; pathIndex++)
 	{
@@ -192,9 +191,9 @@ void PathwayList::GetSourceOutputCode(std::string prefix)
 	}
 }
 
-int32_t PathwayList::GetRawDataSize()
+size_t PathwayList::GetRawDataSize()
 {
-	int32_t pointsSize = 0;
+	size_t pointsSize = 0;
 
 	for (PathwayEntry* entry : pathways)
 	{

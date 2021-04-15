@@ -30,7 +30,7 @@ public:
 	std::string GetCommandCName() override;
 	std::string GenerateExterns() override;
 	RoomCommand GetRoomCommand() override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 
 private:
 	std::vector<ActorCutsceneEntry*> cutscenes;

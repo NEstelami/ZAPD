@@ -446,6 +446,9 @@ void ZLimb::ParseRawData()
 			static_cast<ZLimbSkinType>(BitConverter::ToInt32BE(rawData, rawDataIndex + 8));
 		skinSegment = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
 		break;
+	default:
+		throw std::runtime_error("Invalid ZLimb type");
+		break;
 	}
 }
 
@@ -468,7 +471,7 @@ void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	}
 }
 
-int ZLimb::GetRawDataSize()
+size_t ZLimb::GetRawDataSize()
 {
 	switch (type)
 	{
@@ -564,9 +567,9 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 		return "SkinLimb";
 	case ZLimbType::Curve:
 		return "SkelCurveLimb";
+	default:
+		return "StandardLimb";
 	}
-
-	return "StandardLimb";
 }
 
 uint32_t ZLimb::GetFileAddress()
@@ -658,6 +661,7 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 			        "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type "
 			        "for SkinLimb: '%i'. \n\tPlease report this.\n",
 			        name.c_str(), static_cast<int32_t>(skinSegmentType));
+			break;
 		case ZLimbSkinType::SkinType_0:
 		case ZLimbSkinType::SkinType_5:
 			fprintf(stderr,

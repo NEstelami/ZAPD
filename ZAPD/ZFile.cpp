@@ -109,7 +109,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 	if (segment != -1)
 	{
-		// printf("Adding Segment %i\n", segment);
 		Globals::Instance->AddSegment(segment);
 	}
 
@@ -146,8 +145,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			if (mode == ZFileMode::Extract)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
-			// else
-			// nRes->ExtractFromFile();
 
 			// TODO: See if we can make this part of the ZRoom code...
 			if (nRes->GetResourceType() == ZResourceType::Room)
@@ -171,9 +168,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			resources.push_back(nRes);
 			rawDataIndex += nRes->GetRawDataSize();
-		}
-		else
-		{
 		}
 	}
 }
@@ -207,9 +201,6 @@ std::string ZFile::GetName()
 void ZFile::ExtractResources(string outputDir)
 {
 	string folderName = Path::GetFileNameWithoutExtension(outputPath);
-
-	// printf("DIR CHECK: %s\n", folderName.c_str());
-	// printf("OUT CHECK: %s\n", outputDir.c_str());
 
 	if (!Directory::Exists(outputPath))
 		Directory::CreateDirectory(outputPath);
@@ -652,7 +643,7 @@ string ZFile::ProcessDeclarations()
 
 	pair<int32_t, Declaration*> lastItem = declarationKeys[0];
 
-	for (int i = 1; i < declarationKeys.size(); i++)
+	for (size_t i = 1; i < declarationKeys.size(); i++)
 	{
 		pair<int32_t, Declaration*> curItem = declarationKeys[i];
 

@@ -122,7 +122,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 	return sourceOutput;
 }
 
-int32_t SetCsCamera::GetRawDataSize()
+size_t SetCsCamera::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }

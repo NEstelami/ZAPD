@@ -53,6 +53,7 @@ public:
 	uint32_t hash;
 
 	ZResource(ZFile* nParent);
+	virtual ~ZResource();
 
 	// Parsing from File
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -83,9 +84,9 @@ public:
 	std::string GetOutName();
 	void SetOutName(std::string nName);
 	std::string GetRelativePath();
-	virtual int GetRawDataIndex();
-	virtual void SetRawDataIndex(int value);
-	virtual int GetRawDataSize();
+	virtual uint32_t GetRawDataIndex();
+	virtual void SetRawDataIndex(uint32_t value);
+	virtual size_t GetRawDataSize();
 	virtual std::vector<uint8_t> GetRawData();
 	virtual void SetRawData(std::vector<uint8_t> nData);
 
@@ -94,7 +95,7 @@ protected:
 	std::string outName;
 	std::string relativePath;
 	std::vector<uint8_t> rawData;
-	int rawDataIndex;
+	uint32_t rawDataIndex;
 	std::string sourceOutput;
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file

@@ -38,7 +38,7 @@ string ZRoomCommandUnk::GenerateExterns()
 	return "";
 }
 
-int32_t ZRoomCommandUnk::GetRawDataSize()
+size_t ZRoomCommandUnk::GetRawDataSize()
 {
 	return 8;
 }

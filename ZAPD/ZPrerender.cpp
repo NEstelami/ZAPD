@@ -59,20 +59,7 @@ void ZPrerender::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<
 	DeclareVar("", "");
 }
 
-// ZPrerender* ZPrerender::BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
-//                                     ZFile* nParent, bool readFile)
-//{
-//	ZPrerender* back = new ZPrerender(reader, nParent);
-//
-//	back->ParseXML(reader);
-//
-//	if (readFile)
-//		back->ParseBinaryFile(inFolder, true);
-//
-//	return back;
-//}
-
-int ZPrerender::GetRawDataSize()
+size_t ZPrerender::GetRawDataSize()
 {
 	return data.size();
 }

@@ -24,7 +24,7 @@ public:
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
 	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
 	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
+	virtual size_t GetRawDataSize();
 	virtual std::string GetCommandCName();
 	virtual std::string GenerateExterns();
 

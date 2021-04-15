@@ -303,7 +303,7 @@ protected:
 	void ParseRawData() override;
 
 	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line);
-	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line);
+	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string prefix, char* line);
 
 	// Various Instruction Optimizations
 	bool SequenceCheck(std::vector<F3DZEXOpcode> sequence, int startIndex);
@@ -313,27 +313,27 @@ protected:
 	// prefix);
 
 	// F3DEX Specific Opcode Values
-	void Opcode_F3DEX_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_F3DEX_G_SETOTHERMODE_L(uint64_t data, char* line);
 
 	// Shared Opcodes between F3DZEX and F3DEX
-	void Opcode_G_DL(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_MODIFYVTX(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_CULLDL(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_TRI1(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_TRI2(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_MTX(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_VTX(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_TEXTURE(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_SETTIMG(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_SETTILE(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_SETTILESIZE(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_LOADBLOCK(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_SETCOMBINE(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_SETPRIMCOLOR(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_SETOTHERMODE_L(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_SETOTHERMODE_H(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_LOADTLUT(uint64_t data, int i, std::string prefix, char* line);
-	void Opcode_G_ENDDL(uint64_t data, int i, std::string prefix, char* line);
+	void Opcode_G_DL(uint64_t data, std::string prefix, char* line);
+	void Opcode_G_MODIFYVTX(uint64_t data, char* line);
+	void Opcode_G_CULLDL(uint64_t data, char* line);
+	void Opcode_G_TRI1(uint64_t data, char* line);
+	void Opcode_G_TRI2(uint64_t data, char* line);
+	void Opcode_G_MTX(uint64_t data, char* line);
+	void Opcode_G_VTX(uint64_t data, char* line);
+	void Opcode_G_TEXTURE(uint64_t data, char* line);
+	void Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* line);
+	void Opcode_G_SETTILE(uint64_t data, char* line);
+	void Opcode_G_SETTILESIZE(uint64_t data, std::string prefix, char* line);
+	void Opcode_G_LOADBLOCK(uint64_t data, char* line);
+	void Opcode_G_SETCOMBINE(uint64_t data, char* line);
+	void Opcode_G_SETPRIMCOLOR(uint64_t data, char* line);
+	void Opcode_G_SETOTHERMODE_L(uint64_t data, char* line);
+	void Opcode_G_SETOTHERMODE_H(uint64_t data, char* line);
+	void Opcode_G_LOADTLUT(uint64_t data, std::string prefix, char* line);
+	void Opcode_G_ENDDL(std::string prefix, char* line);
 
 public:
 	std::string sceneSegName;
@@ -383,7 +383,7 @@ public:
 	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex, DListType dListType);
 
 	std::vector<uint8_t> GetRawData() override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string ProcessLegacy(const std::string& prefix);

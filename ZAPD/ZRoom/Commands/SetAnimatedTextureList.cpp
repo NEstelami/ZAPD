@@ -44,7 +44,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 	for (AnimatedTexture* texture : textures)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		switch (texture->type)
 		{
@@ -100,9 +100,9 @@ string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, int base
 		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
-int32_t SetAnimatedTextureList::GetRawDataSize()
+size_t SetAnimatedTextureList::GetRawDataSize()
 {
-	int32_t paramsSize = 0;
+	size_t paramsSize = 0;
 	for (AnimatedTexture* texture : textures)
 	{
 		for (AnitmatedTextureParams* param : texture->params)
@@ -209,24 +209,24 @@ FlashingTexture::FlashingTexture(std::vector<uint8_t> rawData, int rawDataIndex,
 	envColorSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 8))),
 	keyFrameSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 12)))
 {
-	int length = (type == 2) ? cycleLength : numKeyFrames;
+	uint16_t length = (type == 2) ? cycleLength : numKeyFrames;
 
 	int32_t currentPtr = primColorSegmentOffset;
-	for (int i = 0; i < length; i++)
+	for (uint16_t i = 0; i < length; i++)
 	{
 		primColors.push_back(FlashingTexturePrimColor(rawData, currentPtr));
 		currentPtr += 5;
 	}
 	
 	currentPtr = envColorSegmentOffset;
-	for (int i = 0; i < length; i++)
+	for (uint16_t i = 0; i < length; i++)
 	{
 		envColors.push_back(FlashingTextureEnvColor(rawData, currentPtr));
 		currentPtr += 4;
 	}
 	
 	currentPtr = keyFrameSegmentOffset;
-	for (int i = 0; i < length; i++)
+	for (uint16_t i = 0; i < length; i++)
 	{
 		keyFrames.push_back(BitConverter::ToUInt16BE(rawData, currentPtr));
 		currentPtr += 2;
@@ -238,7 +238,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 	if (primColorSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (FlashingTexturePrimColor& color : primColors)
 		{
@@ -260,7 +260,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 	if (envColorSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (FlashingTextureEnvColor& color : envColors)
 		{
@@ -282,7 +282,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 	if (keyFrameSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (uint16_t keyFrame : keyFrames)
 		{
@@ -320,7 +320,7 @@ CyclingTextureParams::CyclingTextureParams(std::vector<uint8_t> rawData, int raw
 	int32_t currentPtr = textureIndicesSegmentOffset;
 	int maxIndex = 0;
 	
-	for (int i = 0; i < cycleLength; i++)
+	for (uint16_t i = 0; i < cycleLength; i++)
 	{
 		int newIndex = rawData[currentPtr];
 		textureIndices.push_back(newIndex);
@@ -342,7 +342,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (uint32_t offset : textureSegmentOffsets)
 		{
@@ -364,7 +364,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 	if (textureIndicesSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (uint8_t textureIndex : textureIndices)
 		{

@@ -110,7 +110,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	return sourceOutput;
 }
 
-int32_t SetActorList::GetRawDataSize()
+size_t SetActorList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + ((int)actors.size() * 16);
 }

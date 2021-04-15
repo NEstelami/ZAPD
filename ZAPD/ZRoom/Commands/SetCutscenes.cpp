@@ -13,7 +13,6 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
     numCutscenes = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
-	uint32_t curPtr = segmentOffset;
 	string output = "";
 
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
@@ -28,7 +27,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 		int32_t currentPtr = segmentOffset;
 		string declaration = "";
 
-		for (int i = 0; i < numCutscenes; i++)
+		for (uint8_t i = 0; i < numCutscenes; i++)
 		{
 			CutsceneEntry* entry = new CutsceneEntry(rawData, currentPtr);
 			cutsceneEntries.push_back(entry);
@@ -45,7 +44,6 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 				"");  // TODO: Use ExtractFromFile() here when that gets implemented
 			cutscenes.push_back(cutscene);
 
-			//cutscenes.push_back(new ZCutsceneMM(rawData, entry->segmentOffset, 9999));
 		}
 
 		zRoom->parent->AddDeclarationArray(
@@ -106,7 +104,7 @@ string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
 								 numCutscenes, zRoom->GetName().c_str(), segmentOffset);
 }
 
-int32_t SetCutscenes::GetRawDataSize()
+size_t SetCutscenes::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (0);
 }

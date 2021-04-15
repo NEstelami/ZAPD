@@ -20,17 +20,17 @@ ZCutscene::~ZCutscene()
 string ZCutscene::GetSourceOutputCode(const std::string& prefix)
 {
 	string output = "";
-	int size = 0;
+	size_t size = 0;
 	int32_t curPtr = 0;
-	
+
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
 		output += "    " + cmd->GenerateSourceCode(prefix, curPtr);
 		curPtr += (uint32_t)cmd->GetCommandSize();
-		size += (int)cmd->GetCommandSize();
+		size += cmd->GetCommandSize();
 	}
 
 	output += StringHelper::Sprintf("    CS_END(),\n", commands.size(), endFrame);
@@ -38,17 +38,17 @@ string ZCutscene::GetSourceOutputCode(const std::string& prefix)
 	return output;
 }
 
-int ZCutscene::GetRawDataSize()
+size_t ZCutscene::GetRawDataSize()
 {
-	int size = 0;
+	size_t size = 0;
 
 	// Beginning
 	size += 8;
 
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
-		size += (int)cmd->GetCommandSize();
+		size += cmd->GetCommandSize();
 		size += 4;
 	}
 
@@ -84,13 +84,6 @@ void ZCutscene::ParseRawData()
 
 		int numEntries = 1;
 
-		/*if (cmdID != CutsceneCommands::SetCameraPos && cmdID != CutsceneCommands::SetCameraFocus
-		&& cmdID != CutsceneCommands::SetCameraFocusLink && cmdID !=
-		CutsceneCommands::SetCameraPosLink)
-		{
-			numEntries = BitConverter::ToInt32BE(rawData, currentPtr);
-			currentPtr += 4;
-		}*/
 
 		for (int j = 0; j < numEntries; j++)
 		{
@@ -170,7 +163,7 @@ void ZCutscene::ParseRawData()
 				break;
 			case CutsceneCommands::Error:
 				fprintf(stderr, "Cutscene command error %d  %s  %d\n", (int)cmdID, __FILE__,
-						__LINE__);
+				        __LINE__);
 				break;
 			}
 
@@ -370,8 +363,8 @@ string CutsceneCommand::GetCName(const std::string& prefix)
 string CutsceneCommand::GenerateSourceCode(const std::string& roomName, int baseAddress)
 {
 	return StringHelper::Sprintf("%s %sCutsceneData%04XCmd%02X = { 0x%02X,",
-								 GetCName(roomName).c_str(), roomName.c_str(), baseAddress,
-								 commandIndex, commandID);
+	                             GetCName(roomName).c_str(), roomName.c_str(), baseAddress,
+	                             commandIndex, commandID);
 }
 
 size_t CutsceneCommand::GetCommandSize()
@@ -396,15 +389,15 @@ CutsceneCameraPoint::CutsceneCameraPoint(const vector<uint8_t>& rawData, int raw
 }
 
 CutsceneCommandSetCameraPos::CutsceneCommandSetCameraPos(const vector<uint8_t>& rawData,
-														 int rawDataIndex)
+                                                         int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 
-	base = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 0);
-	startFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 2);
-	endFrame = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 4);
-	unused = (uint16_t)BitConverter::ToInt16BE(data, rawDataIndex + 6);
+	base = BitConverter::ToUInt16BE(data, rawDataIndex + 0);
+	startFrame = BitConverter::ToUInt16BE(data, rawDataIndex + 2);
+	endFrame = BitConverter::ToUInt16BE(data, rawDataIndex + 4);
+	unused = BitConverter::ToUInt16BE(data, rawDataIndex + 6);
 
 	entries = vector<CutsceneCameraPoint*>();
 
@@ -479,33 +472,33 @@ size_t CutsceneCommandSetCameraPos::GetCommandSize()
 
 MusicFadeEntry::MusicFadeEntry(const vector<uint8_t>& rawData, int rawDataIndex)
 {
-	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	unknown0 = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	unknown1 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 8);
-	unknown2 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
-	unknown3 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 16);
-	unknown4 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 20);
-	unknown5 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
-	unknown6 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
-	unknown7 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
-	unknown8 = (uint32_t)BitConverter::ToInt32BE(rawData,
-												 rawDataIndex + 36);  // Macro hardcodes it as zero
-	unknown9 = (uint32_t)BitConverter::ToInt32BE(rawData,
-												 rawDataIndex + 40);  // Macro hardcodes it as zero
-	unknown10 = (uint32_t)BitConverter::ToInt32BE(rawData,
-												  rawDataIndex + 44);  // Macro hardcodes it as zero
+	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
+	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+	endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
+	unknown0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
+	unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+	unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+	unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
+	unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
+	unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
+	unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
+	unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
+	unknown8 = BitConverter::ToUInt32BE(rawData,
+	                                    rawDataIndex + 36);  // Macro hardcodes it as zero
+	unknown9 = BitConverter::ToUInt32BE(rawData,
+	                                    rawDataIndex + 40);  // Macro hardcodes it as zero
+	unknown10 = BitConverter::ToUInt32BE(rawData,
+	                                     rawDataIndex + 44);  // Macro hardcodes it as zero
 }
 
 CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const vector<uint8_t>& rawData, int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
+	uint32_t numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 
 	rawDataIndex += 4;
 
-	for (int i = 0; i < numEntries; i++)
+	for (uint32_t i = 0; i < numEntries; i++)
 	{
 		entries.push_back(new MusicFadeEntry(rawData, rawDataIndex));
 		rawDataIndex += 0x30;
@@ -543,27 +536,27 @@ size_t CutsceneCommandFadeBGM::GetCommandSize()
 
 MusicChangeEntry::MusicChangeEntry(const vector<uint8_t>& rawData, int rawDataIndex)
 {
-	sequence = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	unknown0 = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	unknown1 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 8);
-	unknown2 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
-	unknown3 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 16);
-	unknown4 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 20);
-	unknown5 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
-	unknown6 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
-	unknown7 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
+	sequence = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
+	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+	endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
+	unknown0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
+	unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+	unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+	unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
+	unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
+	unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
+	unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
+	unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
 }
 
 CutsceneCommandPlayBGM::CutsceneCommandPlayBGM(const vector<uint8_t>& rawData, int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
+	uint32_t numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 
 	rawDataIndex += 4;
 
-	for (int i = 0; i < numEntries; i++)
+	for (uint32_t i = 0; i < numEntries; i++)
 	{
 		entries.push_back(new MusicChangeEntry(rawData, rawDataIndex));
 		rawDataIndex += 0x30;
@@ -601,11 +594,11 @@ size_t CutsceneCommandPlayBGM::GetCommandSize()
 CutsceneCommandStopBGM::CutsceneCommandStopBGM(const vector<uint8_t>& rawData, int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
+	uint32_t numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 
 	rawDataIndex += 4;
 
-	for (int i = 0; i < numEntries; i++)
+	for (uint32_t i = 0; i < numEntries; i++)
 	{
 		entries.push_back(new MusicChangeEntry(rawData, rawDataIndex));
 		rawDataIndex += 0x30;
@@ -656,7 +649,7 @@ EnvLightingEntry::EnvLightingEntry(const vector<uint8_t>& rawData, int rawDataIn
 }
 
 CutsceneCommandEnvLighting::CutsceneCommandEnvLighting(const vector<uint8_t>& rawData,
-													   int rawDataIndex)
+                                                       int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
@@ -734,9 +727,9 @@ string CutsceneCommandUnknown9::GenerateSourceCode(const std::string& roomName, 
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf("\t\tCS_CMD_09(%i, %i, %i, %i, %i, %i, %i, %i),\n",
-										entries[i]->base, entries[i]->startFrame,
-										entries[i]->endFrame, entries[i]->unk2, entries[i]->unk3,
-										entries[i]->unk4, entries[i]->unused0, entries[i]->unused1);
+		                                entries[i]->base, entries[i]->startFrame,
+		                                entries[i]->endFrame, entries[i]->unk2, entries[i]->unk3,
+		                                entries[i]->unk4, entries[i]->unused0, entries[i]->unused1);
 	}
 
 	return result;
@@ -941,7 +934,7 @@ ActorAction::ActorAction(const vector<uint8_t>& rawData, int rawDataIndex)
 }
 
 CutsceneCommandActorAction::CutsceneCommandActorAction(const vector<uint8_t>& rawData,
-													   int rawDataIndex)
+                                                       int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
@@ -975,7 +968,7 @@ string CutsceneCommandActorAction::GenerateSourceCode(const std::string& roomNam
 	{
 		result += StringHelper::Sprintf(
 			"    CS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, "
-		    "%i, %i),\n",
+			"%i, %i),\n",
 			entries[i]->action, entries[i]->startFrame, entries[i]->endFrame, entries[i]->rotX,
 			entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX, entries[i]->startPosY,
 			entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY, entries[i]->endPosZ,
@@ -997,7 +990,7 @@ size_t CutsceneCommandActorAction::GetCommandSize()
 }
 
 CutsceneCommandTerminator::CutsceneCommandTerminator(const vector<uint8_t>& rawData,
-													 int rawDataIndex)
+                                                     int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -1075,7 +1068,7 @@ SpecialActionEntry::SpecialActionEntry(const vector<uint8_t>& rawData, int rawDa
 }
 
 CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(const vector<uint8_t>& rawData,
-														   int rawDataIndex)
+                                                           int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
@@ -1090,7 +1083,7 @@ CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(const vector<uint8_t>
 }
 
 string CutsceneCommandSpecialAction::GenerateSourceCode(const std::string& roomName,
-														int baseAddress)
+                                                        int baseAddress)
 {
 	string result = "";
 
@@ -1139,7 +1132,7 @@ size_t CutsceneCommandNop::GetCommandSize()
 }
 
 CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const vector<uint8_t>& rawData,
-														 int rawDataIndex)
+                                                         int rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;

@@ -100,7 +100,7 @@ RoomCommand SetMinimapList::GetRoomCommand()
 	return RoomCommand::SetMinimapList;
 }
 
-int32_t SetMinimapList::GetRawDataSize()
+size_t SetMinimapList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (minimaps.size() * 10);
 }

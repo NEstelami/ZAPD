@@ -81,7 +81,7 @@ public:
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 
 	std::vector<uint8_t> GetRawData() override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
 	int GetWidth();

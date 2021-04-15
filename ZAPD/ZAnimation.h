@@ -49,7 +49,7 @@ public:
 	ZNormalAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetSourceTypeName() override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -67,7 +67,7 @@ public:
 	ZLinkAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetSourceTypeName() override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -137,7 +137,7 @@ public:
 	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 	void PreGenValues(const std::string& prefix);
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() override;

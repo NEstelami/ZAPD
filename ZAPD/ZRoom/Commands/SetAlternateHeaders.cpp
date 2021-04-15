@@ -58,7 +58,7 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 	return sourceOutput;
 }
 
-int32_t SetAlternateHeaders::GetRawDataSize()
+size_t SetAlternateHeaders::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + 0;
 }

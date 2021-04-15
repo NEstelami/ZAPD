@@ -86,7 +86,7 @@ RoomCommand SetMinimapChests::GetRoomCommand()
 	return RoomCommand::SetMinimapChests;
 }
 
-int32_t SetMinimapChests::GetRawDataSize()
+size_t SetMinimapChests::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (chests.size() * 10);
 }

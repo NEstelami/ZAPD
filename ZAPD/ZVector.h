@@ -21,7 +21,7 @@ public:
 	std::string GetSourceValue();
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void ParseRawData() override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType() override;
 

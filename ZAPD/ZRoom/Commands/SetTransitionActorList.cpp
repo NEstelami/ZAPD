@@ -78,7 +78,7 @@ string SetTransitionActorList::GenerateSourceCodePass2(string roomName, int base
 	return "";
 }
 
-int32_t SetTransitionActorList::GetRawDataSize()
+size_t SetTransitionActorList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (transitionActors.size() * 16);
 }

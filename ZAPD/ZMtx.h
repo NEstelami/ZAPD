@@ -18,7 +18,7 @@ public:
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    int nRawDataIndex, const std::string& nRelPath) override;
 
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 

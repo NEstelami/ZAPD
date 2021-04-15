@@ -16,7 +16,7 @@ public:
 	~ZCutsceneMM();
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	uint32_t getSegmentOffset() override { return segmentOffset; }
 
 	void ParseRawData() override;

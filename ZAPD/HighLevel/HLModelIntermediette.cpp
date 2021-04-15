@@ -268,28 +268,6 @@ void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton*
 
 	// Start at the root skeleton node, go down...
 	ProcessZSkeletonLimb(model, zSkeleton, zSkeleton->limbs[0]);
-
-	/*for (int i = 0; i < zSkeleton->limbs.size(); i++)
-	{
-	    // ZLimb* limb = zSkeleton->limbs[i];
-
-	    if (limb->dList == nullptr && limb->dListPtr != 0)
-	        limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
-
-	    if (limb->dList != nullptr)
-	    {
-	        auto cmdTrans = new HLSetTranslation(limb->transX, limb->transY, limb->transZ);
-	        cmdTrans->parent = model;
-	        model->blocks.push_back(cmdTrans);
-
-	        FromZDisplayList(model, limb->dList);
-	    }
-
-
-	    for (int j = 0; j < model->blocks.size(); j++)
-	    {
-	    }
-	}*/
 }
 
 void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton,

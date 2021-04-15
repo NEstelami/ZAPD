@@ -15,12 +15,6 @@ ZCollisionHeader::ZCollisionHeader(ZFile* nParent) : ZResource(nParent)
 
 ZCollisionHeader::~ZCollisionHeader()
 {
-	// for (VertexEntry* vtx : vertices)
-	// delete vtx;
-
-	// for (PolygonEntry* poly : polygons)
-	// delete poly;
-
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
 }
@@ -49,15 +43,15 @@ void ZCollisionHeader::ParseRawData()
 	absMaxY = BitConverter::ToInt16BE(data, rawDataIndex + 8);
 	absMaxZ = BitConverter::ToInt16BE(data, rawDataIndex + 10);
 
-	numVerts = BitConverter::ToInt16BE(data, rawDataIndex + 12);
+	numVerts = BitConverter::ToUInt16BE(data, rawDataIndex + 12);
 	vtxAddress = BitConverter::ToInt32BE(data, rawDataIndex + 16);
 
-	numPolygons = BitConverter::ToInt16BE(data, rawDataIndex + 20);
+	numPolygons = BitConverter::ToUInt16BE(data, rawDataIndex + 20);
 	polyAddress = BitConverter::ToInt32BE(data, rawDataIndex + 24);
 	polyTypeDefAddress = BitConverter::ToInt32BE(data, rawDataIndex + 28);
 	camDataAddress = BitConverter::ToInt32BE(data, rawDataIndex + 32);
 
-	numWaterBoxes = BitConverter::ToInt16BE(data, rawDataIndex + 36);
+	numWaterBoxes = BitConverter::ToUInt16BE(data, rawDataIndex + 36);
 	waterBoxAddress = BitConverter::ToInt32BE(data, rawDataIndex + 40);
 
 	vtxSegmentOffset = Seg2Filespace(vtxAddress, parent->baseAddress);
@@ -69,10 +63,10 @@ void ZCollisionHeader::ParseRawData()
 	vertices.reserve(numVerts);
 	polygons.reserve(numPolygons);
 
-	for (int i = 0; i < numVerts; i++)
+	for (uint16_t i = 0; i < numVerts; i++)
 		vertices.push_back(VertexEntry(rawData, vtxSegmentOffset + (i * 6)));
 
-	for (int i = 0; i < numPolygons; i++)
+	for (uint16_t i = 0; i < numPolygons; i++)
 		polygons.push_back(PolygonEntry(rawData, polySegmentOffset + (i * 16)));
 
 	uint16_t highestPolyType = 0;
@@ -83,25 +77,17 @@ void ZCollisionHeader::ParseRawData()
 			highestPolyType = poly.type;
 	}
 
-	// if (highestPolyType > 0)
 	{
 		for (uint16_t i = 0; i < highestPolyType + 1; i++)
 			polygonTypes.push_back(
 				BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 	}
-	// else
-	//{
-	// int polyTypesSize = abs(polyTypeDefSegmentOffset - camDataSegmentOffset) / 8;
-
-	// for (int i = 0; i < polyTypesSize; i++)
-	// polygonTypes.push_back(BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
-	//}
 
 	if (camDataAddress != 0)
 		camData = new CameraDataList(parent, name, rawData, camDataSegmentOffset,
 		                             polyTypeDefSegmentOffset, polygonTypes.size());
 
-	for (int i = 0; i < numWaterBoxes; i++)
+	for (uint16_t i = 0; i < numWaterBoxes; i++)
 		waterBoxes.push_back(new WaterBoxHeader(
 			rawData,
 			waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16))));
@@ -110,7 +96,7 @@ void ZCollisionHeader::ParseRawData()
 
 	if (waterBoxes.size() > 0)
 	{
-		for (int i = 0; i < waterBoxes.size(); i++)
+		for (size_t i = 0; i < waterBoxes.size(); i++)
 			declaration += StringHelper::Sprintf("   { %i, %i, %i, %i, %i, 0x%08X },\n",
 			                                     waterBoxes[i]->xMin, waterBoxes[i]->ySurface,
 			                                     waterBoxes[i]->zMin, waterBoxes[i]->xLength,

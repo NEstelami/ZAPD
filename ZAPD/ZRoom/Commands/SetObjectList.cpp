@@ -62,7 +62,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	return sourceOutput;
 }
 
-int32_t SetObjectList::GetRawDataSize()
+size_t SetObjectList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (objects.size() * 2);
 }

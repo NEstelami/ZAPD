@@ -412,7 +412,7 @@ public:
 	~ZCutscene();
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	CutsceneCommands GetCommandFromID(int id);
 	uint32_t getSegmentOffset() override { return rawDataIndex; }
 

@@ -57,7 +57,7 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-int ZArray::GetRawDataSize()
+size_t ZArray::GetRawDataSize()
 {
 	return arrayCnt * testFile->resources[0]->GetRawDataSize();
 }

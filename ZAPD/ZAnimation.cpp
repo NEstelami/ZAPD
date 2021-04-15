@@ -111,7 +111,7 @@ std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-int ZNormalAnimation::GetRawDataSize()
+size_t ZNormalAnimation::GetRawDataSize()
 {
 	return 16;
 }
@@ -185,7 +185,7 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-int ZLinkAnimation::GetRawDataSize()
+size_t ZLinkAnimation::GetRawDataSize()
 {
 	return 8;
 }
@@ -427,7 +427,7 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 	}
 }
 
-int ZCurveAnimation::GetRawDataSize()
+size_t ZCurveAnimation::GetRawDataSize()
 {
 	return 0x10;
 }

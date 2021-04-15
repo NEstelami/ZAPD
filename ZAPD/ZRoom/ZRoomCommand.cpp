@@ -45,7 +45,7 @@ std::string ZRoomCommand::PreGenSourceFiles()
 	return std::string();
 }
 
-int32_t ZRoomCommand::GetRawDataSize()
+size_t ZRoomCommand::GetRawDataSize()
 {
 	return 8;
 }

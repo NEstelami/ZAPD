@@ -277,7 +277,7 @@ class HLDisplayListIntermediette : public HLIntermediette
 {
 public:
 	std::vector<HLDisplayListCommand*> commands;
-	int address;
+	uint32_t address;
 
 	HLDisplayListIntermediette();
 

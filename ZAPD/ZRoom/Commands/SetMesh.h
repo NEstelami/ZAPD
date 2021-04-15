@@ -119,7 +119,7 @@ public:
 	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	             ZFile* nParent);
 
-	int GetRawDataSize();
+	size_t GetRawDataSize();
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
@@ -143,7 +143,7 @@ public:
 	virtual std::string GenerateExterns();
 	virtual std::string GetCommandCName();
 	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
+	virtual size_t GetRawDataSize();
 
 private:
 	MeshHeaderBase* meshHeader;

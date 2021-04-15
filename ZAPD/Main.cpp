@@ -33,13 +33,11 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
                        const std::string& outPath);
 void BuildAssetPrerender(const std::string& imageFilePath, const std::string& outPath);
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath);
-void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath);
+void BuildAssetModelIntermediette(const std::string& outPath);
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
 
-int NewMain(int argc, char* argv[]);
-
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-void ErrorHandler(int sig)
+void ErrorHandler(int seg)
 {
 	void* array[4096];
 	const int nMaxFrames = sizeof(array) / sizeof(array[0]);
@@ -79,21 +77,17 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	Globals* g = new Globals();
-	return NewMain(argc, argv);
-}
-
-int NewMain(int argc, char* argv[])
-{
 	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
-
+	
 	if (argc < 2)
 	{
 		printf("ZAPD.exe (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
 		return 1;
 	}
 
-	// Parse File Mode
+	Globals* g = new Globals();
+	
+	// Parse File Mode 
 	string buildMode = argv[1];
 	ZFileMode fileMode = ZFileMode::Invalid;
 
@@ -261,7 +255,7 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (fileMode == ZFileMode::BuildModelIntermediette)
 		{
-			BuildAssetModelIntermediette(Globals::Instance->inputPath,
+			BuildAssetModelIntermediette(
 			                             Globals::Instance->outputPath);
 		}
 		else if (fileMode == ZFileMode::BuildAnimationIntermediette)
@@ -279,7 +273,7 @@ int NewMain(int argc, char* argv[])
 				File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
 		}
 	}
-	catch (std::runtime_error e)
+	catch (std::runtime_error& e)
 	{
 		printf("Exception occurred: %s\n", e.what());
 	}
@@ -380,10 +374,9 @@ void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 	delete blob;
 }
 
-void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath)
+void BuildAssetModelIntermediette(const std::string& outPath)
 {
 	XMLDocument doc;
-	// XMLError eResult = doc.LoadFile(mdlPath.c_str());
 
 	vector<string> split = StringHelper::Split(outPath, "/");
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());

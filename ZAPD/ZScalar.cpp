@@ -136,7 +136,7 @@ int ZScalar::MapTypeToSize(const ZScalarType scalarType)
 	}
 }
 
-int ZScalar::GetRawDataSize()
+size_t ZScalar::GetRawDataSize()
 {
 	return ZScalar::MapTypeToSize(scalarType);
 }

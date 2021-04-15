@@ -163,7 +163,7 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	mdl->blocks.push_back(new HLTerminator());
 }
 
-int ZSkeleton::GetRawDataSize()
+size_t ZSkeleton::GetRawDataSize()
 {
 	switch (type)
 	{

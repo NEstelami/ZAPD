@@ -17,8 +17,6 @@ ZCutsceneMM::~ZCutsceneMM()
 string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
 {
 	string output = "";
-	size_t size = 0;
-	int32_t curPtr = 0;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),", numCommands, endFrame);
 
@@ -32,7 +30,7 @@ string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
 	return output;
 }
 
-int ZCutsceneMM::GetRawDataSize()
+size_t ZCutsceneMM::GetRawDataSize()
 {
 	return 8 + data.size() * 4;
 }
