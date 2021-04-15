@@ -20,6 +20,13 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	{
 		ZCutscene* cutscene = new ZCutscene(nZRoom->parent);
 		cutscene->ExtractFromFile(rawData, segmentOffset, "");
+
+		auto decl = nZRoom->parent->GetDeclaration(segmentOffset);
+		if (decl == nullptr)
+		{
+			cutscene->DeclareVar(zRoom->GetName().c_str(), "");
+		}
+
 		cutscenes.push_back(cutscene);
 	}
 	else
