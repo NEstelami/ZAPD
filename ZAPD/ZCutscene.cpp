@@ -84,14 +84,6 @@ void ZCutscene::ParseRawData()
 
 		int numEntries = 1;
 
-		/*if (cmdID != CutsceneCommands::SetCameraPos && cmdID != CutsceneCommands::SetCameraFocus
-		&& cmdID != CutsceneCommands::SetCameraFocusLink && cmdID !=
-		CutsceneCommands::SetCameraPosLink)
-		{
-		    numEntries = BitConverter::ToInt32BE(rawData, currentPtr);
-		    currentPtr += 4;
-		}*/
-
 		for (int j = 0; j < numEntries; j++)
 		{
 			CutsceneCommand* cmd = nullptr;
