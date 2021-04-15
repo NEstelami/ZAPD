@@ -58,7 +58,7 @@ public:
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                            const int nRawDataIndex,
 	                            const std::string& nRelPath);  // Extract Mode
-	virtual void ExtractFromFile();
+	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, int nRawDataIndex, const std::string& nRelPath);
 
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);

@@ -402,6 +402,8 @@ class ZCutsceneBase : public ZResource
 {
 public:
 	ZCutsceneBase(ZFile* nParent);
+	virtual std::string GetBodySourceCode() = 0;
+	virtual void DeclareVar(const std::string& prefix, const std::string& bodyStr) = 0;
 	virtual uint32_t getSegmentOffset() = 0;
 };
 
@@ -411,7 +413,8 @@ public:
 	ZCutscene(ZFile* nParent);
 	~ZCutscene();
 
-	std::string GetBodySourceCode();
+	std::string GetBodySourceCode() override;
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
 	CutsceneCommands GetCommandFromID(int id);

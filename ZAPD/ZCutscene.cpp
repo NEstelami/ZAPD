@@ -40,8 +40,29 @@ string ZCutscene::GetBodySourceCode()
 
 string ZCutscene::GetSourceOutputCode(const std::string& prefix)
 {
-	// TODO: change this.
-	return GetBodySourceCode();
+	std::string bodyStr = GetBodySourceCode();
+
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+
+	if (decl == nullptr)
+		DeclareVar(prefix, bodyStr);
+	else
+		decl->text = bodyStr;
+
+	return "";
+}
+
+void ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (auxName == "")
+		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
+		//auxName = GetDefaultName(prefix, getSegmentOffset());
+
+	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4,
+								DeclarationPadding::Pad16, GetRawDataSize(),
+	                            "s32", auxName, 0, bodyStr);
 }
 
 int ZCutscene::GetRawDataSize()
@@ -68,6 +89,7 @@ void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
                                const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	DeclareVar("", "");
 }
 
 void ZCutscene::ParseRawData()
