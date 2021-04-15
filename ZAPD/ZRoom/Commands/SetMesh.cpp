@@ -514,7 +514,7 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 	return background;
 }
 
-int BgImage::GetRawDataSize()
+size_t BgImage::GetRawDataSize()
 {
 	return 0x1C;
 }
@@ -681,7 +681,7 @@ void PolygonType1::ParseRawData()
 	}
 }
 
-int PolygonType1::GetRawDataSize()
+size_t PolygonType1::GetRawDataSize()
 {
 	switch (format)
 	{

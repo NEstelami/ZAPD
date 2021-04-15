@@ -51,7 +51,7 @@ public:
 	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	             ZFile* nParent, ZRoom* nRoom);
 
-	int GetRawDataSize();
+	size_t GetRawDataSize();
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
@@ -97,7 +97,7 @@ public:
 	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
 	        int nRawDataIndex, ZFile* nParent);
 
-	static int GetRawDataSize();
+	static size_t GetRawDataSize();
 
 	std::string GetBodySourceCode(bool arrayElement);
 

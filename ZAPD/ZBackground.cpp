@@ -125,12 +125,12 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		        "ZBackground::CheckValidJpeg: Warning.\n"
 		        "\t The image is bigger than the screen buffer. File: '%s'.\n"
 		        "\t Image size: %zu bytes.\n"
-		        "\t Screen buffer size: %i bytes.\n",
+		        "\t Screen buffer size: %zu bytes.\n",
 		        filename.c_str(), data.size(), GetRawDataSize());
 	}
 }
 
-int ZBackground::GetRawDataSize()
+size_t ZBackground::GetRawDataSize()
 {
 	// Jpgs use the whole sceen buffer, which is a u16 matrix.
 	return SCREEN_HEIGHT * SCREEN_WIDTH * 2;

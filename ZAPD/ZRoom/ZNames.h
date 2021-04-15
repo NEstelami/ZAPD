@@ -8,7 +8,7 @@
 class ZNames
 {
 public:
-	static std::string GetObjectName(int id)
+	static std::string GetObjectName(size_t id)
 	{
 		if (id >= Globals::Instance->cfg.objectList.size())
 			return StringHelper::Sprintf("0x%04X", id);
