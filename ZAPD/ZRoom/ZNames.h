@@ -26,27 +26,24 @@ public:
 			else
 				return StringHelper::Sprintf("0x%04X", id);
 		case ZGame::MM_RETAIL:
-			{
-				int flags = id & 0xF000;
-				id &= 0xFFF;
-				std::string name = "";
-				if (id < ZNames::GetNumActors())
-					name = Globals::Instance->cfg.actorList.at(id);
-				else
-					name = StringHelper::Sprintf("0x%04X", id);
+		{
+			int flags = id & 0xF000;
+			id &= 0xFFF;
+			std::string name = "";
+			if (id < ZNames::GetNumActors())
+				name = Globals::Instance->cfg.actorList.at(id);
+			else
+				name = StringHelper::Sprintf("0x%04X", id);
 
-				if (flags == 0)
-					return name;
-				else
-					return StringHelper::Sprintf("%s | 0x%04X", name.c_str(), flags);
-			}
+			if (flags == 0)
+				return name;
+			else
+				return StringHelper::Sprintf("%s | 0x%04X", name.c_str(), flags);
+		}
 		}
 
 		return "";
 	}
 
-	static int GetNumActors()
-	{
-		return Globals::Instance->cfg.actorList.size();
-	}
+	static int GetNumActors() { return Globals::Instance->cfg.actorList.size(); }
 };

@@ -7,8 +7,8 @@
 #include "../StringHelper.h"
 #include "../ZBlob.h"
 #include "Commands/EndMarker.h"
-#include "Commands/SetActorList.h"
 #include "Commands/SetActorCutsceneList.h"
+#include "Commands/SetActorList.h"
 #include "Commands/SetAlternateHeaders.h"
 #include "Commands/SetAnimatedTextureList.h"
 #include "Commands/SetCameraSettings.h"
@@ -20,9 +20,9 @@
 #include "Commands/SetExitList.h"
 #include "Commands/SetLightList.h"
 #include "Commands/SetLightingSettings.h"
+#include "Commands/SetMesh.h"
 #include "Commands/SetMinimapChests.h"
 #include "Commands/SetMinimapList.h"
-#include "Commands/SetMesh.h"
 #include "Commands/SetObjectList.h"
 #include "Commands/SetPathways.h"
 #include "Commands/SetRoomBehavior.h"
@@ -321,7 +321,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::SetCameraSettings:
 			if (Globals::Instance->game == ZGame::MM_RETAIL)
 				cmd = new SetWorldMapVisited(this, rawData, rawDataIndex);
-			 else
+			else
 				cmd = new SetCameraSettings(this, rawData, rawDataIndex);
 			break;  // 0x19
 		case RoomCommand::SetAnimatedTextureList:
