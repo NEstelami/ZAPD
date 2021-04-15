@@ -148,7 +148,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(this, rawData, address, false);
+			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
 			pathway->GenerateSourceCodePass1(name, 0);
 			pathway->GenerateSourceCodePass2(name, 0);
 
@@ -228,7 +228,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new SetLightList(this, rawData, rawDataIndex);
 			break;  // 0x0C (MM-ONLY)
 		case RoomCommand::SetPathways:
-			cmd = new SetPathways(this, rawData, rawDataIndex, true);
+			cmd = new ZSetPathways(this, rawData, rawDataIndex, true);
 			break;  // 0x0D
 		case RoomCommand::SetTransitionActorList:
 			cmd = new SetTransitionActorList(this, rawData, rawDataIndex);
