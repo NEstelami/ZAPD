@@ -168,6 +168,6 @@ uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 	return currentPtr;
 }
 
-ZResource::~ZResource(){
-
+ZResource::~ZResource()
+{
 }

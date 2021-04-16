@@ -78,7 +78,7 @@ void ErrorHandler(int sig)
 int main(int argc, char* argv[])
 {
 	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
-	
+
 	if (argc < 2)
 	{
 		printf("ZAPD.exe (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
@@ -86,8 +86,8 @@ int main(int argc, char* argv[])
 	}
 
 	Globals* g = new Globals();
-	
-	// Parse File Mode 
+
+	// Parse File Mode
 	string buildMode = argv[1];
 	ZFileMode fileMode = ZFileMode::Invalid;
 
@@ -255,8 +255,7 @@ int main(int argc, char* argv[])
 		}
 		else if (fileMode == ZFileMode::BuildModelIntermediette)
 		{
-			BuildAssetModelIntermediette(
-			                             Globals::Instance->outputPath);
+			BuildAssetModelIntermediette(Globals::Instance->outputPath);
 		}
 		else if (fileMode == ZFileMode::BuildAnimationIntermediette)
 		{

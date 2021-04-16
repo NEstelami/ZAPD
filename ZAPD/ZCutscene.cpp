@@ -84,7 +84,6 @@ void ZCutscene::ParseRawData()
 
 		int numEntries = 1;
 
-
 		for (int j = 0; j < numEntries; j++)
 		{
 			CutsceneCommand* cmd = nullptr;

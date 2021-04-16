@@ -341,7 +341,7 @@ CyclingTextureParams::CyclingTextureParams(std::vector<uint8_t> rawData, int raw
 {
 	int32_t currentPtr = textureIndicesSegmentOffset;
 	int maxIndex = 0;
-	
+
 	for (uint16_t i = 0; i < cycleLength; i++)
 	{
 		int newIndex = rawData[currentPtr];

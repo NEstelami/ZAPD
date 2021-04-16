@@ -285,8 +285,7 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 	}
 }
 
-void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string prefix,
-                              char* line)
+void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string prefix, char* line)
 {
 	switch (opcode)
 	{

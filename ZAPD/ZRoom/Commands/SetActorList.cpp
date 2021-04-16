@@ -74,7 +74,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		{
 			declaration += StringHelper::Sprintf(
 				"    { %s, %i, %i, %i, SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X), "
-			    "SPAWN_ROT_FLAGS(%i, 0x%04X), 0x%04X }, //0x%06X",
+				"SPAWN_ROT_FLAGS(%i, 0x%04X), 0x%04X }, //0x%06X",
 				ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY, entry->posZ,
 				(entry->rotX >> 7) & 0b111111111, entry->rotX & 0b1111111,
 				(entry->rotY >> 7) & 0b111111111, entry->rotY & 0b1111111,
