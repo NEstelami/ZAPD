@@ -47,8 +47,6 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 				nullptr, rawData, entry->segmentOffset,
 				"");  // TODO: Use ExtractFromFile() here when that gets implemented
 			cutscenes.push_back(cutscene);
-
-			// cutscenes.push_back(new ZCutsceneMM(rawData, entry->segmentOffset, 9999));
 		}
 
 		zRoom->parent->AddDeclarationArray(
