@@ -52,11 +52,11 @@ void ZCutsceneMM::DeclareVar(const std::string& prefix, const std::string& bodyS
 
 	if (auxName == "")
 		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
-		//auxName = GetDefaultName(prefix, getSegmentOffset());
+	// auxName = GetDefaultName(prefix, getSegmentOffset());
 
 	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4,
-								DeclarationPadding::Pad16, GetRawDataSize(),
-								"s32", auxName, 0, bodyStr);
+	                            DeclarationPadding::Pad16, GetRawDataSize(), "s32", auxName, 0,
+	                            bodyStr);
 }
 
 int ZCutsceneMM::GetRawDataSize()
@@ -65,7 +65,7 @@ int ZCutsceneMM::GetRawDataSize()
 }
 
 void ZCutsceneMM::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const int nRawDataIndex, const std::string& nRelPath)
+                                 const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar("", "");

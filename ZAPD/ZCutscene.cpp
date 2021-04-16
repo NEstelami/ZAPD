@@ -58,11 +58,11 @@ void ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr
 
 	if (auxName == "")
 		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
-		//auxName = GetDefaultName(prefix, getSegmentOffset());
+	// auxName = GetDefaultName(prefix, getSegmentOffset());
 
 	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4,
-								DeclarationPadding::Pad16, GetRawDataSize(),
-	                            "s32", auxName, 0, bodyStr);
+	                            DeclarationPadding::Pad16, GetRawDataSize(), "s32", auxName, 0,
+	                            bodyStr);
 }
 
 int ZCutscene::GetRawDataSize()
@@ -389,9 +389,8 @@ string CutsceneCommand::GetCName()
 
 string CutsceneCommand::GenerateSourceCode(int baseAddress)
 {
-	return StringHelper::Sprintf("%s CutsceneData%04XCmd%02X = { 0x%02X,",
-								 GetCName().c_str(), baseAddress,
-								 commandIndex, commandID);
+	return StringHelper::Sprintf("%s CutsceneData%04XCmd%02X = { 0x%02X,", GetCName().c_str(),
+	                             baseAddress, commandIndex, commandID);
 }
 
 size_t CutsceneCommand::GetCommandSize()

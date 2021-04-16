@@ -9,13 +9,12 @@ REGISTER_ZFILENODE(Path, ZSetPathways);
 
 using namespace std;
 
-ZSetPathways::ZSetPathways(ZFile* nParent)
-	: ZResource(parent)
+ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(parent)
 {
 }
 
 ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-                         bool nIsFromHeader)
+                           bool nIsFromHeader)
 	: ZResource(nZRoom->parent), ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
 	rawData = nRawData;
@@ -30,12 +29,11 @@ ZSetPathways::~ZSetPathways()
 
 void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	parent->AddDeclaration(
-		cmdAddress, DeclarationAlignment::None, 8,
-		StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
-		StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
-								commandSet & 0x00FFFFFF, cmdIndex, cmdID),
-		StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
+	parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
+	                       StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
+	                       StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
+	                                             commandSet & 0x00FFFFFF, cmdIndex, cmdID),
+	                       StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
 }
 
 string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
@@ -73,10 +71,9 @@ string ZSetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 
-	sourceOutput +=
-		StringHelper::Sprintf("%s 0, (u32)%sPathway0x%06X };",
-	                          ZRoomCommand::GenerateSourceCodePass1("", 0).c_str(),
-	                          parent->GetName().c_str(), segmentOffset);
+	sourceOutput += StringHelper::Sprintf("%s 0, (u32)%sPathway0x%06X };",
+	                                      ZRoomCommand::GenerateSourceCodePass1("", 0).c_str(),
+	                                      parent->GetName().c_str(), segmentOffset);
 
 	if (pathwayList != nullptr)
 		pathwayList->GetSourceOutputCode(parent->GetName());

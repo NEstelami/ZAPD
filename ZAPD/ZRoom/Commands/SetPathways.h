@@ -39,7 +39,8 @@ class ZSetPathways : public ZResource, public ZRoomCommand
 {
 public:
 	ZSetPathways(ZFile* nParent);
-	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex, bool nIsFromHeader);
+	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             bool nIsFromHeader);
 	~ZSetPathways();
 
 	void ParseRawData() override;
