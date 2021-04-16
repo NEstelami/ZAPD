@@ -345,8 +345,6 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
 	if (File::Exists(cfgPath))
 		name = File::ReadAllText(cfgPath);
 
-	// string src = StringHelper::Sprintf("u64 %s[] = \n{\n", name.c_str()) +
-	// tex->GetSourceOutputCode(name) + "};\n";
 	string src = tex->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
@@ -368,8 +366,6 @@ void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 	ZBlob* blob = ZBlob::FromFile(blobFilePath);
 	string name = StringHelper::Split(split[split.size() - 1], ".")[0];
 
-	// string src = StringHelper::Sprintf("u8 %s[] = \n{\n", name.c_str()) +
-	// blob->GetSourceOutputCode(name) + "};\n";
 	string src = blob->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
@@ -380,7 +376,6 @@ void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath)
 {
 	XMLDocument doc;
-	// XMLError eResult = doc.LoadFile(mdlPath.c_str());
 
 	vector<string> split = StringHelper::Split(outPath, "/");
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
@@ -399,8 +394,6 @@ void BuildAssetAnimationIntermediette(const std::string& animPath, const std::st
 	ZAnimation* zAnim = anim->ToZAnimation();
 	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
 	zAnim->parent = file;
-	// zAnim->rotationIndicesSeg = 1;
-	// zAnim->rotationValuesSeg = 2;
 
 	zAnim->GetSourceOutputCode(split[split.size() - 2]);
 	string output = "";
