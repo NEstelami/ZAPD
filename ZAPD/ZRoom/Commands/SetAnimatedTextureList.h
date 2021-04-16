@@ -6,6 +6,7 @@
 class AnitmatedTextureParams
 {
 public:
+	virtual ~AnitmatedTextureParams();
 	virtual std::string GenerateSourceCode(ZRoom* zRoom, int baseAddress) = 0;
 	virtual size_t GetParamsSize() = 0;
 };
@@ -83,7 +84,7 @@ class AnimatedTexture
 {
 public:
 	AnimatedTexture(std::vector<uint8_t> rawData, int rawDataIndex);
-	~AnimatedTexture();
+	virtual ~AnimatedTexture();
 
 	int8_t segment;
 	int16_t type;

@@ -13,7 +13,7 @@ public:
 	uint32_t segmentOffset;
 
 	ZCutsceneMM(ZFile* nParent);
-	~ZCutsceneMM();
+	virtual ~ZCutsceneMM();
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() override;

@@ -28,7 +28,7 @@ public:
 	std::string extDefines;
 
 	ZRoom(ZFile* nParent);
-	~ZRoom();
+	virtual ~ZRoom();
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const int nRawDataIndex, const std::string& nRelPath) override;

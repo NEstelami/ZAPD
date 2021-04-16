@@ -38,7 +38,7 @@ class SetPathways : public ZRoomCommand
 {
 public:
 	SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, bool isFromHeader);
-	~SetPathways();
+	virtual ~SetPathways();
 
 	std::string GetSourceOutputCode(std::string prefix);
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);

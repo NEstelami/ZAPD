@@ -10,6 +10,10 @@ ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	zRoom = nZRoom;
 }
 
+ZRoomCommand::~ZRoomCommand()
+{
+}
+
 string ZRoomCommand::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	return StringHelper::Sprintf("0x%02X,", (uint8_t)cmdID);

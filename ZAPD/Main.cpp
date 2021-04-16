@@ -276,7 +276,7 @@ int main(int argc, char* argv[])
 	{
 		printf("Exception occurred: %s\n", e.what());
 	}
-
+	delete g;
 	return 0;
 }
 

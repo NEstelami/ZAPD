@@ -103,6 +103,10 @@ SetAnimatedTextureList::~SetAnimatedTextureList()
 		delete texture;
 }
 
+AnitmatedTextureParams::~AnitmatedTextureParams()
+{
+}
+
 string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	return StringHelper::Sprintf(

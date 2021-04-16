@@ -61,7 +61,7 @@ class CutsceneCommand
 public:
 	uint32_t commandID;
 	uint32_t commandIndex;
-
+	virtual ~CutsceneCommand();
 	CutsceneCommand(const std::vector<uint8_t>& rawData, int rawDataIndex);
 	virtual std::string GetCName(const std::string& prefix);
 	virtual std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
@@ -223,7 +223,7 @@ public:
 	uint16_t base;
 	uint16_t startFrame;
 	uint16_t endFrame;
-
+	virtual ~CutsceneCommandSceneTransFX();
 	CutsceneCommandSceneTransFX(const std::vector<uint8_t>& rawData, int rawDataIndex);
 	std::string GetCName(const std::string& prefix);
 	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
@@ -409,8 +409,7 @@ class ZCutscene : public ZCutsceneBase
 {
 public:
 	ZCutscene(ZFile* nParent);
-	~ZCutscene();
-
+	virtual ~ZCutscene();
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() override;
 	CutsceneCommands GetCommandFromID(int id);

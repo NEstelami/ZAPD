@@ -354,6 +354,10 @@ CutsceneCommand::CutsceneCommand(const vector<uint8_t>& rawData, int rawDataInde
 {
 }
 
+CutsceneCommand::~CutsceneCommand()
+{
+}
+
 string CutsceneCommand::GetCName(const std::string& prefix)
 {
 	return "SCmdCutsceneData";
@@ -1138,6 +1142,10 @@ CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const vector<uint8_t>& 
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+}
+
+CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
+{
 }
 
 string CutsceneCommandSceneTransFX::GenerateSourceCode(const std::string& roomName, int baseAddress)
