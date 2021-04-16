@@ -62,14 +62,6 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	ParseRawData();
 }
 
-// ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
-//{
-//	ZDisplayList* dList = new ZDisplayList();
-//
-//	dList->SetName(reader->Attribute("Name"));
-//	return dList;
-//}
-
 ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize,
                            ZFile* nParent)
 	: ZDisplayList(nParent)
@@ -2275,22 +2267,6 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 
 void ZDisplayList::Save(const std::string& outFolder)
 {
-	// File::WriteAllText(StringHelper::Sprintf("%s/%s.%s.inc.c", outFolder.c_str(), name.c_str(),
-	// GetExternalExtension().c_str()), GetSourceOutputCode(""));
-
-	// HLModelIntermediette* mdl = HLModelIntermediette::FromZDisplayList(this);
-
-	// For testing purposes only at the moment...
-	// if (Globals::Instance->testMode)
-	//{
-	// string xml = mdl->OutputXML();
-	// string obj = mdl->ToOBJFile();
-	// string fbx = mdl->ToFBXFile();
-
-	// File::WriteAllText(outFolder + "/" + name + ".mdli", xml);
-	// File::WriteAllText(outFolder + "/" + name + ".obj", obj);
-	// File::WriteAllText(outFolder + "/" + name + ".fbx", fbx);
-	//}
 }
 
 void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)

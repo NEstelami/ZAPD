@@ -60,7 +60,7 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 
 	// Add padding.
 	data.insert(data.end(), GetRawDataSize() - data.size(), 0x00);
-	CheckValidJpeg(filepath);
+	CheckValidJpeg(filepath.generic_string());
 }
 
 void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,

@@ -122,15 +122,8 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 		{
 			int ss = (data & 0x0000FF0000000000) >> 40;
 			int nn = (data & 0x000000FF00000000) >> 32;
-			// int dd = (data & 0xFFFFFFFF);
 
 			int sft = 32 - (nn + 1) - ss;
-
-			if (sft == 3)
-			{
-				// int mode1 = (dd & 0xCCCC0000) >> 0;
-				// int mode2 = (dd & 0x33330000) >> 0;
-			}
 		}
 		else if (opcode == F3DZEXOpcode::G_SETPRIMCOLOR)
 		{
@@ -159,26 +152,10 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 		         (F3DZEXOpcode)(zDisplayList->instructions[i - 1] >> 56) !=
 		             F3DZEXOpcode::G_RDPPIPESYNC)
 		{
-			// int fff = (data & 0b0000000011100000000000000000000000000000000000000000000000000000)
-			// >> 53; int ii = (data &
-			// 0b0000000000011000000000000000000000000000000000000000000000000000) >> 51; int
-			// nnnnnnnnn = (data &
-			// 0b0000000000000011111111100000000000000000000000000000000000000000) >> 41; int
-			// mmmmmmmmm = (data &
-			// 0b0000000000000000000000011111111100000000000000000000000000000000) >> 32; int ttt =
-			// (data & 0b0000000000000000000000000000000000000111000000000000000000000000) >> 24;
-			// int pppp = (data &
-			// 0b0000000000000000000000000000000000000000111100000000000000000000) >> 20;
 			int cc =
 				(data & 0b0000000000000000000000000000000000000000000011000000000000000000) >> 18;
-			// int aaaa = (data &
-			// 0b0000000000000000000000000000000000000000000000111100000000000000) >> 14; int ssss =
-			// (data & 0b0000000000000000000000000000000000000000000000000011110000000000) >> 10;
 			int dd =
 				(data & 0b0000000000000000000000000000000000000000000000000000001100000000) >> 8;
-			// int bbbb = (data &
-			// 0b0000000000000000000000000000000000000000000000000000000011110000) >> 4; int uuuu =
-			// (data & 0b0000000000000000000000000000000000000000000000000000000000001111);
 
 			lastMat->cmtH = (HLMaterialCmt)cc;
 			lastMat->cmtV = (HLMaterialCmt)dd;
@@ -523,32 +500,19 @@ std::string HLVerticesIntermediette::OutputOBJ()
 	{
 		output += StringHelper::Sprintf("v %f %f %f %i %i %i %i\n", (float)v.x * 0.1f,
 		                                (float)v.y * 0.1f, (float)v.z * 0.1f, v.r, v.g, v.b, v.a);
-		// output += StringHelper::Sprintf("v %f %f %f\n", (float)v.x * 0.1f, (float)v.y * 0.1f,
-		// (float)v.z * 0.1f);
 	}
-
-	// for (Vertex v : vertices)
-	// output += StringHelper::Sprintf("vt %i %i\n", v.s, v.t);
 
 	return output;
 }
 
 void HLVerticesIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts)
 {
-	// aiVector3D* verts = new aiVector3D[vertices.size()];
-	// aiVector3D* normals = new aiVector3D[vertices.size()];
-
 	verts->clear();
 
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		verts->push_back(aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z));
-		// normals[i] = aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z);
 	}
-
-	// mesh->mVertices = verts;
-	// mesh->mNormals = normals;
-	// mesh->mNumVertices += vertices.size();
 }
 
 void HLVerticesIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root)
@@ -701,7 +665,6 @@ string HLMeshCmdTriangle2::OutputCode(HLModelIntermediette* parent)
 
 std::string HLMeshCmdTriangle2::OutputOBJ(HLModelIntermediette* parent)
 {
-	// HLVerticesIntermediette* verts = parent->FindByName<HLVerticesIntermediette>("");
 	string output = "";
 
 	int startIndex = parent->startIndex;
@@ -818,12 +781,6 @@ void HLMaterialIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 {
 	name = xmlElement->Attribute("Name");
 	textureName = xmlElement->Attribute("TextureName");
-	// repeatH = xmlElement->BoolAttribute("RepeatH");
-	// repeatV = xmlElement->BoolAttribute("RepeatV");
-	// clampH = xmlElement->BoolAttribute("ClampH");
-	// clampV = xmlElement->BoolAttribute("ClampV");
-	// mirrorH  = xmlElement->BoolAttribute("MirrorH");
-	// mirrorV = xmlElement->BoolAttribute("MirrorV");
 	clrR = xmlElement->IntAttribute("ClrR");
 	clrG = xmlElement->IntAttribute("ClrG");
 	clrB = xmlElement->IntAttribute("ClrB");
@@ -1164,8 +1121,6 @@ std::string HLLimbCommand::OutputCode(HLModelIntermediette* parent)
 
 	// Time to generate the display list...
 	HLMeshIntermediette* mesh = parent->FindByName<HLMeshIntermediette>(meshName);
-	// HLMaterialIntermediette* mat = parent->FindByName<HLMaterialIntermediette>(materialName);
-	// HLTextureIntermediette* tex = parent->FindByName<HLTextureIntermediette>(mat->textureName);
 
 	output += mesh->OutputCode(materialName);
 
