@@ -210,8 +210,6 @@ void ZLinkAnimation::ParseRawData()
 	ZAnimation::ParseRawData();
 
 	const uint8_t* data = rawData.data();
-
-	// segmentAddress = GETSEGOFFSET(BitConverter::ToInt32BE(data, rawDataIndex + 4));
 	segmentAddress = (BitConverter::ToInt32BE(data, rawDataIndex + 4));
 }
 

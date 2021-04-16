@@ -901,7 +901,6 @@ std::string ZTexture::GetExternalExtension()
 
 string ZTexture::GetSourceOutputHeader(const std::string& prefix)
 {
-	// return StringHelper::Sprintf("extern u64 %s[];\n", name.c_str());
 	return "";
 }
 
