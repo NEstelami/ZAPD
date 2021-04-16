@@ -37,7 +37,7 @@ void BuildAssetModelIntermediette(const std::string& outPath);
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-void ErrorHandler(int seg)
+void ErrorHandler(int sig)
 {
 	void* array[4096];
 	const int nMaxFrames = sizeof(array) / sizeof(array[0]);
