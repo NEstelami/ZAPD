@@ -90,6 +90,7 @@ protected:
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
 	              bool placeholderMode);
 	void GenerateSourceFiles(std::string outputDir);
+	void GenerateSourceHeaderFiles();
 	void GenerateHLIntermediette();
 	void AddDeclarationDebugChecks(uint32_t address);
 	std::string ProcessDeclarations();

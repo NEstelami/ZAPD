@@ -573,22 +573,28 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 	File::WriteAllText(outPath, formatter.GetOutput());
 
-	// Generate Header
-	sourceOutput = "";
+	GenerateSourceHeaderFiles();
+}
+
+void ZFile::GenerateSourceHeaderFiles()
+{
+	OutputFormatter formatter;
 
 	for (ZResource* res : resources)
 	{
 		string resSrc = res->GetSourceOutputHeader("");
-		sourceOutput += resSrc;
+		formatter.Write(resSrc);
 
 		if (resSrc != "")
-			sourceOutput += "\n";
+			formatter.Write("\n");
 	}
 
-	sourceOutput += ProcessExterns();
+	formatter.Write(ProcessExterns());
 
-	File::WriteAllText(sourceOutDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h",
-	                   sourceOutput);
+	fs::path sourceOutDir(Globals::Instance->sourceOutputPath);
+	fs::path headerFilename = sourceOutDir / (Path::GetFileNameWithoutExtension(name) + ".h");
+
+	File::WriteAllText(headerFilename, formatter.GetOutput());
 }
 
 void ZFile::GenerateHLIntermediette()
