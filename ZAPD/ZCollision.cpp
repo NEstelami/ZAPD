@@ -161,7 +161,7 @@ void ZCollisionHeader::ParseRawData()
 
 		for (size_t i = 0; i < vertices.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("   { %i, %i, %i },", vertices[i].x, vertices[i].y,
+			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i },", vertices[i].x, vertices[i].y,
 			                                     vertices[i].z);
 
 			if (i < vertices.size() - 1)
@@ -181,7 +181,7 @@ void ZCollisionHeader::ParseRawData()
 	char waterBoxStr[2048];
 
 	if (waterBoxAddress != 0)
-		sprintf(waterBoxStr, "%s_waterBoxes_%08X", name.c_str(), waterBoxSegmentOffset);
+		sprintf(waterBoxStr, "%s_waterBoxes_%06X", name.c_str(), waterBoxSegmentOffset);
 	else
 		sprintf(waterBoxStr, "NULL");
 
@@ -313,7 +313,9 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 			cameraPositionData.push_back(data);
 
 			declaration +=
-				StringHelper::Sprintf("    { %6i, %6i, %6i },\n", data->x, data->y, data->z);
+				StringHelper::Sprintf("\t{ %6i, %6i, %6i },", data->x, data->y, data->z);
+			if (i + 1 < numDataTotal)
+				declaration += "\n";
 		}
 
 		int cameraPosDataIndex = GETSEGOFFSET(cameraPosDataSeg);

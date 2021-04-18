@@ -5,6 +5,7 @@
 #include "File.h"
 #include "Globals.h"
 #include "HighLevel/HLModelIntermediette.h"
+#include "OutputFormatter.h"
 #include "Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
@@ -567,7 +568,10 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 	string outPath = sourceOutDir + "/" + Path::GetFileNameWithoutExtension(name) + ".c";
 
-	File::WriteAllText(outPath, sourceOutput);
+	OutputFormatter formatter;
+	formatter.Write(sourceOutput);
+
+	File::WriteAllText(outPath, formatter.GetOutput());
 
 	// Generate Header
 	sourceOutput = "";

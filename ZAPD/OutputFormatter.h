@@ -22,9 +22,6 @@ private:
 	char* spaceP;
 
 	std::string str;
-
-	int Write(const char* buf, int count);
-
 	static OutputFormatter* Instance;
 	static int WriteStatic(const char* buf, int count);
 
@@ -33,5 +30,7 @@ public:
 
 	int (*StaticWriter())(const char* buf, int count);
 
+	int Write(const char* buf, int count);
+	int Write(const std::string& buf);
 	std::string GetOutput();
 };

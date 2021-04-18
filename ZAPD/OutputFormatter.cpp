@@ -63,6 +63,11 @@ int OutputFormatter::Write(const char* buf, int count)
 	return count;
 }
 
+int OutputFormatter::Write(const std::string& buf)
+{
+	return Write(buf.data(), buf.size());
+}
+
 OutputFormatter* OutputFormatter::Instance;
 
 int OutputFormatter::WriteStatic(const char* buf, int count)
