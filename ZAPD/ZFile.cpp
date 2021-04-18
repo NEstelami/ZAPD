@@ -39,13 +39,13 @@ ZFile::ZFile()
 	rangeEnd = 0xFFFFFFFF;
 }
 
-ZFile::ZFile(string nOutPath, string nName) : ZFile()
+ZFile::ZFile(fs::path nOutPath, string nName) : ZFile()
 {
 	outputPath = nOutPath;
 	name = nName;
 }
 
-ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath,
+ZFile::ZFile(ZFileMode mode, XMLElement* reader, fs::path nBasePath, fs::path nOutPath,
              std::string filename, bool placeholderMode)
 	: ZFile()
 {
@@ -114,15 +114,15 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		Globals::Instance->AddSegment(segment);
 	}
 
-	string folderName = basePath + "/" + Path::GetFileNameWithoutExtension(name);
+	string folderName = basePath / Path::GetFileNameWithoutExtension(name);
 
 	if (mode == ZFileMode::Extract)
 	{
-		if (!File::Exists(basePath + "/" + name))
+		if (!File::Exists(basePath / name))
 			throw std::runtime_error(StringHelper::Sprintf("Error! File %s does not exist.",
-			                                               (basePath + "/" + name).c_str()));
+			                                               (basePath / name).c_str()));
 
-		rawData = File::ReadAllBytes(basePath + "/" + name);
+		rawData = File::ReadAllBytes(basePath / name);
 	}
 
 	auto nodeMap = *GetNodeMap();
@@ -179,7 +179,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	}
 }
 
-void ZFile::BuildSourceFile(string outputDir)
+void ZFile::BuildSourceFile(fs::path outputDir)
 {
 	string folderName = Path::GetFileNameWithoutExtension(outputPath);
 
@@ -205,7 +205,7 @@ std::string ZFile::GetName()
 	return name;
 }
 
-void ZFile::ExtractResources(string outputDir)
+void ZFile::ExtractResources(fs::path outputDir)
 {
 	string folderName = Path::GetFileNameWithoutExtension(outputPath);
 
@@ -495,9 +495,9 @@ bool ZFile::HasDeclaration(uint32_t address)
 	return (declarations.find(address) != declarations.end());
 }
 
-void ZFile::GenerateSourceFiles(string outputDir)
+void ZFile::GenerateSourceFiles(fs::path outputDir)
 {
-	sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput += "#include \"ultra64.h\"\n";
 	sourceOutput += "#include \"z64.h\"\n";
@@ -515,16 +515,11 @@ void ZFile::GenerateSourceFiles(string outputDir)
 		{
 			string path = Path::GetFileNameWithoutExtension(res->GetName()).c_str();
 
-			while (StringHelper::EndsWith(outputDir, "/"))
-				outputDir = outputDir.substr(0, outputDir.length() - 1);
-
-			string assetOutDir = outputDir;
+			string assetOutDir = outputDir / Path::GetFileNameWithoutExtension(res->GetOutName());
 			string declType = res->GetSourceTypeName();
 
 			std::string incStr =
-				StringHelper::Sprintf("%s/%s.%s.inc", assetOutDir.c_str(),
-			                          Path::GetFileNameWithoutExtension(res->GetOutName()).c_str(),
-			                          res->GetExternalExtension().c_str());
+				StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(), res->GetExternalExtension().c_str());
 
 			if (res->GetResourceType() == ZResourceType::Texture)
 			{
@@ -561,12 +556,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 	sourceOutput += ProcessDeclarations();
 
-	string sourceOutDir = Globals::Instance->sourceOutputPath;
-
-	while (StringHelper::EndsWith(sourceOutDir, "/"))
-		sourceOutDir = sourceOutDir.substr(0, sourceOutDir.length() - 1);
-
-	string outPath = sourceOutDir + "/" + Path::GetFileNameWithoutExtension(name) + ".c";
+	string outPath = Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c");
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -591,8 +581,7 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	formatter.Write(ProcessExterns());
 
-	fs::path sourceOutDir(Globals::Instance->sourceOutputPath);
-	fs::path headerFilename = sourceOutDir / (Path::GetFileNameWithoutExtension(name) + ".h");
+	fs::path headerFilename = Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".h");
 
 	File::WriteAllText(headerFilename, formatter.GetOutput());
 }
@@ -916,9 +905,9 @@ string ZFile::ProcessDeclarations()
 				else if (item.second->varType == "Vtx" || item.second->varType == "static Vtx")
 					extType = "vtx";
 
+				auto filepath = Globals::Instance->outputPath / item.second->varName;
 				File::WriteAllText(
-					StringHelper::Sprintf("%s/%s.%s.inc", Globals::Instance->outputPath.c_str(),
-				                          item.second->varName.c_str(), extType.c_str()),
+					StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), extType.c_str()),
 					item.second->text);
 			}
 

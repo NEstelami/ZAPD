@@ -108,7 +108,7 @@ void ZCollisionHeader::ParseRawData()
 	if (waterBoxAddress != 0)
 		parent->AddDeclarationArray(
 			waterBoxSegmentOffset, DeclarationAlignment::None, 16 * waterBoxes.size(), "WaterBox",
-			StringHelper::Sprintf("%s_waterBoxes_%08X", name.c_str(), waterBoxSegmentOffset), 0,
+			StringHelper::Sprintf("%s_waterBoxes_%06X", name.c_str(), waterBoxSegmentOffset), 0,
 			declaration);
 
 	if (polygons.size() > 0)

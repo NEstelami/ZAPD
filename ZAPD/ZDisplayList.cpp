@@ -1975,10 +1975,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 						printf("SAVED IMAGE TO %s in %ims\n", Globals::Instance->outputPath.c_str(),
 						       (int)diff);
 
-					std::string incStr = StringHelper::Sprintf(
-						"%s/%s.%s.inc.c", Globals::Instance->outputPath.c_str(),
-						Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
-						item.second->GetExternalExtension().c_str());
+					auto filepath = Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(item.second->GetName());
+					std::string incStr = StringHelper::Sprintf( "%s.%s.inc.c", filepath.c_str(), item.second->GetExternalExtension().c_str());
 					std::string texName =
 						StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
 
@@ -2096,8 +2094,10 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			{
 				std::string vtxName =
 					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), vtxKeys[i]);
-				std::string incStr = StringHelper::Sprintf(
-					"%s/%s.%s.inc", Globals::Instance->outputPath.c_str(), vtxName.c_str(), "vtx");
+
+				auto filepath = Globals::Instance->outputPath / vtxName;
+				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), "vtx");
+
 				parent->AddDeclarationArray(vtxKeys[i], DeclarationAlignment::None,
 				                            item.size() * 16, "static Vtx", vtxName, item.size(),
 				                            declaration);
@@ -2242,11 +2242,11 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 			if (scene != nullptr)
 			{
 				scene->textures[texAddr] = tex;
+
+				auto filepath = Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(tex->GetName());
 				scene->parent->AddDeclarationIncludeArray(
 					texAddr,
-					StringHelper::Sprintf("%s/%s.%s.inc.c", Globals::Instance->outputPath.c_str(),
-				                          Path::GetFileNameWithoutExtension(tex->GetName()).c_str(),
-				                          tex->GetExternalExtension().c_str()),
+					StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), tex->GetExternalExtension().c_str()),
 					tex->GetRawDataSize(), "u64",
 					StringHelper::Sprintf("%sTex_%06X",
 				                          Globals::Instance->lastScene->GetName().c_str(), texAddr),

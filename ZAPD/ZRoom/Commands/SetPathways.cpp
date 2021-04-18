@@ -50,7 +50,7 @@ string SetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 	string sourceOutput = "";
 
 	sourceOutput +=
-		StringHelper::Sprintf("%s 0, (u32)%sPathway0x%06X };",
+		StringHelper::Sprintf("\n\t%s 0, (u32)%sPathway0x%06X\n};",
 	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 	                          roomName.c_str(), segmentOffset);
 
