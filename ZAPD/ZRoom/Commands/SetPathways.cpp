@@ -17,8 +17,8 @@ ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, 
                            bool nIsFromHeader)
 	: ZResource(nZRoom->parent), ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
-	//rawData = nRawData;
-	//rawDataIndex = nRawDataIndex;
+	ZResource::rawData = nRawData;
+	ZResource::rawDataIndex = nRawDataIndex;
 	isFromHeader = nIsFromHeader;
 }
 

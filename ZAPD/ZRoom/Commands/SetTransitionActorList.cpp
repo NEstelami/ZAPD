@@ -50,7 +50,7 @@ string SetTransitionActorList::GetBodySourceCode()
 		}
 	}
 
-	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s", GetCommandHex().c_str(), listName.c_str());
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s", GetCommandHex().c_str(), transitionActors.size(), listName.c_str());
 }
 
 string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
