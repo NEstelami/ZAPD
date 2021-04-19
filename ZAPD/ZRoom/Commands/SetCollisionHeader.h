@@ -9,9 +9,9 @@ public:
 	SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetCollisionHeader();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GetCommandCName();
-	virtual RoomCommand GetRoomCommand();
+	std::string GetBodySourceCode() override;
+	std::string GetCommandCName() override;
+	RoomCommand GetRoomCommand() override;
 
 private:
 	ZCollisionHeader* collisionHeader;

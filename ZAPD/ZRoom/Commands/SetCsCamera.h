@@ -8,9 +8,13 @@ class CsCameraEntry
 public:
 	CsCameraEntry(std::vector<uint8_t> rawData, int rawDataIndex);
 
+	int GetSegmentOffset() const;
+	int16_t GetNumPoints() const;
+
+//protected:
 	int baseOffset;
-	int type;
-	int numPoints;
+	int16_t type;
+	int16_t numPoints;
 	uint32_t segmentOffset;
 };
 
@@ -20,16 +24,13 @@ public:
 	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetCsCamera();
 
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
-	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
+	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
+	RoomCommand GetRoomCommand() override;
+	int32_t GetRawDataSize() override;
+	std::string GetCommandCName() override;
 
 private:
 	uint32_t segmentOffset;
 	std::vector<CsCameraEntry*> cameras;
 	std::vector<Vec3s> points;
-	std::vector<uint8_t> _rawData;
-	int _rawDataIndex;
 };

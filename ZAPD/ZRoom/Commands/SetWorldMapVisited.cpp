@@ -9,10 +9,10 @@ SetWorldMapVisited::SetWorldMapVisited(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 {
 }
 
-string SetWorldMapVisited::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetWorldMapVisited::GetBodySourceCode()
 {
 	return StringHelper::Sprintf(
-		"%s 0x00, 0x00", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
+		"%s 0x00, 0x00", GetCommandHex().c_str());
 }
 
 string SetWorldMapVisited::GetCommandCName()

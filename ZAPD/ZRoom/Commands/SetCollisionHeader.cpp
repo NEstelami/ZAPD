@@ -24,12 +24,23 @@ SetCollisionHeader::~SetCollisionHeader()
 	delete collisionHeader;
 }
 
-string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetCollisionHeader::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0x00, (u32)&%sCollisionHeader0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-		zRoom->GetName().c_str(), segmentOffset);
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, 0, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
 string SetCollisionHeader::GetCommandCName()

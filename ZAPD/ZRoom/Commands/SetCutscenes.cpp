@@ -133,11 +133,6 @@ RoomCommand SetCutscenes::GetRoomCommand()
 	return RoomCommand::SetCutscenes;
 }
 
-string SetCutscenes::GetSourceOutputCode(std::string prefix)
-{
-	return "";
-}
-
 CutsceneEntry::CutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex)
 	: segmentOffset(BitConverter::ToInt32BE(rawData, rawDataIndex + 0) & 0x00FFFFFF),
 	  exit(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)), entrance(rawData[rawDataIndex + 6]),

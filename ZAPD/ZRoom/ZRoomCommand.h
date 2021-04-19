@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "ZFile.h"
+
 class ZRoom;
 
 enum class RoomCommand : uint8_t

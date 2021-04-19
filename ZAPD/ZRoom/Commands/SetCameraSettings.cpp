@@ -7,15 +7,13 @@ using namespace std;
 SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	cameraMovement = rawData[rawDataIndex + 0x01];
+	cameraMovement = rawData.at(rawDataIndex + 0x01);
 	mapHighlight = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 }
 
-string SetCameraSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetCameraSettings::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, 0x%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-		cameraMovement, mapHighlight);
+	return StringHelper::Sprintf("%s, 0x%02X, 0x%08X", GetCommandHex().c_str(), cameraMovement, mapHighlight);
 }
 
 string SetCameraSettings::GetCommandCName()
