@@ -2,6 +2,7 @@
 
 #include "../../Vec3s.h"
 #include "../ZRoomCommand.h"
+#include "ZResource.h"
 
 class PathwayEntry
 {
@@ -20,37 +21,42 @@ public:
 struct PathwayList
 {
 public:
-	PathwayList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int length);
+	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, int rawDataIndex, int length);
 	~PathwayList();
 
-	void GetSourceOutputCode(std::string prefix);
+	void GetSourceOutputCode(const std::string& prefix);
 	int32_t GetRawDataSize();
-	std::string GenerateExterns();
+	std::string GenerateExterns(const std::string& prefix);
 
 private:
-	ZRoom* zRoom;
+	ZFile* parent;
 	std::vector<PathwayEntry*> pathways;
 	std::vector<uint8_t> _rawData;
 	int _rawDataIndex;
 };
 
-class SetPathways : public ZRoomCommand
+class ZSetPathways : public ZResource, public ZRoomCommand
 {
 public:
-	SetPathways(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, bool isFromHeader);
-	~SetPathways();
+	ZSetPathways(ZFile* nParent);
+	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             bool nIsFromHeader);
+	~ZSetPathways();
 
-	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
-	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
+	void ParseRawData() override;
+
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+
+	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
+	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
+	RoomCommand GetRoomCommand() override;
+	int32_t GetRawDataSize() override;
+	std::string GetCommandCName() override;
+	std::string GenerateExterns() override;
 
 private:
 	uint32_t segmentOffset;
 	PathwayList* pathwayList;
-	std::vector<uint8_t> _rawData;
-	int _rawDataIndex;
+	bool isFromHeader = false;
 };

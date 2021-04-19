@@ -78,8 +78,7 @@ void ZCollisionHeader::ParseRawData()
 	}
 
 	for (uint16_t i = 0; i < highestPolyType + 1; i++)
-		polygonTypes.push_back(
-			BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
+		polygonTypes.push_back(BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 
 	if (camDataAddress != 0)
 		camData = new CameraDataList(parent, name, rawData, camDataSegmentOffset,
