@@ -56,11 +56,6 @@ string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, int baseAd
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetActorCutsceneList::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	return "";
-}
-
 int32_t SetActorCutsceneList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);

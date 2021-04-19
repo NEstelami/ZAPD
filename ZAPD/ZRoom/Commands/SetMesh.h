@@ -153,8 +153,6 @@ public:
 	~SetMesh();
 
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	// virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
-	// virtual std::string GenerateSourceCodePass3(std::string roomName);
 	virtual std::string GenerateExterns();
 	virtual std::string GetCommandCName();
 	virtual RoomCommand GetRoomCommand();

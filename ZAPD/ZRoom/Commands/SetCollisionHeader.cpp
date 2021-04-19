@@ -19,6 +19,11 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 	collisionHeader->ParseRawData();
 }
 
+SetCollisionHeader::~SetCollisionHeader()
+{
+	delete collisionHeader;
+}
+
 string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	return StringHelper::Sprintf(
@@ -27,19 +32,9 @@ string SetCollisionHeader::GenerateSourceCodePass1(string roomName, int baseAddr
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetCollisionHeader::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	return "";
-}
-
 string SetCollisionHeader::GetCommandCName()
 {
 	return "SCmdColHeader";
-}
-
-string SetCollisionHeader::GenerateExterns()
-{
-	return "";
 }
 
 RoomCommand SetCollisionHeader::GetRoomCommand()

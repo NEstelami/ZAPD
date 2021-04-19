@@ -62,11 +62,6 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAd
 	return sourceOutput;
 }
 
-string SetStartPositionList::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	return "";
-}
-
 string SetStartPositionList::GenerateExterns()
 {
 	return StringHelper::Sprintf("extern ActorEntry %sStartPositionList0x%06X[];\n",

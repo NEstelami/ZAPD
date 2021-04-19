@@ -42,11 +42,6 @@ string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetRoomList::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	return "";
-}
-
 string SetRoomList::GenerateExterns()
 {
 	return StringHelper::Sprintf("extern RomFile %sRoomList0x%06X[];\n", zRoom->GetName().c_str(),

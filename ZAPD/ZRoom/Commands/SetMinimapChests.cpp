@@ -30,11 +30,6 @@ SetMinimapChests::~SetMinimapChests()
 		delete chest;
 }
 
-string SetMinimapChests::GenerateSourceCodePass1(string roomName, int baseAddress)
-{
-	return std::string();
-}
-
 string SetMinimapChests::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";

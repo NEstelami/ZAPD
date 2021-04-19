@@ -55,16 +55,6 @@ SetCsCamera::~SetCsCamera()
 		delete entry;
 }
 
-string SetCsCamera::GetSourceOutputCode(std::string prefix)
-{
-	return "";
-}
-
-string SetCsCamera::GenerateSourceCodePass1(string roomName, int baseAddress)
-{
-	return "";
-}
-
 string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";

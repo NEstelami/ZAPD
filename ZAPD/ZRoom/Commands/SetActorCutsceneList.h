@@ -26,7 +26,6 @@ public:
 	~SetActorCutsceneList();
 
 	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
-	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
 	std::string GetCommandCName() override;
 	std::string GenerateExterns() override;
 	RoomCommand GetRoomCommand() override;

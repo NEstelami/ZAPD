@@ -23,26 +23,6 @@ string ZRoomCommandUnk::GenerateSourceCodePass1(string roomName, int baseAddress
 	                             cmdID, data1, data2);
 }
 
-string ZRoomCommandUnk::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	return "";
-}
-
-string ZRoomCommandUnk::GenerateSourceCodePass3(string roomName)
-{
-	return "";
-}
-
-string ZRoomCommandUnk::GenerateExterns()
-{
-	return "";
-}
-
-int32_t ZRoomCommandUnk::GetRawDataSize()
-{
-	return 8;
-}
-
 string ZRoomCommandUnk::GetCommandCName()
 {
 	return "SCmdBase";

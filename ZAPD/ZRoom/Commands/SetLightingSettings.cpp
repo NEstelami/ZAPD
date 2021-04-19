@@ -57,11 +57,6 @@ string SetLightingSettings::GenerateSourceCodePass1(string roomName, int baseAdd
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetLightingSettings::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	return "";
-}
-
 string SetLightingSettings::GetCommandCName()
 {
 	return "SCmdLightSettingList";

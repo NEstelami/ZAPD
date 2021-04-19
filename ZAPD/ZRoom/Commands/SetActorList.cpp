@@ -29,16 +29,6 @@ SetActorList::~SetActorList()
 	actors.clear();
 }
 
-string SetActorList::GetSourceOutputCode(std::string prefix)
-{
-	return "";
-}
-
-string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
-{
-	return "";
-}
-
 string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
