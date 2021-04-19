@@ -138,3 +138,8 @@ int16_t CsCameraEntry::GetNumPoints() const
 {
 	return numPoints;
 }
+
+int CsCameraEntry::GetSegmentOffset() const
+{
+	return segmentOffset;
+}

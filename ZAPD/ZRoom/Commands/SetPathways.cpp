@@ -17,8 +17,8 @@ ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, 
                            bool nIsFromHeader)
 	: ZResource(nZRoom->parent), ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
-	rawData = nRawData;
-	rawDataIndex = nRawDataIndex;
+	//rawData = nRawData;
+	//rawDataIndex = nRawDataIndex;
 	isFromHeader = nIsFromHeader;
 }
 
@@ -29,7 +29,7 @@ ZSetPathways::~ZSetPathways()
 
 void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
+	ZResource::parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
 	                       StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
 	                       StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
 	                                             commandSet & 0x00FFFFFF, cmdIndex, cmdID),
@@ -39,7 +39,7 @@ void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& body
 string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 {
 	if (pathwayList != nullptr)
-		pathwayList->GetSourceOutputCode(parent->GetName());
+		pathwayList->GetSourceOutputCode(ZResource::parent->GetName());
 
 	return "";
 }
@@ -47,18 +47,18 @@ string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 void ZSetPathways::ParseRawData()
 {
 	if (isFromHeader)
-		segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
+		segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(ZResource::rawData, ZResource::rawDataIndex + 4));
 	else
-		segmentOffset = rawDataIndex;
+		segmentOffset = ZResource::rawDataIndex;
 
 	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
+		ZResource::parent->AddDeclarationPlaceholder(segmentOffset);
 
 	int numPaths = (Globals::Instance->game != ZGame::MM_RETAIL) ?
                        1 :
                        zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
 
-	pathwayList = new PathwayList(parent, rawData, segmentOffset, numPaths);
+	pathwayList = new PathwayList(ZResource::parent, ZResource::rawData, segmentOffset, numPaths);
 }
 
 string ZSetPathways::GenerateSourceCodePass1(string roomName, int baseAddress)
@@ -73,10 +73,10 @@ string ZSetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 	sourceOutput += StringHelper::Sprintf("%s 0, (u32)%sPathway0x%06X };",
 	                                      ZRoomCommand::GenerateSourceCodePass1("", 0).c_str(),
-	                                      parent->GetName().c_str(), segmentOffset);
+	                                      ZResource::parent->GetName().c_str(), segmentOffset);
 
 	if (pathwayList != nullptr)
-		pathwayList->GetSourceOutputCode(parent->GetName());
+		pathwayList->GetSourceOutputCode(ZResource::parent->GetName());
 
 	return sourceOutput;
 }
@@ -93,7 +93,7 @@ int32_t ZSetPathways::GetRawDataSize()
 string ZSetPathways::GenerateExterns()
 {
 	if (pathwayList != nullptr)
-		return pathwayList->GenerateExterns(parent->GetName());
+		return pathwayList->GenerateExterns(ZResource::parent->GetName());
 
 	return "";
 }

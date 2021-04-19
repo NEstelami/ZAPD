@@ -58,7 +58,7 @@ public:
 	int32_t cmdSet;
 	uint32_t commandSet;
 
-	//ZRoomCommand() = default;
+	ZRoomCommand() = default;
 	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex);
 
 	virtual std::string GetBodySourceCode();

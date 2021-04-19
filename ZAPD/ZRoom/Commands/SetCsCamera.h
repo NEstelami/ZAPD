@@ -8,8 +8,8 @@ class CsCameraEntry
 public:
 	CsCameraEntry(std::vector<uint8_t> rawData, int rawDataIndex);
 
-	int GetSegmentOffset() const;
 	int16_t GetNumPoints() const;
+	int GetSegmentOffset() const;
 
 //protected:
 	int baseOffset;
