@@ -14,38 +14,26 @@ SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	numActors = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
-	_rawData = rawData;
-	_rawDataIndex = rawDataIndex;
-
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
-}
-
-SetActorList::~SetActorList()
-{
-	for (ActorSpawnEntry* entry : actors)
-		delete entry;
-
-	actors.clear();
 }
 
 string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
 	string sourceOutput = "";
 	size_t numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
-	actors = vector<ActorSpawnEntry*>();
 	uint32_t currentPtr = segmentOffset;
 
 	for (size_t i = 0; i < numActorsReal; i++)
 	{
-		ActorSpawnEntry* entry = new ActorSpawnEntry(_rawData, currentPtr);
+		ActorSpawnEntry entry(rawData, currentPtr);
 		actors.push_back(entry);
 
 		currentPtr += 16;
 	}
 
 	sourceOutput +=
-		StringHelper::Sprintf("\n    %s 0x%02X, (u32)%sActorList0x%06X \n};",
+		StringHelper::Sprintf("\n    %s 0x%02X, (u32)%sActorList_%06X \n};",
 	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 	                          numActors, roomName.c_str(), segmentOffset);
 
@@ -56,32 +44,9 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	string declaration = "";
 
 	size_t index = 0;
-	for (ActorSpawnEntry* entry : actors)
+	for (const auto& entry : actors)
 	{
-		uint16_t actorNum = entry->actorNum;
-
-		if (Globals::Instance->game == ZGame::MM_RETAIL)
-		{
-			declaration += StringHelper::Sprintf(
-				"    { %s, %i, %i, %i, SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X), "
-				"SPAWN_ROT_FLAGS(%i, 0x%04X), 0x%04X }, //0x%06X",
-				ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY, entry->posZ,
-				(entry->rotX >> 7) & 0b111111111, entry->rotX & 0b1111111,
-				(entry->rotY >> 7) & 0b111111111, entry->rotY & 0b1111111,
-				(entry->rotZ >> 7) & 0b111111111, entry->rotZ & 0b1111111, (uint16_t)entry->initVar,
-				segmentOffset + (index * 16));
-		}
-		else
-		{
-			declaration += StringHelper::Sprintf(
-				"    { %s, %i, %i, %i, %i, %i, %i, 0x%04X }, //0x%06X",
-				ZNames::GetActorName(actorNum).c_str(), entry->posX, entry->posY, entry->posZ,
-				entry->rotX, entry->rotY, entry->rotZ, (uint16_t)entry->initVar,
-				segmentOffset + (index * 16));
-
-			if (index < actors.size() - 1)
-				declaration += "\n";
-		}
+		declaration += StringHelper::Sprintf("    { %s }, // 0x%06X", entry.GetBodySourceCode().c_str(), segmentOffset + (index * 16));
 
 		if (index < actors.size() - 1)
 			declaration += "\n";
@@ -94,8 +59,8 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		padding = DeclarationPadding::None;
 
 	zRoom->parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, padding, actors.size() * 16, "ActorEntry",
-		StringHelper::Sprintf("%sActorList0x%06X", roomName.c_str(), segmentOffset),
+		segmentOffset, DeclarationAlignment::Align4, padding, actors.size() * 16, "ActorEntry",
+		StringHelper::Sprintf("%sActorList_%06X", roomName.c_str(), segmentOffset),
 		GetActorListArraySize(), declaration);
 
 	return sourceOutput;
@@ -117,8 +82,8 @@ size_t SetActorList::GetActorListArraySize()
 	{
 		actorCount = 0;
 
-		for (ActorSpawnEntry* entry : actors)
-			if (entry->actorNum != 0x22)
+		for (const auto& entry : actors)
+			if (entry.GetActorId() != 0x22)
 				actorCount++;
 	}
 	else
@@ -131,8 +96,13 @@ size_t SetActorList::GetActorListArraySize()
 
 string SetActorList::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern ActorEntry %sActorList0x%06X[%i];\n",
-	                             zRoom->GetName().c_str(), segmentOffset, GetActorListArraySize());
+	Declaration* decl = parent->GetDeclaration(segmentOffset);
+	if (decl == nullptr)
+	{
+		return "";
+	}
+
+	return StringHelper::Sprintf("extern %s %s[];\n", actors.at(0).GetSourceTypeName().c_str(), decl->varName.c_str());
 }
 
 string SetActorList::GetCommandCName()
@@ -145,16 +115,40 @@ RoomCommand SetActorList::GetRoomCommand()
 	return RoomCommand::SetActorList;
 }
 
-ActorSpawnEntry::ActorSpawnEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+ActorSpawnEntry::ActorSpawnEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 {
-	const uint8_t* data = rawData.data();
+	actorNum = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
+	posX = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+	posY = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+	posZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
+	rotX = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
+	rotY = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
+	rotZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
+	initVar = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
+}
 
-	actorNum = BitConverter::ToInt16BE(data, rawDataIndex + 0);
-	posX = BitConverter::ToInt16BE(data, rawDataIndex + 2);
-	posY = BitConverter::ToInt16BE(data, rawDataIndex + 4);
-	posZ = BitConverter::ToInt16BE(data, rawDataIndex + 6);
-	rotX = BitConverter::ToInt16BE(data, rawDataIndex + 8);
-	rotY = BitConverter::ToInt16BE(data, rawDataIndex + 10);
-	rotZ = BitConverter::ToInt16BE(data, rawDataIndex + 12);
-	initVar = BitConverter::ToInt16BE(data, rawDataIndex + 14);
+std::string ActorSpawnEntry::GetBodySourceCode() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL)
+	{
+		return StringHelper::Sprintf(
+			"%s, %i, %i, %i, SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X), "
+			"SPAWN_ROT_FLAGS(%i, 0x%04X), 0x%04X",
+			ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ,
+			(rotX >> 7) & 0b111111111, rotX & 0b1111111,
+			(rotY >> 7) & 0b111111111, rotY & 0b1111111,
+			(rotZ >> 7) & 0b111111111, rotZ & 0b1111111, initVar);
+	}
+
+	return StringHelper::Sprintf("%s, %i, %i, %i, %i, %i, %i, 0x%04X", ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ, rotX, rotY, rotZ, initVar);
+}
+
+std::string ActorSpawnEntry::GetSourceTypeName() const
+{
+	return "ActorEntry";
+}
+
+uint16_t ActorSpawnEntry::GetActorId() const
+{
+	return actorNum;
 }

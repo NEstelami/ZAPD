@@ -4,7 +4,7 @@
 
 class ActorSpawnEntry
 {
-public:
+protected:
 	uint16_t actorNum;
 	int16_t posX;
 	int16_t posY;
@@ -14,26 +14,29 @@ public:
 	int16_t rotZ;
 	uint16_t initVar;
 
-	ActorSpawnEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+public:
+	ActorSpawnEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
+
+	std::string GetBodySourceCode() const;
+	std::string GetSourceTypeName() const;
+
+	uint16_t GetActorId() const;
 };
 
 class SetActorList : public ZRoomCommand
 {
 public:
 	SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetActorList();
 
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
-	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
+	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
+	RoomCommand GetRoomCommand() override;
+	int32_t GetRawDataSize() override;
+	std::string GetCommandCName() override;
+	std::string GenerateExterns() override;
 
-private:
+protected:
 	size_t GetActorListArraySize();
 	int numActors;
-	std::vector<ActorSpawnEntry*> actors;
+	std::vector<ActorSpawnEntry> actors;
 	uint32_t segmentOffset;
-	std::vector<uint8_t> _rawData;
-	int _rawDataIndex;
 };

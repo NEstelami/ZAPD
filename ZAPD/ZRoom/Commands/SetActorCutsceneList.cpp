@@ -11,49 +11,57 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> r
                                            int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numCutscenes = rawData[rawDataIndex + 1];
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+	int numCutscenes = rawData.at(rawDataIndex + 1);
+	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
-	cutscenes = vector<ActorCutsceneEntry*>();
+	if (numCutscenes > 0) {
+		int32_t currentPtr = segmentOffset;
 
-	int32_t currentPtr = segmentOffset;
+		for (int i = 0; i < numCutscenes; i++)
+		{
+			ActorCutsceneEntry entry(rawData, currentPtr);
+			cutscenes.push_back(entry);
 
-	for (int i = 0; i < numCutscenes; i++)
-	{
-		ActorCutsceneEntry* entry = new ActorCutsceneEntry(rawData, currentPtr);
-		cutscenes.push_back(entry);
+			currentPtr += 16;
+		}
 
-		currentPtr += 16;
+		string declaration = "";
+
+		for (size_t i = 0; i < cutscenes.size(); i++)
+		{
+			const auto& entry = cutscenes.at(i);
+			declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
+
+			if (i + 1 < cutscenes.size())
+			{
+				declaration += "\n";
+			}
+		}
+
+		zRoom->parent->AddDeclarationArray(
+			segmentOffset, DeclarationAlignment::Align4, cutscenes.size() * 16, cutscenes.at(0).GetSourceTypeName(),
+			StringHelper::Sprintf("%sActorCutsceneList_%06X", zRoom->GetName().c_str(), segmentOffset),
+			0, declaration);
 	}
-
-	string declaration = "";
-
-	for (ActorCutsceneEntry* entry : cutscenes)
-	{
-		declaration += StringHelper::Sprintf(
-			"    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", entry->priority, entry->length,
-			entry->unk4, entry->unk6, entry->additionalCutscene, entry->sound, entry->unkB,
-			entry->unkC, entry->unkE, entry->letterboxSize);
-	}
-
-	zRoom->parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, cutscenes.size() * 16, "ActorCutscene",
-		StringHelper::Sprintf("%sActorCutsceneList0x%06X", zRoom->GetName().c_str(), segmentOffset),
-		0, declaration);
 }
 
-SetActorCutsceneList::~SetActorCutsceneList()
+string SetActorCutsceneList::GetBodySourceCode()
 {
-	for (ActorCutsceneEntry* entry : cutscenes)
-		delete entry;
-}
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
 
-string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, int baseAddress)
-{
-	return StringHelper::Sprintf(
-		"%s 0x%02X, (u32)&%sActorCutsceneList0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), cutscenes.size(),
-		zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s, %3i, (u32)%s", GetCommandHex().c_str(), cutscenes.size(), listName.c_str());
 }
 
 int32_t SetActorCutsceneList::GetRawDataSize()
@@ -63,8 +71,13 @@ int32_t SetActorCutsceneList::GetRawDataSize()
 
 string SetActorCutsceneList::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern ActorCutscene %sActorCutsceneList0x%06X[];\n",
-	                             zRoom->GetName().c_str(), segmentOffset);
+	Declaration* decl = parent->GetDeclaration(segmentOffset);
+	if (decl == nullptr)
+	{
+		return "";
+	}
+
+	return StringHelper::Sprintf("extern %s %s[];\n", cutscenes.at(0).GetSourceTypeName().c_str(), decl->varName.c_str());
 }
 
 string SetActorCutsceneList::GetCommandCName()
@@ -87,4 +100,14 @@ ActorCutsceneEntry::ActorCutsceneEntry(std::vector<uint8_t> rawData, int rawData
 	  unkC(BitConverter::ToInt16BE(rawData, rawDataIndex + 0xC)), unkE(rawData[rawDataIndex + 0xE]),
 	  letterboxSize(rawData[rawDataIndex + 0xF])
 {
+}
+
+std::string ActorCutsceneEntry::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %i", priority, length, unk4, unk6, additionalCutscene, sound, unkB, unkC, unkE, letterboxSize);
+}
+
+std::string ActorCutsceneEntry::GetSourceTypeName() const
+{
+	return "ActorCutscene";
 }
