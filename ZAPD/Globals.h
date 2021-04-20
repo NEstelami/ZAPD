@@ -44,6 +44,7 @@ public:
 	TextureType texType;
 	ZGame game;
 	GameConfig cfg;
+	bool warnUnaccounted = false;
 
 	std::vector<ZFile*> files;
 	std::vector<int> segments;

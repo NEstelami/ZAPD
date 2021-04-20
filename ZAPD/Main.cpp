@@ -221,6 +221,10 @@ int NewMain(int argc, char* argv[])
 		{
 			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
 		}
+		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
+		{
+			Globals::Instance->warnUnaccounted = true;
+		}
 	}
 
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)

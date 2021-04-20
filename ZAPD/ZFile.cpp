@@ -815,23 +815,27 @@ string ZFile::ProcessDeclarations()
 						// DeclarationAlignment::None, diff, "static u8",
 						// StringHelper::Sprintf("unaccounted_%06X", lastAddr +
 						// declarations[lastAddr]->size), diff, src);
-						AddDeclarationArray(
+						Declaration* decl = AddDeclarationArray(
 							unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
 							StringHelper::Sprintf("unaccounted_%06X", unaccountedAddress), diff,
 							src);
-						if (nonZeroUnaccounted)
-						{
-							fprintf(stderr, "Warning in file: %s (%s)\n"
-								    "\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-								    "\t Block size: '0x%X'.\n", 
-									xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-						}
-						else if (diff >= 16)
-						{
-							fprintf(stderr, "Warning in file: %s (%s)\n"
-								    "\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
-								    "\t Block size: '0x%X'.\n", 
-									xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+						decl->isUnaccounted = true;
+
+						if (Globals::Instance->warnUnaccounted) {
+							if (nonZeroUnaccounted)
+							{
+								fprintf(stderr, "Warning in file: %s (%s)\n"
+										"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+										"\t Block size: '0x%X'.\n", 
+										xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+							}
+							else if (diff >= 16)
+							{
+								fprintf(stderr, "Warning in file: %s (%s)\n"
+										"\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
+										"\t Block size: '0x%X'.\n", 
+										xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+							}
 						}
 					}
 				}
@@ -872,24 +876,28 @@ string ZFile::ProcessDeclarations()
 		{
 			if (diff > 0)
 			{
-				AddDeclarationArray(unaccountedAddress,
+				Declaration* decl = AddDeclarationArray(unaccountedAddress,
 				                    DeclarationAlignment::None, diff, "static u8",
 				                    StringHelper::Sprintf("unaccounted_%06X",
 				                                          unaccountedAddress),
 				                    diff, src);
-				if (nonZeroUnaccounted)
-				{
-					fprintf(stderr, "Warning in file: %s (%s)\n"
-							"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-							"\t Block size: '0x%X'.\n", 
-							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-				}
-				else if (diff >= 16)
-				{
-					fprintf(stderr, "Warning in file: %s (%s)\n"
-							"\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
-							"\t Block size: '0x%X'.\n", 
-							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+				decl->isUnaccounted = true;
+
+				if (Globals::Instance->warnUnaccounted) {
+					if (nonZeroUnaccounted)
+					{
+						fprintf(stderr, "Warning in file: %s (%s)\n"
+								"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+								"\t Block size: '0x%X'.\n", 
+								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+					}
+					else if (diff >= 16)
+					{
+						fprintf(stderr, "Warning in file: %s (%s)\n"
+								"\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
+								"\t Block size: '0x%X'.\n", 
+								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+					}
 				}
 			}
 		}
@@ -900,9 +908,7 @@ string ZFile::ProcessDeclarations()
 	int protoCnt = 0;
 	for (pair<uint32_t, Declaration*> item : declarations)
 	{
-		if (/* item.second->includePath == "" && */ StringHelper::StartsWith(item.second->varType,
-		                                                                     "static ") &&
-		    !StringHelper::StartsWith(item.second->varName, "unaccounted_"))
+		if (StringHelper::StartsWith(item.second->varType, "static ") && !item.second->isUnaccounted)
 		{
 			if (item.second->isArray)
 			{
