@@ -7,7 +7,7 @@ using namespace std;
 SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	cameraMovement = rawData.at(rawDataIndex + 0x01);
+	cameraMovement = cmdArg1;
 	mapHighlight = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 }
 

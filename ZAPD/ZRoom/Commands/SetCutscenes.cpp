@@ -10,6 +10,11 @@ using namespace std;
 SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
+	ParseRawData();
+}
+
+void SetCutscenes::ParseRawData()
+{
 	numCutscenes = rawData[rawDataIndex + 1];
 
 	uint32_t curPtr = segmentOffset;
@@ -17,10 +22,10 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
 	{
-		ZCutscene* cutscene = new ZCutscene(nZRoom->parent);
+		ZCutscene* cutscene = new ZCutscene(parent);
 		cutscene->ExtractFromFile(rawData, segmentOffset, "");
 
-		auto decl = nZRoom->parent->GetDeclaration(segmentOffset);
+		auto decl = parent->GetDeclaration(segmentOffset);
 		if (decl == nullptr)
 		{
 			cutscene->DeclareVar(zRoom->GetName().c_str(), "");
@@ -35,20 +40,20 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 		for (int i = 0; i < numCutscenes; i++)
 		{
-			CutsceneEntry* entry = new CutsceneEntry(rawData, currentPtr);
+			CutsceneEntry entry(rawData, currentPtr);
 			cutsceneEntries.push_back(entry);
 			currentPtr += 8;
 
 			declaration += StringHelper::Sprintf(
 				"    { %sCutsceneData0x%06X, 0x%04X, 0x%02X, 0x%02X },", zRoom->GetName().c_str(),
-				entry->segmentOffset, entry->exit, entry->entrance, entry->flag);
+				entry.segmentOffset, entry.exit, entry.entrance, entry.flag);
 
 			if (i < numCutscenes - 1)
 				declaration += "\n";
 
-			ZCutsceneMM* cutscene = new ZCutsceneMM(nZRoom->parent);
+			ZCutsceneMM* cutscene = new ZCutsceneMM(parent);
 			cutscene->ExtractFromXML(
-				nullptr, rawData, entry->segmentOffset,
+				nullptr, rawData, entry.segmentOffset,
 				"");  // TODO: Use ExtractFromFile() here when that gets implemented
 			cutscenes.push_back(cutscene);
 		}
@@ -82,9 +87,6 @@ SetCutscenes::~SetCutscenes()
 {
 	for (ZCutsceneBase* cutscene : cutscenes)
 		delete cutscene;
-
-	for (CutsceneEntry* entry : cutsceneEntries)
-		delete entry;
 }
 
 string SetCutscenes::GetBodySourceCode()

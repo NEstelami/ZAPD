@@ -10,8 +10,9 @@ public:
 
 	std::string GetBodySourceCode() override;
 	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
-	std::string GetCommandCName() override;
+
 	RoomCommand GetRoomCommand() override;
+	std::string GetCommandCName() override;
 
 private:
 	std::vector<uint32_t> headers;

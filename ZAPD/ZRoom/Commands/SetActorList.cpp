@@ -11,7 +11,7 @@ using namespace std;
 SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	numActors = rawData.at(rawDataIndex + 1);
+	numActors = cmdArg1;
 
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);

@@ -22,14 +22,16 @@ class SetCsCamera : public ZRoomCommand
 {
 public:
 	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetCsCamera();
+
+	void ParseRawData() override;
 
 	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
+
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;
 	std::string GetCommandCName() override;
 
 private:
-	std::vector<CsCameraEntry*> cameras;
+	std::vector<CsCameraEntry> cameras;
 	std::vector<Vec3s> points;
 };

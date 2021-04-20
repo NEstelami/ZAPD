@@ -7,8 +7,13 @@ using namespace std;
 SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	this->numLights = rawData[rawDataIndex + 1];
+	numLights = cmdArg1;
 
+	ParseRawData();
+}
+
+void SetLightList::ParseRawData()
+{
 	string declarations = "";
 
 	int32_t currentPtr = segmentOffset;
@@ -42,10 +47,21 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 std::string SetLightList::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s, %i, &%sLightInfo0x%06X",
-		GetCommandHex().c_str(), this->numLights,
-		zRoom->GetName().c_str(), segmentOffset);
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, %i, &%s", GetCommandHex().c_str(), numLights, listName.c_str());
 }
 
 string SetLightList::GetCommandCName()

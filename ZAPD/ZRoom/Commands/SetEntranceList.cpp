@@ -12,12 +12,6 @@ SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 {
 }
 
-SetEntranceList::~SetEntranceList()
-{
-	for (EntranceEntry* entry : entrances)
-		delete entry;
-}
-
 std::string SetEntranceList::GetBodySourceCode()
 {
 	return StringHelper::Sprintf("%s, 0x00, (u32)&%sEntranceList0x%06X", GetCommandHex().c_str(), zRoom->GetName().c_str(), segmentOffset);
@@ -27,12 +21,13 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 {
 	// Parse Entrances and Generate Declaration
 	zRoom->parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
+
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
 	for (int i = 0; i < numEntrances; i++)
 	{
-		EntranceEntry* entry = new EntranceEntry(rawData, currentPtr);
+		EntranceEntry entry(rawData, currentPtr);
 		entrances.push_back(entry);
 
 		currentPtr += 2;
@@ -42,11 +37,12 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 
 	int index = 0;
 
-	for (EntranceEntry* entry : entrances)
+	for (const auto& entry : entrances)
 	{
-		declaration +=
-			StringHelper::Sprintf("    { 0x%02X, 0x%02X }, //0x%06X \n", entry->startPositionIndex,
-		                          entry->roomToLoad, segmentOffset + (index * 2));
+		declaration += StringHelper::Sprintf("    { %s }, //0x%06X", entry.GetBodySourceCode().c_str(), segmentOffset + (index * 2));
+		if (index + 1 < entrances.size())
+			declaration += "\n";
+
 		index++;
 	}
 
@@ -74,8 +70,13 @@ RoomCommand SetEntranceList::GetRoomCommand()
 	return RoomCommand::SetEntranceList;
 }
 
-EntranceEntry::EntranceEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+EntranceEntry::EntranceEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 {
-	startPositionIndex = rawData[rawDataIndex + 0];
-	roomToLoad = rawData[rawDataIndex + 1];
+	startPositionIndex = rawData.at(rawDataIndex + 0);
+	roomToLoad = rawData.at(rawDataIndex + 1);
+}
+
+std::string EntranceEntry::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("0x%02X, 0x%02X", startPositionIndex, roomToLoad);
 }

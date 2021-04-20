@@ -11,7 +11,12 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> r
                                            int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numCutscenes = rawData.at(rawDataIndex + 1);
+	ParseRawData();
+}
+
+void SetActorCutsceneList::ParseRawData()
+{
+	int numCutscenes = cmdArg1;
 
 	if (numCutscenes > 0) {
 		int32_t currentPtr = segmentOffset;

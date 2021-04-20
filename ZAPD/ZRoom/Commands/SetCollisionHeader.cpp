@@ -10,11 +10,16 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
                                        int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	collisionHeader = new ZCollisionHeader(nZRoom->parent);
+	ParseRawData();
+}
+
+void SetCollisionHeader::ParseRawData()
+{
+	collisionHeader = new ZCollisionHeader(parent);
 	collisionHeader->SetRawData(rawData);
 	collisionHeader->SetRawDataIndex(segmentOffset);
 	collisionHeader->SetName(
-		StringHelper::Sprintf("%sCollisionHeader0x%06X", nZRoom->GetName().c_str(), segmentOffset));
+		StringHelper::Sprintf("%sCollisionHeader_%06X", parent->GetName().c_str(), segmentOffset));
 	collisionHeader->ParseRawData();
 }
 

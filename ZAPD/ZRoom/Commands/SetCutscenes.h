@@ -21,14 +21,17 @@ public:
 	SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetCutscenes();
 
+	void ParseRawData() override;
+
 	std::string GetBodySourceCode() override;
+	std::string GenerateExterns() override;
+
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;
 	std::string GetCommandCName() override;
-	std::string GenerateExterns() override;
 
 private:
 	std::vector<ZCutsceneBase*> cutscenes;
-	std::vector<CutsceneEntry*> cutsceneEntries;  // (MM Only)
+	std::vector<CutsceneEntry> cutsceneEntries;  // (MM Only)
 	uint8_t numCutscenes;  // (MM Only)
 };

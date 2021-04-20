@@ -28,9 +28,12 @@ class SetActorCutsceneList : public ZRoomCommand
 public:
 	SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
+	void ParseRawData() override;
+
 	std::string GetBodySourceCode() override;
-	std::string GetCommandCName() override;
 	std::string GenerateExterns() override;
+
+	std::string GetCommandCName() override;
 	RoomCommand GetRoomCommand() override;
 	int GetRawDataSize() override;
 

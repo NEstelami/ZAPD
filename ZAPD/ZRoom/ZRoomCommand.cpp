@@ -19,6 +19,11 @@ void ZRoomCommand::ParseRawData()
 {
 }
 
+void ZRoomCommand::DeclareReferences()
+{
+	
+}
+
 std::string ZRoomCommand::GetBodySourceCode()
 {
 	return StringHelper::Sprintf("%s,", GetCommandHex().c_str());

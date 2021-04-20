@@ -9,24 +9,29 @@ using namespace std;
 SetCsCamera::SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numCameras = rawData[rawDataIndex + 1];
+	ParseRawData();
+}
+
+void SetCsCamera::ParseRawData()
+{
+	int numCameras = cmdArg1;
 
 	uint32_t currentPtr = segmentOffset;
 	int numPoints = 0;
 
 	for (int i = 0; i < numCameras; i++)
 	{
-		CsCameraEntry* entry = new CsCameraEntry(rawData, currentPtr);
+		CsCameraEntry entry(rawData, currentPtr);
 
 		cameras.push_back(entry);
-		numPoints += entry->GetNumPoints();
+		numPoints += entry.GetNumPoints();
 
 		currentPtr += 8;
 	}
 
 	if (numPoints > 0)
 	{
-		uint32_t currentPtr = cameras[0]->GetSegmentOffset();
+		uint32_t currentPtr = cameras[0].GetSegmentOffset();
 
 		for (int i = 0; i < numPoints; i++)
 		{
@@ -40,12 +45,6 @@ SetCsCamera::SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
-}
-
-SetCsCamera::~SetCsCamera()
-{
-	for (CsCameraEntry* entry : cameras)
-		delete entry;
 }
 
 string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
@@ -64,7 +63,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 		for (Vec3s point : points)
 		{
 			declaration += StringHelper::Sprintf("	{ %i, %i, %i }, //0x%06X", point.x, point.y,
-			                                     point.z, cameras[0]->segmentOffset + (index * 6));
+			                                     point.z, cameras[0].segmentOffset + (index * 6));
 
 			if (index < points.size() - 1)
 				declaration += "\n";
@@ -72,11 +71,11 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 			index++;
 		}
 
-		zRoom->parent->AddDeclarationArray(cameras[0]->GetSegmentOffset(), DeclarationAlignment::None,
+		zRoom->parent->AddDeclarationArray(cameras[0].GetSegmentOffset(), DeclarationAlignment::None,
 		                                   DeclarationPadding::None, points.size() * 6, "Vec3s",
 		                                   StringHelper::Sprintf("%sCsCameraPoints0x%06X",
 		                                                         roomName.c_str(),
-		                                                         cameras[0]->GetSegmentOffset()),
+		                                                         cameras[0].GetSegmentOffset()),
 		                                   points.size(), declaration);
 	}
 
@@ -85,17 +84,17 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 		size_t index = 0;
 		size_t pointsIndex = 0;
-		for (CsCameraEntry* entry : cameras)
+		for (const auto& entry : cameras)
 		{
 			declaration += StringHelper::Sprintf("    %i, %i, (u32)&%sCsCameraPoints0x%06X[%i],",
-			                                     entry->type, entry->numPoints, roomName.c_str(),
-			                                     cameras[0]->GetSegmentOffset(), pointsIndex);
+			                                     entry.type, entry.numPoints, roomName.c_str(),
+			                                     cameras[0].GetSegmentOffset(), pointsIndex);
 
 			if (index < cameras.size() - 1)
 				declaration += "\n";
 
 			index++;
-			pointsIndex += entry->GetNumPoints();
+			pointsIndex += entry.GetNumPoints();
 		}
 
 		zRoom->parent->AddDeclarationArray(

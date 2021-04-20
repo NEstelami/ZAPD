@@ -10,10 +10,15 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
                                          int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	uint8_t numLights = rawData[rawDataIndex + 1];
+	ParseRawData();
+}
+
+void SetLightingSettings::ParseRawData()
+{
+	uint8_t numLights = cmdArg1;
 
 	for (int i = 0; i < numLights; i++)
-		settings.push_back(new LightingSettings(rawData, segmentOffset + (i * 22)));
+		settings.push_back(LightingSettings(rawData, segmentOffset + (i * 22)));
 
 	if (numLights > 0)
 	{
@@ -22,19 +27,11 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 		for (int i = 0; i < numLights; i++)
 		{
 			declaration += StringHelper::Sprintf(
-				"\t{ 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, "
-				"0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, "
-				"0x%04X }, // 0x%06X \n",
-				settings[i]->ambientClrR, settings[i]->ambientClrG, settings[i]->ambientClrB,
-				settings[i]->diffuseClrA_R, settings[i]->diffuseClrA_G, settings[i]->diffuseClrA_B,
-				settings[i]->diffuseDirA_X, settings[i]->diffuseDirA_Y, settings[i]->diffuseDirA_Z,
-				settings[i]->diffuseClrB_R, settings[i]->diffuseClrB_G, settings[i]->diffuseClrB_B,
-				settings[i]->diffuseDirB_X, settings[i]->diffuseDirB_Y, settings[i]->diffuseDirB_Z,
-				settings[i]->fogClrR, settings[i]->fogClrG, settings[i]->fogClrB, settings[i]->unk,
-				settings[i]->drawDistance, segmentOffset + (i * 22));
+				"\t{ %s }, // 0x%06X \n",
+				settings.at(i).GetBodySourceCode().c_str(), segmentOffset + (i * 22));
 		}
 
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, numLights * 22,
 			"LightSettings",
 			StringHelper::Sprintf("%sLightSettings0x%06X", zRoom->GetName().c_str(), segmentOffset),
@@ -42,15 +39,23 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 	}
 }
 
-SetLightingSettings::~SetLightingSettings()
-{
-	for (LightingSettings* setting : settings)
-		delete setting;
-}
-
 std::string SetLightingSettings::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, %i, (u32)&%sLightSettings0x%06X", GetCommandHex().c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, %i, (u32)%s", GetCommandHex().c_str(), settings.size(), listName.c_str());
 }
 
 string SetLightingSettings::GetCommandCName()
@@ -69,34 +74,44 @@ RoomCommand SetLightingSettings::GetRoomCommand()
 	return RoomCommand::SetLightingSettings;
 }
 
-LightingSettings::LightingSettings(vector<uint8_t> rawData, int rawDataIndex)
+LightingSettings::LightingSettings(const vector<uint8_t>& rawData, int rawDataIndex)
 {
-	const uint8_t* data = rawData.data();
+	ambientClrR = rawData.at(rawDataIndex + 0);
+	ambientClrG = rawData.at(rawDataIndex + 1);
+	ambientClrB = rawData.at(rawDataIndex + 2);
 
-	ambientClrR = data[rawDataIndex + 0];
-	ambientClrG = data[rawDataIndex + 1];
-	ambientClrB = data[rawDataIndex + 2];
+	diffuseClrA_R = rawData.at(rawDataIndex + 3);
+	diffuseClrA_G = rawData.at(rawDataIndex + 4);
+	diffuseClrA_B = rawData.at(rawDataIndex + 5);
 
-	diffuseClrA_R = data[rawDataIndex + 3];
-	diffuseClrA_G = data[rawDataIndex + 4];
-	diffuseClrA_B = data[rawDataIndex + 5];
+	diffuseDirA_X = rawData.at(rawDataIndex + 6);
+	diffuseDirA_Y = rawData.at(rawDataIndex + 7);
+	diffuseDirA_Z = rawData.at(rawDataIndex + 8);
 
-	diffuseDirA_X = data[rawDataIndex + 6];
-	diffuseDirA_Y = data[rawDataIndex + 7];
-	diffuseDirA_Z = data[rawDataIndex + 8];
+	diffuseClrB_R = rawData.at(rawDataIndex + 9);
+	diffuseClrB_G = rawData.at(rawDataIndex + 10);
+	diffuseClrB_B = rawData.at(rawDataIndex + 11);
 
-	diffuseClrB_R = data[rawDataIndex + 9];
-	diffuseClrB_G = data[rawDataIndex + 10];
-	diffuseClrB_B = data[rawDataIndex + 11];
+	diffuseDirB_X = rawData.at(rawDataIndex + 12);
+	diffuseDirB_Y = rawData.at(rawDataIndex + 13);
+	diffuseDirB_Z = rawData.at(rawDataIndex + 14);
 
-	diffuseDirB_X = data[rawDataIndex + 12];
-	diffuseDirB_Y = data[rawDataIndex + 13];
-	diffuseDirB_Z = data[rawDataIndex + 14];
+	fogClrR = rawData.at(rawDataIndex + 15);
+	fogClrG = rawData.at(rawDataIndex + 16);
+	fogClrB = rawData.at(rawDataIndex + 17);
 
-	fogClrR = data[rawDataIndex + 15];
-	fogClrG = data[rawDataIndex + 16];
-	fogClrB = data[rawDataIndex + 17];
+	unk = BitConverter::ToInt16BE(rawData, rawDataIndex + 18);
+	drawDistance = BitConverter::ToInt16BE(rawData, rawDataIndex + 20);
+}
 
-	unk = BitConverter::ToInt16BE(data, rawDataIndex + 18);
-	drawDistance = BitConverter::ToInt16BE(data, rawDataIndex + 20);
+std::string LightingSettings::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X",
+				ambientClrR, ambientClrG, ambientClrB,
+				diffuseClrA_R, diffuseClrA_G, diffuseClrA_B,
+				diffuseDirA_X, diffuseDirA_Y, diffuseDirA_Z,
+				diffuseClrB_R, diffuseClrB_G, diffuseClrB_B,
+				diffuseDirB_X, diffuseDirB_Y, diffuseDirB_Z,
+				fogClrR, fogClrG, fogClrB, unk,
+				drawDistance);
 }

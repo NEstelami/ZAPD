@@ -62,6 +62,7 @@ public:
 	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex);
 
 	virtual void ParseRawData();
+	virtual void DeclareReferences();
 
 	virtual std::string GetBodySourceCode();
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);

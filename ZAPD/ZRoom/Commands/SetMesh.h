@@ -154,9 +154,10 @@ public:
 
 	std::string GetBodySourceCode() override;
 	std::string GenerateExterns() override;
-	std::string GetCommandCName() override;
+
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;
+	std::string GetCommandCName() override;
 
 private:
 	MeshHeaderBase* meshHeader = nullptr;
