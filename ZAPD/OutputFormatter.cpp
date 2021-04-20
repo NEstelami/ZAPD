@@ -1,8 +1,8 @@
 #include "OutputFormatter.h"
 
-int OutputFormatter::Write(const char* buf, int count)
+int32_t OutputFormatter::Write(const char* buf, int32_t count)
 {
-	for (int i = 0; i < count; i++)
+	for (int32_t i = 0; i < count; i++)
 	{
 		char c = buf[i];
 
@@ -13,8 +13,8 @@ int OutputFormatter::Write(const char* buf, int count)
 		}
 		else if (c == '\t')
 		{
-			int n = tabSize - (col % tabSize);
-			for (int j = 0; j < n - 1; j++)
+			int32_t n = tabSize - (col % tabSize);
+			for (int32_t j = 0; j < n - 1; j++)
 				*spaceP++ = ' ';
 			c = ' ';
 			col += n;
@@ -65,18 +65,18 @@ int OutputFormatter::Write(const char* buf, int count)
 
 OutputFormatter* OutputFormatter::Instance;
 
-int OutputFormatter::WriteStatic(const char* buf, int count)
+int32_t OutputFormatter::WriteStatic(const char* buf, int32_t count)
 {
 	return Instance->Write(buf, count);
 }
 
-int (*OutputFormatter::StaticWriter())(const char* buf, int count)
+int32_t (*OutputFormatter::StaticWriter())(const char* buf, int32_t count)
 {
 	Instance = this;
 	return &WriteStatic;
 }
 
-OutputFormatter::OutputFormatter(int tabSize, int defaultIndent, int lineLimit)
+OutputFormatter::OutputFormatter(int32_t tabSize, int32_t defaultIndent, int32_t lineLimit)
 	: tabSize{tabSize}, defaultIndent{defaultIndent}, lineLimit{lineLimit}, col{0}, nest{0},
 	  nestIndent{defaultIndent}, currentIndent{defaultIndent}, wordP{word}, spaceP{space}
 {

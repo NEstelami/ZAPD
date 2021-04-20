@@ -12,10 +12,10 @@ public:
 	uint8_t data1;
 	uint32_t data2;
 
-	ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
+	virtual std::string GenerateSourceCodePass2(std::string roomName, int32_t baseAddress);
 	virtual std::string GenerateSourceCodePass3(std::string roomName);
 	virtual RoomCommand GetRoomCommand();
 	virtual size_t GetRawDataSize();

@@ -57,9 +57,10 @@ public:
 
 	// Parsing from File
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            const int nRawDataIndex,
+	                            const int32_t nRawDataIndex,
 	                            const std::string& nRelPath);  // Extract Mode
-	virtual void ExtractFromFile();
+	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
+	                             const std::string& nRelPath);
 
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
@@ -134,7 +135,7 @@ public:
 	std::string includePath;
 	bool isExternal;
 	bool isArray;
-	int arrayItemCnt;
+	int32_t arrayItemCnt;
 	std::vector<uint32_t> references;
 
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
@@ -142,12 +143,12 @@ public:
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
 	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText);
+	            std::string nVarName, bool nIsArray, int32_t nArrayItemCnt, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText,
+	            std::string nVarName, bool nIsArray, int32_t nArrayItemCnt, std::string nText,
 	            bool nIsExternal);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, int nArrayItemCnt,
+	            std::string nVarType, std::string nVarName, bool nIsArray, int32_t nArrayItemCnt,
 	            std::string nText);
 	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType,
 	            std::string nVarName);

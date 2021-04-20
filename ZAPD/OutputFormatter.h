@@ -7,14 +7,14 @@
 class OutputFormatter
 {
 private:
-	const int tabSize;
-	const int defaultIndent;
-	const int lineLimit;
+	const int32_t tabSize;
+	const int32_t defaultIndent;
+	const int32_t lineLimit;
 
-	int col;
-	int nest;
-	int nestIndent[8];
-	int currentIndent;
+	int32_t col;
+	int32_t nest;
+	int32_t nestIndent[8];
+	int32_t currentIndent;
 
 	char word[128];
 	char space[128];
@@ -23,15 +23,15 @@ private:
 
 	std::string str;
 
-	int Write(const char* buf, int count);
+	int32_t Write(const char* buf, int32_t count);
 
 	static OutputFormatter* Instance;
-	static int WriteStatic(const char* buf, int count);
+	static int32_t WriteStatic(const char* buf, int32_t count);
 
 public:
-	OutputFormatter(int tabSize = 4, int defaultIndent = 4, int lineLimit = 120);
+	OutputFormatter(int32_t tabSize = 4, int32_t defaultIndent = 4, int32_t lineLimit = 120);
 
-	int (*StaticWriter())(const char* buf, int count);
+	int32_t (*StaticWriter())(const char* buf, int32_t count);
 
 	std::string GetOutput();
 };

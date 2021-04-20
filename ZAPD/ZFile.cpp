@@ -74,7 +74,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	else
 		name = filename;
 
-	int segment = -1;
+	int32_t segment = -1;
 
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
@@ -124,7 +124,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	}
 
 	auto nodeMap = *GetNodeMap();
-	int rawDataIndex = 0;
+	int32_t rawDataIndex = 0;
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
@@ -182,7 +182,7 @@ void ZFile::BuildSourceFile(string outputDir)
 	GenerateSourceFiles(outputDir);
 }
 
-std::string ZFile::GetVarName(int address)
+std::string ZFile::GetVarName(int32_t address)
 {
 	for (pair<int32_t, Declaration*> pair : declarations)
 	{
@@ -262,7 +262,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 #endif
 
@@ -280,7 +280,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 #endif
 
@@ -293,12 +293,12 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         uint32_t size, std::string varType, std::string varName,
-                                        int arrayItemCnt, std::string body)
+                                        int32_t arrayItemCnt, std::string body)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 #endif
 
@@ -311,12 +311,12 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         uint32_t size, std::string varType, std::string varName,
-                                        int arrayItemCnt, std::string body, bool isExternal)
+                                        int32_t arrayItemCnt, std::string body, bool isExternal)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 #endif
 
@@ -329,12 +329,12 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         DeclarationPadding padding, uint32_t size, string varType,
-                                        string varName, int arrayItemCnt, std::string body)
+                                        string varName, int32_t arrayItemCnt, std::string body)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 #endif
 
@@ -379,17 +379,17 @@ Declaration* ZFile::AddDeclarationInclude(uint32_t address, string includePath, 
 
 Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath,
                                                uint32_t size, std::string varType,
-                                               std::string varName, int arrayItemCnt)
+                                               std::string varName, int32_t arrayItemCnt)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 
 	if (address == 0)
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 #endif
 
@@ -430,7 +430,7 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #ifdef _DEBUG
 	if (address == 0x0000)
 	{
-		int bp = 0;
+		int32_t bp = 0;
 	}
 #endif
 }
@@ -654,7 +654,7 @@ string ZFile::ProcessDeclarations()
 				// TEST: For now just do Vtx declarations...
 				if (lastItem.second->varType == "static Vtx")
 				{
-					int sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
+					int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
 
 					// Make sure there isn't an unaccounted inbetween these two
 					if (sizeDiff == 0)
@@ -686,8 +686,8 @@ string ZFile::ProcessDeclarations()
 		{
 			if (item.second->alignment == DeclarationAlignment::Align16)
 			{
-				// int lastAddrSizeTest = declarations[lastAddr]->size;
-				int curPtr = lastAddr + declarations[lastAddr]->size;
+				// int32_t lastAddrSizeTest = declarations[lastAddr]->size;
+				int32_t curPtr = lastAddr + declarations[lastAddr]->size;
 
 				while (curPtr % 4 != 0)
 				{
@@ -709,7 +709,7 @@ string ZFile::ProcessDeclarations()
 			}
 			else if (item.second->alignment == DeclarationAlignment::Align8)
 			{
-				int curPtr = lastAddr + declarations[lastAddr]->size;
+				int32_t curPtr = lastAddr + declarations[lastAddr]->size;
 
 				while (curPtr % 4 != 0)
 				{
@@ -734,7 +734,7 @@ string ZFile::ProcessDeclarations()
 
 		if (item.second->padding == DeclarationPadding::Pad16)
 		{
-			int curPtr = item.first + item.second->size;
+			int32_t curPtr = item.first + item.second->size;
 
 			while (curPtr % 4 != 0)
 			{
@@ -776,12 +776,12 @@ string ZFile::ProcessDeclarations()
 			if (lastAddr + lastSize != item.first && lastAddr >= rangeStart &&
 			    lastAddr + lastSize < rangeEnd)
 			{
-				// int diff = item.first - (lastAddr + declarations[lastAddr]->size);
-				int diff = item.first - (lastAddr + lastSize);
+				// int32_t diff = item.first - (lastAddr + declarations[lastAddr]->size);
+				int32_t diff = item.first - (lastAddr + lastSize);
 
 				string src = "    ";
 
-				for (int i = 0; i < diff; i++)
+				for (int32_t i = 0; i < diff; i++)
 				{
 					// src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr +
 					// declarations[lastAddr]->size + i]);
@@ -818,11 +818,11 @@ string ZFile::ProcessDeclarations()
 	if (lastAddr + lastDecl->size < rawData.size() && lastAddr + lastDecl->size >= rangeStart &&
 	    lastAddr + lastDecl->size < rangeEnd)
 	{
-		int diff = (int)(rawData.size() - (lastAddr + lastDecl->size));
+		int32_t diff = (int32_t)(rawData.size() - (lastAddr + lastDecl->size));
 
 		string src = "    ";
 
-		for (int i = 0; i < diff; i++)
+		for (int32_t i = 0; i < diff; i++)
 		{
 			src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + lastDecl->size + i]);
 
@@ -844,7 +844,7 @@ string ZFile::ProcessDeclarations()
 
 	// Go through include declarations
 	// First, handle the prototypes (static only for now)
-	int protoCnt = 0;
+	int32_t protoCnt = 0;
 	for (pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (/* item.second->includePath == "" && */ StringHelper::StartsWith(item.second->varType,
@@ -1016,8 +1016,8 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 					{
 						if (refDecl->arrayItemCnt != 0)
 						{
-							int itemSize = refDecl->size / refDecl->arrayItemCnt;
-							int itemIndex = (decl->references[refIndex] - refDeclAddr) / itemSize;
+							int32_t itemSize = refDecl->size / refDecl->arrayItemCnt;
+							int32_t itemIndex = (decl->references[refIndex] - refDeclAddr) / itemSize;
 
 							decl->text.replace(i, 2,
 							                   StringHelper::Sprintf(

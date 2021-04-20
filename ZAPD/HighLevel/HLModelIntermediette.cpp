@@ -97,15 +97,15 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	// Analyze display lists to determine components
 	HLDisplayListIntermediette* dList = new HLDisplayListIntermediette();
 	dList->address = zDisplayList->GetRawDataIndex();
-	int startIndex = 0;
+	int32_t startIndex = 0;
 
 	// Go through the display lists and setup commands
-	int meshCnt = 0;
+	int32_t meshCnt = 0;
 
 	HLMeshIntermediette* mesh = new HLMeshIntermediette();
 	mesh->name = StringHelper::Sprintf("%s_%i", zDisplayList->GetName().c_str(), meshCnt);
 
-	int matCnt = 0;
+	int32_t matCnt = 0;
 	HLMaterialIntermediette* lastMat = new HLMaterialIntermediette();
 	lastMat->name = StringHelper::Sprintf("Material_%i", matCnt);
 
@@ -120,19 +120,15 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 
 		if (opcode == F3DZEXOpcode::G_SETOTHERMODE_L)
 		{
-			int ss = (data & 0x0000FF0000000000) >> 40;
-			int nn = (data & 0x000000FF00000000) >> 32;
-
-			int sft = 32 - (nn + 1) - ss;
 		}
 		else if (opcode == F3DZEXOpcode::G_SETPRIMCOLOR)
 		{
-			int mm = (data & 0x0000FF0000000000) >> 40;
-			int ff = (data & 0x000000FF00000000) >> 32;
-			int rr = (data & 0x00000000FF000000) >> 24;
-			int gg = (data & 0x0000000000FF0000) >> 16;
-			int bb = (data & 0x000000000000FF00) >> 8;
-			int aa = (data & 0x00000000000000FF) >> 0;
+			int32_t mm = (data & 0x0000FF0000000000) >> 40;
+			int32_t ff = (data & 0x000000FF00000000) >> 32;
+			int32_t rr = (data & 0x00000000FF000000) >> 24;
+			int32_t gg = (data & 0x0000000000FF0000) >> 16;
+			int32_t bb = (data & 0x000000000000FF00) >> 8;
+			int32_t aa = (data & 0x00000000000000FF) >> 0;
 
 			lastClrR = rr;
 			lastClrG = gg;
@@ -152,9 +148,9 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 		         (F3DZEXOpcode)(zDisplayList->instructions[i - 1] >> 56) !=
 		             F3DZEXOpcode::G_RDPPIPESYNC)
 		{
-			int cc =
+			int32_t cc =
 				(data & 0b0000000000000000000000000000000000000000000011000000000000000000) >> 18;
-			int dd =
+			int32_t dd =
 				(data & 0b0000000000000000000000000000000000000000000000000000001100000000) >> 8;
 
 			lastMat->cmtH = (HLMaterialCmt)cc;
@@ -200,9 +196,9 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 		}
 		else if (opcode == F3DZEXOpcode::G_VTX)
 		{
-			int nn = (data & 0x000FF00000000000ULL) >> 44;
-			int aa = (data & 0x000000FF00000000ULL) >> 32;
-			int startIndex = ((aa >> 1) - nn);
+			int32_t nn = (data & 0x000FF00000000000ULL) >> 44;
+			int32_t aa = (data & 0x000000FF00000000ULL) >> 32;
+			int32_t startIndex = ((aa >> 1) - nn);
 			uint32_t vtxAddr = data & 0x00FFFFFF;
 			uint32_t diff = vtxAddr - vStart;
 
@@ -212,25 +208,25 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 		}
 		else if (opcode == F3DZEXOpcode::G_TRI1)
 		{
-			int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
-			int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
-			int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
+			int32_t aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
+			int32_t bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
+			int32_t cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
 
 			mesh->commands.push_back(new HLMeshCmdTriangle1(aa, bb, cc, 0));
 		}
 		else if (opcode == F3DZEXOpcode::G_TRI2)
 		{
-			int aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
-			int bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
-			int cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
-			int dd = ((data & 0x00000000FF0000ULL) >> 16) / 2;
-			int ee = ((data & 0x0000000000FF00ULL) >> 8) / 2;
-			int ff = ((data & 0x000000000000FFULL) >> 0) / 2;
+			int32_t aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
+			int32_t bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
+			int32_t cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
+			int32_t dd = ((data & 0x00000000FF0000ULL) >> 16) / 2;
+			int32_t ee = ((data & 0x0000000000FF00ULL) >> 8) / 2;
+			int32_t ff = ((data & 0x000000000000FFULL) >> 0) / 2;
 
 			mesh->commands.push_back(new HLMeshCmdTriangle2(aa, bb, cc, 0, dd, ee, ff, 0));
 		}
 
-		// int bp = 0;
+		// int32_t bp = 0;
 	}
 
 	limb->commands.push_back(new HLLimbCommand(mesh->name, lastMat->name));
@@ -297,7 +293,7 @@ string HLModelIntermediette::ToAssimpFile()
 
 	std::vector<aiVector3D> vertices;
 
-	int idx = 0;
+	int32_t idx = 0;
 
 	for (HLIntermediette* block : blocks)
 	{
@@ -310,12 +306,12 @@ string HLModelIntermediette::ToAssimpFile()
 	newScene->mRootNode->mNumChildren += newScene->mNumMeshes;
 	newScene->mRootNode->mChildren = new aiNode*[newScene->mRootNode->mNumChildren];
 
-	for (int i = 0; i < newScene->mNumMeshes; i++)
+	for (int32_t i = 0; i < newScene->mNumMeshes; i++)
 	{
 		aiNode* child = new aiNode();
 		child->mName = StringHelper::Sprintf("OBJ_%i", i);
 		child->mNumMeshes = 1;
-		child->mMeshes = new unsigned int[1];
+		child->mMeshes = new unsigned int32_t[1];
 		child->mMeshes[0] = i;
 		child->mTransformation.Translation(aiVector3D(meshTranslations[i].x * 10,
 		                                              meshTranslations[i].y * 10,
@@ -600,7 +596,7 @@ void HLMeshCmdTriangle1::OutputAssimp(HLModelIntermediette* parent, aiScene* sce
 {
 	aiFace* face = new aiFace();
 	face->mNumIndices = 3;
-	face->mIndices = new unsigned int[3];
+	face->mIndices = new unsigned int32_t[3];
 	face->mIndices[0] = parent->startIndex + v0;
 	face->mIndices[1] = parent->startIndex + v1;
 	face->mIndices[2] = parent->startIndex + v2;
@@ -667,7 +663,7 @@ std::string HLMeshCmdTriangle2::OutputOBJ(HLModelIntermediette* parent)
 {
 	string output = "";
 
-	int startIndex = parent->startIndex;
+	int32_t startIndex = parent->startIndex;
 
 	output += StringHelper::Sprintf("f %i %i %i\n", startIndex + v0 + 1, startIndex + v1 + 1,
 	                                startIndex + v2 + 1);
@@ -682,7 +678,7 @@ void HLMeshCmdTriangle2::OutputAssimp(HLModelIntermediette* parent, aiScene* sce
 	{
 		aiFace* face = new aiFace();
 		face->mNumIndices = 3;
-		face->mIndices = new unsigned int[3];
+		face->mIndices = new unsigned int32_t[3];
 		face->mIndices[0] = parent->startIndex + v0;
 		face->mIndices[1] = parent->startIndex + v1;
 		face->mIndices[2] = parent->startIndex + v2;
@@ -693,7 +689,7 @@ void HLMeshCmdTriangle2::OutputAssimp(HLModelIntermediette* parent, aiScene* sce
 	{
 		aiFace* face = new aiFace();
 		face->mNumIndices = 3;
-		face->mIndices = new unsigned int[3];
+		face->mIndices = new unsigned int32_t[3];
 		face->mIndices[0] = parent->startIndex + v10;
 		face->mIndices[1] = parent->startIndex + v11;
 		face->mIndices[2] = parent->startIndex + v12;
@@ -806,8 +802,8 @@ void HLMaterialIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XM
 	elem->SetAttribute("ClrA", clrA);
 	elem->SetAttribute("ClrL", clrL);
 	elem->SetAttribute("ClrM", clrM);
-	elem->SetAttribute("CmtH", (int)cmtH);
-	elem->SetAttribute("CmtV", (int)cmtV);
+	elem->SetAttribute("CmtH", (int32_t)cmtH);
+	elem->SetAttribute("CmtV", (int32_t)cmtV);
 
 	parent->InsertEndChild(elem);
 }
@@ -1170,7 +1166,7 @@ void HLSetTranslation::OutputAssimp(aiScene* scene, std::vector<aiVector3D>* ver
 }
 
 HLModelObj::HLModelObj(Vec3s nPos, Vec3s nRot, std::vector<aiVector3D> nVerts,
-                       std::vector<int> nIndices)
+                       std::vector<int32_t> nIndices)
 {
 	pos = nPos;
 	rot = nRot;

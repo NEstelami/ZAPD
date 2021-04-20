@@ -8,7 +8,7 @@ ZSymbol::ZSymbol(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-// ZSymbol::ZSymbol(const std::string& nName, int nRawDataIndex, const std::string& nType, uint32_t
+// ZSymbol::ZSymbol(const std::string& nName, int32_t nRawDataIndex, const std::string& nType, uint32_t
 // nTypeSize, bool nIsArray, uint32_t nCount)
 //    : type(nType), typeSize(nTypeSize), isArray(nIsArray), count(nCount)
 //{
@@ -16,7 +16,7 @@ ZSymbol::ZSymbol(ZFile* nParent) : ZResource(nParent)
 //    rawDataIndex = nRawDataIndex;
 //}
 //
-// ZSymbol::ZSymbol(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int
+// ZSymbol::ZSymbol(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int32_t
 // nRawDataIndex, ZFile* nParent)
 //{
 //    rawData.assign(nRawData.begin(), nRawData.end());
@@ -27,7 +27,7 @@ ZSymbol::ZSymbol(ZFile* nParent) : ZResource(nParent)
 //}
 
 void ZSymbol::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                             const int nRawDataIndex, const std::string& nRelPath)
+                             const int32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }

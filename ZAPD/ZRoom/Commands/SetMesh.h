@@ -38,7 +38,7 @@ protected:
 	segptr_t xlu = 0;  // Gfx*
 
 	std::vector<uint8_t> rawData;
-	int rawDataIndex;
+	int32_t rawDataIndex;
 	ZFile* parent;
 	ZRoom* room;
 	std::string name;
@@ -48,7 +48,7 @@ protected:
 
 public:
 	PolygonDlist() = default;
-	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
 	             ZFile* nParent, ZRoom* nRoom);
 
 	size_t GetRawDataSize();
@@ -84,7 +84,7 @@ protected:
 	ZBackground* sourceBackground;
 
 	std::vector<uint8_t> rawData;
-	int rawDataIndex;
+	int32_t rawDataIndex;
 	ZFile* parent;
 	std::string name;
 	bool isSubStruct;
@@ -95,7 +95,7 @@ protected:
 public:
 	BgImage() = default;
 	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-	        int nRawDataIndex, ZFile* nParent);
+	        int32_t nRawDataIndex, ZFile* nParent);
 
 	static size_t GetRawDataSize();
 
@@ -122,14 +122,14 @@ protected:
 	std::vector<BgImage> multiList;
 
 	std::vector<uint8_t> rawData;
-	int rawDataIndex;
+	int32_t rawDataIndex;
 	ZFile* parent;
 	std::string name;
 
 	void ParseRawData();
 
 public:
-	PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
 	             ZFile* nParent, ZRoom* nRoom);
 
 	size_t GetRawDataSize();
@@ -149,11 +149,11 @@ public:
 class SetMesh : public ZRoomCommand
 {
 public:
-	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset);
+	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex, int32_t segAddressOffset);
 	~SetMesh();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	// virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
+	// virtual std::string GenerateSourceCodePass2(std::string roomName, int32_t baseAddress);
 	// virtual std::string GenerateSourceCodePass3(std::string roomName);
 	virtual std::string GenerateExterns();
 	virtual std::string GetCommandCName();

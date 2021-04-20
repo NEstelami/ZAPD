@@ -48,7 +48,7 @@ ZTexture::~ZTexture()
 }
 
 void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                              const int nRawDataIndex, const std::string& nRelPath)
+                              const int32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ParseXML(reader);
 	rawDataIndex = nRawDataIndex;
@@ -61,8 +61,8 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 	PrepareBitmap();
 }
 
-ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int nRawDataIndex,
-                               std::string nName, int nWidth, int nHeight, ZFile* nParent)
+ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int32_t nRawDataIndex,
+                               std::string nName, int32_t nWidth, int32_t nHeight, ZFile* nParent)
 {
 	ZTexture* tex = new ZTexture(nParent);
 
@@ -73,7 +73,7 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	tex->outName = nName;
 	tex->rawDataIndex = nRawDataIndex;
 
-	int dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
+	int32_t dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
 	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
 
 	tex->FixRawData();
@@ -97,7 +97,7 @@ ZTexture* ZTexture::BuildFromXML(XMLElement* reader, string inFolder, bool readF
 
 ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 {
-	int comp;
+	int32_t comp;
 	ZTexture* tex = new ZTexture(nullptr);
 	tex->type = texType;
 	tex->name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
@@ -251,11 +251,11 @@ void ZTexture::PrepareBitmap()
 
 void ZTexture::PrepareBitmapRGBA16()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 2;
+			int32_t pos = ((y * width) + x) * 2;
 			short data = (short)((rawData[pos + 1] << 8) + rawData[pos]);
 			uint8_t r = (uint8_t)((data & 0xF800) >> 11);
 			uint8_t g = (uint8_t)((data & 0x07C0) >> 6);
@@ -272,11 +272,11 @@ void ZTexture::PrepareBitmapRGBA16()
 
 void ZTexture::PrepareBitmapRGBA32()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 4;
+			int32_t pos = ((y * width) + x) * 4;
 
 			bmpRgba[(((y * width) + x) * 4) + 0] = rawData[pos + 2];
 			bmpRgba[(((y * width) + x) * 4) + 1] = rawData[pos + 1];
@@ -288,13 +288,13 @@ void ZTexture::PrepareBitmapRGBA32()
 
 void ZTexture::PrepareBitmapGrayscale4()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x += 2)
+		for (int32_t x = 0; x < width; x += 2)
 		{
-			for (int i = 0; i < 2; i++)
+			for (int32_t i = 0; i < 2; i++)
 			{
-				int pos = ((y * width) + x) / 2;
+				int32_t pos = ((y * width) + x) / 2;
 				uint8_t grayscale = 0;
 
 				if (i == 0)
@@ -312,11 +312,11 @@ void ZTexture::PrepareBitmapGrayscale4()
 
 void ZTexture::PrepareBitmapGrayscale8()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 1;
+			int32_t pos = ((y * width) + x) * 1;
 
 			bmpRgb[(((y * width) + x) * 3) + 0] = rawData[pos];
 			bmpRgb[(((y * width) + x) * 3) + 1] = rawData[pos];
@@ -327,13 +327,13 @@ void ZTexture::PrepareBitmapGrayscale8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha4()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x += 2)
+		for (int32_t x = 0; x < width; x += 2)
 		{
-			for (int i = 0; i < 2; i++)
+			for (int32_t i = 0; i < 2; i++)
 			{
-				int pos = ((y * width) + x) / 2;
+				int32_t pos = ((y * width) + x) / 2;
 				uint8_t data = 0;
 
 				if (i == 0)
@@ -355,11 +355,11 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha8()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 1;
+			int32_t pos = ((y * width) + x) * 1;
 			uint8_t grayscale = (uint8_t)(rawData[pos] & 0xF0);
 			uint8_t alpha = (uint8_t)((rawData[pos] & 0x0F) << 4);
 
@@ -373,11 +373,11 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha16()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 2;
+			int32_t pos = ((y * width) + x) * 2;
 			uint8_t grayscale = rawData[pos + 0];
 			uint8_t alpha = rawData[pos + 1];
 
@@ -391,13 +391,13 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 
 void ZTexture::PrepareBitmapPalette4()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x += 2)
+		for (int32_t x = 0; x < width; x += 2)
 		{
-			for (int i = 0; i < 2; i++)
+			for (int32_t i = 0; i < 2; i++)
 			{
-				int pos = ((y * width) + x) / 2;
+				int32_t pos = ((y * width) + x) / 2;
 				uint8_t paletteIndex = 0;
 
 				if (i == 0)
@@ -415,11 +415,11 @@ void ZTexture::PrepareBitmapPalette4()
 
 void ZTexture::PrepareBitmapPalette8()
 {
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 1;
+			int32_t pos = ((y * width) + x) * 1;
 
 			bmpRgb[(((y * width) + x) * 3) + 0] = rawData[pos];
 			bmpRgb[(((y * width) + x) * 3) + 1] = rawData[pos];
@@ -468,17 +468,17 @@ void ZTexture::PrepareRawData(string inFolder)
 
 void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 2;
+			int32_t pos = ((y * width) + x) * 2;
 
 			uint8_t r = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 0] / 8);
 			uint8_t g = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 1] / 8);
@@ -496,17 +496,17 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 
 void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 4;
+			int32_t pos = ((y * width) + x) * 4;
 
 			rawData[pos + 0] = bmpRgba[(((y * width) + x) * 4) + 0];
 			rawData[pos + 1] = bmpRgba[(((y * width) + x) * 4) + 1];
@@ -518,17 +518,17 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 
 void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x += 2)
+		for (int32_t x = 0; x < width; x += 2)
 		{
-			int pos = ((y * width) + x) / 2;
+			int32_t pos = ((y * width) + x) / 2;
 			uint8_t r1 = (uint8_t)(bmpRgb[(((y * width) + x) * 3) + 0]);
 			uint8_t r2 = (uint8_t)(bmpRgb[(((y * width) + x + 1) * 3) + 0]);
 
@@ -539,17 +539,17 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 
 void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x);
+			int32_t pos = ((y * width) + x);
 			rawData[pos] = bmpRgb[(((y * width) + x) * 3) + 0];
 		}
 	}
@@ -557,20 +557,20 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x += 2)
+		for (int32_t x = 0; x < width; x += 2)
 		{
-			int pos = ((y * width) + x) / 2;
+			int32_t pos = ((y * width) + x) / 2;
 			uint8_t data = 0;
 
-			for (int i = 0; i < 2; i++)
+			for (int32_t i = 0; i < 2; i++)
 			{
 				uint8_t cR = bmpRgba[(((y * width) + x + i) * 4) + 0];
 				uint8_t alphaBit = (bmpRgba[(((y * width) + x + i) * 4) + 3] != 0);
@@ -588,17 +588,17 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 1;
+			int32_t pos = ((y * width) + x) * 1;
 
 			uint8_t r = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 0]);
 			uint8_t a = (uint8_t)(bmpRgba[(((y * width) + x) * 4) + 3]);
@@ -610,17 +610,17 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x) * 2;
+			int32_t pos = ((y * width) + x) * 2;
 
 			uint8_t cR = bmpRgba[(((y * width) + x) * 4) + 0];
 			uint8_t aR = bmpRgba[(((y * width) + x) * 4) + 3];
@@ -633,17 +633,17 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataPalette4(string palPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x += 2)
+		for (int32_t x = 0; x < width; x += 2)
 		{
-			int pos = ((y * width) + x) / 2;
+			int32_t pos = ((y * width) + x) / 2;
 
 			uint8_t cR1 = bmpRgb[(((y * width) + x) * 3) + 0];
 			uint8_t cR2 = bmpRgb[(((y * width) + x + 1) * 3) + 0];
@@ -655,17 +655,17 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 
 void ZTexture::PrepareRawDataPalette8(string palPath)
 {
-	int width;
-	int height;
-	int comp;
+	int32_t width;
+	int32_t height;
+	int32_t comp;
 
 	bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
 
-	for (int y = 0; y < height; y++)
+	for (int32_t y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int32_t x = 0; x < width; x++)
 		{
-			int pos = ((y * width) + x);
+			int32_t pos = ((y * width) + x);
 
 			uint8_t cR = bmpRgb[(((y * width) + x) * 3) + 0];
 			rawData[pos] = cR;
@@ -748,22 +748,22 @@ std::string ZTexture::GetIMSizFromType()
 	}
 }
 
-int ZTexture::GetWidth()
+int32_t ZTexture::GetWidth()
 {
 	return width;
 }
 
-int ZTexture::GetHeight()
+int32_t ZTexture::GetHeight()
 {
 	return height;
 }
 
-void ZTexture::SetWidth(int nWidth)
+void ZTexture::SetWidth(int32_t nWidth)
 {
 	width = nWidth;
 }
 
-void ZTexture::SetHeight(int nHeight)
+void ZTexture::SetHeight(int32_t nHeight)
 {
 	height = nHeight;
 }

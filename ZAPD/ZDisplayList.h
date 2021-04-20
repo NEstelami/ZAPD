@@ -293,7 +293,7 @@ public:
 	Vertex();
 	Vertex(int16_t nX, int16_t nY, int16_t nZ, uint16_t nFlag, int16_t nS, int16_t nT, uint8_t nR,
 	       uint8_t nG, uint8_t nB, uint8_t nA);
-	Vertex(std::vector<uint8_t> rawData, int rawDataIndex);
+	Vertex(std::vector<uint8_t> rawData, int32_t rawDataIndex);
 };
 
 class ZDisplayList : public ZResource
@@ -302,14 +302,14 @@ protected:
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
 	void ParseRawData() override;
 
-	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::string prefix, char* line);
+	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, std::string prefix, char* line);
 	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string prefix, char* line);
 
 	// Various Instruction Optimizations
-	bool SequenceCheck(std::vector<F3DZEXOpcode> sequence, int startIndex);
-	int OptimizationChecks(int startIndex, std::string& output, std::string prefix);
-	int OptimizationCheck_LoadTextureBlock(int startIndex, std::string& output, std::string prefix);
-	// int OptimizationCheck_LoadMultiBlock(int startIndex, std::string& output, std::string
+	bool SequenceCheck(std::vector<F3DZEXOpcode> sequence, int32_t startIndex);
+	int32_t OptimizationChecks(int32_t startIndex, std::string& output, std::string prefix);
+	int32_t OptimizationCheck_LoadTextureBlock(int32_t startIndex, std::string& output, std::string prefix);
+	// int32_t OptimizationCheck_LoadMultiBlock(int32_t startIndex, std::string& output, std::string
 	// prefix);
 
 	// F3DEX Specific Opcode Values
@@ -349,7 +349,7 @@ public:
 
 	DListType dListType;
 
-	// int dListAddress;
+	// int32_t dListAddress;
 
 	std::map<uint32_t, std::vector<Vertex>> vertices;
 	std::map<uint32_t, std::string> vtxDeclarations;
@@ -365,11 +365,11 @@ public:
 	std::vector<ZMtx> mtxList;
 
 	ZDisplayList(ZFile* nParent);
-	ZDisplayList(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize, ZFile* nParent);
+	ZDisplayList(std::vector<uint8_t> nRawData, int32_t rawDataIndex, int32_t rawDataSize, ZFile* nParent);
 
 	static ZDisplayList* Instance;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const int nRawDataIndex, const std::string& nRelPath) override;
+	                    const int32_t nRawDataIndex, const std::string& nRelPath) override;
 	// static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool
 	// readFile, ZFile* nParent);
 
@@ -380,7 +380,7 @@ public:
 	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
 	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
 	                            bool texIsPalette);
-	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex, DListType dListType);
+	static int32_t GetDListLength(std::vector<uint8_t> rawData, int32_t rawDataIndex, DListType dListType);
 
 	std::vector<uint8_t> GetRawData() override;
 	size_t GetRawDataSize() override;

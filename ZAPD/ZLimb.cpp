@@ -281,7 +281,7 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 	{
 		uint32_t unk_8_Offset = Seg2Filespace(unk_8, parent->baseAddress);
 
-		int dlistLength = ZDisplayList::GetDListLength(
+		int32_t dlistLength = ZDisplayList::GetDListLength(
 			rawData, unk_8_Offset,
 			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		unk_8_dlist = new ZDisplayList(rawData, unk_8_Offset, dlistLength, parent);
@@ -352,7 +352,7 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 }
 
 ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-             int nRawDataIndex, ZFile* nParent)
+             int32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
@@ -453,7 +453,7 @@ void ZLimb::ParseRawData()
 }
 
 void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const int nRawDataIndex, const std::string& nRelPath)
+                           const int32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	segAddress = nRawDataIndex;
@@ -591,7 +591,7 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 		dListStr = StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(),
 		                                 dListOffset);
 
-		int dlistLength = ZDisplayList::GetDListLength(
+		int32_t dlistLength = ZDisplayList::GetDListLength(
 			rawData, dListOffset,
 			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		auto dList = new ZDisplayList(rawData, dListOffset, dlistLength, parent);

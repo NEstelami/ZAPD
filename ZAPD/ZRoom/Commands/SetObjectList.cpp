@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	objects = vector<uint16_t>();
@@ -33,7 +33,7 @@ string SetObjectList::GenerateExterns()
 	                             segmentOffset);
 }
 
-string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetObjectList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
 {
 	string sourceOutput = "";
 

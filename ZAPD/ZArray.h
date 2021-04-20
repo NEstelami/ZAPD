@@ -16,11 +16,11 @@ public:
 	size_t GetRawDataSize() override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const int nRawDataIndex, const std::string& nRelPath) override;
+	                    const int32_t nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
-	int arrayCnt;
+	int32_t arrayCnt;
 	ZFile* testFile;
 
-	// void ParseRawData(const std::vector<uint8_t>& data, const int offset);
+	// void ParseRawData(const std::vector<uint8_t>& data, const int32_t offset);
 };

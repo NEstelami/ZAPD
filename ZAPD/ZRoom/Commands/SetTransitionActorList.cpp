@@ -9,17 +9,17 @@
 using namespace std;
 
 SetTransitionActorList::SetTransitionActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                               int rawDataIndex)
+                                               int32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numActors = rawData[rawDataIndex + 1];
+	int32_t numActors = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
 	transitionActors = vector<TransitionActorEntry*>();
 
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numActors; i++)
+	for (int32_t i = 0; i < numActors; i++)
 	{
 		TransitionActorEntry* entry = new TransitionActorEntry(rawData, currentPtr);
 		transitionActors.push_back(entry);
@@ -39,7 +39,7 @@ string SetTransitionActorList::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
 {
 	string sourceOutput =
 		StringHelper::Sprintf("%s 0x%02X, (u32)%sTransitionActorList0x%06X",
@@ -67,7 +67,7 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 	return sourceOutput;
 }
 
-string SetTransitionActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
+string SetTransitionActorList::GenerateSourceCodePass2(string roomName, int32_t baseAddress)
 {
 	return "";
 }
@@ -93,7 +93,7 @@ RoomCommand SetTransitionActorList::GetRoomCommand()
 	return RoomCommand::SetTransitionActorList;
 }
 
-TransitionActorEntry::TransitionActorEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+TransitionActorEntry::TransitionActorEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
 {
 	frontObjectRoom = rawData[rawDataIndex + 0];
 	frontTransitionReaction = rawData[rawDataIndex + 1];

@@ -38,7 +38,7 @@ public:
 	      std::string filename, bool placeholderMode);
 	~ZFile();
 
-	std::string GetVarName(int address);
+	std::string GetVarName(int32_t address);
 	std::string GetName();
 	void ExtractResources(std::string outputDir);
 	void BuildSourceFile(std::string outputDir);
@@ -53,20 +53,20 @@ public:
 	                            std::string varName, std::string body);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
 	                                 uint32_t size, std::string varType, std::string varName,
-	                                 int arrayItemCnt, std::string body);
+	                                 int32_t arrayItemCnt, std::string body);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
 	                                 uint32_t size, std::string varType, std::string varName,
-	                                 int arrayItemCnt, std::string body, bool isExternal);
+	                                 int32_t arrayItemCnt, std::string body, bool isExternal);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
 	                                 DeclarationPadding padding, uint32_t size, std::string varType,
-	                                 std::string varName, int arrayItemCnt, std::string body);
+	                                 std::string varName, int32_t arrayItemCnt, std::string body);
 	Declaration* AddDeclarationPlaceholder(uint32_t address);
 	Declaration* AddDeclarationPlaceholder(uint32_t address, std::string varName);
 	Declaration* AddDeclarationInclude(uint32_t address, std::string includePath, uint32_t size,
 	                                   std::string varType, std::string varName);
 	Declaration* AddDeclarationIncludeArray(uint32_t address, std::string includePath,
 	                                        uint32_t size, std::string varType, std::string varName,
-	                                        int arrayItemCnt);
+	                                        int32_t arrayItemCnt);
 	std::string GetDeclarationName(uint32_t address);
 	std::string GetDeclarationName(uint32_t address, std::string defaultResult);
 	Declaration* GetDeclaration(uint32_t address);

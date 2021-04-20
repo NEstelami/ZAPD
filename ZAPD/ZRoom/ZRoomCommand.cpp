@@ -3,7 +3,7 @@
 
 using namespace std;
 
-ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
 {
 	cmdID = (RoomCommand)rawData[rawDataIndex];
 	cmdAddress = rawDataIndex;
@@ -14,12 +14,12 @@ ZRoomCommand::~ZRoomCommand()
 {
 }
 
-string ZRoomCommand::GenerateSourceCodePass1(string roomName, int baseAddress)
+string ZRoomCommand::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
 {
 	return StringHelper::Sprintf("0x%02X,", (uint8_t)cmdID);
 }
 
-string ZRoomCommand::GenerateSourceCodePass2(string roomName, int baseAddress)
+string ZRoomCommand::GenerateSourceCodePass2(string roomName, int32_t baseAddress)
 {
 	return "";
 }

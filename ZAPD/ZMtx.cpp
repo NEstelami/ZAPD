@@ -9,12 +9,13 @@ ZMtx::ZMtx(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
            ZFile* nParent)
 	: ZResource(nParent)
 {
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
-	ExtractFromXML(nullptr, nRawData, nRawDataIndex, "");
+	ExtractFromFile(nRawData, nRawDataIndex, "");
+	DeclareVar("", "");
 }
 
 void ZMtx::ParseRawData()
@@ -27,7 +28,7 @@ void ZMtx::ParseRawData()
 }
 
 void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                          int nRawDataIndex, const std::string& nRelPath)
+                          int32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar("", "");

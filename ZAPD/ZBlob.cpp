@@ -14,7 +14,7 @@ ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, std::string nName,
+ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex, int32_t size, std::string nName,
              ZFile* nParent)
 	: ZBlob(nParent)
 {
@@ -25,7 +25,7 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, int nRawDataIndex, int size, 
 }
 
 void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const int nRawDataIndex, const std::string& nRelPath)
+                           const int32_t nRawDataIndex, const std::string& nRelPath)
 {
 	rawDataIndex = nRawDataIndex;
 

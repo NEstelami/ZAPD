@@ -16,7 +16,7 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 }
 
 void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                             const int nRawDataIndex, const std::string& nRelPath)
+                             const int32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }
@@ -34,7 +34,7 @@ void ZVector::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZVector::ParseRawData()
 {
-	int currentRawDataIndex = this->rawDataIndex;
+	int32_t currentRawDataIndex = this->rawDataIndex;
 
 	scalars.clear();
 

@@ -65,7 +65,7 @@ ZRoom::~ZRoom()
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const int nRawDataIndex, const std::string& nRelPath)
+                           const int32_t nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
@@ -82,7 +82,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	Globals::Instance->AddSegment(SEGMENT_ROOM);
 	Globals::Instance->AddSegment(SEGMENT_SCENE);
 
-	int cmdCount = 999999;
+	int32_t cmdCount = 999999;
 
 	if (name == "syotes_room_0")
 	{
@@ -102,7 +102,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		if (string(child->Name()) == "DListHint")
 		{
 			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
 				rawData, address,
@@ -115,55 +115,25 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			dList->GetSourceOutputCode(name);
 			delete dList;
 		}
-		else if (string(child->Name()) == "BlobHint")
-		{
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			string sizeStr = child->Attribute("Size");
-			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
-
-			ZBlob* blob =
-				new ZBlob(rawData, address, size,
-			              StringHelper::Sprintf("%sBlob0x%06X", name.c_str(), address), parent);
-
-			if (child->Attribute("Name") != NULL)
-				childName = string(child->Attribute("Name"));
-			else
-				childName = StringHelper::Sprintf("%s_%s", name.c_str(), blob->GetName().c_str());
-
-			parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(),
-			                            "u8", childName, 0, blob->GetSourceOutputCode(name));
-			delete blob;
-		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
 			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->ExtractFromXML(
-				nullptr, rawData, address,
-				"");  // TODO: Make this use ExtractFromFile() once that's been implemented
+			cutscene->ExtractFromXML(child, rawData, address, "");
 
-			if (child->Attribute("Name") != NULL)
-				childName = string(child->Attribute("Name"));
-			else
-				childName = StringHelper::Sprintf("%sCutsceneData0x%06X", name.c_str(),
-				                                  cutscene->GetRawDataIndex());
+			cutscene->GetSourceOutputCode(name);
 
-			parent->AddDeclarationArray(address, DeclarationAlignment::None,
-			                            DeclarationPadding::Pad16, cutscene->GetRawDataSize(),
-			                            "s32", childName, 0, cutscene->GetSourceOutputCode(name));
 			delete cutscene;
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
 		{
 			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			int commandsCount = 99999999;
+			int32_t commandsCount = 99999999;
 
 			if (child->FindAttribute("Count") != NULL)
 			{
@@ -176,45 +146,21 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		else if (string(child->Name()) == "PathHint")
 		{
 			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(this, rawData, address, false);
+			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
 			pathway->GenerateSourceCodePass1(name, 0);
 			pathway->GenerateSourceCodePass2(name, 0);
 
 			delete pathway;
 		}
-		else if (string(child->Name()) == "TextureHint")
-		{
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			string typeStr = child->Attribute("Type");
-			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
-			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
-
-			ZTexture* tex = ZTexture::FromBinary(
-				ZTexture::GetTextureTypeFromString(typeStr), rawData, address,
-				StringHelper::Sprintf("%sTex_%06X", name.c_str(), address), width, height, parent);
-			parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(),
-			                            "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()),
-			                            0, tex->GetSourceOutputCode(name));
-			delete tex;
-		}
-		else if (string(child->Name()) == "BackgroundHint")
-		{
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			ZBackground* back = new ZBackground(parent);
-			back->ExtractFromXML(reader, rawData, address, "");
-			parent->resources.push_back(back);
-		}
+		fprintf(stderr,
+		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
+		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
+		        "version.\n"
+		        "\t Use the non-hint version instead.\n",
+		        name.c_str(), child->Name());
 	}
 
 	// ParseCommands(rawDataIndex);
@@ -225,8 +171,8 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
 {
 	bool shouldContinue = true;
-	int currentIndex = 0;
-	int rawDataIndex = commandSet.address & 0x00FFFFFF;
+	int32_t currentIndex = 0;
+	int32_t rawDataIndex = GETSEGOFFSET(commandSet.address);
 
 	int32_t commandsLeft = commandSet.commandCount;
 
@@ -283,7 +229,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new SetLightList(this, rawData, rawDataIndex);
 			break;  // 0x0C (MM-ONLY)
 		case RoomCommand::SetPathways:
-			cmd = new SetPathways(this, rawData, rawDataIndex, true);
+			cmd = new ZSetPathways(this, rawData, rawDataIndex, true);
 			break;  // 0x0D
 		case RoomCommand::SetTransitionActorList:
 			cmd = new SetTransitionActorList(this, rawData, rawDataIndex);
@@ -450,7 +396,7 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 	return nullptr;
 }
 
-size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
+size_t ZRoom::GetDeclarationSizeFromNeighbor(int32_t declarationAddress)
 {
 	size_t declarationIndex = -1;
 
@@ -471,7 +417,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
 		}
 	}
 
-	if ((int)declarationIndex != -1)
+	if ((int32_t)declarationIndex != -1)
 	{
 		if (declarationIndex + 1 < declarationKeysSorted.size())
 			return declarationKeysSorted[declarationIndex + 1].first -
@@ -496,7 +442,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		}
 	}
 
-	if ((int)cmdIndex != -1)
+	if ((int32_t)cmdIndex != -1)
 	{
 		if (cmdIndex + 1 < commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
@@ -550,11 +496,11 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
 			{
-				int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
+				int32_t texSize = textures[texturesSorted[i].first]->GetRawDataSize();
 
 				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 				{
-					// int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
+					// int32_t intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
 					// 1].first;
 
 					defines += StringHelper::Sprintf(
@@ -672,7 +618,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType,
-                         string nVarName, bool nIsArray, int nArrayItemCnt, string nText)
+                         string nVarName, bool nIsArray, int32_t nArrayItemCnt, string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -682,7 +628,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText,
+                         std::string nVarName, bool nIsArray, int32_t nArrayItemCnt, std::string nText,
                          bool nIsExternal)
 	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
@@ -691,7 +637,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::s
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
                          uint32_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         int nArrayItemCnt, string nText)
+                         int32_t nArrayItemCnt, string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;

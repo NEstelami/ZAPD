@@ -25,7 +25,7 @@ ZResourceType ZCollisionHeader::GetResourceType()
 }
 
 void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                      const std::vector<uint8_t>& nRawData, const int nRawDataIndex,
+                                      const std::vector<uint8_t>& nRawData, const int32_t nRawDataIndex,
                                       const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
@@ -78,8 +78,7 @@ void ZCollisionHeader::ParseRawData()
 	}
 
 	for (uint16_t i = 0; i < highestPolyType + 1; i++)
-		polygonTypes.push_back(
-			BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
+		polygonTypes.push_back(BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 
 	if (camDataAddress != 0)
 		camData = new CameraDataList(parent, name, rawData, camDataSegmentOffset,
@@ -196,7 +195,7 @@ void ZCollisionHeader::ParseRawData()
 	                       StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
 }
 
-PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, int32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 
@@ -210,7 +209,7 @@ PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, int rawDataIndex
 	d = BitConverter::ToInt16BE(data, rawDataIndex + 14);
 }
 
-VertexEntry::VertexEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+VertexEntry::VertexEntry(const std::vector<uint8_t>& rawData, int32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 
@@ -219,7 +218,7 @@ VertexEntry::VertexEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 	z = BitConverter::ToInt16BE(data, rawDataIndex + 4);
 }
 
-WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, int rawDataIndex)
+WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, int32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 
@@ -236,16 +235,16 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, int rawDataI
 }
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
-                               const std::vector<uint8_t>& rawData, int rawDataIndex,
-                               int polyTypeDefSegmentOffset, int polygonTypesCnt)
+                               const std::vector<uint8_t>& rawData, int32_t rawDataIndex,
+                               int32_t polyTypeDefSegmentOffset, int32_t polygonTypesCnt)
 {
 	string declaration = "";
 
 	// Parse CameraDataEntries
-	int numElements = abs(polyTypeDefSegmentOffset - (rawDataIndex)) / 8;
-	// int numElements = polygonTypesCnt;
+	int32_t numElements = abs(polyTypeDefSegmentOffset - (rawDataIndex)) / 8;
+	// int32_t numElements = polygonTypesCnt;
 	uint32_t cameraPosDataSeg = rawDataIndex;
-	for (int i = 0; i < numElements; i++)
+	for (int32_t i = 0; i < numElements; i++)
 	{
 		CameraDataEntry* entry = new CameraDataEntry();
 
@@ -275,7 +274,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 		if (entries[i]->cameraPosDataSeg != 0)
 		{
-			int index = ((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
+			int32_t index = ((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
 			sprintf(camSegLine, "&%s_camPosData_%08X[%i]", prefix.c_str(), cameraPosDataOffset,
 			        index);
 		}
@@ -295,12 +294,12 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		StringHelper::Sprintf("%s_camDataList_%08X", prefix.c_str(), rawDataIndex), entries.size(),
 		declaration);
 
-	int numDataTotal = abs(rawDataIndex - (int)cameraPosDataOffset) / 0x6;
+	int32_t numDataTotal = abs(rawDataIndex - (int32_t)cameraPosDataOffset) / 0x6;
 
 	if (numDataTotal > 0)
 	{
 		declaration = "";
-		for (int i = 0; i < numDataTotal; i++)
+		for (int32_t i = 0; i < numDataTotal; i++)
 		{
 			CameraPositionData* data =
 				new CameraPositionData(rawData, cameraPosDataOffset + (i * 6));
@@ -310,8 +309,8 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 				StringHelper::Sprintf("    { %6i, %6i, %6i },\n", data->x, data->y, data->z);
 		}
 
-		int cameraPosDataIndex = GETSEGOFFSET(cameraPosDataSeg);
-		int entrySize = numDataTotal * 0x6;
+		int32_t cameraPosDataIndex = GETSEGOFFSET(cameraPosDataSeg);
+		int32_t entrySize = numDataTotal * 0x6;
 		parent->AddDeclarationArray(
 			cameraPosDataIndex, DeclarationAlignment::None, entrySize, "Vec3s",
 			StringHelper::Sprintf("%s_camPosData_%08X", prefix.c_str(), cameraPosDataIndex),
@@ -319,7 +318,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	}
 }
 
-CameraPositionData::CameraPositionData(const std::vector<uint8_t>& rawData, int rawDataIndex)
+CameraPositionData::CameraPositionData(const std::vector<uint8_t>& rawData, int32_t rawDataIndex)
 {
 	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);

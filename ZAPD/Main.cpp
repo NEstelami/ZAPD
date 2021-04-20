@@ -37,22 +37,22 @@ void BuildAssetModelIntermediette(const std::string& outPath);
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-void ErrorHandler(int sig)
+void ErrorHandler(int32_t sig)
 {
 	void* array[4096];
-	const int nMaxFrames = sizeof(array) / sizeof(array[0]);
+	const int32_t nMaxFrames = sizeof(array) / sizeof(array[0]);
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
 	for (size_t i = 1; i < size; i++)
 	{
 		Dl_info info;
-		int gotAddress = dladdr(array[i], &info);
+		int32_t gotAddress = dladdr(array[i], &info);
 		string functionName(symbols[i]);
 
 		if (gotAddress != 0 && info.dli_sname != nullptr)
 		{
-			int status;
+			int32_t status;
 			char* demangled = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
 			const char* nameFound = info.dli_sname;
 
@@ -75,7 +75,7 @@ void ErrorHandler(int sig)
 }
 #endif
 
-int main(int argc, char* argv[])
+int32_t main(int32_t argc, char* argv[])
 {
 	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
 
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Parse other "commands"
-	for (int i = 2; i < argc; i++)
+	for (int32_t i = 2; i < argc; i++)
 	{
 		string arg = argv[i];
 
