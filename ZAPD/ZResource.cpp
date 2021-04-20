@@ -47,11 +47,15 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		if (reader->Attribute("Name") != nullptr)
 		{
 			name = reader->Attribute("Name");
-			static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*", std::regex::icase | std::regex::optimize);
+			static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*",
+			                    std::regex::icase | std::regex::optimize);
 
 			if (!std::regex_match(name, r))
 			{
-				throw std::domain_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource with invalid 'Name' attribute.\n", name.c_str()));
+				throw std::domain_error(
+					StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource "
+				                          "with invalid 'Name' attribute.\n",
+				                          name.c_str()));
 			}
 		}
 		else
@@ -69,7 +73,10 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 
 		if (!canHaveInner && !reader->NoChildren())
 		{
-			throw std::runtime_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource '%s' with inner element/child detected.\n", name.c_str(), reader->Name()));
+			throw std::runtime_error(
+				StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource '%s' "
+			                          "with inner element/child detected.\n",
+			                          name.c_str(), reader->Name()));
 		}
 	}
 }
