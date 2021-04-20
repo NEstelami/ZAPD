@@ -211,6 +211,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		}
 		else
 		{
+			throw std::runtime_error(StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n\t Unknown element found inside a File element: '%s'.\n", name.c_str(), nodeName.c_str()));
 		}
 	}
 }

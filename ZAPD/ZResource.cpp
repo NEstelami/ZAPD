@@ -69,7 +69,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 
 		if (!canHaveInner && !reader->NoChildren())
 		{
-			throw std::runtime_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource with inner element/child detected.\n", name.c_str()));
+			throw std::runtime_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource '%s' with inner element/child detected.\n", name.c_str(), reader->Name()));
 		}
 	}
 }

@@ -317,7 +317,7 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 		}
 		else
 		{
-			throw std::runtime_error(StringHelper::Sprintf("Parse: Fatal error in '%s'.\n\t Found a resource out of a File element: '%s'\n", xmlFilePath.c_str(), child->Name()));
+			throw std::runtime_error(StringHelper::Sprintf("Parse: Fatal error in '%s'.\n\t Found a resource outside of a File element: '%s'\n", xmlFilePath.c_str(), child->Name()));
 		}
 	}
 
