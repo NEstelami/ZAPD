@@ -104,8 +104,5 @@ public:
 	std::string GenerateExterns() override;
 
 private:
-	uint32_t segmentOffset;
 	std::vector<AnimatedTexture*> textures;
-	std::vector<uint8_t> _rawData;
-	int _rawDataIndex;
 };

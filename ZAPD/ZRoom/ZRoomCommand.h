@@ -61,20 +61,28 @@ public:
 	ZRoomCommand() = default;
 	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex);
 
+	virtual void ParseRawData();
+
 	virtual std::string GetBodySourceCode();
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
 	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
-	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
-	virtual std::string GetCommandCName();
 	virtual std::string GenerateExterns();
 	virtual std::string Save();
 	virtual std::string PreGenSourceFiles();
+
+	// Getters/Setters
+	virtual RoomCommand GetRoomCommand();
+	virtual int32_t GetRawDataSize();
+	virtual std::string GetCommandCName();
 	virtual std::string GetCommandHex();
 
 protected:
 	ZRoom* zRoom;
 	ZFile* parent;
+
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
+
+	uint8_t cmdArg1;
+	uint32_t segmentOffset;
 };

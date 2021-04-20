@@ -9,11 +9,7 @@ using namespace std;
 SetCsCamera::SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-
-	segmentOffset = 0;
-
 	int numCameras = rawData[rawDataIndex + 1];
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	uint32_t currentPtr = segmentOffset;
 	int numPoints = 0;

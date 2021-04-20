@@ -36,5 +36,4 @@ public:
 
 private:
 	std::vector<ActorCutsceneEntry> cutscenes;
-	uint32_t segmentOffset;
 };

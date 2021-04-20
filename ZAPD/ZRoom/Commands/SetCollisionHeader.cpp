@@ -10,7 +10,6 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
                                        int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 	collisionHeader = new ZCollisionHeader(nZRoom->parent);
 	collisionHeader->SetRawData(rawData);
 	collisionHeader->SetRawDataIndex(segmentOffset);

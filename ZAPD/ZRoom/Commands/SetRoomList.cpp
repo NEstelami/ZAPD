@@ -11,9 +11,6 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	int numRooms = rawData[rawDataIndex + 1];
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
-
-	rooms = vector<RoomEntry*>();
 
 	int32_t currentPtr = segmentOffset;
 

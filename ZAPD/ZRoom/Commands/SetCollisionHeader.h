@@ -15,5 +15,4 @@ public:
 
 private:
 	ZCollisionHeader* collisionHeader;
-	uint32_t segmentOffset;
 };

@@ -13,7 +13,6 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	uint8_t numActors = rawData.at(rawDataIndex + 1);
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);

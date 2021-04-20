@@ -16,5 +16,4 @@ public:
 
 private:
 	std::vector<uint16_t> objects;
-	uint32_t segmentOffset;
 };

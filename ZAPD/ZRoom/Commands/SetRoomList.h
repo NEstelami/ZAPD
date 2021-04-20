@@ -27,5 +27,4 @@ public:
 
 private:
 	std::vector<RoomEntry*> rooms;
-	uint32_t segmentOffset;
 };

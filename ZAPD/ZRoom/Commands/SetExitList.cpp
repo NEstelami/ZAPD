@@ -9,14 +9,8 @@ using namespace std;
 SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
-	exits = vector<uint16_t>();
-
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
-
-	_rawData = rawData;
-	_rawDataIndex = rawDataIndex;
 }
 
 std::string SetExitList::GetBodySourceCode()
@@ -33,7 +27,7 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 	for (int i = 0; i < numEntrances; i++)
 	{
-		uint16_t exit = BitConverter::ToInt16BE(_rawData, currentPtr);
+		uint16_t exit = BitConverter::ToInt16BE(rawData, currentPtr);
 		exits.push_back(exit);
 
 		currentPtr += 2;

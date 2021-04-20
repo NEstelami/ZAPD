@@ -29,7 +29,6 @@ public:
 
 private:
 	std::vector<MinimapEntry*> minimaps;
-	uint32_t segmentOffset;
 
 	uint32_t listSegmentOffset;
 	uint32_t unk4;

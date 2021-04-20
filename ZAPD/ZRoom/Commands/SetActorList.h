@@ -40,5 +40,4 @@ protected:
 	size_t GetActorListArraySize();
 	int numActors;
 	std::vector<ActorSpawnEntry> actors;
-	uint32_t segmentOffset;
 };

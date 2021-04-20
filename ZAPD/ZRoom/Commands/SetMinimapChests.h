@@ -30,5 +30,4 @@ public:
 
 private:
 	std::vector<MinimapChest*> chests;
-	uint32_t segmentOffset;
 };

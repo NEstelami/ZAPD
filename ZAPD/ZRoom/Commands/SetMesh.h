@@ -160,8 +160,6 @@ public:
 
 private:
 	MeshHeaderBase* meshHeader = nullptr;
-	uint32_t segmentOffset;
-	uint8_t data;
 	uint8_t meshHeaderType;
 
 	void GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList);

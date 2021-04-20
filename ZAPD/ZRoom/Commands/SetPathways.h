@@ -56,7 +56,6 @@ public:
 	std::string GenerateExterns() override;
 
 private:
-	uint32_t segmentOffset;
 	PathwayList* pathwayList;
 	bool isFromHeader = false;
 };

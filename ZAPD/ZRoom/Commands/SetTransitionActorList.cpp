@@ -13,7 +13,6 @@ SetTransitionActorList::SetTransitionActorList(ZRoom* nZRoom, std::vector<uint8_
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	int numActors = rawData[rawDataIndex + 1];
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
 	transitionActors = vector<TransitionActorEntry*>();
 

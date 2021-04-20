@@ -15,7 +15,4 @@ public:
 
 private:
 	std::vector<uint16_t> exits;
-	uint32_t segmentOffset;
-	std::vector<uint8_t> _rawData;
-	int32_t _rawDataIndex;
 };

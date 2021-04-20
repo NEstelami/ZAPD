@@ -30,8 +30,5 @@ public:
 private:
 	std::vector<ZCutsceneBase*> cutscenes;
 	std::vector<CutsceneEntry*> cutsceneEntries;  // (MM Only)
-	uint32_t segmentOffset;
 	uint8_t numCutscenes;  // (MM Only)
-	std::vector<uint8_t> _rawData;
-	int _rawDataIndex;
 };

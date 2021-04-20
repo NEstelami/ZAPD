@@ -13,11 +13,8 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
                  int segAddressOffset)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	data = rawData[rawDataIndex + 1];
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
-
 	string declaration = "";
-	meshHeaderType = rawData[segmentOffset + 0];
+	meshHeaderType = rawData.at(segmentOffset + 0);
 
 	if (meshHeaderType == 0)
 	{
@@ -288,7 +285,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 std::string SetMesh::GetBodySourceCode()
 {
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
-	return StringHelper::Sprintf("%s, %i, &%s", GetCommandHex().c_str(), data, decl->varName.c_str());
+	return StringHelper::Sprintf("%s, %i, &%s", GetCommandHex().c_str(), cmdArg1, decl->varName.c_str());
 }
 
 string SetMesh::GenerateExterns()

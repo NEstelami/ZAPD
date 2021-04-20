@@ -11,7 +11,6 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numCutscenes = rawData[rawDataIndex + 1];
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	uint32_t curPtr = segmentOffset;
 	string output = "";

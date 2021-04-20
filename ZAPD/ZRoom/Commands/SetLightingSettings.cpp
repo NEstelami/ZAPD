@@ -11,7 +11,6 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	uint8_t numLights = rawData[rawDataIndex + 1];
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	for (int i = 0; i < numLights; i++)
 		settings.push_back(new LightingSettings(rawData, segmentOffset + (i * 22)));

@@ -1,6 +1,7 @@
 #include "ZRoomCommand.h"
 #include "StringHelper.h"
 #include "ZRoom.h"
+#include "BitConverter.h"
 
 using namespace std;
 
@@ -9,6 +10,13 @@ ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, 
 {
 	cmdID = static_cast<RoomCommand>(rawData.at(rawDataIndex));
 	cmdAddress = rawDataIndex;
+
+	cmdArg1 = rawData.at(rawDataIndex + 1);
+	segmentOffset = GETSEGOFFSET(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4));
+}
+
+void ZRoomCommand::ParseRawData()
+{
 }
 
 std::string ZRoomCommand::GetBodySourceCode()

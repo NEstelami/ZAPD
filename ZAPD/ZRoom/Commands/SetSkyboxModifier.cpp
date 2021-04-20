@@ -6,8 +6,8 @@ using namespace std;
 SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	disableSky = rawData[rawDataIndex + 0x04];
-	disableSunMoon = rawData[rawDataIndex + 0x05];
+	disableSky = rawData.at(rawDataIndex + 0x04);
+	disableSunMoon = rawData.at(rawDataIndex + 0x05);
 }
 
 std::string SetSkyboxModifier::GetBodySourceCode()

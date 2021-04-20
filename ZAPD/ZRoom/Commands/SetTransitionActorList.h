@@ -32,5 +32,4 @@ public:
 
 private:
 	std::vector<TransitionActorEntry*> transitionActors;
-	uint32_t segmentOffset;
 };

@@ -29,6 +29,5 @@ public:
 	RoomCommand GetRoomCommand() override;
 
 private:
-	uint32_t segmentOffset;
 	std::vector<LightingSettings*> settings;
 };

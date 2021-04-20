@@ -14,6 +14,5 @@ public:
 	RoomCommand GetRoomCommand() override;
 
 private:
-	int32_t segmentOffset;
 	std::vector<uint32_t> headers;
 };

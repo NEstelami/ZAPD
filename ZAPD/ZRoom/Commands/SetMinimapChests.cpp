@@ -11,7 +11,6 @@ SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, 
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	int numChests = rawData[rawDataIndex + 1];
-	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	int32_t currentPtr = segmentOffset;
 

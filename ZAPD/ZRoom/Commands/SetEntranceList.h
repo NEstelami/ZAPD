@@ -25,5 +25,4 @@ public:
 
 private:
 	std::vector<EntranceEntry*> entrances;
-	uint32_t segmentOffset;
 };

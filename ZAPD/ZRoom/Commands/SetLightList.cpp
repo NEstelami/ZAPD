@@ -7,15 +7,11 @@ using namespace std;
 SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	this->ptrRoom = nZRoom;
 	this->numLights = rawData[rawDataIndex + 1];
-	this->segment = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
-	// std::string declarations = StringHelper::Sprintf("LightInfo %sLightInfo0x%06X[] =\n{\n",
-	// this->ptrRoom->GetName().c_str(), this->segment);
 	string declarations = "";
 
-	int32_t currentPtr = this->segment;
+	int32_t currentPtr = segmentOffset;
 	for (int i = 0; i < this->numLights; i++)
 	{
 		uint8_t type = rawData[currentPtr + 0];
@@ -38,9 +34,9 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 			declarations += "\n";
 	}
 
-	this->ptrRoom->parent->AddDeclarationArray(
-		this->segment, DeclarationAlignment::None, this->numLights * 0xE, "LightInfo",
-		StringHelper::Sprintf("%sLightInfo0x%06X", this->ptrRoom->GetName().c_str(), this->segment),
+	zRoom->parent->AddDeclarationArray(
+		segmentOffset, DeclarationAlignment::None, this->numLights * 0xE, "LightInfo",
+		StringHelper::Sprintf("%sLightInfo0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		this->numLights, declarations);
 }
 
@@ -49,7 +45,7 @@ std::string SetLightList::GetBodySourceCode()
 	return StringHelper::Sprintf(
 		"%s, %i, &%sLightInfo0x%06X",
 		GetCommandHex().c_str(), this->numLights,
-		this->ptrRoom->GetName().c_str(), this->segment);
+		zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetLightList::GetCommandCName()
@@ -60,7 +56,7 @@ string SetLightList::GetCommandCName()
 string SetLightList::GenerateExterns()
 {
 	return StringHelper::Sprintf("extern LightInfo %sLightInfo0x%06X[];\n",
-	                             this->ptrRoom->GetName().c_str(), this->segment);
+	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
 RoomCommand SetLightList::GetRoomCommand()

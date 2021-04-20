@@ -19,7 +19,4 @@ public:
 private:
 	uint8_t code;
 	uint8_t numLights;
-	uint32_t segment;
-
-	ZRoom* ptrRoom;
 };

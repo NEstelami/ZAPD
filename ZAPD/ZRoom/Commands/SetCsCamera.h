@@ -30,7 +30,6 @@ public:
 	std::string GetCommandCName() override;
 
 private:
-	uint32_t segmentOffset;
 	std::vector<CsCameraEntry*> cameras;
 	std::vector<Vec3s> points;
 };
