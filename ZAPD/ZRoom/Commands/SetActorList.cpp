@@ -18,9 +18,32 @@ SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
+std::string SetActorList::GetBodySourceCode()
+{
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s",  GetCommandHex().c_str(), numActors, listName.c_str());
+}
+
+string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
+{
+	return "";
+}
+
 string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
 	size_t numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
 	uint32_t currentPtr = segmentOffset;
 
@@ -34,11 +57,6 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 
 		currentPtr += 16;
 	}
-
-	sourceOutput +=
-		StringHelper::Sprintf("\n    %s 0x%02X, (u32)%sActorList_%06X \n};",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          numActors, roomName.c_str(), segmentOffset);
 
 	string declaration = "";
 
@@ -62,7 +80,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		StringHelper::Sprintf("%sActorList_%06X", roomName.c_str(), segmentOffset),
 		GetActorListArraySize(), declaration);
 
-	return sourceOutput;
+	return GetBodySourceCode() + " };";
 }
 
 int32_t SetActorList::GetRawDataSize()

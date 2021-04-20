@@ -30,39 +30,54 @@ SetMinimapChests::~SetMinimapChests()
 		delete chest;
 }
 
-string SetMinimapChests::GenerateSourceCodePass2(string roomName, int baseAddress)
+std::string SetMinimapChests::GetBodySourceCode()
 {
-	string sourceOutput = "";
-
-	sourceOutput +=
-		StringHelper::Sprintf("%s 0x%02X, (u32)%sMinimapChests0x%06X };",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          chests.size(), roomName.c_str(), segmentOffset);
-
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
 	{
-		string declaration = "";
-
-		size_t index = 0;
-		for (MinimapChest* chest : chests)
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
 		{
-			declaration += StringHelper::Sprintf("    { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },",
-			                                     chest->unk0, chest->unk2, chest->unk4, chest->unk6,
-			                                     chest->unk8);
-
-			if (index < chests.size() - 1)
-				declaration += "\n";
-
-			index++;
+			listName = "&" + decl->varName;
 		}
-
-		zRoom->parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, chests.size() * 10,
-			"MinimapChest",
-			StringHelper::Sprintf("%sMinimapChests0x%06X", roomName.c_str(), segmentOffset),
-			chests.size(), declaration);
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
 	}
 
-	return sourceOutput;
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s };", GetCommandHex().c_str(), chests.size(), listName.c_str());
+}
+
+string SetMinimapChests::GenerateSourceCodePass1(string roomName, int baseAddress)
+{
+	return "";
+}
+
+string SetMinimapChests::GenerateSourceCodePass2(string roomName, int baseAddress)
+{
+	string declaration = "";
+
+	size_t index = 0;
+	for (MinimapChest* chest : chests)
+	{
+		declaration += StringHelper::Sprintf("    { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },",
+												chest->unk0, chest->unk2, chest->unk4, chest->unk6,
+												chest->unk8);
+
+		if (index < chests.size() - 1)
+			declaration += "\n";
+
+		index++;
+	}
+
+	zRoom->parent->AddDeclarationArray(
+		segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, chests.size() * 10,
+		"MinimapChest",
+		StringHelper::Sprintf("%sMinimapChests0x%06X", roomName.c_str(), segmentOffset),
+		chests.size(), declaration);
+
+	return GetBodySourceCode();
 }
 
 string SetMinimapChests::GenerateExterns()

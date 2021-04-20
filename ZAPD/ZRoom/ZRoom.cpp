@@ -328,14 +328,14 @@ void ZRoom::ProcessCommandSets()
 		for (size_t i = 0; i < setCommands.size(); i++)
 		{
 			ZRoomCommand* cmd = setCommands[i];
-			cmd->commandSet = commandSet & 0x00FFFFFF;
+			cmd->commandSet = GETSEGOFFSET(commandSet);
 			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
 			Declaration* decl = parent->AddDeclaration(
 				cmd->cmdAddress,
 				i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8,
 				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
-				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF,
+				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), GETSEGOFFSET(commandSet),
 			                          cmd->cmdIndex, cmd->cmdID),
 				StringHelper::Sprintf("\n    %s\n", pass1.c_str()));
 
@@ -357,7 +357,7 @@ void ZRoom::ProcessCommandSets()
 				cmd->cmdAddress, DeclarationAlignment::None, 8,
 				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
 				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
-			                          cmd->commandSet & 0x00FFFFFF, cmd->cmdIndex, cmd->cmdID),
+			                          GETSEGOFFSET(cmd->commandSet), cmd->cmdIndex, cmd->cmdID),
 				StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
 	}
 }

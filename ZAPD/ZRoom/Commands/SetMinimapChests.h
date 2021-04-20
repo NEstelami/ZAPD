@@ -20,6 +20,8 @@ public:
 	SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetMinimapChests();
 
+	std::string GetBodySourceCode() override;
+	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
 	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
 	std::string GetCommandCName() override;
 	std::string GenerateExterns() override;
