@@ -7,10 +7,13 @@
 #include "../StringHelper.h"
 #include "../ZBlob.h"
 #include "Commands/EndMarker.h"
+#include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
 #include "Commands/SetAlternateHeaders.h"
+#include "Commands/SetAnimatedTextureList.h"
 #include "Commands/SetCameraSettings.h"
 #include "Commands/SetCollisionHeader.h"
+#include "Commands/SetCsCamera.h"
 #include "Commands/SetCutscenes.h"
 #include "Commands/SetEchoSettings.h"
 #include "Commands/SetEntranceList.h"
@@ -18,6 +21,8 @@
 #include "Commands/SetLightList.h"
 #include "Commands/SetLightingSettings.h"
 #include "Commands/SetMesh.h"
+#include "Commands/SetMinimapChests.h"
+#include "Commands/SetMinimapList.h"
 #include "Commands/SetObjectList.h"
 #include "Commands/SetPathways.h"
 #include "Commands/SetRoomBehavior.h"
@@ -30,22 +35,27 @@
 #include "Commands/SetTimeSettings.h"
 #include "Commands/SetTransitionActorList.h"
 #include "Commands/SetWind.h"
+#include "Commands/SetWorldMapVisited.h"
 #include "Commands/Unused09.h"
+#include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
-#include "ObjectList.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
 
 using namespace std;
 using namespace tinyxml2;
 
-ZRoom::ZRoom() : ZResource()
+REGISTER_ZFILENODE(Room, ZRoom);
+REGISTER_ZFILENODE(Scene, ZRoom);
+
+ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
 	textures = map<int32_t, ZTexture*>();
 	commands = vector<ZRoomCommand*>();
 	commandSets = vector<CommandSet>();
 	extDefines = "";
 	scene = nullptr;
+	roomCount = -1;
 }
 
 ZRoom::~ZRoom()
@@ -54,129 +64,72 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int rawDataIndex,
-                             string nRelPath, ZFile* nParent, ZRoom* nScene)
+void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                           const int nRawDataIndex, const std::string& nRelPath)
 {
-	ZRoom* room = new ZRoom();
-
-	room->parent = nParent;
-	room->rawData = nRawData;
-	room->name = reader->Attribute("Name");
-
-	// printf("ZRoom: %s\n", name.c_str());
-
-	room->scene = nScene;
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	name = string(reader->Attribute("Name"));
+	// room->scene = nScene;
+	scene = Globals::Instance->lastScene;
 
 	if (string(reader->Name()) == "Scene")
 	{
-		room->scene = room;
-		Globals::Instance->lastScene = room;
+		scene = this;
+		Globals::Instance->lastScene = this;
 	}
 
 	Globals::Instance->AddSegment(SEGMENT_ROOM);
 	Globals::Instance->AddSegment(SEGMENT_SCENE);
 
-	// GenDefinitions();
-
 	int cmdCount = 999999;
 
-	if (room->name == "syotes_room_0")
+	if (name == "syotes_room_0")
 	{
-		room->SyotesRoomHack();
+		SyotesRoomHack();
 		cmdCount = 0;
 	}
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
+		string childName = child->Attribute("Name") == NULL ? "" : string(child->Attribute("Name"));
+		string childComment = child->Attribute("Comment") == NULL ?
+                                  "" :
+                                  "// " + string(child->Attribute("Comment")) + "\n";
+
 		// TODO: Bunch of repeated code between all of these that needs to be combined.
 		if (string(child->Name()) == "DListHint")
 		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
-				room->rawData, address,
-				ZDisplayList::GetDListLength(room->rawData, address,
+				rawData, address,
+				ZDisplayList::GetDListLength(rawData, address,
 			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                  DListType::F3DEX :
-                                                 DListType::F3DZEX));
-
-			if (child->Attribute("Name") != NULL)
-				name = string(child->Attribute("Name"));
-			else
-				name = room->name;
+                                                 DListType::F3DZEX),
+				parent);
 
 			dList->GetSourceOutputCode(name);
 			delete dList;
 		}
-		else if (string(child->Name()) == "BlobHint")
-		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			string sizeStr = child->Attribute("Size");
-			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
-
-			ZBlob* blob =
-				new ZBlob(room->rawData, address, size,
-			              StringHelper::Sprintf("%sBlob0x%06X", room->name.c_str(), address));
-
-			if (child->Attribute("Name") != NULL)
-				name = string(child->Attribute("Name"));
-			else
-				name = StringHelper::Sprintf("%s_%s", room->name.c_str(), blob->GetName().c_str());
-
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None,
-			                                  blob->GetRawDataSize(), "u8", name, 0,
-			                                  blob->GetSourceOutputCode(room->name));
-			delete blob;
-		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZCutscene* cutscene = new ZCutscene(room->rawData, address, 9999);
+			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
+			ZCutscene* cutscene = new ZCutscene(parent);
+			cutscene->ExtractFromXML(child, rawData, address, "");
 
-			if (child->Attribute("Name") != NULL)
-				name = string(child->Attribute("Name"));
-			else
-				name = StringHelper::Sprintf("%sCutsceneData0x%06X", room->name.c_str(),
-				                             cutscene->segmentOffset);
+			cutscene->GetSourceOutputCode(name);
 
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None,
-			                                  DeclarationPadding::Pad16, cutscene->GetRawDataSize(),
-			                                  "s32", name, 0,
-			                                  cutscene->GetSourceOutputCode(room->name));
 			delete cutscene;
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
 		{
-			string name = "";
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
@@ -188,62 +141,38 @@ ZRoom* ZRoom::ExtractFromXML(XMLElement* reader, vector<uint8_t> nRawData, int r
 				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
 			}
 
-			room->commandSets.push_back(CommandSet(address, commandsCount));
+			commandSets.push_back(CommandSet(address, commandsCount));
 		}
 		else if (string(child->Name()) == "PathHint")
 		{
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(room, room->rawData, address);
-			pathway->InitList(address);
-			pathway->GenerateSourceCodePass1(room->name, 0);
-			pathway->GenerateSourceCodePass2(room->name, 0);
+			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
+			pathway->GenerateSourceCodePass1(name, 0);
+			pathway->GenerateSourceCodePass2(name, 0);
 
 			delete pathway;
 		}
-		else if (string(child->Name()) == "TextureHint")
-		{
-			string comment = "";
 
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			string typeStr = child->Attribute("Type");
-			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
-			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
-
-			ZTexture* tex = ZTexture::FromBinary(
-				ZTexture::GetTextureTypeFromString(typeStr), room->rawData, address,
-				StringHelper::Sprintf("%sTex_%06X", room->name.c_str(), address), width, height);
-			room->parent->AddDeclarationArray(address, DeclarationAlignment::None,
-			                                  tex->GetRawDataSize(), "u64",
-			                                  StringHelper::Sprintf("%s", tex->GetName().c_str()),
-			                                  0, tex->GetSourceOutputCode(room->name));
-			delete tex;
-		}
+		fprintf(stderr,
+		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
+		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
+		        "version.\n"
+		        "\t Use the non-hint version instead.\n",
+		        name.c_str(), child->Name());
 	}
 
 	// ParseCommands(rawDataIndex);
-	room->commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
-	room->ProcessCommandSets();
-
-	return room;
+	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
+	ProcessCommandSets();
 }
 
 void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
 {
 	bool shouldContinue = true;
 	int currentIndex = 0;
-	int rawDataIndex = commandSet.address & 0x00FFFFFF;
+	int rawDataIndex = GETSEGOFFSET(commandSet.address);
 
 	int32_t commandsLeft = commandSet.commandCount;
 
@@ -266,6 +195,9 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		case RoomCommand::SetActorList:
 			cmd = new SetActorList(this, rawData, rawDataIndex);
 			break;  // 0x01
+		case RoomCommand::SetCsCamera:
+			cmd = new SetCsCamera(this, rawData, rawDataIndex);
+			break;  // 0x02 (MM-ONLY)
 		case RoomCommand::SetCollisionHeader:
 			cmd = new SetCollisionHeader(this, rawData, rawDataIndex);
 			break;  // 0x03
@@ -297,7 +229,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new SetLightList(this, rawData, rawDataIndex);
 			break;  // 0x0C (MM-ONLY)
 		case RoomCommand::SetPathways:
-			cmd = new SetPathways(this, rawData, rawDataIndex);
+			cmd = new ZSetPathways(this, rawData, rawDataIndex, true);
 			break;  // 0x0D
 		case RoomCommand::SetTransitionActorList:
 			cmd = new SetTransitionActorList(this, rawData, rawDataIndex);
@@ -333,8 +265,26 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new SetAlternateHeaders(this, rawData, rawDataIndex);
 			break;  // 0x18
 		case RoomCommand::SetCameraSettings:
-			cmd = new SetCameraSettings(this, rawData, rawDataIndex);
+			if (Globals::Instance->game == ZGame::MM_RETAIL)
+				cmd = new SetWorldMapVisited(this, rawData, rawDataIndex);
+			else
+				cmd = new SetCameraSettings(this, rawData, rawDataIndex);
 			break;  // 0x19
+		case RoomCommand::SetAnimatedTextureList:
+			cmd = new SetAnimatedTextureList(this, rawData, rawDataIndex);
+			break;  // 0x1A (MM-ONLY)
+		case RoomCommand::SetActorCutsceneList:
+			cmd = new SetActorCutsceneList(this, rawData, rawDataIndex);
+			break;  // 0x1B (MM-ONLY)
+		case RoomCommand::SetMinimapList:
+			cmd = new SetMinimapList(this, rawData, rawDataIndex);
+			break;  // 0x1C (MM-ONLY)
+		case RoomCommand::Unused1D:
+			cmd = new Unused1D(this, rawData, rawDataIndex);
+			break;  // 0x1D
+		case RoomCommand::SetMinimapChests:
+			cmd = new SetMinimapChests(this, rawData, rawDataIndex);
+			break;  // 0x1E (MM-ONLY)
 		default:
 			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
 		}
@@ -387,7 +337,7 @@ void ZRoom::ProcessCommandSets()
 				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
 				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF,
 			                          cmd->cmdIndex, cmd->cmdID),
-				StringHelper::Sprintf("%s", pass1.c_str()));
+				StringHelper::Sprintf("\n    %s\n", pass1.c_str()));
 
 			decl->rightText = StringHelper::Sprintf("// 0x%04X", cmd->cmdAddress);
 		}
@@ -522,7 +472,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
-	// sourceOutput += "#include <z64.h>\n";
 	sourceOutput += "#include \"segment_symbols.h\"\n";
 	sourceOutput += "#include \"command_macros_base.h\"\n";
 	sourceOutput += "#include \"z64cutscene_commands.h\"\n";
@@ -569,7 +518,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		parent->defines += defines;
-		// parent->externs[0xFFFFFFFF] = defines;
 	}
 
 	for (pair<int32_t, ZTexture*> item : textures)
@@ -646,6 +594,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	isArray = false;
 	arrayItemCnt = 0;
 	includePath = "";
+	isExternal = false;
 	references = vector<uint32_t>();
 }
 
@@ -676,6 +625,14 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string
 	varName = nVarName;
 	isArray = nIsArray;
 	arrayItemCnt = nArrayItemCnt;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+                         std::string nVarName, bool nIsArray, int nArrayItemCnt, std::string nText,
+                         bool nIsExternal)
+	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
+{
+	isExternal = nIsExternal;
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,

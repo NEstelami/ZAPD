@@ -1,8 +1,9 @@
 #include "SetTransitionActorList.h"
 #include "../../BitConverter.h"
+#include "../../Globals.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
-#include "../ActorList.h"
+#include "../ZNames.h"
 #include "../ZRoom.h"
 
 using namespace std;
@@ -48,18 +49,13 @@ string SetTransitionActorList::GenerateSourceCodePass1(string roomName, int base
 
 	for (TransitionActorEntry* entry : transitionActors)
 	{
-		string actorStr = "";
+		string actorStr = ZNames::GetActorName(entry->actorNum);
 
-		if (entry->actorNum < sizeof(ActorList) / sizeof(ActorList[0]))
-			actorStr = ActorList[entry->actorNum];
-		else
-			actorStr = StringHelper::Sprintf("0x%04X", entry->actorNum);
-
-		declaration += StringHelper::Sprintf("\t{ %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n",
-		                                     entry->frontObjectRoom, entry->frontTransitionReaction,
-		                                     entry->backObjectRoom, entry->backTransitionReaction,
-		                                     actorStr.c_str(), entry->posX, entry->posY,
-		                                     entry->posZ, entry->rotY, (uint16_t)entry->initVar);
+		declaration += StringHelper::Sprintf(
+			"    { %i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X }, \n", entry->frontObjectRoom,
+			entry->frontTransitionReaction, entry->backObjectRoom, entry->backTransitionReaction,
+			actorStr.c_str(), entry->posX, entry->posY, entry->posZ, entry->rotY,
+			(uint16_t)entry->initVar);
 	}
 
 	zRoom->parent->AddDeclarationArray(

@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include "ZFile.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
 
@@ -62,8 +63,8 @@ public:
 	uint32_t commandIndex;
 
 	CutsceneCommand(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	virtual std::string GetCName(const std::string& prefix);
-	virtual std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	virtual std::string GetCName();
+	virtual std::string GenerateSourceCode(int baseAddress);
 	virtual size_t GetCommandSize();
 };
 
@@ -78,8 +79,8 @@ public:
 	std::vector<CutsceneCameraPoint*> entries;
 
 	CutsceneCommandSetCameraPos(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -110,8 +111,8 @@ public:
 	std::vector<SpecialActionEntry*> entries;
 
 	CutsceneCommandSpecialAction(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -142,8 +143,8 @@ public:
 	std::vector<MusicFadeEntry*> entries;
 
 	CutsceneCommandFadeBGM(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -171,8 +172,8 @@ public:
 	std::vector<MusicChangeEntry*> entries;
 
 	CutsceneCommandPlayBGM(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -182,8 +183,8 @@ public:
 	std::vector<MusicChangeEntry*> entries;
 
 	CutsceneCommandStopBGM(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -211,8 +212,8 @@ public:
 	std::vector<EnvLightingEntry*> entries;
 
 	CutsceneCommandEnvLighting(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -224,8 +225,8 @@ public:
 	uint16_t endFrame;
 
 	CutsceneCommandSceneTransFX(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -250,8 +251,8 @@ public:
 	std::vector<Unknown9Entry*> entries;
 
 	CutsceneCommandUnknown9(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -280,8 +281,8 @@ public:
 	std::vector<UnkEntry*> entries;
 
 	CutsceneCommandUnknown(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -304,8 +305,8 @@ public:
 	std::vector<DayTimeEntry*> entries;
 
 	CutsceneCommandDayTime(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -328,8 +329,8 @@ public:
 	std::vector<TextboxEntry*> entries;
 
 	CutsceneCommandTextbox(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -353,8 +354,8 @@ public:
 	std::vector<ActorAction*> entries;
 
 	CutsceneCommandActorAction(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -367,8 +368,8 @@ public:
 	uint16_t unknown;
 
 	CutsceneCommandTerminator(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -380,8 +381,8 @@ public:
 	uint16_t endFrame;
 
 	CutsceneCommandEnd(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
-	std::string GenerateSourceCode(const std::string& roomName, int baseAddress);
+	std::string GetCName();
+	std::string GenerateSourceCode(int baseAddress);
 	size_t GetCommandSize();
 };
 
@@ -393,27 +394,36 @@ public:
 	uint16_t endFrame;
 
 	CutsceneCommandNop(const std::vector<uint8_t>& rawData, int rawDataIndex);
-	std::string GetCName(const std::string& prefix);
+	std::string GetCName();
 	size_t GetCommandSize();
 };
 
-class ZCutscene : public ZResource
+class ZCutsceneBase : public ZResource
 {
 public:
-	uint32_t segmentOffset;
+	ZCutsceneBase(ZFile* nParent);
+	virtual std::string GetBodySourceCode() = 0;
+	virtual void DeclareVar(const std::string& prefix, const std::string& bodyStr) = 0;
+	virtual uint32_t getSegmentOffset() = 0;
+};
 
-	ZCutscene(std::vector<uint8_t> nRawData, int rawDataIndex, int rawDataSize);
+class ZCutscene : public ZCutsceneBase
+{
+public:
+	ZCutscene(ZFile* nParent);
 	~ZCutscene();
 
+	std::string GetBodySourceCode() override;
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	int GetRawDataSize() override;
 	CutsceneCommands GetCommandFromID(int id);
+	uint32_t getSegmentOffset() override { return rawDataIndex; }
 
 	ZResourceType GetResourceType() override;
 
-	static ZCutscene* ExtractFromXML(tinyxml2::XMLElement* reader,
-	                                 const std::vector<uint8_t>& nRawData, const int rawDataIndex,
-	                                 const std::string& nRelPath);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
 	int numCommands;

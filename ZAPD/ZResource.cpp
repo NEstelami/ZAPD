@@ -5,9 +5,9 @@
 
 using namespace std;
 
-ZResource::ZResource()
+ZResource::ZResource(ZFile* nParent)
 {
-	parent = nullptr;
+	parent = nParent;
 	name = "";
 	outName = "";
 	relativePath = "";
@@ -17,29 +17,60 @@ ZResource::ZResource()
 	outputDeclaration = true;
 }
 
+void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                               const int nRawDataIndex, const std::string& nRelPath)
+{
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	relativePath = nRelPath;
+
+	if (reader != nullptr)
+		ParseXML(reader);
+
+	ParseRawData();
+}
+
+void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+                                const std::string& nRelPath)
+{
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+	relativePath = nRelPath;
+
+	ParseRawData();
+}
+
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 {
-	if (reader->Attribute("Name") != nullptr)
+	if (reader != nullptr)
 	{
-		name = reader->Attribute("Name");
-		static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*", std::regex::icase | std::regex::optimize);
-
-		if (!std::regex_match(name, r))
+		if (reader->Attribute("Name") != nullptr)
 		{
-			throw std::domain_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource with invalid 'Name' attribute.\n", name.c_str()));
+			name = reader->Attribute("Name");
+			static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*", std::regex::icase | std::regex::optimize);
+
+			if (!std::regex_match(name, r))
+			{
+				throw std::domain_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource with invalid 'Name' attribute.\n", name.c_str()));
+			}
 		}
-	}
-	else
-		name = "";
+		else
+			name = "";
 
-	if (reader->Attribute("OutName") != nullptr)
-		outName = reader->Attribute("OutName");
-	else
-		outName = name;
+		if (reader->Attribute("OutName") != nullptr)
+			outName = reader->Attribute("OutName");
+		else
+			outName = name;
 
-	if (!canHaveInner && !reader->NoChildren())
-	{
-		throw std::runtime_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource with inner element/child detected.\n", name.c_str()));
+		if (reader->Attribute("Custom") != nullptr)
+			isCustomAsset = true;
+		else
+			isCustomAsset = false;
+
+		if (!canHaveInner && !reader->NoChildren())
+		{
+			throw std::runtime_error(StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource with inner element/child detected.\n", name.c_str()));
+		}
 	}
 }
 
@@ -59,6 +90,11 @@ string ZResource::GetName()
 std::string ZResource::GetOutName()
 {
 	return outName;
+}
+
+void ZResource::SetOutName(std::string nName)
+{
+	outName = nName;
 }
 
 void ZResource::SetName(string nName)
@@ -89,6 +125,11 @@ string ZResource::GetRelativePath()
 vector<uint8_t> ZResource::GetRawData()
 {
 	return rawData;
+}
+
+void ZResource::SetRawData(std::vector<uint8_t> nData)
+{
+	rawData = nData;
 }
 
 int ZResource::GetRawDataIndex()
@@ -126,7 +167,7 @@ void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 
 std::string ZResource::GetSourceTypeName()
 {
-	return "";
+	return "u8";
 }
 
 ZResourceType ZResource::GetResourceType()
