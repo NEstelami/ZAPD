@@ -767,35 +767,45 @@ string ZFile::ProcessDeclarations()
 	// Handle unaccounted data
 	lastAddr = 0;
 	lastSize = 0;
-	for (pair<uint32_t, Declaration*> item : declarations)
+	std::vector<uint32_t> declsAddresses;
+	for (const auto& item: declarations)
 	{
-		if (item.first >= rangeStart && item.first < rangeEnd)
+		declsAddresses.push_back(item.first);
+	}
+	declsAddresses.push_back(rawData.size());
+
+	for (uint32_t currentAddress : declsAddresses)
+	{
+		if (currentAddress >= rangeStart && currentAddress < rangeEnd)
 		{
-			if (lastAddr != 0 && declarations.find(lastAddr) != declarations.end() &&
-			    lastAddr + declarations[lastAddr]->size > item.first)
+			if (currentAddress != lastAddr && declarations.find(lastAddr) != declarations.end())
 			{
-				fprintf(stderr,
-				        "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X "
-				        "(%s)\n",
-				        lastAddr, lastAddr + declarations[lastAddr]->size, item.first,
-				        item.second->varName.c_str());
+				Declaration* lastDecl = declarations.at(lastAddr);
+				lastSize = lastDecl->size;
+
+				if (lastAddr + lastSize > currentAddress)
+				{
+					Declaration* currentDecl = declarations.at(currentAddress);
+
+					fprintf(stderr,
+							"WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with 0x%06X (%s)\n",
+							lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
+							currentDecl->varName.c_str());
+				}
 			}
 
 			uint32_t unaccountedAddress = lastAddr + lastSize;
 
-			if (unaccountedAddress != item.first && lastAddr >= rangeStart &&
+			if (unaccountedAddress != currentAddress && lastAddr >= rangeStart &&
 			    unaccountedAddress < rangeEnd)
 			{
-				// int diff = item.first - (lastAddr + declarations[lastAddr]->size);
-				int diff = item.first - unaccountedAddress;
+				int diff = currentAddress - unaccountedAddress;
 				bool nonZeroUnaccounted = false;
 
 				string src = "    ";
 
 				for (int i = 0; i < diff; i++)
 				{
-					// src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr +
-					// declarations[lastAddr]->size + i]);
 					uint8_t val = rawData.at(unaccountedAddress + i);
 					src += StringHelper::Sprintf("0x%02X, ", val);
 					if (val != 0x00)
@@ -811,10 +821,6 @@ string ZFile::ProcessDeclarations()
 				{
 					if (diff > 0)
 					{
-						// AddDeclarationArray(lastAddr + declarations[lastAddr]->size,
-						// DeclarationAlignment::None, diff, "static u8",
-						// StringHelper::Sprintf("unaccounted_%06X", lastAddr +
-						// declarations[lastAddr]->size), diff, src);
 						Declaration* decl = AddDeclarationArray(
 							unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
 							StringHelper::Sprintf("unaccounted_%06X", unaccountedAddress), diff,
@@ -842,65 +848,7 @@ string ZFile::ProcessDeclarations()
 			}
 		}
 
-		lastAddr = item.first;
-		lastSize = item.second->size;
-	}
-
-	uint32_t unaccountedAddress = lastAddr + declarations.at(lastAddr)->size;
-
-	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
-	if (unaccountedAddress < rawData.size() &&
-	    unaccountedAddress >= rangeStart &&
-	    unaccountedAddress < rangeEnd)
-	{
-		int diff = (int)(rawData.size() - unaccountedAddress);
-		bool nonZeroUnaccounted = false;
-
-		string src = "    ";
-
-		for (int i = 0; i < diff; i++)
-		{
-			uint8_t val = rawData.at(unaccountedAddress + i);
-			src += StringHelper::Sprintf("0x%02X, ", val);
-
-			if (val != 0x00)
-			{
-				nonZeroUnaccounted = true;
-			}
-
-			if (i % 16 == 15)
-				src += "\n    ";
-		}
-
-		if (declarations.find(unaccountedAddress) == declarations.end())
-		{
-			if (diff > 0)
-			{
-				Declaration* decl = AddDeclarationArray(unaccountedAddress,
-				                    DeclarationAlignment::None, diff, "static u8",
-				                    StringHelper::Sprintf("unaccounted_%06X",
-				                                          unaccountedAddress),
-				                    diff, src);
-				decl->isUnaccounted = true;
-
-				if (Globals::Instance->warnUnaccounted) {
-					if (nonZeroUnaccounted)
-					{
-						fprintf(stderr, "Warning in file: %s (%s)\n"
-								"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-								"\t Block size: '0x%X'.\n", 
-								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-					}
-					else if (diff >= 16)
-					{
-						fprintf(stderr, "Warning in file: %s (%s)\n"
-								"\t A big (size>=0x10) zero-only unaccounted block was found at address '0x%06X'.\n"
-								"\t Block size: '0x%X'.\n", 
-								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-					}
-				}
-			}
-		}
+		lastAddr = currentAddress;
 	}
 
 	// Go through include declarations
