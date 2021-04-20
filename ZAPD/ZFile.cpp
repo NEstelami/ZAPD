@@ -842,7 +842,7 @@ string ZFile::ProcessDeclarations()
 		lastSize = item.second->size;
 	}
 
-	uint32_t unaccountedAddress = lastAddr + lastDecl->size;
+	uint32_t unaccountedAddress = lastAddr + declarations.at(lastAddr)->size;
 
 	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
 	if (unaccountedAddress < rawData.size() &&
