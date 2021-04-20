@@ -103,12 +103,9 @@ SetAnimatedTextureList::~SetAnimatedTextureList()
 		delete texture;
 }
 
-string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetAnimatedTextureList::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0, (u32)%sAnimatedTextureList0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-		zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s, 0, (u32)%sAnimatedTextureList0x%06X", GetCommandHex().c_str(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 int32_t SetAnimatedTextureList::GetRawDataSize()
@@ -138,11 +135,6 @@ string SetAnimatedTextureList::GetCommandCName()
 RoomCommand SetAnimatedTextureList::GetRoomCommand()
 {
 	return RoomCommand::SetAnimatedTextureList;
-}
-
-string SetAnimatedTextureList::GetSourceOutputCode(std::string prefix)
-{
-	return "";
 }
 
 AnimatedTexture::AnimatedTexture(std::vector<uint8_t> rawData, int rawDataIndex)

@@ -10,13 +10,9 @@ SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, std::vector<uint8_t> rawData
 	disableSunMoon = rawData[rawDataIndex + 0x05];
 }
 
-string SetSkyboxModifier::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetSkyboxModifier::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0, 0, 0, 0x%02X, 0x%02X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), disableSky,
-		disableSunMoon);
-	;
+	return StringHelper::Sprintf("%s, 0, 0, 0, 0x%02X, 0x%02X", GetCommandHex().c_str(), disableSky, disableSunMoon);
 }
 
 string SetSkyboxModifier::GetCommandCName()

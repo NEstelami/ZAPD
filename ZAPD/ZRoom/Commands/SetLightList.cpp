@@ -44,11 +44,11 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 		this->numLights, declarations);
 }
 
-string SetLightList::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetLightList::GetBodySourceCode()
 {
 	return StringHelper::Sprintf(
-		"%s %i, &%sLightInfo0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), this->numLights,
+		"%s, %i, &%sLightInfo0x%06X",
+		GetCommandHex().c_str(), this->numLights,
 		this->ptrRoom->GetName().c_str(), this->segment);
 }
 

@@ -88,16 +88,16 @@ SetCutscenes::~SetCutscenes()
 		delete entry;
 }
 
-string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetCutscenes::GetBodySourceCode()
 {
-	string pass1 = ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress);
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
 	if (decl != nullptr)
 	{
-		return StringHelper::Sprintf("%s %i, (u32)%s", pass1.c_str(), numCutscenes,
+		return StringHelper::Sprintf("%s, %i, (u32)%s", GetCommandHex().c_str(), numCutscenes,
 		                             decl->varName.c_str());
 	}
-	return StringHelper::Sprintf("%s %i, (u32)%sCutsceneData0x%06X", pass1.c_str(), numCutscenes,
+
+	return StringHelper::Sprintf("%s, %i, (u32)%sCutsceneData0x%06X", GetCommandHex().c_str(), numCutscenes,
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 

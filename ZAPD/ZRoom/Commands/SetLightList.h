@@ -11,10 +11,10 @@ class SetLightList : public ZRoomCommand
 public:
 	SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GetCommandCName();
-	virtual RoomCommand GetRoomCommand();
-	virtual std::string GenerateExterns();
+	std::string GetBodySourceCode() override;
+	std::string GetCommandCName() override;
+	RoomCommand GetRoomCommand() override;
+	std::string GenerateExterns() override;
 
 private:
 	uint8_t code;

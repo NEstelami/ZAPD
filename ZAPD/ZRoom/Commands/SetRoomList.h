@@ -18,12 +18,12 @@ public:
 	SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetRoomList();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
-	virtual RoomCommand GetRoomCommand();
-	virtual std::string PreGenSourceFiles();
-	virtual std::string Save();
+	std::string GetBodySourceCode() override;
+	std::string GetCommandCName() override;
+	std::string GenerateExterns() override;
+	RoomCommand GetRoomCommand() override;
+	std::string PreGenSourceFiles() override;
+	std::string Save() override;
 
 private:
 	std::vector<RoomEntry*> rooms;

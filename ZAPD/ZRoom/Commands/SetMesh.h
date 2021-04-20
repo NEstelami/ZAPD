@@ -152,11 +152,11 @@ public:
 	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset);
 	~SetMesh();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GenerateExterns();
-	virtual std::string GetCommandCName();
-	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
+	std::string GetBodySourceCode() override;
+	std::string GenerateExterns() override;
+	std::string GetCommandCName() override;
+	RoomCommand GetRoomCommand() override;
+	int32_t GetRawDataSize() override;
 
 private:
 	MeshHeaderBase* meshHeader = nullptr;

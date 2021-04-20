@@ -19,13 +19,13 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	_rawDataIndex = rawDataIndex;
 }
 
+std::string SetExitList::GetBodySourceCode()
+{
+	return StringHelper::Sprintf("%s, 0x00, (u32)&%sExitList0x%06X", GetCommandHex().c_str(), zRoom->GetName().c_str(), segmentOffset);
+}
+
 string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput =
-		StringHelper::Sprintf("%s 0x00, (u32)&%sExitList0x%06X",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          zRoom->GetName().c_str(), segmentOffset);
-
 	// Parse Entrances and Generate Declaration
 	zRoom->parent->AddDeclarationPlaceholder(segmentOffset);  // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
@@ -46,11 +46,11 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	;
 
 	zRoom->parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, exits.size() * 2, "u16",
+		segmentOffset, DeclarationAlignment::Align4, exits.size() * 2, "u16",
 		StringHelper::Sprintf("%sExitList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		exits.size(), declaration);
 
-	return sourceOutput;
+	return GetBodySourceCode();
 }
 
 string SetExitList::GenerateExterns()

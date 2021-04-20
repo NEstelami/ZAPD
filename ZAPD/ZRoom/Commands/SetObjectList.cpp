@@ -33,15 +33,15 @@ string SetObjectList::GenerateExterns()
 	                             segmentOffset);
 }
 
+std::string SetObjectList::GetBodySourceCode()
+{
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)%sObjectList0x%06X",
+	                          GetCommandHex().c_str(),
+	                          objects.size(), zRoom->GetName().c_str(), segmentOffset);
+}
+
 string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput = "";
-
-	sourceOutput +=
-		StringHelper::Sprintf("%s 0x%02X, (u32)%sObjectList0x%06X",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          objects.size(), zRoom->GetName().c_str(), segmentOffset);
-
 	string declaration = "";
 
 	for (size_t i = 0; i < objects.size(); i++)
@@ -58,7 +58,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 		StringHelper::Sprintf("%sObjectList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		objects.size(), declaration);
 
-	return sourceOutput;
+	return GetBodySourceCode();
 }
 
 int32_t SetObjectList::GetRawDataSize()

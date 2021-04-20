@@ -34,12 +34,9 @@ SetRoomList::~SetRoomList()
 		delete entry;
 }
 
-string SetRoomList::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetRoomList::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, (u32)&%sRoomList0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), rooms.size(),
-		zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)&%sRoomList0x%06X", GetCommandHex().c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetRoomList::GenerateExterns()

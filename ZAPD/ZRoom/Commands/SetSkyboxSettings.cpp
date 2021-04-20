@@ -13,12 +13,9 @@ SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData
 	lightingSettingsControl = rawData[rawDataIndex + 0x06];
 }
 
-string SetSkyboxSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetSkyboxSettings::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), unk1, skyboxNumber,
-		cloudsType, lightingSettingsControl);
+	return StringHelper::Sprintf("%s, 0x%02X, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X", GetCommandHex().c_str(), unk1, skyboxNumber, cloudsType, lightingSettingsControl);
 }
 
 string SetSkyboxSettings::GetCommandCName()

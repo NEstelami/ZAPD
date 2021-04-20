@@ -49,12 +49,9 @@ SetLightingSettings::~SetLightingSettings()
 		delete setting;
 }
 
-string SetLightingSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetLightingSettings::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s %i, (u32)&%sLightSettings0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), settings.size(),
-		zRoom->GetName().c_str(), segmentOffset);
+	return StringHelper::Sprintf("%s, %i, (u32)&%sLightSettings0x%06X", GetCommandHex().c_str(), settings.size(), zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetLightingSettings::GetCommandCName()

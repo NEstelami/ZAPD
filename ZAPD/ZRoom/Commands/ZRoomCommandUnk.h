@@ -14,9 +14,7 @@ public:
 
 	ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual RoomCommand GetRoomCommand();
-	virtual std::string GetCommandCName();
+	std::string GetBodySourceCode() override;
 
 protected:
 	ZRoom* zRoom;

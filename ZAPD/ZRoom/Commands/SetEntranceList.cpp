@@ -10,11 +10,7 @@ using namespace std;
 SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
-	entrances = vector<EntranceEntry*>();
-
-	_rawData = rawData;
-	_rawDataIndex = rawDataIndex;
+	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 }
 
 SetEntranceList::~SetEntranceList()
@@ -23,21 +19,21 @@ SetEntranceList::~SetEntranceList()
 		delete entry;
 }
 
+std::string SetEntranceList::GetBodySourceCode()
+{
+	return StringHelper::Sprintf("%s, 0x00, (u32)&%sEntranceList0x%06X", GetCommandHex().c_str(), zRoom->GetName().c_str(), segmentOffset);
+}
+
 string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	string sourceOutput =
-		StringHelper::Sprintf("%s 0x00, (u32)&%sEntranceList0x%06X",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          zRoom->GetName().c_str(), segmentOffset);
-
 	// Parse Entrances and Generate Declaration
-	zRoom->parent->AddDeclarationPlaceholder(segmentOffset);  // Make sure this segment is defined
+	zRoom->parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
 	for (int i = 0; i < numEntrances; i++)
 	{
-		EntranceEntry* entry = new EntranceEntry(_rawData, currentPtr);
+		EntranceEntry* entry = new EntranceEntry(rawData, currentPtr);
 		entrances.push_back(entry);
 
 		currentPtr += 2;
@@ -60,7 +56,7 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 		StringHelper::Sprintf("%sEntranceList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		entrances.size(), declaration);
 
-	return sourceOutput;
+	return GetBodySourceCode();
 }
 
 string SetEntranceList::GenerateExterns()

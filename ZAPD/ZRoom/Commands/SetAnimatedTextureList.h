@@ -97,12 +97,11 @@ public:
 	SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetAnimatedTextureList();
 
-	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
+	std::string GetBodySourceCode() override;
+	RoomCommand GetRoomCommand() override;
+	int32_t GetRawDataSize() override;
+	std::string GetCommandCName() override;
+	std::string GenerateExterns() override;
 
 private:
 	uint32_t segmentOffset;

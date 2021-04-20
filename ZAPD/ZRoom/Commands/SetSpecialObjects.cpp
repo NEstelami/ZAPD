@@ -11,11 +11,9 @@ SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, std::vector<uint8_t> rawData
 	globalObject = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
 }
 
-string SetSpecialObjects::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetSpecialObjects::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, 0x%04X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-		elfMessage, globalObject);
+	return StringHelper::Sprintf("%s, 0x%02X, 0x%04X", GetCommandHex().c_str(), elfMessage, globalObject);
 }
 
 string SetSpecialObjects::GetCommandCName()

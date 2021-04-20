@@ -17,14 +17,13 @@ public:
 	SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 	~SetEntranceList();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GenerateExterns();
-	virtual std::string GetCommandCName();
-	virtual RoomCommand GetRoomCommand();
+	std::string GetBodySourceCode() override;
+	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
+	std::string GenerateExterns() override;
+	std::string GetCommandCName() override;
+	RoomCommand GetRoomCommand() override;
 
 private:
 	std::vector<EntranceEntry*> entrances;
 	uint32_t segmentOffset;
-	std::vector<uint8_t> _rawData;
-	int32_t _rawDataIndex;
 };

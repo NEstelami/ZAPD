@@ -9,11 +9,9 @@ SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 	echo = rawData[rawDataIndex + 0x07];
 }
 
-string SetEchoSettings::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetEchoSettings::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0, { 0 }, 0x%02X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-		echo);
+	return StringHelper::Sprintf("%s, 0, { 0 }, 0x%02X", GetCommandHex().c_str(), echo);
 }
 
 string SetEchoSettings::GetCommandCName()

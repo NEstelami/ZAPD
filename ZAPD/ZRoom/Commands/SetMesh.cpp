@@ -285,17 +285,10 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	return sourceOutput;
 }
 
-string SetMesh::GenerateSourceCodePass1(string roomName, int baseAddress)
+std::string SetMesh::GetBodySourceCode()
 {
-	string sourceOutput = "";
-
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
-
-	sourceOutput += StringHelper::Sprintf(
-		"%s %i, &%s", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), data,
-		decl->varName.c_str());
-
-	return sourceOutput;
+	return StringHelper::Sprintf("%s, %i, &%s", GetCommandHex().c_str(), data, decl->varName.c_str());
 }
 
 string SetMesh::GenerateExterns()
