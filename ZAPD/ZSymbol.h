@@ -13,9 +13,6 @@ protected:
 
 public:
 	ZSymbol(ZFile* nParent);
-	// ZSymbol(const std::string& nName, int32_t nRawDataIndex, const std::string& nType, uint32_t
-	// nTypeSize, bool nIsArray, uint32_t nCount); ZSymbol(tinyxml2::XMLElement* reader, const
-	// std::vector<uint8_t>& nRawData, int32_t nRawDataIndex, ZFile* nParent);
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const int32_t nRawDataIndex, const std::string& nRelPath) override;

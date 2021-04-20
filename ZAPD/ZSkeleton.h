@@ -20,7 +20,7 @@ public:
 	ZSkeletonType type;
 	ZLimbType limbType;
 	std::vector<ZLimb*> limbs;
-	ZLimb* rootLimb;
+	//ZLimb* rootLimb;
 	segptr_t limbsArrayAddress;
 	uint8_t limbCount;
 	uint8_t dListCount;  // FLEX SKELETON ONLY

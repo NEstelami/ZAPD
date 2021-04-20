@@ -15,6 +15,17 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 	this->dimensions = 0;
 }
 
+ZVector::~ZVector()
+{
+	ClearScalars();
+}
+
+void ZVector::ClearScalars()
+{
+	for(auto s: scalars)
+		delete s;
+}
+
 void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
                              const int32_t nRawDataIndex, const std::string& nRelPath)
 {
@@ -36,7 +47,7 @@ void ZVector::ParseRawData()
 {
 	int32_t currentRawDataIndex = this->rawDataIndex;
 
-	scalars.clear();
+	ClearScalars();
 
 	for (uint32_t i = 0; i < this->dimensions; i++)
 	{

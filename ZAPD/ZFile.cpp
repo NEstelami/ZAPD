@@ -64,7 +64,13 @@ ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPa
 ZFile::~ZFile()
 {
 	for (ZResource* res : resources)
+	{
 		delete res;
+	}
+
+	for(auto d : declarations) {
+		delete d.second;
+	}
 }
 
 void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, bool placeholderMode)

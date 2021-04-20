@@ -17,6 +17,8 @@ ZCollisionHeader::~ZCollisionHeader()
 {
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
+	
+	delete camData;
 }
 
 ZResourceType ZCollisionHeader::GetResourceType()

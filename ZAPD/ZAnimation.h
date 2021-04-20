@@ -62,7 +62,7 @@ protected:
 class ZLinkAnimation : public ZAnimation
 {
 public:
-	uint32_t segmentAddress;
+	segptr_t segmentAddress;
 
 	ZLinkAnimation(ZFile* nParent);
 

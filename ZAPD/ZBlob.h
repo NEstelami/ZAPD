@@ -24,6 +24,4 @@ public:
 	std::string GetExternalExtension() override;
 	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;
-
-private:
 };

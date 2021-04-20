@@ -9,6 +9,11 @@ ZArray::ZArray(ZFile* nParent) : ZResource(nParent)
 {
 }
 
+ZArray::~ZArray()
+{
+	delete testFile;
+}
+
 void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
@@ -28,7 +33,7 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 			StringHelper::Sprintf("Error! Array needs at least one sub-element.\n"));
 
 	ZResource* res = testFile->resources[0];
-	int32_t resSize = res->GetRawDataSize();
+	size_t resSize = res->GetRawDataSize();
 
 	if (!res->DoesSupportArray())
 	{

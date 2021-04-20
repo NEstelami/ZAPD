@@ -240,6 +240,14 @@ Struct_800A5E28::~Struct_800A5E28()
 	delete unk_8_dlist;
 }
 
+ZLimb::~ZLimb()
+{
+	for(auto DL : dLists)
+		delete DL;
+}
+
+
+
 void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 {
 	if (unk_4 != 0)

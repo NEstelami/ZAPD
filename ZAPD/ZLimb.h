@@ -144,11 +144,10 @@ public:
 	std::vector<ZLimb*> children;
 
 	ZLimb(ZFile* nParent);
-	// ZLimb(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
-	// ZFile* nParent);
 	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
 	      int32_t nRawDataIndex, ZFile* nParent);
-
+	~ZLimb();
+	
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,

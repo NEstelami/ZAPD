@@ -15,6 +15,7 @@ public:
 	uint32_t dimensions;
 
 	ZVector(ZFile* nParent);
+	~ZVector();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	std::string GetSourceTypeName() override;
@@ -28,5 +29,6 @@ public:
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const int32_t nRawDataIndex, const std::string& nRelPath) override;
 
-protected:
+private:
+	void ClearScalars();
 };

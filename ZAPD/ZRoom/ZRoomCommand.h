@@ -52,7 +52,7 @@ class ZRoomCommand
 public:
 	RoomCommand cmdID;
 	int32_t cmdAddress;
-	int32_t cmdIndex;
+	uint32_t cmdIndex;
 	int32_t cmdSet;
 	uint32_t commandSet;
 

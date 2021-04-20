@@ -596,7 +596,7 @@ void HLMeshCmdTriangle1::OutputAssimp(HLModelIntermediette* parent, aiScene* sce
 {
 	aiFace* face = new aiFace();
 	face->mNumIndices = 3;
-	face->mIndices = new unsigned int32_t[3];
+	face->mIndices = new uint32_t[3];
 	face->mIndices[0] = parent->startIndex + v0;
 	face->mIndices[1] = parent->startIndex + v1;
 	face->mIndices[2] = parent->startIndex + v2;
@@ -678,7 +678,7 @@ void HLMeshCmdTriangle2::OutputAssimp(HLModelIntermediette* parent, aiScene* sce
 	{
 		aiFace* face = new aiFace();
 		face->mNumIndices = 3;
-		face->mIndices = new unsigned int32_t[3];
+		face->mIndices = new uint32_t[3];
 		face->mIndices[0] = parent->startIndex + v0;
 		face->mIndices[1] = parent->startIndex + v1;
 		face->mIndices[2] = parent->startIndex + v2;
@@ -689,7 +689,7 @@ void HLMeshCmdTriangle2::OutputAssimp(HLModelIntermediette* parent, aiScene* sce
 	{
 		aiFace* face = new aiFace();
 		face->mNumIndices = 3;
-		face->mIndices = new unsigned int32_t[3];
+		face->mIndices = new uint32_t[3];
 		face->mIndices[0] = parent->startIndex + v10;
 		face->mIndices[1] = parent->startIndex + v11;
 		face->mIndices[2] = parent->startIndex + v12;

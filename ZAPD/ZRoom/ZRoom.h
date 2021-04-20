@@ -46,8 +46,8 @@ public:
 struct CommandSet
 {
 	int32_t address;
-	int32_t commandCount;  // Only used if explicitly specified in the XML
+	uint32_t commandCount;  // Only used if explicitly specified in the XML
 
 	CommandSet(int32_t nAddress);
-	CommandSet(int32_t nAddress, int32_t nCommandCount);
+	CommandSet(int32_t nAddress, uint32_t nCommandCount);
 };

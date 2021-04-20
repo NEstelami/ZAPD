@@ -62,6 +62,9 @@ ZRoom::~ZRoom()
 {
 	for (ZRoomCommand* cmd : commands)
 		delete cmd;
+
+	for(auto t : textures)
+		delete t.second;
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -82,7 +85,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	Globals::Instance->AddSegment(SEGMENT_ROOM);
 	Globals::Instance->AddSegment(SEGMENT_SCENE);
 
-	int32_t cmdCount = 999999;
+	uint32_t cmdCount = UINT32_MAX;
 
 	if (name == "syotes_room_0")
 	{
@@ -133,7 +136,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			int32_t commandsCount = 99999999;
+			uint32_t commandsCount = UINT32_MAX;
 
 			if (child->FindAttribute("Count") != NULL)
 			{
@@ -171,10 +174,10 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
 {
 	bool shouldContinue = true;
-	int32_t currentIndex = 0;
+	uint32_t currentIndex = 0;
 	int32_t rawDataIndex = GETSEGOFFSET(commandSet.address);
 
-	int32_t commandsLeft = commandSet.commandCount;
+	uint32_t commandsLeft = commandSet.commandCount;
 
 	while (shouldContinue)
 	{
@@ -431,7 +434,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int32_t declarationAddress)
 
 size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 {
-	size_t cmdIndex = -1;
+	int32_t cmdIndex = -1;
 
 	for (size_t i = 0; i < commands.size(); i++)
 	{
@@ -442,9 +445,9 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		}
 	}
 
-	if ((int32_t)cmdIndex != -1)
+	if (cmdIndex != -1)
 	{
-		if (cmdIndex + 1 < commands.size())
+		if (cmdIndex + 1 < (int32_t)commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
 		else
 			return rawData.size() - commands[cmdIndex]->cmdAddress;
@@ -539,8 +542,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 			item.second->GetRawDataSize(), "u64",
 			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
 	}
-
-	// sourceOutput += "\n";
 
 	return sourceOutput;
 }
@@ -660,7 +661,7 @@ CommandSet::CommandSet(int32_t nAddress)
 	commandCount = 9999999;
 }
 
-CommandSet::CommandSet(int32_t nAddress, int32_t nCommandCount)
+CommandSet::CommandSet(int32_t nAddress, uint32_t nCommandCount)
 {
 	address = nAddress;
 	commandCount = nCommandCount;

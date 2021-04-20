@@ -43,6 +43,17 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 	texDeclarations = map<uint32_t, std::string>();
 }
 
+ZDisplayList::~ZDisplayList()
+{
+    for(auto t : textures){
+        delete t.second;
+    }
+
+	for(auto o : otherDLists){
+        delete o;
+    }
+}
+
 // EXTRACT MODE
 void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
                                   const std::vector<uint8_t>& nRawData, const int32_t nRawDataIndex,
@@ -76,12 +87,12 @@ ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int32_t nRawDataIndex, int3
 
 void ZDisplayList::ParseRawData()
 {
-	int32_t numInstructions = (int32_t)rawData.size() / 8;
+	size_t numInstructions = rawData.size() / 8;
 	uint8_t* rawDataArr = rawData.data();
 
 	instructions.reserve(numInstructions);
 
-	for (int32_t i = 0; i < numInstructions; i++)
+	for (size_t i = 0; i < numInstructions; i++)
 		instructions.push_back(BitConverter::ToUInt64BE(rawDataArr, (i * 8)));
 }
 
@@ -2190,7 +2201,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 			                         texWidth, texHeight, parent);
 			tex->isPalette = texIsPalette;
 			textures[texAddr] = tex;
-
 			return true;
 		}
 		else
@@ -2214,7 +2224,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 				                          Globals::Instance->lastScene->GetName().c_str(), texAddr),
 					0);
 			}
-
 			return true;
 		}
 	}

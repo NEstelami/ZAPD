@@ -366,6 +366,7 @@ public:
 
 	ZDisplayList(ZFile* nParent);
 	ZDisplayList(std::vector<uint8_t> nRawData, int32_t rawDataIndex, int32_t rawDataSize, ZFile* nParent);
+	~ZDisplayList();
 
 	static ZDisplayList* Instance;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,

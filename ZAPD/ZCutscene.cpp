@@ -16,10 +16,76 @@ ZCutscene::~ZCutscene()
 	for (CutsceneCommand* cmd : commands)
 		delete cmd;
 }
-
-CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX(){
-
+CutsceneCommandSetCameraPos::~CutsceneCommandSetCameraPos()
+{
+	for(auto e : entries)
+		delete e;
 }
+
+CutsceneCommandSpecialAction::~CutsceneCommandSpecialAction()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandFadeBGM::~CutsceneCommandFadeBGM()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandPlayBGM::~CutsceneCommandPlayBGM()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandStopBGM::~CutsceneCommandStopBGM()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandEnvLighting::~CutsceneCommandEnvLighting()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandUnknown9::~CutsceneCommandUnknown9()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandUnknown::~CutsceneCommandUnknown()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandDayTime::~CutsceneCommandDayTime()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandTextbox::~CutsceneCommandTextbox()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandActorAction::~CutsceneCommandActorAction()
+{
+	for (auto e: entries)
+		delete e;
+}
+
+CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
+{
+}
+
 string ZCutscene::GetBodySourceCode()
 {
 	string output = "";
