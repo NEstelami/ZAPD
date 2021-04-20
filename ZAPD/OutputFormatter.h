@@ -15,6 +15,7 @@ private:
 	int nest;
 	int nestIndent[8];
 	int currentIndent;
+	int wordNests;
 
 	char word[128];
 	char space[128];
@@ -23,7 +24,7 @@ private:
 
 	std::string str;
 
-	int Write(const char* buf, int count);
+	void Flush();
 
 	static OutputFormatter* Instance;
 	static int WriteStatic(const char* buf, int count);
@@ -32,6 +33,8 @@ public:
 	OutputFormatter(int tabSize = 4, int defaultIndent = 4, int lineLimit = 120);
 
 	int (*StaticWriter())(const char* buf, int count);
+
+	int Write(const char* buf, int count);
 
 	std::string GetOutput();
 };
