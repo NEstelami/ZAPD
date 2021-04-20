@@ -1,5 +1,6 @@
 #include "SetObjectList.h"
 #include "../../BitConverter.h"
+#include "../../Globals.h"
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 #include "../ZNames.h"

@@ -19,9 +19,6 @@ protected:
 	void ProcessCommandSets();
 	void SyotesRoomHack();
 
-	ZRoom();
-	~ZRoom();
-
 public:
 	ZRoom* scene;
 	std::map<int32_t, ZTexture*> textures;
@@ -30,9 +27,11 @@ public:
 
 	std::string extDefines;
 
-	static ZRoom* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData,
-	                             int rawDataIndex, std::string nRelPath, ZFile* nParent,
-	                             ZRoom* nScene);
+	ZRoom(ZFile* nParent);
+	~ZRoom();
+
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const int nRawDataIndex, const std::string& nRelPath) override;
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
 	size_t GetDeclarationSizeFromNeighbor(int declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
