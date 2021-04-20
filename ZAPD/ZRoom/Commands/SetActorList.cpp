@@ -11,7 +11,7 @@ using namespace std;
 SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	numActors = rawData[rawDataIndex + 1];
+	numActors = rawData.at(rawDataIndex + 1);
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	if (segmentOffset != 0)
@@ -23,6 +23,9 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	string sourceOutput = "";
 	size_t numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
 	uint32_t currentPtr = segmentOffset;
+
+	// TODO: hack
+	actors.clear();
 
 	for (size_t i = 0; i < numActorsReal; i++)
 	{
