@@ -4,13 +4,13 @@
 
 using namespace std;
 
-SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	unk1 = rawData[rawDataIndex + 0x01];
-	skyboxNumber = rawData[rawDataIndex + 0x04];
-	cloudsType = rawData[rawDataIndex + 0x05];
-	lightingSettingsControl = rawData[rawDataIndex + 0x06];
+	unk1 = cmdArg1;
+	skyboxNumber = rawData.at(rawDataIndex + 0x04);
+	cloudsType = rawData.at(rawDataIndex + 0x05);
+	lightingSettingsControl = rawData.at(rawDataIndex + 0x06);
 }
 
 std::string SetSkyboxSettings::GetBodySourceCode()

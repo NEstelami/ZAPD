@@ -7,8 +7,8 @@ using namespace std;
 SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	elfMessage = rawData[rawDataIndex + 0x01];
-	globalObject = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
+	elfMessage = cmdArg1;
+	globalObject = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
 }
 
 std::string SetSpecialObjects::GetBodySourceCode()

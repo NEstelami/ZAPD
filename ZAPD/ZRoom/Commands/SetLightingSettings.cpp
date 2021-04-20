@@ -6,7 +6,7 @@
 
 using namespace std;
 
-SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+SetLightingSettings::SetLightingSettings(ZRoom* nZRoom,  const std::vector<uint8_t>& rawData,
                                          int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -15,7 +15,7 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 
 void SetLightingSettings::ParseRawData()
 {
-	uint8_t numLights = cmdArg1;
+	uint8_t numLights = rawData[rawDataIndex + 1];
 
 	for (int i = 0; i < numLights; i++)
 		settings.push_back(LightingSettings(rawData, segmentOffset + (i * 22)));

@@ -8,8 +8,7 @@ public:
 	SetWorldMapVisited(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
 	std::string GetBodySourceCode() override;
-	std::string GetCommandCName() override;
-	RoomCommand GetRoomCommand() override;
 
-private:
+	RoomCommand GetRoomCommand() override;
+	std::string GetCommandCName() override;
 };

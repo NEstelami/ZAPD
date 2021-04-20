@@ -10,13 +10,18 @@ using namespace std;
 SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numRooms = rawData[rawDataIndex + 1];
+	ParseRawData();
+}
+
+void SetRoomList::ParseRawData()
+{
+	int numRooms = cmdArg1;
 
 	int32_t currentPtr = segmentOffset;
 
 	for (int i = 0; i < numRooms; i++)
 	{
-		RoomEntry* entry = new RoomEntry(rawData, currentPtr);
+		RoomEntry entry(rawData, currentPtr);
 		rooms.push_back(entry);
 
 		currentPtr += 8;
@@ -25,15 +30,23 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	zRoom->roomCount = numRooms;
 }
 
-SetRoomList::~SetRoomList()
-{
-	for (RoomEntry* entry : rooms)
-		delete entry;
-}
-
 std::string SetRoomList::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x%02X, (u32)&%sRoomList0x%06X", GetCommandHex().c_str(), rooms.size(), zRoom->GetName().c_str(), segmentOffset);
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s", GetCommandHex().c_str(), rooms.size(), listName.c_str());
 }
 
 string SetRoomList::GenerateExterns()
@@ -75,11 +88,6 @@ std::string SetRoomList::PreGenSourceFiles()
 		StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
 		declaration);
 
-	return std::string();
-}
-
-std::string SetRoomList::Save()
-{
 	return std::string();
 }
 

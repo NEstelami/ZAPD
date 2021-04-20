@@ -11,6 +11,12 @@ using namespace std;
 SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
+	ParseRawData();
+	DeclareReferences();
+}
+
+void SetObjectList::ParseRawData()
+{
 	uint8_t objectCnt = rawData[rawDataIndex + 1];
 	uint32_t currentPtr = segmentOffset;
 
@@ -25,20 +31,7 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int ra
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-string SetObjectList::GenerateExterns()
-{
-	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(),
-	                             segmentOffset);
-}
-
-std::string SetObjectList::GetBodySourceCode()
-{
-	return StringHelper::Sprintf("%s, 0x%02X, (u32)%sObjectList0x%06X",
-	                          GetCommandHex().c_str(),
-	                          objects.size(), zRoom->GetName().c_str(), segmentOffset);
-}
-
-string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
+void SetObjectList::DeclareReferences()
 {
 	string declaration = "";
 
@@ -55,8 +48,31 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 		segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
 		StringHelper::Sprintf("%sObjectList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		objects.size(), declaration);
+}
 
-	return GetBodySourceCode();
+string SetObjectList::GenerateExterns()
+{
+	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(),
+	                             segmentOffset);
+}
+
+std::string SetObjectList::GetBodySourceCode()
+{
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s", GetCommandHex().c_str(), objects.size(), listName.c_str());
 }
 
 int32_t SetObjectList::GetRawDataSize()

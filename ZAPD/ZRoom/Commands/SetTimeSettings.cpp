@@ -4,12 +4,12 @@
 
 using namespace std;
 
-SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	hour = rawData[rawDataIndex + 4];
-	min = rawData[rawDataIndex + 5];
-	unk = rawData[rawDataIndex + 6];
+	hour = rawData.at(rawDataIndex + 4);
+	min = rawData.at(rawDataIndex + 5);
+	unk = rawData.at(rawDataIndex + 6);
 }
 
 std::string SetTimeSettings::GetBodySourceCode()

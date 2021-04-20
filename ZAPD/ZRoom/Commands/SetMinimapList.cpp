@@ -61,19 +61,9 @@ void SetMinimapList::DeclareReferences()
 		minimaps.size(), declaration);
 }
 
-/*
-string SetMinimapList::GenerateSourceCodePass1(string roomName, int baseAddress)
-{
-	return StringHelper::Sprintf(
-		"%s 0x%02X, (u32)&%sMinimapList0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), minimaps.size(),
-		zRoom->GetName().c_str(), segmentOffset);
-}
-*/
-
 string SetMinimapList::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s 0, (u32)&%sMinimapList0x%06X",
+	return StringHelper::Sprintf("%s, 0, (u32)&%sMinimapList0x%06X",
 	                          GetCommandHex().c_str(),
 	                          zRoom->GetName().c_str(), segmentOffset, unk4);
 }

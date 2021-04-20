@@ -23,7 +23,7 @@ protected:
 class SetLightingSettings : public ZRoomCommand
 {
 public:
-	SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 

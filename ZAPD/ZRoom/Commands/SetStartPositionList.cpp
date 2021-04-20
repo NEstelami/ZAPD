@@ -12,7 +12,13 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
                                            int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	uint8_t numActors = rawData.at(rawDataIndex + 1);
+	ParseRawData();
+	DeclareReferences();
+}
+
+void SetStartPositionList::ParseRawData()
+{
+	uint8_t numActors = cmdArg1;
 
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
@@ -23,6 +29,24 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
 	{
 		actors.push_back(ActorSpawnEntry(rawData, currentPtr));
 		currentPtr += 16;
+	}
+}
+
+void SetStartPositionList::DeclareReferences()
+{
+	if (!actors.empty())
+	{
+		string declaration = "";
+
+		for (const auto& entry : actors)
+		{
+			declaration += StringHelper::Sprintf("    { %s },\n", entry.GetBodySourceCode().c_str());
+		}
+
+		zRoom->parent->AddDeclarationArray(
+			segmentOffset, DeclarationAlignment::None, actors.size() * 16, "ActorEntry",
+			StringHelper::Sprintf("%sStartPositionList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+			0, declaration);
 	}
 }
 
@@ -43,26 +67,6 @@ std::string SetStartPositionList::GetBodySourceCode()
 	}
 
 	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s", GetCommandHex().c_str(), actors.size(), listName.c_str());
-}
-
-string SetStartPositionList::GenerateSourceCodePass1(string roomName, int baseAddress)
-{
-	if (!actors.empty())
-	{
-		string declaration = "";
-
-		for (const auto& entry : actors)
-		{
-			declaration += StringHelper::Sprintf("    { %s },\n", entry.GetBodySourceCode().c_str());
-		}
-
-		zRoom->parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, actors.size() * 16, "ActorEntry",
-			StringHelper::Sprintf("%sStartPositionList0x%06X", zRoom->GetName().c_str(), segmentOffset),
-			0, declaration);
-	}
-
-	return GetBodySourceCode();
 }
 
 string SetStartPositionList::GenerateExterns()

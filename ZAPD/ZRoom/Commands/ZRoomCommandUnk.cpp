@@ -8,7 +8,7 @@ using namespace std;
 ZRoomCommandUnk::ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	data1 = rawData.at(rawDataIndex + 1);
+	data1 = cmdArg1;
 	data2 = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 }
 

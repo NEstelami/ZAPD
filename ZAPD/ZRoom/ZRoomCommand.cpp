@@ -21,7 +21,6 @@ void ZRoomCommand::ParseRawData()
 
 void ZRoomCommand::DeclareReferences()
 {
-	
 }
 
 std::string ZRoomCommand::GetBodySourceCode()

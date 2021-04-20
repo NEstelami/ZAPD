@@ -3,12 +3,12 @@
 
 using namespace std;
 
-SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	reverb = rawData[rawDataIndex + 0x01];
-	nightTimeSFX = rawData[rawDataIndex + 0x06];
-	musicSequence = rawData[rawDataIndex + 0x07];
+	reverb = cmdArg1;
+	nightTimeSFX = rawData.at(rawDataIndex + 0x06);
+	musicSequence = rawData.at(rawDataIndex + 0x07);
 }
 
 string SetSoundSettings::GetBodySourceCode()
