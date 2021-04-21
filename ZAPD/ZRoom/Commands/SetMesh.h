@@ -6,9 +6,34 @@
 
 class PolygonDlist
 {
+public:
+	PolygonDlist() = default;
+	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZFile* nParent, ZRoom* nRoom);
+
+	void ParseRawData();
+	void DeclareReferences(const std::string& prefix);
+
+	int GetRawDataSize();
+	void SetPolyType(uint8_t nPolyType);
+
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+
+	std::string GetBodySourceCode(bool arrayElement);
+	void DeclareAndGenerateOutputCode();
+
+	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	std::string GetSourceTypeName();
+	std::string GetName();
+
 protected:
+	int16_t x, y, z; // polyType == 2
+	int16_t unk_06; // polyType == 2
+
 	segptr_t opa = 0;  // Gfx*
 	segptr_t xlu = 0;  // Gfx*
+
+	uint8_t polyType;
 
 	ZDisplayList* opaDList = nullptr;  // Gfx*
 	ZDisplayList* xluDList = nullptr;  // Gfx*
@@ -19,24 +44,7 @@ protected:
 	ZRoom* room;
 	std::string name;
 
-	void ParseRawData();
 	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
-
-public:
-	PolygonDlist() = default;
-	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	             ZFile* nParent, ZRoom* nRoom);
-
-	int GetRawDataSize();
-
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
-
-	std::string GetBodySourceCode(bool arrayElement);
-	void DeclareAndGenerateOutputCode();
-
-	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
-	std::string GetSourceTypeName();
-	std::string GetName();
 };
 
 class BgImage
@@ -119,34 +127,12 @@ public:
 	PolygonDlist polyGfxList;
 };
 
-class PolygonDlist2
-{
-public:
-	PolygonDlist2(const std::vector<uint8_t>& rawData, int rawDataIndex, ZFile* nParent, ZRoom* nRoom);
-
-	std::string GetBodySourceCode() const;
-
-	std::string GetSourceTypeName() const;
-	int GetRawDataSize() const;
-
-protected:
-	int16_t x, y, z;
-	int16_t unk_06;
-	segptr_t opa;  // Gfx*
-	segptr_t xlu;  // Gfx*
-
-	ZDisplayList* opaDList = nullptr;
-	ZDisplayList* xluDList = nullptr;
-
-	ZFile* parent;
-};
-
 class PolygonType2
 {
 public:
 	PolygonType2(const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
 
-	void DeclareReferences(std::string prefix);
+	void DeclareReferences(const std::string& prefix);
 
 	std::string GetBodySourceCode();
 
@@ -159,7 +145,7 @@ protected:
 	segptr_t start;
 	segptr_t end;
 
-	std::vector<PolygonDlist2> polyDLists;
+	std::vector<PolygonDlist> polyDLists;
 
 	ZFile* parent;
 };

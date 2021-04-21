@@ -46,6 +46,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDa
 			{
 				PolygonDlist polyGfxList(zRoom->GetName(), rawData, currentPtr, parent,
 				                         zRoom);
+				polyGfxList.SetPolyType(meshHeaderType);
+				polyGfxList.ParseRawData();
+				polyGfxList.DeclareReferences(zRoom->GetName());
 				polyGfxBody += polyGfxList.GetBodySourceCode(true);
 				polyGfxType = polyGfxList.GetSourceTypeName();
 				polyGfxSize = polyGfxList.GetRawDataSize();
@@ -197,17 +200,33 @@ PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>
 	room = nRoom;
 
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
-
-	ParseRawData();
-
-	opaDList = MakeDlist(opa, prefix);
-	xluDList = MakeDlist(xlu, prefix);
 }
 
 void PolygonDlist::ParseRawData()
 {
-	opa = BitConverter::ToUInt32BE(rawData, rawDataIndex);
-	xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+	switch(polyType)
+	{
+	case 2:
+		x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
+		y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+		z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+		unk_06 = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
+
+		opa = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+		xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+		break;
+	
+	default:
+		opa = BitConverter::ToUInt32BE(rawData, rawDataIndex);
+		xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+		break;
+	}
+}
+
+void PolygonDlist::DeclareReferences(const std::string& prefix)
+{
+	opaDList = MakeDlist(opa, prefix);
+	xluDList = MakeDlist(xlu, prefix);
 }
 
 ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
@@ -230,7 +249,19 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 
 int PolygonDlist::GetRawDataSize()
 {
-	return 0x08;
+	switch(polyType)
+	{
+	case 2:
+		return 0x10;
+
+	default:
+		return 0x08;
+	}
+}
+
+void PolygonDlist::SetPolyType(uint8_t nPolyType)
+{
+	polyType = nPolyType;
 }
 
 void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& bodyStr)
@@ -251,11 +282,11 @@ std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 	std::string xluStr = "NULL";
 	if (arrayElement)
 	{
-		bodyStr += "    { \n    ";
+		bodyStr += "    { ";
 	}
 	else
 	{
-		bodyStr += "\n";
+		bodyStr += "\n    ";
 	}
 
 	if (opa != 0)
@@ -283,17 +314,21 @@ std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 		}
 	}
 
-	bodyStr += StringHelper::Sprintf("    %s, \n", opaStr.c_str());
-	if (arrayElement)
+	if (polyType == 2)
 	{
-		bodyStr += "    ";
+		bodyStr += StringHelper::Sprintf("{ %6i, %6i, %6i }, %6i, ", x, y, z, unk_06);
 	}
 
-	bodyStr += StringHelper::Sprintf("    %s, \n", xluStr.c_str());
+	bodyStr += StringHelper::Sprintf("%s, ", opaStr.c_str());
+	bodyStr += StringHelper::Sprintf("%s", xluStr.c_str());
 
 	if (arrayElement)
 	{
-		bodyStr += "    },";
+		bodyStr += " },";
+	}
+	else
+	{
+		bodyStr += "\n";
 	}
 
 	return bodyStr;
@@ -321,7 +356,14 @@ std::string PolygonDlist::GetDefaultName(const std::string& prefix, uint32_t add
 
 std::string PolygonDlist::GetSourceTypeName()
 {
-	return "PolygonDlist";
+	switch (polyType)
+	{
+	case 2:
+		return "PolygonDlist2";
+	
+	default:
+		return "PolygonDlist";
+	}
 }
 
 std::string PolygonDlist::GetName()
@@ -387,10 +429,10 @@ int BgImage::GetRawDataSize()
 
 std::string BgImage::GetBodySourceCode(bool arrayElement)
 {
-	std::string bodyStr = "";
+	std::string bodyStr = "    ";
 	if (arrayElement)
 	{
-		bodyStr += "    { \n        ";
+		bodyStr += "{ \n        ";
 	}
 
 	if (!isSubStruct)
@@ -456,6 +498,10 @@ std::string BgImage::GetBodySourceCode(bool arrayElement)
 	{
 		bodyStr += " \n    }, ";
 	}
+	else
+	{
+		bodyStr += "\n";
+	}
 
 	return bodyStr;
 }
@@ -490,6 +536,9 @@ PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>
 	{
 		polyGfxList =
 			PolygonDlist(prefix, rawData, Seg2Filespace(dlist, parent->baseAddress), parent, nRoom);
+		polyGfxList.SetPolyType(type);
+		polyGfxList.ParseRawData();
+		polyGfxList.DeclareReferences(prefix);
 	}
 
 	uint32_t listAddress;
@@ -602,7 +651,7 @@ std::string PolygonType1::GetBodySourceCode()
 	switch (format)
 	{
 	case 1:
-		bodyStr += "    " + single.GetBodySourceCode(false) + "\n";
+		bodyStr += single.GetBodySourceCode(false);
 		break;
 	case 2:
 		if (list != 0)
@@ -668,79 +717,6 @@ std::string PolygonType1::GetName()
 	return name;
 }
 
-PolygonDlist2::PolygonDlist2(const std::vector<uint8_t>& rawData, int rawDataIndex, ZFile* nParent, ZRoom* nRoom)
-	: parent{nParent}
-{
-	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	unk_06 = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-
-	opa = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-	xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-
-	if (opa != 0)
-	{
-		uint32_t opaOffset = GETSEGOFFSET(opa);
-		auto dListLen = ZDisplayList::GetDListLength(rawData, opaOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-		opaDList = new ZDisplayList(rawData, opaOffset, dListLen, parent);
-		GenDListDeclarations(nRoom, parent, opaDList);
-	}
-
-	if (xlu != 0)
-	{
-		uint32_t xluOffset = GETSEGOFFSET(xlu);
-		auto dListLen = ZDisplayList::GetDListLength(rawData, xluOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-		xluDList = new ZDisplayList(rawData, xluOffset, dListLen, parent);
-		GenDListDeclarations(nRoom, parent, xluDList);
-	}
-}
-
-std::string PolygonDlist2::GetBodySourceCode() const
-{
-	std::string opaName = "NULL";
-	if (opa != 0)
-	{
-		uint32_t opaOffset = GETSEGOFFSET(opa);
-		Declaration* decl = parent->GetDeclaration(opaOffset);
-		if (decl != nullptr)
-		{
-			opaName = decl->varName;
-		}
-		else
-		{
-			opaName = StringHelper::Sprintf("0x%08X", opa);
-		}
-	}
-
-	std::string xluName = "NULL";
-	if (xlu != 0)
-	{
-		uint32_t xluOffset = GETSEGOFFSET(xlu);
-		Declaration* decl = parent->GetDeclaration(xluOffset);
-		if (decl != nullptr)
-		{
-			xluName = decl->varName;
-		}
-		else
-		{
-			xluName = StringHelper::Sprintf("0x%08X", xluOffset);
-		}
-	}
-
-	return StringHelper::Sprintf("{ %6i, %6i, %6i }, %6i, %s, %s", x, y, z, unk_06, opaName.c_str(), xluName.c_str());
-}
-
-std::string PolygonDlist2::GetSourceTypeName() const
-{
-	return "PolygonDlist2";
-}
-
-int PolygonDlist2::GetRawDataSize() const
-{
-	return 0x10;
-}
-
 PolygonType2::PolygonType2(const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 	: parent{nParent}
 {
@@ -753,13 +729,16 @@ PolygonType2::PolygonType2(const std::vector<uint8_t>& nRawData, int nRawDataInd
 	uint32_t currentPtr = GETSEGOFFSET(start);
 	for (size_t i = 0; i < num; i++)
 	{
-		PolygonDlist2 entry(nRawData, currentPtr, parent, nRoom);
+		PolygonDlist entry(nRoom->GetName(), nRawData, currentPtr, parent, nRoom);
+		entry.SetPolyType(type);
+		entry.ParseRawData();
+		entry.DeclareReferences(nRoom->GetName());
 		polyDLists.push_back(entry);
 		currentPtr += entry.GetRawDataSize();
 	}
 }
 
-void PolygonType2::DeclareReferences(std::string prefix)
+void PolygonType2::DeclareReferences(const std::string& prefix)
 {
 	if (num > 0)
 	{
@@ -767,7 +746,7 @@ void PolygonType2::DeclareReferences(std::string prefix)
 
 		for (size_t i = 0; i < polyDLists.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("    { %s },", polyDLists.at(i).GetBodySourceCode().c_str());
+			declaration += polyDLists.at(i).GetBodySourceCode(true);
 			if (i + 1 < polyDLists.size())
 				declaration += "\n";
 		}
