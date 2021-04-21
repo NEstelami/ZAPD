@@ -24,6 +24,8 @@ void ZVector::ClearScalars()
 {
 	for(auto s: scalars)
 		delete s;
+
+	scalars.clear();
 }
 
 void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
