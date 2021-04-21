@@ -268,6 +268,7 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size,
                                    std::string varType, std::string varName, std::string body)
 {
+	assert(GETSEGNUM(address) == 0);
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
@@ -286,6 +287,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
                                    DeclarationPadding padding, uint32_t size, string varType,
                                    string varName, std::string body)
 {
+	assert(GETSEGNUM(address) == 0);
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
@@ -304,6 +306,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         uint32_t size, std::string varType, std::string varName,
                                         int arrayItemCnt, std::string body)
 {
+	assert(GETSEGNUM(address) == 0);
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
@@ -322,6 +325,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         uint32_t size, std::string varType, std::string varName,
                                         int arrayItemCnt, std::string body, bool isExternal)
 {
+	assert(GETSEGNUM(address) == 0);
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
@@ -340,6 +344,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         DeclarationPadding padding, uint32_t size, string varType,
                                         string varName, int arrayItemCnt, std::string body)
 {
+	assert(GETSEGNUM(address) == 0);
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
@@ -356,6 +361,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 
 Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 {
+	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
 	if (declarations.find(address) == declarations.end())
@@ -366,6 +372,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 
 Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, string varName)
 {
+	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
 	if (declarations.find(address) == declarations.end())
@@ -378,6 +385,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, string varName)
 Declaration* ZFile::AddDeclarationInclude(uint32_t address, string includePath, uint32_t size,
                                           string varType, string varName)
 {
+	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
 	if (declarations.find(address) == declarations.end())
@@ -390,6 +398,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
                                                uint32_t size, std::string varType,
                                                std::string varName, int arrayItemCnt)
 {
+	assert(GETSEGNUM(address) == 0);
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
 	{
@@ -436,6 +445,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 
 void ZFile::AddDeclarationDebugChecks(uint32_t address)
 {
+	assert(GETSEGNUM(address) == 0);
 #ifdef _DEBUG
 	if (address == 0x0000)
 	{

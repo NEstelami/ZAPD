@@ -11,7 +11,6 @@ public:
 	void DeclareReferences();
 
 	std::string GetBodySourceCode() override;
-	std::string GenerateExterns() override;
 
 	std::string GetCommandCName() override;
 	RoomCommand GetRoomCommand() override;

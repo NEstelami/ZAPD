@@ -30,7 +30,6 @@ public:
 
 	std::string GetBodySourceCode() override;
 	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
-	std::string GenerateExterns() override;
 
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;

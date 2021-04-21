@@ -104,17 +104,6 @@ size_t SetActorList::GetActorListArraySize()
 	return actorCount;
 }
 
-string SetActorList::GenerateExterns()
-{
-	Declaration* decl = parent->GetDeclaration(segmentOffset);
-	if (decl == nullptr)
-	{
-		return "";
-	}
-
-	return StringHelper::Sprintf("extern %s %s[];\n", actors.at(0).GetSourceTypeName().c_str(), decl->varName.c_str());
-}
-
 string SetActorList::GetCommandCName()
 {
 	return "SCmdActorList";

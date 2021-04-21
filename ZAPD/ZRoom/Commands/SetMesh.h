@@ -4,33 +4,6 @@
 #include "../ZRoomCommand.h"
 #include "ZBackground.h"
 
-class MeshHeaderBase
-{
-public:
-	int8_t headerType;  // 0x00
-};
-
-class MeshEntry2
-{
-public:
-	int16_t playerXMax, playerZMax;
-	int16_t playerXMin, playerZMin;
-
-	int32_t opaqueDListAddr;
-	int32_t translucentDListAddr;
-
-	ZDisplayList* opaqueDList;
-	ZDisplayList* translucentDList;
-};
-
-class MeshHeader2 : public MeshHeaderBase
-{
-public:
-	std::vector<MeshEntry2> entries;
-	uint32_t dListStart;
-	uint32_t dListEnd;
-};
-
 class PolygonDlist
 {
 protected:
@@ -146,10 +119,58 @@ public:
 	PolygonDlist polyGfxList;
 };
 
+class PolygonDlist2
+{
+public:
+	PolygonDlist2(const std::vector<uint8_t>& rawData, int rawDataIndex, ZFile* nParent, ZRoom* nRoom);
+
+	std::string GetBodySourceCode() const;
+
+	std::string GetSourceTypeName() const;
+	int GetRawDataSize() const;
+	ZDisplayList* GetOpaDList() const;
+	ZDisplayList* GetXluDList() const;
+
+protected:
+	int16_t x, y, z;
+	int16_t unk_06;
+	segptr_t opa;  // Gfx*
+	segptr_t xlu;  // Gfx*
+
+	ZDisplayList* opaDList = nullptr;
+	ZDisplayList* xluDList = nullptr;
+
+	ZFile* parent;
+};
+
+class PolygonType2
+{
+public:
+	PolygonType2(const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
+
+	void DeclareReferences(std::string prefix);
+
+	std::string GetBodySourceCode();
+
+	std::string GetSourceTypeName() const;
+	int GetRawDataSize() const;
+	const std::vector<PolygonDlist2>& GetPolyDLists() const;
+
+protected:
+	uint8_t type;
+	uint8_t num;
+	segptr_t start;
+	segptr_t end;
+
+	std::vector<PolygonDlist2> polyDLists;
+
+	ZFile* parent;
+};
+
 class SetMesh : public ZRoomCommand
 {
 public:
-	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset);
+	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex, int segAddressOffset);
 
 	std::string GetBodySourceCode() override;
 	std::string GenerateExterns() override;
@@ -161,6 +182,6 @@ public:
 private:
 	uint8_t meshHeaderType;
 
-	void GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList);
+	void GenDListDeclarations(ZDisplayList* dList);
 	std::string GenDListExterns(ZDisplayList* dList);
 };

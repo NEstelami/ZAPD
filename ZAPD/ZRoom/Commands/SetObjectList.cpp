@@ -50,12 +50,6 @@ void SetObjectList::DeclareReferences()
 		objects.size(), declaration);
 }
 
-string SetObjectList::GenerateExterns()
-{
-	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(),
-	                             segmentOffset);
-}
-
 std::string SetObjectList::GetBodySourceCode()
 {
 	std::string listName = "NULL";
