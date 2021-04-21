@@ -48,7 +48,7 @@ void SetTransitionActorList::DeclareReferences()
 		index++;
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, transitionActors.size() * 16,
 		"TransitionActorEntry",
 		StringHelper::Sprintf("%sTransitionActorList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,

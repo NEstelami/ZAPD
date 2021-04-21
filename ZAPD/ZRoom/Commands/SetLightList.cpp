@@ -39,7 +39,7 @@ void SetLightList::ParseRawData()
 			declarations += "\n";
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, this->numLights * 0xE, "LightInfo",
 		StringHelper::Sprintf("%sLightInfo0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		this->numLights, declarations);

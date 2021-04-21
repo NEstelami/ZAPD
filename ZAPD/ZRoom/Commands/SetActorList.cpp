@@ -14,7 +14,7 @@ SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	numActors = cmdArg1;
 
 	if (segmentOffset != 0)
-		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 std::string SetActorList::GetBodySourceCode()
@@ -74,7 +74,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 		padding = DeclarationPadding::None;
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::Align4, padding, actors.size() * 16, "ActorEntry",
 		StringHelper::Sprintf("%sActorList_%06X", roomName.c_str(), segmentOffset),
 		GetActorListArraySize(), declaration);

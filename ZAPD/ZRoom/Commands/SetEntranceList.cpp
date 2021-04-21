@@ -20,7 +20,7 @@ std::string SetEntranceList::GetBodySourceCode()
 string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	// Parse Entrances and Generate Declaration
-	zRoom->parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
+	parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
 
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
@@ -46,7 +46,7 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress
 		index++;
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, entrances.size() * 2, "EntranceEntry",
 		StringHelper::Sprintf("%sEntranceList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		entrances.size(), declaration);

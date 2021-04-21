@@ -44,7 +44,7 @@ void SetMinimapChests::DeclareReferences()
 		index++;
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, chests.size() * 10,
 		"MinimapChest",
 		StringHelper::Sprintf("%sMinimapChests0x%06X", zRoom->GetName().c_str(), segmentOffset),

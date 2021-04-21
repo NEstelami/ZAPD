@@ -10,7 +10,7 @@ SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> raw
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	if (segmentOffset != 0)
-		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 std::string SetAlternateHeaders::GetBodySourceCode()
@@ -58,7 +58,7 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAdd
 			                                     headers[i] & 0x00FFFFFF);
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, headers.size() * 4, "u32",
 		StringHelper::Sprintf("%sAlternateHeaders0x%06X", roomName.c_str(), segmentOffset), 0,
 		declaration);

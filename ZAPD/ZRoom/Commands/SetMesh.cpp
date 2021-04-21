@@ -19,9 +19,9 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 	if (meshHeaderType == 0)
 	{
 		uint32_t dListStart = Seg2Filespace(BitConverter::ToInt32BE(rawData, segmentOffset + 4),
-		                                    zRoom->parent->baseAddress);
+		                                    parent->baseAddress);
 		uint32_t dListEnd = Seg2Filespace(BitConverter::ToInt32BE(rawData, segmentOffset + 8),
-		                                  zRoom->parent->baseAddress);
+		                                  parent->baseAddress);
 
 		int8_t numEntries = rawData[segmentOffset + 1];
 		uint32_t currentPtr = dListStart;
@@ -41,7 +41,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 			for (int i = 0; i < numEntries; i++)
 			{
-				PolygonDlist polyGfxList(zRoom->GetName(), rawData, currentPtr, zRoom->parent,
+				PolygonDlist polyGfxList(zRoom->GetName(), rawData, currentPtr, parent,
 				                         zRoom);
 				if (polyGfxList.opaDList != nullptr)
 				{
@@ -58,7 +58,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 				currentPtr += polyGfxList.GetRawDataSize();
 			}
 
-			zRoom->parent->AddDeclarationArray(
+			parent->AddDeclarationArray(
 				dListStart, DeclarationAlignment::Align4, numEntries * polyGfxSize, polyGfxType,
 				StringHelper::Sprintf("%s%s0x%06X", zRoom->GetName().c_str(), polyGfxType.c_str(),
 			                          dListStart),
@@ -73,7 +73,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 		if (dListStart != 0)
 		{
-			entriesStr = zRoom->parent->GetDeclaration(dListStart)->varName;
+			entriesStr = parent->GetDeclaration(dListStart)->varName;
 		}
 		declaration += StringHelper::Sprintf("%s, ", entriesStr.c_str());
 		declaration += "\n    ";
@@ -85,18 +85,18 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			declaration += "NULL, ";
 		declaration += "\n";
 
-		zRoom->parent->AddDeclaration(
+		parent->AddDeclaration(
 			segmentOffset, DeclarationAlignment::Align16, 12, "MeshHeader0",
 			StringHelper::Sprintf("%sMeshHeader0x%06X", zRoom->GetName().c_str(), segmentOffset),
 			declaration);
 
-		zRoom->parent->AddDeclaration(dListStart + (numEntries * 8), DeclarationAlignment::None,
+		parent->AddDeclaration(dListStart + (numEntries * 8), DeclarationAlignment::None,
 		                              DeclarationPadding::Pad16, 4, "static s32", "terminatorMaybe",
 		                              "0x01000000");
 	}
 	else if (meshHeaderType == 1)
 	{
-		PolygonType1 polygon1(zRoom->GetName().c_str(), rawData, segmentOffset, zRoom->parent,
+		PolygonType1 polygon1(zRoom->GetName().c_str(), rawData, segmentOffset, parent,
 		                      zRoom);
 		if (polygon1.polyGfxList.opaDList != nullptr)
 		{
@@ -140,7 +140,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
                                                      DListType::F3DZEX),
-					zRoom->parent);
+					parent);
 				entry->opaqueDList->scene = zRoom->scene;
 				GenDListDeclarations(rawData, entry->opaqueDList);
 			}
@@ -153,7 +153,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
                                                      DListType::F3DZEX),
-					zRoom->parent);
+					parent);
 				entry->translucentDList->scene = zRoom->scene;
 				GenDListDeclarations(rawData, entry->translucentDList);
 			}
@@ -180,7 +180,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 			declaration += "0";
 		declaration += "\n";
 
-		zRoom->parent->AddDeclaration(
+		parent->AddDeclaration(
 			segmentOffset, DeclarationAlignment::None, 12, "MeshHeader2",
 			StringHelper::Sprintf("%sMeshHeader0x%06X", zRoom->GetName().c_str(), segmentOffset),
 			declaration);
@@ -208,14 +208,14 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 				declaration += "0 },\n";
 		}
 
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			meshHeader2->dListStart, DeclarationAlignment::None, DeclarationPadding::None,
 			(meshHeader2->entries.size() * 16) + 0, "MeshEntry2",
 			StringHelper::Sprintf("%sMeshDListEntry0x%06X", zRoom->GetName().c_str(),
 		                          meshHeader2->dListStart, meshHeader2->entries.size()),
 			meshHeader2->entries.size(), declaration);
 
-		zRoom->parent->AddDeclaration(meshHeader2->dListStart + (meshHeader2->entries.size() * 16),
+		parent->AddDeclaration(meshHeader2->dListStart + (meshHeader2->entries.size() * 16),
 		                              DeclarationAlignment::None, DeclarationPadding::Pad16, 4,
 		                              "static s32", "terminatorMaybe", "0x01000000");
 
@@ -248,7 +248,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 		DeclarationAlignment alignment = DeclarationAlignment::Align8;
 		if (Globals::Instance->game == ZGame::MM_RETAIL)
 			alignment = DeclarationAlignment::None;
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			vtxEntry.first, alignment, dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
@@ -284,7 +284,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 
 std::string SetMesh::GetBodySourceCode()
 {
-	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
+	Declaration* decl = parent->GetDeclaration(segmentOffset);
 	return StringHelper::Sprintf("%s, %i, &%s", GetCommandHex().c_str(), cmdArg1, decl->varName.c_str());
 }
 

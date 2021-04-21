@@ -37,7 +37,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 			                                     lastTexture->type, textureName.c_str());
 		} while ((lastTexture->segment != 0) && (lastTexture->segment > -1));
 
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::None, DeclarationPadding::Pad16,
 			textures.size() * 8, "AnimatedTexture",
 			StringHelper::Sprintf("%sAnimatedTextureList0x%06X", zRoom->GetName().c_str(),
@@ -64,7 +64,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 				index++;
 			}
 
-			zRoom->parent->AddDeclarationArray(
+			parent->AddDeclarationArray(
 				texture->segmentOffset, DeclarationAlignment::None, DeclarationPadding::None,
 				texture->params.size() * 4, "ScrollingTextureParams",
 				StringHelper::Sprintf("%sAnimatedTextureParams0x%06X", zRoom->GetName().c_str(),
@@ -74,7 +74,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 		case 2:
 		case 3:
 		case 4:
-			zRoom->parent->AddDeclaration(
+			parent->AddDeclaration(
 				texture->segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::None, 16,
 				"FlashingTextureParams",
 				StringHelper::Sprintf("%sAnimatedTextureParams0x%06X", zRoom->GetName().c_str(),
@@ -82,7 +82,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 				texture->params[0]->GenerateSourceCode(zRoom, texture->segmentOffset));
 			break;
 		case 5:
-			zRoom->parent->AddDeclaration(
+			parent->AddDeclaration(
 				texture->segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::None, 12,
 				"CyclingTextureParams",
 				StringHelper::Sprintf("%sAnimatedTextureParams0x%06X", zRoom->GetName().c_str(),

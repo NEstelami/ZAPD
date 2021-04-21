@@ -44,7 +44,7 @@ void SetCsCamera::ParseRawData()
 	}
 
 	if (segmentOffset != 0)
-		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
@@ -71,7 +71,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 			index++;
 		}
 
-		zRoom->parent->AddDeclarationArray(cameras[0].GetSegmentOffset(), DeclarationAlignment::None,
+		parent->AddDeclarationArray(cameras[0].GetSegmentOffset(), DeclarationAlignment::None,
 		                                   DeclarationPadding::None, points.size() * 6, "Vec3s",
 		                                   StringHelper::Sprintf("%sCsCameraPoints0x%06X",
 		                                                         roomName.c_str(),
@@ -97,7 +97,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 			pointsIndex += entry.GetNumPoints();
 		}
 
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
 			cameras.size() * 8, "CsCameraEntry",
 			StringHelper::Sprintf("%sCsCameraList0x%06X", roomName.c_str(), segmentOffset),

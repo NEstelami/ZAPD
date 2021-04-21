@@ -21,7 +21,7 @@ void SetStartPositionList::ParseRawData()
 	uint8_t numActors = cmdArg1;
 
 	if (segmentOffset != 0)
-		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 
 	uint32_t currentPtr = segmentOffset;
 
@@ -43,7 +43,7 @@ void SetStartPositionList::DeclareReferences()
 			declaration += StringHelper::Sprintf("    { %s },\n", entry.GetBodySourceCode().c_str());
 		}
 
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::None, actors.size() * 16, "ActorEntry",
 			StringHelper::Sprintf("%sStartPositionList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 			0, declaration);

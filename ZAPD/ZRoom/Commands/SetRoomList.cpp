@@ -11,6 +11,7 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
+	DeclareReferences();
 }
 
 void SetRoomList::ParseRawData()
@@ -28,6 +29,14 @@ void SetRoomList::ParseRawData()
 	}
 
 	zRoom->roomCount = numRooms;
+}
+
+void SetRoomList::DeclareReferences()
+{
+	parent->AddDeclarationArray(
+		segmentOffset, DeclarationAlignment::None, rooms.size() * 8, "RomFile",
+		StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
+		"");
 }
 
 std::string SetRoomList::GetBodySourceCode()
@@ -67,7 +76,7 @@ RoomCommand SetRoomList::GetRoomCommand()
 
 std::string SetRoomList::PreGenSourceFiles()
 {
-	string declaration = "";
+	std::string declaration = "";
 
 	for (ZFile* file : Globals::Instance->files)
 	{
@@ -83,12 +92,12 @@ std::string SetRoomList::PreGenSourceFiles()
 		}
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, rooms.size() * 8, "RomFile",
 		StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
 		declaration);
 
-	return std::string();
+	return "";
 }
 
 RoomEntry::RoomEntry(int32_t nVAS, int32_t nVAE)

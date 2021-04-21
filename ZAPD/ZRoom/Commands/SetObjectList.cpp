@@ -28,7 +28,7 @@ void SetObjectList::ParseRawData()
 	}
 
 	if (segmentOffset != 0)
-		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 void SetObjectList::DeclareReferences()
@@ -44,7 +44,7 @@ void SetObjectList::DeclareReferences()
 			declaration += "\n";
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
 		StringHelper::Sprintf("%sObjectList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		objects.size(), declaration);

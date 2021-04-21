@@ -42,7 +42,7 @@ void SetActorCutsceneList::ParseRawData()
 			}
 		}
 
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::Align4, cutscenes.size() * 16, cutscenes.at(0).GetSourceTypeName(),
 			StringHelper::Sprintf("%sActorCutsceneList_%06X", zRoom->GetName().c_str(), segmentOffset),
 			0, declaration);

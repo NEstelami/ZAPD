@@ -35,7 +35,7 @@ void SetMinimapList::DeclareReferences()
 	std::string declaration = StringHelper::Sprintf("(u32)%sMinimapEntryList0x%06X, 0x%08X",
 		                                           zRoom->GetName().c_str(), listSegmentOffset, unk4);
 
-	zRoom->parent->AddDeclaration(
+	parent->AddDeclaration(
 		segmentOffset, DeclarationAlignment::Align4, 8, "MinimapList",
 		StringHelper::Sprintf("%sMinimapList0x%06X", zRoom->GetName().c_str(), segmentOffset),
 		declaration);
@@ -54,7 +54,7 @@ void SetMinimapList::DeclareReferences()
 		index++;
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		listSegmentOffset, DeclarationAlignment::Align4,
 		minimaps.size() * 10, "MinimapEntry",
 		StringHelper::Sprintf("%sMinimapEntryList0x%06X", zRoom->GetName().c_str(), listSegmentOffset),

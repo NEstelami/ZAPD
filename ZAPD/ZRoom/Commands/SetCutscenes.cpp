@@ -58,7 +58,7 @@ void SetCutscenes::ParseRawData()
 			cutscenes.push_back(cutscene);
 		}
 
-		zRoom->parent->AddDeclarationArray(
+		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None,
 			cutsceneEntries.size() * 8, "CutsceneEntry",
 			StringHelper::Sprintf("%sCutsceneEntryList0x%06X", zRoom->GetName().c_str(),
@@ -70,7 +70,7 @@ void SetCutscenes::ParseRawData()
 	{
 		if (cutscene->getSegmentOffset() != 0)
 		{
-			Declaration* decl = zRoom->parent->GetDeclaration(cutscene->getSegmentOffset());
+			Declaration* decl = parent->GetDeclaration(cutscene->getSegmentOffset());
 			if (decl == nullptr)
 			{
 				cutscene->GetSourceOutputCode(zRoom->GetName());
@@ -91,7 +91,7 @@ SetCutscenes::~SetCutscenes()
 
 string SetCutscenes::GetBodySourceCode()
 {
-	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
+	Declaration* decl = parent->GetDeclaration(segmentOffset);
 	if (decl != nullptr)
 	{
 		return StringHelper::Sprintf("%s, %i, (u32)%s", GetCommandHex().c_str(), numCutscenes,
@@ -115,7 +115,7 @@ string SetCutscenes::GenerateExterns()
 		                             zRoom->GetName().c_str(), segmentOffset);
 	}
 
-	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
+	Declaration* decl = parent->GetDeclaration(segmentOffset);
 	if (decl != nullptr && decl->varName != "")
 	{
 		return StringHelper::Sprintf("extern s32 %s[];\n", decl->varName.c_str());
