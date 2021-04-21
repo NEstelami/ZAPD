@@ -10,6 +10,9 @@ protected:
 	segptr_t opa = 0;  // Gfx*
 	segptr_t xlu = 0;  // Gfx*
 
+	ZDisplayList* opaDList = nullptr;  // Gfx*
+	ZDisplayList* xluDList = nullptr;  // Gfx*
+
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	ZFile* parent;
@@ -34,9 +37,6 @@ public:
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	std::string GetSourceTypeName();
 	std::string GetName();
-
-	ZDisplayList* opaDList = nullptr;  // Gfx*
-	ZDisplayList* xluDList = nullptr;  // Gfx*
 };
 
 class BgImage
@@ -128,8 +128,6 @@ public:
 
 	std::string GetSourceTypeName() const;
 	int GetRawDataSize() const;
-	ZDisplayList* GetOpaDList() const;
-	ZDisplayList* GetXluDList() const;
 
 protected:
 	int16_t x, y, z;
@@ -154,7 +152,6 @@ public:
 
 	std::string GetSourceTypeName() const;
 	int GetRawDataSize() const;
-	const std::vector<PolygonDlist2>& GetPolyDLists() const;
 
 protected:
 	uint8_t type;
@@ -182,6 +179,5 @@ public:
 private:
 	uint8_t meshHeaderType;
 
-	void GenDListDeclarations(ZDisplayList* dList);
 	std::string GenDListExterns(ZDisplayList* dList);
 };

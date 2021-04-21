@@ -9,6 +9,9 @@
 
 using namespace std;
 
+void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList);
+
+
 SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
                  int segAddressOffset)
 	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
@@ -43,8 +46,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDa
 			{
 				PolygonDlist polyGfxList(zRoom->GetName(), rawData, currentPtr, parent,
 				                         zRoom);
-				GenDListDeclarations(polyGfxList.opaDList);
-				GenDListDeclarations(polyGfxList.xluDList);
 				polyGfxBody += polyGfxList.GetBodySourceCode(true);
 				polyGfxType = polyGfxList.GetSourceTypeName();
 				polyGfxSize = polyGfxList.GetRawDataSize();
@@ -92,18 +93,11 @@ SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDa
 	{
 		PolygonType1 polygon1(zRoom->GetName().c_str(), rawData, segmentOffset, parent,
 		                      zRoom);
-		GenDListDeclarations(polygon1.polyGfxList.opaDList);
-		GenDListDeclarations(polygon1.polyGfxList.xluDList);
 		polygon1.DeclareAndGenerateOutputCode();
 	}
 	else if (meshHeaderType == 2)
 	{
 		PolygonType2 polygon2(rawData, segmentOffset, parent, zRoom);
-		for(const auto& polyDList: polygon2.GetPolyDLists())
-		{
-			GenDListDeclarations(polyDList.GetOpaDList());
-			GenDListDeclarations(polyDList.GetXluDList());
-		}
 		polygon2.DeclareReferences(zRoom->GetName());
 
 		parent->AddDeclaration(
@@ -113,7 +107,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDa
 	}
 }
 
-void SetMesh::GenDListDeclarations(ZDisplayList* dList)
+void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 {
 	if (dList == nullptr)
 	{
@@ -123,14 +117,15 @@ void SetMesh::GenDListDeclarations(ZDisplayList* dList)
 		StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
+	dList->scene = zRoom->scene;
 	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
-		GenDListDeclarations(otherDList);
+		GenDListDeclarations(zRoom, parent, otherDList);
 
 	for (const auto& vtxEntry : dList->vtxDeclarations)
 	{
-		DeclarationAlignment alignment = DeclarationAlignment::Align8;
+		DeclarationAlignment alignment = DeclarationAlignment::Align4;
 		if (Globals::Instance->game == ZGame::MM_RETAIL)
 			alignment = DeclarationAlignment::None;
 		parent->AddDeclarationArray(
@@ -228,11 +223,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 		rawData, dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength, parent);
-
-	string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
-	dlist->SetName(dListStr);
-	dlist->scene = room->scene;
-	dlist->GetSourceOutputCode(prefix);
+	GenDListDeclarations(room, parent, dlist);
 
 	return dlist;
 }
@@ -688,13 +679,12 @@ PolygonDlist2::PolygonDlist2(const std::vector<uint8_t>& rawData, int rawDataInd
 	opa = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 	xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
 
-
 	if (opa != 0)
 	{
 		uint32_t opaOffset = GETSEGOFFSET(opa);
 		auto dListLen = ZDisplayList::GetDListLength(rawData, opaOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		opaDList = new ZDisplayList(rawData, opaOffset, dListLen, parent);
-		opaDList->scene = nRoom->scene;
+		GenDListDeclarations(nRoom, parent, opaDList);
 	}
 
 	if (xlu != 0)
@@ -702,7 +692,7 @@ PolygonDlist2::PolygonDlist2(const std::vector<uint8_t>& rawData, int rawDataInd
 		uint32_t xluOffset = GETSEGOFFSET(xlu);
 		auto dListLen = ZDisplayList::GetDListLength(rawData, xluOffset, Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		xluDList = new ZDisplayList(rawData, xluOffset, dListLen, parent);
-		xluDList->scene = nRoom->scene;
+		GenDListDeclarations(nRoom, parent, xluDList);
 	}
 }
 
@@ -749,16 +739,6 @@ std::string PolygonDlist2::GetSourceTypeName() const
 int PolygonDlist2::GetRawDataSize() const
 {
 	return 0x10;
-}
-
-ZDisplayList* PolygonDlist2::GetOpaDList() const
-{
-	return opaDList;
-}
-
-ZDisplayList* PolygonDlist2::GetXluDList() const
-{
-	return xluDList;
 }
 
 PolygonType2::PolygonType2(const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
@@ -838,9 +818,3 @@ int PolygonType2::GetRawDataSize() const
 {
 	return 0x0C;
 }
-
-const std::vector<PolygonDlist2>& PolygonType2::GetPolyDLists() const
-{
-	return polyDLists;
-}
-
