@@ -181,7 +181,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		if (commandsLeft <= 0)
 			break;
 
-		RoomCommand opcode = (RoomCommand)rawData[rawDataIndex];
+		RoomCommand opcode = static_cast<RoomCommand>(rawData.at(rawDataIndex));
 
 		ZRoomCommand* cmd = nullptr;
 

@@ -47,15 +47,8 @@ void SetCsCamera::ParseRawData()
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
+void SetCsCamera::DeclareReferences()
 {
-	string sourceOutput = "";
-
-	sourceOutput +=
-		StringHelper::Sprintf("%s %i, (u32)&%sCsCameraList0x%06X };",
-	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-	                          cameras.size(), roomName.c_str(), segmentOffset);
-
 	if (points.size() > 0)
 	{
 		string declaration = "";
@@ -74,37 +67,52 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, int baseAddress)
 		parent->AddDeclarationArray(cameras[0].GetSegmentOffset(), DeclarationAlignment::None,
 		                                   DeclarationPadding::None, points.size() * 6, "Vec3s",
 		                                   StringHelper::Sprintf("%sCsCameraPoints0x%06X",
-		                                                         roomName.c_str(),
+		                                                         zRoom->GetName().c_str(),
 		                                                         cameras[0].GetSegmentOffset()),
 		                                   points.size(), declaration);
 	}
 
+	string declaration = "";
+
+	size_t index = 0;
+	size_t pointsIndex = 0;
+	for (const auto& entry : cameras)
 	{
-		string declaration = "";
+		declaration += StringHelper::Sprintf("    %i, %i, (u32)&%sCsCameraPoints0x%06X[%i],",
+												entry.type, entry.numPoints, zRoom->GetName().c_str(),
+												cameras[0].GetSegmentOffset(), pointsIndex);
 
-		size_t index = 0;
-		size_t pointsIndex = 0;
-		for (const auto& entry : cameras)
-		{
-			declaration += StringHelper::Sprintf("    %i, %i, (u32)&%sCsCameraPoints0x%06X[%i],",
-			                                     entry.type, entry.numPoints, roomName.c_str(),
-			                                     cameras[0].GetSegmentOffset(), pointsIndex);
+		if (index < cameras.size() - 1)
+			declaration += "\n";
 
-			if (index < cameras.size() - 1)
-				declaration += "\n";
-
-			index++;
-			pointsIndex += entry.GetNumPoints();
-		}
-
-		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
-			cameras.size() * 8, "CsCameraEntry",
-			StringHelper::Sprintf("%sCsCameraList0x%06X", roomName.c_str(), segmentOffset),
-			cameras.size(), declaration);
+		index++;
+		pointsIndex += entry.GetNumPoints();
 	}
 
-	return sourceOutput;
+	parent->AddDeclarationArray(
+		segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
+		cameras.size() * 8, "CsCameraEntry",
+		StringHelper::Sprintf("%sCsCameraList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+		cameras.size(), declaration);
+}
+
+std::string SetCsCamera::GetBodySourceCode()
+{
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, %i, (u32)%s", GetCommandHex().c_str(), cameras.size(), listName.c_str());
 }
 
 int32_t SetCsCamera::GetRawDataSize()
