@@ -48,12 +48,14 @@ public:
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
+	std::string GetBodySourceCode() override;
+
 	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
-	std::string GenerateSourceCodePass2(std::string roomName, int baseAddress) override;
+	std::string GenerateExterns() override;
+
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;
 	std::string GetCommandCName() override;
-	std::string GenerateExterns() override;
 
 private:
 	PathwayList* pathwayList;
