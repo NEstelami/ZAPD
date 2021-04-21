@@ -21,8 +21,8 @@ public:
 struct PathwayList
 {
 public:
+	PathwayList() = default;
 	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, int rawDataIndex, int length);
-	~PathwayList();
 
 	void GetSourceOutputCode(const std::string& prefix);
 	int32_t GetRawDataSize();
@@ -30,8 +30,7 @@ public:
 
 private:
 	ZFile* parent;
-	std::vector<PathwayEntry*> pathways;
-	std::vector<uint8_t> _rawData;
+	std::vector<PathwayEntry> pathways;
 	int _rawDataIndex;
 };
 
@@ -41,7 +40,6 @@ public:
 	ZSetPathways(ZFile* nParent);
 	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	             bool nIsFromHeader);
-	~ZSetPathways();
 
 	void ParseRawData() override;
 
@@ -58,6 +56,6 @@ public:
 	std::string GetCommandCName() override;
 
 private:
-	PathwayList* pathwayList;
+	PathwayList pathwayList;
 	bool isFromHeader = false;
 };

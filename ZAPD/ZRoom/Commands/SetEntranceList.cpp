@@ -15,7 +15,21 @@ SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, in
 
 std::string SetEntranceList::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x00, (u32)&%sEntranceList0x%06X", GetCommandHex().c_str(), zRoom->GetName().c_str(), segmentOffset);
+	std::string listName = "NULL";
+	if (segmentOffset != 0)
+	{
+		Declaration* decl = parent->GetDeclaration(segmentOffset);
+		if (decl != nullptr)
+		{
+			listName = "&" + decl->varName;
+		}
+		else
+		{
+			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
+		}
+	}
+
+	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
 string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress)

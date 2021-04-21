@@ -110,72 +110,72 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 	}
 	else if (meshHeaderType == 2)
 	{
-		MeshHeader2* meshHeader2 = new MeshHeader2();
-		meshHeader2->headerType = 2;
+		MeshHeader2 meshHeader2;
+		meshHeader2.headerType = 2;
 
-		meshHeader2->entries = vector<MeshEntry2*>();
-		meshHeader2->dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
-		meshHeader2->dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
+		meshHeader2.entries = vector<MeshEntry2>();
+		meshHeader2.dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
+		meshHeader2.dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
 
 		int8_t numEntries = rawData[segmentOffset + 1];
-		uint32_t currentPtr = meshHeader2->dListStart;
+		uint32_t currentPtr = meshHeader2.dListStart;
 
 		for (int i = 0; i < numEntries; i++)
 		{
-			MeshEntry2* entry = new MeshEntry2();
-			entry->playerXMax = BitConverter::ToInt16BE(rawData, currentPtr + 0);
-			entry->playerZMax = BitConverter::ToInt16BE(rawData, currentPtr + 2);
-			entry->playerXMin = BitConverter::ToInt16BE(rawData, currentPtr + 4);
-			entry->playerZMin = BitConverter::ToInt16BE(rawData, currentPtr + 6);
+			MeshEntry2 entry;
+			entry.playerXMax = BitConverter::ToInt16BE(rawData, currentPtr + 0);
+			entry.playerZMax = BitConverter::ToInt16BE(rawData, currentPtr + 2);
+			entry.playerXMin = BitConverter::ToInt16BE(rawData, currentPtr + 4);
+			entry.playerZMin = BitConverter::ToInt16BE(rawData, currentPtr + 6);
 
-			entry->opaqueDListAddr = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 8));
-			entry->translucentDListAddr =
+			entry.opaqueDListAddr = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 8));
+			entry.translucentDListAddr =
 				GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr + 12));
 
-			if (entry->opaqueDListAddr != 0)
+			if (entry.opaqueDListAddr != 0)
 			{
-				entry->opaqueDList = new ZDisplayList(
-					rawData, entry->opaqueDListAddr,
-					ZDisplayList::GetDListLength(rawData, entry->opaqueDListAddr,
+				entry.opaqueDList = new ZDisplayList(
+					rawData, entry.opaqueDListAddr,
+					ZDisplayList::GetDListLength(rawData, entry.opaqueDListAddr,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
                                                      DListType::F3DZEX),
 					parent);
-				entry->opaqueDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->opaqueDList);
+				entry.opaqueDList->scene = zRoom->scene;
+				GenDListDeclarations(rawData, entry.opaqueDList);
 			}
 
-			if (entry->translucentDListAddr != 0)
+			if (entry.translucentDListAddr != 0)
 			{
-				entry->translucentDList = new ZDisplayList(
-					rawData, entry->translucentDListAddr,
-					ZDisplayList::GetDListLength(rawData, entry->translucentDListAddr,
+				entry.translucentDList = new ZDisplayList(
+					rawData, entry.translucentDListAddr,
+					ZDisplayList::GetDListLength(rawData, entry.translucentDListAddr,
 				                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                      DListType::F3DEX :
                                                      DListType::F3DZEX),
 					parent);
-				entry->translucentDList->scene = zRoom->scene;
-				GenDListDeclarations(rawData, entry->translucentDList);
+				entry.translucentDList->scene = zRoom->scene;
+				GenDListDeclarations(rawData, entry.translucentDList);
 			}
 
-			meshHeader2->entries.push_back(entry);
+			meshHeader2.entries.push_back(entry);
 
 			currentPtr += 16;
 		}
 
-		declaration += StringHelper::Sprintf("{ 2 }, 0x%02lX, ", meshHeader2->entries.size());
+		declaration += StringHelper::Sprintf("{ 2 }, 0x%02lX, ", meshHeader2.entries.size());
 
-		if (meshHeader2->dListStart != 0)
+		if (meshHeader2.dListStart != 0)
 			declaration += StringHelper::Sprintf("(u32)&%sMeshDListEntry0x%06X, ",
-			                                     zRoom->GetName().c_str(), meshHeader2->dListStart);
+			                                     zRoom->GetName().c_str(), meshHeader2.dListStart);
 		else
 			declaration += "0, ";
 
-		if (meshHeader2->dListEnd != 0)
+		if (meshHeader2.dListEnd != 0)
 			declaration += StringHelper::Sprintf(
 				"(u32)&(%sMeshDListEntry0x%06X) + sizeof(%sMeshDListEntry0x%06X)",
-				zRoom->GetName().c_str(), meshHeader2->dListStart, zRoom->GetName().c_str(),
-				meshHeader2->dListStart);
+				zRoom->GetName().c_str(), meshHeader2.dListStart, zRoom->GetName().c_str(),
+				meshHeader2.dListStart);
 		else
 			declaration += "0";
 		declaration += "\n";
@@ -187,48 +187,37 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex,
 
 		declaration = "";
 
-		for (size_t i = 0; i < meshHeader2->entries.size(); i++)
+		for (size_t i = 0; i < meshHeader2.entries.size(); i++)
 		{
 			declaration += StringHelper::Sprintf(
-				"    { %i, %i, %i, %i, ", meshHeader2->entries[i]->playerXMax,
-				meshHeader2->entries[i]->playerZMax, meshHeader2->entries[i]->playerXMin,
-				meshHeader2->entries[i]->playerZMin);
+				"    { %i, %i, %i, %i, ", meshHeader2.entries[i].playerXMax,
+				meshHeader2.entries[i].playerZMax, meshHeader2.entries[i].playerXMin,
+				meshHeader2.entries[i].playerZMin);
 
-			if (meshHeader2->entries[i]->opaqueDListAddr != 0)
+			if (meshHeader2.entries[i].opaqueDListAddr != 0)
 				declaration += StringHelper::Sprintf("(u32)%sDL_%06X, ", zRoom->GetName().c_str(),
-				                                     meshHeader2->entries[i]->opaqueDListAddr);
+				                                     meshHeader2.entries[i].opaqueDListAddr);
 			else
 				declaration += "0, ";
 
-			if (meshHeader2->entries[i]->translucentDListAddr != 0)
+			if (meshHeader2.entries[i].translucentDListAddr != 0)
 				declaration +=
 					StringHelper::Sprintf("(u32)%sDL_%06X },\n", zRoom->GetName().c_str(),
-				                          meshHeader2->entries[i]->translucentDListAddr);
+				                          meshHeader2.entries[i].translucentDListAddr);
 			else
 				declaration += "0 },\n";
 		}
 
 		parent->AddDeclarationArray(
-			meshHeader2->dListStart, DeclarationAlignment::None, DeclarationPadding::None,
-			(meshHeader2->entries.size() * 16) + 0, "MeshEntry2",
+			meshHeader2.dListStart, DeclarationAlignment::None, DeclarationPadding::None,
+			(meshHeader2.entries.size() * 16) + 0, "MeshEntry2",
 			StringHelper::Sprintf("%sMeshDListEntry0x%06X", zRoom->GetName().c_str(),
-		                          meshHeader2->dListStart, meshHeader2->entries.size()),
-			meshHeader2->entries.size(), declaration);
+		                          meshHeader2.dListStart, meshHeader2.entries.size()),
+			meshHeader2.entries.size(), declaration);
 
-		parent->AddDeclaration(meshHeader2->dListStart + (meshHeader2->entries.size() * 16),
+		parent->AddDeclaration(meshHeader2.dListStart + (meshHeader2.entries.size() * 16),
 		                              DeclarationAlignment::None, DeclarationPadding::Pad16, 4,
 		                              "static s32", "terminatorMaybe", "0x01000000");
-
-		meshHeader = meshHeader2;
-	}
-}
-
-SetMesh::~SetMesh()
-{
-	if (meshHeader != nullptr)
-	{
-		delete meshHeader;
-		meshHeader = nullptr;
 	}
 }
 

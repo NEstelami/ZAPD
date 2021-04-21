@@ -26,7 +26,7 @@ public:
 class MeshHeader2 : public MeshHeaderBase
 {
 public:
-	std::vector<MeshEntry2*> entries;
+	std::vector<MeshEntry2> entries;
 	uint32_t dListStart;
 	uint32_t dListEnd;
 };
@@ -150,7 +150,6 @@ class SetMesh : public ZRoomCommand
 {
 public:
 	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex, int segAddressOffset);
-	~SetMesh();
 
 	std::string GetBodySourceCode() override;
 	std::string GenerateExterns() override;
@@ -160,7 +159,6 @@ public:
 	std::string GetCommandCName() override;
 
 private:
-	MeshHeaderBase* meshHeader = nullptr;
 	uint8_t meshHeaderType;
 
 	void GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList);
