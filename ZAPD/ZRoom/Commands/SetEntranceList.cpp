@@ -10,6 +10,7 @@ using namespace std;
 SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
+	parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
 }
 
 std::string SetEntranceList::GetBodySourceCode()
@@ -20,7 +21,6 @@ std::string SetEntranceList::GetBodySourceCode()
 string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
 	// Parse Entrances and Generate Declaration
-	parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
 
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;

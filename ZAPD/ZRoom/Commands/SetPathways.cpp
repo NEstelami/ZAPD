@@ -20,6 +20,9 @@ ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, 
 	ZResource::rawData = nRawData;
 	ZResource::rawDataIndex = nRawDataIndex;
 	isFromHeader = nIsFromHeader;
+
+	if (segmentOffset != 0)
+		ZResource::parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 ZSetPathways::~ZSetPathways()

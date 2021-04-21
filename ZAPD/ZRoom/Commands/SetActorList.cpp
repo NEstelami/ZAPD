@@ -38,18 +38,12 @@ std::string SetActorList::GetBodySourceCode()
 
 string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 {
-	return "";
-}
-
-string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	size_t numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
 	uint32_t currentPtr = segmentOffset;
 
 	// TODO: hack
 	actors.clear();
 
-	for (size_t i = 0; i < numActorsReal; i++)
+	for (size_t i = 0; i < numActors; i++)
 	{
 		ActorSpawnEntry entry(rawData, currentPtr);
 		actors.push_back(entry);
@@ -79,7 +73,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, int baseAddress)
 		StringHelper::Sprintf("%sActorList_%06X", roomName.c_str(), segmentOffset),
 		GetActorListArraySize(), declaration);
 
-	return GetBodySourceCode() + " };";
+	return GetBodySourceCode();
 }
 
 int32_t SetActorList::GetRawDataSize()

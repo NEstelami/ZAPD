@@ -66,7 +66,6 @@ public:
 
 	virtual std::string GetBodySourceCode();
 	virtual std::string GenerateSourceCodePass1(std::string roomName, int baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int baseAddress);
 	virtual std::string GenerateExterns();
 	virtual std::string Save();
 	virtual std::string PreGenSourceFiles();

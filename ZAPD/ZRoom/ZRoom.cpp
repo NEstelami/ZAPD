@@ -150,7 +150,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
 			pathway->GenerateSourceCodePass1(name, 0);
-			pathway->GenerateSourceCodePass2(name, 0);
 
 			delete pathway;
 		}
@@ -346,19 +345,6 @@ void ZRoom::ProcessCommandSets()
 
 		for (ZRoomCommand* cmd : setCommands)
 			commands.push_back(cmd);
-	}
-
-	for (ZRoomCommand* cmd : commands)
-	{
-		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
-
-		if (pass2 != "")
-			parent->AddDeclaration(
-				cmd->cmdAddress, DeclarationAlignment::None, 8,
-				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
-				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
-			                          GETSEGOFFSET(cmd->commandSet), cmd->cmdIndex, cmd->cmdID),
-				StringHelper::Sprintf("%s // 0x%04X", pass2.c_str(), cmd->cmdAddress));
 	}
 }
 

@@ -33,11 +33,6 @@ string ZRoomCommand::GenerateSourceCodePass1(string roomName, int baseAddress)
 	return GetBodySourceCode();
 }
 
-string ZRoomCommand::GenerateSourceCodePass2(string roomName, int baseAddress)
-{
-	return "";
-}
-
 string ZRoomCommand::GenerateExterns()
 {
 	return "";
