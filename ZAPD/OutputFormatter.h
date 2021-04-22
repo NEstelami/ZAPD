@@ -15,6 +15,7 @@ private:
 	int nest;
 	int nestIndent[8];
 	int currentIndent;
+	int wordNests;
 
 	char word[128];
 	char space[128];
@@ -22,6 +23,9 @@ private:
 	char* spaceP;
 
 	std::string str;
+
+	void Flush();
+
 	static OutputFormatter* Instance;
 	static int WriteStatic(const char* buf, int count);
 
@@ -32,5 +36,6 @@ public:
 
 	int Write(const char* buf, int count);
 	int Write(const std::string& buf);
+
 	std::string GetOutput();
 };

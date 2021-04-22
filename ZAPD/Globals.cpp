@@ -54,7 +54,7 @@ string Globals::FindSymbolSegRef(int segNumber, uint32_t symbolAddress)
 			{
 				if (string(child->Name()) == "File")
 				{
-					ZFile* file = new ZFile(fileMode, child, "", "", "", true);
+					ZFile* file = new ZFile(fileMode, child, "", "", "", "", true);
 					file->GeneratePlaceholderDeclarations();
 					segmentRefFiles[segNumber] = file;
 					break;
@@ -105,9 +105,7 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
 			for (std::string line : lines)
-			{
 				cfg.actorList.push_back(StringHelper::Strip(line, "\r"));
-			}
 		}
 		else if (string(child->Name()) == "ObjectList")
 		{
@@ -116,14 +114,17 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
 			for (std::string line : lines)
-			{
 				cfg.objectList.push_back(StringHelper::Strip(line, "\r"));
-			}
 		}
 		else if (string(child->Name()) == "TexturePool")
 		{
 			string fileName = string(child->Attribute("File"));
 			ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+		}
+		else if (string(child->Name()) == "BGConfig")
+		{
+			cfg.bgScreenWidth = child->IntAttribute("ScreenWidth", 320);
+			cfg.bgScreenHeight = child->IntAttribute("ScreenHeight", 240);
 		}
 	}
 }

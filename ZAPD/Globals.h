@@ -24,6 +24,9 @@ public:
 	std::vector<std::string> objectList;
 	std::map<uint32_t, std::string> texturePool;  // Key = CRC, Value = Path to Shared Texture
 
+	// ZBackground
+	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
+
 	GameConfig() = default;
 };
 
@@ -44,6 +47,7 @@ public:
 	TextureType texType;
 	ZGame game;
 	GameConfig cfg;
+	bool warnUnaccounted = false;
 
 	std::vector<ZFile*> files;
 	std::vector<int> segments;

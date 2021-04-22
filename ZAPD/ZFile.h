@@ -34,9 +34,9 @@ public:
 	std::vector<ZResource*> resources;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 
-	ZFile(fs::path nOutPath, std::string nName);
-	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, fs::path nBasePath, fs::path nOutPath,
-	      std::string filename, bool placeholderMode);
+	ZFile(const fs::path& nOutPath, std::string nName);
+	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath, const fs::path& nOutPath,
+	      std::string filename, const fs::path& nXmlFilePath, bool placeholderMode);
 	~ZFile();
 
 	std::string GetVarName(int address);
@@ -85,6 +85,7 @@ protected:
 	std::string name;
 	fs::path basePath;
 	fs::path outputPath;
+	fs::path xmlFilePath;
 
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
