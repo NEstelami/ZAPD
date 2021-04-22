@@ -4,11 +4,9 @@
 #include "Path.h"
 #include "StringHelper.h"
 #include "ZFile.h"
+#include "Globals.h"
 
 REGISTER_ZFILENODE(Background, ZBackground);
-// TODO: make this a configurable value when ZAPD has a configuration file.
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
 
 #define JPEG_MARKER 0xFFD8FFE0
 #define MARKER_DQT 0xFFDB
@@ -133,7 +131,7 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 int ZBackground::GetRawDataSize()
 {
 	// Jpgs use the whole sceen buffer, which is a u16 matrix.
-	return SCREEN_HEIGHT * SCREEN_WIDTH * 2;
+	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
 }
 
 void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
