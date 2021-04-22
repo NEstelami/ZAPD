@@ -106,11 +106,6 @@ std::string SetMesh::GetBodySourceCode()
 	return StringHelper::Sprintf("%s, %i, %s", GetCommandHex().c_str(), cmdArg1, list.c_str());
 }
 
-string SetMesh::GenerateExterns()
-{
-	return "";
-}
-
 int32_t SetMesh::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize();

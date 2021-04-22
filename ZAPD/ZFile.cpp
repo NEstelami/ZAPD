@@ -474,8 +474,7 @@ std::string ZFile::GetDeclarationPtrName(segptr_t segAddress)
 	if (segAddress == 0)
 		return "NULL";
 
-	uint32_t offset = Seg2Filespace(segAddress, baseAddress);
-	Declaration* decl = GetDeclaration(offset);
+	Declaration* decl = GetDeclaration(Seg2Filespace(segAddress, baseAddress));
 
 	if (decl == nullptr)
 		return StringHelper::Sprintf("0x%08X", segAddress);

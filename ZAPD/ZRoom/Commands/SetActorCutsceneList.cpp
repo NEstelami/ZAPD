@@ -51,20 +51,7 @@ void SetActorCutsceneList::ParseRawData()
 
 string SetActorCutsceneList::GetBodySourceCode()
 {
-	std::string listName = "NULL";
-	if (segmentOffset != 0)
-	{
-		Declaration* decl = parent->GetDeclaration(segmentOffset);
-		if (decl != nullptr)
-		{
-			listName = "&" + decl->varName;
-		}
-		else
-		{
-			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
-		}
-	}
-
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("%s, %3i, (u32)%s", GetCommandHex().c_str(), cutscenes.size(), listName.c_str());
 }
 

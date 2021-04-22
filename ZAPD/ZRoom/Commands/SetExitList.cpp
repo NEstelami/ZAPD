@@ -15,20 +15,7 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 
 std::string SetExitList::GetBodySourceCode()
 {
-	std::string listName = "NULL";
-	if (segmentOffset != 0)
-	{
-		Declaration* decl = parent->GetDeclaration(segmentOffset);
-		if (decl != nullptr)
-		{
-			listName = "&" + decl->varName;
-		}
-		else
-		{
-			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
-		}
-	}
-
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
@@ -61,12 +48,6 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 		exits.size(), declaration);
 
 	return GetBodySourceCode();
-}
-
-string SetExitList::GenerateExterns()
-{
-	return StringHelper::Sprintf("extern u16 %sExitList0x%06X[];\n", zRoom->GetName().c_str(),
-	                             segmentOffset);
 }
 
 string SetExitList::GetCommandCName()

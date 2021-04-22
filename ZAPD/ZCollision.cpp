@@ -113,10 +113,12 @@ void ZCollisionHeader::ParseRawData()
 		for (size_t i = 0; i < polygons.size(); i++)
 		{
 			declaration += StringHelper::Sprintf(
-				"   { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },",
+				"    { 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },",
 				(uint16_t)polygons[i].type, (uint16_t)polygons[i].vtxA, (uint16_t)polygons[i].vtxB,
 				(uint16_t)polygons[i].vtxC, (uint16_t)polygons[i].a, (uint16_t)polygons[i].b,
 				(uint16_t)polygons[i].c, (uint16_t)polygons[i].d);
+			if (i + 1 < polygons.size())
+				declaration += "\n";
 		}
 
 		if (polyAddress != 0)

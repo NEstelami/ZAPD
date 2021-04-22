@@ -52,27 +52,8 @@ void SetStartPositionList::DeclareReferences()
 
 std::string SetStartPositionList::GetBodySourceCode()
 {
-	std::string listName = "NULL";
-	if (segmentOffset != 0)
-	{
-		Declaration* decl = parent->GetDeclaration(segmentOffset);
-		if (decl != nullptr)
-		{
-			listName = "&" + decl->varName;
-		}
-		else
-		{
-			listName = StringHelper::Sprintf("0x%08X", segmentOffset);
-		}
-	}
-
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s", GetCommandHex().c_str(), actors.size(), listName.c_str());
-}
-
-string SetStartPositionList::GenerateExterns()
-{
-	return StringHelper::Sprintf("extern ActorEntry %sStartPositionList0x%06X[];\n",
-	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetStartPositionList::GetCommandCName()

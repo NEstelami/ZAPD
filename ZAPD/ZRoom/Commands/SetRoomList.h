@@ -22,7 +22,6 @@ public:
 	virtual void DeclareReferences();
 
 	std::string GetBodySourceCode() override;
-	std::string GenerateExterns() override;
 	std::string PreGenSourceFiles() override;
 
 	RoomCommand GetRoomCommand() override;

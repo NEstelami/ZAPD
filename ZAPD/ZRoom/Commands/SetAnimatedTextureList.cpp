@@ -120,11 +120,6 @@ int32_t SetAnimatedTextureList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + paramsSize;
 }
 
-string SetAnimatedTextureList::GenerateExterns()
-{
-	return "";
-}
-
 string SetAnimatedTextureList::GetCommandCName()
 {
 	return "SCmdTextureAnimations";

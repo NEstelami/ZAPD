@@ -91,15 +91,8 @@ SetCutscenes::~SetCutscenes()
 
 string SetCutscenes::GetBodySourceCode()
 {
-	Declaration* decl = parent->GetDeclaration(segmentOffset);
-	if (decl != nullptr)
-	{
-		return StringHelper::Sprintf("%s, %i, (u32)%s", GetCommandHex().c_str(), numCutscenes,
-		                             decl->varName.c_str());
-	}
-
-	return StringHelper::Sprintf("%s, %i, (u32)%sCutsceneData0x%06X", GetCommandHex().c_str(), numCutscenes,
-	                             zRoom->GetName().c_str(), segmentOffset);
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
+	return StringHelper::Sprintf("%s, %i, (u32)%s", GetCommandHex().c_str(), numCutscenes, listName.c_str());
 }
 
 int32_t SetCutscenes::GetRawDataSize()
@@ -110,18 +103,10 @@ int32_t SetCutscenes::GetRawDataSize()
 string SetCutscenes::GenerateExterns()
 {
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
 		return StringHelper::Sprintf("extern CutsceneEntry %sCutsceneEntryList0x%06X[];\n",
 		                             zRoom->GetName().c_str(), segmentOffset);
-	}
 
-	Declaration* decl = parent->GetDeclaration(segmentOffset);
-	if (decl != nullptr && decl->varName != "")
-	{
-		return StringHelper::Sprintf("extern s32 %s[];\n", decl->varName.c_str());
-	}
-	return StringHelper::Sprintf("extern s32 %sCutsceneData0x%06X[];\n", zRoom->GetName().c_str(),
-	                             segmentOffset);
+	return "";
 }
 
 string SetCutscenes::GetCommandCName()

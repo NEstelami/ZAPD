@@ -101,7 +101,6 @@ public:
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;
 	std::string GetCommandCName() override;
-	std::string GenerateExterns() override;
 
 private:
 	std::vector<AnimatedTexture*> textures;

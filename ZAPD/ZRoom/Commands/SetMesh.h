@@ -173,7 +173,6 @@ public:
 	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex, int segAddressOffset);
 
 	std::string GetBodySourceCode() override;
-	std::string GenerateExterns() override;
 
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;
