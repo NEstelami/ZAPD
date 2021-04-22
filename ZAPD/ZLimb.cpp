@@ -6,6 +6,8 @@
 
 using namespace std;
 
+REGISTER_ZFILENODE(Limb, ZLimb);
+
 Struct_800A57C0::Struct_800A57C0(const std::vector<uint8_t>& rawData, uint32_t fileOffset)
 {
 	unk_0 = BitConverter::ToUInt16BE(rawData, fileOffset + 0x00);

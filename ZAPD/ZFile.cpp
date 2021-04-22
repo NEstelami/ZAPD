@@ -1,6 +1,7 @@
 #include "ZFile.h"
 #include <algorithm>
 #include <cassert>
+#include <unordered_set>
 #include "Directory.h"
 #include "File.h"
 #include "Globals.h"
@@ -125,18 +126,55 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		rawData = File::ReadAllBytes(basePath + "/" + name);
 	}
 
+	std::unordered_set<std::string> nameSet;
+	std::unordered_set<std::string> outNameSet;
+	std::unordered_set<std::string> offsetSet;
+
 	auto nodeMap = *GetNodeMap();
 	int rawDataIndex = 0;
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		if (child->Attribute("Offset") != NULL)
-			rawDataIndex =
-				strtol(StringHelper::Split(child->Attribute("Offset"), "0x")[1].c_str(), NULL, 16);
+		const char* nameXml = child->Attribute("Name");
+		const char* outNameXml = child->Attribute("OutName");
+		const char* offsetXml = child->Attribute("Offset");
 
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
-			printf("%s: 0x%06X\n", child->Attribute("Name"), rawDataIndex);
+			printf("%s: 0x%06X\n", nameXml, rawDataIndex);
+
+		if (offsetXml != NULL)
+		{
+			rawDataIndex = strtol(StringHelper::Split(offsetXml, "0x")[1].c_str(), NULL, 16);
+
+			if (offsetSet.find(offsetXml) != offsetSet.end())
+			{
+				throw std::runtime_error(StringHelper::Sprintf(
+					"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Offset' attribute: %s \n",
+					name.c_str(), offsetXml));
+			}
+			offsetSet.insert(offsetXml);
+		}
+		if (outNameXml != NULL)
+		{
+			if (outNameSet.find(outNameXml) != outNameSet.end())
+			{
+				throw std::runtime_error(StringHelper::Sprintf(
+					"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'OutName' attribute: %s \n",
+					name.c_str(), outNameXml));
+			}
+			outNameSet.insert(outNameXml);
+		}
+		if (nameXml != NULL)
+		{
+			if (nameSet.find(nameXml) != nameSet.end())
+			{
+				throw std::runtime_error(StringHelper::Sprintf(
+					"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Name' attribute: %s \n",
+					name.c_str(), nameXml));
+			}
+			nameSet.insert(nameXml);
+		}
 
 		string nodeName = string(child->Name());
 
@@ -173,8 +211,18 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			resources.push_back(nRes);
 			rawDataIndex += nRes->GetRawDataSize();
 		}
+		else if (string(child->Name()) == "File")
+		{
+			throw std::runtime_error(StringHelper::Sprintf(
+				"ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n",
+				name.c_str()));
+		}
 		else
 		{
+			throw std::runtime_error(
+				StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n\t Unknown element found "
+			                          "inside a File element: '%s'.\n",
+			                          name.c_str(), nodeName.c_str()));
 		}
 	}
 }

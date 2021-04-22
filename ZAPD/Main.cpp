@@ -319,6 +319,13 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);
 		}
+		else
+		{
+			throw std::runtime_error(
+				StringHelper::Sprintf("Parse: Fatal error in '%s'.\n\t Found a resource outside of "
+			                          "a File element: '%s'\n",
+			                          xmlFilePath.c_str(), child->Name()));
+		}
 	}
 
 	for (ZFile* file : Globals::Instance->files)

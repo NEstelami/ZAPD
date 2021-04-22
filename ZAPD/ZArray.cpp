@@ -7,6 +7,7 @@ REGISTER_ZFILENODE(Array, ZArray);
 
 ZArray::ZArray(ZFile* nParent) : ZResource(nParent)
 {
+	canHaveInner = true;
 }
 
 void ZArray::ParseXML(tinyxml2::XMLElement* reader)
