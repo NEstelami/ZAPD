@@ -36,7 +36,7 @@ void SetMinimapChests::DeclareReferences()
 	size_t index = 0;
 	for (const auto& chest : chests)
 	{
-		declaration += StringHelper::Sprintf("    { %s },", chest.GetBodySourceCode());
+		declaration += StringHelper::Sprintf("    { %s },", chest.GetBodySourceCode().c_str());
 
 		if (index < chests.size() - 1)
 			declaration += "\n";
