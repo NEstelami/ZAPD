@@ -46,7 +46,7 @@ void SetMinimapList::DeclareReferences()
 	size_t index = 0;
 	for (const auto& entry : minimaps)
 	{
-		declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode());
+		declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
 
 		if (index < minimaps.size() - 1)
 			declaration += "\n";

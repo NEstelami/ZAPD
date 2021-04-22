@@ -10,6 +10,7 @@ SetCsCamera::SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
+	DeclareReferences();
 }
 
 void SetCsCamera::ParseRawData()
