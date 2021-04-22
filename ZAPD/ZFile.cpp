@@ -45,9 +45,10 @@ ZFile::ZFile(string nOutPath, string nName) : ZFile()
 }
 
 ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath,
-             std::string filename, bool placeholderMode)
+             std::string filename, const std::string& nXmlFilePath, bool placeholderMode)
 	: ZFile()
 {
+	xmlFilePath = nXmlFilePath;
 	if (nBasePath == "")
 		basePath = Directory::GetCurrentDirectory();
 	else
@@ -766,89 +767,109 @@ string ZFile::ProcessDeclarations()
 	// Handle unaccounted data
 	lastAddr = 0;
 	lastSize = 0;
-	for (pair<uint32_t, Declaration*> item : declarations)
+	std::vector<uint32_t> declsAddresses;
+	for (const auto& item : declarations)
 	{
-		if (item.first >= rangeStart && item.first < rangeEnd)
+		declsAddresses.push_back(item.first);
+	}
+	declsAddresses.push_back(rawData.size());
+
+	for (uint32_t currentAddress : declsAddresses)
+	{
+		if (currentAddress >= rangeEnd)
 		{
-			if (lastAddr != 0 && declarations.find(lastAddr) != declarations.end() &&
-			    lastAddr + declarations[lastAddr]->size > item.first)
+			break;
+		}
+
+		if (currentAddress < rangeStart)
+		{
+			lastAddr = currentAddress;
+			continue;
+		}
+
+		if (currentAddress != lastAddr && declarations.find(lastAddr) != declarations.end())
+		{
+			Declaration* lastDecl = declarations.at(lastAddr);
+			lastSize = lastDecl->size;
+
+			if (lastAddr + lastSize > currentAddress)
 			{
+				Declaration* currentDecl = declarations.at(currentAddress);
+
 				fprintf(stderr,
-				        "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X "
-				        "(%s)\n",
-				        lastAddr, lastAddr + declarations[lastAddr]->size, item.first,
-				        item.second->varName.c_str());
+				        "WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
+				        "0x%06X (%s)\n",
+				        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
+				        currentDecl->varName.c_str());
 			}
+		}
 
-			uint8_t* rawDataArr = rawData.data();
+		uint32_t unaccountedAddress = lastAddr + lastSize;
 
-			if (lastAddr + lastSize != item.first && lastAddr >= rangeStart &&
-			    lastAddr + lastSize < rangeEnd)
+		if (unaccountedAddress != currentAddress && lastAddr >= rangeStart &&
+		    unaccountedAddress < rangeEnd)
+		{
+			int diff = currentAddress - unaccountedAddress;
+			bool nonZeroUnaccounted = false;
+
+			string src = "    ";
+
+			for (int i = 0; i < diff; i++)
 			{
-				// int diff = item.first - (lastAddr + declarations[lastAddr]->size);
-				int diff = item.first - (lastAddr + lastSize);
-
-				string src = "    ";
-
-				for (int i = 0; i < diff; i++)
+				uint8_t val = rawData.at(unaccountedAddress + i);
+				src += StringHelper::Sprintf("0x%02X, ", val);
+				if (val != 0x00)
 				{
-					// src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr +
-					// declarations[lastAddr]->size + i]);
-					src += StringHelper::Sprintf("0x%02X, ", rawDataArr[lastAddr + lastSize + i]);
-
-					if ((i % 16 == 15) && (i != (diff - 1)))
-						src += "\n    ";
+					nonZeroUnaccounted = true;
 				}
 
-				if (declarations.find(lastAddr + lastSize) == declarations.end())
+				if ((i % 16 == 15) && (i != (diff - 1)))
+					src += "\n    ";
+			}
+
+			if (declarations.find(unaccountedAddress) == declarations.end())
+			{
+				if (diff > 0)
 				{
-					if (diff > 0)
+					std::string unaccountedPrefix = "unaccounted";
+					if (diff < 16 && !nonZeroUnaccounted)
 					{
-						// AddDeclarationArray(lastAddr + declarations[lastAddr]->size,
-						// DeclarationAlignment::None, diff, "static u8",
-						// StringHelper::Sprintf("unaccounted_%06X", lastAddr +
-						// declarations[lastAddr]->size), diff, src);
-						AddDeclarationArray(
-							lastAddr + lastSize, DeclarationAlignment::None, diff, "static u8",
-							StringHelper::Sprintf("unaccounted_%06X", lastAddr + lastSize), diff,
-							src);
+						unaccountedPrefix = "possiblePadding";
+					}
+
+					Declaration* decl = AddDeclarationArray(
+						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
+						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
+					                          unaccountedAddress),
+						diff, src);
+					decl->isUnaccounted = true;
+
+					if (Globals::Instance->warnUnaccounted)
+					{
+						if (nonZeroUnaccounted)
+						{
+							fprintf(
+								stderr,
+								"Warning in file: %s (%s)\n"
+								"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+								"\t Block size: '0x%X'.\n",
+								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+						}
+						else if (diff >= 16)
+						{
+							fprintf(stderr,
+							        "Warning in file: %s (%s)\n"
+							        "\t A big (size>=0x10) zero-only unaccounted block was found "
+							        "at address '0x%06X'.\n"
+							        "\t Block size: '0x%X'.\n",
+							        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+						}
 					}
 				}
 			}
 		}
 
-		lastAddr = item.first;
-		lastSize = item.second->size;
-	}
-
-	auto lastDecl = declarations[lastAddr];
-
-	// TODO: THIS CONTAINS REDUNDANCIES. CLEAN THIS UP!
-	if (lastAddr + lastDecl->size < rawData.size() && lastAddr + lastDecl->size >= rangeStart &&
-	    lastAddr + lastDecl->size < rangeEnd)
-	{
-		int diff = (int)(rawData.size() - (lastAddr + lastDecl->size));
-
-		string src = "    ";
-
-		for (int i = 0; i < diff; i++)
-		{
-			src += StringHelper::Sprintf("0x%02X, ", rawData[lastAddr + lastDecl->size + i]);
-
-			if (i % 16 == 15)
-				src += "\n    ";
-		}
-
-		if (declarations.find(lastAddr + lastDecl->size) == declarations.end())
-		{
-			if (diff > 0)
-			{
-				AddDeclarationArray(
-					lastAddr + lastDecl->size, DeclarationAlignment::None, diff, "static u8",
-					StringHelper::Sprintf("unaccounted_%06X", lastAddr + lastDecl->size), diff,
-					src);
-			}
-		}
+		lastAddr = currentAddress;
 	}
 
 	// Go through include declarations
@@ -856,9 +877,8 @@ string ZFile::ProcessDeclarations()
 	int protoCnt = 0;
 	for (pair<uint32_t, Declaration*> item : declarations)
 	{
-		if (/* item.second->includePath == "" && */ StringHelper::StartsWith(item.second->varType,
-		                                                                     "static ") &&
-		    !StringHelper::StartsWith(item.second->varName, "unaccounted_"))
+		if (StringHelper::StartsWith(item.second->varType, "static ") &&
+		    !item.second->isUnaccounted)
 		{
 			if (item.second->isArray)
 			{

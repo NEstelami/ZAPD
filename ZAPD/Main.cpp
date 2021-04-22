@@ -221,6 +221,10 @@ int NewMain(int argc, char* argv[])
 		{
 			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
 		}
+		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
+		{
+			Globals::Instance->warnUnaccounted = true;
+		}
 	}
 
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
@@ -312,7 +316,7 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	{
 		if (string(child->Name()) == "File")
 		{
-			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", false);
+			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);
 		}
 	}

@@ -136,6 +136,7 @@ public:
 	bool isArray;
 	int arrayItemCnt;
 	std::vector<uint32_t> references;
+	bool isUnaccounted = false;
 
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);
