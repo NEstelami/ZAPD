@@ -89,7 +89,7 @@ void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
                                const int nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
-	DeclareVar("", "");
+	DeclareVar(parent->GetName(), "");
 }
 
 void ZCutscene::ParseRawData()
