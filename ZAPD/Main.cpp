@@ -159,23 +159,23 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->includeFilePrefix = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-tm")  // Test Mode
+		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
 			Globals::Instance->testMode = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List (Linux builds only)
+		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
 			Globals::Instance->useLegacyZDList = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-profile")  // Profile
+		else if (arg == "-profile")  // Enable profiling
 		{
 			Globals::Instance->profile = string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg ==
-		         "-uer")  // Split resources into their individual components (enabled by default)
+		         "-uer")  // Split resources into their individual components (enabled by default) TODO: We may wish to make this a part of the config file...
 		{
 			Globals::Instance->useExternalResources = string(argv[i + 1]) == "1";
 			i++;
@@ -185,27 +185,14 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
 			i++;
 		}
-		else if (arg == "-cfg")  // Set cfg path
+		else if (arg == "-cfg")  // Set cfg path (for overlays) TODO: Change the name of this to something else so it doesn't get confused with XML config files.
 		{
 			Globals::Instance->cfgPath = argv[i + 1];
-			i++;
-		}
-		else if (arg == "-sm")  // Set symbol map path
-		{
-			Globals::Instance->GenSymbolMap(argv[i + 1]);
 			i++;
 		}
 		else if (arg == "-rconf")  // Read Config File
 		{
 			Globals::Instance->ReadConfigFile(argv[i + 1]);
-			i++;
-		}
-		else if (arg == "-al")  // Set actor list
-		{
-			i++;
-		}
-		else if (arg == "-ol")  // Set object list
-		{
 			i++;
 		}
 		else if (arg == "-eh")  // Enable Error Handler
@@ -220,6 +207,10 @@ int NewMain(int argc, char* argv[])
 		else if (arg == "-v")  // Verbose
 		{
 			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
+		}
+		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
+		{
+			Globals::Instance->warnUnaccounted = true;
 		}
 	}
 
@@ -312,8 +303,15 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 	{
 		if (string(child->Name()) == "File")
 		{
-			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", false);
+			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);
+		}
+		else
+		{
+			throw std::runtime_error(
+				StringHelper::Sprintf("Parse: Fatal error in '%s'.\n\t Found a resource outside of "
+			                          "a File element: '%s'\n",
+			                          xmlFilePath.c_str(), child->Name()));
 		}
 	}
 

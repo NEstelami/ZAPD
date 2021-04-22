@@ -97,6 +97,7 @@ protected:
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	std::string sourceOutput;
+	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
 };
@@ -136,6 +137,7 @@ public:
 	bool isArray;
 	int arrayItemCnt;
 	std::vector<uint32_t> references;
+	bool isUnaccounted = false;
 
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);
