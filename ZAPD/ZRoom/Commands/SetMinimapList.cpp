@@ -68,11 +68,6 @@ string SetMinimapList::GetBodySourceCode()
 	                          zRoom->GetName().c_str(), segmentOffset, unk4);
 }
 
-string SetMinimapList::GenerateExterns()
-{
-	return StringHelper::Sprintf("extern MinimapList %sMinimapList0x%06X;\n",
-	                             zRoom->GetName().c_str(), listSegmentOffset);
-}
 
 string SetMinimapList::GetCommandCName()
 {

@@ -60,17 +60,6 @@ int32_t SetActorCutsceneList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);
 }
 
-string SetActorCutsceneList::GenerateExterns()
-{
-	Declaration* decl = parent->GetDeclaration(segmentOffset);
-	if (decl == nullptr)
-	{
-		return "";
-	}
-
-	return StringHelper::Sprintf("extern %s %s[];\n", cutscenes.at(0).GetSourceTypeName().c_str(), decl->varName.c_str());
-}
-
 string SetActorCutsceneList::GetCommandCName()
 {
 	return "SCmdCutsceneActorList";

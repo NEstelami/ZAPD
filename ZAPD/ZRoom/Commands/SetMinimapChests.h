@@ -26,7 +26,6 @@ public:
 	void DeclareReferences() override;
 
 	std::string GetBodySourceCode() override;
-	std::string GenerateExterns() override;
 
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;

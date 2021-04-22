@@ -56,12 +56,6 @@ string SetLightList::GetCommandCName()
 	return "SCmdLightList";
 }
 
-string SetLightList::GenerateExterns()
-{
-	return StringHelper::Sprintf("extern LightInfo %sLightInfo0x%06X[];\n",
-	                             zRoom->GetName().c_str(), segmentOffset);
-}
-
 RoomCommand SetLightList::GetRoomCommand()
 {
 	return RoomCommand::SetLightList;

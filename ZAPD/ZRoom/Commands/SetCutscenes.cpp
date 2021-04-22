@@ -100,15 +100,6 @@ int32_t SetCutscenes::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (0);
 }
 
-string SetCutscenes::GenerateExterns()
-{
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-		return StringHelper::Sprintf("extern CutsceneEntry %sCutsceneEntryList0x%06X[];\n",
-		                             zRoom->GetName().c_str(), segmentOffset);
-
-	return "";
-}
-
 string SetCutscenes::GetCommandCName()
 {
 	return "SCmdCutsceneData";

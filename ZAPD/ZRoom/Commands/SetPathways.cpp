@@ -80,11 +80,6 @@ int32_t ZSetPathways::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + size;
 }
 
-string ZSetPathways::GenerateExterns()
-{
-	return pathwayList.GenerateExterns(ZResource::parent->GetName());
-}
-
 string ZSetPathways::GetCommandCName()
 {
 	return "SCmdPathList";
@@ -208,16 +203,4 @@ int32_t PathwayList::GetRawDataSize()
 	}
 
 	return pathways.size() * 8 + pointsSize;
-}
-
-string PathwayList::GenerateExterns(const std::string& prefix)
-{
-	string declaration = "";
-	for (const auto& entry : pathways)
-	{
-		declaration += StringHelper::Sprintf("extern Vec3s %sPathwayList0x%06X[];\n",
-		                                     prefix.c_str(), entry.listSegmentOffset);
-	}
-
-	return declaration;
 }
