@@ -19,7 +19,7 @@ public:
 	SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
 	void ParseRawData() override;
-	virtual void DeclareReferences();
+	virtual void DeclareReferences(const std::string& prefix);
 
 	std::string GetBodySourceCode() override;
 	std::string PreGenSourceFiles() override;

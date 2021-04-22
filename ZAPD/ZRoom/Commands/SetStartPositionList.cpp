@@ -13,7 +13,7 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
-	DeclareReferences();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetStartPositionList::ParseRawData()
@@ -32,7 +32,7 @@ void SetStartPositionList::ParseRawData()
 	}
 }
 
-void SetStartPositionList::DeclareReferences()
+void SetStartPositionList::DeclareReferences(const std::string& prefix)
 {
 	if (!actors.empty())
 	{
@@ -45,7 +45,7 @@ void SetStartPositionList::DeclareReferences()
 
 		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::None, actors.size() * 16, "ActorEntry",
-			StringHelper::Sprintf("%sStartPositionList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+			StringHelper::Sprintf("%sStartPositionList0x%06X", prefix.c_str(), segmentOffset),
 			0, declaration);
 	}
 }

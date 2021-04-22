@@ -8,7 +8,7 @@ public:
 	SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
 	void ParseRawData() override;
-	void DeclareReferences();
+	void DeclareReferences(const std::string& prefix);
 
 	std::string GetBodySourceCode() override;
 

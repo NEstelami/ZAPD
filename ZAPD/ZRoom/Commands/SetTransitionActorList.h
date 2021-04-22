@@ -26,7 +26,7 @@ public:
 	SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>&  rawData, int rawDataIndex);
 
 	virtual void ParseRawData();
-	virtual void DeclareReferences();
+	virtual void DeclareReferences(const std::string& prefix);
 
 	std::string GetBodySourceCode() override;
 

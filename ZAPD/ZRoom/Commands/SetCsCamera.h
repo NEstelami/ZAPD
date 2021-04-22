@@ -24,7 +24,7 @@ public:
 	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
 
 	void ParseRawData() override;
-	void DeclareReferences() override;
+	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() override;
 

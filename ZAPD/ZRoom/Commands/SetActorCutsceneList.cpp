@@ -11,25 +11,31 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> r
                                            int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
+	if (segmentOffset != 0)
+		parent->AddDeclarationPlaceholder(segmentOffset);
+
 	ParseRawData();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetActorCutsceneList::ParseRawData()
 {
 	int numCutscenes = cmdArg1;
+	int32_t currentPtr = segmentOffset;
 
-	if (numCutscenes > 0) {
-		int32_t currentPtr = segmentOffset;
+	for (int i = 0; i < numCutscenes; i++)
+	{
+		ActorCutsceneEntry entry(rawData, currentPtr);
+		cutscenes.push_back(entry);
 
-		for (int i = 0; i < numCutscenes; i++)
-		{
-			ActorCutsceneEntry entry(rawData, currentPtr);
-			cutscenes.push_back(entry);
+		currentPtr += 16;
+	}
+}
 
-			currentPtr += 16;
-		}
-
-		string declaration = "";
+void SetActorCutsceneList::DeclareReferences(const std::string& prefix)
+{
+	if (cutscenes.size() > 0) {
+		std::string declaration = "";
 
 		for (size_t i = 0; i < cutscenes.size(); i++)
 		{
@@ -42,9 +48,11 @@ void SetActorCutsceneList::ParseRawData()
 			}
 		}
 
+		std::string typeName = cutscenes.at(0).GetSourceTypeName();
+
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, cutscenes.size() * 16, cutscenes.at(0).GetSourceTypeName(),
-			StringHelper::Sprintf("%sActorCutsceneList_%06X", zRoom->GetName().c_str(), segmentOffset),
+			segmentOffset, DeclarationAlignment::Align4, cutscenes.size() * 16, typeName,
+			StringHelper::Sprintf("%s%sList_%06X", prefix.c_str(), typeName.c_str(), segmentOffset),
 			0, declaration);
 	}
 }

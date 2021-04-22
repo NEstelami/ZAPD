@@ -14,7 +14,7 @@ SetMinimapList::SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int 
 	unk4 = BitConverter::ToInt32BE(rawData, segmentOffset + 4);
 
 	ParseRawData();
-	DeclareReferences();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetMinimapList::ParseRawData()
@@ -30,14 +30,14 @@ void SetMinimapList::ParseRawData()
 	}
 }
 
-void SetMinimapList::DeclareReferences()
+void SetMinimapList::DeclareReferences(const std::string& prefix)
 {
 	std::string declaration = StringHelper::Sprintf("(u32)%sMinimapEntryList0x%06X, 0x%08X",
-		                                           zRoom->GetName().c_str(), listSegmentOffset, unk4);
+		                                           prefix.c_str(), listSegmentOffset, unk4);
 
 	parent->AddDeclaration(
 		segmentOffset, DeclarationAlignment::Align4, 8, "MinimapList",
-		StringHelper::Sprintf("%sMinimapList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+		StringHelper::Sprintf("%sMinimapList0x%06X", prefix.c_str(), segmentOffset),
 		declaration);
 
 
@@ -57,7 +57,7 @@ void SetMinimapList::DeclareReferences()
 	parent->AddDeclarationArray(
 		listSegmentOffset, DeclarationAlignment::Align4,
 		minimaps.size() * 10, "MinimapEntry",
-		StringHelper::Sprintf("%sMinimapEntryList0x%06X", zRoom->GetName().c_str(), listSegmentOffset),
+		StringHelper::Sprintf("%sMinimapEntryList0x%06X", prefix.c_str(), listSegmentOffset),
 		minimaps.size(), declaration);
 }
 

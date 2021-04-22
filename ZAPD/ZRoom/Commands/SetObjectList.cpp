@@ -12,7 +12,7 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int ra
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
-	DeclareReferences();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetObjectList::ParseRawData()
@@ -31,23 +31,26 @@ void SetObjectList::ParseRawData()
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-void SetObjectList::DeclareReferences()
+void SetObjectList::DeclareReferences(const std::string& prefix)
 {
-	string declaration = "";
-
-	for (size_t i = 0; i < objects.size(); i++)
+	if (!objects.empty())
 	{
-		uint16_t objectIndex = objects[i];
-		declaration += StringHelper::Sprintf("    %s,", ZNames::GetObjectName(objectIndex).c_str());
+		std::string declaration = "";
 
-		if (i < objects.size() - 1)
-			declaration += "\n";
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+			uint16_t objectIndex = objects[i];
+			declaration += StringHelper::Sprintf("    %s,", ZNames::GetObjectName(objectIndex).c_str());
+
+			if (i < objects.size() - 1)
+				declaration += "\n";
+		}
+
+		parent->AddDeclarationArray(
+			segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
+			StringHelper::Sprintf("%sObjectList0x%06X", prefix.c_str(), segmentOffset),
+			objects.size(), declaration);
 	}
-
-	parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
-		StringHelper::Sprintf("%sObjectList0x%06X", zRoom->GetName().c_str(), segmentOffset),
-		objects.size(), declaration);
 }
 
 std::string SetObjectList::GetBodySourceCode()

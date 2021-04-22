@@ -11,7 +11,7 @@ SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, 
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
-	DeclareReferences();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetMinimapChests::ParseRawData()
@@ -29,7 +29,7 @@ void SetMinimapChests::ParseRawData()
 	}
 }
 
-void SetMinimapChests::DeclareReferences()
+void SetMinimapChests::DeclareReferences(const std::string& prefix)
 {
 	string declaration = "";
 
@@ -47,7 +47,7 @@ void SetMinimapChests::DeclareReferences()
 	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, chests.size() * 10,
 		"MinimapChest",
-		StringHelper::Sprintf("%sMinimapChests0x%06X", zRoom->GetName().c_str(), segmentOffset),
+		StringHelper::Sprintf("%sMinimapChests0x%06X", prefix.c_str(), segmentOffset),
 		chests.size(), declaration);
 }
 

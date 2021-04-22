@@ -13,7 +13,7 @@ SetTransitionActorList::SetTransitionActorList(ZRoom* nZRoom, const std::vector<
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
-	DeclareReferences();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetTransitionActorList::ParseRawData()
@@ -31,7 +31,7 @@ void SetTransitionActorList::ParseRawData()
 	}
 }
 
-void SetTransitionActorList::DeclareReferences()
+void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 {
 	string declaration = "";
 
@@ -51,7 +51,7 @@ void SetTransitionActorList::DeclareReferences()
 	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, transitionActors.size() * 16,
 		"TransitionActorEntry",
-		StringHelper::Sprintf("%sTransitionActorList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
+		StringHelper::Sprintf("%sTransitionActorList0x%06X", prefix.c_str(), segmentOffset), 0,
 		declaration);
 }
 

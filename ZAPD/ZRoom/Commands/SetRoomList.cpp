@@ -11,7 +11,7 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
-	DeclareReferences();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetRoomList::ParseRawData()
@@ -31,12 +31,11 @@ void SetRoomList::ParseRawData()
 	zRoom->roomCount = numRooms;
 }
 
-void SetRoomList::DeclareReferences()
+void SetRoomList::DeclareReferences(const std::string& prefix)
 {
 	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, rooms.size() * 8, "RomFile",
-		StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
-		"");
+		StringHelper::Sprintf("%sRoomList0x%06X", prefix.c_str(), segmentOffset), 0, "");
 }
 
 std::string SetRoomList::GetBodySourceCode()

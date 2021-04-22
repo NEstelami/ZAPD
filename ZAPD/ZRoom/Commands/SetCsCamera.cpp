@@ -10,7 +10,7 @@ SetCsCamera::SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDat
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
-	DeclareReferences();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetCsCamera::ParseRawData()
@@ -48,7 +48,7 @@ void SetCsCamera::ParseRawData()
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-void SetCsCamera::DeclareReferences()
+void SetCsCamera::DeclareReferences(const std::string& prefix)
 {
 	if (points.size() > 0)
 	{
@@ -68,7 +68,7 @@ void SetCsCamera::DeclareReferences()
 		parent->AddDeclarationArray(cameras[0].GetSegmentOffset(), DeclarationAlignment::None,
 		                                   DeclarationPadding::None, points.size() * 6, "Vec3s",
 		                                   StringHelper::Sprintf("%sCsCameraPoints0x%06X",
-		                                                         zRoom->GetName().c_str(),
+		                                                         prefix.c_str(),
 		                                                         cameras[0].GetSegmentOffset()),
 		                                   points.size(), declaration);
 	}
@@ -80,7 +80,7 @@ void SetCsCamera::DeclareReferences()
 	for (const auto& entry : cameras)
 	{
 		declaration += StringHelper::Sprintf("    %i, %i, (u32)&%sCsCameraPoints0x%06X[%i],",
-												entry.type, entry.numPoints, zRoom->GetName().c_str(),
+												entry.type, entry.numPoints, prefix.c_str(),
 												cameras[0].GetSegmentOffset(), pointsIndex);
 
 		if (index < cameras.size() - 1)
@@ -93,7 +93,7 @@ void SetCsCamera::DeclareReferences()
 	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
 		cameras.size() * 8, "CsCameraEntry",
-		StringHelper::Sprintf("%sCsCameraList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+		StringHelper::Sprintf("%sCsCameraList0x%06X", prefix.c_str(), segmentOffset),
 		cameras.size(), declaration);
 }
 

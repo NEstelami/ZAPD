@@ -15,15 +15,12 @@ SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
+
+	ParseRawData();
+	DeclareReferences(zRoom->GetName());
 }
 
-std::string SetActorList::GetBodySourceCode()
-{
-	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s",  GetCommandHex().c_str(), numActors, listName.c_str());
-}
-
-string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
+void SetActorList::ParseRawData()
 {
 	uint32_t currentPtr = segmentOffset;
 
@@ -38,29 +35,40 @@ string SetActorList::GenerateSourceCodePass1(string roomName, int baseAddress)
 		currentPtr += 16;
 	}
 
-	string declaration = "";
+}
 
-	size_t index = 0;
-	for (const auto& entry : actors)
+void SetActorList::DeclareReferences(const std::string& prefix)
+{
+	if (!actors.empty())
 	{
-		declaration += StringHelper::Sprintf("    { %s }, // 0x%06X", entry.GetBodySourceCode().c_str(), segmentOffset + (index * 16));
+		std::string declaration = "";
 
-		if (index < actors.size() - 1)
-			declaration += "\n";
+		size_t index = 0;
+		for (const auto& entry : actors)
+		{
+			declaration += StringHelper::Sprintf("    { %s }, // 0x%06X", entry.GetBodySourceCode().c_str(), segmentOffset + (index * 16));
 
-		index++;
+			if (index < actors.size() - 1)
+				declaration += "\n";
+
+			index++;
+		}
+
+		DeclarationPadding padding = DeclarationPadding::Pad16;
+		if (Globals::Instance->game == ZGame::MM_RETAIL)
+			padding = DeclarationPadding::None;
+
+		parent->AddDeclarationArray(
+			segmentOffset, DeclarationAlignment::Align4, padding, actors.size() * 16, "ActorEntry",
+			StringHelper::Sprintf("%sActorList_%06X", prefix.c_str(), segmentOffset),
+			GetActorListArraySize(), declaration);
 	}
+}
 
-	DeclarationPadding padding = DeclarationPadding::Pad16;
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-		padding = DeclarationPadding::None;
-
-	parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::Align4, padding, actors.size() * 16, "ActorEntry",
-		StringHelper::Sprintf("%sActorList_%06X", roomName.c_str(), segmentOffset),
-		GetActorListArraySize(), declaration);
-
-	return GetBodySourceCode();
+std::string SetActorList::GetBodySourceCode()
+{
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
+	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s",  GetCommandHex().c_str(), numActors, listName.c_str());
 }
 
 int32_t SetActorList::GetRawDataSize()

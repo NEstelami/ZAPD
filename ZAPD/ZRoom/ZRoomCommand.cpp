@@ -19,7 +19,7 @@ void ZRoomCommand::ParseRawData()
 {
 }
 
-void ZRoomCommand::DeclareReferences()
+void ZRoomCommand::DeclareReferences(const std::string& prefix)
 {
 }
 
