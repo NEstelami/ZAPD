@@ -19,9 +19,14 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
 	{
 		ZCutscene* cutscene = new ZCutscene(nZRoom->parent);
-		cutscene->ExtractFromXML(
-			nullptr, rawData, segmentOffset,
-			"");  // TODO: Use ExtractFromFile() here when that gets implemented
+		cutscene->ExtractFromFile(rawData, segmentOffset, "");
+
+		auto decl = nZRoom->parent->GetDeclaration(segmentOffset);
+		if (decl == nullptr)
+		{
+			cutscene->DeclareVar(zRoom->GetName().c_str(), "");
+		}
+
 		cutscenes.push_back(cutscene);
 	}
 	else
@@ -47,8 +52,6 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 				nullptr, rawData, entry->segmentOffset,
 				"");  // TODO: Use ExtractFromFile() here when that gets implemented
 			cutscenes.push_back(cutscene);
-
-			// cutscenes.push_back(new ZCutsceneMM(rawData, entry->segmentOffset, 9999));
 		}
 
 		zRoom->parent->AddDeclarationArray(
@@ -61,29 +64,16 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 
 	for (ZCutsceneBase* cutscene : cutscenes)
 	{
-		string output = "";
-
-		output += cutscene->GetSourceOutputCode(zRoom->GetName());
-
 		if (cutscene->getSegmentOffset() != 0)
 		{
 			Declaration* decl = zRoom->parent->GetDeclaration(cutscene->getSegmentOffset());
 			if (decl == nullptr)
 			{
-				DeclarationPadding padding = (Globals::Instance->game == ZGame::MM_RETAIL) ?
-                                                 DeclarationPadding::None :
-                                                 DeclarationPadding::Pad16;
-
-				zRoom->parent->AddDeclarationArray(
-					cutscene->getSegmentOffset(), DeclarationAlignment::None, padding,
-					cutscene->GetRawDataSize(), "s32",
-					StringHelper::Sprintf("%sCutsceneData0x%06X", zRoom->GetName().c_str(),
-				                          cutscene->getSegmentOffset()),
-					0, output);
+				cutscene->GetSourceOutputCode(zRoom->GetName());
 			}
 			else if (decl->text == "")
 			{
-				decl->text = output;
+				decl->text = cutscene->GetBodySourceCode();
 			}
 		}
 	}

@@ -14,9 +14,8 @@ ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, int 
 	: ZResource(nParent)
 {
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
-	ExtractFromXML(nullptr, nRawData, nRawDataIndex, "");
-
-	// ParseRawData();
+	ExtractFromFile(nRawData, nRawDataIndex, "");
+	DeclareVar("", "");
 }
 
 void ZMtx::ParseRawData()

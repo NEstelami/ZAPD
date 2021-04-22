@@ -62,14 +62,6 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	ParseRawData();
 }
 
-// ZDisplayList* ZDisplayList::BuildFromXML(XMLElement* reader, string inFolder, bool readFile)
-//{
-//	ZDisplayList* dList = new ZDisplayList();
-//
-//	dList->SetName(reader->Attribute("Name"));
-//	return dList;
-//}
-
 ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int nRawDataIndex, int rawDataSize,
                            ZFile* nParent)
 	: ZDisplayList(nParent)
@@ -110,15 +102,6 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 	case F3DZEXOpcode::G_CULLDL:
 		Opcode_G_CULLDL(data, i, prefix, line);
 		break;
-	/*case F3DZEXOpcode::G_BRANCH_Z:
-	{
-		int aaa = (data & 0x00FFF00000000000) >> 44;
-		int bbb = (data & 0x00000FFF00000000) >> 32;
-		int zzzzzzzz = (data & 0x00000000FFFFFFFF);
-
-		sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", );
-	}
-	break;*/
 	case F3DZEXOpcode::G_TRI1:
 		Opcode_G_TRI1(data, i, prefix, line);
 		break;
@@ -287,13 +270,6 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int i, std::s
 		}
 	}
 	break;
-	/*case F3DZEXOpcode::G_BRANCH_Z:
-	{
-		uint8_t h = (data & 0xFFFFFFFF);
-
-		sprintf(line, "gsSPBranchLessZraw(%i, %i, %i),", h);
-	}
-		break;*/
 	case F3DZEXOpcode::G_MTX:
 		Opcode_G_MTX(data, i, prefix, line);
 		break;
@@ -2329,22 +2305,6 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 
 void ZDisplayList::Save(const std::string& outFolder)
 {
-	// File::WriteAllText(StringHelper::Sprintf("%s/%s.%s.inc.c", outFolder.c_str(), name.c_str(),
-	// GetExternalExtension().c_str()), GetSourceOutputCode(""));
-
-	// HLModelIntermediette* mdl = HLModelIntermediette::FromZDisplayList(this);
-
-	// For testing purposes only at the moment...
-	// if (Globals::Instance->testMode)
-	//{
-	// string xml = mdl->OutputXML();
-	// string obj = mdl->ToOBJFile();
-	// string fbx = mdl->ToFBXFile();
-
-	// File::WriteAllText(outFolder + "/" + name + ".mdli", xml);
-	// File::WriteAllText(outFolder + "/" + name + ".obj", obj);
-	// File::WriteAllText(outFolder + "/" + name + ".fbx", fbx);
-	//}
 }
 
 void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)

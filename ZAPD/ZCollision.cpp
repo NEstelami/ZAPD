@@ -15,12 +15,6 @@ ZCollisionHeader::ZCollisionHeader(ZFile* nParent) : ZResource(nParent)
 
 ZCollisionHeader::~ZCollisionHeader()
 {
-	// for (VertexEntry* vtx : vertices)
-	// delete vtx;
-
-	// for (PolygonEntry* poly : polygons)
-	// delete poly;
-
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
 }
@@ -83,19 +77,8 @@ void ZCollisionHeader::ParseRawData()
 			highestPolyType = poly.type;
 	}
 
-	// if (highestPolyType > 0)
-	{
-		for (uint16_t i = 0; i < highestPolyType + 1; i++)
-			polygonTypes.push_back(
-				BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
-	}
-	// else
-	//{
-	// int polyTypesSize = abs(polyTypeDefSegmentOffset - camDataSegmentOffset) / 8;
-
-	// for (int i = 0; i < polyTypesSize; i++)
-	// polygonTypes.push_back(BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
-	//}
+	for (uint16_t i = 0; i < highestPolyType + 1; i++)
+		polygonTypes.push_back(BitConverter::ToUInt64BE(data, polyTypeDefSegmentOffset + (i * 8)));
 
 	if (camDataAddress != 0)
 		camData = new CameraDataList(parent, name, rawData, camDataSegmentOffset,
@@ -283,7 +266,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		entries.push_back(entry);
 	}
 
-	// setting cameraPosDataAddr to rawDataIndex give a pos list length of 0
+	// Setting cameraPosDataAddr to rawDataIndex give a pos list length of 0
 	uint32_t cameraPosDataOffset = cameraPosDataSeg & 0xFFFFFF;
 	for (size_t i = 0; i < entries.size(); i++)
 	{

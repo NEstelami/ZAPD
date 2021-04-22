@@ -56,6 +56,7 @@ ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 	extDefines = "";
 	scene = nullptr;
 	roomCount = -1;
+	canHaveInner = true;
 }
 
 ZRoom::~ZRoom()
@@ -67,9 +68,8 @@ ZRoom::~ZRoom()
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
                            const int nRawDataIndex, const std::string& nRelPath)
 {
-	rawData = nRawData;
-	rawDataIndex = nRawDataIndex;
-	name = string(reader->Attribute("Name"));
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+
 	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
 
@@ -115,27 +115,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			dList->GetSourceOutputCode(name);
 			delete dList;
 		}
-		else if (string(child->Name()) == "BlobHint")
-		{
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			string sizeStr = child->Attribute("Size");
-			int size = strtol(StringHelper::Split(sizeStr, "0x")[1].c_str(), NULL, 16);
-
-			ZBlob* blob =
-				new ZBlob(rawData, address, size,
-			              StringHelper::Sprintf("%sBlob0x%06X", name.c_str(), address), parent);
-
-			if (child->Attribute("Name") != NULL)
-				childName = string(child->Attribute("Name"));
-			else
-				childName = StringHelper::Sprintf("%s_%s", name.c_str(), blob->GetName().c_str());
-
-			parent->AddDeclarationArray(address, DeclarationAlignment::None, blob->GetRawDataSize(),
-			                            "u8", childName, 0, blob->GetSourceOutputCode(name));
-			delete blob;
-		}
 		else if (string(child->Name()) == "CutsceneHint")
 		{
 			string addressStr = child->Attribute("Offset");
@@ -143,19 +122,10 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->ExtractFromXML(
-				nullptr, rawData, address,
-				"");  // TODO: Make this use ExtractFromFile() once that's been implemented
+			cutscene->ExtractFromXML(child, rawData, address, "");
 
-			if (child->Attribute("Name") != NULL)
-				childName = string(child->Attribute("Name"));
-			else
-				childName = StringHelper::Sprintf("%sCutsceneData0x%06X", name.c_str(),
-				                                  cutscene->GetRawDataIndex());
+			cutscene->GetSourceOutputCode(name);
 
-			parent->AddDeclarationArray(address, DeclarationAlignment::None,
-			                            DeclarationPadding::Pad16, cutscene->GetRawDataSize(),
-			                            "s32", childName, 0, cutscene->GetSourceOutputCode(name));
 			delete cutscene;
 		}
 		else if (string(child->Name()) == "AltHeaderHint")
@@ -178,43 +148,19 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			SetPathways* pathway = new SetPathways(this, rawData, address, false);
+			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
 			pathway->GenerateSourceCodePass1(name, 0);
 			pathway->GenerateSourceCodePass2(name, 0);
 
 			delete pathway;
 		}
-		else if (string(child->Name()) == "TextureHint")
-		{
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			string typeStr = child->Attribute("Type");
-			int width = strtol(string(child->Attribute("Width")).c_str(), NULL, 10);
-			int height = strtol(string(child->Attribute("Height")).c_str(), NULL, 10);
-
-			ZTexture* tex = ZTexture::FromBinary(
-				ZTexture::GetTextureTypeFromString(typeStr), rawData, address,
-				StringHelper::Sprintf("%sTex_%06X", name.c_str(), address), width, height, parent);
-			parent->AddDeclarationArray(address, DeclarationAlignment::None, tex->GetRawDataSize(),
-			                            "u64", StringHelper::Sprintf("%s", tex->GetName().c_str()),
-			                            0, tex->GetSourceOutputCode(name));
-			delete tex;
-		}
-		else if (string(child->Name()) == "BackgroundHint")
-		{
-			string comment = "";
-
-			if (child->Attribute("Comment") != NULL)
-				comment = "// " + string(child->Attribute("Comment")) + "\n";
-
-			string addressStr = child->Attribute("Offset");
-			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			ZBackground* back = new ZBackground(parent);
-			back->ExtractFromXML(reader, rawData, address, "");
-			parent->resources.push_back(back);
-		}
+		fprintf(stderr,
+		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
+		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
+		        "version.\n"
+		        "\t Use the non-hint version instead.\n",
+		        name.c_str(), child->Name());
 	}
 
 	// ParseCommands(rawDataIndex);
@@ -226,7 +172,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 {
 	bool shouldContinue = true;
 	int currentIndex = 0;
-	int rawDataIndex = commandSet.address & 0x00FFFFFF;
+	int rawDataIndex = GETSEGOFFSET(commandSet.address);
 
 	int32_t commandsLeft = commandSet.commandCount;
 
@@ -283,7 +229,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new SetLightList(this, rawData, rawDataIndex);
 			break;  // 0x0C (MM-ONLY)
 		case RoomCommand::SetPathways:
-			cmd = new SetPathways(this, rawData, rawDataIndex, true);
+			cmd = new ZSetPathways(this, rawData, rawDataIndex, true);
 			break;  // 0x0D
 		case RoomCommand::SetTransitionActorList:
 			cmd = new SetTransitionActorList(this, rawData, rawDataIndex);

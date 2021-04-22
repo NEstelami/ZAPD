@@ -58,7 +58,8 @@ public:
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                            const int nRawDataIndex,
 	                            const std::string& nRelPath);  // Extract Mode
-	virtual void ExtractFromFile();
+	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	                             const std::string& nRelPath);
 
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
@@ -96,6 +97,7 @@ protected:
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	std::string sourceOutput;
+	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
 };
@@ -135,6 +137,7 @@ public:
 	bool isArray;
 	int arrayItemCnt;
 	std::vector<uint32_t> references;
+	bool isUnaccounted = false;
 
 	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);

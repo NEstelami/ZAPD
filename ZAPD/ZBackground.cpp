@@ -60,7 +60,7 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 
 	// Add padding.
 	data.insert(data.end(), GetRawDataSize() - data.size(), 0x00);
-	CheckValidJpeg(filepath);
+	CheckValidJpeg(filepath.generic_string());
 }
 
 void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -111,7 +111,7 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 	}
 	if (BitConverter::ToUInt16BE(data, 20) != MARKER_DQT)
 	{
-		// This may happen when creating the image with Exif, XMP, thumbnail, progressive, etc.
+		// This may happen when creating a custom image with Exif, XMP, thumbnail, progressive, etc.
 		// enabled.
 		fprintf(stderr,
 		        "ZBackground::CheckValidJpeg: Warning.\n"
