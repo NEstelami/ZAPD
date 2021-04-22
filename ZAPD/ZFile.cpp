@@ -469,6 +469,23 @@ std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResul
 	return defaultResult;
 }
 
+std::string ZFile::GetDeclarationPtrName(segptr_t segAddress)
+{
+	if (segAddress == 0)
+		return "NULL";
+
+	uint32_t offset = Seg2Filespace(segAddress, baseAddress);
+	Declaration* decl = GetDeclaration(offset);
+
+	if (decl == nullptr)
+		return StringHelper::Sprintf("0x%08X", segAddress);
+
+	if (!decl->isArray)
+		return "&" + decl->varName;
+
+	return decl->varName;
+}
+
 Declaration* ZFile::GetDeclaration(uint32_t address)
 {
 	if (declarations.find(address) != declarations.end())

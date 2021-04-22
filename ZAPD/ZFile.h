@@ -69,6 +69,7 @@ public:
 	                                        int arrayItemCnt);
 	std::string GetDeclarationName(uint32_t address);
 	std::string GetDeclarationName(uint32_t address, std::string defaultResult);
+	std::string GetDeclarationPtrName(segptr_t segAddress);
 	Declaration* GetDeclaration(uint32_t address);
 	Declaration* GetDeclarationRanged(uint32_t address);
 	uint32_t GetDeclarationRangedAddress(uint32_t address);

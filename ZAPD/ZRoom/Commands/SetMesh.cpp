@@ -102,8 +102,8 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 
 std::string SetMesh::GetBodySourceCode()
 {
-	Declaration* decl = parent->GetDeclaration(segmentOffset);
-	return StringHelper::Sprintf("%s, %i, &%s", GetCommandHex().c_str(), cmdArg1, decl->varName.c_str());
+	std::string list = parent->GetDeclarationPtrName(segmentOffset);
+	return StringHelper::Sprintf("%s, %i, %s", GetCommandHex().c_str(), cmdArg1, list.c_str());
 }
 
 string SetMesh::GenerateExterns()
@@ -223,8 +223,8 @@ void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& body
 std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 {
 	std::string bodyStr = "";
-	std::string opaStr = "NULL";
-	std::string xluStr = "NULL";
+	std::string opaStr = parent->GetDeclarationPtrName(opa);
+	std::string xluStr = parent->GetDeclarationPtrName(xlu);
 	if (arrayElement)
 	{
 		bodyStr += "    { ";
@@ -232,31 +232,6 @@ std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 	else
 	{
 		bodyStr += "\n    ";
-	}
-
-	if (opa != 0)
-	{
-		Declaration* decl = parent->GetDeclaration(Seg2Filespace(opa, parent->baseAddress));
-		if (decl != nullptr)
-		{
-			opaStr = decl->varName;
-		}
-		else
-		{
-			opaStr = StringHelper::Sprintf("0x%08X", opa);
-		}
-	}
-	if (xlu != 0)
-	{
-		Declaration* decl = parent->GetDeclaration(Seg2Filespace(xlu, parent->baseAddress));
-		if (decl != nullptr)
-		{
-			xluStr = decl->varName;
-		}
-		else
-		{
-			xluStr = StringHelper::Sprintf("0x%08X", xlu);
-		}
 	}
 
 	if (polyType == 2)
@@ -305,7 +280,7 @@ std::string PolygonDlist::GetSourceTypeName()
 	{
 	case 2:
 		return "PolygonDlist2";
-	
+
 	default:
 		return "PolygonDlist";
 	}
@@ -391,21 +366,7 @@ std::string BgImage::GetBodySourceCode(bool arrayElement)
 		}
 	}
 
-	std::string backgroundName = "NULL";
-	if (source != 0)
-	{
-		uint32_t address = Seg2Filespace(source, parent->baseAddress);
-		Declaration* decl = parent->GetDeclaration(address);
-
-		if (decl == nullptr)
-		{
-			backgroundName += StringHelper::Sprintf("0x%08X, ", source);
-		}
-		else
-		{
-			backgroundName = decl->varName;
-		}
-	}
+	std::string backgroundName = parent->GetDeclarationPtrName(source);
 	bodyStr += StringHelper::Sprintf("%s, ", backgroundName.c_str());
 	bodyStr += "\n    ";
 	if (arrayElement)
@@ -621,21 +582,7 @@ std::string PolygonType1::GetBodySourceCode()
 	bodyStr += "{ ";
 	bodyStr += StringHelper::Sprintf("%i, %i, ", type, format);
 
-	std::string dlistStr = "NULL";
-	if (dlist != 0)
-	{
-		uint32_t entryRecordAddress = Seg2Filespace(dlist, parent->baseAddress);
-		Declaration* decl = parent->GetDeclaration(entryRecordAddress);
-
-		if (decl != nullptr)
-		{
-			dlistStr = "&" + decl->varName;
-		}
-		else
-		{
-			dlistStr = StringHelper::Sprintf("0x%08X", dlist);
-		}
-	}
+	std::string dlistStr = parent->GetDeclarationPtrName(dlist);
 	bodyStr += StringHelper::Sprintf("%s, ", dlistStr.c_str());
 	bodyStr += "}, \n";
 
@@ -647,19 +594,7 @@ std::string PolygonType1::GetBodySourceCode()
 		bodyStr += single.GetBodySourceCode(false);
 		break;
 	case 2:
-		if (list != 0)
-		{
-			uint32_t listAddress = Seg2Filespace(list, parent->baseAddress);
-			Declaration* decl = parent->GetDeclaration(listAddress);
-			if (decl != nullptr)
-			{
-				listStr = decl->varName;
-			}
-			else
-			{
-				listStr = StringHelper::Sprintf("0x%08X", list);
-			}
-		}
+		listStr = parent->GetDeclarationPtrName(list);
 		bodyStr += StringHelper::Sprintf("    %i, %s, \n", count, listStr.c_str());
 		break;
 
@@ -738,20 +673,7 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 
 std::string PolygonType2::GetBodySourceCode()
 {
-	std::string listName = "NULL";
-	if (start != 0)
-	{
-		uint32_t startOffset = GETSEGOFFSET(start);
-		Declaration* decl = parent->GetDeclaration(startOffset);
-		if (decl != nullptr)
-		{
-			listName = decl->varName;
-		}
-		else
-		{
-			listName = StringHelper::Sprintf("0x%08X", startOffset);
-		}
-	}
+	std::string listName = parent->GetDeclarationPtrName(start);
 
 	std::string body = StringHelper::Sprintf("\n    %i, %i,\n", type, polyDLists.size());
 	body += StringHelper::Sprintf("    %s,\n", listName.c_str());
