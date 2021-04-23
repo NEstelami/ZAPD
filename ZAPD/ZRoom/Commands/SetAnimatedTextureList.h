@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "../ZRoomCommand.h"
 
 // TODO move into header and add all types
@@ -13,7 +14,7 @@ public:
 class ScrollingTexture : public AnitmatedTextureParams
 {
 public:
-	ScrollingTexture(std::vector<uint8_t> rawData, int rawDataIndex);
+	ScrollingTexture(const std::vector<uint8_t>& rawData, int rawDataIndex);
 	std::string GenerateSourceCode(ZRoom* zRoom, int baseAddress) override;
 	size_t GetParamsSize() override;
 
@@ -26,7 +27,7 @@ public:
 class FlashingTexturePrimColor
 {
 public:
-	FlashingTexturePrimColor(std::vector<uint8_t> rawData, int rawDataIndex);
+	FlashingTexturePrimColor(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	uint8_t r;
 	uint8_t g;
@@ -38,7 +39,7 @@ public:
 class FlashingTextureEnvColor
 {
 public:
-	FlashingTextureEnvColor(std::vector<uint8_t> rawData, int rawDataIndex);
+	FlashingTextureEnvColor(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	uint8_t r;
 	uint8_t g;
@@ -49,7 +50,7 @@ public:
 class FlashingTexture : public AnitmatedTextureParams
 {
 public:
-	FlashingTexture(std::vector<uint8_t> rawData, int rawDataIndex, int type);
+	FlashingTexture(const std::vector<uint8_t>& rawData, int rawDataIndex, int type);
 	std::string GenerateSourceCode(ZRoom* zRoom, int baseAddress) override;
 	size_t GetParamsSize() override;
 
@@ -67,7 +68,7 @@ public:
 class CyclingTextureParams : public AnitmatedTextureParams
 {
 public:
-	CyclingTextureParams(std::vector<uint8_t> rawData, int rawDataIndex);
+	CyclingTextureParams(const std::vector<uint8_t>& rawData, int rawDataIndex);
 	std::string GenerateSourceCode(ZRoom* zRoom, int baseAddress) override;
 	size_t GetParamsSize() override;
 
@@ -82,26 +83,28 @@ public:
 class AnimatedTexture
 {
 public:
-	AnimatedTexture(std::vector<uint8_t> rawData, int rawDataIndex);
-	~AnimatedTexture();
+	AnimatedTexture(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	int8_t segment;
 	int16_t type;
 	uint32_t segmentOffset;
-	std::vector<AnitmatedTextureParams*> params;
+	std::vector<std::shared_ptr<AnitmatedTextureParams>> params;
 };
 
 class SetAnimatedTextureList : public ZRoomCommand
 {
 public:
-	SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
-	~SetAnimatedTextureList();
+	SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+
+	void ParseRawData() override;
+	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() override;
+
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;
 	std::string GetCommandCName() override;
 
 private:
-	std::vector<AnimatedTexture*> textures;
+	std::vector<AnimatedTexture> textures;
 };
