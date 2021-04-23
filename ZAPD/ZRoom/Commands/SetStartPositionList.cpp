@@ -12,8 +12,6 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, const std::vector<uint
                                            int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetStartPositionList::ParseRawData()

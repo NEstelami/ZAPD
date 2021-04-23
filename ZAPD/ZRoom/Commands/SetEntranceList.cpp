@@ -19,7 +19,7 @@ std::string SetEntranceList::GetBodySourceCode()
 	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
-string SetEntranceList::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetEntranceList::GenerateSourceCodePass1(string roomName)
 {
 	// Parse Entrances and Generate Declaration
 

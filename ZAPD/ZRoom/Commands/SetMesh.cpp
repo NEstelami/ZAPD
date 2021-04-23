@@ -23,9 +23,6 @@ SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDa
 		// Hack for Syotes
 		SyotesHack(segAddressOffset);
 	}
-
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetMesh::ParseRawData()

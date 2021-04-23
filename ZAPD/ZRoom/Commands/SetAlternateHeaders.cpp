@@ -19,7 +19,7 @@ std::string SetAlternateHeaders::GetBodySourceCode()
 	return StringHelper::Sprintf("%s, 0, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
-string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetAlternateHeaders::GenerateSourceCodePass1(string roomName)
 {
 	int numHeaders = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 4;
 

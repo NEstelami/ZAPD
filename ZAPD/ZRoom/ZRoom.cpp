@@ -149,7 +149,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
-			pathway->GenerateSourceCodePass1(name, 0);
+			pathway->GenerateSourceCodePass1(name);
 
 			delete pathway;
 		}
@@ -162,7 +162,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		        name.c_str(), child->Name());
 	}
 
-	// ParseCommands(rawDataIndex);
 	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
 	ProcessCommandSets();
 }
@@ -288,6 +287,9 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
 		}
 
+		cmd->ParseRawData();
+		cmd->DeclareReferences(GetName());
+
 		auto end = chrono::steady_clock::now();
 		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
@@ -328,7 +330,7 @@ void ZRoom::ProcessCommandSets()
 		{
 			ZRoomCommand* cmd = setCommands[i];
 			cmd->commandSet = GETSEGOFFSET(commandSet);
-			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
+			string pass1 = cmd->GenerateSourceCodePass1(name);
 
 			Declaration* decl = parent->AddDeclaration(
 				cmd->cmdAddress,
@@ -361,6 +363,8 @@ void ZRoom::SyotesRoomHack()
 		rawData.insert(rawData.begin() + i, headerData[i]);
 
 	SetMesh* cmdSetMesh = new SetMesh(this, rawData, 0, -8);
+	cmdSetMesh->ParseRawData();
+	cmdSetMesh->DeclareReferences(GetName());
 
 	for (size_t i = 0; i < sizeof(headerData); i++)
 		rawData.erase(rawData.begin());

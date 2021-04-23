@@ -12,9 +12,6 @@ SetMinimapList::SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawDat
 {
 	listSegmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 0));
 	unk4 = BitConverter::ToInt32BE(rawData, segmentOffset + 4);
-
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetMinimapList::ParseRawData()

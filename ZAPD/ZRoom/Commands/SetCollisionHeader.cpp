@@ -10,7 +10,6 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, const std::vector<uint8_t>
                                        int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
 }
 
 void SetCollisionHeader::ParseRawData()

@@ -28,7 +28,7 @@ std::string ZRoomCommand::GetBodySourceCode()
 	return StringHelper::Sprintf("%s,", GetCommandHex().c_str());
 }
 
-string ZRoomCommand::GenerateSourceCodePass1(string roomName, int baseAddress)
+string ZRoomCommand::GenerateSourceCodePass1(string roomName)
 {
 	return GetBodySourceCode();
 }

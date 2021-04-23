@@ -19,7 +19,7 @@ std::string SetExitList::GetBodySourceCode()
 	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
-string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetExitList::GenerateSourceCodePass1(string roomName)
 {
 	// Parse Entrances and Generate Declaration
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;

@@ -12,8 +12,6 @@ SetTransitionActorList::SetTransitionActorList(ZRoom* nZRoom, const std::vector<
                                                int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetTransitionActorList::ParseRawData()

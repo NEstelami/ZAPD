@@ -10,8 +10,6 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom,  const std::vector<uint8
                                          int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetLightingSettings::ParseRawData()

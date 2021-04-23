@@ -10,8 +10,6 @@ using namespace std;
 SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetMinimapChests::ParseRawData()

@@ -41,7 +41,7 @@ string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-void ZSetPathways::ParseRawData()
+void ZSetPathways::ParseRawDataLate()
 {
 	if (isFromHeader)
 		segmentOffset = GETSEGOFFSET(BitConverter::ToUInt32BE(ZResource::rawData, ZResource::rawDataIndex + 4));
@@ -64,9 +64,9 @@ std::string ZSetPathways::GetBodySourceCode()
 	return StringHelper::Sprintf("%s, 0, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
-string ZSetPathways::GenerateSourceCodePass1(string roomName, int baseAddress)
+string ZSetPathways::GenerateSourceCodePass1(string roomName)
 {
-	ParseRawData();
+	ParseRawDataLate();
 
 	pathwayList.GetSourceOutputCode(ZResource::parent->GetName());
 

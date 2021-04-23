@@ -40,14 +40,13 @@ public:
 	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
 	             bool nIsFromHeader);
 
-	void ParseRawData() override;
-
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() override;
 
-	std::string GenerateSourceCodePass1(std::string roomName, int baseAddress) override;
+	void ParseRawDataLate();
+	std::string GenerateSourceCodePass1(std::string roomName) override;
 
 	RoomCommand GetRoomCommand() override;
 	int32_t GetRawDataSize() override;

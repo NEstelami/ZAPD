@@ -11,8 +11,6 @@ using namespace std;
 SetObjectList::SetObjectList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetObjectList::ParseRawData()

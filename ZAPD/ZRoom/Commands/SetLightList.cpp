@@ -8,9 +8,6 @@ SetLightList::SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, i
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numLights = cmdArg1;
-
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetLightList::ParseRawData()

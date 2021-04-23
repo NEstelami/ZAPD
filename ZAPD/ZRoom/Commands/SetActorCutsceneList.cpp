@@ -13,9 +13,6 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint
 {
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
-
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetActorCutsceneList::ParseRawData()

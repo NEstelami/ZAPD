@@ -10,8 +10,6 @@ using namespace std;
 SetRoomList::SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetRoomList::ParseRawData()

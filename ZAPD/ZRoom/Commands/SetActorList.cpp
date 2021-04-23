@@ -15,9 +15,6 @@ SetActorList::SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, i
 
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
-
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetActorList::ParseRawData()

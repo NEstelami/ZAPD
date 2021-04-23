@@ -11,8 +11,6 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<
                                                int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	ParseRawData();
-	DeclareReferences(zRoom->GetName());
 }
 
 void SetAnimatedTextureList::ParseRawData()
