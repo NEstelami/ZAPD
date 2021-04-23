@@ -792,7 +792,7 @@ void ZTexture::Save(const std::string& outFolder)
 {
 	//CalcHash();
 
-	// Optionally generate text file containing CRC information
+	// Optionally generate text file containing CRC information. This is going to be a one time process for generating the Texture Pool XML.
 	if (Globals::Instance->testMode)
 	{
 		if (hash != 0)
@@ -803,13 +803,7 @@ void ZTexture::Save(const std::string& outFolder)
 		}
 	}
 
-	if (rawDataIndex == 0xC160)
-	{
-		int bp = 0;
-	}
-
 	std::string outPath = GetPoolOutPath(outFolder);
-	//outName = GetPoolOutName(outName);
 
 	if (!Directory::Exists(outPath))
 		Directory::CreateDirectory(outPath);
@@ -894,24 +888,11 @@ void ZTexture::CalcHash()
 {
 	// Make sure raw data is fixed before we calc the hash...
 	bool fixFlag = !isRawDataFixed;
-
-	if (rawDataIndex == 0x37B60)
-	{
-		//uint32_t hashA = CRC32B(rawData.data(), GetRawDataSize());
-		//FixRawData();
-		//uint32_t hashB = CRC32B(rawData.data(), GetRawDataSize());
-		int bp = 0;
-	}
 	
 	if (fixFlag)
 		FixRawData();
 
 	hash = CRC32B(rawData.data(), GetRawDataSize());
-
-	if (hash == 0x16CCF21D)
-	{
-		int bp = 0;
-	}
 
 	if (fixFlag)
 		FixRawData();
@@ -948,21 +929,6 @@ std::string ZTexture::GetPoolOutPath(std::string defaultValue)
 {
 	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
 		return Path::GetDirectoryName(Globals::Instance->cfg.texturePool[hash].path);
-
-	return defaultValue;
-}
-
-std::string ZTexture::GetPoolOutName(std::string defaultValue)
-{
-	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
-	{
-		TexturePoolEntry entry = Globals::Instance->cfg.texturePool[hash];
-		
-		if (entry.name == "")
-			return Path::GetFileNameWithoutExtension(entry.path);
-		else
-			return entry.name;
-	}
 
 	return defaultValue;
 }

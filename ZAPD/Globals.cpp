@@ -152,14 +152,10 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 			string crcStr = string(child->Attribute("CRC"));
 			string texPath = string(child->Attribute("Path"));
 			string texName = "";
-			
-			if (child->Attribute("Name") != nullptr)
-				texName = string(child->Attribute("Name"));
 
 			uint32_t crc = strtoul(crcStr.c_str(), NULL, 16);
 
 			cfg.texturePool[crc].path = texPath;
-			cfg.texturePool[crc].name = texName;
 		}
 	}
 }

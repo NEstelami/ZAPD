@@ -589,15 +589,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
 				    Globals::Instance->cfg.texturePool.end())
 				{
-					if (res->GetRawDataIndex() == 0xF0A0)
-					{
-						int bp = 0;
-					}
-
-					//incStr = Globals::Instance->cfg.texturePool[tex->hash].path + ".inc";
 					incStr = Globals::Instance->cfg.texturePool[tex->hash].path + "." + res->GetExternalExtension() + ".inc";
-					//res->SetName(Path::GetFileNameWithoutExtension(incStr));
-					//res->SetName(tex->GetPoolOutName(res->GetName()));
 				}
 
 				incStr += ".c";

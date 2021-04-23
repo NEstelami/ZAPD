@@ -1678,24 +1678,7 @@ static int GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int32_t 
 	instance->lastTexLoaded = true;
 	instance->lastTexIsPalette = false;
 
-	if (texOffset == 0x37960)
-	{
-		int bp = 0;
-	}
-
 	instance->TextureGenCheck(instance->curPrefix);
-	
-	// TEXTURE POOL CHECK
-	if (instance->textures.find(texOffset) != instance->textures.end())
-	{
-		if (texOffset == 0x37B60)
-		{
-			int bp = 0;
-		}
-
-		ZTexture* texTest = instance->textures[texOffset];
-		//texName = instance->textures[texOffset]->GetPoolOutName(texName);
-	}
 	
 	gfxd_puts(texName.c_str());
 
@@ -1984,13 +1967,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			{
 				if (parent->GetDeclaration(item.first) == nullptr)
 				{
-					if (item.first == 0xD890)
-					{
-						int bp = 0;
-					}
-
+					// TEXTURE POOL CHECK
 					std::string texOutPath = item.second->GetPoolOutPath(Globals::Instance->outputPath);
-					//std::string texOutName = item.second->GetPoolOutName(item.second->GetName());
 					std::string texOutName = item.second->GetName();
 
 					auto start = chrono::steady_clock::now();
@@ -2006,17 +1984,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 						"%s/%s.%s.inc.c", texOutPath.c_str(),
 						Path::GetFileNameWithoutExtension(texOutName).c_str(),
 						item.second->GetExternalExtension().c_str());
-					//std::string texName = item.second->GetPoolOutName(StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first));
 					std::string texName = StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
-
-
-					// TEXTURE POOL CHECK
-					//if (Globals::Instance->cfg.texturePool.find(item.second->hash) !=
-					//    Globals::Instance->cfg.texturePool.end())
-					//{
-					//	incStr = Globals::Instance->cfg.texturePool[item.second->hash];
-					//	texName = Path::GetFileNameWithoutExtension(incStr);
-					//}
 
 					parent->AddDeclarationIncludeArray(
 						item.first, incStr, item.second->GetRawDataSize(), "u64", texName, 0);

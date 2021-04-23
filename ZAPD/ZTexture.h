@@ -89,7 +89,6 @@ public:
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;
 	std::string GetPoolOutPath(std::string defaultValue);
-	std::string GetPoolOutName(std::string defaultValue);
 	void CalcHash() override;
 
 	bool IsExternalResource() override;
