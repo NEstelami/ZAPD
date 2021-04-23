@@ -112,3 +112,13 @@ ZResourceType ZVector::GetResourceType()
 {
 	return ZResourceType::Vector;
 }
+
+void ZVector::SetScalarType(ZScalarType type)
+{
+	scalarType = type;
+}
+
+void ZVector::SetDimensions(uint32_t dim)
+{
+	dimensions = dim;
+}

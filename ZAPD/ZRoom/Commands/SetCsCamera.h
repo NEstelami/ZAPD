@@ -1,13 +1,14 @@
 #pragma once
 
-#include "../../Vec3s.h"
 #include "../ZRoomCommand.h"
+#include "ZVector.h"
 
 class CsCameraEntry
 {
 public:
 	CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
+	int32_t GetRawDataSize() const;
 	int16_t GetNumPoints() const;
 	int GetSegmentOffset() const;
 
@@ -34,5 +35,5 @@ public:
 
 private:
 	std::vector<CsCameraEntry> cameras;
-	std::vector<Vec3s> points;
+	std::vector<ZVector> points;
 };

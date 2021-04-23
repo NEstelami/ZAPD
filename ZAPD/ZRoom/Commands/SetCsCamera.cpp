@@ -23,24 +23,27 @@ void SetCsCamera::ParseRawData()
 	for (int i = 0; i < numCameras; i++)
 	{
 		CsCameraEntry entry(rawData, currentPtr);
-
-		cameras.push_back(entry);
 		numPoints += entry.GetNumPoints();
 
-		currentPtr += 8;
+		currentPtr += entry.GetRawDataSize();
+		cameras.push_back(entry);
 	}
 
 	if (numPoints > 0)
 	{
-		uint32_t currentPtr = cameras[0].GetSegmentOffset();
+		uint32_t currentPtr = cameras.at(0).GetSegmentOffset();
 
 		for (int i = 0; i < numPoints; i++)
 		{
-			int16_t x = BitConverter::ToInt16BE(rawData, currentPtr + 0);
-			int16_t y = BitConverter::ToInt16BE(rawData, currentPtr + 2);
-			int16_t z = BitConverter::ToInt16BE(rawData, currentPtr + 4);
-			points.push_back(Vec3s(x, y, z));
-			currentPtr += 6;
+			ZVector vec(parent);
+			vec.SetRawData(rawData);
+			vec.SetRawDataIndex(currentPtr);
+			vec.SetScalarType(ZScalarType::ZSCALAR_S16);
+			vec.SetDimensions(3);
+			vec.ParseRawData();
+
+			currentPtr += vec.GetRawDataSize();
+			points.push_back(vec);
 		}
 	}
 
@@ -54,10 +57,9 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 	{
 		string declaration = "";
 		size_t index = 0;
-		for (Vec3s point : points)
+		for (auto& point : points)
 		{
-			declaration += StringHelper::Sprintf("	{ %i, %i, %i }, //0x%06X", point.x, point.y,
-			                                     point.z, cameras[0].segmentOffset + (index * 6));
+			declaration += StringHelper::Sprintf("\t%s, //0x%06X", point.GetSourceValue().c_str(), cameras.at(0).segmentOffset + (index * 6));
 
 			if (index < points.size() - 1)
 				declaration += "\n";
@@ -65,23 +67,23 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 			index++;
 		}
 
-		parent->AddDeclarationArray(cameras[0].GetSegmentOffset(), DeclarationAlignment::None,
-		                                   DeclarationPadding::None, points.size() * 6, "Vec3s",
+		parent->AddDeclarationArray(cameras.at(0).GetSegmentOffset(), DeclarationAlignment::None,
+		                                   DeclarationPadding::None, points.size() * points.at(0).GetRawDataSize(), points.at(0).GetSourceTypeName().c_str(),
 		                                   StringHelper::Sprintf("%sCsCameraPoints0x%06X",
 		                                                         prefix.c_str(),
-		                                                         cameras[0].GetSegmentOffset()),
+		                                                         cameras.at(0).GetSegmentOffset()),
 		                                   points.size(), declaration);
 	}
 
-	string declaration = "";
+	std::string camPointsName = parent->GetDeclarationPtrName(cameras.at(0).GetSegmentOffset());
+	std::string declaration = "";
 
 	size_t index = 0;
 	size_t pointsIndex = 0;
 	for (const auto& entry : cameras)
 	{
-		declaration += StringHelper::Sprintf("    %i, %i, (u32)&%sCsCameraPoints0x%06X[%i],",
-												entry.type, entry.numPoints, prefix.c_str(),
-												cameras[0].GetSegmentOffset(), pointsIndex);
+		declaration += StringHelper::Sprintf("\t{ %i, %i, %s[%i] },",
+												entry.type, entry.numPoints, camPointsName.c_str(), pointsIndex);
 
 		if (index < cameras.size() - 1)
 			declaration += "\n";
@@ -123,6 +125,11 @@ CsCameraEntry::CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataInd
 	  numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
+}
+
+int32_t CsCameraEntry::GetRawDataSize() const
+{
+	return 8;
 }
 
 int16_t CsCameraEntry::GetNumPoints() const

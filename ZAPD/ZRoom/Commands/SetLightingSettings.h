@@ -9,6 +9,8 @@ public:
 
 	std::string GetBodySourceCode() const;
 
+	size_t GetRawDataSize() const;
+
 protected:
 	uint8_t ambientClrR, ambientClrG, ambientClrB;
 	uint8_t diffuseClrA_R, diffuseClrA_G, diffuseClrA_B;
@@ -26,6 +28,7 @@ public:
 	SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
+	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() override;
 

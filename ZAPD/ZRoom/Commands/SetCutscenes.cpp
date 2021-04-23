@@ -52,14 +52,12 @@ void SetCutscenes::ParseRawData()
 				declaration += "\n";
 
 			ZCutsceneMM* cutscene = new ZCutsceneMM(parent);
-			cutscene->ExtractFromXML(
-				nullptr, rawData, entry.segmentOffset,
-				"");  // TODO: Use ExtractFromFile() here when that gets implemented
+			cutscene->ExtractFromFile(rawData, entry.segmentOffset, "");
 			cutscenes.push_back(cutscene);
 		}
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None,
+			segmentOffset, DeclarationAlignment::Align4,
 			cutsceneEntries.size() * 8, "CutsceneEntry",
 			StringHelper::Sprintf("%sCutsceneEntryList0x%06X", zRoom->GetName().c_str(),
 		                          segmentOffset),
@@ -111,7 +109,7 @@ RoomCommand SetCutscenes::GetRoomCommand()
 }
 
 CutsceneEntry::CutsceneEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
-	: segmentOffset(BitConverter::ToInt32BE(rawData, rawDataIndex + 0) & 0x00FFFFFF),
+	: segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 0))),
 	  exit(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)), entrance(rawData[rawDataIndex + 6]),
 	  flag(rawData[rawDataIndex + 7])
 {

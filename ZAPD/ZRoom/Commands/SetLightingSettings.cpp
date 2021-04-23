@@ -11,31 +11,37 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom,  const std::vector<uint8
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
+	DeclareReferences(zRoom->GetName());
 }
 
 void SetLightingSettings::ParseRawData()
 {
-	uint8_t numLights = rawData[rawDataIndex + 1];
+	uint8_t numLights = cmdArg1;
 
 	for (int i = 0; i < numLights; i++)
 		settings.push_back(LightingSettings(rawData, segmentOffset + (i * 22)));
+}
 
-	if (numLights > 0)
+void SetLightingSettings::DeclareReferences(const std::string& prefix)
+{
+	if (settings.size() > 0)
 	{
 		string declaration = "";
 
-		for (int i = 0; i < numLights; i++)
+		for (size_t i = 0; i < settings.size(); i++)
 		{
 			declaration += StringHelper::Sprintf(
-				"\t{ %s }, // 0x%06X \n",
+				"\t{ %s }, // 0x%06X",
 				settings.at(i).GetBodySourceCode().c_str(), segmentOffset + (i * 22));
+			if (i + 1 < settings.size())
+				declaration += "\n";
 		}
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, numLights * 22,
+			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, settings.size() * settings.front().GetRawDataSize(),
 			"LightSettings",
-			StringHelper::Sprintf("%sLightSettings0x%06X", zRoom->GetName().c_str(), segmentOffset),
-			numLights, declaration);
+			StringHelper::Sprintf("%sLightSettings0x%06X", prefix.c_str(), segmentOffset),
+			settings.size(), declaration);
 	}
 }
 
@@ -95,4 +101,9 @@ std::string LightingSettings::GetBodySourceCode() const
 				diffuseDirB_X, diffuseDirB_Y, diffuseDirB_Z,
 				fogClrR, fogClrG, fogClrB, unk,
 				drawDistance);
+}
+
+size_t LightingSettings::GetRawDataSize() const
+{
+	return 0x16;
 }

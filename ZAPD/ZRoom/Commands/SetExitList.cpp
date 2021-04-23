@@ -27,7 +27,7 @@ string SetExitList::GenerateSourceCodePass1(string roomName, int baseAddress)
 
 	for (int i = 0; i < numEntrances; i++)
 	{
-		uint16_t exit = BitConverter::ToInt16BE(rawData, currentPtr);
+		uint16_t exit = BitConverter::ToUInt16BE(rawData, currentPtr);
 		exits.push_back(exit);
 
 		currentPtr += 2;

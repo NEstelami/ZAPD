@@ -10,10 +10,6 @@
 class ZVector : public ZResource
 {
 public:
-	std::vector<ZScalar*> scalars;
-	ZScalarType scalarType;
-	uint32_t dimensions;
-
 	ZVector(ZFile* nParent);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
@@ -25,8 +21,14 @@ public:
 	bool DoesSupportArray() override;
 	ZResourceType GetResourceType() override;
 
+	void SetScalarType(ZScalarType type);
+	void SetDimensions(uint32_t dim);
+
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
+	std::vector<ZScalar*> scalars;
+	ZScalarType scalarType;
+	uint32_t dimensions;
 };
