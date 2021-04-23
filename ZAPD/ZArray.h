@@ -20,7 +20,7 @@ public:
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
-	int32_t arrayCnt;
+	size_t arrayCnt;
 	ZFile* testFile;
 
 	// void ParseRawData(const std::vector<uint8_t>& data, const int32_t offset);

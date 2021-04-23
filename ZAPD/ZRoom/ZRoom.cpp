@@ -56,6 +56,7 @@ ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 	extDefines = "";
 	scene = nullptr;
 	roomCount = -1;
+	canHaveInner = true;
 }
 
 ZRoom::~ZRoom()
@@ -70,9 +71,8 @@ ZRoom::~ZRoom()
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
                            const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
-	rawData = nRawData;
-	rawDataIndex = nRawDataIndex;
-	name = string(reader->Attribute("Name"));
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+
 	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
 
