@@ -14,8 +14,8 @@ class ZRoom : public ZResource
 protected:
 	std::vector<ZRoomCommand*> commands;
 
-	std::string GetSourceOutputHeader(const std::string& prefix);
-	std::string GetSourceOutputCode(const std::string& prefix);
+	std::string GetSourceOutputHeader(const std::string& prefix) override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void ProcessCommandSets();
 	void SyotesRoomHack();
 
@@ -36,11 +36,11 @@ public:
 	size_t GetDeclarationSizeFromNeighbor(int32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
-	std::vector<uint8_t> GetRawData();
-	size_t GetRawDataSize();
-	virtual ZResourceType GetResourceType();
-	virtual void Save(const std::string& outFolder);
-	virtual void PreGenSourceFiles();
+	std::vector<uint8_t> GetRawData() override;
+	size_t GetRawDataSize() override;
+	virtual ZResourceType GetResourceType() override;
+	virtual void Save(const std::string& outFolder) override;
+	virtual void PreGenSourceFiles() override;
 };
 
 struct CommandSet

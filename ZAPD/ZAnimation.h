@@ -128,7 +128,7 @@ protected:
 	std::vector<int16_t> copyValuesArr;
 
 public:
-	ZCurveAnimation() = default;
+	ZCurveAnimation();
 	ZCurveAnimation(ZFile* nParent);
 	~ZCurveAnimation();
 	void ParseXML(tinyxml2::XMLElement* reader) override;

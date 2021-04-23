@@ -40,7 +40,7 @@ public:
 
 	[[nodiscard]] std::string GetSourceOutputCode() const;
 
-	static size_t GetRawDataSize();
+	static size_t GetRawDataSize() ;
 	static std::string GetSourceTypeName();
 };
 
@@ -59,7 +59,7 @@ public:
 
 	[[nodiscard]] std::string GetSourceOutputCode() const;
 
-	static size_t GetRawDataSize();
+	static size_t GetRawDataSize() ;
 	static std::string GetSourceTypeName();
 };
 

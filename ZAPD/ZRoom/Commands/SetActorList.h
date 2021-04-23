@@ -24,12 +24,12 @@ public:
 	~SetActorList();
 
 	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress);
-	virtual RoomCommand GetRoomCommand();
-	virtual size_t GetRawDataSize();
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
+	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
+	virtual RoomCommand GetRoomCommand() override;
+	virtual size_t GetRawDataSize() override;
+	virtual std::string GetCommandCName() override;
+	virtual std::string GenerateExterns() override;
 
 private:
 	size_t GetActorListArraySize();
@@ -37,5 +37,5 @@ private:
 	std::vector<ActorSpawnEntry*> actors;
 	uint32_t segmentOffset;
 	std::vector<uint8_t> _rawData;
-	int32_t _rawDataIndex;
+	uint32_t _rawDataIndex;
 };
