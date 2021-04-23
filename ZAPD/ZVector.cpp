@@ -29,7 +29,7 @@ void ZVector::ClearScalars()
 }
 
 void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                             const int32_t nRawDataIndex, const std::string& nRelPath)
+                             const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }

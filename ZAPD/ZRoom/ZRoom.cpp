@@ -68,7 +68,7 @@ ZRoom::~ZRoom()
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const int32_t nRawDataIndex, const std::string& nRelPath)
+                           const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
@@ -175,7 +175,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 {
 	bool shouldContinue = true;
 	uint32_t currentIndex = 0;
-	int32_t rawDataIndex = GETSEGOFFSET(commandSet.address);
+	uint32_t rawDataIndex = GETSEGOFFSET(commandSet.address);
 
 	uint32_t commandsLeft = commandSet.commandCount;
 
@@ -579,7 +579,7 @@ void ZRoom::PreGenSourceFiles()
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         uint32_t nSize, string nText)
+                         size_t nSize, string nText)
 {
 	alignment = nAlignment;
 	padding = nPadding;
@@ -599,7 +599,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	references = vector<uint32_t>();
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType,
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
                          string nVarName, bool nIsArray, string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
@@ -609,7 +609,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         uint32_t nSize, string nVarType, string nVarName, bool nIsArray,
+                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
                          string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
@@ -618,8 +618,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType,
-                         string nVarName, bool nIsArray, int32_t nArrayItemCnt, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
+                         string nVarName, bool nIsArray, size_t nArrayItemCnt, string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -628,8 +628,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, int32_t nArrayItemCnt, std::string nText,
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
                          bool nIsExternal)
 	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
@@ -637,8 +637,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::s
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         uint32_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         int32_t nArrayItemCnt, string nText)
+                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
+                         size_t nArrayItemCnt, string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
@@ -647,7 +647,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(std::string nIncludePath, uint32_t nSize, string nVarType, string nVarName)
+Declaration::Declaration(std::string nIncludePath, size_t nSize, string nVarType, string nVarName)
 	: Declaration(DeclarationAlignment::None, DeclarationPadding::None, nSize, "")
 {
 	includePath = nIncludePath;

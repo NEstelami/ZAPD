@@ -8,7 +8,7 @@
 using namespace std;
 
 SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                           int32_t rawDataIndex)
+                                           uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	int32_t numCutscenes = rawData[rawDataIndex + 1];
@@ -48,7 +48,7 @@ SetActorCutsceneList::~SetActorCutsceneList()
 		delete entry;
 }
 
-string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x%02X, (u32)&%sActorCutsceneList0x%06X",
@@ -56,7 +56,7 @@ string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, int32_t ba
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetActorCutsceneList::GenerateSourceCodePass2(string roomName, int32_t baseAddress)
+string SetActorCutsceneList::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
 {
 	return "";
 }
@@ -82,7 +82,7 @@ RoomCommand SetActorCutsceneList::GetRoomCommand()
 	return RoomCommand::SetActorCutsceneList;
 }
 
-ActorCutsceneEntry::ActorCutsceneEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+ActorCutsceneEntry::ActorCutsceneEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: priority(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
 	  length(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  unk4(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)),

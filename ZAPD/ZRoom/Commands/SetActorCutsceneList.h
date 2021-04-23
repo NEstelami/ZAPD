@@ -16,17 +16,17 @@ public:
 	uint8_t unkE;
 	uint8_t letterboxSize;
 
-	ActorCutsceneEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	ActorCutsceneEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 };
 
 class SetActorCutsceneList : public ZRoomCommand
 {
 public:
-	SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetActorCutsceneList();
 
-	std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress) override;
-	std::string GenerateSourceCodePass2(std::string roomName, int32_t baseAddress) override;
+	std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
+	std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
 	std::string GetCommandCName() override;
 	std::string GenerateExterns() override;
 	RoomCommand GetRoomCommand() override;

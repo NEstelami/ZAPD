@@ -6,7 +6,7 @@
 using namespace std;
 
 SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                         int32_t rawDataIndex)
+                                         uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
@@ -18,7 +18,7 @@ SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> raw
 	_rawDataIndex = rawDataIndex;
 }
 
-string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput = "";
 	int32_t numHeaders = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 4;

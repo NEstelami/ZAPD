@@ -57,9 +57,9 @@ public:
 
 	// Parsing from File
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            const int32_t nRawDataIndex,
+	                            const uint32_t nRawDataIndex,
 	                            const std::string& nRelPath);  // Extract Mode
-	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
+	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	                             const std::string& nRelPath);
 
 	// Misc
@@ -123,7 +123,7 @@ class Declaration
 public:
 	DeclarationAlignment alignment;
 	DeclarationPadding padding;
-	uint32_t size;
+	size_t size;
 	std::string preText;
 	std::string text;
 	std::string rightText;
@@ -135,26 +135,26 @@ public:
 	std::string includePath;
 	bool isExternal;
 	bool isArray;
-	int32_t arrayItemCnt;
+	size_t arrayItemCnt;
 	std::vector<uint32_t> references;
 
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
 	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, int32_t nArrayItemCnt, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, uint32_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, int32_t nArrayItemCnt, std::string nText,
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
 	            bool nIsExternal);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, int32_t nArrayItemCnt,
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
 	            std::string nText);
-	Declaration(std::string nIncludePath, uint32_t nSize, std::string nVarType,
+	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType,
 	            std::string nVarName);
 
 protected:
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, uint32_t nSize,
+	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
 	            std::string nText);
 };
 

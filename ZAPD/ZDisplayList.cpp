@@ -56,7 +56,7 @@ ZDisplayList::~ZDisplayList()
 
 // EXTRACT MODE
 void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                  const std::vector<uint8_t>& nRawData, const int32_t nRawDataIndex,
+                                  const std::vector<uint8_t>& nRawData, const uint32_t nRawDataIndex,
                                   const std::string& nRelPath)
 {
 	rawDataIndex = nRawDataIndex;
@@ -73,7 +73,7 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	ParseRawData();
 }
 
-ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, int32_t nRawDataIndex, int32_t rawDataSize,
+ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, uint32_t nRawDataIndex, int32_t rawDataSize,
                            ZFile* nParent)
 	: ZDisplayList(nParent)
 {
@@ -418,7 +418,7 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string pre
 	}
 }
 
-int32_t ZDisplayList::GetDListLength(vector<uint8_t> rawData, int32_t rawDataIndex, DListType dListType)
+int32_t ZDisplayList::GetDListLength(vector<uint8_t> rawData, uint32_t rawDataIndex, DListType dListType)
 {
 	int32_t i = 0;
 
@@ -431,7 +431,7 @@ int32_t ZDisplayList::GetDListLength(vector<uint8_t> rawData, int32_t rawDataInd
 
 	while (true)
 	{
-		uint8_t opcode = (uint8_t)rawData[rawDataIndex + (i * 8)];
+		uint8_t opcode = rawData[rawDataIndex + (i * 8)];
 		i++;
 
 		if (opcode == endDLOpcode)
@@ -1826,7 +1826,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				// 0x%06X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(),
 				// verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
 
-				// int32_t nSize = (int32_t)vertices[verticesSorted[i].first].size();
+				// isize_t nSize = (int32_t)vertices[verticesSorted[i].first].size();
 
 				vertices.erase(verticesSorted[i + 1].first);
 				verticesSorted.erase(verticesSorted.begin() + i + 1);
@@ -2344,7 +2344,7 @@ Vertex::Vertex(int16_t nX, int16_t nY, int16_t nZ, uint16_t nFlag, int16_t nS, i
 	a = nA;
 }
 
-Vertex::Vertex(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+Vertex::Vertex(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 

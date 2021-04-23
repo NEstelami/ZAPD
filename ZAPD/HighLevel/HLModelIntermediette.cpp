@@ -306,12 +306,12 @@ string HLModelIntermediette::ToAssimpFile()
 	newScene->mRootNode->mNumChildren += newScene->mNumMeshes;
 	newScene->mRootNode->mChildren = new aiNode*[newScene->mRootNode->mNumChildren];
 
-	for (int32_t i = 0; i < newScene->mNumMeshes; i++)
+	for (size_t i = 0; i < newScene->mNumMeshes; i++)
 	{
 		aiNode* child = new aiNode();
 		child->mName = StringHelper::Sprintf("OBJ_%i", i);
 		child->mNumMeshes = 1;
-		child->mMeshes = new unsigned int32_t[1];
+		child->mMeshes = new uint32_t[1];
 		child->mMeshes[0] = i;
 		child->mTransformation.Translation(aiVector3D(meshTranslations[i].x * 10,
 		                                              meshTranslations[i].y * 10,

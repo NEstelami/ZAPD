@@ -9,7 +9,7 @@
 
 using namespace std;
 
-SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex,
+SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex,
                  int32_t segAddressOffset)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -285,7 +285,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	return sourceOutput;
 }
 
-string SetMesh::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetMesh::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput = "";
 
@@ -319,7 +319,7 @@ RoomCommand SetMesh::GetRoomCommand()
 }
 
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                           int32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
+                           uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -464,7 +464,7 @@ std::string PolygonDlist::GetName()
 }
 
 BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                 int32_t nRawDataIndex, ZFile* nParent)
+                 uint32_t nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -610,7 +610,7 @@ std::string BgImage::GetName()
 }
 
 PolygonType1::PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                           int32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
+                           uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;

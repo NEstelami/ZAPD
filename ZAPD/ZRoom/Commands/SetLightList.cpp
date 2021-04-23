@@ -4,7 +4,7 @@
 
 using namespace std;
 
-SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
+SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	this->ptrRoom = nZRoom;
@@ -44,7 +44,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t 
 		this->numLights, declarations);
 }
 
-string SetLightList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetLightList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s %i, &%sLightInfo0x%06X",

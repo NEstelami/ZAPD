@@ -13,7 +13,7 @@ ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(parent)
 {
 }
 
-ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
+ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
                            bool nIsFromHeader)
 	: ZResource(nZRoom->parent), ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
@@ -61,13 +61,13 @@ void ZSetPathways::ParseRawData()
 	pathwayList = new PathwayList(parent, rawData, segmentOffset, numPaths);
 }
 
-string ZSetPathways::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string ZSetPathways::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	ParseRawData();
 	return "";
 }
 
-string ZSetPathways::GenerateSourceCodePass2(string roomName, int32_t baseAddress)
+string ZSetPathways::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput = "";
 
@@ -108,7 +108,7 @@ RoomCommand ZSetPathways::GetRoomCommand()
 	return RoomCommand::SetPathways;
 }
 
-PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: numPoints(rawData[rawDataIndex + 0]), unk1(rawData[rawDataIndex + 1]),
 	  unk2(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  listSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
@@ -138,7 +138,7 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
 	}
 }
 
-PathwayList::PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, int32_t rawDataIndex, int32_t length)
+PathwayList::PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t length)
 {
 	parent = nParent;
 	_rawDataIndex = rawDataIndex;

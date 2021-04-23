@@ -130,7 +130,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	}
 
 	auto nodeMap = *GetNodeMap();
-	int32_t rawDataIndex = 0;
+	uint32_t rawDataIndex = 0;
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
@@ -188,9 +188,9 @@ void ZFile::BuildSourceFile(string outputDir)
 	GenerateSourceFiles(outputDir);
 }
 
-std::string ZFile::GetVarName(int32_t address)
+std::string ZFile::GetVarName(uint32_t address)
 {
-	for (pair<int32_t, Declaration*> pair : declarations)
+	for (pair<uint32_t, Declaration*> pair : declarations)
 	{
 		if (pair.first == address)
 			return pair.second->varName;
@@ -262,7 +262,7 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 	return resList;
 }
 
-Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, uint32_t size,
+Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
                                    std::string varType, std::string varName, std::string body)
 {
 #if _DEBUG
@@ -280,7 +280,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-                                   DeclarationPadding padding, uint32_t size, string varType,
+                                   DeclarationPadding padding, size_t size, string varType,
                                    string varName, std::string body)
 {
 #if _DEBUG
@@ -298,8 +298,8 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        uint32_t size, std::string varType, std::string varName,
-                                        int32_t arrayItemCnt, std::string body)
+                                        size_t size, std::string varType, std::string varName,
+                                        size_t arrayItemCnt, std::string body)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
@@ -316,8 +316,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        uint32_t size, std::string varType, std::string varName,
-                                        int32_t arrayItemCnt, std::string body, bool isExternal)
+                                        size_t size, std::string varType, std::string varName,
+                                        size_t arrayItemCnt, std::string body, bool isExternal)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
@@ -334,8 +334,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        DeclarationPadding padding, uint32_t size, string varType,
-                                        string varName, int32_t arrayItemCnt, std::string body)
+                                        DeclarationPadding padding, size_t size, string varType,
+                                        string varName, size_t arrayItemCnt, std::string body)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
@@ -372,7 +372,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, string varName)
 	return declarations[address];
 }
 
-Declaration* ZFile::AddDeclarationInclude(uint32_t address, string includePath, uint32_t size,
+Declaration* ZFile::AddDeclarationInclude(uint32_t address, string includePath, size_t size,
                                           string varType, string varName)
 {
 	AddDeclarationDebugChecks(address);
@@ -384,8 +384,8 @@ Declaration* ZFile::AddDeclarationInclude(uint32_t address, string includePath, 
 }
 
 Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath,
-                                               uint32_t size, std::string varType,
-                                               std::string varName, int32_t arrayItemCnt)
+                                               size_t size, std::string varType,
+                                               std::string varName, size_t arrayItemCnt)
 {
 #if _DEBUG
 	if (declarations.find(address) != declarations.end())
@@ -771,7 +771,7 @@ string ZFile::ProcessDeclarations()
 			    lastAddr + declarations[lastAddr]->size > item.first)
 			{
 				fprintf(stderr,
-				        "WARNING: Intersection detected from 0x%06X:0x%06X, conflicts with 0x%06X "
+				        "WARNING: Intersection detected from 0x%06X:0x%06zu, conflicts with 0x%06X "
 				        "(%s)\n",
 				        lastAddr, lastAddr + declarations[lastAddr]->size, item.first,
 				        item.second->varName.c_str());

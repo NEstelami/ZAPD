@@ -14,17 +14,17 @@ public:
 	uint16_t unk;
 	uint16_t drawDistance;
 
-	LightingSettings(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	LightingSettings(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 };
 
 class SetLightingSettings : public ZRoomCommand
 {
 public:
-	SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetLightingSettings();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int32_t baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
+	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress);
 	virtual std::string GetCommandCName();
 	virtual std::string GenerateExterns();
 	virtual RoomCommand GetRoomCommand();

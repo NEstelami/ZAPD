@@ -6,7 +6,7 @@
 class CsCameraEntry
 {
 public:
-	CsCameraEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	CsCameraEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
 	int32_t baseOffset;
 	int32_t type;
@@ -17,12 +17,12 @@ public:
 class SetCsCamera : public ZRoomCommand
 {
 public:
-	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetCsCamera();
 
 	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int32_t baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
+	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress);
 	virtual RoomCommand GetRoomCommand();
 	virtual size_t GetRawDataSize();
 	virtual std::string GetCommandCName();

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
+SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numActors = rawData[rawDataIndex + 1];
@@ -33,12 +33,12 @@ string SetActorList::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-string SetActorList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetActorList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-string SetActorList::GenerateSourceCodePass2(string roomName, int32_t baseAddress)
+string SetActorList::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput = "";
 	size_t numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
@@ -154,7 +154,7 @@ RoomCommand SetActorList::GetRoomCommand()
 	return RoomCommand::SetActorList;
 }
 
-ActorSpawnEntry::ActorSpawnEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+ActorSpawnEntry::ActorSpawnEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 

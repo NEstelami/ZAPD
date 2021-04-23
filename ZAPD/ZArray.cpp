@@ -42,9 +42,9 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 			res->GetName().c_str()));
 	}
 
-	for (int32_t i = 0; i < arrayCnt; i++)
+	for (size_t i = 0; i < arrayCnt; i++)
 	{
-		int32_t childIndex = rawDataIndex + (i * resSize);
+		size_t childIndex = rawDataIndex + (i * resSize);
 		res->SetRawDataIndex(childIndex);
 		res->ParseRawData();
 		std::string test = res->GetSourceOutputCode("");
@@ -68,7 +68,7 @@ size_t ZArray::GetRawDataSize()
 }
 
 void ZArray::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                            const int32_t nRawDataIndex, const std::string& nRelPath)
+                            const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;

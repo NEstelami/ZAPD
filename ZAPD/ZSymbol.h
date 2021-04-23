@@ -7,7 +7,7 @@ class ZSymbol : public ZResource
 {
 protected:
 	std::string type;
-	uint32_t typeSize;
+	size_t typeSize;
 	bool isArray = false;
 	uint32_t count = 0;
 
@@ -15,7 +15,7 @@ public:
 	ZSymbol(ZFile* nParent);
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const int32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 

@@ -90,7 +90,7 @@ string ZCutscene::GetBodySourceCode()
 {
 	string output = "";
 	size_t size = 0;
-	int32_t curPtr = 0;
+	uint32_t curPtr = 0;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
@@ -98,7 +98,7 @@ string ZCutscene::GetBodySourceCode()
 	{
 		CutsceneCommand* cmd = commands[i];
 		output += "    " + cmd->GenerateSourceCode(curPtr);
-		curPtr += (uint32_t)cmd->GetCommandSize();
+		curPtr += cmd->GetCommandSize();
 		size += cmd->GetCommandSize();
 	}
 
@@ -155,7 +155,7 @@ size_t ZCutscene::GetRawDataSize()
 }
 
 void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const int32_t nRawDataIndex, const std::string& nRelPath)
+                               const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar("", "");
@@ -447,7 +447,7 @@ ZResourceType ZCutscene::GetResourceType()
 	return ZResourceType::Cutscene;
 }
 
-CutsceneCommand::CutsceneCommand(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommand::CutsceneCommand(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 }
 
@@ -460,7 +460,7 @@ string CutsceneCommand::GetCName()
 	return "SCmdCutsceneData";
 }
 
-string CutsceneCommand::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommand::GenerateSourceCode(uint32_t baseAddress)
 {
 	return StringHelper::Sprintf("%s CutsceneData%04XCmd%02X = { 0x%02X,", GetCName().c_str(),
 	                             baseAddress, commandIndex, commandID);
@@ -471,7 +471,7 @@ size_t CutsceneCommand::GetCommandSize()
 	return 4;
 }
 
-CutsceneCameraPoint::CutsceneCameraPoint(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCameraPoint::CutsceneCameraPoint(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 
@@ -488,7 +488,7 @@ CutsceneCameraPoint::CutsceneCameraPoint(const vector<uint8_t>& rawData, int32_t
 }
 
 CutsceneCommandSetCameraPos::CutsceneCommandSetCameraPos(const vector<uint8_t>& rawData,
-                                                         int32_t rawDataIndex)
+                                                         uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
@@ -522,7 +522,7 @@ string CutsceneCommandSetCameraPos::GetCName()
 	return "";
 }
 
-string CutsceneCommandSetCameraPos::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandSetCameraPos::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -569,7 +569,7 @@ size_t CutsceneCommandSetCameraPos::GetCommandSize()
 	return 8 + (entries.size() * 16);
 }
 
-MusicFadeEntry::MusicFadeEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+MusicFadeEntry::MusicFadeEntry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
 	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
@@ -590,7 +590,7 @@ MusicFadeEntry::MusicFadeEntry(const vector<uint8_t>& rawData, int32_t rawDataIn
 	                                     rawDataIndex + 44);  // Macro hardcodes it as zero
 }
 
-CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	uint32_t numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
@@ -609,7 +609,7 @@ string CutsceneCommandFadeBGM::GetCName()
 	return "CsCmdMusicFade";
 }
 
-string CutsceneCommandFadeBGM::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandFadeBGM::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -632,7 +632,7 @@ size_t CutsceneCommandFadeBGM::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + 0x30 * entries.size();
 }
 
-MusicChangeEntry::MusicChangeEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+MusicChangeEntry::MusicChangeEntry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	sequence = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
 	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
@@ -647,7 +647,7 @@ MusicChangeEntry::MusicChangeEntry(const vector<uint8_t>& rawData, int32_t rawDa
 	unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
 }
 
-CutsceneCommandPlayBGM::CutsceneCommandPlayBGM(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandPlayBGM::CutsceneCommandPlayBGM(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	uint32_t numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
@@ -661,7 +661,7 @@ CutsceneCommandPlayBGM::CutsceneCommandPlayBGM(const vector<uint8_t>& rawData, i
 	}
 }
 
-string CutsceneCommandPlayBGM::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandPlayBGM::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -689,7 +689,7 @@ size_t CutsceneCommandPlayBGM::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + 0x30;
 }
 
-CutsceneCommandStopBGM::CutsceneCommandStopBGM(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandStopBGM::CutsceneCommandStopBGM(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	uint32_t numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
@@ -703,7 +703,7 @@ CutsceneCommandStopBGM::CutsceneCommandStopBGM(const vector<uint8_t>& rawData, i
 	}
 }
 
-string CutsceneCommandStopBGM::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandStopBGM::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -731,7 +731,7 @@ size_t CutsceneCommandStopBGM::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + 0x30;
 }
 
-EnvLightingEntry::EnvLightingEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+EnvLightingEntry::EnvLightingEntry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	setting = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
@@ -747,7 +747,7 @@ EnvLightingEntry::EnvLightingEntry(const vector<uint8_t>& rawData, int32_t rawDa
 }
 
 CutsceneCommandEnvLighting::CutsceneCommandEnvLighting(const vector<uint8_t>& rawData,
-                                                       int32_t rawDataIndex)
+                                                       uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
@@ -761,7 +761,7 @@ CutsceneCommandEnvLighting::CutsceneCommandEnvLighting(const vector<uint8_t>& ra
 	}
 }
 
-string CutsceneCommandEnvLighting::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandEnvLighting::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -789,7 +789,7 @@ size_t CutsceneCommandEnvLighting::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + (0x30 * entries.size());
 }
 
-Unknown9Entry::Unknown9Entry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+Unknown9Entry::Unknown9Entry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
@@ -802,7 +802,7 @@ Unknown9Entry::Unknown9Entry(const vector<uint8_t>& rawData, int32_t rawDataInde
 	;
 }
 
-CutsceneCommandUnknown9::CutsceneCommandUnknown9(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandUnknown9::CutsceneCommandUnknown9(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
@@ -816,7 +816,7 @@ CutsceneCommandUnknown9::CutsceneCommandUnknown9(const vector<uint8_t>& rawData,
 	}
 }
 
-string CutsceneCommandUnknown9::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandUnknown9::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -843,7 +843,7 @@ size_t CutsceneCommandUnknown9::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
 
-UnkEntry::UnkEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+UnkEntry::UnkEntry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	unused0 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
 	unused1 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
@@ -859,7 +859,7 @@ UnkEntry::UnkEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
 	unused11 = (uint32_t)BitConverter::ToInt32BE(rawData, rawDataIndex + 44);
 }
 
-CutsceneCommandUnknown::CutsceneCommandUnknown(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandUnknown::CutsceneCommandUnknown(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
@@ -873,7 +873,7 @@ CutsceneCommandUnknown::CutsceneCommandUnknown(const vector<uint8_t>& rawData, i
 	}
 }
 
-string CutsceneCommandUnknown::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandUnknown::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -901,7 +901,7 @@ size_t CutsceneCommandUnknown::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 0x30);
 }
 
-DayTimeEntry::DayTimeEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+DayTimeEntry::DayTimeEntry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
@@ -911,7 +911,7 @@ DayTimeEntry::DayTimeEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
 	unused = rawData[rawDataIndex + 8];
 }
 
-CutsceneCommandDayTime::CutsceneCommandDayTime(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandDayTime::CutsceneCommandDayTime(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
@@ -930,7 +930,7 @@ string CutsceneCommandDayTime::GetCName()
 	return "CsCmdDayTime";
 }
 
-string CutsceneCommandDayTime::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandDayTime::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -951,7 +951,7 @@ size_t CutsceneCommandDayTime::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
 
-TextboxEntry::TextboxEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+TextboxEntry::TextboxEntry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	startFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
@@ -961,7 +961,7 @@ TextboxEntry::TextboxEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
 	textID2 = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
 }
 
-CutsceneCommandTextbox::CutsceneCommandTextbox(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandTextbox::CutsceneCommandTextbox(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
@@ -980,7 +980,7 @@ string CutsceneCommandTextbox::GetCName()
 	return "CsCmdTextbox";
 }
 
-string CutsceneCommandTextbox::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandTextbox::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -1010,7 +1010,7 @@ size_t CutsceneCommandTextbox::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
 
-ActorAction::ActorAction(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+ActorAction::ActorAction(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 
@@ -1032,7 +1032,7 @@ ActorAction::ActorAction(const vector<uint8_t>& rawData, int32_t rawDataIndex)
 }
 
 CutsceneCommandActorAction::CutsceneCommandActorAction(const vector<uint8_t>& rawData,
-                                                       int32_t rawDataIndex)
+                                                       uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
@@ -1046,7 +1046,7 @@ CutsceneCommandActorAction::CutsceneCommandActorAction(const vector<uint8_t>& ra
 	}
 }
 
-string CutsceneCommandActorAction::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandActorAction::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 	string subCommand = "";
@@ -1088,7 +1088,7 @@ size_t CutsceneCommandActorAction::GetCommandSize()
 }
 
 CutsceneCommandTerminator::CutsceneCommandTerminator(const vector<uint8_t>& rawData,
-                                                     int32_t rawDataIndex)
+                                                     uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -1104,7 +1104,7 @@ string CutsceneCommandTerminator::GetCName()
 	return "CsCmdBase";
 }
 
-string CutsceneCommandTerminator::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandTerminator::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -1118,7 +1118,7 @@ size_t CutsceneCommandTerminator::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + 8;
 }
 
-CutsceneCommandEnd::CutsceneCommandEnd(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandEnd::CutsceneCommandEnd(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
@@ -1126,7 +1126,7 @@ CutsceneCommandEnd::CutsceneCommandEnd(const vector<uint8_t>& rawData, int32_t r
 	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
 }
 
-string CutsceneCommandEnd::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandEnd::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -1145,7 +1145,7 @@ size_t CutsceneCommandEnd::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + 6;
 }
 
-SpecialActionEntry::SpecialActionEntry(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+SpecialActionEntry::SpecialActionEntry(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 
@@ -1166,7 +1166,7 @@ SpecialActionEntry::SpecialActionEntry(const vector<uint8_t>& rawData, int32_t r
 }
 
 CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(const vector<uint8_t>& rawData,
-                                                           int32_t rawDataIndex)
+                                                           uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
@@ -1180,7 +1180,7 @@ CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(const vector<uint8_t>
 	}
 }
 
-string CutsceneCommandSpecialAction::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandSpecialAction::GenerateSourceCode(uint32_t baseAddress)
 {
 	string result = "";
 
@@ -1210,7 +1210,7 @@ size_t CutsceneCommandSpecialAction::GetCommandSize()
 	return CutsceneCommand::GetCommandSize() + (0x30 * entries.size());
 }
 
-CutsceneCommandNop::CutsceneCommandNop(const vector<uint8_t>& rawData, int32_t rawDataIndex)
+CutsceneCommandNop::CutsceneCommandNop(const vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	base = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
@@ -1229,7 +1229,7 @@ size_t CutsceneCommandNop::GetCommandSize()
 }
 
 CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const vector<uint8_t>& rawData,
-                                                         int32_t rawDataIndex)
+                                                         uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -1239,7 +1239,7 @@ CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const vector<uint8_t>& 
 	endFrame = (uint16_t)BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
 }
 
-string CutsceneCommandSceneTransFX::GenerateSourceCode(int32_t baseAddress)
+string CutsceneCommandSceneTransFX::GenerateSourceCode(uint32_t baseAddress)
 {
 	return StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i),\n", base, startFrame, endFrame);
 }

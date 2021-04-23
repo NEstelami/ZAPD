@@ -6,9 +6,9 @@
 class SetAlternateHeaders : public ZRoomCommand
 {
 public:
-	SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
 	virtual size_t GetRawDataSize();
 	virtual std::string GetCommandCName();
 	virtual RoomCommand GetRoomCommand();

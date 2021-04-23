@@ -27,7 +27,7 @@ public:
 	ZResourceType GetResourceType() override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const int32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
 
 private:
 	void ClearScalars();

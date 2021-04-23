@@ -8,7 +8,7 @@
 using namespace std;
 
 SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                               int32_t rawDataIndex)
+                                               uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
@@ -107,7 +107,7 @@ AnitmatedTextureParams::~AnitmatedTextureParams()
 {
 }
 
-string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0, (u32)%sAnimatedTextureList0x%06X",
@@ -149,7 +149,7 @@ string SetAnimatedTextureList::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-AnimatedTexture::AnimatedTexture(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+AnimatedTexture::AnimatedTexture(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: segment(rawData[rawDataIndex]), type(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
@@ -181,13 +181,13 @@ AnimatedTexture::~AnimatedTexture()
 		delete param;
 }
 
-ScrollingTexture::ScrollingTexture(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+ScrollingTexture::ScrollingTexture(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: xStep(rawData[rawDataIndex + 0]), yStep(rawData[rawDataIndex + 1]),
 	  width(rawData[rawDataIndex + 2]), height(rawData[rawDataIndex + 3])
 {
 }
 
-std::string ScrollingTexture::GenerateSourceCode(ZRoom* zRoom, int32_t baseAddress)
+std::string ScrollingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf("    { %i, %i, 0x%02X, 0x%02X },", xStep, yStep, width, height);
 }
@@ -197,19 +197,19 @@ size_t ScrollingTexture::GetParamsSize()
 	return 4;
 }
 
-FlashingTexturePrimColor::FlashingTexturePrimColor(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+FlashingTexturePrimColor::FlashingTexturePrimColor(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: r(rawData[rawDataIndex + 0]), g(rawData[rawDataIndex + 1]), b(rawData[rawDataIndex + 2]),
 	  a(rawData[rawDataIndex + 3]), lodFrac(rawData[rawDataIndex + 4])
 {
 }
 
-FlashingTextureEnvColor::FlashingTextureEnvColor(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+FlashingTextureEnvColor::FlashingTextureEnvColor(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: r(rawData[rawDataIndex + 0]), g(rawData[rawDataIndex + 1]), b(rawData[rawDataIndex + 2]),
 	  a(rawData[rawDataIndex + 3])
 {
 }
 
-FlashingTexture::FlashingTexture(std::vector<uint8_t> rawData, int32_t rawDataIndex, int32_t type)
+FlashingTexture::FlashingTexture(std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t type)
 	: cycleLength(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  numKeyFrames(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
 	  primColorSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4))),
@@ -240,7 +240,7 @@ FlashingTexture::FlashingTexture(std::vector<uint8_t> rawData, int32_t rawDataIn
 	}
 }
 
-std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int32_t baseAddress)
+std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
 	if (primColorSegmentOffset != 0)
 	{
@@ -337,7 +337,7 @@ size_t FlashingTexture::GetParamsSize()
 	return 16;
 }
 
-CyclingTextureParams::CyclingTextureParams(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+CyclingTextureParams::CyclingTextureParams(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: cycleLength(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  textureSegmentOffsetsSegmentOffset(
 		  GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4))),
@@ -363,7 +363,7 @@ CyclingTextureParams::CyclingTextureParams(std::vector<uint8_t> rawData, int32_t
 	}
 }
 
-std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int32_t baseAddress)
+std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{

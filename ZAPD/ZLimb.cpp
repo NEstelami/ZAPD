@@ -360,7 +360,7 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 }
 
 ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-             int32_t nRawDataIndex, ZFile* nParent)
+             uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
@@ -461,7 +461,7 @@ void ZLimb::ParseRawData()
 }
 
 void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const int32_t nRawDataIndex, const std::string& nRelPath)
+                           const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	segAddress = nRawDataIndex;

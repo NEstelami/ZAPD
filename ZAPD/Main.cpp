@@ -37,17 +37,17 @@ void BuildAssetModelIntermediette(const std::string& outPath);
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-void ErrorHandler(int32_t sig)
+void ErrorHandler(int sig)
 {
 	void* array[4096];
-	const int32_t nMaxFrames = sizeof(array) / sizeof(array[0]);
+	const size_t nMaxFrames = sizeof(array) / sizeof(array[0]);
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
 	for (size_t i = 1; i < size; i++)
 	{
 		Dl_info info;
-		int32_t gotAddress = dladdr(array[i], &info);
+		uint32_t gotAddress = dladdr(array[i], &info);
 		string functionName(symbols[i]);
 
 		if (gotAddress != 0 && info.dli_sname != nullptr)
@@ -75,7 +75,7 @@ void ErrorHandler(int32_t sig)
 }
 #endif
 
-int32_t main(int32_t argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
 

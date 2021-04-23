@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
+SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
@@ -23,7 +23,7 @@ SetEntranceList::~SetEntranceList()
 		delete entry;
 }
 
-string SetEntranceList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetEntranceList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput =
 		StringHelper::Sprintf("%s 0x00, (u32)&%sEntranceList0x%06X",
@@ -79,7 +79,7 @@ RoomCommand SetEntranceList::GetRoomCommand()
 	return RoomCommand::SetEntranceList;
 }
 
-EntranceEntry::EntranceEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+EntranceEntry::EntranceEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 {
 	startPositionIndex = rawData[rawDataIndex + 0];
 	roomToLoad = rawData[rawDataIndex + 1];

@@ -9,7 +9,7 @@ class PathwayEntry
 public:
 	int16_t x, y, z;
 
-	PathwayEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
 	int32_t numPoints;
 	int8_t unk1;   // (MM Only)
@@ -21,7 +21,7 @@ public:
 struct PathwayList
 {
 public:
-	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, int32_t rawDataIndex, int32_t length);
+	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t length);
 	~PathwayList();
 
 	void GetSourceOutputCode(const std::string& prefix);
@@ -39,7 +39,7 @@ class ZSetPathways : public ZResource, public ZRoomCommand
 {
 public:
 	ZSetPathways(ZFile* nParent);
-	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex,
+	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             bool nIsFromHeader);
 	~ZSetPathways();
 
@@ -48,8 +48,8 @@ public:
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
-	std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress) override;
-	std::string GenerateSourceCodePass2(std::string roomName, int32_t baseAddress) override;
+	std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
+	std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
 	RoomCommand GetRoomCommand() override;
 	size_t GetRawDataSize() override;
 	std::string GetCommandCName() override;

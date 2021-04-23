@@ -7,7 +7,7 @@
 using namespace std;
 
 SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                         int32_t rawDataIndex)
+                                         uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	uint8_t numLights = rawData[rawDataIndex + 1];
@@ -49,7 +49,7 @@ SetLightingSettings::~SetLightingSettings()
 		delete setting;
 }
 
-string SetLightingSettings::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetLightingSettings::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s %i, (u32)&%sLightSettings0x%06X",
@@ -57,7 +57,7 @@ string SetLightingSettings::GenerateSourceCodePass1(string roomName, int32_t bas
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetLightingSettings::GenerateSourceCodePass2(string roomName, int32_t baseAddress)
+string SetLightingSettings::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
 {
 	return "";
 }
@@ -78,7 +78,7 @@ RoomCommand SetLightingSettings::GetRoomCommand()
 	return RoomCommand::SetLightingSettings;
 }
 
-LightingSettings::LightingSettings(vector<uint8_t> rawData, int32_t rawDataIndex)
+LightingSettings::LightingSettings(vector<uint8_t> rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 

@@ -17,7 +17,7 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 }
 
 ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
-                     const std::vector<uint8_t>& nRawData, int32_t nRawDataIndex, ZFile* nParent)
+                     const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
@@ -126,7 +126,7 @@ void ZSkeleton::ParseRawData()
 }
 
 void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const int32_t nRawDataIndex, const std::string& nRelPath)
+                               const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 

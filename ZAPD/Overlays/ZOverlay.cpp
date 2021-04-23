@@ -208,7 +208,7 @@ string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 		output += StringHelper::Sprintf(".word 0x%08X\n", reloc->CalcRelocationWord());
 	}
 
-	int32_t offset = ((int32_t)entries.size() * 4) + 20;
+	size_t offset = (entries.size() * 4) + 20;
 
 	while (offset % 16 != 12)
 	{

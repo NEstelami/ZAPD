@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetMinimapList::SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
+SetMinimapList::SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
@@ -33,7 +33,7 @@ SetMinimapList::~SetMinimapList()
 		delete entry;
 }
 
-string SetMinimapList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetMinimapList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x%02X, (u32)&%sMinimapList0x%06X",
@@ -41,7 +41,7 @@ string SetMinimapList::GenerateSourceCodePass1(string roomName, int32_t baseAddr
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetMinimapList::GenerateSourceCodePass2(string roomName, int32_t baseAddress)
+string SetMinimapList::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput = "";
 
@@ -107,7 +107,7 @@ size_t SetMinimapList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (minimaps.size() * 10);
 }
 
-MinimapEntry::MinimapEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+MinimapEntry::MinimapEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
 	  unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),

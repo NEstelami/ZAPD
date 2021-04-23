@@ -1,6 +1,6 @@
 #include "OutputFormatter.h"
 
-int32_t OutputFormatter::Write(const char* buf, int32_t count)
+int OutputFormatter::Write(const char* buf, int count)
 {
 	for (int32_t i = 0; i < count; i++)
 	{

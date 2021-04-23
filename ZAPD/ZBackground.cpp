@@ -18,7 +18,7 @@ ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 }
 
 ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                         int32_t nRawDataIndex, ZFile* nParent)
+                         uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
@@ -64,7 +64,7 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 }
 
 void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                                 int32_t nRawDataIndex, const std::string& nRelPath)
+                                 uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar("", "");

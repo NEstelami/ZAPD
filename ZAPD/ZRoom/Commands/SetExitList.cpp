@@ -6,7 +6,7 @@
 
 using namespace std;
 
-SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
+SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
@@ -19,7 +19,7 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t ra
 	_rawDataIndex = rawDataIndex;
 }
 
-string SetExitList::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetExitList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput =
 		StringHelper::Sprintf("%s 0x00, (u32)&%sExitList0x%06X",

@@ -145,13 +145,13 @@ public:
 
 	ZLimb(ZFile* nParent);
 	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-	      int32_t nRawDataIndex, ZFile* nParent);
+	      uint32_t nRawDataIndex, ZFile* nParent);
 	~ZLimb();
 	
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const int32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
 	size_t GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;

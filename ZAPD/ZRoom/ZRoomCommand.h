@@ -57,10 +57,10 @@ public:
 	uint32_t commandSet;
 
 	ZRoomCommand() = default;
-	ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	virtual ~ZRoomCommand();
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
-	virtual std::string GenerateSourceCodePass2(std::string roomName, int32_t baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
+	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress);
 	virtual std::string GenerateSourceCodePass3(std::string roomName);
 	virtual RoomCommand GetRoomCommand();
 	virtual size_t GetRawDataSize();

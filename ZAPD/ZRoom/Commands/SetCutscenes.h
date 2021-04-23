@@ -7,7 +7,7 @@
 class CutsceneEntry
 {
 public:
-	CutsceneEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	CutsceneEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
 	uint32_t segmentOffset;
 	uint16_t exit;
@@ -18,11 +18,11 @@ public:
 class SetCutscenes : public ZRoomCommand
 {
 public:
-	SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetCutscenes();
 
 	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
 	virtual RoomCommand GetRoomCommand();
 	virtual size_t GetRawDataSize();
 	virtual std::string GetCommandCName();

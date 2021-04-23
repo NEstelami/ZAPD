@@ -3,7 +3,7 @@
 
 using namespace std;
 
-SetWind::SetWind(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
+SetWind::SetWind(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	windWest = rawData[rawDataIndex + 0x04];
@@ -12,7 +12,7 @@ SetWind::SetWind(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataInd
 	clothFlappingStrength = rawData[rawDataIndex + 0x07];
 }
 
-string SetWind::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetWind::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X, 0x%02X",

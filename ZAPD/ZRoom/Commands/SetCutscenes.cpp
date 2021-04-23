@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex)
+SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numCutscenes = rawData[rawDataIndex + 1];
@@ -87,7 +87,7 @@ SetCutscenes::~SetCutscenes()
 		delete entry;
 }
 
-string SetCutscenes::GenerateSourceCodePass1(string roomName, int32_t baseAddress)
+string SetCutscenes::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	string pass1 = ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress);
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
@@ -137,7 +137,7 @@ string SetCutscenes::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-CutsceneEntry::CutsceneEntry(std::vector<uint8_t> rawData, int32_t rawDataIndex)
+CutsceneEntry::CutsceneEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: segmentOffset(BitConverter::ToInt32BE(rawData, rawDataIndex + 0) & 0x00FFFFFF),
 	  exit(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)), entrance(rawData[rawDataIndex + 6]),
 	  flag(rawData[rawDataIndex + 7])

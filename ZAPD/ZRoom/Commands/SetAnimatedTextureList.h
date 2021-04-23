@@ -7,15 +7,15 @@ class AnitmatedTextureParams
 {
 public:
 	virtual ~AnitmatedTextureParams();
-	virtual std::string GenerateSourceCode(ZRoom* zRoom, int32_t baseAddress) = 0;
+	virtual std::string GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress) = 0;
 	virtual size_t GetParamsSize() = 0;
 };
 
 class ScrollingTexture : public AnitmatedTextureParams
 {
 public:
-	ScrollingTexture(std::vector<uint8_t> rawData, int32_t rawDataIndex);
-	std::string GenerateSourceCode(ZRoom* zRoom, int32_t baseAddress) override;
+	ScrollingTexture(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
+	std::string GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress) override;
 	size_t GetParamsSize() override;
 
 	int8_t xStep;
@@ -27,7 +27,7 @@ public:
 class FlashingTexturePrimColor
 {
 public:
-	FlashingTexturePrimColor(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	FlashingTexturePrimColor(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
 	uint8_t r;
 	uint8_t g;
@@ -39,7 +39,7 @@ public:
 class FlashingTextureEnvColor
 {
 public:
-	FlashingTextureEnvColor(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	FlashingTextureEnvColor(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
 	uint8_t r;
 	uint8_t g;
@@ -50,8 +50,8 @@ public:
 class FlashingTexture : public AnitmatedTextureParams
 {
 public:
-	FlashingTexture(std::vector<uint8_t> rawData, int32_t rawDataIndex, int32_t type);
-	std::string GenerateSourceCode(ZRoom* zRoom, int32_t baseAddress) override;
+	FlashingTexture(std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t type);
+	std::string GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress) override;
 	size_t GetParamsSize() override;
 
 	uint16_t cycleLength;
@@ -68,8 +68,8 @@ public:
 class CyclingTextureParams : public AnitmatedTextureParams
 {
 public:
-	CyclingTextureParams(std::vector<uint8_t> rawData, int32_t rawDataIndex);
-	std::string GenerateSourceCode(ZRoom* zRoom, int32_t baseAddress) override;
+	CyclingTextureParams(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
+	std::string GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress) override;
 	size_t GetParamsSize() override;
 
 	uint16_t cycleLength;
@@ -83,7 +83,7 @@ public:
 class AnimatedTexture
 {
 public:
-	AnimatedTexture(std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	AnimatedTexture(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	virtual ~AnimatedTexture();
 
 	int8_t segment;
@@ -95,11 +95,11 @@ public:
 class SetAnimatedTextureList : public ZRoomCommand
 {
 public:
-	SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int32_t rawDataIndex);
+	SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetAnimatedTextureList();
 
 	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, int32_t baseAddress);
+	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
 	virtual RoomCommand GetRoomCommand();
 	virtual size_t GetRawDataSize();
 	virtual std::string GetCommandCName();
