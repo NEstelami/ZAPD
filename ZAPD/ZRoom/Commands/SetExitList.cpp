@@ -13,13 +13,7 @@ SetExitList::SetExitList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-std::string SetExitList::GetBodySourceCode()
-{
-	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
-}
-
-string SetExitList::GenerateSourceCodePass1(string roomName)
+void SetExitList::ParseRawDataLate()
 {
 	// Parse Entrances and Generate Declaration
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
@@ -32,22 +26,31 @@ string SetExitList::GenerateSourceCodePass1(string roomName)
 
 		currentPtr += 2;
 	}
+}
 
-	string declaration = "";
+void SetExitList::DeclareReferencesLate(const std::string& prefix)
+{
+	if (!exits.empty()) {
+		std::string declaration = "";
 
-	for (size_t i = 0; i < exits.size(); i++)
-	{
-		declaration += StringHelper::Sprintf("    0x%04X,", exits.at(i));
-		if (i + 1 < exits.size())
-			declaration += "\n";
+		for (size_t i = 0; i < exits.size(); i++)
+		{
+			declaration += StringHelper::Sprintf("    0x%04X,", exits.at(i));
+			if (i + 1 < exits.size())
+				declaration += "\n";
+		}
+
+		parent->AddDeclarationArray(
+			segmentOffset, DeclarationAlignment::Align4, exits.size() * 2, "u16",
+			StringHelper::Sprintf("%sExitList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+			exits.size(), declaration);
 	}
+}
 
-	parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::Align4, exits.size() * 2, "u16",
-		StringHelper::Sprintf("%sExitList0x%06X", zRoom->GetName().c_str(), segmentOffset),
-		exits.size(), declaration);
-
-	return GetBodySourceCode();
+std::string SetExitList::GetBodySourceCode()
+{
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
+	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
 string SetExitList::GetCommandCName()

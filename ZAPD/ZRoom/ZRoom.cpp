@@ -148,8 +148,10 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
+			// TODO: add this to command set
 			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
-			pathway->GenerateSourceCodePass1(name);
+			pathway->ParseRawDataLate();
+			pathway->DeclareReferencesLate(name);
 
 			delete pathway;
 		}
@@ -326,11 +328,17 @@ void ZRoom::ProcessCommandSets()
 		ParseCommands(setCommands, commandSets[0]);
 		commandSets.erase(commandSets.begin());
 
+		for (auto& cmd: setCommands)
+		{
+			cmd->ParseRawDataLate();
+			cmd->DeclareReferencesLate(name);
+		}
+
 		for (size_t i = 0; i < setCommands.size(); i++)
 		{
 			ZRoomCommand* cmd = setCommands[i];
 			cmd->commandSet = GETSEGOFFSET(commandSet);
-			string pass1 = cmd->GenerateSourceCodePass1(name);
+			std::string bodyStr = cmd->GetBodySourceCode();
 
 			Declaration* decl = parent->AddDeclaration(
 				cmd->cmdAddress,
@@ -338,7 +346,7 @@ void ZRoom::ProcessCommandSets()
 				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
 				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), GETSEGOFFSET(commandSet),
 			                          cmd->cmdIndex, cmd->cmdID),
-				StringHelper::Sprintf("\n    %s\n", pass1.c_str()));
+				StringHelper::Sprintf("\n    %s\n", bodyStr.c_str()));
 
 			decl->rightText = StringHelper::Sprintf("// 0x%04X", cmd->cmdAddress);
 		}

@@ -23,14 +23,19 @@ void ZRoomCommand::DeclareReferences(const std::string& prefix)
 {
 }
 
+void ZRoomCommand::ParseRawDataLate()
+{
+
+}
+
+void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
+{
+
+}
+
 std::string ZRoomCommand::GetBodySourceCode()
 {
 	return StringHelper::Sprintf("%s,", GetCommandHex().c_str());
-}
-
-string ZRoomCommand::GenerateSourceCodePass1(string roomName)
-{
-	return GetBodySourceCode();
 }
 
 string ZRoomCommand::GenerateExterns()

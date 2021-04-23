@@ -25,22 +25,6 @@ ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, 
 		ZResource::parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
-{
-	ZResource::parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
-	                       StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
-	                       StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
-	                                             commandSet & 0x00FFFFFF, cmdIndex, cmdID),
-	                       StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
-}
-
-string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
-{
-	pathwayList.GetSourceOutputCode(ZResource::parent->GetName());
-
-	return "";
-}
-
 void ZSetPathways::ParseRawDataLate()
 {
 	if (isFromHeader)
@@ -58,19 +42,31 @@ void ZSetPathways::ParseRawDataLate()
 	pathwayList = PathwayList(ZResource::parent, ZResource::rawData, segmentOffset, numPaths);
 }
 
+void ZSetPathways::DeclareReferencesLate(const std::string& prefix)
+{
+	pathwayList.GetSourceOutputCode(prefix);
+}
+
+void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	ZResource::parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
+	                       StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
+	                       StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
+	                                             commandSet & 0x00FFFFFF, cmdIndex, cmdID),
+	                       StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
+}
+
+string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
+{
+	pathwayList.GetSourceOutputCode(ZResource::parent->GetName());
+
+	return "";
+}
+
 std::string ZSetPathways::GetBodySourceCode()
 {
 	std::string listName = ZResource::parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("%s, 0, (u32)%s", GetCommandHex().c_str(), listName.c_str());
-}
-
-string ZSetPathways::GenerateSourceCodePass1(string roomName)
-{
-	ParseRawDataLate();
-
-	pathwayList.GetSourceOutputCode(ZResource::parent->GetName());
-
-	return GetBodySourceCode();
 }
 
 int32_t ZSetPathways::GetRawDataSize()
