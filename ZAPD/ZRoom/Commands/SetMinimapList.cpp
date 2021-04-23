@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetMinimapList::SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetMinimapList::SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	listSegmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 0));

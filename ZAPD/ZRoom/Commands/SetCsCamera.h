@@ -6,7 +6,7 @@
 class CsCameraEntry
 {
 public:
-	CsCameraEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	int16_t GetNumPoints() const;
 	int GetSegmentOffset() const;
@@ -21,7 +21,7 @@ public:
 class SetCsCamera : public ZRoomCommand
 {
 public:
-	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

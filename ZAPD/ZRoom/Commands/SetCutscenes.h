@@ -7,7 +7,7 @@
 class CutsceneEntry
 {
 public:
-	CutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	CutsceneEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	uint32_t segmentOffset;
 	uint16_t exit;
@@ -18,7 +18,7 @@ public:
 class SetCutscenes : public ZRoomCommand
 {
 public:
-	SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetCutscenes(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 	~SetCutscenes();
 
 	void ParseRawData() override;

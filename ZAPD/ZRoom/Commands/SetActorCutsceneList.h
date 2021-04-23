@@ -17,7 +17,7 @@ protected:
 	uint8_t letterboxSize;
 
 public:
-	ActorCutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	ActorCutsceneEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	std::string GetBodySourceCode() const;
 	std::string GetSourceTypeName() const;
@@ -26,7 +26,7 @@ public:
 class SetActorCutsceneList : public ZRoomCommand
 {
 public:
-	SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                        int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {

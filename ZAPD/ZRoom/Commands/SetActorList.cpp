@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetActorList::SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numActors = cmdArg1;

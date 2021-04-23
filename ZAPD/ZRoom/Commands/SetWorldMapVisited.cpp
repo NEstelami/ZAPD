@@ -3,7 +3,7 @@
 
 using namespace std;
 
-SetWorldMapVisited::SetWorldMapVisited(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+SetWorldMapVisited::SetWorldMapVisited(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                        int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {

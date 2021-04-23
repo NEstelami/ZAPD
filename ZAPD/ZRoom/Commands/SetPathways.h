@@ -9,7 +9,7 @@ class PathwayEntry
 public:
 	int16_t x, y, z;
 
-	PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	PathwayEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	int numPoints;
 	int8_t unk1;   // (MM Only)
@@ -22,7 +22,7 @@ struct PathwayList
 {
 public:
 	PathwayList() = default;
-	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, int rawDataIndex, int length);
+	PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, int rawDataIndex, int length);
 
 	void GetSourceOutputCode(const std::string& prefix);
 	int32_t GetRawDataSize();

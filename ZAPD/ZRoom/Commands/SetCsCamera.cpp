@@ -6,7 +6,7 @@
 
 using namespace std;
 
-SetCsCamera::SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetCsCamera::SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
@@ -118,7 +118,7 @@ RoomCommand SetCsCamera::GetRoomCommand()
 	return RoomCommand::SetCsCamera;
 }
 
-CsCameraEntry::CsCameraEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+CsCameraEntry::CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: baseOffset(rawDataIndex), type(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
 	  numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))

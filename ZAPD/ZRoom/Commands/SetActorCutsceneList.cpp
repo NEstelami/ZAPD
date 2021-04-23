@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                            int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -78,7 +78,7 @@ RoomCommand SetActorCutsceneList::GetRoomCommand()
 	return RoomCommand::SetActorCutsceneList;
 }
 
-ActorCutsceneEntry::ActorCutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+ActorCutsceneEntry::ActorCutsceneEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: priority(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
 	  length(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  unk4(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)),

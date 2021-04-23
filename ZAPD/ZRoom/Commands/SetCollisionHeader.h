@@ -6,7 +6,7 @@
 class SetCollisionHeader : public ZRoomCommand
 {
 public:
-	SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetCollisionHeader(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 	~SetCollisionHeader();
 
 	void ParseRawData() override;

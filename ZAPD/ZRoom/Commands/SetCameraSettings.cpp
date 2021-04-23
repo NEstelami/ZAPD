@@ -4,11 +4,11 @@
 
 using namespace std;
 
-SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	cameraMovement = cmdArg1;
-	mapHighlight = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
+	mapHighlight = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 }
 
 string SetCameraSettings::GetBodySourceCode()

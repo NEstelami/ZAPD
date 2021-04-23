@@ -3,7 +3,7 @@
 
 using namespace std;
 
-EndMarker::EndMarker(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+EndMarker::EndMarker(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }

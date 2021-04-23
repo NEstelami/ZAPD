@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
@@ -72,7 +72,7 @@ int32_t SetMinimapChests::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (chests.size() * 10);
 }
 
-MinimapChest::MinimapChest(std::vector<uint8_t> rawData, int rawDataIndex)
+MinimapChest::MinimapChest(const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
 	  unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),

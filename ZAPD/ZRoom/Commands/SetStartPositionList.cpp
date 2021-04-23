@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                            int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {

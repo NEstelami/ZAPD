@@ -4,7 +4,7 @@
 
 using namespace std;
 
-SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetLightList::SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numLights = cmdArg1;

@@ -20,7 +20,7 @@ protected:
 class SetMinimapList : public ZRoomCommand
 {
 public:
-	SetMinimapList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

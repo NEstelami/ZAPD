@@ -90,19 +90,18 @@ RoomCommand ZSetPathways::GetRoomCommand()
 	return RoomCommand::SetPathways;
 }
 
-PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+PathwayEntry::PathwayEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: numPoints(rawData[rawDataIndex + 0]), unk1(rawData[rawDataIndex + 1]),
 	  unk2(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  listSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
 	uint32_t currentPtr = listSegmentOffset;
-	uint8_t* data = rawData.data();
 
 	for (int i = 0; i < numPoints; i++)
 	{
-		x = BitConverter::ToInt16BE(data, currentPtr + 0);
-		y = BitConverter::ToInt16BE(data, currentPtr + 2);
-		z = BitConverter::ToInt16BE(data, currentPtr + 4);
+		x = BitConverter::ToInt16BE(rawData, currentPtr + 0);
+		y = BitConverter::ToInt16BE(rawData, currentPtr + 2);
+		z = BitConverter::ToInt16BE(rawData, currentPtr + 4);
 
 		Vec3s point = Vec3s(x, y, z);
 		points.push_back(point);
@@ -120,13 +119,12 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex)
 	}
 }
 
-PathwayList::PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, int rawDataIndex, int length)
+PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, int rawDataIndex, int length)
 {
 	parent = nParent;
 	_rawDataIndex = rawDataIndex;
 
 	uint32_t currentPtr = rawDataIndex;
-	uint8_t* data = rawData.data();
 
 	for (int pathIndex = 0; pathIndex < length; pathIndex++)
 	{

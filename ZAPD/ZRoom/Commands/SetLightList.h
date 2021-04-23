@@ -9,7 +9,7 @@
 class SetLightList : public ZRoomCommand
 {
 public:
-	SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 

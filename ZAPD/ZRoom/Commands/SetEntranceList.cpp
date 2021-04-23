@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetEntranceList::SetEntranceList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined

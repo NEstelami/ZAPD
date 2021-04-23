@@ -6,7 +6,7 @@ class RoomEntry
 {
 public:
 	RoomEntry(int32_t nVAS, int32_t nVAE);
-	RoomEntry(std::vector<uint8_t> rawData, int rawDataIndex);
+	RoomEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 protected:
 	int32_t virtualAddressStart;
@@ -16,7 +16,7 @@ protected:
 class SetRoomList : public ZRoomCommand
 {
 public:
-	SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 	virtual void DeclareReferences(const std::string& prefix);

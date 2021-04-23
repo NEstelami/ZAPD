@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetCutscenes::SetCutscenes(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
@@ -110,7 +110,7 @@ RoomCommand SetCutscenes::GetRoomCommand()
 	return RoomCommand::SetCutscenes;
 }
 
-CutsceneEntry::CutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+CutsceneEntry::CutsceneEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: segmentOffset(BitConverter::ToInt32BE(rawData, rawDataIndex + 0) & 0x00FFFFFF),
 	  exit(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)), entrance(rawData[rawDataIndex + 6]),
 	  flag(rawData[rawDataIndex + 7])

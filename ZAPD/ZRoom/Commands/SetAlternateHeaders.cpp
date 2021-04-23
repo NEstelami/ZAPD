@@ -5,7 +5,7 @@
 
 using namespace std;
 
-SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                          int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {

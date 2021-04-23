@@ -26,7 +26,7 @@ public:
 class SetActorList : public ZRoomCommand
 {
 public:
-	SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

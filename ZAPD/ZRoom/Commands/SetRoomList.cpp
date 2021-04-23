@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetRoomList::SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	ParseRawData();
@@ -86,7 +86,7 @@ RoomEntry::RoomEntry(int32_t nVAS, int32_t nVAE)
 	virtualAddressEnd = nVAE;
 }
 
-RoomEntry::RoomEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+RoomEntry::RoomEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
 	: RoomEntry(BitConverter::ToInt32BE(rawData, rawDataIndex + 0),
                 BitConverter::ToInt32BE(rawData, rawDataIndex + 4))
 {

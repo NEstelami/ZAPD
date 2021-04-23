@@ -5,7 +5,7 @@
 class MinimapChest
 {
 public:
-	MinimapChest(std::vector<uint8_t> rawData, int rawDataIndex);
+	MinimapChest(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	std::string GetBodySourceCode() const;
 
@@ -20,7 +20,7 @@ protected:
 class SetMinimapChests : public ZRoomCommand
 {
 public:
-	SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetMinimapChests(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

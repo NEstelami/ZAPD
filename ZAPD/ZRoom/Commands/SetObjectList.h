@@ -5,7 +5,7 @@
 class SetObjectList : public ZRoomCommand
 {
 public:
-	SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex);
+	SetObjectList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix);
