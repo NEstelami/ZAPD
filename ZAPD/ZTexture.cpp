@@ -26,6 +26,7 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	height = 0;
 	type = TextureType::Error;
 	isPalette = false;
+	isRawDataFixed = false;
 }
 
 ZTexture::~ZTexture()
@@ -77,6 +78,7 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
 
 	tex->FixRawData();
+	tex->CalcHash();
 	tex->PrepareBitmap();
 
 	return tex;
@@ -208,12 +210,25 @@ void ZTexture::FixRawData()
 			rawData[i + 1] = tmp;
 		}
 	}
+
+	isRawDataFixed = !isRawDataFixed;
 }
 
 void ZTexture::PrepareBitmap()
 {
-	bmpRgb = new uint8_t[width * height * 3];
-	bmpRgba = new uint8_t[width * height * 4];
+	switch (type)
+	{
+		case TextureType::RGBA16bpp:
+		case TextureType::RGBA32bpp:
+		case TextureType::GrayscaleAlpha4bpp:
+		case TextureType::GrayscaleAlpha8bpp:
+		case TextureType::GrayscaleAlpha16bpp:
+			bmpRgba = new uint8_t[width * height * 4];
+			break;
+		default:
+			bmpRgb = new uint8_t[width * height * 3];
+			break;
+	}
 
 	switch (type)
 	{
@@ -775,16 +790,26 @@ TextureType ZTexture::GetTextureType()
 
 void ZTexture::Save(const std::string& outFolder)
 {
-	CalcHash();
+	//CalcHash();
 
-	std::string outPath = outFolder;
-
-	// POOL CHECK
-	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
+	// Optionally generate text file containing CRC information
+	if (Globals::Instance->testMode)
 	{
-		outPath = Path::GetDirectoryName(Globals::Instance->cfg.texturePool[hash]);
-		outName = Path::GetFileNameWithoutExtension(Globals::Instance->cfg.texturePool[hash]);
+		if (hash != 0)
+		{
+			File::WriteAllText(StringHelper::Sprintf("%s/%s.txt", Globals::Instance->outputPath.c_str(),
+				outName.c_str()), StringHelper::Sprintf("%08lX", hash));
+			hash = 0;
+		}
 	}
+
+	if (rawDataIndex == 0xC160)
+	{
+		int bp = 0;
+	}
+
+	std::string outPath = GetPoolOutPath(outFolder);
+	//outName = GetPoolOutName(outName);
 
 	if (!Directory::Exists(outPath))
 		Directory::CreateDirectory(outPath);
@@ -867,9 +892,29 @@ std::string ZTexture::GetSourceTypeName()
 
 void ZTexture::CalcHash()
 {
+	// Make sure raw data is fixed before we calc the hash...
+	bool fixFlag = !isRawDataFixed;
+
+	if (rawDataIndex == 0x37B60)
+	{
+		//uint32_t hashA = CRC32B(rawData.data(), GetRawDataSize());
+		//FixRawData();
+		//uint32_t hashB = CRC32B(rawData.data(), GetRawDataSize());
+		int bp = 0;
+	}
+	
+	if (fixFlag)
+		FixRawData();
+
 	hash = CRC32B(rawData.data(), GetRawDataSize());
-	// File::WriteAllText(StringHelper::Sprintf("%s/%s.txt", Globals::Instance->outputPath.c_str(),
-	// outName.c_str()), StringHelper::Sprintf("%08lX", hash)); hash = 0;
+
+	if (hash == 0x16CCF21D)
+	{
+		int bp = 0;
+	}
+
+	if (fixFlag)
+		FixRawData();
 }
 
 std::string ZTexture::GetExternalExtension()
@@ -897,6 +942,29 @@ std::string ZTexture::GetExternalExtension()
 	default:
 		return "ERROR";
 	}
+}
+
+std::string ZTexture::GetPoolOutPath(std::string defaultValue)
+{
+	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
+		return Path::GetDirectoryName(Globals::Instance->cfg.texturePool[hash].path);
+
+	return defaultValue;
+}
+
+std::string ZTexture::GetPoolOutName(std::string defaultValue)
+{
+	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
+	{
+		TexturePoolEntry entry = Globals::Instance->cfg.texturePool[hash];
+		
+		if (entry.name == "")
+			return Path::GetFileNameWithoutExtension(entry.path);
+		else
+			return entry.name;
+	}
+
+	return defaultValue;
 }
 
 string ZTexture::GetSourceOutputHeader(const std::string& prefix)

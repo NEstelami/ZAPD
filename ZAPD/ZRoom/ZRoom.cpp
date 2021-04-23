@@ -526,14 +526,16 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 		declaration += item.second->GetSourceOutputCode(prefix);
 
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", Globals::Instance->outputPath.c_str());
+		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath);
 
-		item.second->Save(Globals::Instance->outputPath);
+		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+			printf("SAVING IMAGE TO %s\n", outPath.c_str());
+
+		item.second->Save(outPath);
 
 		parent->AddDeclarationIncludeArray(
 			item.first,
-			StringHelper::Sprintf("%s/%s.%s.inc.c", Globals::Instance->outputPath.c_str(),
+			StringHelper::Sprintf("%s/%s.%s.inc.c", outPath.c_str(),
 		                          Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
 		                          item.second->GetExternalExtension().c_str()),
 			item.second->GetRawDataSize(), "u64",

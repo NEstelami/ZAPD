@@ -14,6 +14,12 @@ enum VerbosityLevel
 	VERBOSITY_DEBUG
 };
 
+struct TexturePoolEntry
+{
+	std::string path = ""; // Path to Shared Texture
+	std::string name = ""; // Symbol Name of Texture
+};
+
 class GameConfig
 {
 public:
@@ -22,7 +28,7 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 	std::vector<std::string> actorList;
 	std::vector<std::string> objectList;
-	std::map<uint32_t, std::string> texturePool;  // Key = CRC, Value = Path to Shared Texture
+	std::map<uint32_t, TexturePoolEntry> texturePool;  // Key = CRC
 
 	GameConfig() = default;
 };
