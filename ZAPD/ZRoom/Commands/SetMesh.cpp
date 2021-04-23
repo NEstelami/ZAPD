@@ -16,33 +16,48 @@ SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDa
                  int segAddressOffset)
 	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
-	string declaration = "";
 	meshHeaderType = rawData.at(segmentOffset + 0);
-
-	PolygonTypeBase* poly;
 
 	if (meshHeaderType == 0)
 	{
 		// Hack for Syotes
 		SyotesHack(segAddressOffset);
-
-		poly = new PolygonType2(parent, rawData, segmentOffset, zRoom);
 	}
-	else if (meshHeaderType == 1)
+
+	ParseRawData();
+	DeclareReferences(zRoom->GetName());
+}
+
+void SetMesh::ParseRawData()
+{
+	switch (meshHeaderType)
 	{
-		poly = new PolygonType1(parent, rawData, segmentOffset, zRoom);
-	}
-	else if (meshHeaderType == 2)
-	{
-		poly = new PolygonType2(parent, rawData, segmentOffset, zRoom);
+	case 0:
+		polyType = std::make_shared<PolygonType2>(parent, rawData, segmentOffset, zRoom);
+		break;
+
+	case 1:
+		polyType = std::make_shared<PolygonType1>(parent, rawData, segmentOffset, zRoom);
+		break;
+
+	case 2:
+		polyType = std::make_shared<PolygonType2>(parent, rawData, segmentOffset, zRoom);
+		break;
+
+	default:
+		throw std::runtime_error(StringHelper::Sprintf(
+			"Error in SetMesh::ParseRawData\n" 
+			"\t Unknown meshHeaderType: %i\n", meshHeaderType));
 	}
 
-	poly->ParseRawData();
-	poly->SetName(poly->GetDefaultName(zRoom->GetName()));
-	poly->DeclareReferences(zRoom->GetName());
-	poly->DeclareAndGenerateOutputCode(zRoom->GetName());
+	polyType->ParseRawData();
+}
 
-	delete poly;
+void SetMesh::DeclareReferences(const std::string& prefix)
+{
+	polyType->SetName(polyType->GetDefaultName(prefix));
+	polyType->DeclareReferences(prefix);
+	polyType->DeclareAndGenerateOutputCode(prefix);
 }
 
 void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)

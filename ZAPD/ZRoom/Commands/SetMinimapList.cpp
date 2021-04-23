@@ -32,40 +32,46 @@ void SetMinimapList::ParseRawData()
 
 void SetMinimapList::DeclareReferences(const std::string& prefix)
 {
-	std::string declaration = StringHelper::Sprintf("(u32)%sMinimapEntryList0x%06X, 0x%08X",
-		                                           prefix.c_str(), listSegmentOffset, unk4);
-
-	parent->AddDeclaration(
-		segmentOffset, DeclarationAlignment::Align4, 8, "MinimapList",
-		StringHelper::Sprintf("%sMinimapList0x%06X", prefix.c_str(), segmentOffset),
-		declaration);
-
-
-	declaration = "";
-
-	size_t index = 0;
-	for (const auto& entry : minimaps)
 	{
-		declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
+		std::string declaration = "";
 
-		if (index < minimaps.size() - 1)
-			declaration += "\n";
+		size_t index = 0;
+		for (const auto& entry : minimaps)
+		{
+			declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
 
-		index++;
+			if (index < minimaps.size() - 1)
+				declaration += "\n";
+
+			index++;
+		}
+
+		parent->AddDeclarationArray(
+			listSegmentOffset, DeclarationAlignment::Align4,
+			minimaps.size() * 10, "MinimapEntry",
+			StringHelper::Sprintf("%sMinimapEntryList0x%06X", prefix.c_str(), listSegmentOffset),
+			minimaps.size(), declaration);
 	}
 
-	parent->AddDeclarationArray(
-		listSegmentOffset, DeclarationAlignment::Align4,
-		minimaps.size() * 10, "MinimapEntry",
-		StringHelper::Sprintf("%sMinimapEntryList0x%06X", prefix.c_str(), listSegmentOffset),
-		minimaps.size(), declaration);
+
+	{
+		std::string listName = parent->GetDeclarationPtrName(listSegmentOffset);
+
+		std::string declaration = StringHelper::Sprintf("(u32)%s, 0x%08X",
+													listName.c_str(), unk4);
+
+		parent->AddDeclaration(
+			segmentOffset, DeclarationAlignment::Align4, 8, "MinimapList",
+			StringHelper::Sprintf("%sMinimapList0x%06X", prefix.c_str(), segmentOffset),
+			declaration);
+
+	}
 }
 
 string SetMinimapList::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0, (u32)&%sMinimapList0x%06X",
-	                          GetCommandHex().c_str(),
-	                          zRoom->GetName().c_str(), segmentOffset, unk4);
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
+	return StringHelper::Sprintf("%s, 0, (u32)%s", GetCommandHex().c_str(), listName.c_str());
 }
 
 

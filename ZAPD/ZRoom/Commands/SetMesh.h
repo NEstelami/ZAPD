@@ -3,6 +3,7 @@
 #include "../../ZDisplayList.h"
 #include "../ZRoomCommand.h"
 #include "ZBackground.h"
+#include <memory>
 
 class PolygonDlist
 {
@@ -163,14 +164,15 @@ protected:
 	uint8_t num;
 	segptr_t start;
 	segptr_t end;
-
-	//std::vector<PolygonDlist> polyDLists;
 };
 
 class SetMesh : public ZRoomCommand
 {
 public:
 	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex, int segAddressOffset);
+
+	void ParseRawData() override;
+	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() override;
 
@@ -180,6 +182,7 @@ public:
 
 private:
 	uint8_t meshHeaderType;
+	std::shared_ptr<PolygonTypeBase> polyType;
 
 	std::string GenDListExterns(ZDisplayList* dList);
 	void SyotesHack(int segAddressOffset);
