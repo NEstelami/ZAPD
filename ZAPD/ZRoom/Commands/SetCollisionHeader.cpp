@@ -30,7 +30,7 @@ SetCollisionHeader::~SetCollisionHeader()
 string SetCollisionHeader::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_COL_HEADER(%s)", listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_COL_HEADER(%s)", listName.c_str());
 }
 
 string SetCollisionHeader::GetCommandCName() const

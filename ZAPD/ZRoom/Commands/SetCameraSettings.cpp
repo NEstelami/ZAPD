@@ -14,7 +14,7 @@ SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, const std::vector<uint8_t>& 
 
 string SetCameraSettings::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("SCENE_CMD_MISC_SETTINGS(0x%02X, 0x%08X)", cameraMovement,
+	return StringHelper::Sprintf("SCENECMD_MISC_SETTINGS(0x%02X, 0x%08X)", cameraMovement,
 	                             mapHighlight);
 }
 

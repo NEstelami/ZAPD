@@ -55,7 +55,7 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 std::string SetAlternateHeaders::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_ALTERNATE_HEADER_LIST(%s)", listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_ALTERNATE_HEADER_LIST(%s)", listName.c_str());
 }
 
 string SetAlternateHeaders::GetCommandCName() const

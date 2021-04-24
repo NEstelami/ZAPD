@@ -117,7 +117,7 @@ void SetAnimatedTextureList::DeclareReferences(const std::string& prefix)
 std::string SetAnimatedTextureList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_TEXTURE_ANIM_LIST(%s)", listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_TEXTURE_ANIM_LIST(%s)", listName.c_str());
 }
 
 int32_t SetAnimatedTextureList::GetRawDataSize()

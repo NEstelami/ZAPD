@@ -11,7 +11,7 @@ SetWorldMapVisited::SetWorldMapVisited(ZRoom* nZRoom, const std::vector<uint8_t>
 
 string SetWorldMapVisited::GetBodySourceCode() const
 {
-	return "SCENE_CMD_WORLD_MAP_VISITED()";
+	return "SCENECMD_WORLD_MAP_VISITED()";
 }
 
 string SetWorldMapVisited::GetCommandCName() const

@@ -64,7 +64,7 @@ void SetMinimapList::DeclareReferences(const std::string& prefix)
 string SetMinimapList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_INFO(%s)", listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_MINIMAP_INFO(%s)", listName.c_str());
 }
 
 string SetMinimapList::GetCommandCName() const

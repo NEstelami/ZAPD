@@ -55,7 +55,7 @@ void SetObjectList::DeclareReferences(const std::string& prefix)
 std::string SetObjectList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_OBJECT_LIST(%i, %s)", objects.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_OBJECT_LIST(%i, %s)", objects.size(), listName.c_str());
 }
 
 int32_t SetObjectList::GetRawDataSize()

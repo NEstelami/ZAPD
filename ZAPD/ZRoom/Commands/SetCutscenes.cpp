@@ -88,7 +88,7 @@ SetCutscenes::~SetCutscenes()
 string SetCutscenes::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_LIST(%i, %s)", numCutscenes, listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_CUTSCENE_LIST(%i, %s)", numCutscenes, listName.c_str());
 }
 
 int32_t SetCutscenes::GetRawDataSize()

@@ -56,7 +56,7 @@ void SetStartPositionList::DeclareReferences(const std::string& prefix)
 std::string SetStartPositionList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_SPAWN_LIST(%i, %s)", actors.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_SPAWN_LIST(%i, %s)", actors.size(), listName.c_str());
 }
 
 string SetStartPositionList::GetCommandCName() const

@@ -68,7 +68,7 @@ string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 std::string ZSetPathways::GetBodySourceCode() const
 {
 	std::string listName = ZResource::parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_PATH_LIST(%s)", listName.c_str());
+	return StringHelper::Sprintf("SCENECMD_PATH_LIST(%s)", listName.c_str());
 }
 
 int32_t ZSetPathways::GetRawDataSize()
