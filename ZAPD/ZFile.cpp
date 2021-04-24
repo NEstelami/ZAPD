@@ -722,8 +722,6 @@ string ZFile::ProcessDeclarations()
 	// Optimization: See if there are any arrays side by side that can be merged...
 	auto declarationKeys =
 		vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeys.begin(), declarationKeys.end(),
-	     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
 
 	pair<int32_t, Declaration*> lastItem = declarationKeys[0];
 

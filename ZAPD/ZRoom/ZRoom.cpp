@@ -50,11 +50,6 @@ REGISTER_ZFILENODE(Scene, ZRoom);
 
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
-	textures = map<int32_t, ZTexture*>();
-	commands = vector<ZRoomCommand*>();
-	commandSets = vector<CommandSet>();
-	extDefines = "";
-	scene = nullptr;
 	roomCount = -1;
 	canHaveInner = true;
 }
@@ -451,48 +446,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	ProcessCommandSets();
 
 	// Check for texture intersections
-	{
-		string defines = "";
-		if (textures.size() != 0)
-		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
-
-			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
-			{
-				uint32_t currentOffset = texturesSorted[i].first;
-				uint32_t nextOffset = texturesSorted[i + 1].first;
-				auto& currentTex = textures.at(currentOffset);
-				int texSize = currentTex->GetRawDataSize();
-
-				// Intersection
-				if ((currentOffset + texSize) > texturesSorted[i + 1].first)
-				{
-					uint32_t offsetDiff = nextOffset - currentOffset;
-					if (currentTex->isPalette)
-					{
-						// Shrink palette so it doesn't overlaps
-						currentTex->SetHeight(1);
-						currentTex->SetWidth(offsetDiff / currentTex->GetPixelMultiplyer());
-					}
-					else
-					{
-						defines += StringHelper::Sprintf(
-							"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
-							nextOffset, prefix.c_str(), currentOffset,
-							offsetDiff);
-
-						parent->declarations.erase(nextOffset);
-						textures.erase(nextOffset);
-						texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-						i--;
-					}
-				}
-			}
-		}
-
-		parent->defines += defines;
-	}
+	parent->defines += ProcessTextureIntersections(textures, prefix, parent);
 
 	for (pair<int32_t, ZTexture*> item : textures)
 	{

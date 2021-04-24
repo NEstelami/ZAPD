@@ -1796,6 +1796,57 @@ static int GfxdCallback_Matrix(uint32_t seg)
 	return 1;
 }
 
+std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures, std::string prefix, ZFile* parent)
+{
+	if (textures.empty())
+		return "";
+
+	std::string defines = "";
+	vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
+
+	for (size_t i = 0; i < texturesSorted.size() - 1; i++)
+	{
+		uint32_t currentOffset = texturesSorted[i].first;
+		uint32_t nextOffset = texturesSorted[i + 1].first;
+		auto& currentTex = textures.at(currentOffset);
+		int texSize = currentTex->GetRawDataSize();
+
+		if ((currentOffset + texSize) > nextOffset)
+		{
+			uint32_t offsetDiff = nextOffset - currentOffset;
+			if (currentTex->isPalette)
+			{
+				// Shrink palette so it doesn't overlaps
+				currentTex->SetHeight(1);
+				currentTex->SetWidth(offsetDiff / currentTex->GetPixelMultiplyer());
+			}
+			else
+			{
+				std::string texName = parent->GetDeclarationPtrName(currentOffset);
+				std::string texNextName;
+
+				Declaration* nextDecl = parent->GetDeclaration(nextOffset);
+				if (nextDecl == nullptr)
+					texNextName = textures.at(nextOffset)->GetName();
+				else
+					texNextName = nextDecl->varName;
+
+				defines += StringHelper::Sprintf(
+					"#define %s ((u32)%s + 0x%06X)\n", texNextName.c_str(),
+					texName.c_str(), offsetDiff);
+
+				parent->declarations.erase(nextOffset);
+				textures.erase(nextOffset);
+				texturesSorted.erase(texturesSorted.begin() + i + 1);
+
+				i--;
+			}
+		}
+	}
+
+	return defines;
+}
+
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
 	string sourceOutput = "";
@@ -1815,7 +1866,6 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
-			// int vtxSize = verticesSorted[i].second.size() * 16;
 			size_t vtxSize = vertices[verticesSorted[i].first].size() * 16;
 
 			if ((verticesSorted[i].first + (int)vtxSize) > verticesSorted[i + 1].first)
@@ -1825,15 +1875,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				int intersectIndex = intersectAmt / 16;
 
 				for (size_t j = intersectIndex; j < verticesSorted[i + 1].second.size(); j++)
-				{
 					vertices[verticesSorted[i].first].push_back(verticesSorted[i + 1].second[j]);
-				}
-
-				// defines += StringHelper::Sprintf("#define %sVtx_%06X ((u32)%sVtx_%06X +
-				// 0x%06X)\n", prefix.c_str(), verticesSorted[i + 1].first, prefix.c_str(),
-				// verticesSorted[i].first, verticesSorted[i + 1].first - verticesSorted[i].first);
-
-				// int nSize = (int)vertices[verticesSorted[i].first].size();
 
 				vertices.erase(verticesSorted[i + 1].first);
 				verticesSorted.erase(verticesSorted.begin() + i + 1);
@@ -1879,80 +1921,12 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 	// Check for texture intersections
 	{
-		if (scene != nullptr && scene->textures.size() != 0)
+		if (scene != nullptr)
 		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(scene->textures.begin(),
-			                                                 scene->textures.end());
-
-			sort(texturesSorted.begin(), texturesSorted.end(),
-			     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
-
-			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
-			{
-				int texSize = scene->textures[texturesSorted[i].first]->GetRawDataSize();
-
-				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
-				{
-					// int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
-					// 1].first;
-
-					defines += StringHelper::Sprintf(
-						"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", scene->GetName().c_str(),
-						texturesSorted[i + 1].first, scene->GetName().c_str(),
-						texturesSorted[i].first,
-						texturesSorted[i + 1].first - texturesSorted[i].first);
-
-					scene->parent->declarations.erase(texturesSorted[i + 1].first);
-					scene->textures.erase(texturesSorted[i + 1].first);
-					texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-					i--;
-				}
-			}
-
-			scene->extDefines += defines;
+			scene->extDefines += ProcessTextureIntersections(scene->textures, scene->GetName(), scene->parent);
+			defines += scene->extDefines;
 		}
-
-		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
-
-			sort(texturesSorted.begin(), texturesSorted.end(),
-			     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
-
-			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
-			{
-				if (texturesSorted.size() == 0)  // ?????
-					break;
-
-				int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
-
-				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
-				{
-					// int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
-					// 1].first;
-
-					// If we're working with a palette, resize it to its "real" dimensions
-					if (texturesSorted[i].second->isPalette)
-					{
-						texturesSorted[i].second->SetWidth(
-							(texturesSorted[i + 1].first - texturesSorted[i].first) / 2);
-						texturesSorted[i].second->SetHeight(1);
-					}
-					else
-					{
-						defines += StringHelper::Sprintf(
-							"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
-							texturesSorted[i + 1].first, prefix.c_str(), texturesSorted[i].first,
-							texturesSorted[i + 1].first - texturesSorted[i].first);
-
-						textures.erase(texturesSorted[i + 1].first);
-						texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-						i--;
-					}
-				}
-			}
-		}
+		defines += ProcessTextureIntersections(textures, prefix, parent);
 
 		// Generate Texture Declarations
 		for (pair<int32_t, ZTexture*> item : textures)
