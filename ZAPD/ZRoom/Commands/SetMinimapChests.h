@@ -25,11 +25,11 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
-	RoomCommand GetRoomCommand() override;
+	RoomCommand GetRoomCommand() const override;
 	int32_t GetRawDataSize() override;
-	std::string GetCommandCName() override;
+	std::string GetCommandCName() const override;
 
 private:
 	std::vector<MinimapChest> chests;

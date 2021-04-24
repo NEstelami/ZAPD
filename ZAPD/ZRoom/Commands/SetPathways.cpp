@@ -9,13 +9,13 @@ REGISTER_ZFILENODE(Path, ZSetPathways);
 
 using namespace std;
 
-ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(nParent)
+ZSetPathways::ZSetPathways(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
 ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
                            bool nIsFromHeader)
-	: ZResource(nZRoom->parent), ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
+	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
 	ZResource::rawData = nRawData;
 	ZResource::rawDataIndex = nRawDataIndex;
@@ -63,7 +63,7 @@ string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZSetPathways::GetBodySourceCode()
+std::string ZSetPathways::GetBodySourceCode() const
 {
 	std::string listName = ZResource::parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_PATH_LIST(%s)", listName.c_str());
@@ -76,12 +76,12 @@ int32_t ZSetPathways::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + size;
 }
 
-string ZSetPathways::GetCommandCName()
+string ZSetPathways::GetCommandCName() const
 {
 	return "SCmdPathList";
 }
 
-RoomCommand ZSetPathways::GetRoomCommand()
+RoomCommand ZSetPathways::GetRoomCommand() const
 {
 	return RoomCommand::SetPathways;
 }

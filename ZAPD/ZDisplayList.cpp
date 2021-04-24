@@ -2334,11 +2334,6 @@ ZResourceType ZDisplayList::GetResourceType()
 	return ZResourceType::DisplayList;
 }
 
-vector<uint8_t> ZDisplayList::GetRawData()
-{
-	return rawData;
-}
-
 int ZDisplayList::GetRawDataSize()
 {
 	return (int)instructions.size() * 8;

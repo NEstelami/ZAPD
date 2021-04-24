@@ -10,10 +10,10 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix);
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
-	std::string GetCommandCName() override;
-	RoomCommand GetRoomCommand() override;
+	std::string GetCommandCName() const override;
+	RoomCommand GetRoomCommand() const override;
 	int32_t GetRawDataSize() override;
 
 private:

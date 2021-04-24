@@ -112,7 +112,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	return sourceOutput;
 }
 
-std::string SetMesh::GetBodySourceCode()
+std::string SetMesh::GetBodySourceCode() const
 {
 	std::string list = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_MESH(%s)", list.c_str());
@@ -123,12 +123,12 @@ int32_t SetMesh::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize();
 }
 
-string SetMesh::GetCommandCName()
+string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
 }
 
-RoomCommand SetMesh::GetRoomCommand()
+RoomCommand SetMesh::GetRoomCommand() const
 {
 	return RoomCommand::SetMesh;
 }
@@ -354,7 +354,7 @@ int BgImage::GetRawDataSize()
 	return 0x1C;
 }
 
-std::string BgImage::GetBodySourceCode(bool arrayElement)
+std::string BgImage::GetBodySourceCode(bool arrayElement) const
 {
 	std::string bodyStr = "    ";
 	if (arrayElement)
@@ -582,7 +582,7 @@ int PolygonType1::GetRawDataSize() const
 	return 0x20;
 }
 
-std::string PolygonType1::GetBodySourceCode()
+std::string PolygonType1::GetBodySourceCode() const
 {
 	std::string bodyStr = "\n    ";
 
@@ -678,7 +678,7 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, DeclarationPadding::Pad16, 4, "static s32", "terminatorMaybe", "0x01000000");
 }
 
-std::string PolygonType2::GetBodySourceCode()
+std::string PolygonType2::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(start);
 

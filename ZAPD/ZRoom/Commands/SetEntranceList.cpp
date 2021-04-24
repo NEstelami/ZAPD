@@ -51,18 +51,18 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 	}
 }
 
-std::string SetEntranceList::GetBodySourceCode()
+std::string SetEntranceList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_ENTRANCE_LIST(%s)", listName.c_str());
 }
 
-string SetEntranceList::GetCommandCName()
+string SetEntranceList::GetCommandCName() const
 {
 	return "SCmdEntranceList";
 }
 
-RoomCommand SetEntranceList::GetRoomCommand()
+RoomCommand SetEntranceList::GetRoomCommand() const
 {
 	return RoomCommand::SetEntranceList;
 }

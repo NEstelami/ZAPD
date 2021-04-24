@@ -13,17 +13,17 @@ SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, const std::vector<uint8_t>& 
 	lightingSettingsControl = rawData.at(rawDataIndex + 0x06);
 }
 
-std::string SetSkyboxSettings::GetBodySourceCode()
+std::string SetSkyboxSettings::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("SCENE_CMD_SKYBOX_SETTINGS(0x%02X, 0x%02X, 0x%02X, 0x%02X)", unk1, skyboxNumber, cloudsType, lightingSettingsControl);
 }
 
-string SetSkyboxSettings::GetCommandCName()
+string SetSkyboxSettings::GetCommandCName() const
 {
 	return "SCmdSkyboxSettings";
 }
 
-RoomCommand SetSkyboxSettings::GetRoomCommand()
+RoomCommand SetSkyboxSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetSkyboxSettings;
 }

@@ -86,7 +86,7 @@ SetCutscenes::~SetCutscenes()
 		delete cutscene;
 }
 
-string SetCutscenes::GetBodySourceCode()
+string SetCutscenes::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_LIST(%i, %s)", numCutscenes, listName.c_str());
@@ -97,12 +97,12 @@ int32_t SetCutscenes::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (0);
 }
 
-string SetCutscenes::GetCommandCName()
+string SetCutscenes::GetCommandCName() const
 {
 	return "SCmdCutsceneData";
 }
 
-RoomCommand SetCutscenes::GetRoomCommand()
+RoomCommand SetCutscenes::GetRoomCommand() const
 {
 	return RoomCommand::SetCutscenes;
 }

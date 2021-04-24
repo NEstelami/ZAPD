@@ -27,18 +27,18 @@ SetCollisionHeader::~SetCollisionHeader()
 	delete collisionHeader;
 }
 
-string SetCollisionHeader::GetBodySourceCode()
+string SetCollisionHeader::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_COL_HEADER(%s)", listName.c_str());
 }
 
-string SetCollisionHeader::GetCommandCName()
+string SetCollisionHeader::GetCommandCName() const
 {
 	return "SCmdColHeader";
 }
 
-RoomCommand SetCollisionHeader::GetRoomCommand()
+RoomCommand SetCollisionHeader::GetRoomCommand() const
 {
 	return RoomCommand::SetCollisionHeader;
 }

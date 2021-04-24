@@ -51,18 +51,18 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 	}
 }
 
-std::string SetAlternateHeaders::GetBodySourceCode()
+std::string SetAlternateHeaders::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_ALTERNATE_HEADER_LIST(%s)", listName.c_str());
 }
 
-string SetAlternateHeaders::GetCommandCName()
+string SetAlternateHeaders::GetCommandCName() const
 {
 	return "SCmdAltHeaders";
 }
 
-RoomCommand SetAlternateHeaders::GetRoomCommand()
+RoomCommand SetAlternateHeaders::GetRoomCommand() const
 {
 	return RoomCommand::SetAlternateHeaders;
 }

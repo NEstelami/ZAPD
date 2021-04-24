@@ -8,17 +8,17 @@ Unused1D::Unused1D(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDa
 {
 }
 
-std::string Unused1D::GetBodySourceCode()
+std::string Unused1D::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("{ %s, 0x00, 0x00} ", GetCommandHex().c_str());
+	return StringHelper::Sprintf("{ %s, 0x00, 0x00 }", GetCommandHex().c_str());
 }
 
-string Unused1D::GetCommandCName()
+string Unused1D::GetCommandCName() const
 {
 	return "SCmdBase";
 }
 
-RoomCommand Unused1D::GetRoomCommand()
+RoomCommand Unused1D::GetRoomCommand() const
 {
 	return RoomCommand::Unused1D;
 }

@@ -49,18 +49,18 @@ void SetMinimapChests::DeclareReferences(const std::string& prefix)
 		chests.size(), declaration);
 }
 
-std::string SetMinimapChests::GetBodySourceCode()
+std::string SetMinimapChests::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_COMPASS_ICON_INFO(0x%02X, %s)", chests.size(), listName.c_str());
 }
 
-string SetMinimapChests::GetCommandCName()
+string SetMinimapChests::GetCommandCName() const
 {
 	return "SCmdMinimapChests";
 }
 
-RoomCommand SetMinimapChests::GetRoomCommand()
+RoomCommand SetMinimapChests::GetRoomCommand() const
 {
 	return RoomCommand::SetMinimapChests;
 }

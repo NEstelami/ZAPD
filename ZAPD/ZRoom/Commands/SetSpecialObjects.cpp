@@ -11,17 +11,17 @@ SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& 
 	globalObject = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
 }
 
-std::string SetSpecialObjects::GetBodySourceCode()
+std::string SetSpecialObjects::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("SCENE_CMD_SPECIAL_FILES(0x%02X, 0x%04X)", elfMessage, globalObject);
 }
 
-string SetSpecialObjects::GetCommandCName()
+string SetSpecialObjects::GetCommandCName() const
 {
 	return "SCmdSpecialFiles";
 }
 
-RoomCommand SetSpecialObjects::GetRoomCommand()
+RoomCommand SetSpecialObjects::GetRoomCommand() const
 {
 	return RoomCommand::SetSpecialObjects;
 }

@@ -3,20 +3,21 @@
 #include "ZRoom.h"
 #include "BitConverter.h"
 
-using namespace std;
+ZRoomCommand::ZRoomCommand(ZFile* nParent)
+	: ZResource(parent)
+{
+}
 
 ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex)
-	: zRoom{nZRoom}, parent{nZRoom->parent}, rawData {nRawData}, rawDataIndex{nRawDataIndex}
+	: ZResource(nZRoom->parent), zRoom{nZRoom}
 {
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = nRawDataIndex;
 	cmdID = static_cast<RoomCommand>(rawData.at(rawDataIndex));
 	cmdAddress = rawDataIndex;
 
 	cmdArg1 = rawData.at(rawDataIndex + 1);
 	segmentOffset = GETSEGOFFSET(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4));
-}
-
-void ZRoomCommand::ParseRawData()
-{
 }
 
 void ZRoomCommand::DeclareReferences(const std::string& prefix)
@@ -25,50 +26,23 @@ void ZRoomCommand::DeclareReferences(const std::string& prefix)
 
 void ZRoomCommand::ParseRawDataLate()
 {
-
 }
 
 void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
 {
-
 }
 
-std::string ZRoomCommand::GetBodySourceCode()
-{
-	return StringHelper::Sprintf("%s,", GetCommandHex().c_str());
-}
-
-string ZRoomCommand::GenerateExterns()
-{
-	return "";
-}
-
-std::string ZRoomCommand::Save()
-{
-	return std::string();
-}
-
-std::string ZRoomCommand::PreGenSourceFiles()
-{
-	return std::string();
-}
-
-int32_t ZRoomCommand::GetRawDataSize()
-{
-	return 8;
-}
-
-string ZRoomCommand::GetCommandCName()
+std::string ZRoomCommand::GetCommandCName() const
 {
 	return "SCmdBase";
 }
 
-RoomCommand ZRoomCommand::GetRoomCommand()
+RoomCommand ZRoomCommand::GetRoomCommand() const
 {
 	return RoomCommand::Error;
 }
 
-std::string ZRoomCommand::GetCommandHex()
+std::string ZRoomCommand::GetCommandHex() const
 {
 	return StringHelper::Sprintf("0x%02X", static_cast<uint8_t>(cmdID));
 }

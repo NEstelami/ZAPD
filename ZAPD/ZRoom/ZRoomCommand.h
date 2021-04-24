@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "ZFile.h"
+#include "ZResource.h"
 
 class ZRoom;
 
@@ -49,42 +50,33 @@ enum class RoomCommand : uint8_t
 	Error = 0xFF
 };
 
-class ZRoomCommand
+class ZRoomCommand : public ZResource
 {
 public:
-	RoomCommand cmdID;
 	int32_t cmdAddress;
 	int32_t cmdIndex;
-	int32_t cmdSet;
 	uint32_t commandSet;
 
-	ZRoomCommand() = default;
+	ZRoomCommand(ZFile* nParent);
 	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex);
 
-	virtual void ParseRawData();
+	// virtual void ParseRawData();
 	virtual void DeclareReferences(const std::string& prefix);
 
 	virtual void ParseRawDataLate();
 	virtual void DeclareReferencesLate(const std::string& prefix);
 
-	virtual std::string GetBodySourceCode();
-	virtual std::string GenerateExterns();
-	virtual std::string Save();
-	virtual std::string PreGenSourceFiles();
+	virtual std::string GetBodySourceCode() const = 0;
 
 	// Getters/Setters
-	virtual RoomCommand GetRoomCommand();
-	virtual int32_t GetRawDataSize();
-	virtual std::string GetCommandCName();
-	virtual std::string GetCommandHex();
+	virtual RoomCommand GetRoomCommand() const;
+	virtual std::string GetCommandCName() const;
+	virtual std::string GetCommandHex() const;
 
 protected:
 	ZRoom* zRoom;
-	ZFile* parent;
 
-	std::vector<uint8_t> rawData;
-	int rawDataIndex;
-
+	RoomCommand cmdID;
 	uint8_t cmdArg1;
 	uint32_t segmentOffset;
 };

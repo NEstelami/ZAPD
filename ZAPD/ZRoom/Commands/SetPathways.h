@@ -33,12 +33,12 @@ private:
 	int _rawDataIndex;
 };
 
-class ZSetPathways : public ZResource, public ZRoomCommand
+class ZSetPathways : public ZRoomCommand
 {
 public:
 	ZSetPathways(ZFile* nParent);
 	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	             bool nIsFromHeader);
+	             bool nIsFromHeader=true);
 
 	void ParseRawDataLate() override;
 	void DeclareReferencesLate(const std::string& prefix) override;
@@ -46,11 +46,11 @@ public:
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
-	RoomCommand GetRoomCommand() override;
+	RoomCommand GetRoomCommand() const override;
 	int32_t GetRawDataSize() override;
-	std::string GetCommandCName() override;
+	std::string GetCommandCName() const override;
 
 private:
 	PathwayList pathwayList;

@@ -62,7 +62,7 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 	}
 }
 
-std::string SetActorList::GetBodySourceCode()
+std::string SetActorList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_ACTOR_LIST(%i, %s)", numActors, listName.c_str());
@@ -96,12 +96,12 @@ size_t SetActorList::GetActorListArraySize()
 	return actorCount;
 }
 
-string SetActorList::GetCommandCName()
+string SetActorList::GetCommandCName() const
 {
 	return "SCmdActorList";
 }
 
-RoomCommand SetActorList::GetRoomCommand()
+RoomCommand SetActorList::GetRoomCommand() const
 {
 	return RoomCommand::SetActorList;
 }

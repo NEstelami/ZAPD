@@ -97,7 +97,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		cameras.size(), declaration);
 }
 
-std::string SetCsCamera::GetBodySourceCode()
+std::string SetCsCamera::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_UNUSED_2(%i, %s)", cameras.size(), listName.c_str());
@@ -108,12 +108,12 @@ int32_t SetCsCamera::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }
 
-string SetCsCamera::GetCommandCName()
+string SetCsCamera::GetCommandCName() const
 {
 	return "SCmdCsCameraList";
 }
 
-RoomCommand SetCsCamera::GetRoomCommand()
+RoomCommand SetCsCamera::GetRoomCommand() const
 {
 	return RoomCommand::SetCsCamera;
 }

@@ -22,10 +22,10 @@ public:
 	void ParseRawDataLate() override;
 	void DeclareReferencesLate(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
-	RoomCommand GetRoomCommand() override;
-	std::string GetCommandCName() override;
+	RoomCommand GetRoomCommand() const override;
+	std::string GetCommandCName() const override;
 
 private:
 	std::vector<EntranceEntry> entrances;

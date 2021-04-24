@@ -36,23 +36,23 @@ void SetRoomList::DeclareReferences(const std::string& prefix)
 		StringHelper::Sprintf("%sRoomList0x%06X", prefix.c_str(), segmentOffset), 0, "");
 }
 
-std::string SetRoomList::GetBodySourceCode()
+std::string SetRoomList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_ROOM_LIST(%i, %s)", rooms.size(), listName.c_str());
 }
 
-string SetRoomList::GetCommandCName()
+string SetRoomList::GetCommandCName() const
 {
 	return "SCmdRoomList";
 }
 
-RoomCommand SetRoomList::GetRoomCommand()
+RoomCommand SetRoomList::GetRoomCommand() const
 {
 	return RoomCommand::SetRoomList;
 }
 
-std::string SetRoomList::PreGenSourceFiles()
+void SetRoomList::PreGenSourceFiles()
 {
 	std::string declaration = "";
 
@@ -74,8 +74,6 @@ std::string SetRoomList::PreGenSourceFiles()
 		segmentOffset, DeclarationAlignment::None, rooms.size() * 8, "RomFile",
 		StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
 		declaration);
-
-	return "";
 }
 
 RoomEntry::RoomEntry(int32_t nVAS, int32_t nVAE)

@@ -11,17 +11,17 @@ SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, const std::vector<uint8_t>& 
 	mapHighlight = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 }
 
-string SetCameraSettings::GetBodySourceCode()
+string SetCameraSettings::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("SCENE_CMD_MISC_SETTINGS(0x%02X, 0x%08X)", cameraMovement, mapHighlight);
 }
 
-string SetCameraSettings::GetCommandCName()
+string SetCameraSettings::GetCommandCName() const
 {
 	return "SCmdMiscSettings";
 }
 
-RoomCommand SetCameraSettings::GetRoomCommand()
+RoomCommand SetCameraSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetCameraSettings;
 }

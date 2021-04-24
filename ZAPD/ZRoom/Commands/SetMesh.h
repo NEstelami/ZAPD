@@ -81,7 +81,7 @@ public:
 
 	static int GetRawDataSize();
 
-	std::string GetBodySourceCode(bool arrayElement);
+	std::string GetBodySourceCode(bool arrayElement) const;
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	static std::string GetSourceTypeName();
@@ -96,7 +96,7 @@ public:
 	virtual void ParseRawData() = 0;
 	virtual void DeclareReferences(const std::string& prefix) = 0;
 
-	virtual std::string GetBodySourceCode() = 0;
+	virtual std::string GetBodySourceCode() const = 0;
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 	void DeclareAndGenerateOutputCode(const std::string& prefix);
 
@@ -141,7 +141,7 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
 
@@ -156,7 +156,7 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
 	int GetRawDataSize() const override;
 
@@ -169,16 +169,16 @@ protected:
 class SetMesh : public ZRoomCommand
 {
 public:
-	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex, int segAddressOffset);
+	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex, int segAddressOffset=0);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
-	RoomCommand GetRoomCommand() override;
+	RoomCommand GetRoomCommand() const override;
 	int32_t GetRawDataSize() override;
-	std::string GetCommandCName() override;
+	std::string GetCommandCName() const override;
 
 private:
 	uint8_t meshHeaderType;

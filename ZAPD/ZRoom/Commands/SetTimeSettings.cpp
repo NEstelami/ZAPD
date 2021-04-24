@@ -12,17 +12,17 @@ SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawD
 	unk = rawData.at(rawDataIndex + 6);
 }
 
-std::string SetTimeSettings::GetBodySourceCode()
+std::string SetTimeSettings::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("SCENE_CMD_TIME_SETTINGS(%i, %i, %i)", hour, min, unk);
 }
 
-string SetTimeSettings::GetCommandCName()
+string SetTimeSettings::GetCommandCName() const
 {
 	return "SCmdTimeSettings";
 }
 
-RoomCommand SetTimeSettings::GetRoomCommand()
+RoomCommand SetTimeSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetTimeSettings;
 }

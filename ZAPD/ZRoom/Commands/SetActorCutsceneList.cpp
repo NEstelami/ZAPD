@@ -54,7 +54,7 @@ void SetActorCutsceneList::DeclareReferences(const std::string& prefix)
 	}
 }
 
-string SetActorCutsceneList::GetBodySourceCode()
+string SetActorCutsceneList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_LIST(%i, %s)", cutscenes.size(), listName.c_str());
@@ -65,12 +65,12 @@ int32_t SetActorCutsceneList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);
 }
 
-string SetActorCutsceneList::GetCommandCName()
+string SetActorCutsceneList::GetCommandCName() const
 {
 	return "SCmdCutsceneActorList";
 }
 
-RoomCommand SetActorCutsceneList::GetRoomCommand()
+RoomCommand SetActorCutsceneList::GetRoomCommand() const
 {
 	return RoomCommand::SetActorCutsceneList;
 }

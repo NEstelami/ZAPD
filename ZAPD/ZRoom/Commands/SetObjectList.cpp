@@ -51,7 +51,7 @@ void SetObjectList::DeclareReferences(const std::string& prefix)
 	}
 }
 
-std::string SetObjectList::GetBodySourceCode()
+std::string SetObjectList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_OBJECT_LIST(%i, %s)", objects.size(), listName.c_str());
@@ -62,12 +62,12 @@ int32_t SetObjectList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (objects.size() * 2);
 }
 
-string SetObjectList::GetCommandCName()
+string SetObjectList::GetCommandCName() const
 {
 	return "SCmdObjectList";
 }
 
-RoomCommand SetObjectList::GetRoomCommand()
+RoomCommand SetObjectList::GetRoomCommand() const
 {
 	return RoomCommand::SetObjectList;
 }

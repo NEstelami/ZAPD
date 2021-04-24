@@ -53,7 +53,7 @@ void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 		declaration);
 }
 
-string SetTransitionActorList::GetBodySourceCode()
+string SetTransitionActorList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_TRANSI_ACTOR_LIST(%i, %s)", transitionActors.size(), listName.c_str());
@@ -64,12 +64,12 @@ int32_t SetTransitionActorList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (transitionActors.size() * 16);
 }
 
-string SetTransitionActorList::GetCommandCName()
+string SetTransitionActorList::GetCommandCName() const
 {
 	return "SCmdTransiActorList";
 }
 
-RoomCommand SetTransitionActorList::GetRoomCommand()
+RoomCommand SetTransitionActorList::GetRoomCommand() const
 {
 	return RoomCommand::SetTransitionActorList;
 }

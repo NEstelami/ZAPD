@@ -47,18 +47,18 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 	}
 }
 
-std::string SetLightList::GetBodySourceCode()
+std::string SetLightList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_UNUSED_LIGHT_LIST(%i, %s)", numLights, listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_POS_LIGHT_LIST(%i, %s)", numLights, listName.c_str());
 }
 
-string SetLightList::GetCommandCName()
+string SetLightList::GetCommandCName() const
 {
 	return "SCmdLightList";
 }
 
-RoomCommand SetLightList::GetRoomCommand()
+RoomCommand SetLightList::GetRoomCommand() const
 {
 	return RoomCommand::SetLightList;
 }

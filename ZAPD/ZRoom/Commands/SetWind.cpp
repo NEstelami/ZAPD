@@ -12,18 +12,17 @@ SetWind::SetWind(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawData
 	clothFlappingStrength = rawData[rawDataIndex + 0x07];
 }
 
-string SetWind::GetBodySourceCode()
+string SetWind::GetBodySourceCode() const
 {
-	//return StringHelper::Sprintf("SCENE_CMD_WIND_SETTINGS(0x%02X, 0x%02X, 0x%02X, 0x%02X)", windWest, windVertical, windSouth, clothFlappingStrength);
 	return StringHelper::Sprintf("SCENE_CMD_WIND_SETTINGS(%i, %i, %i, %i)", windWest, windVertical, windSouth, clothFlappingStrength);
 }
 
-string SetWind::GetCommandCName()
+string SetWind::GetCommandCName() const
 {
 	return "SCmdWindSettings";
 }
 
-RoomCommand SetWind::GetRoomCommand()
+RoomCommand SetWind::GetRoomCommand() const
 {
 	return RoomCommand::SetWind;
 }

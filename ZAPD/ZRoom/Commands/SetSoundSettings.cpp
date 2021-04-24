@@ -11,7 +11,7 @@ SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& ra
 	musicSequence = rawData.at(rawDataIndex + 0x07);
 }
 
-string SetSoundSettings::GetBodySourceCode()
+string SetSoundSettings::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf(
 		"SCENE_CMD_SOUND_SETTINGS(0x%02X, 0x%02X, 0x%02X)",
@@ -19,12 +19,12 @@ string SetSoundSettings::GetBodySourceCode()
 		musicSequence);
 }
 
-string SetSoundSettings::GetCommandCName()
+string SetSoundSettings::GetCommandCName() const
 {
 	return "SCmdSoundSettings";
 }
 
-RoomCommand SetSoundSettings::GetRoomCommand()
+RoomCommand SetSoundSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetSoundSettings;
 }

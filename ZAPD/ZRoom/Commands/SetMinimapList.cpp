@@ -65,19 +65,19 @@ void SetMinimapList::DeclareReferences(const std::string& prefix)
 	}
 }
 
-string SetMinimapList::GetBodySourceCode()
+string SetMinimapList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_INFO(%s)", listName.c_str());
 }
 
 
-string SetMinimapList::GetCommandCName()
+string SetMinimapList::GetCommandCName() const
 {
 	return "SCmdMinimapSettings";
 }
 
-RoomCommand SetMinimapList::GetRoomCommand()
+RoomCommand SetMinimapList::GetRoomCommand() const
 {
 	return RoomCommand::SetMinimapList;
 }

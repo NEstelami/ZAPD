@@ -12,7 +12,7 @@ SetRoomBehavior::SetRoomBehavior(ZRoom* nZRoom, const std::vector<uint8_t>& rawD
 	gameplayFlags2 = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x04);
 }
 
-std::string SetRoomBehavior::GetBodySourceCode()
+std::string SetRoomBehavior::GetBodySourceCode() const
 {
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
@@ -29,12 +29,12 @@ std::string SetRoomBehavior::GetBodySourceCode()
 	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i)", gameplayFlags, currRoomUnk2, showInvisActors, msgCtxUnkE40C);
 }
 
-string SetRoomBehavior::GetCommandCName()
+string SetRoomBehavior::GetCommandCName() const
 {
 	return "SCmdRoomBehavior";
 }
 
-RoomCommand SetRoomBehavior::GetRoomCommand()
+RoomCommand SetRoomBehavior::GetRoomCommand() const
 {
 	return RoomCommand::SetRoomBehavior;
 }

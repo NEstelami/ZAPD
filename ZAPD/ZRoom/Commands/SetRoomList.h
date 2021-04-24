@@ -21,11 +21,11 @@ public:
 	void ParseRawData() override;
 	virtual void DeclareReferences(const std::string& prefix);
 
-	std::string GetBodySourceCode() override;
-	std::string PreGenSourceFiles() override;
+	std::string GetBodySourceCode() const override;
+	void PreGenSourceFiles() override;
 
-	RoomCommand GetRoomCommand() override;
-	std::string GetCommandCName() override;
+	RoomCommand GetRoomCommand() const override;
+	std::string GetCommandCName() const override;
 
 private:
 	std::vector<RoomEntry> rooms;

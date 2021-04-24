@@ -220,7 +220,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new Unused09(this, rawData, rawDataIndex);
 			break;  // 0x09
 		case RoomCommand::SetMesh:
-			cmd = new SetMesh(this, rawData, rawDataIndex, 0);
+			cmd = new SetMesh(this, rawData, rawDataIndex);
 			break;  // 0x0A
 		case RoomCommand::SetObjectList:
 			cmd = new SetObjectList(this, rawData, rawDataIndex);
@@ -229,7 +229,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new SetLightList(this, rawData, rawDataIndex);
 			break;  // 0x0C (MM-ONLY)
 		case RoomCommand::SetPathways:
-			cmd = new ZSetPathways(this, rawData, rawDataIndex, true);
+			cmd = new ZSetPathways(this, rawData, rawDataIndex);
 			break;  // 0x0D
 		case RoomCommand::SetTransitionActorList:
 			cmd = new SetTransitionActorList(this, rawData, rawDataIndex);
@@ -301,10 +301,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
 
-		// printf("OP: %s\n", cmd->GetCommandCName().c_str());
-
 		cmd->cmdIndex = currentIndex;
-		cmd->cmdSet = rawDataIndex;
 
 		commandList.push_back(cmd);
 
@@ -381,7 +378,6 @@ void ZRoom::SyotesRoomHack()
 		rawData.erase(rawData.begin());
 
 	cmdSetMesh->cmdIndex = 0;
-	cmdSetMesh->cmdSet = 0;
 
 	commands.push_back(cmdSetMesh);
 }
@@ -390,7 +386,7 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 {
 	for (size_t i = 0; i < commands.size(); i++)
 	{
-		if (commands[i]->cmdID == cmdType)
+		if (commands[i]->GetRoomCommand() == cmdType)
 			return commands[i];
 	}
 
@@ -456,17 +452,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 
 string ZRoom::GetSourceOutputHeader(const std::string& prefix)
 {
-	sourceOutput = "";
-
-	for (ZRoomCommand* cmd : commands)
-		sourceOutput += cmd->GenerateExterns();
-
-	sourceOutput += "\n";
-
-	sourceOutput += "\n" + extDefines + "\n";
-	sourceOutput += "\n";
-
-	return sourceOutput;
+	return "\n" + extDefines + "\n\n";
 }
 
 string ZRoom::GetSourceOutputCode(const std::string& prefix)
@@ -546,11 +532,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	return sourceOutput;
 }
 
-vector<uint8_t> ZRoom::GetRawData()
-{
-	return rawData;
-}
-
 int ZRoom::GetRawDataSize()
 {
 	int32_t size = 0;
@@ -564,12 +545,6 @@ int ZRoom::GetRawDataSize()
 ZResourceType ZRoom::GetResourceType()
 {
 	return ZResourceType::Room;
-}
-
-void ZRoom::Save(const std::string& outFolder)
-{
-	for (ZRoomCommand* cmd : commands)
-		cmd->Save();
 }
 
 void ZRoom::PreGenSourceFiles()

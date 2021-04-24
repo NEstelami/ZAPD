@@ -695,11 +695,6 @@ float ZTexture::GetPixelMultiplyer()
 	}
 }
 
-vector<uint8_t> ZTexture::GetRawData()
-{
-	return rawData;
-}
-
 int ZTexture::GetRawDataSize()
 {
 	return (int)(width * height * GetPixelMultiplyer());

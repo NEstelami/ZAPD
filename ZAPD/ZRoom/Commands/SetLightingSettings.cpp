@@ -43,18 +43,18 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 	}
 }
 
-std::string SetLightingSettings::GetBodySourceCode()
+std::string SetLightingSettings::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_LIGHT_LIST(%i, %s)", settings.size(), listName.c_str());
 }
 
-string SetLightingSettings::GetCommandCName()
+string SetLightingSettings::GetCommandCName() const
 {
 	return "SCmdLightSettingList";
 }
 
-RoomCommand SetLightingSettings::GetRoomCommand()
+RoomCommand SetLightingSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetLightingSettings;
 }

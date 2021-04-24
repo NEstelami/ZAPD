@@ -9,17 +9,17 @@ SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawD
 	echo = rawData[rawDataIndex + 0x07];
 }
 
-std::string SetEchoSettings::GetBodySourceCode()
+std::string SetEchoSettings::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("SCENE_CMD_ECHO_SETTINGS(0x%02X)", echo);
 }
 
-string SetEchoSettings::GetCommandCName()
+string SetEchoSettings::GetCommandCName() const
 {
 	return "SCmdEchoSettings";
 }
 
-RoomCommand SetEchoSettings::GetRoomCommand()
+RoomCommand SetEchoSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetEchoSettings;
 }

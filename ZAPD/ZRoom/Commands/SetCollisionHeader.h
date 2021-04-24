@@ -11,10 +11,10 @@ public:
 
 	void ParseRawData() override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 
-	std::string GetCommandCName() override;
-	RoomCommand GetRoomCommand() override;
+	std::string GetCommandCName() const override;
+	RoomCommand GetRoomCommand() const override;
 
 private:
 	ZCollisionHeader* collisionHeader;
