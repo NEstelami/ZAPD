@@ -65,7 +65,7 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 std::string SetActorList::GetBodySourceCode()
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s",  GetCommandHex().c_str(), numActors, listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_ACTOR_LIST(%i, %s)", numActors, listName.c_str());
 }
 
 int32_t SetActorList::GetRawDataSize()

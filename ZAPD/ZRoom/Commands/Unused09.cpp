@@ -10,7 +10,7 @@ Unused09::Unused09(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDa
 
 std::string Unused09::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x00, 0x00", GetCommandHex().c_str());
+	return "SCENE_CMD_UNUSED_9()";
 }
 
 string Unused09::GetCommandCName()

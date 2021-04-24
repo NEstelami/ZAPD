@@ -10,7 +10,7 @@ Unused1D::Unused1D(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDa
 
 std::string Unused1D::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x00, 0x00", GetCommandHex().c_str());
+	return StringHelper::Sprintf("{ %s, 0x00, 0x00} ", GetCommandHex().c_str());
 }
 
 string Unused1D::GetCommandCName()

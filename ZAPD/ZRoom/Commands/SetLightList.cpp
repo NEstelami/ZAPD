@@ -50,7 +50,7 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 std::string SetLightList::GetBodySourceCode()
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("%s, %i, %s", GetCommandHex().c_str(), numLights, listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_UNUSED_LIGHT_LIST(%i, %s)", numLights, listName.c_str());
 }
 
 string SetLightList::GetCommandCName()

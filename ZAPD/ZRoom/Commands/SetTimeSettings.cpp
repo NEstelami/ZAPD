@@ -14,7 +14,7 @@ SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawD
 
 std::string SetTimeSettings::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X", GetCommandHex().c_str(), hour, min, unk);
+	return StringHelper::Sprintf("SCENE_CMD_TIME_SETTINGS(%i, %i, %i)", hour, min, unk);
 }
 
 string SetTimeSettings::GetCommandCName()

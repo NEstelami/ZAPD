@@ -11,8 +11,7 @@ SetWorldMapVisited::SetWorldMapVisited(ZRoom* nZRoom, const std::vector<uint8_t>
 
 string SetWorldMapVisited::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s 0x00, 0x00", GetCommandHex().c_str());
+	return "SCENE_CMD_WORLD_MAP_VISITED()";
 }
 
 string SetWorldMapVisited::GetCommandCName()

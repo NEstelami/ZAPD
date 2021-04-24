@@ -15,7 +15,7 @@ SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, const std::vector<uint8_t>& 
 
 std::string SetSkyboxSettings::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x%02X, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X", GetCommandHex().c_str(), unk1, skyboxNumber, cloudsType, lightingSettingsControl);
+	return StringHelper::Sprintf("SCENE_CMD_SKYBOX_SETTINGS(0x%02X, 0x%02X, 0x%02X, 0x%02X)", unk1, skyboxNumber, cloudsType, lightingSettingsControl);
 }
 
 string SetSkyboxSettings::GetCommandCName()

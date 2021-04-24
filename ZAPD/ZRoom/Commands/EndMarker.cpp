@@ -10,7 +10,7 @@ EndMarker::EndMarker(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int raw
 
 string EndMarker::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x00, 0x00", GetCommandHex().c_str());
+	return "SCENE_CMD_END()";
 }
 
 string EndMarker::GetCommandCName()

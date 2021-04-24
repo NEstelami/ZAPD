@@ -50,7 +50,7 @@ void SetExitList::DeclareReferencesLate(const std::string& prefix)
 std::string SetExitList::GetBodySourceCode()
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_EXIT_LIST(%s)", listName.c_str());
 }
 
 string SetExitList::GetCommandCName()

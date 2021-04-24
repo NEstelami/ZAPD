@@ -334,27 +334,30 @@ void ZRoom::ProcessCommandSets()
 			cmd->DeclareReferencesLate(name);
 		}
 
-		for (size_t i = 0; i < setCommands.size(); i++)
+		if (!setCommands.empty())
 		{
-			ZRoomCommand* cmd = setCommands[i];
-			cmd->commandSet = GETSEGOFFSET(commandSet);
-			std::string bodyStr = cmd->GetBodySourceCode();
+			std::string declaration = "";
 
-			Declaration* decl = parent->AddDeclaration(
-				cmd->cmdAddress,
-				i == 0 ? DeclarationAlignment::Align16 : DeclarationAlignment::None, 8,
-				StringHelper::Sprintf("static %s", cmd->GetCommandCName().c_str()),
-				StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), GETSEGOFFSET(commandSet),
-			                          cmd->cmdIndex, cmd->cmdID),
-				StringHelper::Sprintf("\n    %s\n", bodyStr.c_str()));
+			for (size_t i = 0; i < setCommands.size(); i++)
+			{
+				ZRoomCommand* cmd = setCommands[i];
+				cmd->commandSet = GETSEGOFFSET(commandSet);
+				declaration += StringHelper::Sprintf("\t%s,", cmd->GetBodySourceCode().c_str());
 
-			decl->rightText = StringHelper::Sprintf("// 0x%04X", cmd->cmdAddress);
+				if (i + 1 < setCommands.size())
+					declaration += "\n";
+			}
+
+			Declaration* decl = parent->AddDeclarationArray(
+				GETSEGOFFSET(commandSet), DeclarationAlignment::Align16, 8 * setCommands.size(),
+				"static SCmdBase", StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),
+				setCommands.size(), declaration);
+
+			sourceOutput += "\n";
+
+			for (ZRoomCommand* cmd : setCommands)
+				commands.push_back(cmd);
 		}
-
-		sourceOutput += "\n";
-
-		for (ZRoomCommand* cmd : setCommands)
-			commands.push_back(cmd);
 	}
 }
 

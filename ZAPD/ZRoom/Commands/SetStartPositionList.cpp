@@ -34,11 +34,16 @@ void SetStartPositionList::DeclareReferences(const std::string& prefix)
 {
 	if (!actors.empty())
 	{
-		string declaration = "";
+		std::string declaration = "";
 
+		size_t index = 0;
 		for (const auto& entry : actors)
 		{
-			declaration += StringHelper::Sprintf("    { %s },\n", entry.GetBodySourceCode().c_str());
+			declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
+			if (index + 1 < actors.size())
+				declaration += "\n";
+
+			index++;
 		}
 
 		parent->AddDeclarationArray(
@@ -51,7 +56,7 @@ void SetStartPositionList::DeclareReferences(const std::string& prefix)
 std::string SetStartPositionList::GetBodySourceCode()
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("%s, 0x%02X, (u32)%s", GetCommandHex().c_str(), actors.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_SPAWN_LIST(%i, %s)", actors.size(), listName.c_str());
 }
 
 string SetStartPositionList::GetCommandCName()

@@ -13,7 +13,7 @@ SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& 
 
 std::string SetSpecialObjects::GetBodySourceCode()
 {
-	return StringHelper::Sprintf("%s, 0x%02X, 0x%04X", GetCommandHex().c_str(), elfMessage, globalObject);
+	return StringHelper::Sprintf("SCENE_CMD_SPECIAL_FILES(0x%02X, 0x%04X)", elfMessage, globalObject);
 }
 
 string SetSpecialObjects::GetCommandCName()

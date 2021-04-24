@@ -14,8 +14,8 @@ SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& ra
 string SetSoundSettings::GetBodySourceCode()
 {
 	return StringHelper::Sprintf(
-		"%s, 0x%02X, 0x00, 0x00, 0x00, 0x00, 0x%02X, 0x%02X",
-		GetCommandHex().c_str(), reverb, nightTimeSFX,
+		"SCENE_CMD_SOUND_SETTINGS(0x%02X, 0x%02X, 0x%02X)",
+		reverb, nightTimeSFX,
 		musicSequence);
 }
 

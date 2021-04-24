@@ -31,7 +31,7 @@ void SetEntranceList::ParseRawDataLate()
 void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 {
 	if (!entrances.empty()) {
-		string declaration = "";
+		std::string declaration = "";
 
 		int index = 0;
 
@@ -54,7 +54,7 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 std::string SetEntranceList::GetBodySourceCode()
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("%s, 0x00, (u32)%s", GetCommandHex().c_str(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_ENTRANCE_LIST(%s)", listName.c_str());
 }
 
 string SetEntranceList::GetCommandCName()

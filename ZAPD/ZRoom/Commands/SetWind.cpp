@@ -14,10 +14,8 @@ SetWind::SetWind(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawData
 
 string SetWind::GetBodySourceCode()
 {
-	return StringHelper::Sprintf(
-		"%s, 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X, 0x%02X",
-		GetCommandHex().c_str(), windWest,
-		windVertical, windSouth, clothFlappingStrength);
+	//return StringHelper::Sprintf("SCENE_CMD_WIND_SETTINGS(0x%02X, 0x%02X, 0x%02X, 0x%02X)", windWest, windVertical, windSouth, clothFlappingStrength);
+	return StringHelper::Sprintf("SCENE_CMD_WIND_SETTINGS(%i, %i, %i, %i)", windWest, windVertical, windSouth, clothFlappingStrength);
 }
 
 string SetWind::GetCommandCName()
