@@ -77,7 +77,6 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 
-	std::vector<uint8_t> GetRawData() override;
 	int GetRawDataSize() override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();

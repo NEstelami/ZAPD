@@ -382,7 +382,6 @@ public:
 	                            bool texIsPalette);
 	static int GetDListLength(std::vector<uint8_t> rawData, int rawDataIndex, DListType dListType);
 
-	std::vector<uint8_t> GetRawData() override;
 	int GetRawDataSize() override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
