@@ -29,14 +29,15 @@ void SetAnimatedTextureList::ParseRawData()
 
 void SetAnimatedTextureList::DeclareReferences(const std::string& prefix)
 {
-	std::string nameStr = StringHelper::Sprintf("%sAnimatedTextureList0x%06X", prefix.c_str(), segmentOffset);
+	std::string nameStr =
+		StringHelper::Sprintf("%sAnimatedTextureList0x%06X", prefix.c_str(), segmentOffset);
 
 	for (auto& texture : textures)
 	{
 		size_t declSize = 0;
 		std::string declTypeName = "";
-		std::string declName = StringHelper::Sprintf("%sAnimatedTextureParams0x%06X", prefix.c_str(),
-			                          texture.segmentOffset);
+		std::string declName = StringHelper::Sprintf("%sAnimatedTextureParams0x%06X",
+		                                             prefix.c_str(), texture.segmentOffset);
 		std::string declaration = "";
 		int index = 0;
 
@@ -57,9 +58,9 @@ void SetAnimatedTextureList::DeclareReferences(const std::string& prefix)
 			declSize = texture.params.size() * 4;
 			declTypeName = "ScrollingTextureParams";
 
-			parent->AddDeclarationArray(
-				texture.segmentOffset, DeclarationAlignment::Align4, declSize, declTypeName,
-				declName, texture.params.size(), declaration);
+			parent->AddDeclarationArray(texture.segmentOffset, DeclarationAlignment::Align4,
+			                            declSize, declTypeName, declName, texture.params.size(),
+			                            declaration);
 			break;
 		case 2:
 		case 3:
@@ -68,26 +69,27 @@ void SetAnimatedTextureList::DeclareReferences(const std::string& prefix)
 			declTypeName = "FlashingTextureParams";
 			declaration = texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
 
-			parent->AddDeclaration(
-				texture.segmentOffset, DeclarationAlignment::Align4, declSize, declTypeName,
-				declName, StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
+			parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4, declSize,
+			                       declTypeName, declName,
+			                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
 			break;
 		case 5:
 			declSize = texture.params.at(0)->GetParamsSize();
 			declTypeName = "CyclingTextureParams";
 			declaration = texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
 
-			parent->AddDeclaration(
-				texture.segmentOffset, DeclarationAlignment::Align4, declSize, declTypeName,
-				declName, StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
+			parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4, declSize,
+			                       declTypeName, declName,
+			                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
 			break;
 		case 6:
 			continue;
 
 		default:
-			throw std::runtime_error(StringHelper::Sprintf(
-				"Error in SetAnimatedTextureList::DeclareReferences (%s)\n" 
-				"\t Unknown texture.type: %i\n", nameStr.c_str(), texture.type));
+			throw std::runtime_error(
+				StringHelper::Sprintf("Error in SetAnimatedTextureList::DeclareReferences (%s)\n"
+			                          "\t Unknown texture.type: %i\n",
+			                          nameStr.c_str(), texture.type));
 		}
 	}
 
@@ -106,9 +108,9 @@ void SetAnimatedTextureList::DeclareReferences(const std::string& prefix)
 				declaration += "\n";
 		}
 
-		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
-			textures.size() * 8, "AnimatedTexture", nameStr, textures.size(), declaration);
+		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
+		                            DeclarationPadding::Pad16, textures.size() * 8,
+		                            "AnimatedTexture", nameStr, textures.size(), declaration);
 	}
 }
 
@@ -184,15 +186,18 @@ size_t ScrollingTexture::GetParamsSize()
 	return 4;
 }
 
-FlashingTexturePrimColor::FlashingTexturePrimColor(const std::vector<uint8_t>& rawData, int rawDataIndex)
-	: r(rawData.at(rawDataIndex + 0)), g(rawData.at(rawDataIndex + 1)), b(rawData.at(rawDataIndex + 2)),
-	  a(rawData.at(rawDataIndex + 3)), lodFrac(rawData.at(rawDataIndex + 4))
+FlashingTexturePrimColor::FlashingTexturePrimColor(const std::vector<uint8_t>& rawData,
+                                                   int rawDataIndex)
+	: r(rawData.at(rawDataIndex + 0)), g(rawData.at(rawDataIndex + 1)),
+	  b(rawData.at(rawDataIndex + 2)), a(rawData.at(rawDataIndex + 3)),
+	  lodFrac(rawData.at(rawDataIndex + 4))
 {
 }
 
-FlashingTextureEnvColor::FlashingTextureEnvColor(const std::vector<uint8_t>& rawData, int rawDataIndex)
-	: r(rawData.at(rawDataIndex + 0)), g(rawData.at(rawDataIndex + 1)), b(rawData.at(rawDataIndex + 2)),
-	  a(rawData.at(rawDataIndex + 3))
+FlashingTextureEnvColor::FlashingTextureEnvColor(const std::vector<uint8_t>& rawData,
+                                                 int rawDataIndex)
+	: r(rawData.at(rawDataIndex + 0)), g(rawData.at(rawDataIndex + 1)),
+	  b(rawData.at(rawDataIndex + 2)), a(rawData.at(rawDataIndex + 3))
 {
 }
 
@@ -304,9 +309,8 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 	std::string envName = zRoom->parent->GetDeclarationPtrName(envColorSegmentOffset);
 	std::string keyName = zRoom->parent->GetDeclarationPtrName(keyFrameSegmentOffset);
 
-	return StringHelper::Sprintf(
-		"%i, %i, %s, %s, %s", cycleLength, numKeyFrames, primName.c_str(), envName.c_str(),
-		keyName.c_str());
+	return StringHelper::Sprintf("%i, %i, %s, %s, %s", cycleLength, numKeyFrames, primName.c_str(),
+	                             envName.c_str(), keyName.c_str());
 }
 
 size_t FlashingTexture::GetParamsSize()
@@ -392,8 +396,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 	std::string segmName = zRoom->parent->GetDeclarationPtrName(textureSegmentOffsetsSegmentOffset);
 	std::string indexesName = zRoom->parent->GetDeclarationPtrName(textureIndicesSegmentOffset);
 
-	return StringHelper::Sprintf(
-		"%i, %s, %s", cycleLength, segmName.c_str(), indexesName.c_str());
+	return StringHelper::Sprintf("%i, %s, %s", cycleLength, segmName.c_str(), indexesName.c_str());
 }
 
 size_t CyclingTextureParams::GetParamsSize()

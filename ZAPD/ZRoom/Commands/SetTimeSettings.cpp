@@ -4,7 +4,8 @@
 
 using namespace std;
 
-SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                                 int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	hour = rawData.at(rawDataIndex + 4);

@@ -1,9 +1,9 @@
 #pragma once
 
+#include <memory>
 #include "../../ZDisplayList.h"
 #include "../ZRoomCommand.h"
 #include "ZBackground.h"
-#include <memory>
 
 class PolygonDlist
 {
@@ -28,8 +28,8 @@ public:
 	std::string GetName();
 
 protected:
-	int16_t x, y, z; // polyType == 2
-	int16_t unk_06; // polyType == 2
+	int16_t x, y, z;  // polyType == 2
+	int16_t unk_06;   // polyType == 2
 
 	segptr_t opa = 0;  // Gfx*
 	segptr_t xlu = 0;  // Gfx*
@@ -91,7 +91,8 @@ public:
 class PolygonTypeBase
 {
 public:
-	PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZRoom* nRoom);
+	PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	                ZRoom* nRoom);
 
 	virtual void ParseRawData() = 0;
 	virtual void DeclareReferences(const std::string& prefix) = 0;
@@ -113,7 +114,6 @@ protected:
 
 	std::vector<PolygonDlist> polyDLists;
 
-
 	std::vector<uint8_t> rawData;
 	int rawDataIndex;
 	ZFile* parent;
@@ -121,7 +121,7 @@ protected:
 	std::string name;
 };
 
-class PolygonType1: public PolygonTypeBase
+class PolygonType1 : public PolygonTypeBase
 {
 protected:
 	uint8_t format;
@@ -136,7 +136,8 @@ protected:
 	std::vector<BgImage> multiList;
 
 public:
-	PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZRoom* nRoom);
+	PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZRoom* nRoom);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -148,10 +149,11 @@ public:
 	int GetRawDataSize() const override;
 };
 
-class PolygonType2: public PolygonTypeBase
+class PolygonType2 : public PolygonTypeBase
 {
 public:
-	PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex, ZRoom* nRoom);
+	PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	             ZRoom* nRoom);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -169,7 +171,8 @@ protected:
 class SetMesh : public ZRoomCommand
 {
 public:
-	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex, int segAddressOffset=0);
+	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	        int segAddressOffset = 0);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

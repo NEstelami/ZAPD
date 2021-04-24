@@ -4,7 +4,8 @@
 
 using namespace std;
 
-SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                                     int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	elfMessage = cmdArg1;
@@ -13,7 +14,8 @@ SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& 
 
 std::string SetSpecialObjects::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("SCENE_CMD_SPECIAL_FILES(0x%02X, 0x%04X)", elfMessage, globalObject);
+	return StringHelper::Sprintf("SCENE_CMD_SPECIAL_FILES(0x%02X, 0x%04X)", elfMessage,
+	                             globalObject);
 }
 
 string SetSpecialObjects::GetCommandCName() const

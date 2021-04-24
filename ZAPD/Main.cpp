@@ -175,7 +175,8 @@ int NewMain(int argc, char* argv[])
 			i++;
 		}
 		else if (arg ==
-		         "-uer")  // Split resources into their individual components (enabled by default) TODO: We may wish to make this a part of the config file...
+		         "-uer")  // Split resources into their individual components (enabled by default)
+		                  // TODO: We may wish to make this a part of the config file...
 		{
 			Globals::Instance->useExternalResources = string(argv[i + 1]) == "1";
 			i++;
@@ -185,7 +186,8 @@ int NewMain(int argc, char* argv[])
 			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
 			i++;
 		}
-		else if (arg == "-cfg")  // Set cfg path (for overlays) TODO: Change the name of this to something else so it doesn't get confused with XML config files.
+		else if (arg == "-cfg")  // Set cfg path (for overlays) TODO: Change the name of this to
+		                         // something else so it doesn't get confused with XML config files.
 		{
 			Globals::Instance->cfgPath = argv[i + 1];
 			i++;

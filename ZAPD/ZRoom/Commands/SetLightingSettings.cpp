@@ -6,7 +6,7 @@
 
 using namespace std;
 
-SetLightingSettings::SetLightingSettings(ZRoom* nZRoom,  const std::vector<uint8_t>& rawData,
+SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                          int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -28,16 +28,16 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 
 		for (size_t i = 0; i < settings.size(); i++)
 		{
-			declaration += StringHelper::Sprintf(
-				"\t{ %s }, // 0x%06X",
-				settings.at(i).GetBodySourceCode().c_str(), segmentOffset + (i * 22));
+			declaration += StringHelper::Sprintf("\t{ %s }, // 0x%06X",
+			                                     settings.at(i).GetBodySourceCode().c_str(),
+			                                     segmentOffset + (i * 22));
 			if (i + 1 < settings.size())
 				declaration += "\n";
 		}
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None, settings.size() * settings.front().GetRawDataSize(),
-			"LightSettings",
+			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None,
+			settings.size() * settings.front().GetRawDataSize(), "LightSettings",
 			StringHelper::Sprintf("%sLightSettings0x%06X", prefix.c_str(), segmentOffset),
 			settings.size(), declaration);
 	}
@@ -91,14 +91,12 @@ LightingSettings::LightingSettings(const vector<uint8_t>& rawData, int rawDataIn
 
 std::string LightingSettings::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X",
-				ambientClrR, ambientClrG, ambientClrB,
-				diffuseClrA_R, diffuseClrA_G, diffuseClrA_B,
-				diffuseDirA_X, diffuseDirA_Y, diffuseDirA_Z,
-				diffuseClrB_R, diffuseClrB_G, diffuseClrB_B,
-				diffuseDirB_X, diffuseDirB_Y, diffuseDirB_Z,
-				fogClrR, fogClrG, fogClrB, unk,
-				drawDistance);
+	return StringHelper::Sprintf(
+		"0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, "
+		"0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%04X, 0x%04X",
+		ambientClrR, ambientClrG, ambientClrB, diffuseClrA_R, diffuseClrA_G, diffuseClrA_B,
+		diffuseDirA_X, diffuseDirA_Y, diffuseDirA_Z, diffuseClrB_R, diffuseClrB_G, diffuseClrB_B,
+		diffuseDirB_X, diffuseDirB_Y, diffuseDirB_Z, fogClrR, fogClrG, fogClrB, unk, drawDistance);
 }
 
 size_t LightingSettings::GetRawDataSize() const

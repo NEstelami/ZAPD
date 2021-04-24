@@ -23,7 +23,7 @@ protected:
 class SetTransitionActorList : public ZRoomCommand
 {
 public:
-	SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>&  rawData, int rawDataIndex);
+	SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
 
 	virtual void ParseRawData();
 	virtual void DeclareReferences(const std::string& prefix);

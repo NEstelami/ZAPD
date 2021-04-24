@@ -39,7 +39,9 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 		size_t index = 0;
 		for (const auto& entry : actors)
 		{
-			declaration += StringHelper::Sprintf("    { %s }, // 0x%06X", entry.GetBodySourceCode().c_str(), segmentOffset + (index * 16));
+			declaration +=
+				StringHelper::Sprintf("\t{ %s }, // 0x%06X", entry.GetBodySourceCode().c_str(),
+			                          segmentOffset + (index * 16));
 
 			if (index < actors.size() - 1)
 				declaration += "\n";
@@ -54,7 +56,8 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 			padding = DeclarationPadding::None;
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, padding, actors.size() * entry.GetRawDataSize(), entry.GetSourceTypeName(),
+			segmentOffset, DeclarationAlignment::Align4, padding,
+			actors.size() * entry.GetRawDataSize(), entry.GetSourceTypeName(),
 			StringHelper::Sprintf("%sActorList_%06X", prefix.c_str(), segmentOffset),
 			GetActorListArraySize(), declaration);
 	}
@@ -123,13 +126,14 @@ std::string ActorSpawnEntry::GetBodySourceCode() const
 		return StringHelper::Sprintf(
 			"%s, %i, %i, %i, SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X), "
 			"SPAWN_ROT_FLAGS(%i, 0x%04X), 0x%04X",
-			ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ,
-			(rotX >> 7) & 0b111111111, rotX & 0b1111111,
-			(rotY >> 7) & 0b111111111, rotY & 0b1111111,
+			ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ, (rotX >> 7) & 0b111111111,
+			rotX & 0b1111111, (rotY >> 7) & 0b111111111, rotY & 0b1111111,
 			(rotZ >> 7) & 0b111111111, rotZ & 0b1111111, initVar);
 	}
 
-	return StringHelper::Sprintf("%s, { %i, %i, %i }, { %i, %i, %i }, 0x%04X", ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ, rotX, rotY, rotZ, initVar);
+	return StringHelper::Sprintf(
+		"\n\t\t%s,\n\t\t{ %6i, %6i, %6i },\n\t\t{ %6i, %6i, %6i },\n\t\t0x%04X\n   ",
+		ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ, rotX, rotY, rotZ, initVar);
 }
 
 std::string ActorSpawnEntry::GetSourceTypeName() const

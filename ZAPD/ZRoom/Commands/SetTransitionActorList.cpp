@@ -36,8 +36,7 @@ void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 	size_t index = 0;
 	for (const auto& entry : transitionActors)
 	{
-		declaration += StringHelper::Sprintf(
-			"    { %s },",  entry.GetBodySourceCode().c_str());
+		declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
 		if (index + 1 < transitionActors.size())
 		{
 			declaration += "\n";
@@ -56,7 +55,8 @@ void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 string SetTransitionActorList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_TRANSI_ACTOR_LIST(%i, %s)", transitionActors.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_TRANSI_ACTOR_LIST(%i, %s)", transitionActors.size(),
+	                             listName.c_str());
 }
 
 int32_t SetTransitionActorList::GetRawDataSize()
@@ -92,9 +92,7 @@ std::string TransitionActorEntry::GetBodySourceCode() const
 {
 	string actorStr = ZNames::GetActorName(actorNum);
 
-	return StringHelper::Sprintf(
-			"%i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X", frontObjectRoom,
-			frontTransitionReaction, backObjectRoom, backTransitionReaction,
-			actorStr.c_str(), posX, posY, posZ, rotY,
-			initVar);
+	return StringHelper::Sprintf("%i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X", frontObjectRoom,
+	                             frontTransitionReaction, backObjectRoom, backTransitionReaction,
+	                             actorStr.c_str(), posX, posY, posZ, rotY, initVar);
 }

@@ -14,7 +14,6 @@ public:
 	int16_t GetNumPoints() const;
 	int GetSegmentOffset() const;
 
-//protected:
 	int baseOffset;
 	int16_t type;
 	int16_t numPoints;

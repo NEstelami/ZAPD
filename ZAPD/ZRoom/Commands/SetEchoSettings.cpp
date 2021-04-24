@@ -3,7 +3,8 @@
 
 using namespace std;
 
-SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                                 int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	echo = rawData[rawDataIndex + 0x07];

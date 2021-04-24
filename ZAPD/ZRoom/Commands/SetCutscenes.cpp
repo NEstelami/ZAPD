@@ -55,12 +55,11 @@ void SetCutscenes::ParseRawData()
 			cutscenes.push_back(cutscene);
 		}
 
-		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4,
-			cutsceneEntries.size() * 8, "CutsceneEntry",
-			StringHelper::Sprintf("%sCutsceneEntryList_%06X", zRoom->GetName().c_str(),
-		                          segmentOffset),
-			cutsceneEntries.size(), declaration);
+		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
+		                            cutsceneEntries.size() * 8, "CutsceneEntry",
+		                            StringHelper::Sprintf("%sCutsceneEntryList_%06X",
+		                                                  zRoom->GetName().c_str(), segmentOffset),
+		                            cutsceneEntries.size(), declaration);
 	}
 
 	for (ZCutsceneBase* cutscene : cutscenes)

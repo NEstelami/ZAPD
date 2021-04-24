@@ -7,10 +7,11 @@
 
 using namespace std;
 
-SetEntranceList::SetEntranceList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetEntranceList::SetEntranceList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                                 int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	parent->AddDeclarationPlaceholder(segmentOffset); // Make sure this segment is defined
+	parent->AddDeclarationPlaceholder(segmentOffset);  // Make sure this segment is defined
 }
 
 void SetEntranceList::ParseRawDataLate()
@@ -30,14 +31,17 @@ void SetEntranceList::ParseRawDataLate()
 
 void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 {
-	if (!entrances.empty()) {
+	if (!entrances.empty())
+	{
 		std::string declaration = "";
 
 		int index = 0;
 
 		for (const auto& entry : entrances)
 		{
-			declaration += StringHelper::Sprintf("    { %s }, //0x%06X", entry.GetBodySourceCode().c_str(), segmentOffset + (index * 2));
+			declaration +=
+				StringHelper::Sprintf("    { %s }, //0x%06X", entry.GetBodySourceCode().c_str(),
+			                          segmentOffset + (index * 2));
 			if (index + 1 < entrances.size())
 				declaration += "\n";
 

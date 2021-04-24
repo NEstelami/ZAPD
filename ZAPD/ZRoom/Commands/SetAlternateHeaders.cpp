@@ -29,7 +29,8 @@ void SetAlternateHeaders::ParseRawDataLate()
 
 void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 {
-	if (!headers.empty()) {
+	if (!headers.empty())
+	{
 		std::string declaration = "";
 
 		for (int i = 0; i < headers.size(); i++)
@@ -37,8 +38,8 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 			if (headers.at(i) == 0)
 				declaration += StringHelper::Sprintf("\tNULL,");
 			else
-				declaration += StringHelper::Sprintf("\t%sSet%04X,", prefix.c_str(),
-													GETSEGOFFSET(headers[i]));
+				declaration +=
+					StringHelper::Sprintf("\t%sSet%04X,", prefix.c_str(), GETSEGOFFSET(headers[i]));
 
 			if (i + 1 < headers.size())
 				declaration += "\n";

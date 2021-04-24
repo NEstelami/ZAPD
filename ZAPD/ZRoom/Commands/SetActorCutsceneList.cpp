@@ -31,7 +31,8 @@ void SetActorCutsceneList::ParseRawData()
 
 void SetActorCutsceneList::DeclareReferences(const std::string& prefix)
 {
-	if (cutscenes.size() > 0) {
+	if (cutscenes.size() > 0)
+	{
 		std::string declaration = "";
 
 		for (size_t i = 0; i < cutscenes.size(); i++)
@@ -57,7 +58,8 @@ void SetActorCutsceneList::DeclareReferences(const std::string& prefix)
 string SetActorCutsceneList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_LIST(%i, %s)", cutscenes.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_LIST(%i, %s)", cutscenes.size(),
+	                             listName.c_str());
 }
 
 int32_t SetActorCutsceneList::GetRawDataSize()
@@ -89,7 +91,8 @@ ActorCutsceneEntry::ActorCutsceneEntry(const std::vector<uint8_t>& rawData, int 
 
 std::string ActorCutsceneEntry::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %i", priority, length, unk4, unk6, additionalCutscene, sound, unkB, unkC, unkE, letterboxSize);
+	return StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %i", priority, length, unk4,
+	                             unk6, additionalCutscene, sound, unkB, unkC, unkE, letterboxSize);
 }
 
 std::string ActorCutsceneEntry::GetSourceTypeName() const

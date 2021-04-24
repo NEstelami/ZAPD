@@ -3,7 +3,8 @@
 
 using namespace std;
 
-SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                                   int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	reverb = cmdArg1;
@@ -13,10 +14,8 @@ SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& ra
 
 string SetSoundSettings::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf(
-		"SCENE_CMD_SOUND_SETTINGS(%i, %i, %i)",
-		reverb, nightTimeSFX,
-		musicSequence);
+	return StringHelper::Sprintf("SCENE_CMD_SOUND_SETTINGS(%i, %i, %i)", reverb, nightTimeSFX,
+	                             musicSequence);
 }
 
 string SetSoundSettings::GetCommandCName() const

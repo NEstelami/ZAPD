@@ -3,7 +3,8 @@
 
 using namespace std;
 
-SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                                     int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	disableSky = rawData.at(rawDataIndex + 0x04);

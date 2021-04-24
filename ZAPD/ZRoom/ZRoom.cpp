@@ -320,7 +320,7 @@ void ZRoom::ProcessCommandSets()
 		ParseCommands(setCommands, commandSets[0]);
 		commandSets.erase(commandSets.begin());
 
-		for (auto& cmd: setCommands)
+		for (auto& cmd : setCommands)
 		{
 			cmd->ParseRawDataLate();
 			cmd->DeclareReferencesLate(name);
@@ -342,7 +342,8 @@ void ZRoom::ProcessCommandSets()
 
 			Declaration* decl = parent->AddDeclarationArray(
 				GETSEGOFFSET(commandSet), DeclarationAlignment::Align16, 8 * setCommands.size(),
-				"static SCmdBase", StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),
+				"static SCmdBase",
+				StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),
 				setCommands.size(), declaration);
 
 			sourceOutput += "\n";

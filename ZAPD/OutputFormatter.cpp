@@ -98,7 +98,8 @@ int (*OutputFormatter::StaticWriter())(const char* buf, int count)
 
 OutputFormatter::OutputFormatter(int tabSize, int defaultIndent, int lineLimit)
 	: tabSize{tabSize}, defaultIndent{defaultIndent}, lineLimit{lineLimit}, col{0}, nest{0},
-	  nestIndent{defaultIndent}, currentIndent{defaultIndent}, wordNests(0), wordP{word}, spaceP{space}
+	  nestIndent{defaultIndent}, currentIndent{defaultIndent},
+	  wordNests(0), wordP{word}, spaceP{space}
 {
 }
 

@@ -38,7 +38,7 @@ class ZSetPathways : public ZRoomCommand
 public:
 	ZSetPathways(ZFile* nParent);
 	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	             bool nIsFromHeader=true);
+	             bool nIsFromHeader = true);
 
 	void ParseRawDataLate() override;
 	void DeclareReferencesLate(const std::string& prefix) override;

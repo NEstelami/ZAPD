@@ -32,7 +32,8 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 
 		for (int i = 0; i < lights.size(); i++)
 		{
-			declarations += StringHelper::Sprintf("\t{ %s },", lights.at(i).GetBodySourceCode().c_str());
+			declarations +=
+				StringHelper::Sprintf("\t{ %s },", lights.at(i).GetBodySourceCode().c_str());
 
 			if (i < lights.size() - 1)
 				declarations += "\n";
@@ -41,7 +42,8 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 		const auto& light = lights.front();
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, lights.size() * light.GetRawDataSize(), light.GetSourceTypeName(),
+			segmentOffset, DeclarationAlignment::None, lights.size() * light.GetRawDataSize(),
+			light.GetSourceTypeName(),
 			StringHelper::Sprintf("%sLightInfo0x%06X", prefix.c_str(), segmentOffset),
 			lights.size(), declarations);
 	}
@@ -79,8 +81,8 @@ LightInfo::LightInfo(const std::vector<uint8_t>& rawData, int rawDataIndex)
 std::string LightInfo::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf(
-				"0x%02X, { %i, %i, %i, { 0x%02X, 0x%02X, 0x%02X }, 0x%02X, 0x%04X }", type, x,
-				y, z, r, g, b, drawGlow, radius);
+		"0x%02X, { %i, %i, %i, { 0x%02X, 0x%02X, 0x%02X }, 0x%02X, 0x%04X }", type, x, y, z, r, g,
+		b, drawGlow, radius);
 }
 
 std::string LightInfo::GetSourceTypeName() const

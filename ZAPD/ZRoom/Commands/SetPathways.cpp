@@ -28,7 +28,8 @@ ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, 
 void ZSetPathways::ParseRawDataLate()
 {
 	if (isFromHeader)
-		segmentOffset = GETSEGOFFSET(BitConverter::ToUInt32BE(ZResource::rawData, ZResource::rawDataIndex + 4));
+		segmentOffset =
+			GETSEGOFFSET(BitConverter::ToUInt32BE(ZResource::rawData, ZResource::rawDataIndex + 4));
 	else
 		segmentOffset = ZResource::rawDataIndex;
 
@@ -49,11 +50,12 @@ void ZSetPathways::DeclareReferencesLate(const std::string& prefix)
 
 void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	ZResource::parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
-	                       StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
-	                       StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(),
-	                                             commandSet & 0x00FFFFFF, cmdIndex, cmdID),
-	                       StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
+	ZResource::parent->AddDeclaration(
+		cmdAddress, DeclarationAlignment::None, 8,
+		StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
+		StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmdIndex,
+	                          cmdID),
+		StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
 }
 
 string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
@@ -115,7 +117,8 @@ PathwayEntry::PathwayEntry(const std::vector<uint8_t>& rawData, int rawDataIndex
 	}
 }
 
-PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, int rawDataIndex, int length)
+PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, int rawDataIndex,
+                         int length)
 {
 	parent = nParent;
 	_rawDataIndex = rawDataIndex;

@@ -63,9 +63,9 @@ void SetRoomList::PreGenSourceFiles()
 			if (res->GetResourceType() == ZResourceType::Room && res != zRoom)
 			{
 				string roomName = res->GetName();
-				declaration += StringHelper::Sprintf(
-					"\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(),
-					roomName.c_str());
+				declaration +=
+					StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n",
+				                          roomName.c_str(), roomName.c_str());
 			}
 		}
 	}

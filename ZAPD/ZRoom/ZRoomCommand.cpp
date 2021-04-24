@@ -1,10 +1,9 @@
 #include "ZRoomCommand.h"
+#include "BitConverter.h"
 #include "StringHelper.h"
 #include "ZRoom.h"
-#include "BitConverter.h"
 
-ZRoomCommand::ZRoomCommand(ZFile* nParent)
-	: ZResource(parent)
+ZRoomCommand::ZRoomCommand(ZFile* nParent) : ZResource(parent)
 {
 }
 

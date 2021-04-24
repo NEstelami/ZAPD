@@ -397,4 +397,5 @@ public:
 	ZResourceType GetResourceType() override;
 };
 
-std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures, std::string prefix, ZFile* parent);
+std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures, std::string prefix,
+                                        ZFile* parent);

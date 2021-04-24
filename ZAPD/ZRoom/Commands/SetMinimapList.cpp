@@ -44,24 +44,20 @@ void SetMinimapList::DeclareReferences(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			listSegmentOffset, DeclarationAlignment::Align4,
-			minimaps.size() * 10, "MinimapEntry",
+			listSegmentOffset, DeclarationAlignment::Align4, minimaps.size() * 10, "MinimapEntry",
 			StringHelper::Sprintf("%sMinimapEntryList0x%06X", prefix.c_str(), listSegmentOffset),
 			minimaps.size(), declaration);
 	}
 
-
 	{
 		std::string listName = parent->GetDeclarationPtrName(listSegmentOffset);
 
-		std::string declaration = StringHelper::Sprintf("(u32)%s, 0x%08X",
-													listName.c_str(), unk4);
+		std::string declaration = StringHelper::Sprintf("(u32)%s, 0x%08X", listName.c_str(), unk4);
 
 		parent->AddDeclaration(
 			segmentOffset, DeclarationAlignment::Align4, 8, "MinimapList",
 			StringHelper::Sprintf("%sMinimapList0x%06X", prefix.c_str(), segmentOffset),
 			declaration);
-
 	}
 }
 
@@ -70,7 +66,6 @@ string SetMinimapList::GetBodySourceCode() const
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_INFO(%s)", listName.c_str());
 }
-
 
 string SetMinimapList::GetCommandCName() const
 {
@@ -98,5 +93,6 @@ MinimapEntry::MinimapEntry(const std::vector<uint8_t>& rawData, int rawDataIndex
 
 std::string MinimapEntry::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X", unk0, unk2, unk4, unk6, unk8);
+	return StringHelper::Sprintf("0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X", unk0, unk2, unk4, unk6,
+	                             unk8);
 }

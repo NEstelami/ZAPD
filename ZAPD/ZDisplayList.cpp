@@ -1796,7 +1796,8 @@ static int GfxdCallback_Matrix(uint32_t seg)
 	return 1;
 }
 
-std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures, std::string prefix, ZFile* parent)
+std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures, std::string prefix,
+                                        ZFile* parent)
 {
 	if (textures.empty())
 		return "";
@@ -1831,9 +1832,8 @@ std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures,
 				else
 					texNextName = nextDecl->varName;
 
-				defines += StringHelper::Sprintf(
-					"#define %s ((u32)%s + 0x%06X)\n", texNextName.c_str(),
-					texName.c_str(), offsetDiff);
+				defines += StringHelper::Sprintf("#define %s ((u32)%s + 0x%06X)\n",
+				                                 texNextName.c_str(), texName.c_str(), offsetDiff);
 
 				parent->declarations.erase(nextOffset);
 				textures.erase(nextOffset);
@@ -1923,7 +1923,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	{
 		if (scene != nullptr)
 		{
-			scene->extDefines += ProcessTextureIntersections(scene->textures, scene->GetName(), scene->parent);
+			scene->extDefines +=
+				ProcessTextureIntersections(scene->textures, scene->GetName(), scene->parent);
 			defines += scene->extDefines;
 		}
 		defines += ProcessTextureIntersections(textures, prefix, parent);

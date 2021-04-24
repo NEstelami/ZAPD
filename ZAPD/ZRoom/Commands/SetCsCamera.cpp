@@ -57,7 +57,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		size_t index = 0;
 		for (auto& point : points)
 		{
-			declaration += StringHelper::Sprintf("\t%s, //0x%06X", point.GetSourceValue().c_str(), cameras.at(0).segmentOffset + (index * 6));
+			declaration += StringHelper::Sprintf("\t%s, //0x%06X", point.GetSourceValue().c_str(),
+			                                     cameras.at(0).segmentOffset + (index * 6));
 
 			if (index < points.size() - 1)
 				declaration += "\n";
@@ -65,15 +66,15 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 			index++;
 		}
 
-		parent->AddDeclarationArray(cameras.at(0).GetSegmentOffset(), DeclarationAlignment::None,
-		                                   DeclarationPadding::None, points.size() * points.at(0).GetRawDataSize(), points.at(0).GetSourceTypeName().c_str(),
-		                                   StringHelper::Sprintf("%sCsCameraPoints_%06X",
-		                                                         prefix.c_str(),
-		                                                         cameras.at(0).GetSegmentOffset()),
-		                                   points.size(), declaration);
+		parent->AddDeclarationArray(
+			cameras.at(0).GetSegmentOffset(), DeclarationAlignment::None, DeclarationPadding::None,
+			points.size() * points.at(0).GetRawDataSize(), points.at(0).GetSourceTypeName().c_str(),
+			StringHelper::Sprintf("%sCsCameraPoints_%06X", prefix.c_str(),
+		                          cameras.at(0).GetSegmentOffset()),
+			points.size(), declaration);
 	}
 
-	if (!cameras.empty()) 
+	if (!cameras.empty())
 	{
 		std::string camPointsName = parent->GetDeclarationPtrName(cameras.at(0).GetSegmentOffset());
 		std::string declaration = "";
@@ -82,8 +83,9 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		size_t pointsIndex = 0;
 		for (const auto& entry : cameras)
 		{
-			declaration += StringHelper::Sprintf("\t{ %i, %i, %s[%i] },",
-													entry.type, entry.numPoints, camPointsName.c_str(), pointsIndex);
+			declaration +=
+				StringHelper::Sprintf("\t{ %i, %i, %s[%i] },", entry.type, entry.numPoints,
+			                          camPointsName.c_str(), pointsIndex);
 
 			if (index < cameras.size() - 1)
 				declaration += "\n";

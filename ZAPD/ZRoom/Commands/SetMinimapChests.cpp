@@ -7,7 +7,8 @@
 
 using namespace std;
 
-SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                                   int rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -43,8 +44,7 @@ void SetMinimapChests::DeclareReferences(const std::string& prefix)
 	}
 
 	parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, chests.size() * 10,
-		"MinimapChest",
+		segmentOffset, DeclarationAlignment::None, chests.size() * 10, "MinimapChest",
 		StringHelper::Sprintf("%sMinimapChests0x%06X", prefix.c_str(), segmentOffset),
 		chests.size(), declaration);
 }
@@ -52,7 +52,8 @@ void SetMinimapChests::DeclareReferences(const std::string& prefix)
 std::string SetMinimapChests::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_COMPASS_ICON_INFO(0x%02X, %s)", chests.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_COMPASS_ICON_INFO(0x%02X, %s)", chests.size(),
+	                             listName.c_str());
 }
 
 string SetMinimapChests::GetCommandCName() const
@@ -81,5 +82,6 @@ MinimapChest::MinimapChest(const std::vector<uint8_t>& rawData, int rawDataIndex
 
 std::string MinimapChest::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X", unk0, unk2, unk4, unk6, unk8);
+	return StringHelper::Sprintf("0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X", unk0, unk2, unk4, unk6,
+	                             unk8);
 }
