@@ -42,7 +42,7 @@ void SetExitList::DeclareReferencesLate(const std::string& prefix)
 
 		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::Align4, exits.size() * 2, "u16",
-			StringHelper::Sprintf("%sExitList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+			StringHelper::Sprintf("%sExitList_%06X", zRoom->GetName().c_str(), segmentOffset),
 			exits.size(), declaration);
 	}
 }

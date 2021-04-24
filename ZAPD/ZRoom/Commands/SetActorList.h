@@ -4,6 +4,16 @@
 
 class ActorSpawnEntry
 {
+public:
+	ActorSpawnEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
+
+	std::string GetBodySourceCode() const;
+
+	std::string GetSourceTypeName() const;
+	int32_t GetRawDataSize() const;
+
+	uint16_t GetActorId() const;
+
 protected:
 	uint16_t actorNum;
 	int16_t posX;
@@ -13,14 +23,6 @@ protected:
 	int16_t rotY;
 	int16_t rotZ;
 	uint16_t initVar;
-
-public:
-	ActorSpawnEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
-
-	std::string GetBodySourceCode() const;
-	std::string GetSourceTypeName() const;
-
-	uint16_t GetActorId() const;
 };
 
 class SetActorList : public ZRoomCommand

@@ -14,10 +14,10 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, i
 
 void SetCutscenes::ParseRawData()
 {
-	numCutscenes = rawData[rawDataIndex + 1];
+	numCutscenes = cmdArg1;
 
 	uint32_t curPtr = segmentOffset;
-	string output = "";
+	std::string output = "";
 
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
 	{
@@ -58,7 +58,7 @@ void SetCutscenes::ParseRawData()
 		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::Align4,
 			cutsceneEntries.size() * 8, "CutsceneEntry",
-			StringHelper::Sprintf("%sCutsceneEntryList0x%06X", zRoom->GetName().c_str(),
+			StringHelper::Sprintf("%sCutsceneEntryList_%06X", zRoom->GetName().c_str(),
 		                          segmentOffset),
 			cutsceneEntries.size(), declaration);
 	}
@@ -94,7 +94,7 @@ string SetCutscenes::GetBodySourceCode() const
 
 int32_t SetCutscenes::GetRawDataSize()
 {
-	return ZRoomCommand::GetRawDataSize() + (0);
+	return ZRoomCommand::GetRawDataSize();
 }
 
 string SetCutscenes::GetCommandCName() const

@@ -64,7 +64,7 @@ void SetRoomList::PreGenSourceFiles()
 			{
 				string roomName = res->GetName();
 				declaration += StringHelper::Sprintf(
-					"    { (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(),
+					"\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(),
 					roomName.c_str());
 			}
 		}

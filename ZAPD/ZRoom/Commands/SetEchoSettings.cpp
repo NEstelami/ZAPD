@@ -11,7 +11,7 @@ SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawD
 
 std::string SetEchoSettings::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("SCENE_CMD_ECHO_SETTINGS(0x%02X)", echo);
+	return StringHelper::Sprintf("SCENE_CMD_ECHO_SETTINGS(%i)", echo);
 }
 
 string SetEchoSettings::GetCommandCName() const

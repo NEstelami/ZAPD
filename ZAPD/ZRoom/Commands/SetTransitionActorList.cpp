@@ -49,7 +49,7 @@ void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, transitionActors.size() * 16,
 		"TransitionActorEntry",
-		StringHelper::Sprintf("%sTransitionActorList0x%06X", prefix.c_str(), segmentOffset), 0,
+		StringHelper::Sprintf("%sTransitionActorList_%06X", prefix.c_str(), segmentOffset), 0,
 		declaration);
 }
 

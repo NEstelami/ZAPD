@@ -67,34 +67,40 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(cameras.at(0).GetSegmentOffset(), DeclarationAlignment::None,
 		                                   DeclarationPadding::None, points.size() * points.at(0).GetRawDataSize(), points.at(0).GetSourceTypeName().c_str(),
-		                                   StringHelper::Sprintf("%sCsCameraPoints0x%06X",
+		                                   StringHelper::Sprintf("%sCsCameraPoints_%06X",
 		                                                         prefix.c_str(),
 		                                                         cameras.at(0).GetSegmentOffset()),
 		                                   points.size(), declaration);
 	}
 
-	std::string camPointsName = parent->GetDeclarationPtrName(cameras.at(0).GetSegmentOffset());
-	std::string declaration = "";
-
-	size_t index = 0;
-	size_t pointsIndex = 0;
-	for (const auto& entry : cameras)
+	if (!cameras.empty()) 
 	{
-		declaration += StringHelper::Sprintf("\t{ %i, %i, %s[%i] },",
-												entry.type, entry.numPoints, camPointsName.c_str(), pointsIndex);
+		std::string camPointsName = parent->GetDeclarationPtrName(cameras.at(0).GetSegmentOffset());
+		std::string declaration = "";
 
-		if (index < cameras.size() - 1)
-			declaration += "\n";
+		size_t index = 0;
+		size_t pointsIndex = 0;
+		for (const auto& entry : cameras)
+		{
+			declaration += StringHelper::Sprintf("\t{ %i, %i, %s[%i] },",
+													entry.type, entry.numPoints, camPointsName.c_str(), pointsIndex);
 
-		index++;
-		pointsIndex += entry.GetNumPoints();
+			if (index < cameras.size() - 1)
+				declaration += "\n";
+
+			index++;
+			pointsIndex += entry.GetNumPoints();
+		}
+
+		const auto& entry = cameras.front();
+		std::string camTypename = entry.GetSourceTypeName();
+
+		parent->AddDeclarationArray(
+			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
+			cameras.size() * entry.GetRawDataSize(), camTypename,
+			StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), camTypename.c_str(), segmentOffset),
+			cameras.size(), declaration);
 	}
-
-	parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
-		cameras.size() * 8, "CsCameraEntry",
-		StringHelper::Sprintf("%sCsCameraList0x%06X", prefix.c_str(), segmentOffset),
-		cameras.size(), declaration);
 }
 
 std::string SetCsCamera::GetBodySourceCode() const
@@ -123,6 +129,11 @@ CsCameraEntry::CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataInd
 	  numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
+}
+
+std::string CsCameraEntry::GetSourceTypeName() const
+{
+	return "CsCameraEntry";
 }
 
 int32_t CsCameraEntry::GetRawDataSize() const

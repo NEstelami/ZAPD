@@ -8,7 +8,9 @@ class CsCameraEntry
 public:
 	CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
 
+	std::string GetSourceTypeName() const;
 	int32_t GetRawDataSize() const;
+
 	int16_t GetNumPoints() const;
 	int GetSegmentOffset() const;
 
