@@ -13,7 +13,7 @@ ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(parent)
 {
 }
 
-ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
                            bool nIsFromHeader)
 	: ZResource(nZRoom->parent), ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
@@ -54,20 +54,20 @@ void ZSetPathways::ParseRawData()
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
 
-	int numPaths = (Globals::Instance->game != ZGame::MM_RETAIL) ?
+	int32_t numPaths = (Globals::Instance->game != ZGame::MM_RETAIL) ?
                        1 :
                        zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
 
 	pathwayList = new PathwayList(parent, rawData, segmentOffset, numPaths);
 }
 
-string ZSetPathways::GenerateSourceCodePass1(string roomName, int baseAddress)
+string ZSetPathways::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	ParseRawData();
 	return "";
 }
 
-string ZSetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
+string ZSetPathways::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput = "";
 
@@ -81,9 +81,9 @@ string ZSetPathways::GenerateSourceCodePass2(string roomName, int baseAddress)
 	return sourceOutput;
 }
 
-int32_t ZSetPathways::GetRawDataSize()
+size_t ZSetPathways::GetRawDataSize()
 {
-	int32_t size = 0;
+	size_t size = 0;
 	if (pathwayList != nullptr)
 		size += pathwayList->GetRawDataSize();
 
@@ -108,7 +108,7 @@ RoomCommand ZSetPathways::GetRoomCommand()
 	return RoomCommand::SetPathways;
 }
 
-PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: numPoints(rawData[rawDataIndex + 0]), unk1(rawData[rawDataIndex + 1]),
 	  unk2(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  listSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
@@ -116,7 +116,7 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex)
 	uint32_t currentPtr = listSegmentOffset;
 	uint8_t* data = rawData.data();
 
-	for (int i = 0; i < numPoints; i++)
+	for (int32_t i = 0; i < numPoints; i++)
 	{
 		x = BitConverter::ToInt16BE(data, currentPtr + 0);
 		y = BitConverter::ToInt16BE(data, currentPtr + 2);
@@ -130,7 +130,7 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex)
 
 	if (numPoints == 0)  // Hack for SharpOcarina
 	{
-		for (int i = 0; i < 3; i++)
+		for (int32_t i = 0; i < 3; i++)
 		{
 			Vec3s point = Vec3s(0, 0, 0);
 			points.push_back(point);
@@ -138,15 +138,14 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, int rawDataIndex)
 	}
 }
 
-PathwayList::PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, int rawDataIndex, int length)
+PathwayList::PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t length)
 {
 	parent = nParent;
 	_rawDataIndex = rawDataIndex;
 
 	uint32_t currentPtr = rawDataIndex;
-	uint8_t* data = rawData.data();
 
-	for (int pathIndex = 0; pathIndex < length; pathIndex++)
+	for (int32_t pathIndex = 0; pathIndex < length; pathIndex++)
 	{
 		PathwayEntry* path = new PathwayEntry(rawData, currentPtr);
 		currentPtr += 8;
@@ -217,9 +216,9 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 	}
 }
 
-int32_t PathwayList::GetRawDataSize()
+size_t PathwayList::GetRawDataSize()
 {
-	int32_t pointsSize = 0;
+	size_t pointsSize = 0;
 
 	for (PathwayEntry* entry : pathways)
 	{

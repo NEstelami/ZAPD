@@ -24,7 +24,7 @@ class ZTexture : public ZResource
 {
 protected:
 	TextureType type;
-	int width, height;
+	uint16_t width, height;
 
 	uint8_t* bmpRgb;
 	uint8_t* bmpRgba;
@@ -33,7 +33,7 @@ protected:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void FixRawData();
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const int nRawDataIndex,
+	                    const uint32_t nRawDataIndex,
 	                    const std::string& nRelPath) override;  // Extract Mode
 
 	void PrepareBitmap();
@@ -67,9 +67,9 @@ public:
 	static ZTexture* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
 	                              bool readFile);
 	// static ZTexture* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData,
-	// int rawDataIndex, std::string nRelPath, ZFile* nParent);
-	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData, int rawDataIndex,
-	                            std::string nName, int nWidth, int nHeight, ZFile* nParent);
+	// uint32_t rawDataIndex, std::string nRelPath, ZFile* nParent);
+	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t rawDataIndex,
+	                            std::string nName, int32_t nWidth, int32_t nHeight, ZFile* nParent);
 	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
 	static ZTexture* FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);
@@ -77,13 +77,13 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 
-	int GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
-	int GetWidth();
-	int GetHeight();
-	void SetWidth(int nWidth);
-	void SetHeight(int nHeight);
+	uint16_t GetWidth();
+	uint16_t GetHeight();
+	void SetWidth(uint16_t nWidth);
+	void SetHeight(uint16_t nHeight);
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;

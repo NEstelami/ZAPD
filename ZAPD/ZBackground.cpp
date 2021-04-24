@@ -4,11 +4,9 @@
 #include "Path.h"
 #include "StringHelper.h"
 #include "ZFile.h"
+#include "Globals.h"
 
 REGISTER_ZFILENODE(Background, ZBackground);
-// TODO: make this a configurable value when ZAPD has a configuration file.
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
 
 #define JPEG_MARKER 0xFFD8FFE0
 #define MARKER_DQT 0xFFDB
@@ -18,7 +16,7 @@ ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 }
 
 ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                         int nRawDataIndex, ZFile* nParent)
+                         uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
@@ -64,7 +62,7 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 }
 
 void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                                 int nRawDataIndex, const std::string& nRelPath)
+                                 uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar("", "");
@@ -125,15 +123,15 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		        "ZBackground::CheckValidJpeg: Warning.\n"
 		        "\t The image is bigger than the screen buffer. File: '%s'.\n"
 		        "\t Image size: %zu bytes.\n"
-		        "\t Screen buffer size: %i bytes.\n",
+		        "\t Screen buffer size: %zu bytes.\n",
 		        filename.c_str(), data.size(), GetRawDataSize());
 	}
 }
 
-int ZBackground::GetRawDataSize()
+size_t ZBackground::GetRawDataSize()
 {
 	// Jpgs use the whole sceen buffer, which is a u16 matrix.
-	return SCREEN_HEIGHT * SCREEN_WIDTH * 2;
+	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
 }
 
 void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
