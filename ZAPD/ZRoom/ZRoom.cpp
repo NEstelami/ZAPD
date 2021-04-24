@@ -393,37 +393,18 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 	return nullptr;
 }
 
-size_t ZRoom::GetDeclarationSizeFromNeighbor(int declarationAddress)
+size_t ZRoom::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
 {
-	size_t declarationIndex = -1;
+	auto currentDecl = parent->declarations.find(declarationAddress);
+	if (currentDecl == parent->declarations.end())
+		return 0;
 
-	// Copy it into a vector.
-	vector<pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(),
-	                                                          parent->declarations.end());
+	auto nextDecl = currentDecl;
+	std::advance(nextDecl, 1);
+	if (nextDecl == parent->declarations.end())
+		return rawData.size() - currentDecl->first;
 
-	// Sort the vector according to the word count in descending order.
-	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(),
-	     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
-
-	for (size_t i = 0; i < declarationKeysSorted.size(); i++)
-	{
-		if (declarationKeysSorted[i].first == declarationAddress)
-		{
-			declarationIndex = i;
-			break;
-		}
-	}
-
-	if ((int)declarationIndex != -1)
-	{
-		if (declarationIndex + 1 < declarationKeysSorted.size())
-			return declarationKeysSorted[declarationIndex + 1].first -
-				   declarationKeysSorted[declarationIndex].first;
-		else
-			return rawData.size() - declarationKeysSorted[declarationIndex].first;
-	}
-
-	return 0;
+	return nextDecl->first - currentDecl->first;
 }
 
 size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
@@ -467,8 +448,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	if (scene != nullptr)
 		sourceOutput += scene->parent->GetHeaderInclude();
 
-	// sourceOutput += "\n";
-
 	ProcessCommandSets();
 
 	// Check for texture intersections
@@ -478,28 +457,36 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		{
 			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
 
-			sort(texturesSorted.begin(), texturesSorted.end(),
-			     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
-
 			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
 			{
-				int texSize = textures[texturesSorted[i].first]->GetRawDataSize();
+				uint32_t currentOffset = texturesSorted[i].first;
+				uint32_t nextOffset = texturesSorted[i + 1].first;
+				auto& currentTex = textures.at(currentOffset);
+				int texSize = currentTex->GetRawDataSize();
 
-				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
+				// Intersection
+				if ((currentOffset + texSize) > texturesSorted[i + 1].first)
 				{
-					// int intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
-					// 1].first;
+					uint32_t offsetDiff = nextOffset - currentOffset;
+					if (currentTex->isPalette)
+					{
+						// Shrink palette so it doesn't overlaps
+						currentTex->SetHeight(1);
+						currentTex->SetWidth(offsetDiff / currentTex->GetPixelMultiplyer());
+					}
+					else
+					{
+						defines += StringHelper::Sprintf(
+							"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
+							nextOffset, prefix.c_str(), currentOffset,
+							offsetDiff);
 
-					defines += StringHelper::Sprintf(
-						"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
-						texturesSorted[i + 1].first, prefix.c_str(), texturesSorted[i].first,
-						texturesSorted[i + 1].first - texturesSorted[i].first);
+						parent->declarations.erase(nextOffset);
+						textures.erase(nextOffset);
+						texturesSorted.erase(texturesSorted.begin() + i + 1);
 
-					parent->declarations.erase(texturesSorted[i + 1].first);
-					textures.erase(texturesSorted[i + 1].first);
-					texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-					i--;
+						i--;
+					}
 				}
 			}
 		}
@@ -526,8 +513,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 			item.second->GetRawDataSize(), "u64",
 			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
 	}
-
-	// sourceOutput += "\n";
 
 	return sourceOutput;
 }
@@ -559,19 +544,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	alignment = nAlignment;
 	padding = nPadding;
 	size = nSize;
-	preText = "";
 	text = nText;
-	rightText = "";
-	postText = "";
-	preComment = "";
-	postComment = "";
-	varType = "";
-	varName = "";
-	isArray = false;
-	arrayItemCnt = 0;
-	includePath = "";
-	isExternal = false;
-	references = vector<uint32_t>();
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, uint32_t nSize, string nVarType,

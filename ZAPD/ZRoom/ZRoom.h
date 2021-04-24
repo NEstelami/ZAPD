@@ -34,7 +34,7 @@ public:
 	                    const int nRawDataIndex, const std::string& nRelPath) override;
 
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
-	size_t GetDeclarationSizeFromNeighbor(int declarationAddress);
+	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 

@@ -55,7 +55,6 @@ protected:
 	void PrepareRawDataGrayscaleAlpha16(std::string grayAlphaPath);
 	void PrepareRawDataPalette4(std::string palPath);
 	void PrepareRawDataPalette8(std::string palPath);
-	float GetPixelMultiplyer();
 	void CalcHash() override;
 
 public:
@@ -84,6 +83,7 @@ public:
 	int GetHeight();
 	void SetWidth(int nWidth);
 	void SetHeight(int nHeight);
+	float GetPixelMultiplyer();
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;
