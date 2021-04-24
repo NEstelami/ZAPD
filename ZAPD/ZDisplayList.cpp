@@ -1632,7 +1632,7 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	return 1;
 }
 
-static int32_t GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int32_t width,
+static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int32_t width,
                                 int32_t height, int32_t pal)
 {
 	ZDisplayList* instance = ZDisplayList::Instance;
@@ -1642,7 +1642,7 @@ static int32_t GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int3
 	string texName = "";
 
 	if (instance->parent != nullptr &&
-	    texSegNum != 2)  // HACK: Until we have declarations use segment addresses, we'll exclude
+	    texSegNum != SEGMENT_SCENE)  // HACK: Until we have declarations use segment addresses, we'll exclude
 	                     // scene references...
 	{
 		texDecl = instance->parent->GetDeclaration(texOffset);
@@ -1672,6 +1672,7 @@ static int32_t GfxdCallback_Texture(uint32_t seg, int32_t fmt, int32_t siz, int3
 	instance->lastTexIsPalette = false;
 
 	instance->TextureGenCheck(instance->curPrefix);
+	
 	gfxd_puts(texName.c_str());
 
 	return 1;
@@ -1959,8 +1960,12 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			{
 				if (parent->GetDeclaration(item.first) == nullptr)
 				{
+					// TEXTURE POOL CHECK
+					std::string texOutPath = item.second->GetPoolOutPath(Globals::Instance->outputPath);
+					std::string texOutName = item.second->GetName();
+
 					auto start = chrono::steady_clock::now();
-					item.second->Save(Globals::Instance->outputPath);
+					item.second->Save(texOutPath);
 					auto end = chrono::steady_clock::now();
 					auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
@@ -1969,18 +1974,10 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 						       (int32_t)diff);
 
 					std::string incStr = StringHelper::Sprintf(
-						"%s/%s.%s.inc.c", Globals::Instance->outputPath.c_str(),
-						Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
+						"%s/%s.%s.inc.c", texOutPath.c_str(),
+						Path::GetFileNameWithoutExtension(texOutName).c_str(),
 						item.second->GetExternalExtension().c_str());
-					std::string texName =
-						StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
-
-					if (Globals::Instance->cfg.texturePool.find(item.second->hash) !=
-					    Globals::Instance->cfg.texturePool.end())
-					{
-						incStr = Globals::Instance->cfg.texturePool[item.second->hash];
-						texName = Path::GetFileNameWithoutExtension(incStr);
-					}
+					std::string texName = StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
 
 					parent->AddDeclarationIncludeArray(
 						item.first, incStr, item.second->GetRawDataSize(), "u64", texName, 0);
@@ -2303,11 +2300,6 @@ std::string ZDisplayList::GetSourceTypeName()
 ZResourceType ZDisplayList::GetResourceType()
 {
 	return ZResourceType::DisplayList;
-}
-
-vector<uint8_t> ZDisplayList::GetRawData()
-{
-	return rawData;
 }
 
 size_t ZDisplayList::GetRawDataSize()

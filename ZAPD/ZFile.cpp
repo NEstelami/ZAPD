@@ -578,12 +578,18 @@ void ZFile::GenerateSourceFiles(string outputDir)
 			{
 				ZTexture* tex = (ZTexture*)res;
 
-				// POOL CHECK
+				tex->CalcHash();
+
+				if (res->GetRawDataIndex() == 0xF0A0)
+				{
+					int bp = 0;
+				}
+
+				// TEXTURE POOL CHECK
 				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
 				    Globals::Instance->cfg.texturePool.end())
 				{
-					incStr = Globals::Instance->cfg.texturePool[tex->hash];
-					res->SetName(Path::GetFileNameWithoutExtension(incStr));
+					incStr = Globals::Instance->cfg.texturePool[tex->hash].path + "." + res->GetExternalExtension() + ".inc";
 				}
 
 				incStr += ".c";
@@ -880,11 +886,10 @@ string ZFile::ProcessDeclarations()
 				if (diff > 0)
 				{
 					std::string unaccountedPrefix = "unaccounted";
-					if (diff < 16 && !nonZeroUnaccounted)
-					{
-						unaccountedPrefix = "possiblePadding";
-					}
 
+					if (diff < 16 && !nonZeroUnaccounted)
+						unaccountedPrefix = "possiblePadding";
+					
 					Declaration* decl = AddDeclarationArray(
 						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
 						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),

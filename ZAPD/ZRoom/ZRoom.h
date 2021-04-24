@@ -36,7 +36,6 @@ public:
 	size_t GetDeclarationSizeFromNeighbor(int32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
-	std::vector<uint8_t> GetRawData() override;
 	size_t GetRawDataSize() override;
 	virtual ZResourceType GetResourceType() override;
 	virtual void Save(const std::string& outFolder) override;
