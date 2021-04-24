@@ -7,13 +7,12 @@
 
 using namespace std;
 
-SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numCutscenes = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
-	uint32_t curPtr = segmentOffset;
 	string output = "";
 
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
@@ -34,7 +33,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 		int32_t currentPtr = segmentOffset;
 		string declaration = "";
 
-		for (int i = 0; i < numCutscenes; i++)
+		for (uint8_t i = 0; i < numCutscenes; i++)
 		{
 			CutsceneEntry* entry = new CutsceneEntry(rawData, currentPtr);
 			cutsceneEntries.push_back(entry);
@@ -88,7 +87,7 @@ SetCutscenes::~SetCutscenes()
 		delete entry;
 }
 
-string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetCutscenes::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	string pass1 = ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress);
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
@@ -101,7 +100,7 @@ string SetCutscenes::GenerateSourceCodePass1(string roomName, int baseAddress)
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-int32_t SetCutscenes::GetRawDataSize()
+size_t SetCutscenes::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (0);
 }
@@ -138,7 +137,7 @@ string SetCutscenes::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-CutsceneEntry::CutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex)
+CutsceneEntry::CutsceneEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: segmentOffset(BitConverter::ToInt32BE(rawData, rawDataIndex + 0) & 0x00FFFFFF),
 	  exit(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)), entrance(rawData[rawDataIndex + 6]),
 	  flag(rawData[rawDataIndex + 7])

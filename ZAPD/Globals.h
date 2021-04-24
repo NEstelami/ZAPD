@@ -17,8 +17,8 @@ enum VerbosityLevel
 class GameConfig
 {
 public:
-	std::map<int, std::string> segmentRefs;
-	std::map<int, ZFile*> segmentRefFiles;
+	std::map<int32_t, std::string> segmentRefs;
+	std::map<int32_t, ZFile*> segmentRefFiles;
 	std::map<uint32_t, std::string> symbolMap;
 	std::vector<std::string> actorList;
 	std::vector<std::string> objectList;
@@ -50,19 +50,19 @@ public:
 	bool warnUnaccounted = false;
 
 	std::vector<ZFile*> files;
-	std::vector<int> segments;
-	std::map<int, std::string> segmentRefs;
-	std::map<int, ZFile*> segmentRefFiles;
+	std::vector<int32_t> segments;
+	std::map<int32_t, std::string> segmentRefs;
+	std::map<int32_t, ZFile*> segmentRefFiles;
 	ZRoom* lastScene;
 	std::map<uint32_t, std::string> symbolMap;
 
 	Globals();
-	std::string FindSymbolSegRef(int segNumber, uint32_t symbolAddress);
+	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
 	void ReadConfigFile(const std::string& configFilePath);
 	void ReadTexturePool(const std::string& texturePoolXmlPath);
 	void GenSymbolMap(const std::string& symbolMapPath);
-	void AddSegment(int segment);
-	bool HasSegment(int segment);
+	void AddSegment(int32_t segment);
+	bool HasSegment(int32_t segment);
 };
 
 /*

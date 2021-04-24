@@ -18,7 +18,7 @@ ZResource::ZResource(ZFile* nParent)
 }
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const int nRawDataIndex, const std::string& nRelPath)
+                               const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
@@ -30,7 +30,7 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 	ParseRawData();
 }
 
-void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
                                 const std::string& nRelPath)
 {
 	rawData = nRawData;
@@ -139,17 +139,17 @@ void ZResource::SetRawData(std::vector<uint8_t> nData)
 	rawData = nData;
 }
 
-int ZResource::GetRawDataIndex()
+uint32_t ZResource::GetRawDataIndex()
 {
 	return rawDataIndex;
 }
 
-int ZResource::GetRawDataSize()
+size_t ZResource::GetRawDataSize()
 {
 	return rawData.size();
 }
 
-void ZResource::SetRawDataIndex(int value)
+void ZResource::SetRawDataIndex(uint32_t value)
 {
 	rawDataIndex = value;
 }
@@ -195,4 +195,8 @@ uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 		currentPtr -= GETSEGOFFSET(parentBaseAddress);
 
 	return currentPtr;
+}
+
+ZResource::~ZResource()
+{
 }
