@@ -548,7 +548,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	return sourceOutput;
 }
 
-int ZRoom::GetRawDataSize()
+size_t ZRoom::GetRawDataSize()
 {
 	size_t size = 0;
 

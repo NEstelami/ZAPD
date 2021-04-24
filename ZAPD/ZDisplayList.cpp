@@ -2302,7 +2302,7 @@ ZResourceType ZDisplayList::GetResourceType()
 	return ZResourceType::DisplayList;
 }
 
-int ZDisplayList::GetRawDataSize()
+size_t ZDisplayList::GetRawDataSize()
 {
 	return instructions.size() * 8;
 }
