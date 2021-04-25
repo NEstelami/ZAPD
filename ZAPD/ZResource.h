@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "tinyxml2.h"
+#include "Declaration.h"
 
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3
@@ -22,7 +23,6 @@ typedef uint32_t segptr_t;
 class ZFile;
 class HLFileIntermediette;
 
-class Declaration;
 struct CommandSet;
 
 enum class ZResourceType
@@ -100,62 +100,6 @@ protected:
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
-};
-
-enum class DeclarationAlignment
-{
-	None,
-	Align4,
-	Align8,
-	Align16
-};
-
-enum class DeclarationPadding
-{
-	None,
-	Pad4,
-	Pad8,
-	Pad16
-};
-
-class Declaration
-{
-public:
-	DeclarationAlignment alignment;
-	DeclarationPadding padding;
-	size_t size;
-	std::string preText;
-	std::string text;
-	std::string rightText;
-	std::string postText;
-	std::string preComment;
-	std::string postComment;
-	std::string varType;
-	std::string varName;
-	std::string includePath;
-	bool isExternal;
-	bool isArray;
-	size_t arrayItemCnt;
-	std::vector<uint32_t> references;
-	bool isUnaccounted = false;
-
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-	            bool nIsExternal);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
-	            std::string nText);
-	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
-
-protected:
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nText);
 };
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
