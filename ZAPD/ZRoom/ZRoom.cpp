@@ -343,7 +343,7 @@ void ZRoom::ProcessCommandSets()
 					declaration += "\n";
 			}
 
-			Declaration* decl = parent->AddDeclarationArray(
+			parent->AddDeclarationArray(
 				GETSEGOFFSET(commandSet), DeclarationAlignment::Align16, 8 * setCommands.size(),
 				"static SCmdBase",
 				StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),

@@ -3,7 +3,7 @@
 #include "StringHelper.h"
 #include "ZRoom.h"
 
-ZRoomCommand::ZRoomCommand(ZFile* nParent) : ZResource(parent)
+ZRoomCommand::ZRoomCommand(ZFile* nParent) : ZResource(nParent)
 {
 }
 

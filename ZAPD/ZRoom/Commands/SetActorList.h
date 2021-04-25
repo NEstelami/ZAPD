@@ -42,6 +42,6 @@ public:
 protected:
 	size_t GetActorListArraySize();
 
-	int numActors;
+	uint8_t numActors;
 	std::vector<ActorSpawnEntry> actors;
 };

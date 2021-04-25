@@ -9,13 +9,11 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                            uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
+	numCutscenes = cmdArg1;
 }
 
 void SetCutscenes::ParseRawData()
 {
-	numCutscenes = cmdArg1;
-
-	uint32_t curPtr = segmentOffset;
 	std::string output = "";
 
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)

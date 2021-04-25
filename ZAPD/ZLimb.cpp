@@ -445,10 +445,11 @@ void ZLimb::ParseRawData()
 	{
 	case ZLimbType::LOD:
 		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+		// Intended fallthrough
 	case ZLimbType::Standard:
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-
 		break;
+
 	case ZLimbType::Skin:
 		skinSegmentType =
 			static_cast<ZLimbSkinType>(BitConverter::ToInt32BE(rawData, rawDataIndex + 8));

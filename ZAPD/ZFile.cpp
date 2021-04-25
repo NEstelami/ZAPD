@@ -607,11 +607,6 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 				tex->CalcHash();
 
-				if (res->GetRawDataIndex() == 0xF0A0)
-				{
-					int bp = 0;
-				}
-
 				// TEXTURE POOL CHECK
 				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
 				    Globals::Instance->cfg.texturePool.end())

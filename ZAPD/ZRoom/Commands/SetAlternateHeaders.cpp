@@ -31,7 +31,7 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 	{
 		std::string declaration = "";
 
-		for (int i = 0; i < headers.size(); i++)
+		for (size_t i = 0; i < headers.size(); i++)
 		{
 			if (headers.at(i) == 0)
 				declaration += StringHelper::Sprintf("\tNULL,");

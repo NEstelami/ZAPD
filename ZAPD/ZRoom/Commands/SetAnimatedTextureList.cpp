@@ -37,7 +37,7 @@ void SetAnimatedTextureList::DeclareReferences(const std::string& prefix)
 		std::string declName = StringHelper::Sprintf("%sAnimatedTextureParams0x%06X",
 		                                             prefix.c_str(), texture.segmentOffset);
 		std::string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		switch (texture.type)
 		{

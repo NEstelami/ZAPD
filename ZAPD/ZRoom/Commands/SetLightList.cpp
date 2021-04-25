@@ -29,7 +29,7 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 	{
 		std::string declarations = "";
 
-		for (int i = 0; i < lights.size(); i++)
+		for (size_t i = 0; i < lights.size(); i++)
 		{
 			declarations +=
 				StringHelper::Sprintf("\t{ %s },", lights.at(i).GetBodySourceCode().c_str());

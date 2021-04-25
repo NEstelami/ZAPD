@@ -123,7 +123,7 @@ PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, ui
 
 	uint32_t currentPtr = rawDataIndex;
 
-	for (int32_t pathIndex = 0; pathIndex < length; pathIndex++)
+	for (size_t pathIndex = 0; pathIndex < length; pathIndex++)
 	{
 		PathwayEntry path(rawData, currentPtr);
 		currentPtr += 8;
