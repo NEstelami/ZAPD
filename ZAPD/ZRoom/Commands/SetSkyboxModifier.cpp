@@ -11,7 +11,9 @@ SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, const std::vector<uint8_t>& 
 
 std::string SetSkyboxModifier::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("SCENE_CMD_SKYBOX_DISABLES(%i, %i)", disableSky, disableSunMoon);
+	std::string sky = StringHelper::BoolStr(disableSky);
+	std::string soonMoon = StringHelper::BoolStr(disableSunMoon);
+	return StringHelper::Sprintf("SCENE_CMD_SKYBOX_DISABLES(%s, %s)", sky.c_str(), soonMoon.c_str());
 }
 
 std::string SetSkyboxModifier::GetCommandCName() const

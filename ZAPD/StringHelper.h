@@ -92,4 +92,9 @@ public:
 								   return ss.empty() ? s : ss + separator + s;
 							   });
 	}
+
+	static std::string BoolStr(bool b)
+	{
+		return b ? "true" : "false";
+	}
 };

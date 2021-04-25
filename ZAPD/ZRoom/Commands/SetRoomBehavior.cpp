@@ -32,8 +32,9 @@ std::string SetRoomBehavior::GetBodySourceCode() const
 		                             gameplayFlags, currRoomUnk2, currRoomUnk5, msgCtxUnk,
 		                             enablePosLights, kankyoContextUnkE2);
 	}
-	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i)", gameplayFlags,
-	                             currRoomUnk2, showInvisActors, msgCtxUnk);
+	std::string showInvisible = StringHelper::BoolStr(showInvisActors);
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %s, %i)", gameplayFlags,
+	                             currRoomUnk2, showInvisible.c_str(), msgCtxUnk);
 }
 
 std::string SetRoomBehavior::GetCommandCName() const
