@@ -4,7 +4,7 @@
 class ZRoomCommandUnk : public ZRoomCommand
 {
 public:
-	ZRoomCommandUnk(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	ZRoomCommandUnk(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 

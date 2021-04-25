@@ -6,9 +6,7 @@
 #include "../ZNames.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
-SetObjectList::SetObjectList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetObjectList::SetObjectList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -58,12 +56,12 @@ std::string SetObjectList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_OBJECT_LIST(%i, %s)", objects.size(), listName.c_str());
 }
 
-int32_t SetObjectList::GetRawDataSize()
+size_t SetObjectList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (objects.size() * 2);
 }
 
-string SetObjectList::GetCommandCName() const
+std::string SetObjectList::GetCommandCName() const
 {
 	return "SCmdObjectList";
 }

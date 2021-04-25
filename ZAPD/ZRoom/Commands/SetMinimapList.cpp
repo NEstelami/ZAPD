@@ -5,9 +5,7 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
-SetMinimapList::SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetMinimapList::SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	listSegmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 0));
@@ -18,7 +16,7 @@ void SetMinimapList::ParseRawData()
 {
 	int32_t currentPtr = listSegmentOffset;
 
-	for (int i = 0; i < zRoom->roomCount; i++)
+	for (int32_t i = 0; i < zRoom->roomCount; i++)
 	{
 		MinimapEntry entry(rawData, currentPtr);
 		minimaps.push_back(entry);
@@ -61,13 +59,13 @@ void SetMinimapList::DeclareReferences(const std::string& prefix)
 	}
 }
 
-string SetMinimapList::GetBodySourceCode() const
+std::string SetMinimapList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENECMD_MINIMAP_INFO(%s)", listName.c_str());
 }
 
-string SetMinimapList::GetCommandCName() const
+std::string SetMinimapList::GetCommandCName() const
 {
 	return "SCmdMinimapSettings";
 }
@@ -77,12 +75,12 @@ RoomCommand SetMinimapList::GetRoomCommand() const
 	return RoomCommand::SetMinimapList;
 }
 
-int32_t SetMinimapList::GetRawDataSize()
+size_t SetMinimapList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (minimaps.size() * 10);
 }
 
-MinimapEntry::MinimapEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+MinimapEntry::MinimapEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: unk0(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  unk2(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
 	  unk4(BitConverter::ToUInt16BE(rawData, rawDataIndex + 4)),

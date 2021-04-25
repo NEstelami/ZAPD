@@ -6,7 +6,7 @@
 class CsCameraEntry
 {
 public:
-	CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
+	CsCameraEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetSourceTypeName() const;
 	int32_t GetRawDataSize() const;
@@ -23,7 +23,7 @@ public:
 class SetCsCamera : public ZRoomCommand
 {
 public:
-	SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -31,7 +31,7 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
-	int32_t GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetCommandCName() const override;
 
 private:

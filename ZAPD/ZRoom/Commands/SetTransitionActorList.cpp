@@ -6,10 +6,8 @@
 #include "../ZNames.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetTransitionActorList::SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                               int rawDataIndex)
+                                               uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -20,7 +18,7 @@ void SetTransitionActorList::ParseRawData()
 
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numActors; i++)
+	for (int32_t i = 0; i < numActors; i++)
 	{
 		TransitionActorEntry entry(rawData, currentPtr);
 		transitionActors.push_back(entry);
@@ -31,7 +29,7 @@ void SetTransitionActorList::ParseRawData()
 
 void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 {
-	string declaration = "";
+	std::string declaration = "";
 
 	size_t index = 0;
 	for (const auto& entry : transitionActors)
@@ -52,19 +50,19 @@ void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 		declaration);
 }
 
-string SetTransitionActorList::GetBodySourceCode() const
+std::string SetTransitionActorList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENECMD_TRANSI_ACTOR_LIST(%i, %s)", transitionActors.size(),
 	                             listName.c_str());
 }
 
-int32_t SetTransitionActorList::GetRawDataSize()
+size_t SetTransitionActorList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (transitionActors.size() * 16);
 }
 
-string SetTransitionActorList::GetCommandCName() const
+std::string SetTransitionActorList::GetCommandCName() const
 {
 	return "SCmdTransiActorList";
 }
@@ -90,7 +88,7 @@ TransitionActorEntry::TransitionActorEntry(const std::vector<uint8_t>& rawData, 
 
 std::string TransitionActorEntry::GetBodySourceCode() const
 {
-	string actorStr = ZNames::GetActorName(actorNum);
+	std::string actorStr = ZNames::GetActorName(actorNum);
 
 	return StringHelper::Sprintf("%i, %i, %i, %i, %s, %i, %i, %i, %i, 0x%04X", frontObjectRoom,
 	                             frontTransitionReaction, backObjectRoom, backTransitionReaction,

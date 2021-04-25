@@ -6,7 +6,7 @@
 using namespace std;
 
 ZRoomCommandUnk::ZRoomCommandUnk(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 int rawDataIndex)
+                                 uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	data1 = cmdArg1;

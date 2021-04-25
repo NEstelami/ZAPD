@@ -9,7 +9,7 @@ class PolygonDlist
 {
 public:
 	PolygonDlist() = default;
-	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             ZFile* nParent, ZRoom* nRoom);
 
 	void ParseRawData();
@@ -66,7 +66,7 @@ protected:
 	ZBackground* sourceBackground;
 
 	std::vector<uint8_t> rawData;
-	int rawDataIndex;
+	uint32_t rawDataIndex;
 	ZFile* parent;
 	std::string name;
 	bool isSubStruct;
@@ -77,9 +77,9 @@ protected:
 public:
 	BgImage() = default;
 	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-	        int nRawDataIndex, ZFile* nParent);
+	        uint32_t nRawDataIndex, ZFile* nParent);
 
-	static int GetRawDataSize();
+	static size_t GetRawDataSize() ;
 
 	std::string GetBodySourceCode(bool arrayElement) const;
 
@@ -91,7 +91,7 @@ public:
 class PolygonTypeBase
 {
 public:
-	PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	                ZRoom* nRoom);
 
 	virtual void ParseRawData() = 0;
@@ -105,7 +105,7 @@ public:
 
 	std::string GetName() const;
 	void SetName(const std::string& newName);
-	virtual int GetRawDataSize() const = 0;
+	virtual size_t GetRawDataSize() const = 0;
 
 	std::string GetDefaultName(const std::string& prefix) const;
 
@@ -136,7 +136,7 @@ protected:
 	std::vector<BgImage> multiList;
 
 public:
-	PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             ZRoom* nRoom);
 
 	void ParseRawData() override;
@@ -146,13 +146,13 @@ public:
 
 	std::string GetSourceTypeName() const override;
 
-	int GetRawDataSize() const override;
+	size_t GetRawDataSize() const override;
 };
 
 class PolygonType2 : public PolygonTypeBase
 {
 public:
-	PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             ZRoom* nRoom);
 
 	void ParseRawData() override;
@@ -160,7 +160,7 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-	int GetRawDataSize() const override;
+	size_t GetRawDataSize() const override;
 
 protected:
 	uint8_t num;
@@ -171,8 +171,8 @@ protected:
 class SetMesh : public ZRoomCommand
 {
 public:
-	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-	        int segAddressOffset = 0);
+	SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+	        int32_t segAddressOffset = 0);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -180,7 +180,7 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
-	int32_t GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetCommandCName() const override;
 
 private:

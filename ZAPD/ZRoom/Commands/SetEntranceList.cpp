@@ -5,10 +5,8 @@
 #include "../ZRoom.h"
 #include "SetStartPositionList.h"
 
-using namespace std;
-
 SetEntranceList::SetEntranceList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 int rawDataIndex)
+                                 uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	parent->AddDeclarationPlaceholder(segmentOffset);  // Make sure this segment is defined
@@ -20,7 +18,7 @@ void SetEntranceList::ParseRawDataLate()
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numEntrances; i++)
+	for (int32_t i = 0; i < numEntrances; i++)
 	{
 		EntranceEntry entry(rawData, currentPtr);
 		entrances.push_back(entry);
@@ -35,8 +33,7 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 	{
 		std::string declaration = "";
 
-		int index = 0;
-
+		size_t index = 0;
 		for (const auto& entry : entrances)
 		{
 			declaration +=
@@ -61,7 +58,7 @@ std::string SetEntranceList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_ENTRANCE_LIST(%s)", listName.c_str());
 }
 
-string SetEntranceList::GetCommandCName() const
+std::string SetEntranceList::GetCommandCName() const
 {
 	return "SCmdEntranceList";
 }
@@ -71,7 +68,7 @@ RoomCommand SetEntranceList::GetRoomCommand() const
 	return RoomCommand::SetEntranceList;
 }
 
-EntranceEntry::EntranceEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+EntranceEntry::EntranceEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	startPositionIndex = rawData.at(rawDataIndex + 0);
 	roomToLoad = rawData.at(rawDataIndex + 1);

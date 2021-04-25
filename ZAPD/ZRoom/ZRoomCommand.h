@@ -54,11 +54,11 @@ class ZRoomCommand : public ZResource
 {
 public:
 	int32_t cmdAddress;
-	int32_t cmdIndex;
+	uint32_t cmdIndex;
 	uint32_t commandSet;
 
 	ZRoomCommand(ZFile* nParent);
-	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex);
+	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex);
 
 	// virtual void ParseRawData();
 	virtual void DeclareReferences(const std::string& prefix);

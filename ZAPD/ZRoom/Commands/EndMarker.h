@@ -5,7 +5,7 @@
 class EndMarker : public ZRoomCommand
 {
 public:
-	EndMarker(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	EndMarker(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 	std::string GetCommandCName() const override;

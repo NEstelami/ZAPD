@@ -2,10 +2,8 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
 SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 int rawDataIndex)
+                                 uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	hour = rawData.at(rawDataIndex + 4);
@@ -18,7 +16,7 @@ std::string SetTimeSettings::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_TIME_SETTINGS(%i, %i, %i)", hour, min, unk);
 }
 
-string SetTimeSettings::GetCommandCName() const
+std::string SetTimeSettings::GetCommandCName() const
 {
 	return "SCmdTimeSettings";
 }

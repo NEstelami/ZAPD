@@ -6,7 +6,7 @@
 using namespace std;
 
 SetRoomBehavior::SetRoomBehavior(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 int rawDataIndex)
+                                 uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	gameplayFlags = rawData.at(rawDataIndex + 0x01);

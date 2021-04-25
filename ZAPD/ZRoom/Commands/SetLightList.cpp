@@ -2,9 +2,7 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
-SetLightList::SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetLightList::SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numLights = cmdArg1;
@@ -12,7 +10,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, i
 
 void SetLightList::ParseRawData()
 {
-	string declarations = "";
+	std::string declarations = "";
 
 	int32_t currentPtr = segmentOffset;
 	for (int i = 0; i < this->numLights; i++)
@@ -65,7 +63,7 @@ RoomCommand SetLightList::GetRoomCommand() const
 	return RoomCommand::SetLightList;
 }
 
-LightInfo::LightInfo(const std::vector<uint8_t>& rawData, int rawDataIndex)
+LightInfo::LightInfo(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	type = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0);
 	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);

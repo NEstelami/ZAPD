@@ -6,7 +6,7 @@
 class SetAlternateHeaders : public ZRoomCommand
 {
 public:
-	SetAlternateHeaders(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetAlternateHeaders(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	void ParseRawDataLate() override;
 	void DeclareReferencesLate(const std::string& prefix) override;

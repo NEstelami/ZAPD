@@ -5,7 +5,7 @@
 class ActorSpawnEntry
 {
 public:
-	ActorSpawnEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
+	ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const;
 
@@ -28,7 +28,7 @@ protected:
 class SetActorList : public ZRoomCommand
 {
 public:
-	SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -36,7 +36,7 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
-	int32_t GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetCommandCName() const override;
 
 protected:

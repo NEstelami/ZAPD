@@ -6,10 +6,8 @@
 #include "../ZNames.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                           int rawDataIndex)
+                                           uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -23,7 +21,7 @@ void SetStartPositionList::ParseRawData()
 
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numActors; i++)
+	for (int32_t i = 0; i < numActors; i++)
 	{
 		actors.push_back(ActorSpawnEntry(rawData, currentPtr));
 		currentPtr += 16;
@@ -59,7 +57,7 @@ std::string SetStartPositionList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_SPAWN_LIST(%i, %s)", actors.size(), listName.c_str());
 }
 
-string SetStartPositionList::GetCommandCName() const
+std::string SetStartPositionList::GetCommandCName() const
 {
 	return "SCmdSpawnList";
 }

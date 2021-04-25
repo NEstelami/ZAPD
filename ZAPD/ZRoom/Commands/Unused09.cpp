@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Unused09::Unused09(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+Unused09::Unused09(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }

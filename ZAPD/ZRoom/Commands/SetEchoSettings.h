@@ -5,7 +5,7 @@
 class SetEchoSettings : public ZRoomCommand
 {
 public:
-	SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 

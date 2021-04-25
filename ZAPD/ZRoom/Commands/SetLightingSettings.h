@@ -5,7 +5,7 @@
 class LightingSettings
 {
 public:
-	LightingSettings(const std::vector<uint8_t>& rawData, int rawDataIndex);
+	LightingSettings(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const;
 
@@ -25,7 +25,7 @@ protected:
 class SetLightingSettings : public ZRoomCommand
 {
 public:
-	SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

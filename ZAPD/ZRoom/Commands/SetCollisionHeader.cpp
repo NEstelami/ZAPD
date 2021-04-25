@@ -4,10 +4,8 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                       int rawDataIndex)
+                                       uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -27,13 +25,13 @@ SetCollisionHeader::~SetCollisionHeader()
 	delete collisionHeader;
 }
 
-string SetCollisionHeader::GetBodySourceCode() const
+std::string SetCollisionHeader::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENECMD_COL_HEADER(%s)", listName.c_str());
 }
 
-string SetCollisionHeader::GetCommandCName() const
+std::string SetCollisionHeader::GetCommandCName() const
 {
 	return "SCmdColHeader";
 }

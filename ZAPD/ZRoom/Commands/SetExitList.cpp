@@ -4,9 +4,7 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
-SetExitList::SetExitList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetExitList::SetExitList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	if (segmentOffset != 0)
@@ -19,7 +17,7 @@ void SetExitList::ParseRawDataLate()
 	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numEntrances; i++)
+	for (int32_t i = 0; i < numEntrances; i++)
 	{
 		uint16_t exit = BitConverter::ToUInt16BE(rawData, currentPtr);
 		exits.push_back(exit);
@@ -54,7 +52,7 @@ std::string SetExitList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_EXIT_LIST(%s)", listName.c_str());
 }
 
-string SetExitList::GetCommandCName() const
+std::string SetExitList::GetCommandCName() const
 {
 	return "SCmdExitList";
 }

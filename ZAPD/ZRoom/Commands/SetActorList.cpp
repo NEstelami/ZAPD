@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SetActorList::SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetActorList::SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numActors = cmdArg1;
@@ -69,9 +69,9 @@ std::string SetActorList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_ACTOR_LIST(%i, %s)", numActors, listName.c_str());
 }
 
-int32_t SetActorList::GetRawDataSize()
+size_t SetActorList::GetRawDataSize()
 {
-	return ZRoomCommand::GetRawDataSize() + ((int)actors.size() * 16);
+	return ZRoomCommand::GetRawDataSize() + ((int32_t)actors.size() * 16);
 }
 
 size_t SetActorList::GetActorListArraySize()

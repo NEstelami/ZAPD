@@ -33,28 +33,26 @@ void BuildAssetTexture(const std::string& pngFilePath, TextureType texType,
                        const std::string& outPath);
 void BuildAssetBackground(const std::string& imageFilePath, const std::string& outPath);
 void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath);
-void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath);
+void BuildAssetModelIntermediette(const std::string& outPath);
 void BuildAssetAnimationIntermediette(const std::string& animPath, const std::string& outPath);
-
-int NewMain(int argc, char* argv[]);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 void ErrorHandler(int sig)
 {
 	void* array[4096];
-	const int nMaxFrames = sizeof(array) / sizeof(array[0]);
+	const size_t nMaxFrames = sizeof(array) / sizeof(array[0]);
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
 	for (size_t i = 1; i < size; i++)
 	{
 		Dl_info info;
-		int gotAddress = dladdr(array[i], &info);
+		uint32_t gotAddress = dladdr(array[i], &info);
 		string functionName(symbols[i]);
 
 		if (gotAddress != 0 && info.dli_sname != nullptr)
 		{
-			int status;
+			int32_t status;
 			char* demangled = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
 			const char* nameFound = info.dli_sname;
 
@@ -79,12 +77,6 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	Globals* g = new Globals();
-	return NewMain(argc, argv);
-}
-
-int NewMain(int argc, char* argv[])
-{
 	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
 
 	if (argc < 2)
@@ -92,6 +84,8 @@ int NewMain(int argc, char* argv[])
 		printf("ZAPD.exe (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
 		return 1;
 	}
+
+	Globals* g = new Globals();
 
 	// Parse File Mode
 	string buildMode = argv[1];
@@ -121,7 +115,7 @@ int NewMain(int argc, char* argv[])
 	}
 
 	// Parse other "commands"
-	for (int i = 2; i < argc; i++)
+	for (int32_t i = 2; i < argc; i++)
 	{
 		string arg = argv[i];
 
@@ -254,8 +248,7 @@ int NewMain(int argc, char* argv[])
 		}
 		else if (fileMode == ZFileMode::BuildModelIntermediette)
 		{
-			BuildAssetModelIntermediette(Globals::Instance->inputPath,
-			                             Globals::Instance->outputPath);
+			BuildAssetModelIntermediette(Globals::Instance->outputPath);
 		}
 		else if (fileMode == ZFileMode::BuildAnimationIntermediette)
 		{
@@ -272,11 +265,11 @@ int NewMain(int argc, char* argv[])
 				File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
 		}
 	}
-	catch (std::runtime_error e)
+	catch (std::runtime_error& e)
 	{
 		printf("Exception occurred: %s\n", e.what());
 	}
-
+	delete g;
 	return 0;
 }
 
@@ -373,7 +366,7 @@ void BuildAssetBlob(const std::string& blobFilePath, const std::string& outPath)
 	delete blob;
 }
 
-void BuildAssetModelIntermediette(const std::string& mdlPath, const std::string& outPath)
+void BuildAssetModelIntermediette(const std::string& outPath)
 {
 	XMLDocument doc;
 

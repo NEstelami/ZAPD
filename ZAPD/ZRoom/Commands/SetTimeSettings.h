@@ -5,7 +5,7 @@
 class SetTimeSettings : public ZRoomCommand
 {
 public:
-	SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 

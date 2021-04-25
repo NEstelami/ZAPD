@@ -7,7 +7,7 @@ ZRoomCommand::ZRoomCommand(ZFile* nParent) : ZResource(parent)
 {
 }
 
-ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex)
+ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
 	: ZResource(nZRoom->parent), zRoom{nZRoom}
 {
 	rawData.assign(nRawData.begin(), nRawData.end());

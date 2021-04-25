@@ -8,7 +8,7 @@
 using namespace std;
 
 SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                               int rawDataIndex)
+                                               uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -120,9 +120,9 @@ std::string SetAnimatedTextureList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_TEXTURE_ANIM_LIST(%s)", listName.c_str());
 }
 
-int32_t SetAnimatedTextureList::GetRawDataSize()
+size_t SetAnimatedTextureList::GetRawDataSize()
 {
-	int32_t paramsSize = 0;
+	size_t paramsSize = 0;
 	for (const auto& texture : textures)
 	{
 		for (const auto& param : texture.params)
@@ -144,7 +144,7 @@ RoomCommand SetAnimatedTextureList::GetRoomCommand() const
 	return RoomCommand::SetAnimatedTextureList;
 }
 
-AnimatedTexture::AnimatedTexture(const std::vector<uint8_t>& rawData, int rawDataIndex)
+AnimatedTexture::AnimatedTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: segment(rawData.at(rawDataIndex)), type(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
@@ -170,13 +170,13 @@ AnimatedTexture::AnimatedTexture(const std::vector<uint8_t>& rawData, int rawDat
 	}
 }
 
-ScrollingTexture::ScrollingTexture(const std::vector<uint8_t>& rawData, int rawDataIndex)
+ScrollingTexture::ScrollingTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: xStep(rawData.at(rawDataIndex + 0)), yStep(rawData.at(rawDataIndex + 1)),
 	  width(rawData.at(rawDataIndex + 2)), height(rawData.at(rawDataIndex + 3))
 {
 }
 
-std::string ScrollingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
+std::string ScrollingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf("    { %i, %i, 0x%02X, 0x%02X },", xStep, yStep, width, height);
 }
@@ -187,7 +187,7 @@ size_t ScrollingTexture::GetParamsSize()
 }
 
 FlashingTexturePrimColor::FlashingTexturePrimColor(const std::vector<uint8_t>& rawData,
-                                                   int rawDataIndex)
+                                                   uint32_t rawDataIndex)
 	: r(rawData.at(rawDataIndex + 0)), g(rawData.at(rawDataIndex + 1)),
 	  b(rawData.at(rawDataIndex + 2)), a(rawData.at(rawDataIndex + 3)),
 	  lodFrac(rawData.at(rawDataIndex + 4))
@@ -195,49 +195,49 @@ FlashingTexturePrimColor::FlashingTexturePrimColor(const std::vector<uint8_t>& r
 }
 
 FlashingTextureEnvColor::FlashingTextureEnvColor(const std::vector<uint8_t>& rawData,
-                                                 int rawDataIndex)
+                                                 uint32_t rawDataIndex)
 	: r(rawData.at(rawDataIndex + 0)), g(rawData.at(rawDataIndex + 1)),
 	  b(rawData.at(rawDataIndex + 2)), a(rawData.at(rawDataIndex + 3))
 {
 }
 
-FlashingTexture::FlashingTexture(const std::vector<uint8_t>& rawData, int rawDataIndex, int type)
+FlashingTexture::FlashingTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex, int32_t type)
 	: cycleLength(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  numKeyFrames(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
 	  primColorSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4))),
 	  envColorSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 8))),
 	  keyFrameSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 12)))
 {
-	int length = (type == 2) ? cycleLength : numKeyFrames;
+	uint16_t length = (type == 2) ? cycleLength : numKeyFrames;
 
 	int32_t currentPtr = primColorSegmentOffset;
-	for (int i = 0; i < length; i++)
+	for (uint16_t i = 0; i < length; i++)
 	{
 		primColors.push_back(FlashingTexturePrimColor(rawData, currentPtr));
 		currentPtr += 5;
 	}
 
 	currentPtr = envColorSegmentOffset;
-	for (int i = 0; i < length; i++)
+	for (uint16_t i = 0; i < length; i++)
 	{
 		envColors.push_back(FlashingTextureEnvColor(rawData, currentPtr));
 		currentPtr += 4;
 	}
 
 	currentPtr = keyFrameSegmentOffset;
-	for (int i = 0; i < length; i++)
+	for (uint16_t i = 0; i < length; i++)
 	{
 		keyFrames.push_back(BitConverter::ToUInt16BE(rawData, currentPtr));
 		currentPtr += 2;
 	}
 }
 
-std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
+std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
 	if (primColorSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (FlashingTexturePrimColor& color : primColors)
 		{
@@ -261,7 +261,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 	if (envColorSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (FlashingTextureEnvColor& color : envColors)
 		{
@@ -285,7 +285,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
 	if (keyFrameSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (uint16_t keyFrame : keyFrames)
 		{
@@ -318,18 +318,18 @@ size_t FlashingTexture::GetParamsSize()
 	return 16;
 }
 
-CyclingTextureParams::CyclingTextureParams(const std::vector<uint8_t>& rawData, int rawDataIndex)
+CyclingTextureParams::CyclingTextureParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: cycleLength(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  textureSegmentOffsetsSegmentOffset(
 		  GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4))),
 	  textureIndicesSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 8)))
 {
 	int32_t currentPtr = textureIndicesSegmentOffset;
-	int maxIndex = 0;
+	int32_t maxIndex = 0;
 
-	for (int i = 0; i < cycleLength; i++)
+	for (uint16_t i = 0; i < cycleLength; i++)
 	{
-		int newIndex = rawData.at(currentPtr);
+		uint8_t newIndex = rawData.at(currentPtr);
 		textureIndices.push_back(newIndex);
 		currentPtr++;
 		if (newIndex > maxIndex)
@@ -337,19 +337,19 @@ CyclingTextureParams::CyclingTextureParams(const std::vector<uint8_t>& rawData, 
 	}
 
 	currentPtr = textureSegmentOffsetsSegmentOffset;
-	for (int i = 0; i < maxIndex + 1; i++)
+	for (int32_t i = 0; i < maxIndex + 1; i++)
 	{
 		textureSegmentOffsets.push_back(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, currentPtr)));
 		currentPtr += 4;
 	}
 }
 
-std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddress)
+std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (uint32_t offset : textureSegmentOffsets)
 		{
@@ -373,7 +373,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, int baseAddre
 	if (textureIndicesSegmentOffset != 0)
 	{
 		string declaration = "";
-		int index = 0;
+		size_t index = 0;
 
 		for (uint8_t textureIndex : textureIndices)
 		{

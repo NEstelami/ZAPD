@@ -7,13 +7,11 @@
 
 REGISTER_ZFILENODE(Path, ZSetPathways);
 
-using namespace std;
-
 ZSetPathways::ZSetPathways(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
                            bool nIsFromHeader)
 	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
@@ -58,7 +56,7 @@ void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& body
 		StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
 }
 
-string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
+std::string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 {
 	pathwayList.GetSourceOutputCode(ZResource::parent->GetName());
 
@@ -71,14 +69,14 @@ std::string ZSetPathways::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_PATH_LIST(%s)", listName.c_str());
 }
 
-int32_t ZSetPathways::GetRawDataSize()
+size_t ZSetPathways::GetRawDataSize()
 {
 	int32_t size = pathwayList.GetRawDataSize();
 
 	return ZRoomCommand::GetRawDataSize() + size;
 }
 
-string ZSetPathways::GetCommandCName() const
+std::string ZSetPathways::GetCommandCName() const
 {
 	return "SCmdPathList";
 }
@@ -88,14 +86,14 @@ RoomCommand ZSetPathways::GetRoomCommand() const
 	return RoomCommand::SetPathways;
 }
 
-PathwayEntry::PathwayEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+PathwayEntry::PathwayEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: numPoints(rawData[rawDataIndex + 0]), unk1(rawData[rawDataIndex + 1]),
 	  unk2(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  listSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
 {
 	uint32_t currentPtr = listSegmentOffset;
 
-	for (int i = 0; i < numPoints; i++)
+	for (int32_t i = 0; i < numPoints; i++)
 	{
 		x = BitConverter::ToInt16BE(rawData, currentPtr + 0);
 		y = BitConverter::ToInt16BE(rawData, currentPtr + 2);
@@ -109,7 +107,7 @@ PathwayEntry::PathwayEntry(const std::vector<uint8_t>& rawData, int rawDataIndex
 
 	if (numPoints == 0)  // Hack for SharpOcarina
 	{
-		for (int i = 0; i < 3; i++)
+		for (int32_t i = 0; i < 3; i++)
 		{
 			Vec3s point = Vec3s(0, 0, 0);
 			points.push_back(point);
@@ -117,15 +115,15 @@ PathwayEntry::PathwayEntry(const std::vector<uint8_t>& rawData, int rawDataIndex
 	}
 }
 
-PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, int rawDataIndex,
-                         int length)
+PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
+                         size_t length)
 {
 	parent = nParent;
 	_rawDataIndex = rawDataIndex;
 
 	uint32_t currentPtr = rawDataIndex;
 
-	for (int pathIndex = 0; pathIndex < length; pathIndex++)
+	for (int32_t pathIndex = 0; pathIndex < length; pathIndex++)
 	{
 		PathwayEntry path(rawData, currentPtr);
 		currentPtr += 8;
@@ -140,7 +138,7 @@ PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, in
 void PathwayList::GetSourceOutputCode(const std::string& prefix)
 {
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 		for (const auto& entry : pathways)
 		{
@@ -168,7 +166,7 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 
 	for (const auto& entry : pathways)
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		size_t index = 0;
 		for (const auto& point : entry.points)
@@ -190,9 +188,9 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 	}
 }
 
-int32_t PathwayList::GetRawDataSize()
+size_t PathwayList::GetRawDataSize()
 {
-	int32_t pointsSize = 0;
+	size_t pointsSize = 0;
 
 	for (const auto& entry : pathways)
 	{

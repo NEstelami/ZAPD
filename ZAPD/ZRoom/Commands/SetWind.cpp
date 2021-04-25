@@ -3,7 +3,7 @@
 
 using namespace std;
 
-SetWind::SetWind(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetWind::SetWind(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	windWest = rawData[rawDataIndex + 0x04];

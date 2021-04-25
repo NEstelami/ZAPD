@@ -2,10 +2,8 @@
 #include "../../Globals.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
 SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                     int rawDataIndex)
+                                     uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	unk1 = cmdArg1;
@@ -20,7 +18,7 @@ std::string SetSkyboxSettings::GetBodySourceCode() const
 	                             skyboxNumber, cloudsType, lightingSettingsControl);
 }
 
-string SetSkyboxSettings::GetCommandCName() const
+std::string SetSkyboxSettings::GetCommandCName() const
 {
 	return "SCmdSkyboxSettings";
 }

@@ -5,9 +5,7 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
-SetCutscenes::SetCutscenes(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetCutscenes::SetCutscenes(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -35,9 +33,9 @@ void SetCutscenes::ParseRawData()
 	else
 	{
 		int32_t currentPtr = segmentOffset;
-		string declaration = "";
+		std::string declaration = "";
 
-		for (int i = 0; i < numCutscenes; i++)
+		for (uint8_t i = 0; i < numCutscenes; i++)
 		{
 			CutsceneEntry entry(rawData, currentPtr);
 			cutsceneEntries.push_back(entry);
@@ -85,18 +83,18 @@ SetCutscenes::~SetCutscenes()
 		delete cutscene;
 }
 
-string SetCutscenes::GetBodySourceCode() const
+std::string SetCutscenes::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENECMD_CUTSCENE_LIST(%i, %s)", numCutscenes, listName.c_str());
 }
 
-int32_t SetCutscenes::GetRawDataSize()
+size_t SetCutscenes::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize();
 }
 
-string SetCutscenes::GetCommandCName() const
+std::string SetCutscenes::GetCommandCName() const
 {
 	return "SCmdCutsceneData";
 }
@@ -106,7 +104,7 @@ RoomCommand SetCutscenes::GetRoomCommand() const
 	return RoomCommand::SetCutscenes;
 }
 
-CutsceneEntry::CutsceneEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+CutsceneEntry::CutsceneEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 0))),
 	  exit(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)), entrance(rawData[rawDataIndex + 6]),
 	  flag(rawData[rawDataIndex + 7])

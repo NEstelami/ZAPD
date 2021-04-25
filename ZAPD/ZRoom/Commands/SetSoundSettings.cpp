@@ -1,10 +1,8 @@
 #include "SetSoundSettings.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
 SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                   int rawDataIndex)
+                                   uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	reverb = cmdArg1;
@@ -12,13 +10,13 @@ SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& ra
 	musicSequence = rawData.at(rawDataIndex + 0x07);
 }
 
-string SetSoundSettings::GetBodySourceCode() const
+std::string SetSoundSettings::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("SCENECMD_SOUND_SETTINGS(%i, %i, %i)", reverb, nightTimeSFX,
 	                             musicSequence);
 }
 
-string SetSoundSettings::GetCommandCName() const
+std::string SetSoundSettings::GetCommandCName() const
 {
 	return "SCmdSoundSettings";
 }

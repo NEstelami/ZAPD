@@ -7,12 +7,10 @@
 #include "../ZRoom.h"
 #include "ZBackground.h"
 
-using namespace std;
-
 void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList);
 
-SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
-                 int segAddressOffset)
+SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+                 int32_t segAddressOffset)
 	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
 	meshHeaderType = rawData.at(segmentOffset + 0);
@@ -62,12 +60,12 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 	{
 		return;
 	}
-	string srcVarName =
+	std::string srcVarName =
 		StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
 	dList->scene = zRoom->scene;
-	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
+	std::string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(zRoom, parent, otherDList);
@@ -91,7 +89,7 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	if (Globals::Instance->includeFilePrefix)
 		sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(),
@@ -102,7 +100,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
-	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
+	for (auto& texEntry : dList->texDeclarations)
 		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n",
 		                                      zRoom->GetName().c_str(), texEntry.first);
 
@@ -117,12 +115,12 @@ std::string SetMesh::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_MESH(%s)", list.c_str());
 }
 
-int32_t SetMesh::GetRawDataSize()
+size_t SetMesh::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize();
 }
 
-string SetMesh::GetCommandCName() const
+std::string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
 }
@@ -143,7 +141,7 @@ void SetMesh::SyotesHack(int segAddressOffset)
 }
 
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                           int nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
+                           uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -189,7 +187,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 
 	uint32_t dlistAddress = Seg2Filespace(ptr, parent->baseAddress);
 
-	int dlistLength = ZDisplayList::GetDListLength(
+	int32_t dlistLength = ZDisplayList::GetDListLength(
 		rawData, dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength, parent);
@@ -198,7 +196,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	return dlist;
 }
 
-int PolygonDlist::GetRawDataSize()
+size_t PolygonDlist::GetRawDataSize()
 {
 	switch (polyType)
 	{
@@ -298,7 +296,7 @@ std::string PolygonDlist::GetName()
 }
 
 BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                 int nRawDataIndex, ZFile* nParent)
+                 uint32_t nRawDataIndex, ZFile* nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -348,7 +346,7 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 	return background;
 }
 
-int BgImage::GetRawDataSize()
+size_t BgImage::GetRawDataSize()
 {
 	return 0x1C;
 }
@@ -436,7 +434,7 @@ std::string BgImage::GetName()
 /* PolygonType section */
 
 PolygonTypeBase::PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData,
-                                 int nRawDataIndex, ZRoom* nRoom)
+                                 uint32_t nRawDataIndex, ZRoom* nRoom)
 	: rawData{nRawData}, rawDataIndex{nRawDataIndex}, parent{nParent}, zRoom{nRoom}
 {
 	type = BitConverter::ToUInt8BE(rawData, rawDataIndex);
@@ -498,7 +496,7 @@ std::string PolygonTypeBase::GetDefaultName(const std::string& prefix) const
 	                             rawDataIndex);
 }
 
-PolygonType1::PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+PolygonType1::PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
                            ZRoom* nRoom)
 	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom)
 {
@@ -572,7 +570,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 	}
 }
 
-int PolygonType1::GetRawDataSize() const
+size_t PolygonType1::GetRawDataSize() const
 {
 	switch (format)
 	{
@@ -630,7 +628,7 @@ std::string PolygonType1::GetSourceTypeName() const
 	// return "PolygonType1";
 }
 
-PolygonType2::PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+PolygonType2::PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
                            ZRoom* nRoom)
 	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom)
 {
@@ -694,7 +692,7 @@ std::string PolygonType2::GetBodySourceCode() const
 	return body;
 }
 
-int PolygonType2::GetRawDataSize() const
+size_t PolygonType2::GetRawDataSize() const
 {
 	return 0x0C;
 }

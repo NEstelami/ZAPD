@@ -17,8 +17,6 @@ ZCutsceneMM::~ZCutsceneMM()
 string ZCutsceneMM::GetBodySourceCode()
 {
 	string output = "";
-	size_t size = 0;
-	int32_t curPtr = 0;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),", numCommands, endFrame);
 
@@ -58,13 +56,13 @@ void ZCutsceneMM::DeclareVar(const std::string& prefix, const std::string& bodyS
 	                            "s32", auxName, 0, bodyStr);
 }
 
-int ZCutsceneMM::GetRawDataSize()
+size_t ZCutsceneMM::GetRawDataSize()
 {
 	return 8 + data.size() * 4;
 }
 
 void ZCutsceneMM::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                                 const int nRawDataIndex, const std::string& nRelPath)
+                                 const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 	DeclareVar(parent->GetName(), "");

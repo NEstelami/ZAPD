@@ -4,10 +4,8 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                         int rawDataIndex)
+                                         uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -24,7 +22,7 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 {
 	if (settings.size() > 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		for (size_t i = 0; i < settings.size(); i++)
 		{
@@ -49,7 +47,7 @@ std::string SetLightingSettings::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_LIGHT_LIST(%i, %s)", settings.size(), listName.c_str());
 }
 
-string SetLightingSettings::GetCommandCName() const
+std::string SetLightingSettings::GetCommandCName() const
 {
 	return "SCmdLightSettingList";
 }
@@ -59,7 +57,7 @@ RoomCommand SetLightingSettings::GetRoomCommand() const
 	return RoomCommand::SetLightingSettings;
 }
 
-LightingSettings::LightingSettings(const vector<uint8_t>& rawData, int rawDataIndex)
+LightingSettings::LightingSettings(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	ambientClrR = rawData.at(rawDataIndex + 0);
 	ambientClrG = rawData.at(rawDataIndex + 1);

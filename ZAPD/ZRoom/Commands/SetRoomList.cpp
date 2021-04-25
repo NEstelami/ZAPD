@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SetRoomList::SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetRoomList::SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -18,7 +18,7 @@ void SetRoomList::ParseRawData()
 
 	int32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numRooms; i++)
+	for (int32_t i = 0; i < numRooms; i++)
 	{
 		RoomEntry entry(rawData, currentPtr);
 		rooms.push_back(entry);
@@ -82,7 +82,7 @@ RoomEntry::RoomEntry(int32_t nVAS, int32_t nVAE)
 	virtualAddressEnd = nVAE;
 }
 
-RoomEntry::RoomEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+RoomEntry::RoomEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: RoomEntry(BitConverter::ToInt32BE(rawData, rawDataIndex + 0),
                 BitConverter::ToInt32BE(rawData, rawDataIndex + 4))
 {

@@ -2,10 +2,8 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
 SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                     int rawDataIndex)
+                                     uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	elfMessage = cmdArg1;
@@ -18,7 +16,7 @@ std::string SetSpecialObjects::GetBodySourceCode() const
 	                             globalObject);
 }
 
-string SetSpecialObjects::GetCommandCName() const
+std::string SetSpecialObjects::GetCommandCName() const
 {
 	return "SCmdSpecialFiles";
 }

@@ -4,9 +4,7 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
-SetCsCamera::SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex)
+SetCsCamera::SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
@@ -16,9 +14,9 @@ void SetCsCamera::ParseRawData()
 	int numCameras = cmdArg1;
 
 	uint32_t currentPtr = segmentOffset;
-	int numPoints = 0;
+	int32_t numPoints = 0;
 
-	for (int i = 0; i < numCameras; i++)
+	for (int32_t i = 0; i < numCameras; i++)
 	{
 		CsCameraEntry entry(rawData, currentPtr);
 		numPoints += entry.GetNumPoints();
@@ -31,7 +29,7 @@ void SetCsCamera::ParseRawData()
 	{
 		uint32_t currentPtr = cameras.at(0).GetSegmentOffset();
 
-		for (int i = 0; i < numPoints; i++)
+		for (int32_t i = 0; i < numPoints; i++)
 		{
 			ZVector vec(parent);
 			vec.SetRawData(rawData);
@@ -53,7 +51,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 {
 	if (points.size() > 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 		for (auto& point : points)
 		{
@@ -111,12 +109,12 @@ std::string SetCsCamera::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_CAM_LIST(%i, %s)", cameras.size(), listName.c_str());
 }
 
-int32_t SetCsCamera::GetRawDataSize()
+size_t SetCsCamera::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }
 
-string SetCsCamera::GetCommandCName() const
+std::string SetCsCamera::GetCommandCName() const
 {
 	return "SCmdCsCameraList";
 }
@@ -126,7 +124,7 @@ RoomCommand SetCsCamera::GetRoomCommand() const
 	return RoomCommand::SetCsCamera;
 }
 
-CsCameraEntry::CsCameraEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+CsCameraEntry::CsCameraEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: baseOffset(rawDataIndex), type(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
 	  numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
 	  segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))

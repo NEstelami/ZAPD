@@ -20,7 +20,7 @@ protected:
 class SetMinimapList : public ZRoomCommand
 {
 public:
-	SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -28,7 +28,7 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
-	int32_t GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetCommandCName() const override;
 
 private:

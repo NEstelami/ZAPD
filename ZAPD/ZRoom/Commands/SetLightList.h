@@ -27,7 +27,7 @@ protected:
 class SetLightList : public ZRoomCommand
 {
 public:
-	SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -38,7 +38,6 @@ public:
 	std::string GetCommandCName() const override;
 
 private:
-	uint8_t code;
 	uint8_t numLights;
 	std::vector<LightInfo> lights;
 };

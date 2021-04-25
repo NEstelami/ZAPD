@@ -5,7 +5,7 @@
 class Unused09 : public ZRoomCommand
 {
 public:
-	Unused09(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	Unused09(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 

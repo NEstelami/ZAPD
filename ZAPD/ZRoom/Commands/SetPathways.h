@@ -9,9 +9,9 @@ class PathwayEntry
 public:
 	int16_t x, y, z;
 
-	PathwayEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
+	PathwayEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	int numPoints;
+	int32_t numPoints;
 	int8_t unk1;   // (MM Only)
 	int16_t unk2;  // (MM Only)
 	uint32_t listSegmentOffset;
@@ -22,10 +22,10 @@ struct PathwayList
 {
 public:
 	PathwayList() = default;
-	PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, int rawDataIndex, int length);
+	PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex, size_t length);
 
 	void GetSourceOutputCode(const std::string& prefix);
-	int32_t GetRawDataSize();
+	size_t GetRawDataSize();
 
 private:
 	ZFile* parent;
@@ -37,7 +37,7 @@ class ZSetPathways : public ZRoomCommand
 {
 public:
 	ZSetPathways(ZFile* nParent);
-	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, int nRawDataIndex,
+	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             bool nIsFromHeader = true);
 
 	void ParseRawDataLate() override;
@@ -49,7 +49,7 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
-	int32_t GetRawDataSize() override;
+	size_t GetRawDataSize() override;
 	std::string GetCommandCName() const override;
 
 private:

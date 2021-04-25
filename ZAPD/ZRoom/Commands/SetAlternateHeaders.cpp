@@ -3,10 +3,8 @@
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 
-using namespace std;
-
 SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                         int rawDataIndex)
+                                         uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	if (segmentOffset != 0)
@@ -17,7 +15,7 @@ void SetAlternateHeaders::ParseRawDataLate()
 {
 	int numHeaders = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 4;
 
-	for (int i = 0; i < numHeaders; i++)
+	for (int32_t i = 0; i < numHeaders; i++)
 	{
 		int32_t address = BitConverter::ToInt32BE(rawData, segmentOffset + (i * 4));
 		headers.push_back(address);
@@ -58,7 +56,7 @@ std::string SetAlternateHeaders::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_ALTERNATE_HEADER_LIST(%s)", listName.c_str());
 }
 
-string SetAlternateHeaders::GetCommandCName() const
+std::string SetAlternateHeaders::GetCommandCName() const
 {
 	return "SCmdAltHeaders";
 }

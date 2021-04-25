@@ -16,7 +16,7 @@ protected:
 class SetRoomList : public ZRoomCommand
 {
 public:
-	SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, int rawDataIndex);
+	SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	void ParseRawData() override;
 	virtual void DeclareReferences(const std::string& prefix);
