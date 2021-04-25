@@ -28,13 +28,15 @@ std::string SetRoomBehavior::GetBodySourceCode() const
 {
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
-		return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i, %i, %i)",
+		std::string enableLights = StringHelper::BoolStr(enablePosLights);
+		return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i, %s, %i)",
 		                             gameplayFlags, currRoomUnk2, currRoomUnk5, msgCtxUnk,
-		                             enablePosLights, kankyoContextUnkE2);
+		                             enableLights.c_str(), kankyoContextUnkE2);
 	}
 	std::string showInvisible = StringHelper::BoolStr(showInvisActors);
-	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %s, %i)", gameplayFlags,
-	                             currRoomUnk2, showInvisible.c_str(), msgCtxUnk);
+	std::string disableWarps = StringHelper::BoolStr(msgCtxUnk);
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %s, %s)", gameplayFlags,
+	                             currRoomUnk2, showInvisible.c_str(), disableWarps.c_str());
 }
 
 std::string SetRoomBehavior::GetCommandCName() const
