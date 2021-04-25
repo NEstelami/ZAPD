@@ -50,7 +50,7 @@ void SetMinimapChests::DeclareReferences(const std::string& prefix)
 std::string SetMinimapChests::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENECMD_MINIMAP_COMPASS_ICON_INFO(0x%02X, %s)", chests.size(),
+	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_COMPASS_ICON_INFO(0x%02X, %s)", chests.size(),
 	                             listName.c_str());
 }
 

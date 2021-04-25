@@ -8,7 +8,7 @@ EndMarker::EndMarker(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_
 
 std::string EndMarker::GetBodySourceCode() const
 {
-	return "SCENECMD_END()";
+	return "SCENE_CMD_END()";
 }
 
 std::string EndMarker::GetCommandCName() const

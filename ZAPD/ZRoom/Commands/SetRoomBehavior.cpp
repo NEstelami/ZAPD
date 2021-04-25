@@ -18,7 +18,7 @@ std::string SetRoomBehavior::GetBodySourceCode() const
 	uint8_t msgCtxunk12044 = (gameplayFlags2 >> 10) & 1;
 	uint8_t enablePosLights = (gameplayFlags2 >> 11) & 1;
 	uint8_t kankyoContextUnkE2 = (gameplayFlags2 >> 12) & 1;
-	return StringHelper::Sprintf("SCENECMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i, %i, %i)",
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i, %i, %i)",
 	                             gameplayFlags, currRoomUnk2, currRoomUnk5, msgCtxunk12044,
 	                             enablePosLights, kankyoContextUnkE2);
 }

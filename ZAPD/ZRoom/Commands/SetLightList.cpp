@@ -51,7 +51,7 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 std::string SetLightList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENECMD_POS_LIGHT_LIST(%i, %s)", numLights, listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_LIGHT_LIST(%i, %s)", numLights, listName.c_str());
 }
 
 std::string SetLightList::GetCommandCName() const
