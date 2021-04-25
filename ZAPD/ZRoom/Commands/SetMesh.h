@@ -15,7 +15,7 @@ public:
 	void ParseRawData();
 	void DeclareReferences(const std::string& prefix);
 
-	int GetRawDataSize();
+	size_t GetRawDataSize();
 	void SetPolyType(uint8_t nPolyType);
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
@@ -40,7 +40,7 @@ protected:
 	ZDisplayList* xluDList = nullptr;  // Gfx*
 
 	std::vector<uint8_t> rawData;
-	int rawDataIndex;
+	uint32_t rawDataIndex;
 	ZFile* parent;
 	ZRoom* zRoom;
 	std::string name;
@@ -115,7 +115,7 @@ protected:
 	std::vector<PolygonDlist> polyDLists;
 
 	std::vector<uint8_t> rawData;
-	int rawDataIndex;
+	uint32_t rawDataIndex;
 	ZFile* parent;
 	ZRoom* zRoom;
 	std::string name;

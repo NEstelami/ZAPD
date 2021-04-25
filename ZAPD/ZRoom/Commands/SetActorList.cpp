@@ -107,7 +107,7 @@ RoomCommand SetActorList::GetRoomCommand() const
 	return RoomCommand::SetActorList;
 }
 
-ActorSpawnEntry::ActorSpawnEntry(const std::vector<uint8_t>& rawData, int rawDataIndex)
+ActorSpawnEntry::ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	actorNum = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	posX = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);

@@ -5,7 +5,7 @@
 class EntranceEntry
 {
 public:
-	EntranceEntry(const std::vector<uint8_t>& rawData, int rawDataIndex);
+	EntranceEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const;
 

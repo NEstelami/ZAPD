@@ -7,7 +7,6 @@
 class AnitmatedTextureParams
 {
 public:
-	virtual ~AnitmatedTextureParams();
 	virtual std::string GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress) = 0;
 	virtual size_t GetParamsSize() = 0;
 };

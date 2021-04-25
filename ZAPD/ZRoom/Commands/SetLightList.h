@@ -9,7 +9,7 @@
 class LightInfo
 {
 public:
-	LightInfo(const std::vector<uint8_t>& rawData, int rawDataIndex);
+	LightInfo(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const;
 

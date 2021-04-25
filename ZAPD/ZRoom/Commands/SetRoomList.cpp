@@ -5,8 +5,6 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetRoomList::SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -42,7 +40,7 @@ std::string SetRoomList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_ROOM_LIST(%i, %s)", rooms.size(), listName.c_str());
 }
 
-string SetRoomList::GetCommandCName() const
+std::string SetRoomList::GetCommandCName() const
 {
 	return "SCmdRoomList";
 }
@@ -62,7 +60,7 @@ void SetRoomList::PreGenSourceFiles()
 		{
 			if (res->GetResourceType() == ZResourceType::Room && res != zRoom)
 			{
-				string roomName = res->GetName();
+				std::string roomName = res->GetName();
 				declaration +=
 					StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n",
 				                          roomName.c_str(), roomName.c_str());

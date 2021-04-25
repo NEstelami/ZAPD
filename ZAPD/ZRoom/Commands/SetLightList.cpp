@@ -53,7 +53,7 @@ std::string SetLightList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_POS_LIGHT_LIST(%i, %s)", numLights, listName.c_str());
 }
 
-string SetLightList::GetCommandCName() const
+std::string SetLightList::GetCommandCName() const
 {
 	return "SCmdLightList";
 }
