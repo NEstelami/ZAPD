@@ -122,8 +122,8 @@ std::string ZNormalAnimation::GetSourceTypeName()
 }
 
 void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                      const std::vector<uint8_t>& nRawData, const uint32_t nRawDataIndex,
-                                      const std::string& nRelPath)
+                                      const std::vector<uint8_t>& nRawData,
+                                      const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -196,8 +196,8 @@ std::string ZLinkAnimation::GetSourceTypeName()
 }
 
 void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                    const std::vector<uint8_t>& nRawData, const uint32_t nRawDataIndex,
-                                    const std::string& nRelPath)
+                                    const std::vector<uint8_t>& nRawData,
+                                    const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -284,8 +284,8 @@ void ZCurveAnimation::ParseRawData()
 }
 
 void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                     const std::vector<uint8_t>& nRawData, const uint32_t nRawDataIndex,
-                                     const std::string& nRelPath)
+                                     const std::vector<uint8_t>& nRawData,
+                                     const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 

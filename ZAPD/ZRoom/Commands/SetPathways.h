@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../Vec3s.h"
-#include "../ZRoomCommand.h"
+#include "Vec3s.h"
 #include "ZResource.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class PathwayEntry
 {
@@ -22,7 +22,8 @@ struct PathwayList
 {
 public:
 	PathwayList() = default;
-	PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex, size_t length);
+	PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
+	            size_t length);
 
 	void GetSourceOutputCode(const std::string& prefix);
 	size_t GetRawDataSize();

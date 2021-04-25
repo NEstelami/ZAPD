@@ -1,14 +1,13 @@
 #include "SetActorList.h"
-#include "../../BitConverter.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZNames.h"
-#include "../ZRoom.h"
+#include "BitConverter.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZNames.h"
+#include "ZRoom/ZRoom.h"
 
-using namespace std;
-
-SetActorList::SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+SetActorList::SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+                           uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numActors = cmdArg1;
@@ -97,7 +96,7 @@ size_t SetActorList::GetActorListArraySize()
 	return actorCount;
 }
 
-string SetActorList::GetCommandCName() const
+std::string SetActorList::GetCommandCName() const
 {
 	return "SCmdActorList";
 }

@@ -308,7 +308,8 @@ protected:
 	// Various Instruction Optimizations
 	bool SequenceCheck(std::vector<F3DZEXOpcode> sequence, int32_t startIndex);
 	int32_t OptimizationChecks(int32_t startIndex, std::string& output, std::string prefix);
-	int32_t OptimizationCheck_LoadTextureBlock(int32_t startIndex, std::string& output, std::string prefix);
+	int32_t OptimizationCheck_LoadTextureBlock(int32_t startIndex, std::string& output,
+	                                           std::string prefix);
 	// int32_t OptimizationCheck_LoadMultiBlock(int32_t startIndex, std::string& output, std::string
 	// prefix);
 
@@ -365,7 +366,8 @@ public:
 	std::vector<ZMtx> mtxList;
 
 	ZDisplayList(ZFile* nParent);
-	ZDisplayList(std::vector<uint8_t> nRawData, uint32_t rawDataIndex, int32_t rawDataSize, ZFile* nParent);
+	ZDisplayList(std::vector<uint8_t> nRawData, uint32_t rawDataIndex, int32_t rawDataSize,
+	             ZFile* nParent);
 	~ZDisplayList();
 
 	static ZDisplayList* Instance;
@@ -381,7 +383,8 @@ public:
 	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
 	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
 	                            bool texIsPalette);
-	static int32_t GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex, DListType dListType);
+	static int32_t GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex,
+	                              DListType dListType);
 
 	size_t GetRawDataSize() override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;

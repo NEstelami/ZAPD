@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ZRoomCommand.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class SetObjectList : public ZRoomCommand
 {

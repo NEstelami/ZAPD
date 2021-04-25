@@ -1,19 +1,17 @@
 #include "EndMarker.h"
-#include "../../StringHelper.h"
-
-using namespace std;
+#include "StringHelper.h"
 
 EndMarker::EndMarker(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 }
 
-string EndMarker::GetBodySourceCode() const
+std::string EndMarker::GetBodySourceCode() const
 {
 	return "SCENECMD_END()";
 }
 
-string EndMarker::GetCommandCName() const
+std::string EndMarker::GetCommandCName() const
 {
 	return "SCmdEndMarker";
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "../ZRoomCommand.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class ZRoomCommandUnk : public ZRoomCommand
 {

@@ -1,6 +1,6 @@
 #include "SetCameraSettings.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
+#include "BitConverter.h"
+#include "StringHelper.h"
 
 SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                      uint32_t rawDataIndex)

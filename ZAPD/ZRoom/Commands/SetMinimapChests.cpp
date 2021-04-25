@@ -1,9 +1,9 @@
 #include "SetMinimapChests.h"
-#include "../../BitConverter.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
+#include "BitConverter.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
 
 SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                    uint32_t rawDataIndex)

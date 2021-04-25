@@ -1,7 +1,5 @@
 #include "SetSkyboxModifier.h"
-#include "../../StringHelper.h"
-
-using namespace std;
+#include "StringHelper.h"
 
 SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                      uint32_t rawDataIndex)
@@ -16,7 +14,7 @@ std::string SetSkyboxModifier::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENECMD_SKYBOX_DISABLES(%i, %i)", disableSky, disableSunMoon);
 }
 
-string SetSkyboxModifier::GetCommandCName() const
+std::string SetSkyboxModifier::GetCommandCName() const
 {
 	return "SCmdSkyboxDisables";
 }

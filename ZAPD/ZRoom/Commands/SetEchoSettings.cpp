@@ -1,5 +1,5 @@
 #include "SetEchoSettings.h"
-#include "../../StringHelper.h"
+#include "StringHelper.h"
 
 SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                  uint32_t rawDataIndex)

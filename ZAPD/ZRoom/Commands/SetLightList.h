@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include "../ZRoom.h"
-#include "../ZRoomCommand.h"
 #include "ZFile.h"
+#include "ZRoom/ZRoom.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class LightInfo
 {

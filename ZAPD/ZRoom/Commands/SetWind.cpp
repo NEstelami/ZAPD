@@ -1,7 +1,5 @@
 #include "SetWind.h"
-#include "../../StringHelper.h"
-
-using namespace std;
+#include "StringHelper.h"
 
 SetWind::SetWind(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -12,13 +10,13 @@ SetWind::SetWind(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t ra
 	clothFlappingStrength = rawData[rawDataIndex + 0x07];
 }
 
-string SetWind::GetBodySourceCode() const
+std::string SetWind::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("SCENECMD_WIND_SETTINGS(%i, %i, %i, %i)", windWest, windVertical,
 	                             windSouth, clothFlappingStrength);
 }
 
-string SetWind::GetCommandCName() const
+std::string SetWind::GetCommandCName() const
 {
 	return "SCmdWindSettings";
 }

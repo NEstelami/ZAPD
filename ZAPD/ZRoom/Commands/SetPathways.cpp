@@ -1,9 +1,9 @@
 #include "SetPathways.h"
-#include "../../BitConverter.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
+#include "BitConverter.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
 
 REGISTER_ZFILENODE(Path, ZSetPathways);
 
@@ -11,8 +11,8 @@ ZSetPathways::ZSetPathways(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                           bool nIsFromHeader)
+ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData,
+                           uint32_t nRawDataIndex, bool nIsFromHeader)
 	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
 	ZResource::rawData = nRawData;

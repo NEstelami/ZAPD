@@ -1,11 +1,9 @@
 #include "SetAnimatedTextureList.h"
-#include "../../BitConverter.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
-
-using namespace std;
+#include "BitConverter.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
 
 SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                                uint32_t rawDataIndex)
@@ -134,7 +132,7 @@ size_t SetAnimatedTextureList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + paramsSize;
 }
 
-string SetAnimatedTextureList::GetCommandCName() const
+std::string SetAnimatedTextureList::GetCommandCName() const
 {
 	return "SCmdTextureAnimations";
 }
@@ -201,7 +199,8 @@ FlashingTextureEnvColor::FlashingTextureEnvColor(const std::vector<uint8_t>& raw
 {
 }
 
-FlashingTexture::FlashingTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex, int32_t type)
+FlashingTexture::FlashingTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
+                                 int32_t type)
 	: cycleLength(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  numKeyFrames(BitConverter::ToUInt16BE(rawData, rawDataIndex + 2)),
 	  primColorSegmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4))),
@@ -236,7 +235,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 {
 	if (primColorSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (FlashingTexturePrimColor& color : primColors)
@@ -260,7 +259,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 
 	if (envColorSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (FlashingTextureEnvColor& color : envColors)
@@ -284,7 +283,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 
 	if (keyFrameSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (uint16_t keyFrame : keyFrames)
@@ -318,7 +317,8 @@ size_t FlashingTexture::GetParamsSize()
 	return 16;
 }
 
-CyclingTextureParams::CyclingTextureParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+CyclingTextureParams::CyclingTextureParams(const std::vector<uint8_t>& rawData,
+                                           uint32_t rawDataIndex)
 	: cycleLength(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  textureSegmentOffsetsSegmentOffset(
 		  GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4))),
@@ -348,7 +348,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, uint32_t base
 {
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (uint32_t offset : textureSegmentOffsets)
@@ -372,7 +372,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, uint32_t base
 
 	if (textureIndicesSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (uint8_t textureIndex : textureIndices)

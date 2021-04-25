@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "../ZRoomCommand.h"
+#include "ZRoom/ZRoomCommand.h"
 
 // TODO move into header and add all types
 class AnitmatedTextureParams
@@ -94,7 +94,8 @@ public:
 class SetAnimatedTextureList : public ZRoomCommand
 {
 public:
-	SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+	                       uint32_t rawDataIndex);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

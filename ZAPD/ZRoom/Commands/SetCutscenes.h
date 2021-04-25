@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../ZCutscene.h"
-#include "../../ZCutsceneMM.h"
-#include "../ZRoomCommand.h"
+#include "ZCutscene.h"
+#include "ZCutsceneMM.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class CutsceneEntry
 {

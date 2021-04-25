@@ -1,7 +1,7 @@
 #pragma once
 
 #include <tinyxml2.h>
-#include "../ZResource.h"
+#include "ZResource.h"
 #include "ZRoomCommand.h"
 #include "ZTexture.h"
 

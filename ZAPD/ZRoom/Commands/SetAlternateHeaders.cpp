@@ -1,7 +1,7 @@
 #include "SetAlternateHeaders.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
+#include "BitConverter.h"
+#include "StringHelper.h"
+#include "ZFile.h"
 
 SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                          uint32_t rawDataIndex)

@@ -1,5 +1,5 @@
 #include "SetSoundSettings.h"
-#include "../../StringHelper.h"
+#include "StringHelper.h"
 
 SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                    uint32_t rawDataIndex)

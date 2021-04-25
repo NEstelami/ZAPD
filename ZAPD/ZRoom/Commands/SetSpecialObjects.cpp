@@ -1,6 +1,6 @@
 #include "SetSpecialObjects.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
+#include "BitConverter.h"
+#include "StringHelper.h"
 
 SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                      uint32_t rawDataIndex)

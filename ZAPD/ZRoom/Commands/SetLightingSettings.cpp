@@ -1,8 +1,8 @@
 #include "SetLightingSettings.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
+#include "BitConverter.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
 
 SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                          uint32_t rawDataIndex)

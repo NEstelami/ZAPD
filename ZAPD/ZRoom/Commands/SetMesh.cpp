@@ -1,11 +1,11 @@
 #include "SetMesh.h"
 #include <Globals.h>
 #include <Path.h>
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
+#include "BitConverter.h"
+#include "StringHelper.h"
 #include "ZBackground.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
 
 void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList);
 
@@ -496,8 +496,8 @@ std::string PolygonTypeBase::GetDefaultName(const std::string& prefix) const
 	                             rawDataIndex);
 }
 
-PolygonType1::PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                           ZRoom* nRoom)
+PolygonType1::PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData,
+                           uint32_t nRawDataIndex, ZRoom* nRoom)
 	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom)
 {
 }
@@ -628,8 +628,8 @@ std::string PolygonType1::GetSourceTypeName() const
 	// return "PolygonType1";
 }
 
-PolygonType2::PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                           ZRoom* nRoom)
+PolygonType2::PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData,
+                           uint32_t nRawDataIndex, ZRoom* nRoom)
 	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom)
 {
 }

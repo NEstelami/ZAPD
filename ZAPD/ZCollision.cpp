@@ -17,7 +17,7 @@ ZCollisionHeader::~ZCollisionHeader()
 {
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
-	
+
 	delete camData;
 }
 
@@ -27,8 +27,8 @@ ZResourceType ZCollisionHeader::GetResourceType()
 }
 
 void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                      const std::vector<uint8_t>& nRawData, const uint32_t nRawDataIndex,
-                                      const std::string& nRelPath)
+                                      const std::vector<uint8_t>& nRawData,
+                                      const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }
@@ -277,7 +277,8 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 		if (entries[i]->cameraPosDataSeg != 0)
 		{
-			int32_t index = ((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
+			int32_t index =
+				((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
 			sprintf(camSegLine, "&%s_camPosData_%08X[%i]", prefix.c_str(), cameraPosDataOffset,
 			        index);
 		}

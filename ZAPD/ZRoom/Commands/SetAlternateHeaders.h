@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../ZRoom.h"
-#include "../ZRoomCommand.h"
+#include "ZRoom/ZRoom.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class SetAlternateHeaders : public ZRoomCommand
 {

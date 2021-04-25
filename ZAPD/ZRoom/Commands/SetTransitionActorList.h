@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ZRoomCommand.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class TransitionActorEntry
 {
@@ -23,7 +23,8 @@ protected:
 class SetTransitionActorList : public ZRoomCommand
 {
 public:
-	SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
+	                       uint32_t rawDataIndex);
 
 	virtual void ParseRawData();
 	virtual void DeclareReferences(const std::string& prefix);

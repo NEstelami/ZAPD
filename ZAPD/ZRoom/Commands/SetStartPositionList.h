@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../ZRoomCommand.h"
 #include "SetActorList.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class SetStartPositionList : public ZRoomCommand
 {

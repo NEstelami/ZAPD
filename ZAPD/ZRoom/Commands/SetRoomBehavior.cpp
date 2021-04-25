@@ -1,9 +1,7 @@
 #include "SetRoomBehavior.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
+#include "BitConverter.h"
 #include "Globals.h"
-
-using namespace std;
+#include "StringHelper.h"
 
 SetRoomBehavior::SetRoomBehavior(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                  uint32_t rawDataIndex)
@@ -25,7 +23,7 @@ std::string SetRoomBehavior::GetBodySourceCode() const
 	                             enablePosLights, kankyoContextUnkE2);
 }
 
-string SetRoomBehavior::GetCommandCName() const
+std::string SetRoomBehavior::GetCommandCName() const
 {
 	return "SCmdRoomBehavior";
 }

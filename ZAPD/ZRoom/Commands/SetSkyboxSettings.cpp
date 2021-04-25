@@ -1,6 +1,6 @@
 #include "SetSkyboxSettings.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
+#include "Globals.h"
+#include "StringHelper.h"
 
 SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                      uint32_t rawDataIndex)
@@ -14,8 +14,8 @@ SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, const std::vector<uint8_t>& 
 
 std::string SetSkyboxSettings::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("SCENECMD_SKYBOX_SETTINGS(0x%02X, %i, %i, %i)", unk1,
-	                             skyboxNumber, cloudsType, lightingSettingsControl);
+	return StringHelper::Sprintf("SCENECMD_SKYBOX_SETTINGS(0x%02X, %i, %i, %i)", unk1, skyboxNumber,
+	                             cloudsType, lightingSettingsControl);
 }
 
 std::string SetSkyboxSettings::GetCommandCName() const

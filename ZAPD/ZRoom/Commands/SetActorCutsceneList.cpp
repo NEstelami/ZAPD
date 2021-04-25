@@ -1,11 +1,9 @@
 #include "SetActorCutsceneList.h"
-#include "../../BitConverter.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
-
-using namespace std;
+#include "BitConverter.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
 
 SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                            uint32_t rawDataIndex)
@@ -55,7 +53,7 @@ void SetActorCutsceneList::DeclareReferences(const std::string& prefix)
 	}
 }
 
-string SetActorCutsceneList::GetBodySourceCode() const
+std::string SetActorCutsceneList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENECMD_ACTOR_CUTSCENE_LIST(%i, %s)", cutscenes.size(),
@@ -67,7 +65,7 @@ size_t SetActorCutsceneList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);
 }
 
-string SetActorCutsceneList::GetCommandCName() const
+std::string SetActorCutsceneList::GetCommandCName() const
 {
 	return "SCmdCutsceneActorList";
 }

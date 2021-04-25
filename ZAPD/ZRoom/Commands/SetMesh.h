@@ -1,16 +1,16 @@
 #pragma once
 
 #include <memory>
-#include "../../ZDisplayList.h"
-#include "../ZRoomCommand.h"
 #include "ZBackground.h"
+#include "ZDisplayList.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class PolygonDlist
 {
 public:
 	PolygonDlist() = default;
-	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-	             ZFile* nParent, ZRoom* nRoom);
+	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+	             uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
 
 	void ParseRawData();
 	void DeclareReferences(const std::string& prefix);
@@ -79,7 +79,7 @@ public:
 	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
 	        uint32_t nRawDataIndex, ZFile* nParent);
 
-	static size_t GetRawDataSize() ;
+	static size_t GetRawDataSize();
 
 	std::string GetBodySourceCode(bool arrayElement) const;
 

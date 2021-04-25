@@ -1,9 +1,9 @@
 #include "SetEntranceList.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
+#include "BitConverter.h"
 #include "SetStartPositionList.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
 
 SetEntranceList::SetEntranceList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                  uint32_t rawDataIndex)

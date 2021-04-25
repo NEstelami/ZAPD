@@ -59,7 +59,7 @@ ZRoom::~ZRoom()
 	for (ZRoomCommand* cmd : commands)
 		delete cmd;
 
-	for(auto t : textures)
+	for (auto t : textures)
 		delete t.second;
 }
 
@@ -498,8 +498,8 @@ void ZRoom::PreGenSourceFiles()
 		cmd->PreGenSourceFiles();
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         string nText)
 {
 	alignment = nAlignment;
 	padding = nPadding;
@@ -516,9 +516,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         string nVarType, string nVarName, bool nIsArray, string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
@@ -537,16 +536,16 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-                         bool nIsExternal)
+                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         std::string nText, bool nIsExternal)
 	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
 	isExternal = nIsExternal;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         size_t nArrayItemCnt, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         string nVarType, string nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;

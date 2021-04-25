@@ -1,10 +1,10 @@
 #include "SetStartPositionList.h"
-#include "../../BitConverter.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZNames.h"
-#include "../ZRoom.h"
+#include "BitConverter.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZNames.h"
+#include "ZRoom/ZRoom.h"
 
 SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                            uint32_t rawDataIndex)
