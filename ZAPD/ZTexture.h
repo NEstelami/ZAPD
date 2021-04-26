@@ -3,6 +3,7 @@
 #include "HighLevel/HLTexture.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
+#include "Directory.h"
 
 #include <vector>
 
@@ -88,7 +89,7 @@ public:
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;
-	std::string GetPoolOutPath(std::string defaultValue);
+	fs::path GetPoolOutPath(const fs::path& defaultValue);
 	void CalcHash() override;
 
 	bool IsExternalResource() override;

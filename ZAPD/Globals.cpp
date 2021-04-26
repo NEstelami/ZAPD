@@ -26,7 +26,7 @@ Globals::Globals()
 	useLegacyZDList = false;
 	useExternalResources = true;
 	lastScene = nullptr;
-	verbosity = VERBOSITY_SILENT;
+	verbosity = VerbosityLevel::VERBOSITY_SILENT;
 }
 
 string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
@@ -150,9 +150,8 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 	{
 		if (string(child->Name()) == "Texture")
 		{
-			string crcStr = string(child->Attribute("CRC"));
-			string texPath = string(child->Attribute("Path"));
-			string texName = "";
+			string crcStr(child->Attribute("CRC"));
+			fs::path texPath(child->Attribute("Path"));
 
 			uint32_t crc = strtoul(crcStr.c_str(), NULL, 16);
 

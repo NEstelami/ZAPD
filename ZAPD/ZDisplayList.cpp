@@ -926,7 +926,7 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* lin
 	uint32_t fmt = (__ & 0xE0) >> 5;
 	uint32_t siz = (__ & 0x18) >> 3;
 
-	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_SETTIMG\n");
 
 	TextureGenCheck(prefix);  // HOTSPOT
@@ -1033,11 +1033,11 @@ void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, std::string prefix, char*
 	lastTexWidth = (uuu >> shiftAmtW) + 1;
 	lastTexHeight = (vvv >> shiftAmtH) + 1;
 
-	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("lastTexWidth: %i lastTexHeight: %i, lastTexSizTest: 0x%x, lastTexFmt: 0x%x\n",
 		       lastTexWidth, lastTexHeight, (uint32_t)lastTexSizTest, (uint32_t)lastTexFmt);
 
-	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_SETTILESIZE\n");
 
 	TextureGenCheck(prefix);
@@ -1537,7 +1537,7 @@ void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, std::string prefix, char* li
 	lastTexLoaded = true;
 	lastTexIsPalette = true;
 
-	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", (uint32_t)lastCISiz);
 
 	TextureGenCheck(prefix);
@@ -1549,7 +1549,7 @@ void ZDisplayList::Opcode_G_ENDDL(std::string prefix, char* line)
 {
 	sprintf(line, "gsSPEndDisplayList(),");
 
-	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_ENDDL\n");
 
 	TextureGenCheck(prefix);
@@ -1949,7 +1949,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					auto end = chrono::steady_clock::now();
 					auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-					if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+					if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 						printf("SAVED IMAGE TO %s in %ims\n", Globals::Instance->outputPath.c_str(),
 						       (int32_t)diff);
 
@@ -2097,7 +2097,7 @@ std::string ZDisplayList::ProcessLegacy(const std::string& prefix)
 		auto end = chrono::steady_clock::now();
 		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG && diff > 5)
+		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG && diff > 5)
 			printf("F3DOP: 0x%02X, TIME: %lims\n", opcode, diff);
 
 		sourceOutput += line;
@@ -2164,7 +2164,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 {
 	int32_t segmentNumber = GETSEGNUM(texSeg);
 
-	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck seg=%i width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber,
 		       texWidth, texHeight, texIsPalette, texAddr);
 

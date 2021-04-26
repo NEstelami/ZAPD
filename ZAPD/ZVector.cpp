@@ -11,7 +11,7 @@ REGISTER_ZFILENODE(Vector, ZVector);
 ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 {
 	scalars = std::vector<ZScalar*>();
-	this->scalarType = ZSCALAR_NONE;
+	this->scalarType = ZScalarType::ZSCALAR_NONE;
 	this->dimensions = 0;
 }
 
@@ -83,11 +83,11 @@ bool ZVector::DoesSupportArray()
 
 std::string ZVector::GetSourceTypeName()
 {
-	if (dimensions == 3 && scalarType == ZSCALAR_F32)
+	if (dimensions == 3 && scalarType == ZScalarType::ZSCALAR_F32)
 		return "Vec3f";
-	else if (dimensions == 3 && scalarType == ZSCALAR_S16)
+	else if (dimensions == 3 && scalarType == ZScalarType::ZSCALAR_S16)
 		return "Vec3s";
-	else if (dimensions == 3 && scalarType == ZSCALAR_S32)
+	else if (dimensions == 3 && scalarType == ZScalarType::ZSCALAR_S32)
 		return "Vec3i";
 	else
 	{
@@ -95,7 +95,7 @@ std::string ZVector::GetSourceTypeName()
 			"Encountered unsupported vector type: %d dimensions, %s type", dimensions,
 			ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
 
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 			printf("%s\n", output.c_str());
 
 		throw std::runtime_error(output);

@@ -23,8 +23,6 @@ typedef uint32_t segptr_t;
 class ZFile;
 class HLFileIntermediette;
 
-struct CommandSet;
-
 enum class ZResourceType
 {
 	Error,

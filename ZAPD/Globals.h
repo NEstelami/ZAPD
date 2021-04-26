@@ -7,7 +7,7 @@
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
 
-enum VerbosityLevel
+enum class VerbosityLevel
 {
 	VERBOSITY_SILENT,
 	VERBOSITY_INFO,
@@ -16,7 +16,7 @@ enum VerbosityLevel
 
 struct TexturePoolEntry
 {
-	std::string path = "";  // Path to Shared Texture
+	fs::path path = "";  // Path to Shared Texture
 };
 
 class GameConfig

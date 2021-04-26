@@ -924,7 +924,7 @@ std::string ZTexture::GetExternalExtension()
 	}
 }
 
-std::string ZTexture::GetPoolOutPath(std::string defaultValue)
+fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 {
 	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
 		return Path::GetDirectoryName(Globals::Instance->cfg.texturePool[hash].path);

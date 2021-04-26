@@ -146,7 +146,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		const char* outNameXml = child->Attribute("OutName");
 		const char* offsetXml = child->Attribute("Offset");
 
-		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 			printf("%s: 0x%06X\n", nameXml, rawDataIndex);
 
 		if (offsetXml != NULL)
@@ -275,7 +275,7 @@ void ZFile::ExtractResources(string outputDir)
 
 	for (ZResource* res : resources)
 	{
-		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
 		res->CalcHash();  // TEST
@@ -504,22 +504,23 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #endif
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address)
+std::string ZFile::GetDeclarationName(uint32_t address) const
 {
 	return GetDeclarationName(address,
 	                          "ERROR_COULD_NOT_FIND_DECLARATION");  // Note: For now that default
 	                                                                // message is just for testing
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult)
+std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult) const
 {
-	if (declarations.find(address) != declarations.end())
-		return declarations[address]->varName;
+	Declaration* decl = GetDeclaration(address);
+	if (decl != nullptr)
+		return decl->varName;
 
 	return defaultResult;
 }
 
-std::string ZFile::GetDeclarationPtrName(segptr_t segAddress)
+std::string ZFile::GetDeclarationPtrName(segptr_t segAddress) const
 {
 	if (segAddress == 0)
 		return "NULL";
@@ -535,15 +536,15 @@ std::string ZFile::GetDeclarationPtrName(segptr_t segAddress)
 	return decl->varName;
 }
 
-Declaration* ZFile::GetDeclaration(uint32_t address)
+Declaration* ZFile::GetDeclaration(uint32_t address) const
 {
 	if (declarations.find(address) != declarations.end())
-		return declarations[address];
+		return declarations.at(address);
 
 	return nullptr;
 }
 
-Declaration* ZFile::GetDeclarationRanged(uint32_t address)
+Declaration* ZFile::GetDeclarationRanged(uint32_t address) const
 {
 	for (const auto decl : declarations)
 	{
@@ -554,7 +555,7 @@ Declaration* ZFile::GetDeclarationRanged(uint32_t address)
 	return nullptr;
 }
 
-uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address)
+uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address) const
 {
 	for (const auto decl : declarations)
 	{
@@ -567,7 +568,7 @@ uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address)
 
 bool ZFile::HasDeclaration(uint32_t address)
 {
-	return (declarations.find(address) != declarations.end());
+	return declarations.find(address) != declarations.end();
 }
 
 void ZFile::GenerateSourceFiles(string outputDir)
@@ -611,7 +612,7 @@ void ZFile::GenerateSourceFiles(string outputDir)
 				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
 				    Globals::Instance->cfg.texturePool.end())
 				{
-					incStr = Globals::Instance->cfg.texturePool[tex->hash].path + "." +
+					incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
 							 res->GetExternalExtension() + ".inc";
 				}
 
@@ -628,7 +629,6 @@ void ZFile::GenerateSourceFiles(string outputDir)
 		}
 		else
 		{
-			// cout << "NOT EXTERN\n";
 			sourceOutput += resSrc;
 		}
 
@@ -985,11 +985,6 @@ string ZFile::ProcessDeclarations()
 
 		if (item.second->includePath != "")
 		{
-			// output += StringHelper::Sprintf("#include \"%s\"\n",
-			// item.second->includePath.c_str()); output += StringHelper::Sprintf("%s %s[] =
-			// {\n#include \"%s\"\n};\n\n", item.second->varType.c_str(),
-			// item.second->varName.c_str(), item.second->includePath.c_str());
-
 			if (item.second->isExternal)
 			{
 				// HACK
@@ -1006,45 +1001,19 @@ string ZFile::ProcessDeclarations()
 					item.second->text);
 			}
 
-			/*if (item.second->varType == "u64")
-			    output += StringHelper::Sprintf("#pragma INC_ASSET_U64(\"%s\", \"%s\")\n",
-			item.second->varName.c_str(), item.second->includePath.c_str()); else if
-			(item.second->varType == "Gfx") output += StringHelper::Sprintf("#pragma
-			INC_ASSET_GFX(\"%s\", \"%s\")\n", item.second->varName.c_str(),
-			item.second->includePath.c_str()); else if (item.second->varType == "Vtx" ||
-			item.second->varType == "static Vtx") output += StringHelper::Sprintf("#pragma
-			INC_ASSET_VTX(\"%s\", \"%s\")\n", item.second->varName.c_str(),
-			item.second->includePath.c_str()); else output += StringHelper::Sprintf("#pragma
-			INC_ASSET_U8(\"%s\", \"%s\")\n", item.second->varName.c_str(),
-			item.second->includePath.c_str());*/
-
 			// Do not asm_process vertex arrays. They have no practical use being overridden.
 			// if (item.second->varType == "Vtx" || item.second->varType == "static Vtx")
 			if (item.second->varType != "u64" && item.second->varType != "static u64" &&
 			    item.second->varType != "u8" && item.second->varType != "static u8")
 			{
-				// output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n",
-				// item.second->varType.c_str(), item.second->varName.c_str(),
-				// StringHelper::Replace(item.second->includePath, "assets/",
-				// "../assets/extracted/").c_str());
 				output += StringHelper::Sprintf(
 					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
 					item.second->varName.c_str(),
 					StringHelper::Replace(item.second->includePath, "assets/", "../assets/")
 						.c_str());
-				// output += StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n",
-				// item.second->varType.c_str(), item.second->varName.c_str(),
-				// Path::GetFileName(item.second->includePath).c_str());
 			}
 			else
 			{
-				// output += StringHelper::Sprintf("%s %s[] = {\n    #pragma
-				// INC_ASSET(\"%s\")\n};\n\n", item.second->varType.c_str(),
-				// item.second->varName.c_str(), item.second->includePath.c_str()); output +=
-				// StringHelper::Sprintf("%s %s[] = {\n    #include \"%s\"\n};\n\n",
-				// item.second->varType.c_str(), item.second->varName.c_str(),
-				// StringHelper::Replace(item.second->includePath, "assets/",
-				// "assets/extracted/").c_str());
 				output += StringHelper::Sprintf(
 					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
 					item.second->varName.c_str(), item.second->includePath.c_str());
