@@ -9,7 +9,7 @@ REGISTER_ZFILENODE(Path, ZSetPathways);
 
 using namespace std;
 
-ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(parent)
+ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(nParent)
 {
 }
 

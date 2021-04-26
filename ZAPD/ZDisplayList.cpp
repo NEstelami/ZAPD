@@ -1553,7 +1553,6 @@ string ZDisplayList::GetSourceOutputHeader(const std::string& prefix)
 
 static int32_t GfxdCallback_FormatSingleEntry(void)
 {
-	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	gfxd_puts("\t");
 	gfxd_macro_dflt();
 	gfxd_puts(",");

@@ -44,6 +44,9 @@ void ErrorHandler(int sig)
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
+	// To prevent unused parameter warning
+	(void)sig;
+
 	for (size_t i = 1; i < size; i++)
 	{
 		Dl_info info;
