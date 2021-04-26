@@ -7,9 +7,9 @@ void OutputFormatter::Flush()
 		str.append(1, '\n');
 		str.append(currentIndent, ' ');
 
-		int newCol = currentIndent + (wordP - word);
+		uint32_t newCol = currentIndent + (wordP - word);
 
-		for (int i = 0; i < wordNests; i++)
+		for (uint32_t i = 0; i < wordNests; i++)
 			nestIndent[nest - i] -= col - newCol;
 
 		col = newCol;
@@ -25,9 +25,9 @@ void OutputFormatter::Flush()
 	wordNests = 0;
 }
 
-int OutputFormatter::Write(const char* buf, int count)
+int OutputFormatter::Write(const char* buf, uint32_t count)
 {
-	for (int i = 0; i < count; i++)
+	for (uint32_t i = 0; i < count; i++)
 	{
 		char c = buf[i];
 
@@ -101,7 +101,7 @@ int (*OutputFormatter::StaticWriter())(const char* buf, int count)
 	return &WriteStatic;
 }
 
-OutputFormatter::OutputFormatter(int tabSize, int defaultIndent, int lineLimit)
+OutputFormatter::OutputFormatter(uint32_t tabSize, uint32_t defaultIndent, uint32_t lineLimit)
 	: tabSize{tabSize}, defaultIndent{defaultIndent}, lineLimit{lineLimit}, col{0}, nest{0},
 	  nestIndent{defaultIndent}, currentIndent{defaultIndent}, wordNests(0), wordP{word}, spaceP{space}
 {
