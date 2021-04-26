@@ -29,8 +29,7 @@ using namespace std;
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
            ZFileMode fileMode);
 
-void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType,
-                       const fs::path& outPath);
+void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath);
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
 void BuildAssetModelIntermediette(const fs::path& outPath);
@@ -172,7 +171,8 @@ int main(int argc, char* argv[])
 			i++;
 		}
 		else if (arg ==
-		         "-uer")  // Split resources into their individual components (enabled by default) TODO: We may wish to make this a part of the config file...
+		         "-uer")  // Split resources into their individual components (enabled by default)
+		                  // TODO: We may wish to make this a part of the config file...
 		{
 			Globals::Instance->useExternalResources = string(argv[i + 1]) == "1";
 			i++;
@@ -182,7 +182,8 @@ int main(int argc, char* argv[])
 			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
 			i++;
 		}
-		else if (arg == "-cfg")  // Set cfg path (for overlays) TODO: Change the name of this to something else so it doesn't get confused with XML config files.
+		else if (arg == "-cfg")  // Set cfg path (for overlays) 
+								 // TODO: Change the name of this to something else so it doesn't get confused with XML config files.
 		{
 			Globals::Instance->cfgPath = argv[i + 1];
 			i++;
@@ -320,8 +321,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	return true;
 }
 
-void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType,
-                       const fs::path& outPath)
+void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath)
 {
 	string name = outPath.stem();
 
@@ -349,7 +349,7 @@ void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 {
 	ZBlob* blob = ZBlob::FromFile(blobFilePath);
-	string name = outPath.stem(); // filename without extension
+	string name = outPath.stem();  // filename without extension
 
 	string src = blob->GetSourceOutputCode(name);
 

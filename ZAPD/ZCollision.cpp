@@ -17,7 +17,7 @@ ZCollisionHeader::~ZCollisionHeader()
 {
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
-	
+
 	delete camData;
 }
 
@@ -27,8 +27,8 @@ ZResourceType ZCollisionHeader::GetResourceType()
 }
 
 void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                      const std::vector<uint8_t>& nRawData, const uint32_t nRawDataIndex,
-                                      const std::string& nRelPath)
+                                      const std::vector<uint8_t>& nRawData,
+                                      const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }
@@ -120,9 +120,8 @@ void ZCollisionHeader::ParseRawData()
 		{
 			declaration += StringHelper::Sprintf(
 				"\t{ 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X },",
-				polygons[i].type, polygons[i].vtxA, polygons[i].vtxB,
-				polygons[i].vtxC, polygons[i].a, polygons[i].b,
-				polygons[i].c, polygons[i].d);
+				polygons[i].type, polygons[i].vtxA, polygons[i].vtxB, polygons[i].vtxC,
+				polygons[i].a, polygons[i].b, polygons[i].c, polygons[i].d);
 			if (i + 1 < polygons.size())
 				declaration += "\n";
 		}
@@ -162,8 +161,8 @@ void ZCollisionHeader::ParseRawData()
 
 		for (size_t i = 0; i < vertices.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i },", vertices[i].x, vertices[i].y,
-			                                     vertices[i].z);
+			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i },", vertices[i].x,
+			                                     vertices[i].y, vertices[i].z);
 
 			if (i < vertices.size() - 1)
 				declaration += "\n";
@@ -281,7 +280,8 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 		if (entries[i]->cameraPosDataSeg != 0)
 		{
-			int32_t index = ((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
+			int32_t index =
+				((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
 			sprintf(camSegLine, "&%s_camPosData_%08X[%i]", prefix.c_str(), cameraPosDataOffset,
 			        index);
 		}
@@ -312,8 +312,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 				new CameraPositionData(rawData, cameraPosDataOffset + (i * 6));
 			cameraPositionData.push_back(data);
 
-			declaration +=
-				StringHelper::Sprintf("\t{ %6i, %6i, %6i },", data->x, data->y, data->z);
+			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i },", data->x, data->y, data->z);
 			if (i + 1 < numDataTotal)
 				declaration += "\n";
 		}

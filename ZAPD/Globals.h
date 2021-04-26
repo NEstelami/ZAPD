@@ -16,7 +16,7 @@ enum VerbosityLevel
 
 struct TexturePoolEntry
 {
-	std::string path = ""; // Path to Shared Texture
+	fs::path path = "";  // Path to Shared Texture
 };
 
 class GameConfig

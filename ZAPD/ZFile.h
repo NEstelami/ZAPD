@@ -2,9 +2,9 @@
 
 #include <string>
 #include <vector>
+#include "Directory.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
-#include "Directory.h"
 
 enum class ZFileMode
 {
@@ -35,8 +35,9 @@ public:
 	uint32_t baseAddress, rangeStart, rangeEnd;
 
 	ZFile(const fs::path& nOutPath, std::string nName);
-	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath, const fs::path& nOutPath,
-	      std::string filename, const fs::path& nXmlFilePath, bool placeholderMode);
+	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
+	      const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
+	      bool placeholderMode);
 	~ZFile();
 
 	std::string GetVarName(uint32_t address);
@@ -52,12 +53,12 @@ public:
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment,
 	                            DeclarationPadding padding, size_t size, std::string varType,
 	                            std::string varName, std::string body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	                                 size_t size, std::string varType, std::string varName,
-	                                 size_t arrayItemCnt, std::string body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	                                 size_t size, std::string varType, std::string varName,
-	                                 size_t arrayItemCnt, std::string body, bool isExternal);
+	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
+	                                 std::string varType, std::string varName, size_t arrayItemCnt,
+	                                 std::string body);
+	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
+	                                 std::string varType, std::string varName, size_t arrayItemCnt,
+	                                 std::string body, bool isExternal);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
 	                                 DeclarationPadding padding, size_t size, std::string varType,
 	                                 std::string varName, size_t arrayItemCnt, std::string body);
@@ -65,8 +66,8 @@ public:
 	Declaration* AddDeclarationPlaceholder(uint32_t address, std::string varName);
 	Declaration* AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,
 	                                   std::string varType, std::string varName);
-	Declaration* AddDeclarationIncludeArray(uint32_t address, std::string includePath,
-	                                        size_t size, std::string varType, std::string varName,
+	Declaration* AddDeclarationIncludeArray(uint32_t address, std::string includePath, size_t size,
+	                                        std::string varType, std::string varName,
 	                                        size_t arrayItemCnt);
 	std::string GetDeclarationName(uint32_t address);
 	std::string GetDeclarationName(uint32_t address, std::string defaultResult);

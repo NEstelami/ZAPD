@@ -46,8 +46,9 @@ ZFile::ZFile(const fs::path& nOutPath, string nName) : ZFile()
 	name = nName;
 }
 
-ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath, const fs::path& nOutPath,
-			 std::string filename, const fs::path& nXmlFilePath, bool placeholderMode)
+ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
+             const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
+             bool placeholderMode)
 	: ZFile()
 {
 	xmlFilePath = nXmlFilePath;
@@ -71,7 +72,8 @@ ZFile::~ZFile()
 		delete res;
 	}
 
-	for(auto d : declarations) {
+	for (auto d : declarations)
+	{
 		delete d.second;
 	}
 }
@@ -126,8 +128,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (mode == ZFileMode::Extract)
 	{
 		if (!File::Exists(basePath / name))
-			throw std::runtime_error(StringHelper::Sprintf("Error! File %s does not exist.",
-			                                               (basePath / name).c_str()));
+			throw std::runtime_error(
+				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 
 		rawData = File::ReadAllBytes(basePath / name);
 	}
@@ -567,8 +569,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 			string assetOutDir = outputDir / Path::GetFileNameWithoutExtension(res->GetOutName());
 			string declType = res->GetSourceTypeName();
 
-			std::string incStr =
-				StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(), res->GetExternalExtension().c_str());
+			std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
+			                                           res->GetExternalExtension().c_str());
 
 			if (res->GetResourceType() == ZResourceType::Texture)
 			{
@@ -580,7 +582,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
 				    Globals::Instance->cfg.texturePool.end())
 				{
-					incStr = Globals::Instance->cfg.texturePool[tex->hash].path + "." + res->GetExternalExtension() + ".inc";
+					incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
+							 res->GetExternalExtension() + ".inc";
 				}
 
 				incStr += ".c";
@@ -606,7 +609,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 	sourceOutput += ProcessDeclarations();
 
-	string outPath = Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c");
+	string outPath =
+		Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c");
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -631,7 +635,8 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	formatter.Write(ProcessExterns());
 
-	fs::path headerFilename = Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".h");
+	fs::path headerFilename =
+		Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".h");
 
 	File::WriteAllText(headerFilename, formatter.GetOutput());
 }
@@ -883,7 +888,7 @@ string ZFile::ProcessDeclarations()
 
 					if (diff < 16 && !nonZeroUnaccounted)
 						unaccountedPrefix = "possiblePadding";
-					
+
 					Declaration* decl = AddDeclarationArray(
 						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
 						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
@@ -1093,7 +1098,8 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 						if (refDecl->arrayItemCnt != 0)
 						{
 							int32_t itemSize = refDecl->size / refDecl->arrayItemCnt;
-							int32_t itemIndex = (decl->references[refIndex] - refDeclAddr) / itemSize;
+							int32_t itemIndex =
+								(decl->references[refIndex] - refDeclAddr) / itemSize;
 
 							decl->text.replace(i, 2,
 							                   StringHelper::Sprintf(
