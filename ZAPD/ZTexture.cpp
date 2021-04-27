@@ -876,7 +876,7 @@ ZResourceType ZTexture::GetResourceType()
 
 std::string ZTexture::GetSourceTypeName()
 {
-	return "u64";
+	return isStatic ? "static u64" : "u64";
 }
 
 void ZTexture::CalcHash()

@@ -580,11 +580,6 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 				tex->CalcHash();
 
-				if (res->GetRawDataIndex() == 0xF0A0)
-				{
-					int bp = 0;
-				}
-
 				// TEXTURE POOL CHECK
 				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
 				    Globals::Instance->cfg.texturePool.end())
@@ -600,12 +595,14 @@ void ZFile::GenerateSourceFiles(string outputDir)
 				incStr += ".c";
 			}
 
+			if (res->isStatic && !StringHelper::StartsWith(declType, "static"))
+				declType = "static " + declType;
+
 			AddDeclarationIncludeArray(res->GetRawDataIndex(), incStr, res->GetRawDataSize(),
 			                           declType, res->GetName(), 0);
 		}
 		else
 		{
-			// cout << "NOT EXTERN\n";
 			sourceOutput += resSrc;
 		}
 

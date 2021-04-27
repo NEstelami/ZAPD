@@ -71,6 +71,11 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		else
 			isCustomAsset = false;
 
+		if (reader->Attribute("Static") != nullptr)
+			isStatic = true;
+		else
+			isStatic = false;
+
 		if (!canHaveInner && !reader->NoChildren())
 		{
 			throw std::runtime_error(
