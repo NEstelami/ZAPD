@@ -22,6 +22,7 @@
 
 #include <string>
 #include "tinyxml2.h"
+//#include <HighLevel/HLExporterTest.h>
 
 using namespace tinyxml2;
 using namespace std;
@@ -206,6 +207,11 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->warnUnaccounted = true;
 		}
+		else if (arg == "--plugin")  // Load Exporter Plugin
+		{
+			Globals::Instance->LoadExporterPlugin(argv[i + 1]);
+			i++;
+		}
 	}
 
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
@@ -307,6 +313,13 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 			                          xmlFilePath.c_str(), child->Name()));
 		}
 	}
+
+	// EXPORTER TEST
+	//Globals::Instance->AddExporter(ZResourceType::Texture, new HLExporterTest_Texture());
+	
+#ifdef _MSC_VER
+	Globals::Instance->LoadExporterPlugin("ExporterTest");
+#endif
 
 	for (ZFile* file : Globals::Instance->files)
 	{

@@ -279,6 +279,11 @@ void ZFile::ExtractResources(string outputDir)
 
 		res->CalcHash();  // TEST
 		res->Save(outputPath);
+
+		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
+
+		if (exporter != nullptr)
+			exporter->Save(res, outputDir);
 	}
 
 	if (Globals::Instance->testMode)

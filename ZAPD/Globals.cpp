@@ -1,10 +1,13 @@
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
+
 #include "Globals.h"
 #include <algorithm>
 #include "File.h"
 #include "Path.h"
 #include "tinyxml2.h"
 
-using namespace tinyxml2;
 using namespace std;
 
 Globals* Globals::Instance;
@@ -35,21 +38,21 @@ string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 	{
 		if (segmentRefFiles.find(segNumber) == segmentRefFiles.end())
 		{
-			XMLDocument doc;
+			tinyxml2::XMLDocument doc;
 			string filePath = segmentRefs[segNumber];
-			XMLError eResult = doc.LoadFile(filePath.c_str());
+			tinyxml2::XMLError eResult = doc.LoadFile(filePath.c_str());
 
 			if (eResult != tinyxml2::XML_SUCCESS)
 				return "ERROR";
 
-			XMLNode* root = doc.FirstChild();
+			tinyxml2::XMLNode* root = doc.FirstChild();
 
 			if (root == nullptr)
 				return "ERROR";
 
 			// vector<ZFile*> files = vector<ZFile*>();
 
-			for (XMLElement* child = root->FirstChildElement(); child != NULL;
+			for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
 			     child = child->NextSiblingElement())
 			{
 				if (string(child->Name()) == "File")
@@ -70,8 +73,8 @@ string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 
 void Globals::ReadConfigFile(const std::string& configFilePath)
 {
-	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(configFilePath.c_str());
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError eResult = doc.LoadFile(configFilePath.c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
@@ -79,12 +82,12 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		return;
 	}
 
-	XMLNode* root = doc.FirstChild();
+	tinyxml2::XMLNode* root = doc.FirstChild();
 
 	if (root == nullptr)
 		return;
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "SymbolMap")
@@ -131,8 +134,8 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 
 void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 {
-	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
@@ -140,12 +143,12 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 		return;
 	}
 
-	XMLNode* root = doc.FirstChild();
+	tinyxml2::XMLNode* root = doc.FirstChild();
 
 	if (root == nullptr)
 		return;
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
 		if (string(child->Name()) == "Texture")
@@ -184,4 +187,41 @@ void Globals::AddSegment(int32_t segment)
 bool Globals::HasSegment(int32_t segment)
 {
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
+}
+
+
+typedef void(AddExporterFunc)(ZResourceType, ZResourceExporter*);
+typedef void(__stdcall* ImportExporterFunc)(AddExporterFunc*);
+
+static void _AddExporterFunc(ZResourceType resType, ZResourceExporter* exporter)
+{
+	Globals::Instance->AddExporter(resType, exporter);
+}
+
+void Globals::LoadExporterPlugin(std::string pluginPath)
+{
+#ifdef _MSC_VER
+	HINSTANCE pluginHandle = LoadLibrary((pluginPath + ".dll").c_str());
+
+	if (pluginHandle != nullptr)
+	{
+		ImportExporterFunc importExportFunc = (ImportExporterFunc)GetProcAddress(pluginHandle, "ImportExporters");
+		importExportFunc(_AddExporterFunc);
+	}
+#else
+	// TODO: Linux implementation
+#endif
+}
+
+void Globals::AddExporter(ZResourceType resType, ZResourceExporter* exporter)
+{
+	exporters[resType] = exporter;
+}
+
+ZResourceExporter* Globals::GetExporter(ZResourceType resType)
+{
+	if (exporters.find(resType) != exporters.end())
+		return exporters[resType];
+	else
+		return nullptr;
 }

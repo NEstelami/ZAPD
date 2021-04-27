@@ -160,6 +160,15 @@ protected:
 	            std::string nText);
 };
 
+//template <typename class T>
+class ZResourceExporter
+{
+public:
+	ZResourceExporter() = default;
+
+	virtual void Save(ZResource* res, std::string outPath) = 0;
+};
+
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
 
 typedef ZResource*(ZResourceFactoryFunc)();

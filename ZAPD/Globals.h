@@ -61,6 +61,8 @@ public:
 	ZRoom* lastScene;
 	std::map<uint32_t, std::string> symbolMap;
 
+	std::map<ZResourceType, ZResourceExporter*> exporters;
+
 	Globals();
 	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
 	void ReadConfigFile(const std::string& configFilePath);
@@ -68,6 +70,9 @@ public:
 	void GenSymbolMap(const std::string& symbolMapPath);
 	void AddSegment(int32_t segment);
 	bool HasSegment(int32_t segment);
+	void LoadExporterPlugin(std::string pluginPath);
+	void AddExporter(ZResourceType resType, ZResourceExporter* exporter);
+	ZResourceExporter* GetExporter(ZResourceType resType);
 };
 
 /*
