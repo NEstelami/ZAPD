@@ -124,9 +124,10 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->ExtractFromXML(child, rawData, address, "");
+			cutscene->SetRawData(rawData);
+			cutscene->SetRawDataIndex(address);
+			cutscene->ParseRawData();
 
 			cutscene->GetSourceOutputCode(name);
 
