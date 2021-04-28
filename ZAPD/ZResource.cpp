@@ -83,8 +83,8 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 				throw std::runtime_error(StringHelper::Sprintf(
 					"ZResource::ParseXML: Fatal error while parsing '%s'.\n"
 					"\t Unexpected '%s' attribute in resource '%s'.\n"
-					"\t Aborting...", parent->GetName().c_str(), 
-					attrName.c_str(), reader->Name()));
+					"\t Aborting...",
+					parent->GetName().c_str(), attrName.c_str(), reader->Name()));
 			attrs = attrs->Next();
 		}
 
@@ -92,7 +92,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			throw std::runtime_error(
 				StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n"
-									  "\t Resource '%s' with inner element/child detected.\n",
+			                          "\t Resource '%s' with inner element/child detected.\n",
 			                          name.c_str(), reader->Name()));
 		}
 
@@ -102,8 +102,8 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 				throw std::runtime_error(StringHelper::Sprintf(
 					"ZResource::ParseXML: Fatal error while parsing '%s'.\n"
 					"\t Missing required attribute '%s' in resource '%s'.\n"
-					"\t Aborting...", parent->GetName().c_str(), 
-					attr.first.c_str(), reader->Name()));
+					"\t Aborting...",
+					parent->GetName().c_str(), attr.first.c_str(), reader->Name()));
 		}
 
 		if (!isInner)
@@ -111,17 +111,16 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		else
 			name = optionalAttributes.at("Name");
 
-		static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*",
-							std::regex::icase | std::regex::optimize);
+		static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*", std::regex::icase | std::regex::optimize);
 
 		if (!isInner || (isInner && name != ""))
 		{
 			if (!std::regex_match(name, r))
 			{
 				throw std::domain_error(
-					StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource "
-											"with invalid 'Name' attribute.\n",
-											name.c_str()));
+					StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n"
+				                          "\t Resource with invalid 'Name' attribute.\n",
+				                          name.c_str()));
 			}
 		}
 

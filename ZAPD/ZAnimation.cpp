@@ -242,11 +242,11 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 	std::string skelOffsetXml = optionalAttributes.at("SkelOffset");
 	if (skelOffsetXml == "")
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-			"ZCurveAnimation::ParseXML: Fatal error in '%s'.\n"
-			"\t Missing 'SkelOffset' attribute in ZCurveAnimation.\n"
-			"\t You need to provide the offset of the curve skeleton.",
-			name.c_str()));
+		throw std::runtime_error(
+			StringHelper::Sprintf("ZCurveAnimation::ParseXML: Fatal error in '%s'.\n"
+		                          "\t Missing 'SkelOffset' attribute in ZCurveAnimation.\n"
+		                          "\t You need to provide the offset of the curve skeleton.",
+		                          name.c_str()));
 	}
 	skelOffset = StringHelper::StrToL(skelOffsetXml, 0);
 }

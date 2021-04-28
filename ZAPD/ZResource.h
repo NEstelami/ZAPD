@@ -102,7 +102,7 @@ protected:
 	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	std::string sourceOutput;
-	bool isInner = false; // Is this resource an inner node of another resource? ie inner of <Array>
+	bool isInner = false;  // Is this resource an inner node of another resource? inside of <Array>
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
@@ -115,10 +115,11 @@ protected:
 	// XML attributes registers.
 	// Registering XML attributes should be done in constructors.
 
-	// The resource needs this attribute. If it is not provided, then the program will throw an exception.
+	// The resource needs this attribute. If it is not provided, then the program will throw an
+	// exception.
 	void RegisterRequiredAttribute(const std::string& attr);
 	// Optional attribute. The resource has to do manual checks and manual warnings.
-	void RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue="");
+	void RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue = "");
 	// Optional attribute. It may be provided or not.
 	void RegisterNonValueAttribute(const std::string& attr);
 };

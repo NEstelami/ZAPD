@@ -26,7 +26,8 @@ std::string ZVtx::GetSourceTypeName()
 
 std::string ZVtx::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b, a);
+	return StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b,
+	                             a);
 }
 
 std::string ZVtx::GetSourceOutputCode(const std::string& prefix)

@@ -65,8 +65,9 @@ public:
 	                    const std::string& nRelPath) override;  // Extract Mode
 	static ZTexture* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
 	                              bool readFile);
-	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t rawDataIndex,
-	                            std::string nName, int32_t nWidth, int32_t nHeight, ZFile* nParent);
+	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
+	                            uint32_t rawDataIndex, std::string nName, int32_t nWidth,
+	                            int32_t nHeight, ZFile* nParent);
 	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
 	static ZTexture* FromHLTexture(HLTexture* hlTex);
 

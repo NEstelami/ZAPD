@@ -58,7 +58,8 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 	ParseXML(reader);
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
-	textureData.assign(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + GetRawDataSize());
+	textureData.assign(nRawData.data() + rawDataIndex,
+	                   nRawData.data() + rawDataIndex + GetRawDataSize());
 
 	relativePath = nRelPath;
 
@@ -80,7 +81,7 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	tex->rawDataIndex = nRawDataIndex;
 
 	size_t dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
-	tex->textureData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
+	tex->textureData.assign(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
 
 	tex->FixRawData();
 	tex->CalcHash();

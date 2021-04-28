@@ -185,11 +185,10 @@ void ZCollisionHeader::ParseRawData()
 		name.c_str(), polyTypeDefSegmentOffset, name.c_str(), camDataSegmentOffset, numWaterBoxes,
 		waterBoxStr);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16, GetRawDataSize(),
-	                       "CollisionHeader",
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16,
+	                       GetRawDataSize(), "CollisionHeader",
 	                       StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
 }
-
 
 ZResourceType ZCollisionHeader::GetResourceType() const
 {

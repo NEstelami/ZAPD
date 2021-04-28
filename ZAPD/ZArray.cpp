@@ -1,8 +1,8 @@
 #include "ZArray.h"
+#include <cassert>
 #include "Globals.h"
 #include "StringHelper.h"
 #include "ZFile.h"
-#include <cassert>
 
 REGISTER_ZFILENODE(Array, ZArray);
 

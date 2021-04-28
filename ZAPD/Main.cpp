@@ -182,8 +182,9 @@ int main(int argc, char* argv[])
 			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
 			i++;
 		}
-		else if (arg == "-cfg")  // Set cfg path (for overlays) 
-								 // TODO: Change the name of this to something else so it doesn't get confused with XML config files.
+		else if (arg == "-cfg")  // Set cfg path (for overlays)
+		                         // TODO: Change the name of this to something else so it doesn't
+		                         // get confused with XML config files.
 		{
 			Globals::Instance->cfgPath = argv[i + 1];
 			i++;

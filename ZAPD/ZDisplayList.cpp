@@ -69,7 +69,8 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	int32_t rawDataSize = ZDisplayList::GetDListLength(
 		nRawData, rawDataIndex,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	dlistRawData.assign(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + rawDataSize);
+	dlistRawData.assign(nRawData.data() + rawDataIndex,
+	                    nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
 
@@ -81,8 +82,8 @@ ZDisplayList::ZDisplayList(vector<uint8_t> nRawData, uint32_t nRawDataIndex, int
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
-	dlistRawData = vector<uint8_t>(nRawData.data() + rawDataIndex,
-	                          nRawData.data() + rawDataIndex + rawDataSize);
+	dlistRawData.assign(nRawData.data() + rawDataIndex,
+	                    nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
 

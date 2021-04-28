@@ -28,7 +28,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	{
 		fprintf(stderr,
 		        "ZSymbol::ParseXML: Warning in '%s'.\n"
-				"\t Missing 'Type' attribute in xml.\n"
+		        "\t Missing 'Type' attribute in xml.\n"
 		        "\t Defaulting to 'void*'.\n",
 		        name.c_str());
 		type = "void*";
@@ -43,7 +43,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	{
 		fprintf(stderr,
 		        "ZSymbol::ParseXML: Warning in '%s'.\n"
-				"\t Missing 'TypeSize' attribute in xml.\n"
+		        "\t Missing 'TypeSize' attribute in xml.\n"
 		        "\t Defaulting to '4'.\n",
 		        name.c_str());
 		typeSize = 4;  // Size of a word.
