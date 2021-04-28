@@ -55,7 +55,7 @@ public:
 	uint32_t hash;
 
 	ZResource(ZFile* nParent);
-	virtual ~ZResource();
+	virtual ~ZResource() = default;
 
 	// Parsing from File
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,

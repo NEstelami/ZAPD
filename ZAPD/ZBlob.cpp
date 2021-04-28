@@ -21,8 +21,7 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, size_
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
-	blobData =
-		vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
+	blobData.assign(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
 	name = nName;
 }
 

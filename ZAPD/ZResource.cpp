@@ -13,7 +13,6 @@ ZResource::ZResource(ZFile* nParent)
 	outName = "";
 	relativePath = "";
 	sourceOutput = "";
-	rawData = vector<uint8_t>();
 	rawDataIndex = 0;
 	outputDeclaration = true;
 
@@ -266,8 +265,4 @@ uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 		currentPtr -= GETSEGOFFSET(parentBaseAddress);
 
 	return currentPtr;
-}
-
-ZResource::~ZResource()
-{
 }
