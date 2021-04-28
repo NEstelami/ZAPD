@@ -65,8 +65,9 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	else if (skelTypeXml != "Normal")
 	{
 		fprintf(stderr,
-				"ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. "
-				"Defaulting to 'Normal'.\n",
+				"ZSkeleton::ParseXML: Warning in '%s'.\n"
+				"\t Invalid Type found: '%s'.\n"
+				"\t Defaulting to 'Normal'.\n",
 				name.c_str(), skelTypeXml.c_str());
 		type = ZSkeletonType::Normal;
 	}
@@ -84,8 +85,9 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	else
 	{
 		fprintf(stderr,
-				"ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid LimbType found: '%s'. "
-				"Defaulting to 'Standard'.\n",
+				"ZSkeleton::ParseXML: Warning in '%s'.\n"
+				"\t Invalid LimbType found: '%s'.\n"
+				"\t Defaulting to 'Standard'.\n",
 				name.c_str(), limbTypeXml.c_str());
 		limbType = ZLimbType::Standard;
 	}

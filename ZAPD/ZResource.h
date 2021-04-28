@@ -93,6 +93,7 @@ public:
 	virtual size_t GetRawDataSize() = 0;
 	virtual std::vector<uint8_t> GetRawData();
 	virtual void SetRawData(std::vector<uint8_t> nData);
+	void SetInnerNode(bool inner);
 
 protected:
 	std::string name;
@@ -101,6 +102,7 @@ protected:
 	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	std::string sourceOutput;
+	bool isInner = false; // Is this resource an inner node of another resource? ie inner of <Array>
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file

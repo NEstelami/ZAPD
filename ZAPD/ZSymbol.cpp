@@ -42,8 +42,9 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	if (typeSizeXml == "")
 	{
 		fprintf(stderr,
-		        "ZSymbol::ParseXML: Warning in '%s'.\n\t Missing 'TypeSize' attribute in xml. "
-		        "Defaulting to '4'.\n",
+		        "ZSymbol::ParseXML: Warning in '%s'.\n"
+				"\t Missing 'TypeSize' attribute in xml.\n"
+		        "\t Defaulting to '4'.\n",
 		        name.c_str());
 		typeSize = 4;  // Size of a word.
 	}

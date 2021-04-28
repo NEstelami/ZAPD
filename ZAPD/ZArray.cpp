@@ -32,10 +32,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 			StringHelper::Sprintf("Error! Array needs at least one sub-element.\n"));
 
 	childName = child->Name();
-}
 
-void ZArray::ParseRawData()
-{
 	auto nodeMap = ZFile::GetNodeMap();
 	size_t childIndex = rawDataIndex;
 	for (size_t i = 0; i < arrayCnt; i++)
@@ -48,9 +45,8 @@ void ZArray::ParseRawData()
 				childName.c_str()));
 		}
 		res->parent = parent;
-		res->SetRawData(rawData);
-		res->SetRawDataIndex(childIndex);
-		res->ParseRawData();
+		res->SetInnerNode(true);
+		res->ExtractFromXML(child, rawData, childIndex, "");
 
 		childIndex += res->GetRawDataSize();
 		resList.push_back(res);

@@ -418,8 +418,8 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			fprintf(stderr,
 			        "ZLimb::ParseXML: Warning in '%s'.\n"
-					"\t Invalid LimbType found: '%s'. "
-			        "Defaulting to 'Standard'.\n",
+					"\t Invalid LimbType found: '%s'.\n"
+			        "\t Defaulting to 'Standard'.\n",
 			        name.c_str(), limbType.c_str());
 			type = ZLimbType::Standard;
 		}

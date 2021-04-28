@@ -50,6 +50,13 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 {
 	if (reader != nullptr)
 	{
+		// If it is an inner node, then 'Name' isn't required
+		if (isInner)
+		{
+			requiredAttributes.erase("Name");
+			RegisterOptionalAttribute("Name");
+		}
+
 		auto attrs = reader->FirstAttribute();
 		while (attrs != nullptr)
 		{
@@ -84,8 +91,8 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		if (!canHaveInner && !reader->NoChildren())
 		{
 			throw std::runtime_error(
-				StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource '%s' "
-			                          "with inner element/child detected.\n",
+				StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n"
+									  "\t Resource '%s' with inner element/child detected.\n",
 			                          name.c_str(), reader->Name()));
 		}
 
@@ -99,16 +106,23 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 					attr.first.c_str(), reader->Name()));
 		}
 
-		name = requiredAttributes.at("Name");
+		if (!isInner)
+			name = requiredAttributes.at("Name");
+		else
+			name = optionalAttributes.at("Name");
+
 		static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*",
 							std::regex::icase | std::regex::optimize);
 
-		if (!std::regex_match(name, r))
+		if (!isInner || (isInner && name != ""))
 		{
-			throw std::domain_error(
-				StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource "
-										"with invalid 'Name' attribute.\n",
-										name.c_str()));
+			if (!std::regex_match(name, r))
+			{
+				throw std::domain_error(
+					StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n\t Resource "
+											"with invalid 'Name' attribute.\n",
+											name.c_str()));
+			}
 		}
 
 		outName = optionalAttributes.at("OutName");
@@ -223,6 +237,11 @@ ZResourceType ZResource::GetResourceType() const
 void ZResource::CalcHash()
 {
 	hash = 0;
+}
+
+void ZResource::SetInnerNode(bool inner)
+{
+	isInner = inner;
 }
 
 void ZResource::RegisterRequiredAttribute(const std::string& attr)

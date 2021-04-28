@@ -13,7 +13,6 @@ public:
 	~ZArray();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
-	void ParseRawData() override;
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() override;

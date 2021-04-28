@@ -115,6 +115,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
                                                  DListType::F3DEX :
                                                  DListType::F3DZEX),
 				parent);
+			dList->SetInnerNode(true);
 
 			dList->GetSourceOutputCode(name);
 			delete dList;
@@ -125,9 +126,8 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->SetRawData(rawData);
-			cutscene->SetRawDataIndex(address);
-			cutscene->ParseRawData();
+			cutscene->SetInnerNode(true);
+			cutscene->ExtractFromXML(child, rawData, address, "");
 
 			cutscene->GetSourceOutputCode(name);
 
@@ -154,18 +154,21 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
+			pathway->SetInnerNode(true);
 			pathway->GenerateSourceCodePass1(name, 0);
 			pathway->GenerateSourceCodePass2(name, 0);
 
 			delete pathway;
 		}
 
+		#if 0
 		fprintf(stderr,
 		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
 		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
 		        "version.\n"
 		        "\t Use the non-hint version instead.\n",
 		        name.c_str(), child->Name());
+		#endif
 	}
 
 	// ParseCommands(rawDataIndex);
