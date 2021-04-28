@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "Directory.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
 
@@ -33,15 +34,16 @@ public:
 	std::vector<ZResource*> resources;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 
-	ZFile(std::string nOutPath, std::string nName);
-	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, std::string nBasePath, std::string nOutPath,
-	      std::string filename, const std::string& nXmlFilePath, bool placeholderMode);
+	ZFile(const fs::path& nOutPath, std::string nName);
+	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
+	      const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
+	      bool placeholderMode);
 	~ZFile();
 
 	std::string GetVarName(uint32_t address);
 	std::string GetName();
-	void ExtractResources(std::string outputDir);
-	void BuildSourceFile(std::string outputDir);
+	void ExtractResources(fs::path outputDir);
+	void BuildSourceFile(fs::path outputDir);
 	void AddResource(ZResource* res);
 	ZResource* FindResource(uint32_t rawDataIndex);
 	std::vector<ZResource*> GetResourcesOfType(ZResourceType resType);
@@ -83,15 +85,15 @@ public:
 protected:
 	std::vector<uint8_t> rawData;
 	std::string name;
-	std::string basePath;
-	std::string outputPath;
-	std::string sourceOutput;
-	std::string xmlFilePath;
+	fs::path basePath;
+	fs::path outputPath;
+	fs::path xmlFilePath;
 
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
 	              bool placeholderMode);
-	void GenerateSourceFiles(std::string outputDir);
+	void GenerateSourceFiles(fs::path outputDir);
+	void GenerateSourceHeaderFiles();
 	void GenerateHLIntermediette();
 	void AddDeclarationDebugChecks(uint32_t address);
 	std::string ProcessDeclarations();

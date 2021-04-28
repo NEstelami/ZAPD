@@ -34,7 +34,8 @@ public:
 
 	int (*StaticWriter())(const char* buf, int count);  // Must be `int` due to libgfxd
 
-	int Write(const char* buf, uint32_t count);
+	int Write(const char* buf, int count);
+	int Write(const std::string& buf);
 
 	std::string GetOutput();
 };

@@ -48,7 +48,7 @@ public:
 	bool useLegacyZDList;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
 	ZFileMode fileMode;
-	std::string baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
+	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
 	TextureType texType;
 	ZGame game;
 	GameConfig cfg;

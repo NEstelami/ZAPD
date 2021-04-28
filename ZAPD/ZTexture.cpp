@@ -786,8 +786,6 @@ TextureType ZTexture::GetTextureType()
 
 void ZTexture::Save(const std::string& outFolder)
 {
-	// CalcHash();
-
 	// Optionally generate text file containing CRC information. This is going to be a one time
 	// process for generating the Texture Pool XML.
 	if (Globals::Instance->testMode)

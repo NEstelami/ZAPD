@@ -7,9 +7,9 @@
 class PolygonEntry
 {
 public:
-	int16_t type;
-	int16_t vtxA, vtxB, vtxC;
-	int16_t a, b, c, d;
+	uint16_t type;
+	uint16_t vtxA, vtxB, vtxC;
+	uint16_t a, b, c, d;
 
 	PolygonEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 };

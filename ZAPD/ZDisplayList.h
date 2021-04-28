@@ -370,7 +370,6 @@ public:
 	             ZFile* nParent);
 	~ZDisplayList();
 
-	static ZDisplayList* Instance;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
 	// static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool

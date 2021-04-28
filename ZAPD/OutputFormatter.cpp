@@ -25,9 +25,9 @@ void OutputFormatter::Flush()
 	wordNests = 0;
 }
 
-int OutputFormatter::Write(const char* buf, uint32_t count)
+int OutputFormatter::Write(const char* buf, int count)
 {
-	for (uint32_t i = 0; i < count; i++)
+	for (int i = 0; i < count; i++)
 	{
 		char c = buf[i];
 
@@ -81,6 +81,11 @@ int OutputFormatter::Write(const char* buf, uint32_t count)
 	}
 
 	return count;
+}
+
+int OutputFormatter::Write(const std::string& buf)
+{
+	return Write(buf.data(), buf.size());
 }
 
 OutputFormatter* OutputFormatter::Instance;
