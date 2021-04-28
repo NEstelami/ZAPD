@@ -16,5 +16,5 @@ private:
 	uint8_t unk1;  // (MM Only)
 	uint8_t skyboxNumber;
 	uint8_t cloudsType;
-	uint8_t lightingSettingsControl;
+	uint8_t isIndoors;
 };

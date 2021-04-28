@@ -85,7 +85,10 @@ SetCutscenes::~SetCutscenes()
 std::string SetCutscenes::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
-	return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_LIST(%i, %s)", numCutscenes, listName.c_str());
+
+	if (Globals::Instance->game == ZGame::MM_RETAIL)
+		return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_LIST(%i, %s)", numCutscenes, listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_DEFAULT_CUTSCENE(%s)", listName.c_str());
 }
 
 size_t SetCutscenes::GetRawDataSize()
