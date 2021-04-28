@@ -108,6 +108,11 @@ RoomCommand ZSetPathways::GetRoomCommand()
 	return RoomCommand::SetPathways;
 }
 
+ZResourceType ZSetPathways::GetResourceType() const
+{
+	return ZResourceType::Path;
+}
+
 PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: numPoints(rawData[rawDataIndex + 0]), unk1(rawData[rawDataIndex + 1]),
 	  unk2(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),

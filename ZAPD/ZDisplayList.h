@@ -371,8 +371,6 @@ public:
 	static ZDisplayList* Instance;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
-	// static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool
-	// readFile, ZFile* nParent);
 
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(std::vector<uint8_t> fileData,
@@ -395,5 +393,8 @@ public:
 	virtual std::string GetExternalExtension() override;
 	std::string GetSourceTypeName() override;
 
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
+
+protected:
+	std::vector<uint8_t> dlistRawData;
 };

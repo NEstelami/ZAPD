@@ -57,6 +57,7 @@ ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 	scene = nullptr;
 	roomCount = -1;
 	canHaveInner = true;
+	RegisterOptionalAttribute("Comment");
 }
 
 ZRoom::~ZRoom()
@@ -558,7 +559,7 @@ size_t ZRoom::GetRawDataSize()
 	return size;
 }
 
-ZResourceType ZRoom::GetResourceType()
+ZResourceType ZRoom::GetResourceType() const
 {
 	return ZResourceType::Room;
 }

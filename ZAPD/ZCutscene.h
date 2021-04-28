@@ -430,7 +430,7 @@ public:
 	CutsceneCommands GetCommandFromID(int32_t id);
 	uint32_t getSegmentOffset() override { return rawDataIndex; }
 
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;

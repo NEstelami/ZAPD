@@ -11,14 +11,15 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 {
 	type = ZSkeletonType::Normal;
 	limbType = ZLimbType::Standard;
-	limbs = vector<ZLimb*>();
-	//rootLimb = nullptr;
 	dListCount = 0;
+
+	RegisterRequiredAttribute("Type");
+	RegisterRequiredAttribute("LimbType");
 }
 
 ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
                      const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent)
-	: ZResource(nParent)
+	: ZSkeleton(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -55,64 +56,38 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	const char* skelTypeXml = reader->Attribute("Type");
+	std::string skelTypeXml = requiredAttributes.at("Type");
 
-	if (skelTypeXml == nullptr)
+	if (skelTypeXml == "Flex")
+		type = ZSkeletonType::Flex;
+	else if (skelTypeXml == "Curve")
+		type = ZSkeletonType::Curve;
+	else if (skelTypeXml != "Normal")
 	{
 		fprintf(stderr,
-		        "ZSkeleton::ParseXML: Warning in '%s'.\n\t Type not found found. Defaulting to "
-		        "'Normal'.\n",
-		        name.c_str());
+				"ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. "
+				"Defaulting to 'Normal'.\n",
+				name.c_str(), skelTypeXml.c_str());
 		type = ZSkeletonType::Normal;
 	}
+
+	std::string limbTypeXml = requiredAttributes.at("LimbType");
+
+	if (limbTypeXml == "Standard")
+		limbType = ZLimbType::Standard;
+	else if (limbTypeXml == "LOD")
+		limbType = ZLimbType::LOD;
+	else if (limbTypeXml == "Skin")
+		limbType = ZLimbType::Skin;
+	else if (limbTypeXml == "Curve")
+		limbType = ZLimbType::Curve;
 	else
-	{
-		string skelTypeStr(skelTypeXml);
-
-		if (skelTypeStr == "Flex")
-			type = ZSkeletonType::Flex;
-		else if (skelTypeStr == "Curve")
-			type = ZSkeletonType::Curve;
-		else if (skelTypeStr != "Normal")
-		{
-			fprintf(stderr,
-			        "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid Type found: '%s'. "
-			        "Defaulting to 'Normal'.\n",
-			        name.c_str(), skelTypeXml);
-			type = ZSkeletonType::Normal;
-		}
-	}
-
-	const char* limbTypeXml = reader->Attribute("LimbType");
-
-	if (limbTypeXml == nullptr)
 	{
 		fprintf(stderr,
-		        "ZSkeleton::ParseXML: Warning in '%s'.\n\t LimbType not found found. Defaulting to "
-		        "'Standard'.\n",
-		        name.c_str());
+				"ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid LimbType found: '%s'. "
+				"Defaulting to 'Standard'.\n",
+				name.c_str(), limbTypeXml.c_str());
 		limbType = ZLimbType::Standard;
-	}
-	else
-	{
-		string limbTypeStr(limbTypeXml);
-
-		if (limbTypeStr == "Standard")
-			limbType = ZLimbType::Standard;
-		else if (limbTypeStr == "LOD")
-			limbType = ZLimbType::LOD;
-		else if (limbTypeStr == "Skin")
-			limbType = ZLimbType::Skin;
-		else if (limbTypeStr == "Curve")
-			limbType = ZLimbType::Curve;
-		else
-		{
-			fprintf(stderr,
-			        "ZSkeleton::ParseXML: Warning in '%s'.\n\t Invalid LimbType found: '%s'. "
-			        "Defaulting to 'Standard'.\n",
-			        name.c_str(), limbTypeXml);
-			limbType = ZLimbType::Standard;
-		}
 	}
 }
 
@@ -261,7 +236,7 @@ std::string ZSkeleton::GetSourceTypeName()
 	return "SkeletonHeader";
 }
 
-ZResourceType ZSkeleton::GetResourceType()
+ZResourceType ZSkeleton::GetResourceType() const
 {
 	return ZResourceType::Skeleton;
 }

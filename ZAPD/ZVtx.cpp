@@ -19,10 +19,6 @@ ZVtx::ZVtx(ZFile* nParent) : ZResource(nParent)
 	a = 0;
 }
 
-void ZVtx::ParseXML(tinyxml2::XMLElement* reader)
-{
-}
-
 std::string ZVtx::GetSourceTypeName()
 {
 	return "Vtx";
@@ -70,7 +66,7 @@ bool ZVtx::DoesSupportArray()
 	return true;
 }
 
-ZResourceType ZVtx::GetResourceType()
+ZResourceType ZVtx::GetResourceType() const
 {
 	return ZResourceType::Vertex;
 }
@@ -83,10 +79,4 @@ bool ZVtx::IsExternalResource()
 std::string ZVtx::GetExternalExtension()
 {
 	return "vtx";
-}
-
-void ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                          const uint32_t nRawDataIndex, const std::string& nRelPath)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 }

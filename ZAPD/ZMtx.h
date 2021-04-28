@@ -6,14 +6,11 @@
 
 class ZMtx : public ZResource
 {
-protected:
-	std::array<std::array<int32_t, 4>, 4> mtx;
-
 public:
-	// ZMtx() = default;
 	ZMtx(ZFile* nParent);
 	ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	     ZFile* nParent);
+
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    uint32_t nRawDataIndex, const std::string& nRelPath) override;
@@ -27,5 +24,8 @@ public:
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 
 	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
+
+protected:
+	std::array<std::array<int32_t, 4>, 4> mtx;
 };

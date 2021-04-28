@@ -24,5 +24,5 @@ public:
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 };

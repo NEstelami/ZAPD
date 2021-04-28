@@ -91,7 +91,7 @@ std::string ZMtx::GetSourceTypeName()
 	return "Mtx";
 }
 
-ZResourceType ZMtx::GetResourceType()
+ZResourceType ZMtx::GetResourceType() const
 {
 	return ZResourceType::Mtx;
 }

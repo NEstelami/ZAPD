@@ -8,6 +8,7 @@ REGISTER_ZFILENODE(Array, ZArray);
 ZArray::ZArray(ZFile* nParent) : ZResource(nParent)
 {
 	canHaveInner = true;
+	RegisterRequiredAttribute("Count");
 }
 
 ZArray::~ZArray()
@@ -19,7 +20,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	arrayCnt = reader->IntAttribute("Count", 0);
+	arrayCnt = StringHelper::StrToL(requiredAttributes.at("Count"), 0);
 	testFile = new ZFile(ZFileMode::Extract, reader, Globals::Instance->baseRomPath, "",
 	                     parent->GetName(), "ZArray subfile", true);
 }
@@ -68,11 +69,7 @@ size_t ZArray::GetRawDataSize()
 	return arrayCnt * testFile->resources[0]->GetRawDataSize();
 }
 
-void ZArray::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                            const uint32_t nRawDataIndex, const std::string& nRelPath)
+ZResourceType ZArray::GetResourceType() const
 {
-	rawData = nRawData;
-	rawDataIndex = nRawDataIndex;
-	ParseXML(reader);
-	// arr->ParseRawData();
+	return ZResourceType::Array;
 }

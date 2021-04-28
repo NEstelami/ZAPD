@@ -28,19 +28,23 @@ public:
 	ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
 	          const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent);
 	~ZSkeleton();
-	void ParseXML(tinyxml2::XMLElement* reader) override;
-	void ParseRawData() override;
+
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
-	void Save(const std::string& outFolder) override;
+
+	void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseRawData() override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
+	void Save(const std::string& outFolder) override;
 
 	size_t GetRawDataSize() override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 
 	segptr_t GetAddress();
 	uint8_t GetLimbCount();
+
+protected:
 };

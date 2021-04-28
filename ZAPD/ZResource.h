@@ -32,11 +32,13 @@ enum class ZResourceType
 	DisplayList,
 	Room,
 	Animation,
+	Array,
 	Cutscene,
 	Blob,
 	Limb,
 	Skeleton,
 	Scalar,
+	Path,
 	Vector,
 	Vertex,
 	CollisionHeader,
@@ -76,14 +78,15 @@ public:
 	virtual bool IsExternalResource();
 	virtual bool DoesSupportArray();  // Can this type be wrapped in an <Array> node?
 	virtual std::string GetSourceTypeName();
-	virtual ZResourceType GetResourceType();
+	virtual ZResourceType GetResourceType() const = 0;
+	virtual std::string GetResourceName() const;
 	virtual std::string GetExternalExtension();
 
 	// Getters/Setters
 	std::string GetName();
-	void SetName(std::string nName);
+	void SetName(const std::string& nName);
 	std::string GetOutName();
-	void SetOutName(std::string nName);
+	void SetOutName(const std::string& nName);
 	std::string GetRelativePath();
 	virtual uint32_t GetRawDataIndex();
 	virtual void SetRawDataIndex(uint32_t value);
@@ -101,6 +104,21 @@ protected:
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
+
+	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
+	std::map<std::string, std::string> requiredAttributes;
+	std::map<std::string, std::string> optionalAttributes;
+	std::map<std::string, bool> nonValueAttributes;
+
+	// XML attributes registers.
+	// Registering XML attributes should be done in constructors.
+
+	// The resource needs this attribute. If it is not provided, then the program will throw an exception.
+	void RegisterRequiredAttribute(const std::string& attr);
+	// Optional attribute. The resource has to do manual checks and manual warnings.
+	void RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue="");
+	// Optional attribute. It may be provided or not.
+	void RegisterNonValueAttribute(const std::string& attr);
 };
 
 enum class DeclarationAlignment

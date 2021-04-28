@@ -22,7 +22,7 @@ public:
 	uint32_t getSegmentOffset() override { return segmentOffset; }
 
 	void ParseRawData() override;
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;

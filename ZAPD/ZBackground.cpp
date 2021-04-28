@@ -203,7 +203,7 @@ std::string ZBackground::GetSourceTypeName()
 	return "u64";
 }
 
-ZResourceType ZBackground::GetResourceType()
+ZResourceType ZBackground::GetResourceType() const
 {
 	return ZResourceType::Background;
 }

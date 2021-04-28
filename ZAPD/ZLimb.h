@@ -155,7 +155,7 @@ public:
 	size_t GetRawDataSize() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 
 	ZLimbType GetLimbType();
 	void SetLimbType(ZLimbType value);

@@ -33,5 +33,5 @@ public:
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 
 	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 };

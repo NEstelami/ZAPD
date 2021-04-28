@@ -10,9 +10,10 @@ REGISTER_ZFILENODE(Vector, ZVector);
 
 ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 {
-	scalars = std::vector<ZScalar*>();
 	this->scalarType = ZSCALAR_NONE;
 	this->dimensions = 0;
+	RegisterRequiredAttribute("Type");
+	RegisterRequiredAttribute("Dimensions");
 }
 
 ZVector::~ZVector()
@@ -28,21 +29,13 @@ void ZVector::ClearScalars()
 	scalars.clear();
 }
 
-void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                             const uint32_t nRawDataIndex, const std::string& nRelPath)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
-}
-
 void ZVector::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	std::string type = reader->Attribute("Type");
-	this->scalarType = ZScalar::MapOutputTypeToScalarType(type);
+	this->scalarType = ZScalar::MapOutputTypeToScalarType(requiredAttributes.at("Type"));
 
-	std::string dimensions = reader->Attribute("Dimensions");
-	this->dimensions = strtol(dimensions.c_str(), NULL, 16);
+	this->dimensions = StringHelper::StrToL(requiredAttributes.at("Dimensions"), 16);
 }
 
 void ZVector::ParseRawData()
@@ -71,7 +64,7 @@ size_t ZVector::GetRawDataSize()
 	size_t size = 0;
 
 	for (size_t i = 0; i < this->scalars.size(); i++)
-		size += this->scalars[i]->GetRawDataSize();
+		size += this->scalars.at(i)->GetRawDataSize();
 
 	return size;
 }
@@ -121,7 +114,7 @@ std::string ZVector::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-ZResourceType ZVector::GetResourceType()
+ZResourceType ZVector::GetResourceType() const
 {
 	return ZResourceType::Vector;
 }

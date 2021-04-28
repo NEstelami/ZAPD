@@ -89,7 +89,7 @@ void ZCutsceneMM::ParseRawData()
 	} while (lastData != 0xFFFFFFFF);
 }
 
-ZResourceType ZCutsceneMM::GetResourceType()
+ZResourceType ZCutsceneMM::GetResourceType() const
 {
 	return ZResourceType::Cutscene;
 }

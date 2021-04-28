@@ -442,7 +442,7 @@ CutsceneCommands ZCutscene::GetCommandFromID(int32_t id)
 	return CutsceneCommands::Error;
 }
 
-ZResourceType ZCutscene::GetResourceType()
+ZResourceType ZCutscene::GetResourceType() const
 {
 	return ZResourceType::Cutscene;
 }

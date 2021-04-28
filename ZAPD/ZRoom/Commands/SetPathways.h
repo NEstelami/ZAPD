@@ -55,6 +55,8 @@ public:
 	std::string GetCommandCName() override;
 	std::string GenerateExterns() override;
 
+	ZResourceType GetResourceType() const override;
+
 private:
 	uint32_t segmentOffset;
 	PathwayList* pathwayList;

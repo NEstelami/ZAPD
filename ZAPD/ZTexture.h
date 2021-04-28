@@ -30,11 +30,7 @@ protected:
 	uint8_t* bmpRgba;
 	bool isRawDataFixed;
 
-	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void FixRawData();
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex,
-	                    const std::string& nRelPath) override;  // Extract Mode
 
 	void PrepareBitmap();
 	void PrepareBitmapRGBA16();
@@ -64,18 +60,28 @@ public:
 
 	bool isPalette;
 
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const uint32_t nRawDataIndex,
+	                    const std::string& nRelPath) override;  // Extract Mode
 	static ZTexture* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
 	                              bool readFile);
-	// static ZTexture* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData,
-	// uint32_t rawDataIndex, std::string nRelPath, ZFile* nParent);
 	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t rawDataIndex,
 	                            std::string nName, int32_t nWidth, int32_t nHeight, ZFile* nParent);
 	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
 	static ZTexture* FromHLTexture(HLTexture* hlTex);
+
 	static TextureType GetTextureTypeFromString(std::string str);
 
+	void ParseXML(tinyxml2::XMLElement* reader) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
+	void CalcHash() override;
+	void Save(const std::string& outFolder) override;
+
+	bool IsExternalResource() override;
+	std::string GetSourceTypeName() override;
+	ZResourceType GetResourceType() const override;
+	std::string GetExternalExtension() override;
 
 	size_t GetRawDataSize() override;
 	std::string GetIMFmtFromType();
@@ -85,12 +91,8 @@ public:
 	void SetWidth(uint16_t nWidth);
 	void SetHeight(uint16_t nHeight);
 	TextureType GetTextureType();
-	void Save(const std::string& outFolder) override;
-	std::string GetExternalExtension() override;
 	std::string GetPoolOutPath(std::string defaultValue);
-	void CalcHash() override;
 
-	bool IsExternalResource() override;
-	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+protected:
+	std::vector<uint8_t> textureData;
 };

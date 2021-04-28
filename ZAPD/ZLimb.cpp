@@ -359,11 +359,13 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 {
 	dListPtr = 0;
 	dList2Ptr = 0;
+	RegisterOptionalAttribute("LimbType");
+	RegisterOptionalAttribute("Type");
 }
 
 ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
              uint32_t nRawDataIndex, ZFile* nParent)
-	: ZResource(nParent)
+	: ZLimb(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -381,44 +383,44 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	// Reading from a <Skeleton/>
-	const char* limbType = reader->Attribute("LimbType");
-	if (limbType == nullptr)  // Reading from a <Limb/>
-		limbType = reader->Attribute("Type");
+	std::string limbType = optionalAttributes.at("LimbType");
+	if (limbType == "")  // Reading from a <Limb/>
+		limbType = optionalAttributes.at("Type");
 
-	if (limbType == nullptr)
+	if (limbType == "")
 	{
 		fprintf(stderr,
-		        "ZLimb::ParseXML: Warning in '%s'.\n\t Missing 'LimbType' attribute in xml. "
-		        "Defaulting to 'Standard'.\n",
+		        "ZLimb::ParseXML: Warning in '%s'.\n"
+				"\t Missing 'LimbType' attribute in xml.\n"
+		        "\t Defaulting to 'Standard'.\n",
 		        name.c_str());
 		type = ZLimbType::Standard;
 	}
 	else
 	{
-		string limbTypeStr(limbType);
-
-		if (limbTypeStr == "Standard")
+		if (limbType == "Standard")
 		{
 			type = ZLimbType::Standard;
 		}
-		else if (limbTypeStr == "LOD")
+		else if (limbType == "LOD")
 		{
 			type = ZLimbType::LOD;
 		}
-		else if (limbTypeStr == "Skin")
+		else if (limbType == "Skin")
 		{
 			type = ZLimbType::Skin;
 		}
-		else if (limbTypeStr == "Curve")
+		else if (limbType == "Curve")
 		{
 			type = ZLimbType::Curve;
 		}
 		else
 		{
 			fprintf(stderr,
-			        "ZLimb::ParseXML: Warning in '%s'.\n\t Invalid LimbType found: '%s'. "
+			        "ZLimb::ParseXML: Warning in '%s'.\n"
+					"\t Invalid LimbType found: '%s'. "
 			        "Defaulting to 'Standard'.\n",
-			        name.c_str(), limbType);
+			        name.c_str(), limbType.c_str());
 			type = ZLimbType::Standard;
 		}
 	}
@@ -550,7 +552,7 @@ std::string ZLimb::GetSourceTypeName()
 	return GetSourceTypeName(type);
 }
 
-ZResourceType ZLimb::GetResourceType()
+ZResourceType ZLimb::GetResourceType() const
 {
 	return ZResourceType::Limb;
 }

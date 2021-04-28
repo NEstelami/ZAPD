@@ -29,12 +29,11 @@ public:
 	ZAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 
 protected:
 	void ParseRawData() override;
 	void Save(const std::string& outFolder) override;
-	void ParseXML(tinyxml2::XMLElement* reader) override;
 };
 
 class ZNormalAnimation : public ZAnimation
@@ -52,9 +51,6 @@ public:
 	size_t GetRawDataSize() override;
 	std::string GetSourceTypeName() override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
-
 protected:
 	virtual void ParseRawData() override;
 };
@@ -69,9 +65,6 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() override;
 	std::string GetSourceTypeName() override;
-
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
 
 protected:
 	virtual void ParseRawData() override;
