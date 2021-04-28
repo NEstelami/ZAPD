@@ -161,17 +161,14 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			delete pathway;
 		}
 
-		#if 0
 		fprintf(stderr,
 		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
 		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
 		        "version.\n"
 		        "\t Use the non-hint version instead.\n",
 		        name.c_str(), child->Name());
-		#endif
 	}
 
-	// ParseCommands(rawDataIndex);
 	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
 	ProcessCommandSets();
 }
