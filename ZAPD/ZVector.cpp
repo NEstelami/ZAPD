@@ -95,12 +95,12 @@ std::string ZVector::GetSourceTypeName()
 	}
 }
 
-std::string ZVector::GetSourceValue()
+std::string ZVector::GetBodySourceCode() const
 {
 	std::vector<std::string> strings = std::vector<std::string>();
 
 	for (size_t i = 0; i < this->scalars.size(); i++)
-		strings.push_back(scalars[i]->GetSourceValue());
+		strings.push_back(scalars[i]->GetBodySourceCode());
 
 	return "{ " + StringHelper::Implode(strings, ", ") + " }";
 }
@@ -109,7 +109,7 @@ std::string ZVector::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetSourceValue());
+		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
 
 	return "";
 }

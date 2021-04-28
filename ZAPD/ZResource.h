@@ -67,6 +67,7 @@ public:
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	virtual void ParseRawData();
+	virtual std::string GetBodySourceCode() const;
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void PreGenSourceFiles();
@@ -79,7 +80,6 @@ public:
 	virtual bool DoesSupportArray();  // Can this type be wrapped in an <Array> node?
 	virtual std::string GetSourceTypeName();
 	virtual ZResourceType GetResourceType() const = 0;
-	virtual std::string GetResourceName() const;
 	virtual std::string GetExternalExtension();
 
 	// Getters/Setters
@@ -90,7 +90,7 @@ public:
 	std::string GetRelativePath();
 	virtual uint32_t GetRawDataIndex();
 	virtual void SetRawDataIndex(uint32_t value);
-	virtual size_t GetRawDataSize();
+	virtual size_t GetRawDataSize() = 0;
 	virtual std::vector<uint8_t> GetRawData();
 	virtual void SetRawData(std::vector<uint8_t> nData);
 

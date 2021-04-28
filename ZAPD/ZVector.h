@@ -16,6 +16,7 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 
+	std::string GetBodySourceCode() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	bool DoesSupportArray() override;
@@ -23,7 +24,6 @@ public:
 	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() override;
-	std::string GetSourceValue();
 
 private:
 	std::vector<ZScalar*> scalars;

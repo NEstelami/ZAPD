@@ -18,6 +18,7 @@ public:
 	ZVtx(ZFile* nParent);
 
 	void ParseRawData() override;
+	std::string GetBodySourceCode() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	bool IsExternalResource() override;

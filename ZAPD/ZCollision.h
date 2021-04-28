@@ -89,7 +89,9 @@ public:
 	ZCollisionHeader(ZFile* nParent);
 	~ZCollisionHeader();
 
+	void ParseRawData() override;
+
 	ZResourceType GetResourceType() const override;
 
-	void ParseRawData() override;
+	size_t GetRawDataSize() override;
 };

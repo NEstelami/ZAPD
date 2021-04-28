@@ -17,13 +17,8 @@ ZCollisionHeader::~ZCollisionHeader()
 {
 	for (WaterBoxHeader* waterBox : waterBoxes)
 		delete waterBox;
-	
-	delete camData;
-}
 
-ZResourceType ZCollisionHeader::GetResourceType() const
-{
-	return ZResourceType::CollisionHeader;
+	delete camData;
 }
 
 void ZCollisionHeader::ParseRawData()
@@ -185,9 +180,20 @@ void ZCollisionHeader::ParseRawData()
 		name.c_str(), polyTypeDefSegmentOffset, name.c_str(), camDataSegmentOffset, numWaterBoxes,
 		waterBoxStr);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16, 44,
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16, GetRawDataSize(),
 	                       "CollisionHeader",
 	                       StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
+}
+
+
+ZResourceType ZCollisionHeader::GetResourceType() const
+{
+	return ZResourceType::CollisionHeader;
+}
+
+size_t ZCollisionHeader::GetRawDataSize()
+{
+	return 44;
 }
 
 PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)

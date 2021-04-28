@@ -77,7 +77,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 					"ZResource::ParseXML: Fatal error while parsing '%s'.\n"
 					"\t Unexpected '%s' attribute in resource '%s'.\n"
 					"\t Aborting...", parent->GetName().c_str(), 
-					attrName.c_str(), GetResourceName().c_str()));
+					attrName.c_str(), reader->Name()));
 			attrs = attrs->Next();
 		}
 
@@ -96,7 +96,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 					"ZResource::ParseXML: Fatal error while parsing '%s'.\n"
 					"\t Missing required attribute '%s' in resource '%s'.\n"
 					"\t Aborting...", parent->GetName().c_str(), 
-					attr.first.c_str(), GetResourceName().c_str()));
+					attr.first.c_str(), reader->Name()));
 		}
 
 		name = requiredAttributes.at("Name");
@@ -182,14 +182,14 @@ uint32_t ZResource::GetRawDataIndex()
 	return rawDataIndex;
 }
 
-size_t ZResource::GetRawDataSize()
-{
-	return rawData.size();
-}
-
 void ZResource::SetRawDataIndex(uint32_t value)
 {
 	rawDataIndex = value;
+}
+
+std::string ZResource::GetBodySourceCode() const
+{
+	return "ERROR";
 }
 
 string ZResource::GetSourceOutputCode(const std::string& prefix)
@@ -218,11 +218,6 @@ std::string ZResource::GetSourceTypeName()
 ZResourceType ZResource::GetResourceType() const
 {
 	return ZResourceType::Error;
-}
-
-std::string ZResource::GetResourceName() const
-{
-	return "ERROR";
 }
 
 void ZResource::CalcHash()

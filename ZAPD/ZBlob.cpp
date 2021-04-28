@@ -12,7 +12,7 @@ REGISTER_ZFILENODE(Blob, ZBlob);
 
 ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 {
-	RegisterRequiredAttribute("Count");
+	RegisterRequiredAttribute("Size");
 }
 
 ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, size_t size, std::string nName,
@@ -24,7 +24,6 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, size_
 	blobData =
 		vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
 	name = nName;
-	RegisterRequiredAttribute("Count");
 }
 
 void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -119,4 +118,9 @@ std::string ZBlob::GetSourceTypeName()
 ZResourceType ZBlob::GetResourceType() const
 {
 	return ZResourceType::Blob;
+}
+
+size_t ZBlob::GetRawDataSize()
+{
+	return blobSize;
 }

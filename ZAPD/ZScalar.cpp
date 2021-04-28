@@ -181,7 +181,7 @@ std::string ZScalar::GetSourceTypeName()
 	return ZScalar::MapScalarTypeToOutputType(scalarType);
 }
 
-std::string ZScalar::GetSourceValue()
+std::string ZScalar::GetBodySourceCode() const
 {
 	switch (scalarType)
 	{
@@ -206,7 +206,7 @@ std::string ZScalar::GetSourceValue()
 	case ZSCALAR_F64:
 		return StringHelper::Sprintf("%lf", scalarData.f64);
 	default:
-		return "";
+		return "SCALAR_ERROR";
 	}
 }
 
@@ -214,7 +214,7 @@ std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetSourceValue());
+		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
 
 	return "";
 }

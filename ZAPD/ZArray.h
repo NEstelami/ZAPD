@@ -11,8 +11,10 @@ class ZArray : public ZResource
 public:
 	ZArray(ZFile* nParent);
 	~ZArray();
-	
+
 	void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseRawData() override;
+
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() override;
 
@@ -20,7 +22,6 @@ public:
 
 protected:
 	size_t arrayCnt;
-	ZFile* testFile;
-
-	// void ParseRawData(const std::vector<uint8_t>& data, const int32_t offset);
+	std::string childName;
+	std::vector<ZResource*> resList;
 };

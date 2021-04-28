@@ -27,6 +27,8 @@ public:
 	ZResourceType GetResourceType() const override;
 	std::string GetExternalExtension() override;
 
+	size_t GetRawDataSize() override;
+
 protected:
 	std::vector<uint8_t> blobData;
 	size_t blobSize = 0;
