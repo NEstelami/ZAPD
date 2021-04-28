@@ -46,8 +46,6 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 
 void ZVtx::ParseRawData()
 {
-	const uint8_t* data = rawData.data();
-
 	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
