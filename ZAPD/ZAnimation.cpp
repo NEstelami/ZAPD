@@ -62,9 +62,10 @@ std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
 		string defaultPrefix = name.c_str();
 		defaultPrefix.replace(0, 1, "s");  // replace g prefix with s for local variables
 
-		string headerStr =
-			StringHelper::Sprintf("{ %i }, %sFrameData, %sJointIndices, %i", frameCount,
-		                          defaultPrefix.c_str(), defaultPrefix.c_str(), limit);
+		string headerStr = StringHelper::Sprintf("\n\t{ %i },\n", frameCount);
+		headerStr += StringHelper::Sprintf("\t%sFrameData,\n", defaultPrefix.c_str());
+		headerStr += StringHelper::Sprintf("\t%sJointIndices,\n", defaultPrefix.c_str());
+		headerStr += StringHelper::Sprintf("\t%i\n", limit);
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
 		                       headerStr);
@@ -161,7 +162,8 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
                                parent->GetDeclarationName(
 								   segmentAddress, StringHelper::Sprintf("%sSeg%06X", name.c_str(),
 		                                                                 segmentAddress));
-		string headerStr = StringHelper::Sprintf("{ %i }, 0x%08X", frameCount, segmentAddress);
+		string headerStr =
+			StringHelper::Sprintf("\n\t{ %i },\n\t0x%08X\n", frameCount, segmentAddress);
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
 		                       headerStr);
@@ -261,8 +263,8 @@ void ZCurveAnimation::ParseRawData()
 }
 
 void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                     const std::vector<uint8_t>& nRawData, const uint32_t nRawDataIndex,
-                                     const std::string& nRelPath)
+                                     const std::vector<uint8_t>& nRawData,
+                                     const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 

@@ -170,8 +170,8 @@ void ZScalar::ParseRawData()
 		scalarData.f64 = BitConverter::ToDoubleBE(rawData, rawDataIndex);
 		break;
 	case ZSCALAR_NONE:
-		fprintf(stderr, "Warning in ZScalar: Invalid type. %d %s %d\n", (int32_t)scalarType, __FILE__,
-		        __LINE__);
+		fprintf(stderr, "Warning in ZScalar: Invalid type. %d %s %d\n", (int32_t)scalarType,
+		        __FILE__, __LINE__);
 		break;
 	}
 }

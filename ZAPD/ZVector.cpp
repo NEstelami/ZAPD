@@ -23,7 +23,7 @@ ZVector::~ZVector()
 
 void ZVector::ClearScalars()
 {
-	for(auto s: scalars)
+	for (auto s : scalars)
 		delete s;
 
 	scalars.clear();
