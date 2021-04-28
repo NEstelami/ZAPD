@@ -5,8 +5,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
-#include "tinyxml2.h"
 #include "Declaration.h"
+#include "tinyxml2.h"
 
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3

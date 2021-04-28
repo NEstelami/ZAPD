@@ -1,6 +1,5 @@
 #include "Declaration.h"
 
-
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
                          std::string nText)
 	: Declaration()
@@ -21,7 +20,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-                         std::string nVarType, std::string nVarName, bool nIsArray, std::string nText)
+                         std::string nVarType, std::string nVarName, bool nIsArray,
+                         std::string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
@@ -30,7 +30,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText)
+                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         std::string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -48,8 +49,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-                         std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
-                         std::string nText)
+                         std::string nVarType, std::string nVarName, bool nIsArray,
+                         size_t nArrayItemCnt, std::string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
@@ -58,7 +59,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName)
+Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVarType,
+                         std::string nVarName)
 	: Declaration(DeclarationAlignment::None, DeclarationPadding::None, nSize, "")
 {
 	includePath = nIncludePath;

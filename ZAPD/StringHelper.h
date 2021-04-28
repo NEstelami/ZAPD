@@ -93,8 +93,5 @@ public:
 							   });
 	}
 
-	static std::string BoolStr(bool b)
-	{
-		return b ? "true" : "false";
-	}
+	static std::string BoolStr(bool b) { return b ? "true" : "false"; }
 };

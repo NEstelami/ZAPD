@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Directory.h"
 #include "HighLevel/HLTexture.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
-#include "Directory.h"
 
 #include <vector>
 
