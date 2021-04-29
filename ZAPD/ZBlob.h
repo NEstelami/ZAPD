@@ -7,17 +7,13 @@ class ZBlob : public ZResource
 {
 public:
 	ZBlob(ZFile* nParent);
-	ZBlob(const std::vector<uint8_t>& nRawData, uint32_t rawDataIndex, size_t size,
-	      std::string nName, ZFile* nParent);
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex,
-	                    const std::string& nRelPath) override;  // Extract Mode
 	static ZBlob* BuildFromXML(tinyxml2::XMLElement* reader, const std::string& inFolder,
 	                           bool readFile);
 	static ZBlob* FromFile(const std::string& filePath);
 
-	void ParseXML(tinyxml2::XMLElement* reader);
+	void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseRawData() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	void Save(const std::string& outFolder) override;

@@ -15,28 +15,6 @@ ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Size");
 }
 
-ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, size_t size,
-             std::string nName, ZFile* nParent)
-	: ZBlob(nParent)
-{
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	blobData.assign(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
-	name = nName;
-}
-
-void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex, const std::string& nRelPath)
-{
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-
-	ParseXML(reader);
-	// TODO: move to ParseRawData?
-	blobData.assign(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + blobSize);
-	relativePath = nRelPath;
-}
-
 // Build Source File Mode
 ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool readFile)
 {
@@ -64,6 +42,11 @@ void ZBlob::ParseXML(tinyxml2::XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	blobSize = StringHelper::StrToL(requiredAttributes.at("Size"), 16);
+}
+
+void ZBlob::ParseRawData()
+{
+	blobData.assign(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + blobSize);
 }
 
 string ZBlob::GetSourceOutputCode(const std::string& prefix)
