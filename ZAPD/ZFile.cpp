@@ -280,7 +280,6 @@ void ZFile::ExtractResources(fs::path outputDir)
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
-		res->CalcHash();  // TEST
 		res->Save(outputPath);
 	}
 

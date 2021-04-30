@@ -160,6 +160,11 @@ int main(int argc, char* argv[])
 			Globals::Instance->testMode = string(argv[i + 1]) == "1";
 			i++;
 		}
+		else if (arg == "-crc" || arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
+		{
+			Globals::Instance->outputCrc = string(argv[i + 1]) == "1";
+			i++;
+		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
 			Globals::Instance->useLegacyZDList = string(argv[i + 1]) == "1";

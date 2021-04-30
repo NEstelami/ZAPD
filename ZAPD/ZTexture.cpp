@@ -19,35 +19,10 @@ REGISTER_ZFILENODE(Texture, ZTexture);
 
 ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 {
-	//bmpRgb = nullptr;
-	//bmpRgba = nullptr;
-	//pixelMatrix = nullptr;
 	width = 0;
 	height = 0;
 	type = TextureType::Error;
 	isPalette = false;
-	isRawDataFixed = false;
-}
-
-ZTexture::~ZTexture()
-{
-	/*
-	if (pixelMatrix != nullptr)
-	{
-		//stbi_image_free(bmpRgb);
-		pixelMatrix = nullptr;
-	}
-
-	if (pixelMatrix != nullptr)
-	{
-		//stbi_image_free(bmpRgba);
-		pixelMatrix = nullptr;
-	}
-
-	width = 0;
-	height = 0;
-	type = TextureType::Error;
-	*/
 }
 
 void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -60,7 +35,6 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 
 	relativePath = nRelPath;
 
-	FixRawData();
 	PrepareBitmap();
 }
 
@@ -80,8 +54,6 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	size_t dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
 	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
 
-	tex->FixRawData();
-	tex->CalcHash();
 	tex->PrepareBitmap();
 
 	return tex;
@@ -92,41 +64,7 @@ ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 	ZTexture* tex = new ZTexture(nullptr);
 	tex->type = texType;
 	tex->name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
-
-	switch (texType)
-	{
-	case TextureType::RGBA16bpp:
-		tex->PrepareRawDataRGBA16(pngFilePath);
-		break;
-	case TextureType::RGBA32bpp:
-		tex->PrepareRawDataRGBA32(pngFilePath);
-		break;
-	case TextureType::Grayscale4bpp:
-		tex->PrepareRawDataGrayscale4(pngFilePath);
-		break;
-	case TextureType::Grayscale8bpp:
-		tex->PrepareRawDataGrayscale8(pngFilePath);
-		break;
-	case TextureType::GrayscaleAlpha4bpp:
-		tex->PrepareRawDataGrayscaleAlpha4(pngFilePath);
-		break;
-	case TextureType::GrayscaleAlpha8bpp:
-		tex->PrepareRawDataGrayscaleAlpha8(pngFilePath);
-		break;
-	case TextureType::GrayscaleAlpha16bpp:
-		tex->PrepareRawDataGrayscaleAlpha16(pngFilePath);
-		break;
-	case TextureType::Palette4bpp:
-		tex->PrepareRawDataPalette4(pngFilePath);
-		break;
-	case TextureType::Palette8bpp:
-		tex->PrepareRawDataPalette8(pngFilePath);
-		break;
-	default:
-		throw std::runtime_error("Format is not supported!");
-	}
-
-	tex->FixRawData();
+	tex->PrepareRawData(pngFilePath);
 
 	return tex;
 }
@@ -171,32 +109,6 @@ void ZTexture::ParseXML(XMLElement* reader)
 
 	if (type == TextureType::Error)
 		throw std::runtime_error("Format " + formatStr + " is not supported!");
-}
-
-void ZTexture::FixRawData()
-{
-	/*
-	if (type == TextureType::RGBA32bpp)
-	{
-		for (size_t i = 0; i < rawData.size(); i += 4)
-		{
-			uint8_t tmp = rawData[i];
-			rawData[i] = rawData[i + 2];
-			rawData[i + 2] = tmp;
-		}
-	}
-	else if (type == TextureType::RGBA16bpp)  // || type == TextureType::GrayscaleAlpha16bpp)
-	{
-		for (size_t i = 0; i < rawData.size(); i += 2)
-		{
-			uint8_t tmp = rawData[i];
-			rawData[i] = rawData[i + 1];
-			rawData[i + 1] = tmp;
-		}
-	}
-	*/
-
-	isRawDataFixed = !isRawDataFixed;
 }
 
 void ZTexture::PrepareBitmap()
@@ -404,41 +316,41 @@ void ZTexture::PrepareBitmapPalette8()
 	}
 }
 
-void ZTexture::PrepareRawData(string inFolder)
+void ZTexture::PrepareRawData(string pngFilePath)
 {
 	rawData = vector<uint8_t>(GetRawDataSize());
 
 	switch (type)
 	{
 	case TextureType::RGBA16bpp:
-		PrepareRawDataRGBA16(inFolder + "/" + outName + ".rgba5a1.png");
+		PrepareRawDataRGBA16(pngFilePath);
 		break;
 	case TextureType::RGBA32bpp:
-		PrepareRawDataRGBA32(inFolder + "/" + outName + ".rgba32.png");
+		PrepareRawDataRGBA32(pngFilePath);
 		break;
 	case TextureType::Grayscale4bpp:
-		PrepareRawDataGrayscale4(inFolder + "/" + outName + ".i4.png");
+		PrepareRawDataGrayscale4(pngFilePath);
 		break;
 	case TextureType::Grayscale8bpp:
-		PrepareRawDataGrayscale8(inFolder + "/" + outName + ".i8.png");
+		PrepareRawDataGrayscale8(pngFilePath);
 		break;
 	case TextureType::GrayscaleAlpha4bpp:
-		PrepareRawDataGrayscaleAlpha4(inFolder + "/" + outName + ".ia4.png");
+		PrepareRawDataGrayscaleAlpha4(pngFilePath);
 		break;
 	case TextureType::GrayscaleAlpha8bpp:
-		PrepareRawDataGrayscaleAlpha8(inFolder + "/" + outName + ".ia8.png");
+		PrepareRawDataGrayscaleAlpha8(pngFilePath);
 		break;
 	case TextureType::GrayscaleAlpha16bpp:
-		PrepareRawDataGrayscaleAlpha16(inFolder + "/" + outName + ".ia16.png");
+		PrepareRawDataGrayscaleAlpha16(pngFilePath);
 		break;
 	case TextureType::Palette4bpp:
-		PrepareRawDataPalette4(inFolder + "/" + outName + ".ci4.png");
+		PrepareRawDataPalette4(pngFilePath);
 		break;
 	case TextureType::Palette8bpp:
-		PrepareRawDataPalette8(inFolder + "/" + outName + ".ci8.png");
+		PrepareRawDataPalette8(pngFilePath);
 		break;
 	default:
-		throw std::runtime_error("Build Mode: Format is not supported!");
+		throw std::runtime_error("Format is not supported!");
 	}
 }
 
@@ -772,18 +684,6 @@ uint32_t ZTexture::GetHeight()
 {
 	return height;
 }
-/*
-void ZTexture::SetWidth(uint32_t nWidth)
-{
-	width = nWidth;
-}
-
-void ZTexture::SetHeight(uint32_t nHeight)
-{
-	height = nHeight;
-}
-*/
-
 
 void ZTexture::SetDimensions(uint32_t nWidth, uint32_t nHeight)
 {
@@ -792,27 +692,6 @@ void ZTexture::SetDimensions(uint32_t nWidth, uint32_t nHeight)
 	PrepareBitmap();
 }
 
-	/*
-void ZTexture::Linealize(uint32_t newDim)
-{
-	uint8_t** newMatrix = new uint8_t*[1];
-	newMatrix[0] = new uint8_t[width * height * 4];
-
-	for (size_t y = 0; y < height && y * width < newDim; y++)
-	{
-		size_t pos = y * width * 4;
-		size_t bytes_to_copy = sizeof(uint8_t) * width * 4;
-		std::memcpy(&newMatrix[0][pos], pixelMatrix[y], bytes_to_copy);
-	}
-
-	// TODO: Free!
-	pixelMatrix = newMatrix;
-
-	width = newDim;
-	height = 1;
-}
-	*/
-
 TextureType ZTexture::GetTextureType()
 {
 	return type;
@@ -820,19 +699,18 @@ TextureType ZTexture::GetTextureType()
 
 void ZTexture::Save(const std::string& outFolder)
 {
-	//PrepareBitmap();
 	// Optionally generate text file containing CRC information. This is going to be a one time
 	// process for generating the Texture Pool XML.
-	if (Globals::Instance->testMode)
+	if (Globals::Instance->outputCrc)
 	{
-		if (hash != 0)
+		if (hash == 0)
 		{
-			File::WriteAllText(StringHelper::Sprintf("%s/%s.txt",
-			                                         Globals::Instance->outputPath.c_str(),
-			                                         outName.c_str()),
-			                   StringHelper::Sprintf("%08lX", hash));
-			hash = 0;
+			CalcHash();
 		}
+		File::WriteAllText(StringHelper::Sprintf("%s/%s.txt",
+													Globals::Instance->outputPath.c_str(),
+													outName.c_str()),
+							StringHelper::Sprintf("%08lX", hash));
 	}
 
 	std::string outPath = GetPoolOutPath(outFolder);
@@ -911,7 +789,6 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 	sourceOutput = "";
 
 	relativePath = "build/assets/" + relativePath;
-	FixRawData();
 
 	for (size_t i = 0; i < rawData.size(); i += 8)
 	{
@@ -953,16 +830,7 @@ std::string ZTexture::GetSourceTypeName()
 
 void ZTexture::CalcHash()
 {
-	// Make sure raw data is fixed before we calc the hash...
-	bool fixFlag = !isRawDataFixed;
-
-	if (fixFlag)
-		FixRawData();
-
 	hash = CRC32B(rawData.data(), GetRawDataSize());
-
-	if (fixFlag)
-		FixRawData();
 }
 
 std::string ZTexture::GetExternalExtension()

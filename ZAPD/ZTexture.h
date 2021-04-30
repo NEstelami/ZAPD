@@ -29,13 +29,6 @@ protected:
 	uint32_t width, height;
 
 	std::vector<std::vector<RGBAPixel>> textureData;
-	bool isRawDataFixed;
-
-	void ParseXML(tinyxml2::XMLElement* reader) override;
-	void FixRawData();
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex,
-	                    const std::string& nRelPath) override;  // Extract Mode
 
 	void PrepareBitmap();
 	void PrepareBitmapRGBA16();
@@ -61,18 +54,20 @@ protected:
 
 public:
 	ZTexture(ZFile* nParent);
-	~ZTexture();
 
 	bool isPalette;
 
-	// static ZTexture* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData,
-	// uint32_t rawDataIndex, std::string nRelPath, ZFile* nParent);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                    const uint32_t nRawDataIndex,
+	                    const std::string& nRelPath) override;  // Extract Mode
 	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	                            uint32_t rawDataIndex, std::string nName, int32_t nWidth,
 	                            int32_t nHeight, ZFile* nParent);
 	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
 	static ZTexture* FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);
+
+	void ParseXML(tinyxml2::XMLElement* reader) override;
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
@@ -82,10 +77,7 @@ public:
 	std::string GetIMSizFromType();
 	uint32_t GetWidth();
 	uint32_t GetHeight();
-	//void SetWidth(uint32_t nWidth);
-	//void SetHeight(uint32_t nHeight);
 	void SetDimensions(uint32_t nWidth, uint32_t nHeight);
-	//void Linealize(uint32_t newDim);
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;
