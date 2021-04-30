@@ -159,6 +159,7 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 
 ZTexture::~ZTexture()
 {
+	/*
 	if (pixelMatrix != nullptr)
 	{
 		//stbi_image_free(bmpRgb);
@@ -174,6 +175,7 @@ ZTexture::~ZTexture()
 	width = 0;
 	height = 0;
 	type = TextureType::Error;
+	*/
 }
 
 void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -972,11 +974,13 @@ void ZTexture::SetHeight(uint16_t nHeight)
 void ZTexture::Linealize(uint32_t newDim)
 {
 	uint8_t** newMatrix = new uint8_t*[1];
-	newMatrix[0] = new uint8_t[newDim * 4];
+	newMatrix[0] = new uint8_t[width * height * 4];
 
-	for (size_t y = 0; y < height && y * width*4 < newDim; y++)
+	for (size_t y = 0; y < height && y * width < newDim; y++)
 	{
-		std::memcpy(&newMatrix[0][y * width * 4], pixelMatrix[y], sizeof(uint8_t) * width * 4);
+		size_t pos = y * width * 4;
+		size_t bytes_to_copy = sizeof(uint8_t) * width * 4;
+		std::memcpy(&newMatrix[0][pos], pixelMatrix[y], bytes_to_copy);
 	}
 
 	// TODO: Free!
@@ -1112,15 +1116,16 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 	relativePath = "build/assets/" + relativePath;
 	FixRawData();
 
-	uint8_t* rawDataArr = rawData.data();
-
 	for (size_t i = 0; i < rawData.size(); i += 8)
 	{
 		if (i % 32 == 0)
 			sourceOutput += "    ";
 
 		sourceOutput +=
-			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(rawDataArr, i));
+			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(rawData, i));
+
+			//../ZAPD/ZAPD.out e -eh -i assets/xml/objects/object_gnd.xml -b baserom/ -o assets/objects/object_gnd -gsf 1 -ifp 0 -sm tools/ZAPD/SymbolMap_OoTMqDbg.txt
+
 
 		if (i % 32 == 24)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));

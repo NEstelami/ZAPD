@@ -1,4 +1,5 @@
 OPTIMIZATION_ON ?= 1
+ASAN ?= 0
 
 CC := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
@@ -9,6 +10,10 @@ ifeq ($(OPTIMIZATION_ON),1)
 else
   CFLAGS += -O0
 endif
+ifeq ($(ASAN),1)
+  CFLAGS += -fsanitize=address
+endif
+
 
 LDFLAGS := -ldl -lpng
 UNAME := $(shell uname)

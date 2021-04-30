@@ -43,6 +43,7 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 
 ZDisplayList::~ZDisplayList()
 {
+	/*
 	for (auto t : textures)
 	{
 		delete t.second;
@@ -52,6 +53,7 @@ ZDisplayList::~ZDisplayList()
 	{
 		delete o;
 	}
+	*/
 }
 
 // EXTRACT MODE
@@ -1950,10 +1952,10 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		// Generate Texture Declarations
 		for (pair<int32_t, ZTexture*> item : textures)
 		{
-			string declaration = "";
+			//string declaration = "";
 
-			declaration += item.second->GetSourceOutputCode(prefix);
-			texDeclarations[item.first] = declaration;
+			//declaration += item.second->GetSourceOutputCode(prefix);
+			texDeclarations[item.first] = "";
 
 			if (parent != nullptr)
 			{
