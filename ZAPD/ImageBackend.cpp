@@ -99,7 +99,6 @@ void ImageBackend::WritePng(const char *filename) {
 
 	png_init_io(png, fp);
 
-	// Output is 8bit depth, RGBA format.
 	png_set_IHDR(
 		png,
 		info,

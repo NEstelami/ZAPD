@@ -89,16 +89,9 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 
 ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 {
-	int32_t comp;
 	ZTexture* tex = new ZTexture(nullptr);
 	tex->type = texType;
 	tex->name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
-
-	//tex->bmpRgb = (uint8_t*)stbi_load((pngFilePath).c_str(), (int*)&tex->width, (int*)&tex->height,
-	//                                  &comp, STBI_rgb);
-	//stbi_image_free(tex->bmpRgb);
-	//tex->bmpRgb = nullptr;
-	//tex->rawData = vector<uint8_t>(tex->GetRawDataSize());
 
 	switch (texType)
 	{
@@ -182,6 +175,7 @@ void ZTexture::ParseXML(XMLElement* reader)
 
 void ZTexture::FixRawData()
 {
+	/*
 	if (type == TextureType::RGBA32bpp)
 	{
 		for (size_t i = 0; i < rawData.size(); i += 4)
@@ -200,32 +194,13 @@ void ZTexture::FixRawData()
 			rawData[i + 1] = tmp;
 		}
 	}
+	*/
 
 	isRawDataFixed = !isRawDataFixed;
 }
 
 void ZTexture::PrepareBitmap()
 {
-	/*
-	switch (type)
-	{
-	case TextureType::RGBA16bpp:
-	case TextureType::RGBA32bpp:
-	case TextureType::GrayscaleAlpha4bpp:
-	case TextureType::GrayscaleAlpha8bpp:
-	case TextureType::GrayscaleAlpha16bpp:
-		bmpRgba = new uint8_t[width * height * 4];
-		break;
-	default:
-		bmpRgb = new uint8_t[width * height * 3];
-		break;
-	}
-	*/
-	/*pixelMatrix = new uint8_t*[height];
-	for(int y = 0; y < height; y++) {
-		pixelMatrix[y] = new uint8_t[width*4];
-	}*/
-
 	switch (type)
 	{
 	case TextureType::RGBA16bpp:
@@ -262,14 +237,13 @@ void ZTexture::PrepareBitmap()
 
 void ZTexture::PrepareBitmapRGBA16()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x++)
 		{
 			int32_t pos = ((y * width) + x) * 2;
-			uint16_t data = (uint16_t)((rawData[pos + 1] << 8) + rawData[pos]);
+			uint16_t data = (uint16_t)(rawData[pos + 1] | (rawData[pos] << 8));
 			uint8_t r = (uint8_t)((data & 0xF800) >> 11);
 			uint8_t g = (uint8_t)((data & 0x07C0) >> 6);
 			uint8_t b = (uint8_t)((data & 0x003E) >> 1);
@@ -282,16 +256,15 @@ void ZTexture::PrepareBitmapRGBA16()
 
 void ZTexture::PrepareBitmapRGBA32()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 4;
-			uint8_t r = rawData.at(pos + 2);
+			uint8_t r = rawData.at(pos + 0);
 			uint8_t g = rawData.at(pos + 1);
-			uint8_t b = rawData.at(pos + 0);
+			uint8_t b = rawData.at(pos + 2);
 			uint8_t alpha = rawData.at(pos + 3);
 
 			textureData[y][x].SetRGBA(r, g, b, alpha);
@@ -301,10 +274,9 @@ void ZTexture::PrepareBitmapRGBA32()
 
 void ZTexture::PrepareBitmapGrayscale4()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x += 2)
 		{
 			for (uint8_t i = 0; i < 2; i++)
@@ -325,10 +297,9 @@ void ZTexture::PrepareBitmapGrayscale4()
 
 void ZTexture::PrepareBitmapGrayscale8()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 1;
@@ -340,10 +311,9 @@ void ZTexture::PrepareBitmapGrayscale8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha4()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x += 2)
 		{
 			for (uint16_t i = 0; i < 2; i++)
@@ -367,10 +337,9 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha8()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 1;
@@ -384,10 +353,9 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha16()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 2;
@@ -401,10 +369,9 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 
 void ZTexture::PrepareBitmapPalette4()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x += 2)
 		{
 			for (uint16_t i = 0; i < 2; i++)
@@ -425,10 +392,9 @@ void ZTexture::PrepareBitmapPalette4()
 
 void ZTexture::PrepareBitmapPalette8()
 {
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (size_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (size_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 1;
@@ -478,14 +444,6 @@ void ZTexture::PrepareRawData(string inFolder)
 
 void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 {
-	//uint32_t width;
-	//uint32_t height;
-	uint32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
-	//pixelMatrix = read_png_file(rgbaPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(rgbaPath.c_str());
 
@@ -495,10 +453,9 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 2;
@@ -520,14 +477,6 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 
 void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgba = (uint8_t*)stbi_load(rgbaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
-	// pixelMatrix = read_png_file(rgbaPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(rgbaPath.c_str());
 
@@ -537,10 +486,9 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 4;
@@ -556,14 +504,6 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 
 void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
-	//pixelMatrix = read_png_file(grayPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(grayPath.c_str());
 
@@ -573,10 +513,9 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x += 2)
 		{
 			uint16_t pos = ((y * width) + x) / 2;
@@ -590,14 +529,6 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 
 void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgb = (uint8_t*)stbi_load(grayPath.c_str(), &width, &height, &comp, STBI_rgb);
-	//pixelMatrix = read_png_file(grayPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(grayPath.c_str());
 
@@ -607,10 +538,9 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x++)
 		{
 			uint16_t pos = (y * width) + x;
@@ -622,14 +552,6 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
-	//pixelMatrix = read_png_file(grayAlphaPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(grayAlphaPath.c_str());
 
@@ -639,10 +561,9 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x += 2)
 		{
 			uint16_t pos = ((y * width) + x) / 2;
@@ -667,14 +588,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
-	//pixelMatrix = read_png_file(grayAlphaPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(grayAlphaPath.c_str());
 
@@ -684,10 +597,9 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 1;
@@ -703,14 +615,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgba = (uint8_t*)stbi_load(grayAlphaPath.c_str(), &width, &height, &comp, STBI_rgb_alpha);
-	//pixelMatrix = read_png_file(grayAlphaPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(grayAlphaPath.c_str());
 
@@ -720,10 +624,9 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x) * 2;
@@ -740,14 +643,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataPalette4(string palPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
-	//pixelMatrix = read_png_file(palPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(palPath.c_str());
 
@@ -757,10 +652,9 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x += 2)
 		{
 			uint16_t pos = ((y * width) + x) / 2;
@@ -776,14 +670,6 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 
 void ZTexture::PrepareRawDataPalette8(string palPath)
 {
-	//int32_t width;
-	//int32_t height;
-	//int32_t comp;
-	uint8_t color_type;
-	uint8_t bit_depth;
-
-	//bmpRgb = (uint8_t*)stbi_load(palPath.c_str(), &width, &height, &comp, STBI_rgb);
-	//pixelMatrix = read_png_file(palPath.c_str(), &width, &height, &color_type, &bit_depth);
 	ImageBackend image;
 	image.ReadPng(palPath.c_str());
 
@@ -793,10 +679,9 @@ void ZTexture::PrepareRawDataPalette8(string palPath)
 	rawData.clear();
 	rawData.resize(GetRawDataSize());
 
-	textureData.resize(height);
+	textureData.assign(height, std::vector<RGBAPixel>(width));
 	for (uint16_t y = 0; y < height; y++)
 	{
-		textureData.at(y).resize(width);
 		for (uint16_t x = 0; x < width; x++)
 		{
 			uint16_t pos = ((y * width) + x);
@@ -1011,45 +896,14 @@ void ZTexture::Save(const std::string& outFolder)
 		color_type = PNG_COLOR_TYPE_RGB;
 		bit_depth = 8;
 		break;
+
+	default:
+		throw std::runtime_error("Invalid texture type.");
 	}
 
 	ImageBackend image;
 	image.SetTextureData(textureData, width, height, color_type, bit_depth);
 	image.WritePng((outPath + "/" + outName + "." + GetExternalExtension() + ".png").c_str());
-
-	//write_png_file((outPath + "/" + outName + "." + GetExternalExtension() + ".png").c_str(), width, height, pixelMatrix, color_type, bit_depth);
-	#if 0
-	if (type == TextureType::RGBA32bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".rgba32.png").c_str(), width, height, 4, bmpRgba,
-		               width * 4);*/
-	else if (type == TextureType::RGBA16bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".rgb5a1.png").c_str(), width, height, 4, bmpRgba,
-		               width * 4);*/
-	else if (type == TextureType::Grayscale8bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".i8.png").c_str(), width, height, 3, bmpRgb,
-		               width * 3);*/
-	else if (type == TextureType::Grayscale4bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".i4.png").c_str(), width, height, 3, bmpRgb,
-		               width * 3);*/
-	else if (type == TextureType::GrayscaleAlpha16bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".ia16.png").c_str(), width, height, 4, bmpRgba,
-		               width * 4);*/
-	else if (type == TextureType::GrayscaleAlpha8bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".ia8.png").c_str(), width, height, 4, bmpRgba,
-		               width * 4);*/
-	else if (type == TextureType::GrayscaleAlpha4bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".ia4.png").c_str(), width, height, 4, bmpRgba,
-		               width * 4);*/
-	else if (type == TextureType::Palette4bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".ci4.png").c_str(), width, height, 3, bmpRgb,
-		               width * 3);*/
-	else if (type == TextureType::Palette8bpp)
-		/*stbi_write_png((outPath + "/" + outName + ".ci8.png").c_str(), width, height, 3, bmpRgb,
-		               width * 3);*/
-	#endif
-
-	// if (outName != name && outName != "")
-	// File::WriteAllText(outFolder + "/" + outName + ".cfg", name.c_str());
 }
 
 string ZTexture::GetSourceOutputCode(const std::string& prefix)

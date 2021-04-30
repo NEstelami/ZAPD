@@ -28,11 +28,7 @@ protected:
 	TextureType type;
 	uint32_t width, height;
 
-	//uint8_t* bmpRgb;
-	//uint8_t* bmpRgba;
-	//uint8_t** pixelMatrix;
 	std::vector<std::vector<RGBAPixel>> textureData;
-	//ImageBackend
 	bool isRawDataFixed;
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
