@@ -580,9 +580,8 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 		for (uint16_t x = 0; x < width; x += 2)
 		{
 			uint16_t pos = ((y * width) + x) / 2;
-			RGBAPixel pixel = image.GetPixel(y, x);
-			uint8_t r1 = pixel.r;
-			uint8_t r2 = pixel.g;
+			uint8_t r1 = image.GetPixel(y, x).r;
+			uint8_t r2 = image.GetPixel(y, x + 1).r;
 
 			rawData[pos] = (uint8_t)(((r1 / 16) << 4) + (r2 / 16));
 		}

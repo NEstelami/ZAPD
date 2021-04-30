@@ -1,5 +1,6 @@
 OPTIMIZATION_ON ?= 1
 ASAN ?= 0
+DEPRECATION_OFF ?= 0
 
 CC := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
@@ -13,7 +14,9 @@ endif
 ifeq ($(ASAN),1)
   CFLAGS += -fsanitize=address
 endif
-
+ifeq ($(DEPRECATION_OFF),1)
+  CFLAGS += -DDEPRECATION_OFF
+endif
 
 LDFLAGS := -ldl -lpng
 UNAME := $(shell uname)
