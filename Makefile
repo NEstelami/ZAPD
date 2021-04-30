@@ -3,14 +3,14 @@ OPTIMIZATION_ON ?= 1
 CC := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
 
-CFLAGS := -g3 -fpic -Wl,-export-dynamic -std=c++17 -rdynamic -Wall
+CFLAGS := -g3 -ggdb -fpic -Wl,-export-dynamic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
 ifeq ($(OPTIMIZATION_ON),1)
   CFLAGS += -O2
 else
   CFLAGS += -O0
 endif
 
-LDFLAGS := -ldl
+LDFLAGS := -ldl -lpng
 UNAME := $(shell uname)
 
 FS_INC =

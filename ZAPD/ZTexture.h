@@ -24,10 +24,11 @@ class ZTexture : public ZResource
 {
 protected:
 	TextureType type;
-	uint16_t width, height;
+	uint32_t width, height;
 
-	uint8_t* bmpRgb;
-	uint8_t* bmpRgba;
+	//uint8_t* bmpRgb;
+	//uint8_t* bmpRgba;
+	uint8_t** pixelMatrix;
 	bool isRawDataFixed;
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
@@ -83,8 +84,9 @@ public:
 	std::string GetIMSizFromType();
 	uint16_t GetWidth();
 	uint16_t GetHeight();
-	void SetWidth(uint16_t nWidth);
-	void SetHeight(uint16_t nHeight);
+	//void SetWidth(uint16_t nWidth);
+	//void SetHeight(uint16_t nHeight);
+	void Linealize(uint32_t newDim);
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;
