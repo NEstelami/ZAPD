@@ -11,7 +11,7 @@ public:
 	virtual std::string GetCommandCName() override;
 	virtual RoomCommand GetRoomCommand() override;
 
-private:
 	uint8_t cameraMovement;
 	uint32_t mapHighlight;
+private:
 };

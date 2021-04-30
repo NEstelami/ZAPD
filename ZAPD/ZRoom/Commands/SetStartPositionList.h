@@ -7,6 +7,7 @@ class SetStartPositionList : public ZRoomCommand
 {
 public:
 	std::vector<ActorSpawnEntry*> actors;
+	uint32_t segmentOffset;
 
 	SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetStartPositionList();
@@ -18,5 +19,4 @@ public:
 	virtual RoomCommand GetRoomCommand() override;
 
 private:
-	uint32_t segmentOffset;
 };

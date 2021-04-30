@@ -15,6 +15,9 @@ public:
 class SetRoomList : public ZRoomCommand
 {
 public:
+	std::vector<RoomEntry*> rooms;
+	uint32_t segmentOffset;
+
 	SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetRoomList();
 
@@ -27,6 +30,4 @@ public:
 	virtual std::string Save() override;
 
 private:
-	std::vector<RoomEntry*> rooms;
-	uint32_t segmentOffset;
 };

@@ -6,6 +6,8 @@
 class SetCollisionHeader : public ZRoomCommand
 {
 public:
+	ZCollisionHeader* collisionHeader;
+
 	SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
 	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
@@ -15,6 +17,5 @@ public:
 	virtual RoomCommand GetRoomCommand() override;
 
 private:
-	ZCollisionHeader* collisionHeader;
 	uint32_t segmentOffset;
 };

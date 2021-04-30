@@ -11,11 +11,8 @@ public:
 	virtual std::string GetCommandCName() override;
 	virtual RoomCommand GetRoomCommand() override;
 
-private:
-	// uint16_t time;
-	// int8_t speed;
-
 	uint8_t hour;
 	uint8_t min;
 	uint8_t unk;
+private:
 };

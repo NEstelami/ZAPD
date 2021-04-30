@@ -30,6 +30,7 @@ Globals::Globals()
 	useExternalResources = true;
 	lastScene = nullptr;
 	verbosity = VERBOSITY_SILENT;
+	currentExporter = "";
 }
 
 string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
@@ -189,39 +190,24 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-
-typedef void(AddExporterFunc)(ZResourceType, ZResourceExporter*);
-typedef void(__stdcall* ImportExporterFunc)(AddExporterFunc*);
-
-static void _AddExporterFunc(ZResourceType resType, ZResourceExporter* exporter)
+std::map<std::string, std::map<ZResourceType, ZResourceExporter*>>* Globals::GetExporterMap()
 {
-	Globals::Instance->AddExporter(resType, exporter);
+	static std::map<std::string, std::map<ZResourceType, ZResourceExporter*>> exporters;
+	return &exporters;
 }
 
-void Globals::LoadExporterPlugin(std::string pluginPath)
+void Globals::AddExporter(std::string exporterName, ZResourceType resType, ZResourceExporter* exporter)
 {
-#ifdef _MSC_VER
-	HINSTANCE pluginHandle = LoadLibrary((pluginPath + ".dll").c_str());
-
-	if (pluginHandle != nullptr)
-	{
-		ImportExporterFunc importExportFunc = (ImportExporterFunc)GetProcAddress(pluginHandle, "ImportExporters");
-		importExportFunc(_AddExporterFunc);
-	}
-#else
-	// TODO: Linux implementation
-#endif
-}
-
-void Globals::AddExporter(ZResourceType resType, ZResourceExporter* exporter)
-{
-	exporters[resType] = exporter;
+	std::map<std::string, std::map<ZResourceType, ZResourceExporter*>>* exporters = GetExporterMap();
+	(*exporters)[exporterName][resType] = exporter;
 }
 
 ZResourceExporter* Globals::GetExporter(ZResourceType resType)
 {
-	if (exporters.find(resType) != exporters.end())
-		return exporters[resType];
+	auto exporters = *GetExporterMap();
+
+	if (currentExporter != "" && exporters[currentExporter].find(resType) != exporters[currentExporter].end())
+		return exporters[currentExporter][resType];
 	else
 		return nullptr;
 }

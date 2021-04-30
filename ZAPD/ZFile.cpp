@@ -23,6 +23,8 @@
 #include "ZTexture.h"
 #include "ZVector.h"
 #include "ZVtx.h"
+#include <MemoryStream.h>
+#include <BinaryWriter.h>
 
 using namespace tinyxml2;
 using namespace std;
@@ -272,6 +274,9 @@ void ZFile::ExtractResources(string outputDir)
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles(outputDir);
 
+	MemoryStream* memStream = new MemoryStream();
+	BinaryWriter writer = BinaryWriter(memStream);
+
 	for (ZResource* res : resources)
 	{
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
@@ -283,8 +288,15 @@ void ZFile::ExtractResources(string outputDir)
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
 
 		if (exporter != nullptr)
-			exporter->Save(res, outputDir);
+			exporter->Save(res, outputDir, &writer);
 	}
+
+	if (memStream->GetLength() > 0)
+	{
+		File::WriteAllBytes(StringHelper::Sprintf("%s.bin", GetName().c_str()), memStream->ToVector());
+	}
+
+	writer.Close();
 
 	if (Globals::Instance->testMode)
 		GenerateHLIntermediette();

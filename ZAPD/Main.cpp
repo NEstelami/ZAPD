@@ -122,73 +122,59 @@ int main(int argc, char* argv[])
 
 		if (arg == "-o" || arg == "--outputpath")  // Set output path
 		{
-			Globals::Instance->outputPath = argv[i + 1];
+			Globals::Instance->outputPath = argv[++i];
 
 			if (Globals::Instance->sourceOutputPath == "")
 				Globals::Instance->sourceOutputPath = Globals::Instance->outputPath;
-
-			i++;
 		}
 		else if (arg == "-i" || arg == "--inputpath")  // Set input path
 		{
-			Globals::Instance->inputPath = argv[i + 1];
-			i++;
+			Globals::Instance->inputPath = argv[++i];
 		}
 		else if (arg == "-b" || arg == "--baserompath")  // Set baserom path
 		{
-			Globals::Instance->baseRomPath = argv[i + 1];
-			i++;
+			Globals::Instance->baseRomPath = argv[++i];
 		}
 		else if (arg == "-osf")  // Set source output path
 		{
-			Globals::Instance->sourceOutputPath = argv[i + 1];
-			i++;
+			Globals::Instance->sourceOutputPath = argv[++i];
 		}
 		else if (arg == "-gsf")  // Generate source file during extraction
 		{
-			Globals::Instance->genSourceFile = string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->genSourceFile = string(argv[++i]) == "1";
 		}
 		else if (arg == "-ifp")  // Include file prefix in generated symbols
 		{
-			Globals::Instance->includeFilePrefix = string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->includeFilePrefix = string(argv[++i]) == "1";
 		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
-			Globals::Instance->testMode = string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->testMode = string(argv[++i]) == "1";
 		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
-			Globals::Instance->useLegacyZDList = string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->useLegacyZDList = string(argv[++i]) == "1";
 		}
 		else if (arg == "-profile")  // Enable profiling
 		{
-			Globals::Instance->profile = string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->profile = string(argv[++i]) == "1";
 		}
 		else if (arg ==
 		         "-uer")  // Split resources into their individual components (enabled by default) TODO: We may wish to make this a part of the config file...
 		{
-			Globals::Instance->useExternalResources = string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->useExternalResources = string(argv[++i]) == "1";
 		}
 		else if (arg == "-tt")  // Set texture type
 		{
-			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
-			i++;
+			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[++i]);
 		}
 		else if (arg == "-cfg")  // Set cfg path (for overlays) TODO: Change the name of this to something else so it doesn't get confused with XML config files.
 		{
-			Globals::Instance->cfgPath = argv[i + 1];
-			i++;
+			Globals::Instance->cfgPath = argv[++i];
 		}
 		else if (arg == "-rconf")  // Read Config File
 		{
-			Globals::Instance->ReadConfigFile(argv[i + 1]);
-			i++;
+			Globals::Instance->ReadConfigFile(argv[++i]);
 		}
 		else if (arg == "-eh")  // Enable Error Handler
 		{
@@ -207,10 +193,9 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->warnUnaccounted = true;
 		}
-		else if (arg == "--plugin")  // Load Exporter Plugin
+		else if (arg == "-sexp" || arg == "--set-exporter")  // Set Current Exporter
 		{
-			Globals::Instance->LoadExporterPlugin(argv[i + 1]);
-			i++;
+			Globals::Instance->currentExporter = argv[++i];
 		}
 	}
 
@@ -313,13 +298,6 @@ bool Parse(const std::string& xmlFilePath, const std::string& basePath, const st
 			                          xmlFilePath.c_str(), child->Name()));
 		}
 	}
-
-	// EXPORTER TEST
-	//Globals::Instance->AddExporter(ZResourceType::Texture, new HLExporterTest_Texture());
-	
-#ifdef _MSC_VER
-	Globals::Instance->LoadExporterPlugin("ExporterTest");
-#endif
 
 	for (ZFile* file : Globals::Instance->files)
 	{

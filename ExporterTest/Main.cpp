@@ -1,13 +1,15 @@
 #include <Windows.h>
-#include <HLExporterTest.h>
+#include <TextureExporter.h>
+#include <RoomExporter.h>
+#include <CollisionExporter.h>
+#include <DisplayListExporter.h>
+#include <Globals.h>
 
-typedef void(AddExporterFunc)(ZResourceType, ZResourceExporter*);
-typedef void(__stdcall* ImportExporterFunc)(AddExporterFunc*);
-
-extern "C"
+void ImportExporters()
 {
-	__declspec(dllexport) void ImportExporters(AddExporterFunc* addExporter)
-	{
-		addExporter(ZResourceType::Texture, new HLExporterTest_Texture());
-	}
+	Globals::AddExporter("EXAMPLE", ZResourceType::Texture, new ExporterExample_Texture());
+	Globals::AddExporter("EXAMPLE", ZResourceType::Room, new ExporterExample_Room());
+	Globals::AddExporter("EXAMPLE", ZResourceType::CollisionHeader, new ExporterExample_Collision());
 }
+
+REGISTER_EXPORTER(ImportExporters)

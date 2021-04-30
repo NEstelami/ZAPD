@@ -14,6 +14,9 @@ public:
 class SetEntranceList : public ZRoomCommand
 {
 public:
+	std::vector<EntranceEntry*> entrances;
+	uint32_t segmentOffset;
+
 	SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetEntranceList();
 
@@ -23,8 +26,6 @@ public:
 	virtual RoomCommand GetRoomCommand() override;
 
 private:
-	std::vector<EntranceEntry*> entrances;
-	uint32_t segmentOffset;
 	std::vector<uint8_t> _rawData;
 	int32_t _rawDataIndex;
 };

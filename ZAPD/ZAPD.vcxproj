@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)lib\tinyxml2;$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\elfio;$(SolutionDir)lib\assimp\include;$(SolutionDir)lib\stb;$(ProjectDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\assimp-built;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\assimp-built;$(SolutionDir)x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(IncludePath)</IncludePath>
@@ -84,6 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <Profile>true</Profile>
@@ -102,7 +103,7 @@
     </ClCompile>
     <Link>
       <Profile>true</Profile>
-      <AdditionalDependencies>assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mt.lib;/WHOLEARCHIVE:ExporterExample.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>cd ..
@@ -148,11 +149,13 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClCompile Include="..\lib\libgfxd\uc_f3dex2.c" />
     <ClCompile Include="..\lib\libgfxd\uc_f3dexb.c" />
     <ClCompile Include="..\lib\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="BinaryWriter.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="HighLevel\HLAnimationIntermediette.cpp" />
     <ClCompile Include="HighLevel\HLModelIntermediette.cpp" />
     <ClCompile Include="HighLevel\HLTexture.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MemoryStream.cpp" />
     <ClCompile Include="OutputFormatter.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="ZArray.cpp" />
@@ -230,6 +233,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="..\lib\stb\stb_image_write.h" />
     <ClInclude Include="..\lib\stb\tinyxml2.h" />
     <ClInclude Include="..\lib\tinygtlf\tiny_gltf.h" />
+    <ClInclude Include="BinaryWriter.h" />
     <ClInclude Include="BitConverter.h" />
     <ClInclude Include="CRC32.h" />
     <ClInclude Include="Directory.h" />
@@ -240,9 +244,11 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="HighLevel\HLFileIntermediette.h" />
     <ClInclude Include="HighLevel\HLModelIntermediette.h" />
     <ClInclude Include="HighLevel\HLTexture.h" />
+    <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="OutputFormatter.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="Path.h" />
+    <ClInclude Include="Stream.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="Vec3s.h" />
     <ClInclude Include="ZAnimation.h" />

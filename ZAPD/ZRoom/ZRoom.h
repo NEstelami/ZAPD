@@ -12,8 +12,6 @@
 class ZRoom : public ZResource
 {
 protected:
-	std::vector<ZRoomCommand*> commands;
-
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void ProcessCommandSets();
@@ -23,6 +21,7 @@ public:
 	ZRoom* scene;
 	std::map<int32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
+	std::vector<ZRoomCommand*> commands;
 	int32_t roomCount;  // Only valid for scenes
 
 	std::string extDefines;

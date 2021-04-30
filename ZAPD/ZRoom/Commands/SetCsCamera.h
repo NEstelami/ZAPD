@@ -17,6 +17,10 @@ public:
 class SetCsCamera : public ZRoomCommand
 {
 public:
+	uint32_t segmentOffset;
+	std::vector<CsCameraEntry*> cameras;
+	std::vector<Vec3s> points;
+
 	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetCsCamera();
 
@@ -29,9 +33,6 @@ public:
 	virtual std::string GenerateExterns() override;
 
 private:
-	uint32_t segmentOffset;
-	std::vector<CsCameraEntry*> cameras;
-	std::vector<Vec3s> points;
 	std::vector<uint8_t> _rawData;
 	int32_t _rawDataIndex;
 };

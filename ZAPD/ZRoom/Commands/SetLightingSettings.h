@@ -20,6 +20,9 @@ public:
 class SetLightingSettings : public ZRoomCommand
 {
 public:
+	uint32_t segmentOffset;
+	std::vector<LightingSettings*> settings;
+
 	SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetLightingSettings();
 
@@ -30,6 +33,4 @@ public:
 	virtual RoomCommand GetRoomCommand() override;
 
 private:
-	uint32_t segmentOffset;
-	std::vector<LightingSettings*> settings;
 };

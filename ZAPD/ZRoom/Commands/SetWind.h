@@ -11,9 +11,10 @@ public:
 	virtual std::string GetCommandCName() override;
 	virtual RoomCommand GetRoomCommand() override;
 
-private:
 	uint8_t windWest;
 	uint8_t windVertical;
 	uint8_t windSouth;
 	uint8_t clothFlappingStrength;
+
+private:
 };

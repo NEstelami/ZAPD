@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "tinyxml2.h"
+#include <BinaryWriter.h>
 
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3
@@ -166,7 +167,7 @@ class ZResourceExporter
 public:
 	ZResourceExporter() = default;
 
-	virtual void Save(ZResource* res, std::string outPath) = 0;
+	virtual void Save(ZResource* res, std::string outPath, BinaryWriter* writer) = 0;
 };
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
@@ -188,3 +189,14 @@ typedef ZResource*(ZResourceFactoryFunc)();
 		}                                                                                          \
 	};                                                                                             \
 	static ZRes_##nodeName inst_ZRes_##nodeName;
+
+#define REGISTER_EXPORTER(expFunc)																		\
+	class ZResExp_##expFunc																				\
+	{																									\
+	public:																								\
+		ZResExp_##expFunc()																			\
+		{																								\
+			##expFunc();																				\
+		}																								\
+	};																									\
+	static ZResExp_##expFunc inst_ZResExp_##expFunc;
