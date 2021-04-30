@@ -26,7 +26,7 @@ public:
     void ReadPng(const char* filename);
     void WritePng(const char* filename);
 
-    void SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth, uint32_t nHeight);
+    void SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth, uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth);
 
     uint32_t GetWidth() const;
     uint32_t GetHeight() const;
@@ -36,7 +36,7 @@ public:
     RGBAPixel GetPixel(size_t y, size_t x) const;
 
 protected:
-    uint8_t** pixelMatrix = nullptr; // width * height * 4 (RGBA)
+    uint8_t** pixelMatrix = nullptr; // height * [width * bytePerPixel]
 
     uint32_t width = 0;
     uint32_t height = 0;
@@ -44,4 +44,6 @@ protected:
     uint8_t bitDepth = 0;
 
     bool hasImageData = false;
+
+    double GetBytesPerPixel() const;
 };

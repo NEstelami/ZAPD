@@ -1,5 +1,3 @@
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #define TINYGLTF_IMPLEMENTATION
 
 #include "ZTexture.h"
@@ -1017,7 +1015,7 @@ void ZTexture::Save(const std::string& outFolder)
 	}
 
 	ImageBackend image;
-	image.SetTextureData(textureData, width, height);
+	image.SetTextureData(textureData, width, height, color_type, bit_depth);
 	image.WritePng((outPath + "/" + outName + "." + GetExternalExtension() + ".png").c_str());
 
 	//write_png_file((outPath + "/" + outName + "." + GetExternalExtension() + ".png").c_str(), width, height, pixelMatrix, color_type, bit_depth);

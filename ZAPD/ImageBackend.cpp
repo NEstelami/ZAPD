@@ -2,7 +2,11 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <stdexcept>
 #include <png.h>
+
+
+/* ImageBackend */
 
 ImageBackend::~ImageBackend()
 {
@@ -82,8 +86,6 @@ void ImageBackend::ReadPng(const char* filename) {
 void ImageBackend::WritePng(const char *filename) {
     assert(hasImageData);
 
-	//int y;
-
 	FILE *fp = fopen(filename, "wb");
 	if(!fp) abort();
 
@@ -119,39 +121,38 @@ void ImageBackend::WritePng(const char *filename) {
 	png_write_image(png, pixelMatrix);
 	png_write_end(png, NULL);
 
-	// TODO!
-	/*for(int y = 0; y < height; y++) {
-		free(row_pointers[y]);
-	}
-	free(row_pointers);*/
-
 	fclose(fp);
 
 	png_destroy_write_struct(&png, &info);
 }
 
-void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth, uint32_t nHeight)
+void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth, uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth)
 {
     assert(!hasImageData);
 
     width = nWidth;
     height = nHeight;
+    //colorType = PNG_COLOR_TYPE_RGBA;
+    //bitDepth = 8;
+	colorType = nColorType;
+	bitDepth = nBitDepth;
+
+	size_t bytePerPixel = GetBytesPerPixel();
 
 	pixelMatrix = (uint8_t**)malloc(sizeof(uint8_t*) * height);
 	for(size_t y = 0; y < height; y++) {
-		pixelMatrix[y] = (uint8_t*)malloc(sizeof(uint8_t*) * width * 4);
+		pixelMatrix[y] = (uint8_t*)malloc(sizeof(uint8_t*) * width * bytePerPixel);
         for (size_t x = 0; x < width; x++)
         {
-            pixelMatrix[y][x*4 + 0] = texData.at(y).at(x).r;
-            pixelMatrix[y][x*4 + 1] = texData.at(y).at(x).g;
-            pixelMatrix[y][x*4 + 2] = texData.at(y).at(x).b;
-            pixelMatrix[y][x*4 + 3] = texData.at(y).at(x).a;
+            pixelMatrix[y][x*bytePerPixel + 0] = texData.at(y).at(x).r;
+            pixelMatrix[y][x*bytePerPixel + 1] = texData.at(y).at(x).g;
+            pixelMatrix[y][x*bytePerPixel + 2] = texData.at(y).at(x).b;
+
+			if (colorType == PNG_COLOR_TYPE_RGBA)
+            	pixelMatrix[y][x*bytePerPixel + 3] = texData.at(y).at(x).a;
         }
 	}
     hasImageData = true;
-
-    colorType = PNG_COLOR_TYPE_RGBA;
-    bitDepth = 8;
 }
 
 uint32_t ImageBackend::GetWidth() const
@@ -179,11 +180,28 @@ RGBAPixel ImageBackend::GetPixel(size_t y, size_t x) const
     assert(y < height);
     assert(x < width);
     RGBAPixel pixel;
-    pixel.r = pixelMatrix[y][x*4 + 0];
-    pixel.g = pixelMatrix[y][x*4 + 1];
-    pixel.b = pixelMatrix[y][x*4 + 2];
-    pixel.a = pixelMatrix[y][x*4 + 3];
+	size_t bytePerPixel = GetBytesPerPixel();
+    pixel.r = pixelMatrix[y][x*bytePerPixel + 0];
+    pixel.g = pixelMatrix[y][x*bytePerPixel + 1];
+    pixel.b = pixelMatrix[y][x*bytePerPixel + 2];
+	if (colorType == PNG_COLOR_TYPE_RGBA)
+    	pixel.a = pixelMatrix[y][x*bytePerPixel + 3];
     return pixel;
+}
+
+double ImageBackend::GetBytesPerPixel() const
+{
+	switch (colorType)
+	{
+	case PNG_COLOR_TYPE_RGBA:
+		return 4 * bitDepth / 8;
+
+	case PNG_COLOR_TYPE_RGB:
+		return 3 * bitDepth / 8;
+
+	default:
+		throw std::invalid_argument("Invalid color type.");
+	}
 }
 
 
