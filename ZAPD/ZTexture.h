@@ -1,10 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include "HighLevel/HLTexture.h"
+#include "ImageBackend.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-#include <vector>
 
 enum class TextureType
 {
@@ -28,7 +30,9 @@ protected:
 
 	//uint8_t* bmpRgb;
 	//uint8_t* bmpRgba;
-	uint8_t** pixelMatrix;
+	//uint8_t** pixelMatrix;
+	std::vector<std::vector<RGBAPixel>> textureData;
+	//ImageBackend
 	bool isRawDataFixed;
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
@@ -65,8 +69,6 @@ public:
 
 	bool isPalette;
 
-	static ZTexture* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
-	                              bool readFile);
 	// static ZTexture* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData,
 	// uint32_t rawDataIndex, std::string nRelPath, ZFile* nParent);
 	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
@@ -82,11 +84,12 @@ public:
 	size_t GetRawDataSize() override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
-	uint16_t GetWidth();
-	uint16_t GetHeight();
-	//void SetWidth(uint16_t nWidth);
-	//void SetHeight(uint16_t nHeight);
-	void Linealize(uint32_t newDim);
+	uint32_t GetWidth();
+	uint32_t GetHeight();
+	//void SetWidth(uint32_t nWidth);
+	//void SetHeight(uint32_t nHeight);
+	void SetDimensions(uint32_t nWidth, uint32_t nHeight);
+	//void Linealize(uint32_t newDim);
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
 	std::string GetExternalExtension() override;

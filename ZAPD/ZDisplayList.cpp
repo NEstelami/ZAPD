@@ -1928,10 +1928,11 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					// If we're working with a palette, resize it to its "real" dimensions
 					if (texturesSorted[i].second->isPalette)
 					{
-						/*texturesSorted[i].second->SetWidth(
-							(texturesSorted[i + 1].first - texturesSorted[i].first) / 2);
-						texturesSorted[i].second->SetHeight(1);*/
-						texturesSorted[i].second->Linealize((texturesSorted[i + 1].first - texturesSorted[i].first) / 2);
+						//texturesSorted[i].second->SetWidth(
+						//	(texturesSorted[i + 1].first - texturesSorted[i].first) / 2);
+						//texturesSorted[i].second->SetHeight(1);
+						texturesSorted[i].second->SetDimensions((texturesSorted[i + 1].first - texturesSorted[i].first) / 2, 1);
+						//texturesSorted[i].second->Linealize((texturesSorted[i + 1].first - texturesSorted[i].first) / 2);
 					}
 					else
 					{
