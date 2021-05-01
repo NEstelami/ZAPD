@@ -194,26 +194,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			if (mode == ZFileMode::Extract)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
 
-			// TODO: See if we can make this part of the ZRoom code...
-			if (nRes->GetResourceType() == ZResourceType::Room)
-			{
-				if (nodeName == "Scene")
-				{
-					Globals::Instance->lastScene = (ZRoom*)nRes;
-
-					if (segment == -1)
-						segment = SEGMENT_SCENE;
-				}
-				else
-				{
-					if (segment == -1)
-						segment = SEGMENT_ROOM;
-				}
-
-				if (segment != -1)
-					Globals::Instance->AddSegment(segment);
-			}
-
 			resources.push_back(nRes);
 			rawDataIndex += nRes->GetRawDataSize();
 		}
