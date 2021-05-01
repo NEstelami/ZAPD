@@ -500,30 +500,46 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #endif
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address)
+std::string ZFile::GetDeclarationName(uint32_t address) const
 {
 	return GetDeclarationName(address,
 	                          "ERROR_COULD_NOT_FIND_DECLARATION");  // Note: For now that default
 	                                                                // message is just for testing
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult)
+std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult) const
 {
 	if (declarations.find(address) != declarations.end())
-		return declarations[address]->varName;
+		return declarations.at(address)->varName;
 
 	return defaultResult;
 }
 
-Declaration* ZFile::GetDeclaration(uint32_t address)
+std::string ZFile::GetDeclarationPtrName(segptr_t segAddress) const
+{
+	if (segAddress == 0)
+		return "NULL";
+
+	Declaration* decl = GetDeclaration(Seg2Filespace(segAddress, baseAddress));
+
+	if (decl == nullptr)
+		return StringHelper::Sprintf("0x%08X", segAddress);
+
+	if (!decl->isArray)
+		return "&" + decl->varName;
+
+	return decl->varName;
+}
+
+Declaration* ZFile::GetDeclaration(uint32_t address) const
 {
 	if (declarations.find(address) != declarations.end())
-		return declarations[address];
+		return declarations.at(address);
 
 	return nullptr;
 }
 
-Declaration* ZFile::GetDeclarationRanged(uint32_t address)
+Declaration* ZFile::GetDeclarationRanged(uint32_t address) const
 {
 	for (const auto decl : declarations)
 	{
@@ -534,7 +550,7 @@ Declaration* ZFile::GetDeclarationRanged(uint32_t address)
 	return nullptr;
 }
 
-uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address)
+uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address) const
 {
 	for (const auto decl : declarations)
 	{

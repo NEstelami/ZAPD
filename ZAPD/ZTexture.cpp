@@ -554,7 +554,7 @@ void ZTexture::PrepareRawDataPalette8(const fs::path& palPath)
 	}
 }
 
-float ZTexture::GetPixelMultiplyer()
+float ZTexture::GetPixelMultiplyer() const
 {
 	switch (type)
 	{
@@ -624,12 +624,12 @@ std::string ZTexture::GetIMSizFromType()
 	}
 }
 
-uint32_t ZTexture::GetWidth()
+uint32_t ZTexture::GetWidth() const
 {
 	return width;
 }
 
-uint32_t ZTexture::GetHeight()
+uint32_t ZTexture::GetHeight() const
 {
 	return height;
 }

@@ -70,11 +70,12 @@ public:
 	Declaration* AddDeclarationIncludeArray(uint32_t address, std::string includePath, size_t size,
 	                                        std::string varType, std::string varName,
 	                                        size_t arrayItemCnt);
-	std::string GetDeclarationName(uint32_t address);
-	std::string GetDeclarationName(uint32_t address, std::string defaultResult);
-	Declaration* GetDeclaration(uint32_t address);
-	Declaration* GetDeclarationRanged(uint32_t address);
-	uint32_t GetDeclarationRangedAddress(uint32_t address);
+	std::string GetDeclarationName(uint32_t address) const;
+	std::string GetDeclarationName(uint32_t address, std::string defaultResult) const;
+	std::string GetDeclarationPtrName(segptr_t segAddress) const;
+	Declaration* GetDeclaration(uint32_t address) const;
+	Declaration* GetDeclarationRanged(uint32_t address) const;
+	uint32_t GetDeclarationRangedAddress(uint32_t address) const;
 	bool HasDeclaration(uint32_t address);
 	std::string GetHeaderInclude();
 	void GeneratePlaceholderDeclarations();

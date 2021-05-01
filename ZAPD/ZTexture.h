@@ -50,7 +50,6 @@ protected:
 	void PrepareRawDataGrayscaleAlpha16(const fs::path& grayAlphaPath);
 	void PrepareRawDataPalette4(const fs::path& palPath);
 	void PrepareRawDataPalette8(const fs::path& palPath);
-	float GetPixelMultiplyer();
 
 public:
 	ZTexture(ZFile* nParent);
@@ -77,9 +76,10 @@ public:
 	size_t GetRawDataSize() override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
-	uint32_t GetWidth();
-	uint32_t GetHeight();
+	uint32_t GetWidth() const;
+	uint32_t GetHeight() const;
 	void SetDimensions(uint32_t nWidth, uint32_t nHeight);
+	float GetPixelMultiplyer() const;
 	TextureType GetTextureType();
 	fs::path GetPoolOutPath(const fs::path& defaultValue);
 };
