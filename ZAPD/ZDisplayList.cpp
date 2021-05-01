@@ -2201,10 +2201,10 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		{
 			if (texAddr < parent->GetRawData().size())
 			{
-				ZTexture* tex =
-					ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
+				ZTexture* tex = new ZTexture(parent);
+				tex->FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
 										StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
-										texWidth, texHeight, parent);
+										texWidth, texHeight);
 				tex->isPalette = texIsPalette;
 				textures[texAddr] = tex;
 				return true;
@@ -2212,11 +2212,12 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		}
 		else
 		{
-			ZTexture* tex = ZTexture::FromBinary(
+			ZTexture* tex = new ZTexture(parent);
+			tex->FromBinary(
 				TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
 				StringHelper::Sprintf("%sTex_%06X", Globals::Instance->lastScene->GetName().c_str(),
 			                          texAddr),
-				texWidth, texHeight, parent);
+				texWidth, texHeight);
 
 			if (scene != nullptr)
 			{

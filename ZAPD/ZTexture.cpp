@@ -8,8 +8,6 @@
 #include "Path.h"
 
 #include <Directory.h>
-//#include "stb_image.h"
-//#include "stb_image_write.h"
 #include <png.h>
 
 using namespace std;
@@ -21,66 +19,36 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 {
 	width = 0;
 	height = 0;
-	type = TextureType::Error;
-	isPalette = false;
 }
 
-void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                              const uint32_t nRawDataIndex, const std::string& nRelPath)
-{
-	ParseXML(reader);
-	rawDataIndex = nRawDataIndex;
-	rawData.assign(nRawData.begin(), nRawData.end());
-	//rawData = vector<uint8_t>(nRawData.data() + rawDataIndex,
-	//                          nRawData.data() + rawDataIndex + GetRawDataSize());
-
-	relativePath = nRelPath;
-
-	PrepareBitmap();
-}
-
-ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
+void ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
                                uint32_t nRawDataIndex, std::string nName, int32_t nWidth,
-                               int32_t nHeight, ZFile* nParent)
+                               int32_t nHeight)
 {
-	ZTexture* tex = new ZTexture(nParent);
+	width = nWidth;
+	height = nHeight;
+	type = nType;
+	name = nName;
+	outName = nName;
+	rawDataIndex = nRawDataIndex;
 
-	tex->width = nWidth;
-	tex->height = nHeight;
-	tex->type = nType;
-	tex->name = nName;
-	tex->outName = nName;
-	tex->rawDataIndex = nRawDataIndex;
+	rawData.assign(nRawData.begin(), nRawData.end());
 
-	tex->rawData.assign(nRawData.begin(), nRawData.end());
-	//size_t dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
-	//tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
-	// ../ZAPD/ZAPD.out e -eh -i assets/xml/scenes/indoors/hakasitarelay.xml -b baserom/ -o assets/scenes/indoors/hakasitarelay -osf assets/scenes/indoors/hakasitarelay -gsf 1 -ifp 1 -rconf tools/ZAPDConfigs/MqDbg/Config.xml
-
-	tex->PrepareBitmap();
-
-	return tex;
+	ParseRawData();
 }
 
-ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
+void ZTexture::FromPNG(string pngFilePath, TextureType texType)
 {
-	ZTexture* tex = new ZTexture(nullptr);
-	tex->type = texType;
-	tex->name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
-	tex->PrepareRawData(pngFilePath);
-
-	return tex;
+	type = texType;
+	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
+	PrepareRawData(pngFilePath);
 }
 
-ZTexture* ZTexture::FromHLTexture(HLTexture* hlTex)
+void ZTexture::FromHLTexture(HLTexture* hlTex)
 {
-	ZTexture* tex = new ZTexture(nullptr);
-
-	tex->width = hlTex->width;
-	tex->height = hlTex->height;
-	tex->type = (TextureType)hlTex->type;
-
-	return tex;
+	width = hlTex->width;
+	height = hlTex->height;
+	type = (TextureType)hlTex->type;
 }
 
 void ZTexture::ParseXML(XMLElement* reader)
@@ -114,7 +82,7 @@ void ZTexture::ParseXML(XMLElement* reader)
 		throw std::runtime_error("Format " + formatStr + " is not supported!");
 }
 
-void ZTexture::PrepareBitmap()
+void ZTexture::ParseRawData()
 {
 	switch (type)
 	{
@@ -683,7 +651,7 @@ void ZTexture::SetDimensions(uint32_t nWidth, uint32_t nHeight)
 {
 	width = nWidth;
 	height = nHeight;
-	PrepareBitmap();
+	ParseRawData();
 }
 
 TextureType ZTexture::GetTextureType()
@@ -782,8 +750,6 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
-	//relativePath = "build/assets/" + relativePath;
-
 	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
 	{
 		if (i % 32 == 0)
@@ -861,11 +827,6 @@ std::string ZTexture::GetPoolOutPath(std::string defaultValue)
 		return Path::GetDirectoryName(Globals::Instance->cfg.texturePool[hash].path);
 
 	return defaultValue;
-}
-
-string ZTexture::GetSourceOutputHeader(const std::string& prefix)
-{
-	return "";
 }
 
 TextureType ZTexture::GetTextureTypeFromString(string str)

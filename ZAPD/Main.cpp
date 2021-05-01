@@ -330,17 +330,16 @@ void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const f
 {
 	string name = outPath.stem();
 
-	ZTexture* tex = ZTexture::FromPNG(pngFilePath, texType);
+	ZTexture tex(nullptr);
+	tex.FromPNG(pngFilePath, texType);
 	string cfgPath = StringHelper::Split(pngFilePath, ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))
 		name = File::ReadAllText(cfgPath);
 
-	string src = tex->GetSourceOutputCode(name);
+	string src = tex.GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
-
-	delete tex;
 }
 
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath)
