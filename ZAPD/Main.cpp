@@ -163,8 +163,7 @@ int main(int argc, char* argv[])
 		else if (arg == "-crc" ||
 		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
 		{
-			Globals::Instance->outputCrc = string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->outputCrc = true;
 		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
@@ -206,7 +205,7 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, ErrorHandler);
 			signal(SIGABRT, ErrorHandler);
 #else
-			printf("Warning: Tried to set error handler, but this build lacks support for one.\n");
+			fprintf(stderr, "Warning: Tried to set error handler, but this build lacks support for one.\n");
 #endif
 		}
 		else if (arg == "-v")  // Verbose
