@@ -42,6 +42,7 @@ public:
 
 	std::string GetVarName(uint32_t address);
 	std::string GetName();
+	const std::vector<uint8_t>& GetRawData() const;
 	void ExtractResources(fs::path outputDir);
 	void BuildSourceFile(fs::path outputDir);
 	void AddResource(ZResource* res);

@@ -30,8 +30,9 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 {
 	ParseXML(reader);
 	rawDataIndex = nRawDataIndex;
-	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex,
-	                          nRawData.data() + rawDataIndex + GetRawDataSize());
+	rawData.assign(nRawData.begin(), nRawData.end());
+	//rawData = vector<uint8_t>(nRawData.data() + rawDataIndex,
+	//                          nRawData.data() + rawDataIndex + GetRawDataSize());
 
 	relativePath = nRelPath;
 
@@ -51,8 +52,10 @@ ZTexture* ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
 	tex->outName = nName;
 	tex->rawDataIndex = nRawDataIndex;
 
-	size_t dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
-	tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
+	tex->rawData.assign(nRawData.begin(), nRawData.end());
+	//size_t dataEnd = tex->rawDataIndex + tex->GetRawDataSize();
+	//tex->rawData = vector<uint8_t>(nRawData.data() + tex->rawDataIndex, nRawData.data() + dataEnd);
+	// ../ZAPD/ZAPD.out e -eh -i assets/xml/scenes/indoors/hakasitarelay.xml -b baserom/ -o assets/scenes/indoors/hakasitarelay -osf assets/scenes/indoors/hakasitarelay -gsf 1 -ifp 1 -rconf tools/ZAPDConfigs/MqDbg/Config.xml
 
 	tex->PrepareBitmap();
 
@@ -150,16 +153,17 @@ void ZTexture::PrepareBitmap()
 void ZTexture::PrepareBitmapRGBA16()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
 		{
-			int32_t pos = ((y * width) + x) * 2;
-			uint16_t data = (uint16_t)(rawData[pos + 1] | (rawData[pos] << 8));
-			uint8_t r = (uint8_t)((data & 0xF800) >> 11);
-			uint8_t g = (uint8_t)((data & 0x07C0) >> 6);
-			uint8_t b = (uint8_t)((data & 0x003E) >> 1);
-			uint8_t alpha = (uint8_t)(data & 0x01);
+			int32_t pos = rawDataIndex + ((y * width) + x) * 2;
+			uint16_t data = rawData.at(pos + 1) | (rawData.at(pos) << 8);
+			uint8_t r = (data & 0xF800) >> 11;
+			uint8_t g = (data & 0x07C0) >> 6;
+			uint8_t b = (data & 0x003E) >> 1;
+			uint8_t alpha = data & 0x01;
 
 			textureData[y][x].SetRGBA(r * 8, g * 8, b * 8, alpha * 255);
 		}
@@ -169,11 +173,12 @@ void ZTexture::PrepareBitmapRGBA16()
 void ZTexture::PrepareBitmapRGBA32()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 4;
+			size_t pos = rawDataIndex + ((y * width) + x) * 4;
 			uint8_t r = rawData.at(pos + 0);
 			uint8_t g = rawData.at(pos + 1);
 			uint8_t b = rawData.at(pos + 2);
@@ -187,19 +192,20 @@ void ZTexture::PrepareBitmapRGBA32()
 void ZTexture::PrepareBitmapGrayscale4()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x += 2)
 		{
 			for (uint8_t i = 0; i < 2; i++)
 			{
-				uint16_t pos = ((y * width) + x) / 2;
+				size_t pos = rawDataIndex + ((y * width) + x) / 2;
 				uint8_t grayscale = 0;
 
 				if (i == 0)
-					grayscale = rawData[pos] & 0xF0;
+					grayscale = rawData.at(pos) & 0xF0;
 				else
-					grayscale = (rawData[pos] & 0x0F) << 4;
+					grayscale = (rawData.at(pos) & 0x0F) << 4;
 
 				textureData[y][x + i].SetGrayscale(grayscale);
 			}
@@ -210,11 +216,12 @@ void ZTexture::PrepareBitmapGrayscale4()
 void ZTexture::PrepareBitmapGrayscale8()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 1;
+			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 
 			textureData[y][x].SetGrayscale(rawData.at(pos));
 		}
@@ -224,19 +231,20 @@ void ZTexture::PrepareBitmapGrayscale8()
 void ZTexture::PrepareBitmapGrayscaleAlpha4()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x += 2)
 		{
 			for (uint16_t i = 0; i < 2; i++)
 			{
-				uint16_t pos = ((y * width) + x) / 2;
+				size_t pos = rawDataIndex + ((y * width) + x) / 2;
 				uint8_t data = 0;
 
 				if (i == 0)
-					data = (rawData[pos] & 0xF0) >> 4;
+					data = (rawData.at(pos) & 0xF0) >> 4;
 				else
-					data = rawData[pos] & 0x0F;
+					data = rawData.at(pos) & 0x0F;
 
 				uint8_t grayscale = ((data & 0x0E) >> 1) * 32;
 				uint8_t alpha = (data & 0x01) * 255;
@@ -250,13 +258,14 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 void ZTexture::PrepareBitmapGrayscaleAlpha8()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 1;
-			uint8_t grayscale = rawData[pos] & 0xF0;
-			uint8_t alpha = (rawData[pos] & 0x0F) << 4;
+			size_t pos = rawDataIndex + ((y * width) + x) * 1;
+			uint8_t grayscale = rawData.at(pos) & 0xF0;
+			uint8_t alpha = (rawData.at(pos) & 0x0F) << 4;
 
 			textureData[y][x].SetGrayscale(grayscale, alpha);
 		}
@@ -266,13 +275,14 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 void ZTexture::PrepareBitmapGrayscaleAlpha16()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 2;
-			uint8_t grayscale = rawData[pos + 0];
-			uint8_t alpha = rawData[pos + 1];
+			size_t pos = rawDataIndex + ((y * width) + x) * 2;
+			uint8_t grayscale = rawData.at(pos + 0);
+			uint8_t alpha = rawData.at(pos + 1);
 
 			textureData[y][x].SetGrayscale(grayscale, alpha);
 		}
@@ -282,19 +292,20 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 void ZTexture::PrepareBitmapPalette4()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x += 2)
 		{
 			for (uint16_t i = 0; i < 2; i++)
 			{
-				uint16_t pos = ((y * width) + x) / 2;
+				size_t pos = rawDataIndex + ((y * width) + x) / 2;
 				uint8_t paletteIndex = 0;
 
 				if (i == 0)
-					paletteIndex = (rawData[pos] & 0xF0) >> 4;
+					paletteIndex = (rawData.at(pos) & 0xF0) >> 4;
 				else
-					paletteIndex = (rawData[pos] & 0x0F);
+					paletteIndex = (rawData.at(pos) & 0x0F);
 
 				textureData[y][x + i].SetGrayscale(paletteIndex * 16);
 			}
@@ -305,11 +316,12 @@ void ZTexture::PrepareBitmapPalette4()
 void ZTexture::PrepareBitmapPalette8()
 {
 	textureData.assign(height, std::vector<RGBAPixel>(width));
+	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 1;
+			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 
 			textureData[y][x].SetGrayscale(rawData.at(pos));
 		}
@@ -318,7 +330,7 @@ void ZTexture::PrepareBitmapPalette8()
 
 void ZTexture::PrepareRawData(string pngFilePath)
 {
-	rawData = vector<uint8_t>(GetRawDataSize());
+	//rawData = vector<uint8_t>(GetRawDataSize());
 
 	switch (type)
 	{
@@ -362,15 +374,13 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 2;
+			size_t pos = ((y * width) + x) * 2;
 			RGBAPixel pixel = image.GetPixel(y, x);
 
 			uint8_t r = pixel.r / 8;
@@ -381,8 +391,8 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 
 			uint16_t data = (r << 11) + (g << 6) + (b << 1) + alphaBit;
 
-			rawData[pos + 0] = (data & 0xFF00) >> 8;
-			rawData[pos + 1] = (data & 0x00FF);
+			textureDataRaw[pos + 0] = (data & 0xFF00) >> 8;
+			textureDataRaw[pos + 1] = (data & 0x00FF);
 		}
 	}
 }
@@ -395,21 +405,19 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 4;
+			size_t pos = ((y * width) + x) * 4;
 			RGBAPixel pixel = image.GetPixel(y, x);
 
-			rawData[pos + 0] = pixel.r;
-			rawData[pos + 1] = pixel.g;
-			rawData[pos + 2] = pixel.b;
-			rawData[pos + 3] = pixel.a;
+			textureDataRaw[pos + 0] = pixel.r;
+			textureDataRaw[pos + 1] = pixel.g;
+			textureDataRaw[pos + 2] = pixel.b;
+			textureDataRaw[pos + 3] = pixel.a;
 		}
 	}
 }
@@ -422,19 +430,17 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x += 2)
 		{
-			uint16_t pos = ((y * width) + x) / 2;
+			size_t pos = ((y * width) + x) / 2;
 			uint8_t r1 = image.GetPixel(y, x).r;
 			uint8_t r2 = image.GetPixel(y, x + 1).r;
 
-			rawData[pos] = (uint8_t)(((r1 / 16) << 4) + (r2 / 16));
+			textureDataRaw[pos] = (uint8_t)(((r1 / 16) << 4) + (r2 / 16));
 		}
 	}
 }
@@ -447,17 +453,15 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
 		{
-			uint16_t pos = (y * width) + x;
+			size_t pos = (y * width) + x;
 			RGBAPixel pixel = image.GetPixel(y, x);
-			rawData[pos] = pixel.r;
+			textureDataRaw[pos] = pixel.r;
 		}
 	}
 }
@@ -470,15 +474,13 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x += 2)
 		{
-			uint16_t pos = ((y * width) + x) / 2;
+			size_t pos = ((y * width) + x) / 2;
 			uint8_t data = 0;
 
 			for (uint16_t i = 0; i < 2; i++)
@@ -493,7 +495,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 					data |= ((cR / 32) << 1) + alphaBit;
 			}
 
-			rawData[pos] = data;
+			textureDataRaw[pos] = data;
 		}
 	}
 }
@@ -506,21 +508,19 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 1;
+			size_t pos = ((y * width) + x) * 1;
 			RGBAPixel pixel = image.GetPixel(y, x);
 
 			uint8_t r = pixel.r;
 			uint8_t a = pixel.a;
 
-			rawData[pos] = ((r / 16) << 4) + (a / 16);
+			textureDataRaw[pos] = ((r / 16) << 4) + (a / 16);
 		}
 	}
 }
@@ -533,22 +533,20 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x) * 2;
+			size_t pos = ((y * width) + x) * 2;
 			RGBAPixel pixel = image.GetPixel(y, x);
 
 			uint8_t cR = pixel.r;
 			uint8_t aR = pixel.a;
 
-			rawData[pos + 0] = cR;
-			rawData[pos + 1] = aR;
+			textureDataRaw[pos + 0] = cR;
+			textureDataRaw[pos + 1] = aR;
 		}
 	}
 }
@@ -561,21 +559,19 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x += 2)
 		{
-			uint16_t pos = ((y * width) + x) / 2;
+			size_t pos = ((y * width) + x) / 2;
 			//RGBAPixel pixel = image.GetPixel(y, x);
 
 			uint8_t cR1 = image.GetPixel(y, x).r;
 			uint8_t cR2 = image.GetPixel(y, x + 1).r;
 
-			rawData[pos] = ((cR1 / 16) << 4) + (cR2 / 16);
+			textureDataRaw[pos] = ((cR1 / 16) << 4) + (cR2 / 16);
 		}
 	}
 }
@@ -588,19 +584,17 @@ void ZTexture::PrepareRawDataPalette8(string palPath)
 	width = image.GetWidth();
 	height = image.GetHeight();
 
-	rawData.clear();
-	rawData.resize(GetRawDataSize());
-
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureDataRaw.clear();
+	textureDataRaw.resize(GetRawDataSize());
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
 		{
-			uint16_t pos = ((y * width) + x);
+			size_t pos = ((y * width) + x);
 			RGBAPixel pixel = image.GetPixel(y, x);
 
 			uint8_t cR = pixel.r;
-			rawData[pos] = cR;
+			textureDataRaw[pos] = cR;
 		}
 	}
 }
@@ -788,15 +782,15 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
-	relativePath = "build/assets/" + relativePath;
+	//relativePath = "build/assets/" + relativePath;
 
-	for (size_t i = 0; i < rawData.size(); i += 8)
+	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
 	{
 		if (i % 32 == 0)
 			sourceOutput += "    ";
 
 		sourceOutput +=
-			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(rawData, i));
+			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(textureDataRaw, i));
 
 			//../ZAPD/ZAPD.out e -eh -i assets/xml/objects/object_gnd.xml -b baserom/ -o assets/objects/object_gnd -gsf 1 -ifp 0 -sm tools/ZAPD/SymbolMap_OoTMqDbg.txt
 
@@ -830,7 +824,8 @@ std::string ZTexture::GetSourceTypeName()
 
 void ZTexture::CalcHash()
 {
-	hash = CRC32B(rawData.data(), GetRawDataSize());
+	//auto parentRawData = parent->GetRawData();
+	hash = CRC32B(rawData.data() + rawDataIndex, GetRawDataSize());
 }
 
 std::string ZTexture::GetExternalExtension()

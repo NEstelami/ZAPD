@@ -28,7 +28,8 @@ protected:
 	TextureType type;
 	uint32_t width, height;
 
-	std::vector<std::vector<RGBAPixel>> textureData;
+	std::vector<std::vector<RGBAPixel>> textureData; // Reading from object to PNG.
+	std::vector<uint8_t> textureDataRaw; // When reading from a PNG file.
 
 	void PrepareBitmap();
 	void PrepareBitmapRGBA16();

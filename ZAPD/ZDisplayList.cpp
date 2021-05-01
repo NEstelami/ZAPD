@@ -2199,13 +2199,16 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 	{
 		if (segmentNumber != SEGMENT_SCENE)
 		{
-			ZTexture* tex =
-				ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
-			                         StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
-			                         texWidth, texHeight, parent);
-			tex->isPalette = texIsPalette;
-			textures[texAddr] = tex;
-			return true;
+			if (texAddr < parent->GetRawData().size())
+			{
+				ZTexture* tex =
+					ZTexture::FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
+										StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
+										texWidth, texHeight, parent);
+				tex->isPalette = texIsPalette;
+				textures[texAddr] = tex;
+				return true;
+			}
 		}
 		else
 		{
