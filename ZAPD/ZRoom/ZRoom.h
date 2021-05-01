@@ -38,7 +38,7 @@ public:
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 	size_t GetRawDataSize() override;
 	virtual ZResourceType GetResourceType() override;
-	virtual void Save(const std::string& outFolder) override;
+	virtual void Save(const fs::path& outFolder) override;
 	virtual void PreGenSourceFiles() override;
 };
 

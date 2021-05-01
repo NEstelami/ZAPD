@@ -36,7 +36,7 @@ void ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint
 	ParseRawData();
 }
 
-void ZTexture::FromPNG(string pngFilePath, TextureType texType)
+void ZTexture::FromPNG(const fs::path& pngFilePath, TextureType texType)
 {
 	type = texType;
 	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
@@ -295,7 +295,7 @@ void ZTexture::PrepareBitmapPalette8()
 	}
 }
 
-void ZTexture::PrepareRawData(string pngFilePath)
+void ZTexture::PrepareRawData(const fs::path& pngFilePath)
 {
 	switch (type)
 	{
@@ -331,9 +331,9 @@ void ZTexture::PrepareRawData(string pngFilePath)
 	}
 }
 
-void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
+void ZTexture::PrepareRawDataRGBA16(const fs::path& rgbaPath)
 {
-	textureData.ReadPng(rgbaPath.c_str());
+	textureData.ReadPng(rgbaPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -361,9 +361,9 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
+void ZTexture::PrepareRawDataRGBA32(const fs::path& rgbaPath)
 {
-	textureData.ReadPng(rgbaPath.c_str());
+	textureData.ReadPng(rgbaPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -385,9 +385,9 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscale4(string grayPath)
+void ZTexture::PrepareRawDataGrayscale4(const fs::path& grayPath)
 {
-	textureData.ReadPng(grayPath.c_str());
+	textureData.ReadPng(grayPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -407,9 +407,9 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscale8(string grayPath)
+void ZTexture::PrepareRawDataGrayscale8(const fs::path& grayPath)
 {
-	textureData.ReadPng(grayPath.c_str());
+	textureData.ReadPng(grayPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -427,9 +427,9 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
+void ZTexture::PrepareRawDataGrayscaleAlpha4(const fs::path& grayAlphaPath)
 {
-	textureData.ReadPng(grayAlphaPath.c_str());
+	textureData.ReadPng(grayAlphaPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -460,9 +460,9 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
+void ZTexture::PrepareRawDataGrayscaleAlpha8(const fs::path& grayAlphaPath)
 {
-	textureData.ReadPng(grayAlphaPath.c_str());
+	textureData.ReadPng(grayAlphaPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -484,9 +484,9 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
+void ZTexture::PrepareRawDataGrayscaleAlpha16(const fs::path& grayAlphaPath)
 {
-	textureData.ReadPng(grayAlphaPath.c_str());
+	textureData.ReadPng(grayAlphaPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -509,9 +509,9 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataPalette4(string palPath)
+void ZTexture::PrepareRawDataPalette4(const fs::path& palPath)
 {
-	textureData.ReadPng(palPath.c_str());
+	textureData.ReadPng(palPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -532,9 +532,9 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 	}
 }
 
-void ZTexture::PrepareRawDataPalette8(string palPath)
+void ZTexture::PrepareRawDataPalette8(const fs::path& palPath)
 {
-	textureData.ReadPng(palPath.c_str());
+	textureData.ReadPng(palPath);
 
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
@@ -646,7 +646,7 @@ TextureType ZTexture::GetTextureType()
 	return type;
 }
 
-void ZTexture::Save(const std::string& outFolder)
+void ZTexture::Save(const fs::path& outFolder)
 {
 	// Optionally generate text file containing CRC information. This is going to be a one time
 	// process for generating the Texture Pool XML.
@@ -656,17 +656,18 @@ void ZTexture::Save(const std::string& outFolder)
 		{
 			CalcHash();
 		}
-		File::WriteAllText(StringHelper::Sprintf("%s/%s.txt", Globals::Instance->outputPath.c_str(),
-		                                         outName.c_str()),
+		File::WriteAllText(Globals::Instance->outputPath / (outName + ".txt"),
 		                   StringHelper::Sprintf("%08lX", hash));
 	}
 
-	std::string outPath = GetPoolOutPath(outFolder);
+	auto outPath = GetPoolOutPath(outFolder);
 
 	if (!Directory::Exists(outPath))
 		Directory::CreateDirectory(outPath);
 
-	textureData.WritePng((outPath + "/" + outName + "." + GetExternalExtension() + ".png").c_str());
+	auto outFileName = outPath / (outName + "." + GetExternalExtension() + ".png");
+
+	textureData.WritePng(outFileName);
 }
 
 std::string ZTexture::GetBodySourceCode() const
@@ -741,7 +742,7 @@ std::string ZTexture::GetExternalExtension()
 	}
 }
 
-std::string ZTexture::GetPoolOutPath(std::string defaultValue)
+fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 {
 	if (Globals::Instance->cfg.texturePool.find(hash) != Globals::Instance->cfg.texturePool.end())
 		return Path::GetDirectoryName(Globals::Instance->cfg.texturePool[hash].path);

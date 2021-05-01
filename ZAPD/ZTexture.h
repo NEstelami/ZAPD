@@ -40,16 +40,16 @@ protected:
 	void PrepareBitmapPalette4();
 	void PrepareBitmapPalette8();
 
-	void PrepareRawData(std::string inFolder);
-	void PrepareRawDataRGBA16(std::string rgbaPath);
-	void PrepareRawDataRGBA32(std::string rgbaPath);
-	void PrepareRawDataGrayscale4(std::string grayPath);
-	void PrepareRawDataGrayscale8(std::string grayPath);
-	void PrepareRawDataGrayscaleAlpha4(std::string grayAlphaPath);
-	void PrepareRawDataGrayscaleAlpha8(std::string grayAlphaPath);
-	void PrepareRawDataGrayscaleAlpha16(std::string grayAlphaPath);
-	void PrepareRawDataPalette4(std::string palPath);
-	void PrepareRawDataPalette8(std::string palPath);
+	void PrepareRawData(const fs::path& inFolder);
+	void PrepareRawDataRGBA16(const fs::path& rgbaPath);
+	void PrepareRawDataRGBA32(const fs::path& rgbaPath);
+	void PrepareRawDataGrayscale4(const fs::path& grayPath);
+	void PrepareRawDataGrayscale8(const fs::path& grayPath);
+	void PrepareRawDataGrayscaleAlpha4(const fs::path& grayAlphaPath);
+	void PrepareRawDataGrayscaleAlpha8(const fs::path& grayAlphaPath);
+	void PrepareRawDataGrayscaleAlpha16(const fs::path& grayAlphaPath);
+	void PrepareRawDataPalette4(const fs::path& palPath);
+	void PrepareRawDataPalette8(const fs::path& palPath);
 	float GetPixelMultiplyer();
 
 public:
@@ -59,7 +59,7 @@ public:
 
 	void FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t rawDataIndex,
 	                std::string nName, int32_t nWidth, int32_t nHeight);
-	void FromPNG(std::string pngFilePath, TextureType texType);
+	void FromPNG(const fs::path& pngFilePath, TextureType texType);
 	void FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);
 
@@ -67,7 +67,7 @@ public:
 	void ParseRawData() override;
 	std::string GetBodySourceCode() const;
 	void CalcHash() override;
-	void Save(const std::string& outFolder) override;
+	void Save(const fs::path& outFolder) override;
 
 	bool IsExternalResource() override;
 	std::string GetSourceTypeName() override;
@@ -81,5 +81,5 @@ public:
 	uint32_t GetHeight();
 	void SetDimensions(uint32_t nWidth, uint32_t nHeight);
 	TextureType GetTextureType();
-	std::string GetPoolOutPath(std::string defaultValue);
+	fs::path GetPoolOutPath(const fs::path& defaultValue);
 };

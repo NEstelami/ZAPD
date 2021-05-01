@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "Directory.h"
+
 class RGBAPixel
 {
 public:
@@ -24,7 +26,9 @@ public:
 	~ImageBackend();
 
 	void ReadPng(const char* filename);
+	void ReadPng(const fs::path& filename);
 	void WritePng(const char* filename);
+	void WritePng(const fs::path& filename);
 
 	void SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth,
 	                    uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth);

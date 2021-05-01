@@ -564,7 +564,7 @@ ZResourceType ZRoom::GetResourceType()
 	return ZResourceType::Room;
 }
 
-void ZRoom::Save(const std::string& outFolder)
+void ZRoom::Save(const fs::path& outFolder)
 {
 	for (ZRoomCommand* cmd : commands)
 		cmd->Save();

@@ -391,7 +391,6 @@ public:
 	std::string ProcessLegacy(const std::string& prefix);
 	std::string ProcessGfxDis(const std::string& prefix);
 
-	void Save(const std::string& outFolder) override;
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 	bool IsExternalResource() override;
 	virtual std::string GetExternalExtension() override;

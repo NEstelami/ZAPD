@@ -86,9 +86,9 @@ string ZBlob::GetSourceOutputHeader(const std::string& prefix)
 	return StringHelper::Sprintf("extern u8 %s[];\n", name.c_str());
 }
 
-void ZBlob::Save(const std::string& outFolder)
+void ZBlob::Save(const fs::path& outFolder)
 {
-	File::WriteAllBytes(outFolder + "/" + name + ".bin", rawData);
+	File::WriteAllBytes(outFolder / (name + ".bin"), rawData);
 }
 
 bool ZBlob::IsExternalResource()

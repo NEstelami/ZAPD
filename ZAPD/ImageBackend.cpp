@@ -85,6 +85,11 @@ void ImageBackend::ReadPng(const char* filename)
 	hasImageData = true;
 }
 
+void ImageBackend::ReadPng(const fs::path& filename)
+{
+	ReadPng(filename.c_str());
+}
+
 void ImageBackend::WritePng(const char* filename)
 {
 	assert(hasImageData);
@@ -123,6 +128,11 @@ void ImageBackend::WritePng(const char* filename)
 	fclose(fp);
 
 	png_destroy_write_struct(&png, &info);
+}
+
+void ImageBackend::WritePng(const fs::path& filename)
+{
+	WritePng(filename.c_str());
 }
 
 void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData,

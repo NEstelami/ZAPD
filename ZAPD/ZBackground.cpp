@@ -155,10 +155,9 @@ std::string ZBackground::GetExternalExtension()
 	return "jpg";
 }
 
-void ZBackground::Save(const std::string& outFolder)
+void ZBackground::Save(const fs::path& outFolder)
 {
-	fs::path folder(outFolder);
-	fs::path filepath = folder / (outName + "." + GetExternalExtension());
+	fs::path filepath = outFolder / (outName + "." + GetExternalExtension());
 	File::WriteAllBytes(filepath.string(), data);
 }
 

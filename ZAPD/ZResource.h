@@ -7,6 +7,8 @@
 #include <vector>
 #include "tinyxml2.h"
 
+#include "Directory.h"
+
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3
 #define SEGMENT_KEEP 4
@@ -70,7 +72,7 @@ public:
 	virtual void PreGenSourceFiles();
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	virtual void CalcHash();
-	virtual void Save(const std::string& outFolder);
+	virtual void Save(const fs::path& outFolder);
 
 	// Properties
 	virtual bool IsExternalResource();

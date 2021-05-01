@@ -2276,10 +2276,6 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	return TextureType::RGBA16bpp;
 }
 
-void ZDisplayList::Save(const std::string& outFolder)
-{
-}
-
 void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;

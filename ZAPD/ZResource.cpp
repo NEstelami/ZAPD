@@ -81,7 +81,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-void ZResource::Save(const std::string& outFolder)
+void ZResource::Save(const fs::path& outFolder)
 {
 }
 
