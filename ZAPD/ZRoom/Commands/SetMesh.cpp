@@ -257,7 +257,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}
 
-	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
+	for (const auto& texEntry : dList->textures)
 	{
 		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
 	}
@@ -276,7 +276,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
-	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
+	for (const auto& texEntry : dList->textures)
 		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n",
 		                                      zRoom->GetName().c_str(), texEntry.first);
 

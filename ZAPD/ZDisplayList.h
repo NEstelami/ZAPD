@@ -350,14 +350,11 @@ public:
 
 	DListType dListType;
 
-	// int32_t dListAddress;
-
 	std::map<uint32_t, std::vector<Vertex>> vertices;
 	std::map<uint32_t, std::string> vtxDeclarations;
 	std::vector<ZDisplayList*> otherDLists;
 
 	std::map<uint32_t, ZTexture*> textures;
-	std::map<uint32_t, std::string> texDeclarations;
 
 	std::vector<uint32_t> references;
 
@@ -372,8 +369,6 @@ public:
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
-	// static ZDisplayList* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder, bool
-	// readFile, ZFile* nParent);
 
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(std::vector<uint8_t> fileData,

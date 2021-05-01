@@ -38,7 +38,6 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 	vtxDeclarations = map<uint32_t, string>();
 	otherDLists = vector<ZDisplayList*>();
 	textures = map<uint32_t, ZTexture*>();
-	texDeclarations = map<uint32_t, std::string>();
 }
 
 ZDisplayList::~ZDisplayList()
@@ -1948,7 +1947,6 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		// Generate Texture Declarations
 		for (pair<int32_t, ZTexture*> item : textures)
 		{
-			texDeclarations[item.first] = "";
 
 			if (parent != nullptr)
 			{
