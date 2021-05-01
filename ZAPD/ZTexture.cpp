@@ -120,7 +120,7 @@ void ZTexture::ParseRawData()
 
 void ZTexture::PrepareBitmapRGBA16()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -133,14 +133,14 @@ void ZTexture::PrepareBitmapRGBA16()
 			uint8_t b = (data & 0x003E) >> 1;
 			uint8_t alpha = data & 0x01;
 
-			textureData[y][x].SetRGBA(r * 8, g * 8, b * 8, alpha * 255);
+			textureData.SetRGBPixel(y, x, r * 8, g * 8, b * 8, alpha * 255);
 		}
 	}
 }
 
 void ZTexture::PrepareBitmapRGBA32()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -152,14 +152,14 @@ void ZTexture::PrepareBitmapRGBA32()
 			uint8_t b = rawData.at(pos + 2);
 			uint8_t alpha = rawData.at(pos + 3);
 
-			textureData[y][x].SetRGBA(r, g, b, alpha);
+			textureData.SetRGBPixel(y, x, r, g, b, alpha);
 		}
 	}
 }
 
 void ZTexture::PrepareBitmapGrayscale4()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -175,7 +175,7 @@ void ZTexture::PrepareBitmapGrayscale4()
 				else
 					grayscale = (rawData.at(pos) & 0x0F) << 4;
 
-				textureData[y][x + i].SetGrayscale(grayscale);
+				textureData.SetGrayscalePixel(y, x + i, grayscale);
 			}
 		}
 	}
@@ -183,7 +183,7 @@ void ZTexture::PrepareBitmapGrayscale4()
 
 void ZTexture::PrepareBitmapGrayscale8()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -191,14 +191,14 @@ void ZTexture::PrepareBitmapGrayscale8()
 		{
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 
-			textureData[y][x].SetGrayscale(rawData.at(pos));
+			textureData.SetGrayscalePixel(y, x, rawData.at(pos));
 		}
 	}
 }
 
 void ZTexture::PrepareBitmapGrayscaleAlpha4()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -217,7 +217,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 				uint8_t grayscale = ((data & 0x0E) >> 1) * 32;
 				uint8_t alpha = (data & 0x01) * 255;
 
-				textureData[y][x + i].SetGrayscale(grayscale, alpha);
+				textureData.SetGrayscalePixel(y, x + i, grayscale, alpha);
 			}
 		}
 	}
@@ -225,7 +225,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha8()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -235,14 +235,14 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 			uint8_t grayscale = rawData.at(pos) & 0xF0;
 			uint8_t alpha = (rawData.at(pos) & 0x0F) << 4;
 
-			textureData[y][x].SetGrayscale(grayscale, alpha);
+			textureData.SetGrayscalePixel(y, x, grayscale, alpha);
 		}
 	}
 }
 
 void ZTexture::PrepareBitmapGrayscaleAlpha16()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -252,14 +252,14 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 			uint8_t grayscale = rawData.at(pos + 0);
 			uint8_t alpha = rawData.at(pos + 1);
 
-			textureData[y][x].SetGrayscale(grayscale, alpha);
+			textureData.SetGrayscalePixel(y, x, grayscale, alpha);
 		}
 	}
 }
 
 void ZTexture::PrepareBitmapPalette4()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -275,7 +275,7 @@ void ZTexture::PrepareBitmapPalette4()
 				else
 					paletteIndex = (rawData.at(pos) & 0x0F);
 
-				textureData[y][x + i].SetGrayscale(paletteIndex * 16);
+				textureData.SetGrayscalePixel(y, x, paletteIndex * 16);
 			}
 		}
 	}
@@ -283,7 +283,7 @@ void ZTexture::PrepareBitmapPalette4()
 
 void ZTexture::PrepareBitmapPalette8()
 {
-	textureData.assign(height, std::vector<RGBAPixel>(width));
+	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
 	//auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -291,15 +291,13 @@ void ZTexture::PrepareBitmapPalette8()
 		{
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 
-			textureData[y][x].SetGrayscale(rawData.at(pos));
+			textureData.SetGrayscalePixel(y, x, rawData.at(pos));
 		}
 	}
 }
 
 void ZTexture::PrepareRawData(string pngFilePath)
 {
-	//rawData = vector<uint8_t>(GetRawDataSize());
-
 	switch (type)
 	{
 	case TextureType::RGBA16bpp:
@@ -336,11 +334,10 @@ void ZTexture::PrepareRawData(string pngFilePath)
 
 void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 {
-	ImageBackend image;
-	image.ReadPng(rgbaPath.c_str());
+	textureData.ReadPng(rgbaPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -349,7 +346,7 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 		for (uint16_t x = 0; x < width; x++)
 		{
 			size_t pos = ((y * width) + x) * 2;
-			RGBAPixel pixel = image.GetPixel(y, x);
+			RGBAPixel pixel = textureData.GetPixel(y, x);
 
 			uint8_t r = pixel.r / 8;
 			uint8_t g = pixel.g / 8;
@@ -367,11 +364,10 @@ void ZTexture::PrepareRawDataRGBA16(string rgbaPath)
 
 void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 {
-	ImageBackend image;
-	image.ReadPng(rgbaPath.c_str());
+	textureData.ReadPng(rgbaPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -380,7 +376,7 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 		for (uint16_t x = 0; x < width; x++)
 		{
 			size_t pos = ((y * width) + x) * 4;
-			RGBAPixel pixel = image.GetPixel(y, x);
+			RGBAPixel pixel = textureData.GetPixel(y, x);
 
 			textureDataRaw[pos + 0] = pixel.r;
 			textureDataRaw[pos + 1] = pixel.g;
@@ -392,11 +388,10 @@ void ZTexture::PrepareRawDataRGBA32(string rgbaPath)
 
 void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 {
-	ImageBackend image;
-	image.ReadPng(grayPath.c_str());
+	textureData.ReadPng(grayPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -405,8 +400,8 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 		for (uint16_t x = 0; x < width; x += 2)
 		{
 			size_t pos = ((y * width) + x) / 2;
-			uint8_t r1 = image.GetPixel(y, x).r;
-			uint8_t r2 = image.GetPixel(y, x + 1).r;
+			uint8_t r1 = textureData.GetPixel(y, x).r;
+			uint8_t r2 = textureData.GetPixel(y, x + 1).r;
 
 			textureDataRaw[pos] = (uint8_t)(((r1 / 16) << 4) + (r2 / 16));
 		}
@@ -415,11 +410,10 @@ void ZTexture::PrepareRawDataGrayscale4(string grayPath)
 
 void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 {
-	ImageBackend image;
-	image.ReadPng(grayPath.c_str());
+	textureData.ReadPng(grayPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -428,7 +422,7 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 		for (uint16_t x = 0; x < width; x++)
 		{
 			size_t pos = (y * width) + x;
-			RGBAPixel pixel = image.GetPixel(y, x);
+			RGBAPixel pixel = textureData.GetPixel(y, x);
 			textureDataRaw[pos] = pixel.r;
 		}
 	}
@@ -436,11 +430,10 @@ void ZTexture::PrepareRawDataGrayscale8(string grayPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 {
-	ImageBackend image;
-	image.ReadPng(grayAlphaPath.c_str());
+	textureData.ReadPng(grayAlphaPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -453,7 +446,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 
 			for (uint16_t i = 0; i < 2; i++)
 			{
-				RGBAPixel pixel = image.GetPixel(y, x + i);
+				RGBAPixel pixel = textureData.GetPixel(y, x + i);
 				uint8_t cR = pixel.r;
 				uint8_t alphaBit = pixel.a != 0;
 
@@ -470,11 +463,10 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 {
-	ImageBackend image;
-	image.ReadPng(grayAlphaPath.c_str());
+	textureData.ReadPng(grayAlphaPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -483,7 +475,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 		for (uint16_t x = 0; x < width; x++)
 		{
 			size_t pos = ((y * width) + x) * 1;
-			RGBAPixel pixel = image.GetPixel(y, x);
+			RGBAPixel pixel = textureData.GetPixel(y, x);
 
 			uint8_t r = pixel.r;
 			uint8_t a = pixel.a;
@@ -495,11 +487,10 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 {
-	ImageBackend image;
-	image.ReadPng(grayAlphaPath.c_str());
+	textureData.ReadPng(grayAlphaPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -508,7 +499,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 		for (uint16_t x = 0; x < width; x++)
 		{
 			size_t pos = ((y * width) + x) * 2;
-			RGBAPixel pixel = image.GetPixel(y, x);
+			RGBAPixel pixel = textureData.GetPixel(y, x);
 
 			uint8_t cR = pixel.r;
 			uint8_t aR = pixel.a;
@@ -521,11 +512,10 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(string grayAlphaPath)
 
 void ZTexture::PrepareRawDataPalette4(string palPath)
 {
-	ImageBackend image;
-	image.ReadPng(palPath.c_str());
+	textureData.ReadPng(palPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -534,10 +524,9 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 		for (uint16_t x = 0; x < width; x += 2)
 		{
 			size_t pos = ((y * width) + x) / 2;
-			//RGBAPixel pixel = image.GetPixel(y, x);
 
-			uint8_t cR1 = image.GetPixel(y, x).r;
-			uint8_t cR2 = image.GetPixel(y, x + 1).r;
+			uint8_t cR1 = textureData.GetPixel(y, x).r;
+			uint8_t cR2 = textureData.GetPixel(y, x + 1).r;
 
 			textureDataRaw[pos] = ((cR1 / 16) << 4) + (cR2 / 16);
 		}
@@ -546,11 +535,10 @@ void ZTexture::PrepareRawDataPalette4(string palPath)
 
 void ZTexture::PrepareRawDataPalette8(string palPath)
 {
-	ImageBackend image;
-	image.ReadPng(palPath.c_str());
+	textureData.ReadPng(palPath.c_str());
 
-	width = image.GetWidth();
-	height = image.GetHeight();
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
 
 	textureDataRaw.clear();
 	textureDataRaw.resize(GetRawDataSize());
@@ -559,7 +547,7 @@ void ZTexture::PrepareRawDataPalette8(string palPath)
 		for (uint16_t x = 0; x < width; x++)
 		{
 			size_t pos = ((y * width) + x);
-			RGBAPixel pixel = image.GetPixel(y, x);
+			RGBAPixel pixel = textureData.GetPixel(y, x);
 
 			uint8_t cR = pixel.r;
 			textureDataRaw[pos] = cR;
@@ -680,75 +668,12 @@ void ZTexture::Save(const std::string& outFolder)
 	if (!Directory::Exists(outPath))
 		Directory::CreateDirectory(outPath);
 
-	uint8_t color_type = 0;
- 	uint8_t bit_depth = 0;
-
-	switch (type)
-	{
-	case TextureType::RGBA32bpp:
-		color_type = PNG_COLOR_TYPE_RGBA;
-		//bit_depth = 32;
-		bit_depth = 8;
-		break;
-	case TextureType::RGBA16bpp:
-		color_type = PNG_COLOR_TYPE_RGBA;
-		//bit_depth = 16;
-		bit_depth = 8;
-		break;
-	case TextureType::Grayscale8bpp:
-		//color_type = PNG_COLOR_TYPE_GRAY;
-		color_type = PNG_COLOR_TYPE_RGB;
-		bit_depth = 8;
-		break;
-	case TextureType::Grayscale4bpp:
-		//color_type = PNG_COLOR_TYPE_GRAY;
-		color_type = PNG_COLOR_TYPE_RGB;
-		//bit_depth = 4;
-		bit_depth = 8;
-		break;
-	case TextureType::GrayscaleAlpha16bpp:
-		//color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
-		color_type = PNG_COLOR_TYPE_RGBA;
-		//bit_depth = 16;
-		bit_depth = 8;
-		break;
-	case TextureType::GrayscaleAlpha8bpp:
-		//color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
-		color_type = PNG_COLOR_TYPE_RGBA;
-		bit_depth = 8;
-		break;
-	case TextureType::GrayscaleAlpha4bpp:
-		//color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
-		color_type = PNG_COLOR_TYPE_RGBA;
-		//bit_depth = 4;
-		bit_depth = 8;
-		break;
-	case TextureType::Palette4bpp:
-		//color_type = PNG_COLOR_TYPE_PALETTE;
-		//color_type = PNG_COLOR_TYPE_GRAY;
-		color_type = PNG_COLOR_TYPE_RGB;
-		//bit_depth = 4;
-		bit_depth = 8;
-		break;
-	case TextureType::Palette8bpp:
-		//color_type = PNG_COLOR_TYPE_PALETTE;
-		//color_type = PNG_COLOR_TYPE_GRAY;
-		color_type = PNG_COLOR_TYPE_RGB;
-		bit_depth = 8;
-		break;
-
-	default:
-		throw std::runtime_error("Invalid texture type.");
-	}
-
-	ImageBackend image;
-	image.SetTextureData(textureData, width, height, color_type, bit_depth);
-	image.WritePng((outPath + "/" + outName + "." + GetExternalExtension() + ".png").c_str());
+	textureData.WritePng((outPath + "/" + outName + "." + GetExternalExtension() + ".png").c_str());
 }
 
-string ZTexture::GetSourceOutputCode(const std::string& prefix)
+std::string ZTexture::GetBodySourceCode() const
 {
-	sourceOutput = "";
+	std::string sourceOutput = "";
 
 	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
 	{
@@ -757,9 +682,6 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 
 		sourceOutput +=
 			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(textureDataRaw, i));
-
-			//../ZAPD/ZAPD.out e -eh -i assets/xml/objects/object_gnd.xml -b baserom/ -o assets/objects/object_gnd -gsf 1 -ifp 0 -sm tools/ZAPD/SymbolMap_OoTMqDbg.txt
-
 
 		if (i % 32 == 24)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));

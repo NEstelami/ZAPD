@@ -337,7 +337,7 @@ void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const f
 	if (File::Exists(cfgPath))
 		name = File::ReadAllText(cfgPath);
 
-	string src = tex.GetSourceOutputCode(name);
+	string src = tex.GetBodySourceCode();
 
 	File::WriteAllText(outPath, src);
 }

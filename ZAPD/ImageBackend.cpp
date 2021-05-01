@@ -5,31 +5,33 @@
 #include <stdexcept>
 #include <png.h>
 
+#include "StringHelper.h"
 
 /* ImageBackend */
 
 ImageBackend::~ImageBackend()
 {
-    if (hasImageData)
-    {
-        for(size_t y = 0; y < height; y++)
-            free(pixelMatrix[y]);
-        free(pixelMatrix);
-    }
+	FreeImageData();
 }
 
-void ImageBackend::ReadPng(const char* filename) {
-    assert(!hasImageData);
+void ImageBackend::ReadPng(const char* filename)
+{
+	FreeImageData();
+
 	FILE *fp = fopen(filename, "rb");
+	if (fp == nullptr)
+		throw std::runtime_error(StringHelper::Sprintf("ImageBackend::ReadPng: Error.\n\t Couldn't open file '%s'.", filename));
 
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    // TODO: Change to exceptions
-	if(!png) abort();
+	if(!png)
+		throw std::runtime_error("ImageBackend::ReadPng: Error.\n\t Couldn't create png struct.");
 
 	png_infop info = png_create_info_struct(png);
-	if(!info) abort();
+	if(!info)
+		throw std::runtime_error("ImageBackend::ReadPng: Error.\n\t Couldn't create png info.");
 
-	if(setjmp(png_jmpbuf(png))) abort();
+	if(setjmp(png_jmpbuf(png)))
+		throw std::runtime_error("ImageBackend::ReadPng: Error.\n\t setjmp(png_jmpbuf(png)).");
 
 	png_init_io(png, fp);
 
@@ -87,15 +89,19 @@ void ImageBackend::WritePng(const char *filename) {
     assert(hasImageData);
 
 	FILE *fp = fopen(filename, "wb");
-	if(!fp) abort();
+	if(!fp)
+		throw std::runtime_error(StringHelper::Sprintf("ImageBackend::WritePng: Error.\n\t Couldn't open file '%s' in write mode.", filename));
 
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!png) abort();
+	if (!png)
+		throw std::runtime_error("ImageBackend::WritePng: Error.\n\t Couldn't create png struct.");
 
 	png_infop info = png_create_info_struct(png);
-	if (!info) abort();
+	if (!info)
+		throw std::runtime_error("ImageBackend::WritePng: Error.\n\t Couldn't create png info.");
 
-	if (setjmp(png_jmpbuf(png))) abort();
+	if (setjmp(png_jmpbuf(png)))
+		throw std::runtime_error("ImageBackend::WritePng: Error.\n\t setjmp(png_jmpbuf(png)).");
 
 	png_init_io(png, fp);
 
@@ -115,8 +121,6 @@ void ImageBackend::WritePng(const char *filename) {
 	// Use png_set_filler().
 	//png_set_filler(png, 0, PNG_FILLER_AFTER);
 
-	//if (!row_pointers) abort();
-
 	png_write_image(png, pixelMatrix);
 	png_write_end(png, NULL);
 
@@ -127,12 +131,10 @@ void ImageBackend::WritePng(const char *filename) {
 
 void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth, uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth)
 {
-    assert(!hasImageData);
+	FreeImageData();
 
     width = nWidth;
     height = nHeight;
-    //colorType = PNG_COLOR_TYPE_RGBA;
-    //bitDepth = 8;
 	colorType = nColorType;
 	bitDepth = nBitDepth;
 
@@ -152,6 +154,65 @@ void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& tex
         }
 	}
     hasImageData = true;
+}
+
+void ImageBackend::InitEmptyImage(uint32_t nWidth, uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth)
+{
+	FreeImageData();
+
+    width = nWidth;
+    height = nHeight;
+	colorType = nColorType;
+	bitDepth = nBitDepth;
+
+	size_t bytePerPixel = GetBytesPerPixel();
+
+	pixelMatrix = (uint8_t**)malloc(sizeof(uint8_t*) * height);
+	for(size_t y = 0; y < height; y++) {
+		pixelMatrix[y] = (uint8_t*)calloc(width * bytePerPixel, sizeof(uint8_t*));
+	}
+    hasImageData = true;
+}
+
+RGBAPixel ImageBackend::GetPixel(size_t y, size_t x) const
+{
+    assert(y < height);
+    assert(x < width);
+
+    RGBAPixel pixel;
+	size_t bytePerPixel = GetBytesPerPixel();
+    pixel.r = pixelMatrix[y][x*bytePerPixel + 0];
+    pixel.g = pixelMatrix[y][x*bytePerPixel + 1];
+    pixel.b = pixelMatrix[y][x*bytePerPixel + 2];
+	if (colorType == PNG_COLOR_TYPE_RGBA)
+    	pixel.a = pixelMatrix[y][x*bytePerPixel + 3];
+    return pixel;
+}
+
+void ImageBackend::SetRGBPixel(size_t y, size_t x, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA)
+{
+    assert(y < height);
+    assert(x < width);
+
+	size_t bytePerPixel = GetBytesPerPixel();
+    pixelMatrix[y][x*bytePerPixel + 0] = nR;
+    pixelMatrix[y][x*bytePerPixel + 1] = nG;
+    pixelMatrix[y][x*bytePerPixel + 2] = nB;
+	if (colorType == PNG_COLOR_TYPE_RGBA)
+    	pixelMatrix[y][x*bytePerPixel + 3] = nA;
+}
+
+void ImageBackend::SetGrayscalePixel(size_t y, size_t x, uint8_t grayscale, uint8_t alpha)
+{
+    assert(y < height);
+    assert(x < width);
+
+	size_t bytePerPixel = GetBytesPerPixel();
+    pixelMatrix[y][x*bytePerPixel + 0] = grayscale;
+    pixelMatrix[y][x*bytePerPixel + 1] = grayscale;
+    pixelMatrix[y][x*bytePerPixel + 2] = grayscale;
+	if (colorType == PNG_COLOR_TYPE_RGBA)
+    	pixelMatrix[y][x*bytePerPixel + 3] = alpha;
 }
 
 uint32_t ImageBackend::GetWidth() const
@@ -174,20 +235,6 @@ uint8_t ImageBackend::GetBitDepth() const
     return bitDepth;
 }
 
-RGBAPixel ImageBackend::GetPixel(size_t y, size_t x) const
-{
-    assert(y < height);
-    assert(x < width);
-    RGBAPixel pixel;
-	size_t bytePerPixel = GetBytesPerPixel();
-    pixel.r = pixelMatrix[y][x*bytePerPixel + 0];
-    pixel.g = pixelMatrix[y][x*bytePerPixel + 1];
-    pixel.b = pixelMatrix[y][x*bytePerPixel + 2];
-	if (colorType == PNG_COLOR_TYPE_RGBA)
-    	pixel.a = pixelMatrix[y][x*bytePerPixel + 3];
-    return pixel;
-}
-
 double ImageBackend::GetBytesPerPixel() const
 {
 	switch (colorType)
@@ -203,6 +250,15 @@ double ImageBackend::GetBytesPerPixel() const
 	}
 }
 
+void ImageBackend::FreeImageData()
+{
+    if (hasImageData)
+    {
+        for(size_t y = 0; y < height; y++)
+            free(pixelMatrix[y]);
+        free(pixelMatrix);
+    }
+}
 
 /* RGBAPixel */
 

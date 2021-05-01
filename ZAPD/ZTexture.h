@@ -28,7 +28,7 @@ protected:
 	TextureType type = TextureType::Error;
 	uint32_t width, height;
 
-	std::vector<std::vector<RGBAPixel>> textureData; // Reading from object to PNG.
+	ImageBackend textureData;
 	std::vector<uint8_t> textureDataRaw; // When reading from a PNG file.
 
 	void PrepareBitmapRGBA16();
@@ -67,7 +67,7 @@ public:
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetBodySourceCode() const;
 	void CalcHash() override;
 	void Save(const std::string& outFolder) override;
 
