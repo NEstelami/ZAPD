@@ -877,7 +877,7 @@ void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	// (HLTextureType)ZTexture::GetTextureTypeFromString(format));
 	tex = new ZTexture(nullptr);
 	tex->ZTexture::FromPNG(Path::GetDirectoryName(Globals::Instance->inputPath) + "/" + fileName,
-	                        ZTexture::GetTextureTypeFromString(format));
+	                       ZTexture::GetTextureTypeFromString(format));
 }
 
 std::string HLTextureIntermediette::OutputCode()

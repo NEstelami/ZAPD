@@ -586,10 +586,10 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 					// TEXTURE POOL CHECK
 					if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
-						Globals::Instance->cfg.texturePool.end())
+					    Globals::Instance->cfg.texturePool.end())
 					{
 						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-								res->GetExternalExtension() + ".inc";
+								 res->GetExternalExtension() + ".inc";
 					}
 				}
 

@@ -7,7 +7,6 @@
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-
 enum class TextureType
 {
 	RGBA32bpp,
@@ -29,7 +28,7 @@ protected:
 	uint32_t width, height;
 
 	ImageBackend textureData;
-	std::vector<uint8_t> textureDataRaw; // When reading from a PNG file.
+	std::vector<uint8_t> textureDataRaw;  // When reading from a PNG file.
 
 	void PrepareBitmapRGBA16();
 	void PrepareBitmapRGBA32();
@@ -58,9 +57,8 @@ public:
 
 	bool isPalette = false;
 
-	void FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
-	                            uint32_t rawDataIndex, std::string nName, int32_t nWidth,
-	                            int32_t nHeight);
+	void FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t rawDataIndex,
+	                std::string nName, int32_t nWidth, int32_t nHeight);
 	void FromPNG(std::string pngFilePath, TextureType texType);
 	void FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);

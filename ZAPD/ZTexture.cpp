@@ -21,9 +21,8 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	height = 0;
 }
 
-void ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
-                               uint32_t nRawDataIndex, std::string nName, int32_t nWidth,
-                               int32_t nHeight)
+void ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,
+                          std::string nName, int32_t nWidth, int32_t nHeight)
 {
 	width = nWidth;
 	height = nHeight;
@@ -121,7 +120,7 @@ void ZTexture::ParseRawData()
 void ZTexture::PrepareBitmapRGBA16()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -141,7 +140,7 @@ void ZTexture::PrepareBitmapRGBA16()
 void ZTexture::PrepareBitmapRGBA32()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -160,7 +159,7 @@ void ZTexture::PrepareBitmapRGBA32()
 void ZTexture::PrepareBitmapGrayscale4()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x += 2)
@@ -184,7 +183,7 @@ void ZTexture::PrepareBitmapGrayscale4()
 void ZTexture::PrepareBitmapGrayscale8()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -199,7 +198,7 @@ void ZTexture::PrepareBitmapGrayscale8()
 void ZTexture::PrepareBitmapGrayscaleAlpha4()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x += 2)
@@ -226,7 +225,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 void ZTexture::PrepareBitmapGrayscaleAlpha8()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -243,7 +242,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 void ZTexture::PrepareBitmapGrayscaleAlpha16()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -260,7 +259,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 void ZTexture::PrepareBitmapPalette4()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x += 2)
@@ -284,7 +283,7 @@ void ZTexture::PrepareBitmapPalette4()
 void ZTexture::PrepareBitmapPalette8()
 {
 	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -657,10 +656,9 @@ void ZTexture::Save(const std::string& outFolder)
 		{
 			CalcHash();
 		}
-		File::WriteAllText(StringHelper::Sprintf("%s/%s.txt",
-													Globals::Instance->outputPath.c_str(),
-													outName.c_str()),
-							StringHelper::Sprintf("%08lX", hash));
+		File::WriteAllText(StringHelper::Sprintf("%s/%s.txt", Globals::Instance->outputPath.c_str(),
+		                                         outName.c_str()),
+		                   StringHelper::Sprintf("%08lX", hash));
 	}
 
 	std::string outPath = GetPoolOutPath(outFolder);
@@ -712,7 +710,7 @@ std::string ZTexture::GetSourceTypeName()
 
 void ZTexture::CalcHash()
 {
-	//auto parentRawData = parent->GetRawData();
+	// auto parentRawData = parent->GetRawData();
 	hash = CRC32B(rawData.data() + rawDataIndex, GetRawDataSize());
 }
 

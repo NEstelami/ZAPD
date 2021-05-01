@@ -42,7 +42,7 @@ public:
 
 	bool genSourceFile;  // Used for extraction
 	bool useExternalResources;
-	bool testMode;           // Enables certain experimental features
+	bool testMode;  // Enables certain experimental features
 	bool outputCrc = false;
 	bool profile;            // Measure performance of certain operations
 	bool includeFilePrefix;  // Include the file prefix in symbols

@@ -1926,7 +1926,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					// If we're working with a palette, resize it to its "real" dimensions
 					if (texturesSorted[i].second->isPalette)
 					{
-						texturesSorted[i].second->SetDimensions((texturesSorted[i + 1].first - texturesSorted[i].first) / 2, 1);
+						texturesSorted[i].second->SetDimensions(
+							(texturesSorted[i + 1].first - texturesSorted[i].first) / 2, 1);
 					}
 					else
 					{
@@ -2194,8 +2195,8 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 			{
 				ZTexture* tex = new ZTexture(parent);
 				tex->FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
-										StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
-										texWidth, texHeight);
+				                StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
+				                texWidth, texHeight);
 				tex->isPalette = texIsPalette;
 				textures[texAddr] = tex;
 				return true;
@@ -2204,11 +2205,11 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		else
 		{
 			ZTexture* tex = new ZTexture(parent);
-			tex->FromBinary(
-				TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
-				StringHelper::Sprintf("%sTex_%06X", Globals::Instance->lastScene->GetName().c_str(),
-			                          texAddr),
-				texWidth, texHeight);
+			tex->FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
+			                StringHelper::Sprintf("%sTex_%06X",
+			                                      Globals::Instance->lastScene->GetName().c_str(),
+			                                      texAddr),
+			                texWidth, texHeight);
 
 			if (scene != nullptr)
 			{
