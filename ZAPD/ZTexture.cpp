@@ -274,7 +274,7 @@ void ZTexture::PrepareBitmapPalette4()
 				else
 					paletteIndex = (rawData.at(pos) & 0x0F);
 
-				textureData.SetGrayscalePixel(y, x, paletteIndex * 16);
+				textureData.SetGrayscalePixel(y, x + i, paletteIndex * 16);
 			}
 		}
 	}
