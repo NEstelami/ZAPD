@@ -28,22 +28,22 @@ struct CommandSet;
 enum class ZResourceType
 {
 	Error,
-	Texture,
-	DisplayList,
-	Room,
 	Animation,
-	Cutscene,
+	Background,
 	Blob,
-	Limb,
-	Skeleton,
-	Scalar,
-	Vector,
-	Vertex,
 	CollisionHeader,
+	Cutscene,
+	DisplayList,
+	Limb,
+	Mtx,
+	Room,
+	Scalar,
+	Skeleton,
 	String,
 	Symbol,
-	Mtx,
-	Background,
+	Texture,
+	Vector,
+	Vertex,
 };
 
 class ZResource
