@@ -29,7 +29,7 @@ void ExporterExample_Collision::Save(ZResource* res, std::string outPath, Binary
 	writer->Write(col->camDataSegmentOffset);
 	writer->Write(col->waterBoxSegmentOffset);
 
-	uint32_t oldOffset = writer->GetStream().get()->BaseAddress;
+	uint32_t oldOffset = writer->GetBaseAddress();
 
 	writer->Seek(col->vtxSegmentOffset, SeekOffsetType::Start);
 

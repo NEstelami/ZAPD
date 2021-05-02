@@ -20,6 +20,17 @@ std::shared_ptr<Stream> BinaryWriter::GetStream()
 	return stream;
 }
 
+uint64_t BinaryWriter::GetBaseAddress()
+{
+	return stream->GetBaseAddress();
+}
+
+
+uint64_t BinaryWriter::GetLength()
+{
+	return stream->GetLength();
+}
+
 void BinaryWriter::Seek(int32_t offset, SeekOffsetType seekType)
 {
 	stream->Seek(offset, seekType);

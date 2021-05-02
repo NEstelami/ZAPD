@@ -13,9 +13,8 @@ enum class SeekOffsetType
 class Stream
 {
 public:
-	int64_t BaseAddress;
-	
 	virtual uint64_t GetLength() = 0;
+	uint64_t GetBaseAddress() { return baseAddress; }
 
 	//Stream();
 
@@ -29,4 +28,7 @@ public:
 
 	virtual void Flush() = 0;
 	virtual void Close() = 0;
+
+protected:
+	int64_t baseAddress;
 };

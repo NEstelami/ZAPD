@@ -155,7 +155,7 @@ void ExporterExample_Room::Save(ZResource* res, std::string outPath, BinaryWrite
 
 			writer->Write(baseStreamEnd); // 0x04
 
-			uint32_t oldOffset = writer->GetStream().get()->BaseAddress;
+			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(baseStreamEnd, SeekOffsetType::Start);
 
 			// TODO: NOT DONE
@@ -197,7 +197,7 @@ void ExporterExample_Room::Save(ZResource* res, std::string outPath, BinaryWrite
 			writer->Write((uint8_t)0); // 0x03
 			writer->Write(cmdLight->segmentOffset); // 0x04
 
-			uint32_t oldOffset = writer->GetStream().get()->BaseAddress;
+			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(cmdLight->segmentOffset, SeekOffsetType::Start);
 
 			for (LightingSettings* setting : cmdLight->settings)
@@ -241,16 +241,16 @@ void ExporterExample_Room::Save(ZResource* res, std::string outPath, BinaryWrite
 			writer->Write((uint8_t)0); // 0x02
 			writer->Write((uint8_t)0); // 0x03
 
-			int baseStreamEnd = writer->GetStream().get()->GetLength();
+			int baseStreamEnd = writer->GetLength();
 			writer->Write(baseStreamEnd); // 0x04
 
-			uint32_t oldOffset = writer->GetStream().get()->BaseAddress;
+			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(baseStreamEnd, SeekOffsetType::Start);
 
 			for (RoomEntry* entry : cmdRoom->rooms)
 			{
-				std::string baseName = StringHelper::Split(res->GetName(), "_scene")[0];
-				writer->Write(StringHelper::Sprintf("%s_room0", baseName.c_str()));
+				writer->Write(entry->virtualAddressStart);
+				writer->Write(entry->virtualAddressEnd);
 			}
 
 			writer->Seek(oldOffset, SeekOffsetType::Start);
@@ -269,7 +269,7 @@ void ExporterExample_Room::Save(ZResource* res, std::string outPath, BinaryWrite
 
 			// TODO: NOT DONE
 
-			uint32_t oldOffset = writer->GetStream().get()->BaseAddress;
+			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(streamEnd, SeekOffsetType::Start);
 
 			ExporterExample_Collision colExp = ExporterExample_Collision();
@@ -290,7 +290,7 @@ void ExporterExample_Room::Save(ZResource* res, std::string outPath, BinaryWrite
 			writer->Write((uint8_t)0); // 0x03
 			writer->Write(baseStreamEnd); // 0x04
 
-			uint32_t oldOffset = writer->GetStream().get()->BaseAddress;
+			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(baseStreamEnd, SeekOffsetType::Start);
 
 			for (EntranceEntry* entry : cmdEntrance->entrances)
@@ -325,7 +325,7 @@ void ExporterExample_Room::Save(ZResource* res, std::string outPath, BinaryWrite
 			writer->Write((uint8_t)0); // 0x03
 			writer->Write(baseStreamEnd); // 0x04
 
-			uint32_t oldOffset = writer->GetStream().get()->BaseAddress;
+			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(baseStreamEnd, SeekOffsetType::Start);
 
 			for (ActorSpawnEntry* entry : cmdStartPos->actors)

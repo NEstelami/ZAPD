@@ -2,22 +2,16 @@
 
 MemoryStream::MemoryStream()
 {
-	//buffer = std::make_shared<char[]>(new char[10](), [](char* p) { delete[] p; });
-	//buffer = std::shared_ptr<char[]>(nBuffer, [](char *p) { delete[] p; });
-	//bufferSize = nBufferSize;
-
 	buffer = std::vector<char>();
 	bufferSize = 0;
-	BaseAddress = 0;
+	baseAddress = 0;
 }
 
-MemoryStream::MemoryStream(char* nBuffer, int32_t nBufferSize)
+MemoryStream::MemoryStream(char* nBuffer, int32_t nBufferSize) : MemoryStream()
 {
-	//buffer = std::make_shared<char[]>(new char[10](), [](char* p) { delete[] p; });
-	//buffer = std::shared_ptr<char[]>(nBuffer, [](char *p) { delete[] p; });
 	buffer = std::vector<char>(nBuffer, nBuffer + nBufferSize);
 	bufferSize = nBufferSize;
-	BaseAddress = 0;
+	baseAddress = 0;
 }
 
 MemoryStream::~MemoryStream()
@@ -33,21 +27,21 @@ uint64_t MemoryStream::GetLength()
 void MemoryStream::Seek(int32_t offset, SeekOffsetType seekType)
 {
 	if (seekType == SeekOffsetType::Start)
-		BaseAddress = offset;
+		baseAddress = offset;
 	else if (seekType == SeekOffsetType::Current)
-		BaseAddress += offset;
+		baseAddress += offset;
 	else if (seekType == SeekOffsetType::End)
-		BaseAddress = bufferSize - 1 - offset;
+		baseAddress = bufferSize - 1 - offset;
 }
 
 std::unique_ptr<char[]> MemoryStream::Read(int32_t length)
 {
 	std::unique_ptr<char[]> result = std::make_unique<char[]>(length);
 
-	memcpy_s(result.get(), length, &buffer[BaseAddress], length);
-	BaseAddress += length;
+	memcpy_s(result.get(), length, &buffer[baseAddress], length);
+	baseAddress += length;
 
-	if (BaseAddress >= bufferSize)
+	if (baseAddress >= bufferSize)
 		; // EXCEPTION
 
 	return result;
@@ -55,33 +49,33 @@ std::unique_ptr<char[]> MemoryStream::Read(int32_t length)
 
 int8_t MemoryStream::ReadByte()
 {
-	return buffer[BaseAddress++];
+	return buffer[baseAddress++];
 }
 
 void MemoryStream::Write(char* srcBuffer, int32_t length)
 {
-	if (BaseAddress + length >= bufferSize)
+	if (baseAddress + length >= bufferSize)
 	{
-		buffer.resize(BaseAddress + length);
+		buffer.resize(baseAddress + length);
 		bufferSize += length;
 	}
 
-	memcpy_s(&buffer[BaseAddress], length, srcBuffer, length);
-	BaseAddress += length;
+	memcpy_s(&buffer[baseAddress], length, srcBuffer, length);
+	baseAddress += length;
 
-	if (BaseAddress >= bufferSize)
+	if (baseAddress >= bufferSize)
 		; // EXCEPTION
 }
 
 void MemoryStream::WriteByte(int8_t value)
 {
-	if (BaseAddress >= bufferSize)
+	if (baseAddress >= bufferSize)
 	{
-		buffer.resize(BaseAddress + 1);
-		bufferSize = BaseAddress;
+		buffer.resize(baseAddress + 1);
+		bufferSize = baseAddress;
 	}
 
-	buffer[BaseAddress++] = value;
+	buffer[baseAddress++] = value;
 }
 
 std::vector<char> MemoryStream::ToVector()

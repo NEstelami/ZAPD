@@ -13,6 +13,8 @@ public:
 	BinaryWriter(std::shared_ptr<Stream> nStream);
 
 	std::shared_ptr<Stream> GetStream();
+	uint64_t GetBaseAddress();
+	uint64_t GetLength();
 	void Seek(int32_t offset, SeekOffsetType seekType);
 	void Close();
 
