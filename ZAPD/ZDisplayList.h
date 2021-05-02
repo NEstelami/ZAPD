@@ -4,6 +4,7 @@
 #include "ZResource.h"
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
+#include "ZVtx.h"
 #include "tinyxml2.h"
 
 #include <map>
@@ -282,20 +283,6 @@ enum class OoTSegments
 #define FORCE_BL 0x4000
 #define TEX_EDGE 0x0000
 
-class Vertex
-{
-public:
-	int16_t x, y, z;
-	uint16_t flag;
-	int16_t s, t;
-	uint8_t r, g, b, a;
-
-	Vertex();
-	Vertex(int16_t nX, int16_t nY, int16_t nZ, uint16_t nFlag, int16_t nS, int16_t nT, uint8_t nR,
-	       uint8_t nG, uint8_t nB, uint8_t nA);
-	Vertex(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
-};
-
 class ZDisplayList : public ZResource
 {
 protected:
@@ -350,7 +337,7 @@ public:
 
 	DListType dListType;
 
-	std::map<uint32_t, std::vector<Vertex>> vertices;
+	std::map<uint32_t, std::vector<ZVtx>> vertices;
 	std::map<uint32_t, std::string> vtxDeclarations;
 	std::vector<ZDisplayList*> otherDLists;
 

@@ -85,8 +85,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	else
 		name = filename;
 
-	int32_t segment = -1;
-
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
@@ -121,6 +119,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (segment != -1)
 	{
 		Globals::Instance->AddSegment(segment);
+		Globals::Instance->segmentRefFiles[segment] = this;
 	}
 
 	string folderName = basePath / Path::GetFileNameWithoutExtension(name);

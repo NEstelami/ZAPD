@@ -48,6 +48,7 @@ void ErrorHandler(int sig)
 	// To prevent unused parameter warning
 	(void)sig;
 
+	fprintf(stderr, "Traceback:\n");
 	for (size_t i = 1; i < size; i++)
 	{
 		Dl_info info;
@@ -73,7 +74,8 @@ void ErrorHandler(int sig)
 		fprintf(stderr, "%-3zd %s\n", i, functionName.c_str());
 	}
 
-	// backtrace_symbols_fd(array, size, STDERR_FILENO);
+	fprintf(stderr, "\n");
+
 	free(symbols);
 	exit(1);
 }

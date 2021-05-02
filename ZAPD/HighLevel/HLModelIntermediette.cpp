@@ -66,16 +66,16 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	limb->name = zDisplayList->GetName();
 
 	// Go through verts
-	vector<Vertex> finalVerts = vector<Vertex>();
+	vector<ZVtx> finalVerts;
 
 	int32_t vStart = -1;
 
-	for (pair<int32_t, vector<Vertex>> pair : zDisplayList->vertices)
+	for (auto& pair : zDisplayList->vertices)
 	{
 		if (vStart == -1)  // TODO: Find a better way to do this
 			vStart = pair.first;
 
-		for (Vertex v : pair.second)
+		for (auto& v : pair.second)
 			finalVerts.push_back(v);
 	}
 
@@ -449,25 +449,27 @@ void HLMeshCommand::OutputXML(tinyxml2::XMLElement* parent)
 
 HLVerticesIntermediette::HLVerticesIntermediette() : HLIntermediette()
 {
-	vertices = vector<Vertex>();
+	vertices = vector<ZVtx>();
 }
 
 void HLVerticesIntermediette::InitFromXML(XMLElement* verticesElement)
 {
 	name = verticesElement->Attribute("Name");
 
+	/*
 	for (XMLElement* child = verticesElement->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
-		vertices.push_back(Vertex(child->IntAttribute("X"), child->IntAttribute("Y"),
+		vertices.push_back(ZVtx(child->IntAttribute("X"), child->IntAttribute("Y"),
 		                          child->IntAttribute("Z"), child->IntAttribute("Flags"),
 		                          child->IntAttribute("S"), child->IntAttribute("T"),
 		                          child->IntAttribute("R"), child->IntAttribute("G"),
 		                          child->IntAttribute("B"), child->IntAttribute("A")));
+	*/
 }
 
-void HLVerticesIntermediette::InitFromVertices(vector<Vertex> dispListVertices)
+void HLVerticesIntermediette::InitFromVertices(vector<ZVtx> dispListVertices)
 {
-	for (Vertex v : dispListVertices)
+	for (auto v : dispListVertices)
 		vertices.push_back(v);
 }
 
@@ -477,7 +479,7 @@ string HLVerticesIntermediette::OutputCode(HLModelIntermediette* parent)
 
 	output += StringHelper::Sprintf("Vtx %s_verts[] = \n{\n", name.c_str());
 
-	for (Vertex v : vertices)
+	for (auto v : vertices)
 	{
 		output += StringHelper::Sprintf("    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", v.x,
 		                                v.y, v.z, v.flag, v.s, v.t, v.r, v.g, v.b, v.a);
@@ -492,7 +494,7 @@ std::string HLVerticesIntermediette::OutputOBJ()
 {
 	string output = "";
 
-	for (Vertex v : vertices)
+	for (auto& v : vertices)
 	{
 		output += StringHelper::Sprintf("v %f %f %f %i %i %i %i\n", (float)v.x * 0.1f,
 		                                (float)v.y * 0.1f, (float)v.z * 0.1f, v.r, v.g, v.b, v.a);
@@ -517,7 +519,7 @@ void HLVerticesIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XM
 
 	element->SetAttribute("Name", name.c_str());
 
-	for (Vertex v : vertices)
+	for (auto& v : vertices)
 	{
 		XMLElement* vElem = doc->NewElement("Vertex");
 		vElem->SetAttribute("X", v.x);
