@@ -521,7 +521,7 @@ std::string ZFile::GetDeclarationPtrName(segptr_t segAddress) const
 
 	Declaration* decl = GetDeclaration(Seg2Filespace(segAddress, baseAddress));
 
-	if (decl == nullptr)
+	if (!Globals::Instance->HasSegment(GETSEGNUM(segAddress)) || decl == nullptr)
 		return StringHelper::Sprintf("0x%08X", segAddress);
 
 	if (!decl->isArray)

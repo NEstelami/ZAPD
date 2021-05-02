@@ -1934,36 +1934,29 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		// Generate Texture Declarations
 		for (auto& item : textures)
 		{
-
-			if (parent != nullptr)
+			if (parent != nullptr && parent->GetDeclaration(item.first) == nullptr)
 			{
-				if (parent->GetDeclaration(item.first) == nullptr)
-				{
-					// TEXTURE POOL CHECK
-					std::string texOutPath =
-						item.second->GetPoolOutPath(Globals::Instance->outputPath);
-					std::string texOutName = item.second->GetName();
+				auto start = chrono::steady_clock::now();
+				item.second->Save(Globals::Instance->outputPath);
 
-					auto start = chrono::steady_clock::now();
-					item.second->Save(texOutPath);
+				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
+				{
 					auto end = chrono::steady_clock::now();
 					auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-
-					if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-						printf("SAVED IMAGE TO %s in %ims\n", Globals::Instance->outputPath.c_str(),
-						       (int32_t)diff);
-
-					auto filepath = Globals::Instance->outputPath /
-									Path::GetFileNameWithoutExtension(item.second->GetName());
-					std::string incStr =
-						StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-					                          item.second->GetExternalExtension().c_str());
-					std::string texName =
-						StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
-
-					parent->AddDeclarationIncludeArray(
-						item.first, incStr, item.second->GetRawDataSize(), "u64", texName, 0);
+					printf("SAVED IMAGE TO %s in %ims\n", Globals::Instance->outputPath.c_str(),
+							(int32_t)diff);
 				}
+
+				auto filepath = Globals::Instance->outputPath /
+								Path::GetFileNameWithoutExtension(item.second->GetName());
+				std::string incStr =
+					StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+											item.second->GetExternalExtension().c_str());
+				std::string texName =
+					StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
+
+				parent->AddDeclarationIncludeArray(
+					item.first, incStr, item.second->GetRawDataSize(), "u64", texName, 0);
 			}
 		}
 	}
@@ -2148,7 +2141,7 @@ void ZDisplayList::TextureGenCheck(string prefix)
 {
 	if (TextureGenCheck(fileData, textures, scene, parent, prefix, lastTexWidth, lastTexHeight,
 	                    lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded,
-	                    lastTexIsPalette))
+	                    lastTexIsPalette, this))
 	{
 		lastTexAddr = 0;
 		lastTexLoaded = false;
@@ -2160,9 +2153,10 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
                                    ZRoom* scene, ZFile* parent, string prefix, int32_t texWidth,
                                    int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
                                    F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
-                                   bool texIsPalette)
+                                   bool texIsPalette, ZDisplayList* self)
 {
 	int32_t segmentNumber = GETSEGNUM(texSeg);
+	self->lastTexture = nullptr;
 
 	if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 		printf("TextureGenCheck seg=%i width=%i height=%i ispal=%i addr=0x%06X\n", segmentNumber,
@@ -2175,12 +2169,12 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		{
 			if (texAddr < parent->GetRawData().size())
 			{
-				ZTexture* tex = new ZTexture(parent);
-				tex->isPalette = texIsPalette;
-				tex->FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
+				self->lastTexture = new ZTexture(parent);
+				self->lastTexture->isPalette = texIsPalette;
+				self->lastTexture->FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
 				                StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
 				                texWidth, texHeight);
-				textures[texAddr] = tex;
+				textures[texAddr] = self->lastTexture;
 				return true;
 			}
 		}
@@ -2188,23 +2182,23 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		{
 			if (scene->parent->GetDeclaration(texAddr) == nullptr)
 			{
-				ZTexture* tex = new ZTexture(scene->parent);
-				tex->isPalette = texIsPalette;
-				tex->FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
+				self->lastTexture = new ZTexture(scene->parent);
+				self->lastTexture->isPalette = texIsPalette;
+				self->lastTexture->FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
 								StringHelper::Sprintf("%sTex_%06X",
 													Globals::Instance->lastScene->GetName().c_str(),
 													texAddr),
 								texWidth, texHeight);
 
-				scene->textures[texAddr] = tex;
+				scene->textures[texAddr] = self->lastTexture;
 
 				auto filepath = Globals::Instance->outputPath /
-								Path::GetFileNameWithoutExtension(tex->GetName());
+								Path::GetFileNameWithoutExtension(self->lastTexture->GetName());
 				scene->parent->AddDeclarationIncludeArray(
 					texAddr,
 					StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-											tex->GetExternalExtension().c_str()),
-					tex->GetRawDataSize(), "u64",
+											self->lastTexture->GetExternalExtension().c_str()),
+					self->lastTexture->GetRawDataSize(), "u64",
 					StringHelper::Sprintf("%sTex_%06X",
 											Globals::Instance->lastScene->GetName().c_str(), texAddr),
 					0);

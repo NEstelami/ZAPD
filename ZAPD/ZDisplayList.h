@@ -342,6 +342,7 @@ public:
 	std::vector<ZDisplayList*> otherDLists;
 
 	std::map<uint32_t, ZTexture*> textures;
+	ZTexture* lastTexture = nullptr;
 
 	std::vector<uint32_t> references;
 
@@ -363,7 +364,7 @@ public:
 	                            ZFile* parent, std::string prefix, int32_t texWidth,
 	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
 	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
-	                            bool texIsPalette);
+	                            bool texIsPalette, ZDisplayList* self);
 	static int32_t GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 
