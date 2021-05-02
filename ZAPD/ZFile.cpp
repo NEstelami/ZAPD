@@ -223,26 +223,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				"ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n",
 				name.c_str()));
 		}
-		else if (string(child->Name()) == "String")
-		{
-			ZString* str = nullptr;
-
-			if (mode == ZFileMode::Extract)
-				str = ZString::ExtractFromXML(child, rawData, rawDataIndex, folderName);
-
-			if (str != nullptr)
-			{
-				str->parent = this;
-				resources.push_back(str);
-
-				rawDataIndex += str->GetRawDataSize();
-			}
-			else
-			{
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-					printf("No ZString created!!");
-			}
-		}
 		else
 		{
 			throw std::runtime_error(

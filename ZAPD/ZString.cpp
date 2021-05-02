@@ -1,47 +1,58 @@
 #include "ZString.h"
+
 #include "File.h"
 #include "ZFile.h"
 #include "StringHelper.h"
 
-using namespace tinyxml2;
-using namespace std;
+REGISTER_ZFILENODE(String, ZString);
 
-ZString::ZString() : ZResource()
+ZString::ZString(ZFile* nParent) : ZResource(nParent)
 {
-
 }
 
-ZString* ZString::ExtractFromXML(XMLElement* reader, const vector<uint8_t>& nRawData, int nRawDataIndex, string nRelPath)
+void ZString::ParseRawData()
 {
-	ZString* str = new ZString();
-
-	str->rawDataIndex = nRawDataIndex;
-
-	str->ParseXML(reader);
 	size_t size = 0;
-    for (size_t i = str->rawDataIndex; i < nRawData.size(); ++i) {
+    for (size_t i = rawDataIndex; i < rawData.size(); ++i) {
         ++size;
-        if (nRawData[i] == '\0') {
+        if (rawData.at(i) == '\0') {
             break;
         }
     }
-	str->rawData = vector<uint8_t>(nRawData.data() + str->rawDataIndex, nRawData.data() + str->rawDataIndex + size);
-	str->relativePath = std::move(nRelPath);
 
-	return str;
+	auto dataStart = rawData.begin() + rawDataIndex;
+	strData.assign(dataStart, dataStart + size);
 }
 
-string ZString::GetSourceOutputHeader(const std::string& prefix)
+std::string ZString::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("#define %s \"%s\"", name.c_str(), rawData.data());
+	return StringHelper::Sprintf("\t\"%s\"", strData.data());
+}
+
+std::string ZString::GetSourceOutputCode(const std::string& prefix)
+{
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+	                            GetSourceTypeName(), name, 0, GetBodySourceCode());
+
+	return "";
+}
+
+std::string ZString::GetSourceOutputHeader(const std::string& prefix)
+{
+	return StringHelper::Sprintf("#define %s_macro \"%s\"", name.c_str(), rawData.data());
 }
 
 std::string ZString::GetSourceTypeName()
 {
-	return "char*";
+	return "char";
 }
 
 ZResourceType ZString::GetResourceType()
 {
 	return ZResourceType::String;
+}
+
+size_t ZString::GetRawDataSize()
+{
+	return strData.size();
 }

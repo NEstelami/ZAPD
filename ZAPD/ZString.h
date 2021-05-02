@@ -6,13 +6,18 @@
 class ZString : public ZResource
 {
 public:
-	static ZString* ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData, int rawDataIndex, std::string nRelPath);
+	ZString(ZFile* nParent);
 
-	//std::string GetSourceOutputCode(const std::string& prefix) override;
+	void ParseRawData() override;
+	std::string GetBodySourceCode() const;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceTypeName() override;
 	ZResourceType GetResourceType() override;
 
-private:
-	ZString();
+	size_t GetRawDataSize() override;
+
+protected:
+	std::vector<uint8_t> strData;
 };
