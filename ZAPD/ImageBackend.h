@@ -32,7 +32,7 @@ public:
 
 	void SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth,
 	                    uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth);
-	void InitEmptyImage(uint32_t nWidth, uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth);
+	void InitEmptyImage(uint32_t nWidth, uint32_t nHeight, bool alpha);
 
 	RGBAPixel GetPixel(size_t y, size_t x) const;
 	void SetRGBPixel(size_t y, size_t x, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA = 0);

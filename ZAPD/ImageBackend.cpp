@@ -165,15 +165,16 @@ void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& tex
 	hasImageData = true;
 }
 
-void ImageBackend::InitEmptyImage(uint32_t nWidth, uint32_t nHeight, uint8_t nColorType,
-                                  uint8_t nBitDepth)
+void ImageBackend::InitEmptyImage(uint32_t nWidth, uint32_t nHeight, bool alpha)
 {
 	FreeImageData();
 
 	width = nWidth;
 	height = nHeight;
-	colorType = nColorType;
-	bitDepth = nBitDepth;
+	colorType = PNG_COLOR_TYPE_RGB;
+	if (alpha)
+		colorType = PNG_COLOR_TYPE_RGBA;
+	bitDepth = 8; // nBitDepth;
 
 	size_t bytePerPixel = GetBytesPerPixel();
 

@@ -1,17 +1,13 @@
-#define TINYGLTF_IMPLEMENTATION
+//#define TINYGLTF_IMPLEMENTATION
 
 #include "ZTexture.h"
+
 #include "BitConverter.h"
 #include "CRC32.h"
 #include "File.h"
 #include "Globals.h"
 #include "Path.h"
-
-#include <Directory.h>
-#include <png.h>
-
-using namespace std;
-using namespace tinyxml2;
+#include "Directory.h"
 
 REGISTER_ZFILENODE(Texture, ZTexture);
 
@@ -62,10 +58,10 @@ void ZTexture::FromHLTexture(HLTexture* hlTex)
 {
 	width = hlTex->width;
 	height = hlTex->height;
-	type = (TextureType)hlTex->type;
+	type = static_cast<TextureType>(hlTex->type);
 }
 
-void ZTexture::ParseXML(XMLElement* reader)
+void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
@@ -75,7 +71,7 @@ void ZTexture::ParseXML(XMLElement* reader)
 	}
 	else
 	{
-		throw std::runtime_error("Width == nullptr for asset " + (string)reader->Attribute("Name"));
+		throw std::runtime_error("Width == nullptr for asset " + std::string(reader->Attribute("Name")));
 	}
 
 	if (reader->Attribute("Height") != nullptr)
@@ -85,10 +81,10 @@ void ZTexture::ParseXML(XMLElement* reader)
 	else
 	{
 		throw std::runtime_error("Height == nullptr for asset " +
-		                         (string)reader->Attribute("Name"));
+		                         std::string(reader->Attribute("Name")));
 	}
 
-	string formatStr = reader->Attribute("Format");
+	std::string formatStr = reader->Attribute("Format");
 
 	type = GetTextureTypeFromString(formatStr);
 
@@ -134,7 +130,7 @@ void ZTexture::ParseRawData()
 
 void ZTexture::PrepareBitmapRGBA16()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
+	textureData.InitEmptyImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -154,7 +150,7 @@ void ZTexture::PrepareBitmapRGBA16()
 
 void ZTexture::PrepareBitmapRGBA32()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
+	textureData.InitEmptyImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -173,7 +169,7 @@ void ZTexture::PrepareBitmapRGBA32()
 
 void ZTexture::PrepareBitmapGrayscale4()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
+	textureData.InitEmptyImage(width, height, false);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -197,7 +193,7 @@ void ZTexture::PrepareBitmapGrayscale4()
 
 void ZTexture::PrepareBitmapGrayscale8()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
+	textureData.InitEmptyImage(width, height, false);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -212,7 +208,7 @@ void ZTexture::PrepareBitmapGrayscale8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha4()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
+	textureData.InitEmptyImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -239,7 +235,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha8()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
+	textureData.InitEmptyImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -256,7 +252,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha16()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGBA, 8);
+	textureData.InitEmptyImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -273,7 +269,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 
 void ZTexture::PrepareBitmapPalette4()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
+	textureData.InitEmptyImage(width, height, false);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -297,7 +293,7 @@ void ZTexture::PrepareBitmapPalette4()
 
 void ZTexture::PrepareBitmapPalette8()
 {
-	textureData.InitEmptyImage(width, height, PNG_COLOR_TYPE_RGB, 8);
+	textureData.InitEmptyImage(width, height, false);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -765,7 +761,7 @@ fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 	return defaultValue;
 }
 
-TextureType ZTexture::GetTextureTypeFromString(string str)
+TextureType ZTexture::GetTextureTypeFromString(std::string str)
 {
 	TextureType texType = TextureType::Error;
 
