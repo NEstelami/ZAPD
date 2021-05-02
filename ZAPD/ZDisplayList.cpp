@@ -1647,29 +1647,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t texOffset = Seg2Filespace(seg, self->parent->baseAddress);
-	uint32_t texSegNum = GETSEGNUM(seg);
-	Declaration* texDecl = nullptr;
-	string texName = "";
-
-	if (self->parent != nullptr &&
-	    texSegNum != SEGMENT_SCENE)  // HACK: Until we have declarations use segment addresses,
-	                                 // we'll exclude scene references...
-	{
-		texDecl = self->parent->GetDeclaration(texOffset);
-
-		if (texDecl == nullptr)
-			texDecl = self->parent->GetDeclaration(seg);
-	}
-
-	if (!Globals::Instance->HasSegment(
-			texSegNum))  // Probably an external asset we are unable to track
-		texName = StringHelper::Sprintf("0x%08X", seg);
-	else if (texDecl != nullptr)
-		texName = StringHelper::Sprintf("%s", texDecl->varName.c_str());
-	else if (texSegNum == 2)
-		texName = StringHelper::Sprintf("%sTex_%06X", self->scene->GetName().c_str(), texOffset);
-	else
-		texName = StringHelper::Sprintf("%sTex_%06X", self->curPrefix.c_str(), texOffset);
+	int32_t texSegNum = GETSEGNUM(seg);
 
 	self->lastTexWidth = width;
 	self->lastTexHeight = height;
@@ -1682,6 +1660,20 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 
 	self->TextureGenCheck(self->curPrefix);
 
+	std::string texName = "";
+
+	ZFile* auxParent = self->parent;
+	if (self->parent->segment != texSegNum && Globals::Instance->HasSegment(texSegNum))
+		auxParent = Globals::Instance->segmentRefFiles.at(texSegNum);
+
+	Declaration* decl = auxParent->GetDeclaration(texOffset);
+	if (Globals::Instance->HasSegment(texSegNum) && decl != nullptr)
+		texName = decl->varName;
+	else if (self->lastTexture != nullptr)
+		texName = self->lastTexture->GetName();
+	else
+		texName = auxParent->GetDeclarationPtrName(seg);
+
 	gfxd_puts(texName.c_str());
 
 	return 1;
@@ -1691,28 +1683,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t palOffset = Seg2Filespace(seg, self->parent->baseAddress);
-	uint32_t palSegNum = GETSEGNUM(seg);
-	Declaration* palDecl = nullptr;
-	string palName = "";
-
-	if (self->parent != nullptr && palSegNum != 2)  // HACK: Until we have declarations use segment
-	                                                // addresses, we'll exclude scene references...
-	{
-		palDecl = self->parent->GetDeclaration(palOffset);
-
-		if (palDecl == nullptr)
-			palDecl = self->parent->GetDeclaration(seg);
-	}
-
-	if (!Globals::Instance->HasSegment(
-			palSegNum))  // Probably an external asset we are unable to track
-		palName = StringHelper::Sprintf("0x%08X", seg);
-	else if (palDecl != nullptr)
-		palName = StringHelper::Sprintf("%s", palDecl->varName.c_str());
-	else if (palSegNum == 2)
-		palName = StringHelper::Sprintf("%sTex_%06X", self->scene->GetName().c_str(), palOffset);
-	else
-		palName = StringHelper::Sprintf("%sTex_%06X", self->curPrefix.c_str(), palOffset);
+	int32_t palSegNum = GETSEGNUM(seg);
 
 	self->lastTexWidth = sqrt(count);
 	self->lastTexHeight = sqrt(count);
@@ -1724,6 +1695,21 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	self->lastTexIsPalette = true;
 
 	self->TextureGenCheck(self->curPrefix);
+
+	std::string palName = "";
+
+	ZFile* auxParent = self->parent;
+	if (self->parent->segment != palSegNum && Globals::Instance->HasSegment(palSegNum))
+		auxParent = Globals::Instance->segmentRefFiles.at(palSegNum);
+
+	Declaration* decl = auxParent->GetDeclaration(palOffset);
+	if (Globals::Instance->HasSegment(palSegNum) && decl != nullptr)
+		palName = decl->varName;
+	else if (self->lastTexture != nullptr)
+		palName = self->lastTexture->GetName();
+	else
+		palName = auxParent->GetDeclarationPtrName(seg);
+
 	gfxd_puts(palName.c_str());
 
 	return 1;
@@ -1733,20 +1719,7 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t dListOffset = GETSEGOFFSET(seg);
-	uint32_t dListSegNum = GETSEGNUM(seg);
-	Declaration* dListDecl = nullptr;
-	string dListName = "";
-
-	if (self->parent != nullptr)
-		dListDecl = self->parent->GetDeclaration(dListOffset);
-
-	if (!Globals::Instance->HasSegment(
-			dListSegNum))  // Probably an external asset we are unable to track
-		dListName = StringHelper::Sprintf("0x%08X", seg);
-	else if (dListDecl != nullptr)
-		dListName = StringHelper::Sprintf("%s", dListDecl->varName.c_str());
-	else
-		dListName = StringHelper::Sprintf("%sDL_%06X", self->curPrefix.c_str(), dListOffset);
+	int32_t dListSegNum = GETSEGNUM(seg);
 
 	if ((dListSegNum <= 6) && Globals::Instance->HasSegment(dListSegNum))
 	{
@@ -1757,6 +1730,12 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 		newDList->parent = self->parent;
 		self->otherDLists.push_back(newDList);
 	}
+
+	ZFile* auxParent = self->parent;
+	if (self->parent->segment != dListSegNum && Globals::Instance->HasSegment(dListSegNum))
+		auxParent = Globals::Instance->segmentRefFiles.at(dListSegNum);
+
+	std::string dListName = auxParent->GetDeclarationPtrName(seg);
 
 	gfxd_puts(dListName.c_str());
 
@@ -2194,14 +2173,11 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 
 				auto filepath = Globals::Instance->outputPath /
 								Path::GetFileNameWithoutExtension(self->lastTexture->GetName());
-				scene->parent->AddDeclarationIncludeArray(
-					texAddr,
-					StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-											self->lastTexture->GetExternalExtension().c_str()),
-					self->lastTexture->GetRawDataSize(), "u64",
-					StringHelper::Sprintf("%sTex_%06X",
-											Globals::Instance->lastScene->GetName().c_str(), texAddr),
-					0);
+				auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+											self->lastTexture->GetExternalExtension().c_str());
+				scene->parent->AddDeclarationIncludeArray( texAddr, filename,
+					self->lastTexture->GetRawDataSize(), self->lastTexture->GetSourceTypeName(),
+					self->lastTexture->GetName(), 0);
 			}
 			return true;
 		}

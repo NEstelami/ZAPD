@@ -21,6 +21,21 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	height = 0;
 }
 
+void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                            const uint32_t nRawDataIndex, const std::string& nRelPath)
+{
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+
+
+	auto filepath = Globals::Instance->outputPath /
+					Path::GetFileNameWithoutExtension(name);
+	std::string incStr =
+		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+								GetExternalExtension().c_str());
+
+	parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), name, 0);
+}
+
 void ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,
                           std::string nName, int32_t nWidth, int32_t nHeight)
 {
