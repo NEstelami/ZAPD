@@ -317,13 +317,6 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
                                    std::string varType, std::string varName, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
@@ -335,13 +328,6 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
                                    DeclarationPadding padding, size_t size, string varType,
                                    string varName, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -353,13 +339,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -368,16 +347,20 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+	size_t size, std::string varType, std::string varName,
+	std::string arrayItemCntStr, std::string body)
+{
+	AddDeclarationDebugChecks(address);
+
+	declarations[address] =
+		new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
+	return declarations[address];
+}
+
+Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body, bool isExternal)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -389,13 +372,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         DeclarationPadding padding, size_t size, string varType,
                                         string varName, size_t arrayItemCnt, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -439,18 +415,6 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
                                                size_t size, std::string varType,
                                                std::string varName, size_t arrayItemCnt)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-
-	if (address == 0)
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	if (StringHelper::StartsWith(includePath, "assets/extracted/"))
@@ -935,13 +899,22 @@ string ZFile::ProcessDeclarations()
 		{
 			if (item.second->isArray)
 			{
-				if (item.second->arrayItemCnt == 0)
-					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str());
+				if (item.second->arrayItemCntStr != "")
+				{
+					output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
+						item.second->varName.c_str(),
+						item.second->arrayItemCntStr.c_str());
+				}
 				else
-					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str(),
-					                                item.second->arrayItemCnt);
+				{
+					if (item.second->arrayItemCnt == 0)
+						output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
+							item.second->varName.c_str());
+					else
+						output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
+							item.second->varName.c_str(),
+							item.second->arrayItemCnt);
+				}
 			}
 			else
 				output += StringHelper::Sprintf("%s %s;\n", item.second->varType.c_str(),
@@ -1024,9 +997,15 @@ string ZFile::ProcessDeclarations()
 				// item.second->varType.c_str(), item.second->varName.c_str(),
 				// StringHelper::Replace(item.second->includePath, "assets/",
 				// "assets/extracted/").c_str());
-				output += StringHelper::Sprintf(
-					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-					item.second->varName.c_str(), item.second->includePath.c_str());
+
+				if (item.second->arrayItemCntStr != "")
+					output += StringHelper::Sprintf(
+						"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
+						item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(), item.second->includePath.c_str());
+				else
+					output += StringHelper::Sprintf(
+						"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
+						item.second->varName.c_str(), item.second->includePath.c_str());
 			}
 		}
 		else if (item.second->varType != "")
@@ -1037,14 +1016,23 @@ string ZFile::ProcessDeclarations()
 			{
 				if (item.second->isArray)
 				{
-					if (item.second->arrayItemCnt == 0)
-						output +=
-							StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
-						                          item.second->varName.c_str());
+					if (item.second->arrayItemCntStr != "")
+					{
+						output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
+							item.second->varName.c_str(),
+							item.second->arrayItemCntStr.c_str());
+					}
 					else
-						output += StringHelper::Sprintf(
-							"%s %s[%i] = {\n", item.second->varType.c_str(),
-							item.second->varName.c_str(), item.second->arrayItemCnt);
+					{
+						if (item.second->arrayItemCnt == 0)
+							output +=
+							StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
+								item.second->varName.c_str());
+						else
+							output += StringHelper::Sprintf(
+								"%s %s[%i] = {\n", item.second->varType.c_str(),
+								item.second->varName.c_str(), item.second->arrayItemCnt);
+					}
 
 					output += item.second->text + "\n";
 				}
