@@ -23,9 +23,8 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 
+	auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
 
-	auto filepath = Globals::Instance->outputPath /
-					Path::GetFileNameWithoutExtension(name);
 	std::string incStr =
 		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
 								GetExternalExtension().c_str());
@@ -286,8 +285,8 @@ void ZTexture::PrepareBitmapPalette4()
 				else
 					paletteIndex = (rawData.at(pos) & 0x0F);
 
-				textureData.SetGrayscalePixel(y, x, paletteIndex * 16);
-				textureData.SetIndexedPixel(y * width + x, paletteIndex * 16);
+				//textureData.SetGrayscalePixel(y, x, paletteIndex * 16);
+				textureData.SetIndexedPixel(y, x, paletteIndex * 16);
 			}
 		}
 	}
@@ -303,8 +302,8 @@ void ZTexture::PrepareBitmapPalette8()
 		{
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 
-			textureData.SetGrayscalePixel(y, x, rawData.at(pos));
-			textureData.SetIndexedPixel(y * width + x, rawData.at(pos));
+			//textureData.SetGrayscalePixel(y, x, rawData.at(pos));
+			textureData.SetIndexedPixel(y, x, rawData.at(pos));
 		}
 	}
 }

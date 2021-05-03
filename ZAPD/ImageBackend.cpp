@@ -129,7 +129,7 @@ void ImageBackend::WritePng(const char* filename)
 		}
 		printf("\n");
 
-		//png_set_tRNS(png, info, alphaPalette, paletteSize, nullptr);
+		png_set_tRNS(png, info, alphaPalette, paletteSize, nullptr);
 	}
 
 	png_write_info(png, info);
@@ -281,11 +281,22 @@ void ImageBackend::SetGrayscalePixel(size_t y, size_t x, uint8_t grayscale, uint
 		pixelMatrix[y][x * bytePerPixel + 3] = alpha;
 }
 
-void ImageBackend::SetIndexedPixel(size_t index, uint8_t grayscale)
+void ImageBackend::SetIndexedPixel(size_t y, size_t x, uint8_t grayscale)
 {
 	assert(hasImageData);
-	assert(index < width * height);
+	assert(y < height);
+	assert(x < width);
 
+	size_t bytePerPixel = GetBytesPerPixel();
+	pixelMatrix[y][x * bytePerPixel + 0] = grayscale;
+
+	size_t index = grayscale;
+	assert(index < paletteSize);
+	png_color* pal = static_cast<png_color*>(colorPalette);
+	pal[index].red = grayscale;
+	pal[index].green = grayscale;
+	pal[index].blue = grayscale;
+	alphaPalette[index] = 255;
 }
 
 void ImageBackend::SetPaletteIndex(size_t index, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA)
