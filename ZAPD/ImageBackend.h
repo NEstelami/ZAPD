@@ -52,7 +52,6 @@ public:
 protected:
 	uint8_t** pixelMatrix = nullptr;  // height * [width * bytePerPixel]
 
-	void* colorIndexes = nullptr;
 	void* colorPalette = nullptr;
 	uint8_t* alphaPalette = nullptr;
 	size_t paletteSize = 16*16;

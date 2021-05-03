@@ -286,6 +286,7 @@ void ZTexture::PrepareBitmapPalette4()
 				else
 					paletteIndex = (rawData.at(pos) & 0x0F);
 
+				textureData.SetGrayscalePixel(y, x, paletteIndex * 16);
 				textureData.SetIndexedPixel(y * width + x, paletteIndex * 16);
 			}
 		}
@@ -302,6 +303,7 @@ void ZTexture::PrepareBitmapPalette8()
 		{
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 
+			textureData.SetGrayscalePixel(y, x, rawData.at(pos));
 			textureData.SetIndexedPixel(y * width + x, rawData.at(pos));
 		}
 	}
@@ -671,6 +673,9 @@ void ZTexture::Save(const fs::path& outFolder)
 		File::WriteAllText(Globals::Instance->outputPath / (outName + ".txt"),
 		                   StringHelper::Sprintf("%08lX", hash));
 	}
+
+	//if (IsColorIndexed())
+		//textureData.SetPalette(tlut->textureData);
 
 	auto outPath = GetPoolOutPath(outFolder);
 

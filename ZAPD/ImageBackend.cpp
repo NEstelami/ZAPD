@@ -23,7 +23,7 @@ void ImageBackend::ReadPng(const char* filename)
 		throw std::runtime_error(StringHelper::Sprintf(
 			"ImageBackend::ReadPng: Error.\n\t Couldn't open file '%s'.", filename));
 
-	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (!png)
 		throw std::runtime_error("ImageBackend::ReadPng: Error.\n\t Couldn't create png struct.");
 
@@ -80,7 +80,7 @@ void ImageBackend::ReadPng(const char* filename)
 
 	fclose(fp);
 
-	png_destroy_read_struct(&png, &info, NULL);
+	png_destroy_read_struct(&png, &info, nullptr);
 
 	hasImageData = true;
 }
@@ -99,7 +99,7 @@ void ImageBackend::WritePng(const char* filename)
 		throw std::runtime_error(StringHelper::Sprintf(
 			"ImageBackend::WritePng: Error.\n\t Couldn't open file '%s' in write mode.", filename));
 
-	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (!png)
 		throw std::runtime_error("ImageBackend::WritePng: Error.\n\t Couldn't create png struct.");
 
@@ -120,7 +120,16 @@ void ImageBackend::WritePng(const char* filename)
 	if (isColorIndexed)
 	{
 		png_set_PLTE(png, info, static_cast<png_color*>(colorPalette), paletteSize);
-		png_set_tRNS(png, info, alphaPalette, paletteSize, static_cast<png_color_16*>(colorIndexes));
+
+		printf("palette\n");
+		png_color* aux = (png_color*)colorPalette;
+		for (size_t y = 0; y < paletteSize; y++)
+		{
+			printf("%02X %02X %02X \n", aux[y].red, aux[y].green, aux[y].blue);
+		}
+		printf("\n");
+
+		//png_set_tRNS(png, info, alphaPalette, paletteSize, nullptr);
 	}
 
 	png_write_info(png, info);
@@ -129,8 +138,20 @@ void ImageBackend::WritePng(const char* filename)
 	// Use png_set_filler().
 	// png_set_filler(png, 0, PNG_FILLER_AFTER);
 
+	size_t bytePerPixel = GetBytesPerPixel();
+	printf("imgData\n");
+	for (size_t y = 0; y < height; y++)
+	{
+		for (size_t x = 0; x < width * bytePerPixel; x++)
+		{
+			printf("%02X ", pixelMatrix[y][x]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+
 	png_write_image(png, pixelMatrix);
-	png_write_end(png, NULL);
+	png_write_end(png, nullptr);
 
 	fclose(fp);
 
@@ -210,7 +231,6 @@ void ImageBackend::InitEmptyPaletteImage(uint32_t nWidth, uint32_t nHeight)
 	{
 		pixelMatrix[y] = static_cast<uint8_t*>(calloc(width * bytePerPixel, sizeof(uint8_t*)));
 	}
-	colorIndexes = calloc(width * height, sizeof(png_color_16));
 	colorPalette = calloc(paletteSize, sizeof(png_color));
 	alphaPalette = static_cast<uint8_t*>(calloc(paletteSize, sizeof(uint8_t)));
 
@@ -266,12 +286,6 @@ void ImageBackend::SetIndexedPixel(size_t index, uint8_t grayscale)
 	assert(hasImageData);
 	assert(index < width * height);
 
-	png_color_16* indexes = static_cast<png_color_16*>(colorIndexes);
-	indexes[index].index = grayscale;
-	indexes[index].blue = grayscale;
-	indexes[index].red = grayscale;
-	indexes[index].green = grayscale;
-	indexes[index].gray = grayscale;
 }
 
 void ImageBackend::SetPaletteIndex(size_t index, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA)
@@ -334,7 +348,7 @@ double ImageBackend::GetBytesPerPixel() const
 		return 3 * bitDepth / 8;
 
 	case PNG_COLOR_TYPE_PALETTE:
-		return 3 * bitDepth / 8;
+		return 1 * bitDepth / 8;
 
 	default:
 		throw std::invalid_argument("ImageBackend::GetBytesPerPixel():\n\t Invalid color type.");
@@ -343,6 +357,7 @@ double ImageBackend::GetBytesPerPixel() const
 
 void ImageBackend::FreeImageData()
 {
+	/*
 	if (hasImageData)
 	{
 		for (size_t y = 0; y < height; y++)
@@ -353,16 +368,15 @@ void ImageBackend::FreeImageData()
 
 	if (isColorIndexed)
 	{
-		free(colorIndexes);
 		free(colorPalette);
 		free(alphaPalette);
-		colorIndexes = nullptr;
 		colorPalette = nullptr;
 		alphaPalette = nullptr;
 		isColorIndexed = false;
 	}
 
 	hasImageData = false;
+	*/
 }
 
 /* RGBAPixel */
