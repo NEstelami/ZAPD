@@ -121,6 +121,7 @@ void ImageBackend::WritePng(const char* filename)
 	{
 		png_set_PLTE(png, info, static_cast<png_color*>(colorPalette), paletteSize);
 
+		#ifdef TEXTURE_DEBUG
 		printf("palette\n");
 		png_color* aux = (png_color*)colorPalette;
 		for (size_t y = 0; y < paletteSize; y++)
@@ -128,6 +129,7 @@ void ImageBackend::WritePng(const char* filename)
 			printf("%02X %02X %02X \n", aux[y].red, aux[y].green, aux[y].blue);
 		}
 		printf("\n");
+		#endif
 
 		png_set_tRNS(png, info, alphaPalette, paletteSize, nullptr);
 	}
@@ -138,6 +140,7 @@ void ImageBackend::WritePng(const char* filename)
 	// Use png_set_filler().
 	// png_set_filler(png, 0, PNG_FILLER_AFTER);
 
+	#ifdef TEXTURE_DEBUG
 	size_t bytePerPixel = GetBytesPerPixel();
 	printf("imgData\n");
 	for (size_t y = 0; y < height; y++)
@@ -149,6 +152,7 @@ void ImageBackend::WritePng(const char* filename)
 		printf("\n");
 	}
 	printf("\n");
+	#endif
 
 	png_write_image(png, pixelMatrix);
 	png_write_end(png, nullptr);
