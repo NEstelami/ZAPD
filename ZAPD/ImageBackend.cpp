@@ -116,6 +116,13 @@ void ImageBackend::WritePng(const char* filename)
 	             bitDepth,   // 8,
 	             colorType,  // PNG_COLOR_TYPE_RGBA,
 	             PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+	if (isColorIndexed)
+	{
+		png_set_PLTE(png, info, static_cast<png_color*>(colorPalette), paletteSize);
+		png_set_tRNS(png, info, alphaPalette, paletteSize, static_cast<png_color_16*>(colorIndexes));
+	}
+
 	png_write_info(png, info);
 
 	// To remove the alpha channel for PNG_COLOR_TYPE_RGB format,
@@ -148,10 +155,10 @@ void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& tex
 
 	size_t bytePerPixel = GetBytesPerPixel();
 
-	pixelMatrix = (uint8_t**)malloc(sizeof(uint8_t*) * height);
+	pixelMatrix = static_cast<uint8_t**>(malloc(sizeof(uint8_t*) * height));
 	for (size_t y = 0; y < height; y++)
 	{
-		pixelMatrix[y] = (uint8_t*)malloc(sizeof(uint8_t*) * width * bytePerPixel);
+		pixelMatrix[y] = static_cast<uint8_t*>(malloc(sizeof(uint8_t*) * width * bytePerPixel));
 		for (size_t x = 0; x < width; x++)
 		{
 			pixelMatrix[y][x * bytePerPixel + 0] = texData.at(y).at(x).r;
@@ -165,7 +172,7 @@ void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& tex
 	hasImageData = true;
 }
 
-void ImageBackend::InitEmptyImage(uint32_t nWidth, uint32_t nHeight, bool alpha)
+void ImageBackend::InitEmptyRGBImage(uint32_t nWidth, uint32_t nHeight, bool alpha)
 {
 	FreeImageData();
 
@@ -178,12 +185,37 @@ void ImageBackend::InitEmptyImage(uint32_t nWidth, uint32_t nHeight, bool alpha)
 
 	size_t bytePerPixel = GetBytesPerPixel();
 
+	pixelMatrix = static_cast<uint8_t**>(malloc(sizeof(uint8_t*) * height));
+	for (size_t y = 0; y < height; y++)
+	{
+		pixelMatrix[y] = static_cast<uint8_t*>(calloc(width * bytePerPixel, sizeof(uint8_t*)));
+	}
+
+	hasImageData = true;
+}
+
+void ImageBackend::InitEmptyPaletteImage(uint32_t nWidth, uint32_t nHeight)
+{
+	FreeImageData();
+
+	width = nWidth;
+	height = nHeight;
+	colorType = PNG_COLOR_TYPE_PALETTE;
+	bitDepth = 8;
+
+	size_t bytePerPixel = GetBytesPerPixel();
+
 	pixelMatrix = (uint8_t**)malloc(sizeof(uint8_t*) * height);
 	for (size_t y = 0; y < height; y++)
 	{
-		pixelMatrix[y] = (uint8_t*)calloc(width * bytePerPixel, sizeof(uint8_t*));
+		pixelMatrix[y] = static_cast<uint8_t*>(calloc(width * bytePerPixel, sizeof(uint8_t*)));
 	}
+	colorIndexes = calloc(width * height, sizeof(png_color_16));
+	colorPalette = calloc(paletteSize, sizeof(png_color));
+	alphaPalette = static_cast<uint8_t*>(calloc(paletteSize, sizeof(uint8_t)));
+
 	hasImageData = true;
+	isColorIndexed = true;
 }
 
 RGBAPixel ImageBackend::GetPixel(size_t y, size_t x) const
@@ -203,6 +235,7 @@ RGBAPixel ImageBackend::GetPixel(size_t y, size_t x) const
 
 void ImageBackend::SetRGBPixel(size_t y, size_t x, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA)
 {
+	assert(hasImageData);
 	assert(y < height);
 	assert(x < width);
 
@@ -216,6 +249,7 @@ void ImageBackend::SetRGBPixel(size_t y, size_t x, uint8_t nR, uint8_t nG, uint8
 
 void ImageBackend::SetGrayscalePixel(size_t y, size_t x, uint8_t grayscale, uint8_t alpha)
 {
+	assert(hasImageData);
 	assert(y < height);
 	assert(x < width);
 
@@ -225,6 +259,48 @@ void ImageBackend::SetGrayscalePixel(size_t y, size_t x, uint8_t grayscale, uint
 	pixelMatrix[y][x * bytePerPixel + 2] = grayscale;
 	if (colorType == PNG_COLOR_TYPE_RGBA)
 		pixelMatrix[y][x * bytePerPixel + 3] = alpha;
+}
+
+void ImageBackend::SetIndexedPixel(size_t index, uint8_t grayscale)
+{
+	assert(hasImageData);
+	assert(index < width * height);
+
+	png_color_16* indexes = static_cast<png_color_16*>(colorIndexes);
+	indexes[index].index = grayscale;
+	indexes[index].blue = grayscale;
+	indexes[index].red = grayscale;
+	indexes[index].green = grayscale;
+	indexes[index].gray = grayscale;
+}
+
+void ImageBackend::SetPaletteIndex(size_t index, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA)
+{
+	assert(isColorIndexed);
+	assert(index < paletteSize);
+
+	png_color* pal = static_cast<png_color*>(colorPalette);
+	pal[index].red = nR;
+	pal[index].green = nG;
+	pal[index].blue = nB;
+	alphaPalette[index] = nA;
+}
+
+void ImageBackend::SetPalette(const ImageBackend& pal)
+{
+	size_t bytePerPixel = pal.GetBytesPerPixel();
+
+	for(size_t y = 0; y < pal.height; y++)
+	{
+		for(size_t x = 0; x < pal.width; x++)
+		{
+			uint8_t r = pal.pixelMatrix[y][x * bytePerPixel + 0];
+			uint8_t g = pal.pixelMatrix[y][x * bytePerPixel + 1];
+			uint8_t b = pal.pixelMatrix[y][x * bytePerPixel + 2];
+			uint8_t a = pal.pixelMatrix[y][x * bytePerPixel + 3];
+			SetPaletteIndex(y * pal.width + x, r, g, b, a);
+		}
+	}
 }
 
 uint32_t ImageBackend::GetWidth() const
@@ -257,8 +333,11 @@ double ImageBackend::GetBytesPerPixel() const
 	case PNG_COLOR_TYPE_RGB:
 		return 3 * bitDepth / 8;
 
+	case PNG_COLOR_TYPE_PALETTE:
+		return 3 * bitDepth / 8;
+
 	default:
-		throw std::invalid_argument("Invalid color type.");
+		throw std::invalid_argument("ImageBackend::GetBytesPerPixel():\n\t Invalid color type.");
 	}
 }
 
@@ -269,7 +348,21 @@ void ImageBackend::FreeImageData()
 		for (size_t y = 0; y < height; y++)
 			free(pixelMatrix[y]);
 		free(pixelMatrix);
+		pixelMatrix = nullptr;
 	}
+
+	if (isColorIndexed)
+	{
+		free(colorIndexes);
+		free(colorPalette);
+		free(alphaPalette);
+		colorIndexes = nullptr;
+		colorPalette = nullptr;
+		alphaPalette = nullptr;
+		isColorIndexed = false;
+	}
+
+	hasImageData = false;
 }
 
 /* RGBAPixel */

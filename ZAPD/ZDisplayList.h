@@ -343,6 +343,7 @@ public:
 
 	std::map<uint32_t, ZTexture*> textures;
 	ZTexture* lastTexture = nullptr;
+	ZTexture* lastTlut = nullptr;
 
 	std::vector<uint32_t> references;
 

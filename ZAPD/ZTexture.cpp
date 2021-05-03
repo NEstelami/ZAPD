@@ -2,6 +2,7 @@
 
 #include "ZTexture.h"
 
+#include <cassert>
 #include "BitConverter.h"
 #include "CRC32.h"
 #include "File.h"
@@ -130,7 +131,7 @@ void ZTexture::ParseRawData()
 
 void ZTexture::PrepareBitmapRGBA16()
 {
-	textureData.InitEmptyImage(width, height, true);
+	textureData.InitEmptyRGBImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -150,7 +151,7 @@ void ZTexture::PrepareBitmapRGBA16()
 
 void ZTexture::PrepareBitmapRGBA32()
 {
-	textureData.InitEmptyImage(width, height, true);
+	textureData.InitEmptyRGBImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -169,7 +170,7 @@ void ZTexture::PrepareBitmapRGBA32()
 
 void ZTexture::PrepareBitmapGrayscale4()
 {
-	textureData.InitEmptyImage(width, height, false);
+	textureData.InitEmptyRGBImage(width, height, false);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -193,7 +194,7 @@ void ZTexture::PrepareBitmapGrayscale4()
 
 void ZTexture::PrepareBitmapGrayscale8()
 {
-	textureData.InitEmptyImage(width, height, false);
+	textureData.InitEmptyRGBImage(width, height, false);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -208,7 +209,7 @@ void ZTexture::PrepareBitmapGrayscale8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha4()
 {
-	textureData.InitEmptyImage(width, height, true);
+	textureData.InitEmptyRGBImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -235,7 +236,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha8()
 {
-	textureData.InitEmptyImage(width, height, true);
+	textureData.InitEmptyRGBImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -252,7 +253,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 
 void ZTexture::PrepareBitmapGrayscaleAlpha16()
 {
-	textureData.InitEmptyImage(width, height, true);
+	textureData.InitEmptyRGBImage(width, height, true);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -269,7 +270,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 
 void ZTexture::PrepareBitmapPalette4()
 {
-	textureData.InitEmptyImage(width, height, false);
+	textureData.InitEmptyPaletteImage(width, height);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -285,7 +286,7 @@ void ZTexture::PrepareBitmapPalette4()
 				else
 					paletteIndex = (rawData.at(pos) & 0x0F);
 
-				textureData.SetGrayscalePixel(y, x + i, paletteIndex * 16);
+				textureData.SetIndexedPixel(y * width + x, paletteIndex * 16);
 			}
 		}
 	}
@@ -293,7 +294,7 @@ void ZTexture::PrepareBitmapPalette4()
 
 void ZTexture::PrepareBitmapPalette8()
 {
-	textureData.InitEmptyImage(width, height, false);
+	textureData.InitEmptyPaletteImage(width, height);
 	// auto parentRawData = parent->GetRawData();
 	for (size_t y = 0; y < height; y++)
 	{
@@ -301,7 +302,7 @@ void ZTexture::PrepareBitmapPalette8()
 		{
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 
-			textureData.SetGrayscalePixel(y, x, rawData.at(pos));
+			textureData.SetIndexedPixel(y * width + x, rawData.at(pos));
 		}
 	}
 }
@@ -786,4 +787,30 @@ TextureType ZTexture::GetTextureTypeFromString(std::string str)
 	else
 		fprintf(stderr, "Encountered Unknown Texture Type %s \n", str.c_str());
 	return texType;
+}
+
+bool ZTexture::IsColorIndexed() const
+{
+	switch (type)
+	{
+	case TextureType::Palette4bpp:
+	case TextureType::Palette8bpp:
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+void ZTexture::SetTlut(ZTexture* nTlut)
+{
+	assert(IsColorIndexed());
+	tlut = nTlut;
+
+	textureData.SetPalette(tlut->textureData);
+}
+
+bool ZTexture::HasTlut() const
+{
+	return tlut != nullptr;
 }

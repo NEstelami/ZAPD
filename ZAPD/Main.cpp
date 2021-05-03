@@ -43,10 +43,13 @@ void ErrorHandler(int sig)
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
-	fprintf(stderr, "\n\t\tYou've met with a terrible fate, haven't you?\n\n");
+	fprintf(stderr, "\nZAPD crashed. (Signal: %i)\n", sig);
 
-	// To prevent unused parameter warning
-	(void)sig;
+	fprintf(stderr, "\n\t\tYou've met with a terrible fate, haven't you?\n\n");
+	/**
+	 * Other possible options:
+	 * - SEA BEARS FOAM. SLEEP BEARS DREAMS. \n BOTH END IN THE SAME WAY: CRASSSH!
+	 */
 
 	fprintf(stderr, "Traceback:\n");
 	for (size_t i = 1; i < size; i++)

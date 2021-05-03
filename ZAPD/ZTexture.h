@@ -29,6 +29,7 @@ protected:
 
 	ImageBackend textureData;
 	std::vector<uint8_t> textureDataRaw;  // When reading from a PNG file.
+	ZTexture* tlut = nullptr;
 
 	void PrepareBitmapRGBA16();
 	void PrepareBitmapRGBA32();
@@ -84,4 +85,7 @@ public:
 	float GetPixelMultiplyer() const;
 	TextureType GetTextureType();
 	fs::path GetPoolOutPath(const fs::path& defaultValue);
+	bool IsColorIndexed() const;
+	void SetTlut(ZTexture* nTlut);
+	bool HasTlut() const;
 };

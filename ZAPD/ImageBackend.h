@@ -32,11 +32,17 @@ public:
 
 	void SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData, uint32_t nWidth,
 	                    uint32_t nHeight, uint8_t nColorType, uint8_t nBitDepth);
-	void InitEmptyImage(uint32_t nWidth, uint32_t nHeight, bool alpha);
+	void InitEmptyRGBImage(uint32_t nWidth, uint32_t nHeight, bool alpha);
+	void InitEmptyPaletteImage(uint32_t nWidth, uint32_t nHeight);
 
 	RGBAPixel GetPixel(size_t y, size_t x) const;
+
 	void SetRGBPixel(size_t y, size_t x, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA = 0);
 	void SetGrayscalePixel(size_t y, size_t x, uint8_t grayscale, uint8_t alpha = 0);
+
+	void SetIndexedPixel(size_t index, uint8_t grayscale);
+	void SetPaletteIndex(size_t index, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA);
+	void SetPalette(const ImageBackend& pal);
 
 	uint32_t GetWidth() const;
 	uint32_t GetHeight() const;
@@ -46,12 +52,18 @@ public:
 protected:
 	uint8_t** pixelMatrix = nullptr;  // height * [width * bytePerPixel]
 
+	void* colorIndexes = nullptr;
+	void* colorPalette = nullptr;
+	uint8_t* alphaPalette = nullptr;
+	size_t paletteSize = 16*16;
+
 	uint32_t width = 0;
 	uint32_t height = 0;
 	uint8_t colorType = 0;
 	uint8_t bitDepth = 0;
 
 	bool hasImageData = false;
+	bool isColorIndexed = false;
 
 	double GetBytesPerPixel() const;
 
