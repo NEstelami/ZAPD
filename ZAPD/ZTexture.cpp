@@ -285,8 +285,8 @@ void ZTexture::PrepareBitmapPalette4()
 				else
 					paletteIndex = (rawData.at(pos) & 0x0F);
 
-				//textureData.SetGrayscalePixel(y, x, paletteIndex * 16);
-				textureData.SetIndexedPixel(y, x, paletteIndex * 16);
+				//textureData.SetGrayscalePixel(y, x+i, paletteIndex * 16);
+				textureData.SetIndexedPixel(y, x+i, paletteIndex, paletteIndex * 16);
 			}
 		}
 	}
@@ -301,9 +301,10 @@ void ZTexture::PrepareBitmapPalette8()
 		for (size_t x = 0; x < width; x++)
 		{
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
+			uint8_t grayscale = rawData.at(pos);
 
 			//textureData.SetGrayscalePixel(y, x, rawData.at(pos));
-			textureData.SetIndexedPixel(y, x, rawData.at(pos));
+			textureData.SetIndexedPixel(y, x, grayscale, grayscale);
 		}
 	}
 }
@@ -683,7 +684,18 @@ void ZTexture::Save(const fs::path& outFolder)
 
 	auto outFileName = outPath / (outName + "." + GetExternalExtension() + ".png");
 
+	#ifdef TEXTURE_DEBUG
+	printf("Saving PNG: %s\n", outFileName.c_str());
+	printf("\t Var name: %s\n", name.c_str());
+	if (tlut != nullptr)
+		printf("\t TLUT name: %s\n", tlut->name.c_str());
+	#endif
+
 	textureData.WritePng(outFileName);
+
+	#ifdef TEXTURE_DEBUG
+	printf("\n");
+	#endif
 }
 
 std::string ZTexture::GetBodySourceCode() const

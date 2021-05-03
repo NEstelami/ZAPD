@@ -126,7 +126,9 @@ void ImageBackend::WritePng(const char* filename)
 		png_color* aux = (png_color*)colorPalette;
 		for (size_t y = 0; y < paletteSize; y++)
 		{
-			printf("%02X %02X %02X \n", aux[y].red, aux[y].green, aux[y].blue);
+			printf("#%02X%02X%02X ", aux[y].red, aux[y].green, aux[y].blue);
+			if ((y + 1) % 8 == 0)
+				printf("\n");
 		}
 		printf("\n");
 		#endif
@@ -285,16 +287,16 @@ void ImageBackend::SetGrayscalePixel(size_t y, size_t x, uint8_t grayscale, uint
 		pixelMatrix[y][x * bytePerPixel + 3] = alpha;
 }
 
-void ImageBackend::SetIndexedPixel(size_t y, size_t x, uint8_t grayscale)
+void ImageBackend::SetIndexedPixel(size_t y, size_t x, uint8_t index, uint8_t grayscale)
 {
 	assert(hasImageData);
 	assert(y < height);
 	assert(x < width);
 
 	size_t bytePerPixel = GetBytesPerPixel();
-	pixelMatrix[y][x * bytePerPixel + 0] = grayscale;
+	pixelMatrix[y][x * bytePerPixel + 0] = index;
 
-	size_t index = grayscale;
+	//size_t index = grayscale;
 	assert(index < paletteSize);
 	png_color* pal = static_cast<png_color*>(colorPalette);
 	pal[index].red = grayscale;
