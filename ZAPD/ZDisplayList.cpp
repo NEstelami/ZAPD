@@ -54,7 +54,6 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
 
-	// name = reader->Attribute("Name");
 	fileData = nRawData;
 	relativePath = nRelPath;
 	int32_t rawDataSize = ZDisplayList::GetDListLength(
@@ -1877,37 +1876,6 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		{
 			defines += scene->extDefines;
 		}
-
-		// Generate Texture Declarations
-        /*
-		for (auto& item : textures)
-		{
-			if (parent != nullptr && parent->GetDeclaration(item.first) == nullptr)
-			{
-				auto start = chrono::steady_clock::now();
-				item.second->Save(Globals::Instance->outputPath);
-
-				if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-				{
-					auto end = chrono::steady_clock::now();
-					auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-					printf("SAVED IMAGE TO %s in %ims\n", Globals::Instance->outputPath.c_str(),
-							(int32_t)diff);
-				}
-
-				auto filepath = Globals::Instance->outputPath /
-								Path::GetFileNameWithoutExtension(item.second->GetName());
-				std::string incStr =
-					StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-											item.second->GetExternalExtension().c_str());
-				std::string texName =
-					StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first);
-
-				parent->AddDeclarationIncludeArray(
-					item.first, incStr, item.second->GetRawDataSize(), "u64", texName, 0);
-			}
-		}
-        */
 	}
 
 	if (parent != nullptr)
@@ -2143,10 +2111,6 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 
 				return true;
 			}
-            else
-            {
-                fprintf(stderr, "\n\ntexAddr >= parent->GetRawData().size() ??\n%u >= %zu\n\n", texAddr, parent->GetRawData().size());
-            }
 		}
 		else if (scene != nullptr)
 		{

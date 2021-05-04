@@ -1233,6 +1233,7 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 			{
 				// Shrink palette so it doesn't overlap
 				currentTex->SetDimensions(offsetDiff / currentTex->GetPixelMultiplyer(), 1);
+                declarations.at(currentOffset)->size = currentTex->GetRawDataSize();
 			}
 			else
 			{
