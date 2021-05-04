@@ -3,8 +3,6 @@
 #include <regex>
 #include "StringHelper.h"
 
-using namespace std;
-
 ZResource::ZResource(ZFile* nParent)
 {
 	parent = nParent;
@@ -12,7 +10,7 @@ ZResource::ZResource(ZFile* nParent)
 	outName = "";
 	relativePath = "";
 	sourceOutput = "";
-	rawData = vector<uint8_t>();
+	rawData = std::vector<uint8_t>();
 	rawDataIndex = 0;
 	outputDeclaration = true;
 }
@@ -89,7 +87,7 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-string ZResource::GetName() const
+std::string ZResource::GetName() const
 {
 	return name;
 }
@@ -104,7 +102,7 @@ void ZResource::SetOutName(std::string nName)
 	outName = nName;
 }
 
-void ZResource::SetName(string nName)
+void ZResource::SetName(std::string nName)
 {
 	name = std::move(nName);
 }
@@ -124,12 +122,12 @@ std::string ZResource::GetExternalExtension() const
 	return "";
 }
 
-string ZResource::GetRelativePath()
+std::string ZResource::GetRelativePath()
 {
 	return relativePath;
 }
 
-vector<uint8_t> ZResource::GetRawData()
+std::vector<uint8_t> ZResource::GetRawData()
 {
 	return rawData;
 }
@@ -154,12 +152,12 @@ void ZResource::SetRawDataIndex(uint32_t value)
 	rawDataIndex = value;
 }
 
-string ZResource::GetSourceOutputCode(const std::string& prefix)
+std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 {
 	return "";
 }
 
-string ZResource::GetSourceOutputHeader(const std::string& prefix)
+std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
 {
 	return "";
 }

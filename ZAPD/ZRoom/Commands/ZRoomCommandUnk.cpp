@@ -2,8 +2,6 @@
 #include "../../StringHelper.h"
 #include "BitConverter.h"
 
-using namespace std;
-
 ZRoomCommandUnk::ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -15,7 +13,7 @@ ZRoomCommandUnk::ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, ui
 	data2 = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 }
 
-string ZRoomCommandUnk::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string ZRoomCommandUnk::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf("%s %sSet%04XCmd%02X = { 0x%02X, 0x%02X, 0x%06X }; /* WARNING: "
 	                             "UNIMPLEMENTED ROOM COMMAND */",
@@ -23,17 +21,17 @@ string ZRoomCommandUnk::GenerateSourceCodePass1(string roomName, uint32_t baseAd
 	                             cmdID, data1, data2);
 }
 
-string ZRoomCommandUnk::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string ZRoomCommandUnk::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-string ZRoomCommandUnk::GenerateSourceCodePass3(string roomName)
+std::string ZRoomCommandUnk::GenerateSourceCodePass3(std::string roomName)
 {
 	return "";
 }
 
-string ZRoomCommandUnk::GenerateExterns() const
+std::string ZRoomCommandUnk::GenerateExterns() const
 {
 	return "";
 }
@@ -43,7 +41,7 @@ size_t ZRoomCommandUnk::GetRawDataSize() const
 	return 8;
 }
 
-string ZRoomCommandUnk::GetCommandCName() const
+std::string ZRoomCommandUnk::GetCommandCName() const
 {
 	return "SCmdBase";
 }

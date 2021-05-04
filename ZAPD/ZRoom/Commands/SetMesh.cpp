@@ -7,8 +7,6 @@
 #include "../ZRoom.h"
 #include "ZBackground.h"
 
-using namespace std;
-
 SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex,
                  int32_t segAddressOffset)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -16,7 +14,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIn
 	data = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
-	string declaration = "";
+	std::string declaration = "";
 	meshHeaderType = rawData[segmentOffset + 0];
 
 	if (meshHeaderType == 0)
@@ -116,7 +114,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIn
 		MeshHeader2* meshHeader2 = new MeshHeader2();
 		meshHeader2->headerType = 2;
 
-		meshHeader2->entries = vector<MeshEntry2*>();
+		meshHeader2->entries = std::vector<MeshEntry2*>();
 		meshHeader2->dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
 		meshHeader2->dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
 
@@ -237,16 +235,16 @@ SetMesh::~SetMesh()
 
 void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList)
 {
-	string srcVarName =
+	std::string srcVarName =
 		StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
-	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
+	std::string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
 
-	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
+	for (std::pair<uint32_t, std::string> vtxEntry : dList->vtxDeclarations)
 	{
 		DeclarationAlignment alignment = DeclarationAlignment::Align8;
 		if (Globals::Instance->game == ZGame::MM_RETAIL)
@@ -257,7 +255,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}
 
-	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
+	for (std::pair<uint32_t, std::string> texEntry : dList->texDeclarations)
 	{
 		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
 	}
@@ -265,7 +263,7 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	if (Globals::Instance->includeFilePrefix)
 		sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(),
@@ -276,7 +274,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
-	for (pair<uint32_t, string> texEntry : dList->texDeclarations)
+	for (std::pair<uint32_t, std::string> texEntry : dList->texDeclarations)
 		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n",
 		                                      zRoom->GetName().c_str(), texEntry.first);
 
@@ -285,9 +283,9 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	return sourceOutput;
 }
 
-string SetMesh::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetMesh::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
 
@@ -298,7 +296,7 @@ string SetMesh::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 	return sourceOutput;
 }
 
-string SetMesh::GenerateExterns() const
+std::string SetMesh::GenerateExterns() const
 {
 	return "";
 }
@@ -308,7 +306,7 @@ size_t SetMesh::GetRawDataSize() const
 	return ZRoomCommand::GetRawDataSize();
 }
 
-string SetMesh::GetCommandCName() const
+std::string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
 }
@@ -354,7 +352,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength, parent);
 
-	string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
+	std::string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
 	dlist->SetName(dListStr);
 	dlist->scene = room->scene;
 	dlist->GetSourceOutputCode(prefix);

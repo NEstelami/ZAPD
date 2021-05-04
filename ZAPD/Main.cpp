@@ -24,7 +24,6 @@
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
-using namespace std;
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
            ZFileMode fileMode);
@@ -50,7 +49,7 @@ void ErrorHandler(int sig)
 	{
 		Dl_info info;
 		uint32_t gotAddress = dladdr(array[i], &info);
-		string functionName(symbols[i]);
+		std::string functionName(symbols[i]);
 
 		if (gotAddress != 0 && info.dli_sname != nullptr)
 		{
@@ -90,7 +89,7 @@ int main(int argc, char* argv[])
 	Globals* g = new Globals();
 
 	// Parse File Mode
-	string buildMode = argv[1];
+	std::string buildMode = argv[1];
 	ZFileMode fileMode = ZFileMode::Invalid;
 
 	if (buildMode == "btex")
@@ -119,7 +118,7 @@ int main(int argc, char* argv[])
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
 	{
-		string arg = argv[i];
+		std::string arg = argv[i];
 
 		if (arg == "-o" || arg == "--outputpath")  // Set output path
 		{
@@ -147,34 +146,34 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-gsf")  // Generate source file during extraction
 		{
-			Globals::Instance->genSourceFile = string(argv[i + 1]) == "1";
+			Globals::Instance->genSourceFile = std::string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-ifp")  // Include file prefix in generated symbols
 		{
-			Globals::Instance->includeFilePrefix = string(argv[i + 1]) == "1";
+			Globals::Instance->includeFilePrefix = std::string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
-			Globals::Instance->testMode = string(argv[i + 1]) == "1";
+			Globals::Instance->testMode = std::string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
-			Globals::Instance->useLegacyZDList = string(argv[i + 1]) == "1";
+			Globals::Instance->useLegacyZDList = std::string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-profile")  // Enable profiling
 		{
-			Globals::Instance->profile = string(argv[i + 1]) == "1";
+			Globals::Instance->profile = std::string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg ==
 		         "-uer")  // Split resources into their individual components (enabled by default)
 		                  // TODO: We may wish to make this a part of the config file...
 		{
-			Globals::Instance->useExternalResources = string(argv[i + 1]) == "1";
+			Globals::Instance->useExternalResources = std::string(argv[i + 1]) == "1";
 			i++;
 		}
 		else if (arg == "-tt")  // Set texture type
@@ -290,7 +289,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	for (XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		if (string(child->Name()) == "File")
+		if (std::string(child->Name()) == "File")
 		{
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);
@@ -323,15 +322,15 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath)
 {
-	string name = outPath.stem();
+	std::string name = outPath.stem();
 
 	ZTexture* tex = ZTexture::FromPNG(pngFilePath, texType);
-	string cfgPath = StringHelper::Split(pngFilePath, ".")[0] + ".cfg";
+	std::string cfgPath = StringHelper::Split(pngFilePath, ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))
 		name = File::ReadAllText(cfgPath);
 
-	string src = tex->GetSourceOutputCode(name);
+	std::string src = tex->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
 
@@ -349,9 +348,9 @@ void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 {
 	ZBlob* blob = ZBlob::FromFile(blobFilePath);
-	string name = outPath.stem();  // filename without extension
+	std::string name = outPath.stem();  // filename without extension
 
-	string src = blob->GetSourceOutputCode(name);
+	std::string src = blob->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath, src);
 
@@ -363,7 +362,7 @@ void BuildAssetModelIntermediette(const fs::path& outPath)
 	XMLDocument doc;
 
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
-	string output = mdl->OutputCode();
+	std::string output = mdl->OutputCode();
 
 	File::WriteAllText(outPath, output);
 
@@ -372,7 +371,7 @@ void BuildAssetModelIntermediette(const fs::path& outPath)
 
 void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath)
 {
-	vector<string> split = StringHelper::Split(outPath, "/");
+	std::vector<std::string> split = StringHelper::Split(outPath, "/");
 	ZFile* file = new ZFile("", split[split.size() - 2]);
 	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath);
 	ZAnimation* zAnim = anim->ToZAnimation();
@@ -380,7 +379,7 @@ void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& 
 	zAnim->parent = file;
 
 	zAnim->GetSourceOutputCode(split[split.size() - 2]);
-	string output = "";
+	std::string output = "";
 
 	output += file->declarations[2]->text + "\n";
 	output += file->declarations[1]->text + "\n";

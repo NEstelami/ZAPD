@@ -7,8 +7,6 @@
 
 REGISTER_ZFILENODE(Path, ZSetPathways);
 
-using namespace std;
-
 ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(nParent)
 {
 }
@@ -36,7 +34,7 @@ void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& body
 	                       StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
 }
 
-string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
+std::string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 {
 	if (pathwayList != nullptr)
 		pathwayList->GetSourceOutputCode(parent->GetName());
@@ -61,15 +59,15 @@ void ZSetPathways::ParseRawData()
 	pathwayList = new PathwayList(parent, rawData, segmentOffset, numPaths);
 }
 
-string ZSetPathways::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string ZSetPathways::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	ParseRawData();
 	return "";
 }
 
-string ZSetPathways::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string ZSetPathways::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput += StringHelper::Sprintf("\n\t%s 0, (u32)%sPathway0x%06X\n};",
 	                                      ZRoomCommand::GenerateSourceCodePass1("", 0).c_str(),
@@ -90,7 +88,7 @@ size_t ZSetPathways::GetRawDataSize() const
 	return ZRoomCommand::GetRawDataSize() + size;
 }
 
-string ZSetPathways::GenerateExterns() const
+std::string ZSetPathways::GenerateExterns() const
 {
 	if (pathwayList != nullptr)
 		return pathwayList->GenerateExterns(parent->GetName());
@@ -98,7 +96,7 @@ string ZSetPathways::GenerateExterns() const
 	return "";
 }
 
-string ZSetPathways::GetCommandCName() const
+std::string ZSetPathways::GetCommandCName() const
 {
 	return "SCmdPathList";
 }
@@ -166,7 +164,7 @@ PathwayList::~PathwayList()
 void PathwayList::GetSourceOutputCode(const std::string& prefix)
 {
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 		for (PathwayEntry* entry : pathways)
 		{
@@ -194,7 +192,7 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 
 	for (PathwayEntry* entry : pathways)
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		size_t index = 0;
 		for (Vec3s& point : entry->points)
@@ -228,9 +226,9 @@ size_t PathwayList::GetRawDataSize() const
 	return pathways.size() * 8 + pointsSize;
 }
 
-string PathwayList::GenerateExterns(const std::string& prefix)
+std::string PathwayList::GenerateExterns(const std::string& prefix)
 {
-	string declaration = "";
+	std::string declaration = "";
 	for (PathwayEntry* entry : pathways)
 	{
 		declaration += StringHelper::Sprintf("extern Vec3s %sPathwayList0x%06X[];\n",

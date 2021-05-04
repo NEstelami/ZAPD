@@ -4,13 +4,11 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
-	exits = vector<uint16_t>();
+	exits = std::vector<uint16_t>();
 
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
@@ -19,9 +17,9 @@ SetExitList::SetExitList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t r
 	_rawDataIndex = rawDataIndex;
 }
 
-string SetExitList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetExitList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput =
+	std::string sourceOutput =
 		StringHelper::Sprintf("%s 0x00, (u32)&%sExitList0x%06X",
 	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 	                          zRoom->GetName().c_str(), segmentOffset);
@@ -39,7 +37,7 @@ string SetExitList::GenerateSourceCodePass1(string roomName, uint32_t baseAddres
 		currentPtr += 2;
 	}
 
-	string declaration = "";
+	std::string declaration = "";
 
 	for (uint16_t exit : exits)
 		declaration += StringHelper::Sprintf("    0x%04X,\n", exit);
@@ -53,14 +51,14 @@ string SetExitList::GenerateSourceCodePass1(string roomName, uint32_t baseAddres
 	return sourceOutput;
 }
 
-string SetExitList::GenerateExterns() const
+std::string SetExitList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern u16 %sExitList0x%06X[];\n", zRoom->GetName().c_str(),
 	                             segmentOffset);
 	;
 }
 
-string SetExitList::GetCommandCName() const
+std::string SetExitList::GetCommandCName() const
 {
 	return "SCmdExitList";
 }

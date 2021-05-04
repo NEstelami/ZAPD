@@ -2,8 +2,6 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-using namespace std;
-
 ZCutsceneMM::ZCutsceneMM(ZFile* nParent) : ZCutsceneBase(nParent)
 {
 }
@@ -14,9 +12,9 @@ ZCutsceneMM::~ZCutsceneMM()
 		delete cmd;
 }
 
-string ZCutsceneMM::GetBodySourceCode()
+std::string ZCutsceneMM::GetBodySourceCode()
 {
-	string output = "";
+	std::string output = "";
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),", numCommands, endFrame);
 
@@ -30,7 +28,7 @@ string ZCutsceneMM::GetBodySourceCode()
 	return output;
 }
 
-string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
+std::string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
 {
 	std::string bodyStr = GetBodySourceCode();
 
@@ -72,7 +70,7 @@ void ZCutsceneMM::ParseRawData()
 	segmentOffset = rawDataIndex;
 
 	numCommands = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
-	commands = vector<CutsceneCommand*>();
+	commands = std::vector<CutsceneCommand*>();
 
 	endFrame = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 	uint32_t currentPtr = rawDataIndex + 8;

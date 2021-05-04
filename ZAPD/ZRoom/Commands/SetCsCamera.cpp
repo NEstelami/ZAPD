@@ -4,8 +4,6 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetCsCamera::SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -55,19 +53,19 @@ SetCsCamera::~SetCsCamera()
 		delete entry;
 }
 
-string SetCsCamera::GetSourceOutputCode(std::string prefix)
+std::string SetCsCamera::GetSourceOutputCode(std::string prefix)
 {
 	return "";
 }
 
-string SetCsCamera::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetCsCamera::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-string SetCsCamera::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string SetCsCamera::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput +=
 		StringHelper::Sprintf("%s %i, (u32)&%sCsCameraList0x%06X };",
@@ -76,7 +74,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, uint32_t baseAddres
 
 	if (points.size() > 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 		for (Vec3s point : points)
 		{
@@ -98,7 +96,7 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, uint32_t baseAddres
 	}
 
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		size_t index = 0;
 		size_t pointsIndex = 0;
@@ -130,12 +128,12 @@ size_t SetCsCamera::GetRawDataSize() const
 	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }
 
-string SetCsCamera::GenerateExterns() const
+std::string SetCsCamera::GenerateExterns() const
 {
 	return "";
 }
 
-string SetCsCamera::GetCommandCName() const
+std::string SetCsCamera::GetCommandCName() const
 {
 	return "SCmdCsCameraList";
 }

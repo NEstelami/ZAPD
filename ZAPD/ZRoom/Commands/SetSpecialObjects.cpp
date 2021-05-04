@@ -2,8 +2,6 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
 SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -11,14 +9,14 @@ SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, std::vector<uint8_t> rawData
 	globalObject = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
 }
 
-string SetSpecialObjects::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetSpecialObjects::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x%02X, 0x%04X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 		elfMessage, globalObject);
 }
 
-string SetSpecialObjects::GetCommandCName() const
+std::string SetSpecialObjects::GetCommandCName() const
 {
 	return "SCmdSpecialFiles";
 }

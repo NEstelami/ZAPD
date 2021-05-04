@@ -42,7 +42,6 @@
 #include "ZCutscene.h"
 #include "ZFile.h"
 
-using namespace std;
 using namespace tinyxml2;
 
 REGISTER_ZFILENODE(Room, ZRoom);
@@ -50,9 +49,9 @@ REGISTER_ZFILENODE(Scene, ZRoom);
 
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
-	textures = map<int32_t, ZTexture*>();
-	commands = vector<ZRoomCommand*>();
-	commandSets = vector<CommandSet>();
+	textures = std::map<int32_t, ZTexture*>();
+	commands = std::vector<ZRoomCommand*>();
+	commandSets = std::vector<CommandSet>();
 	extDefines = "";
 	scene = nullptr;
 	roomCount = -1;
@@ -76,7 +75,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
 
-	if (string(reader->Name()) == "Scene")
+	if (std::string(reader->Name()) == "Scene")
 	{
 		scene = this;
 		Globals::Instance->lastScene = this;
@@ -96,15 +95,15 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		string childName = child->Attribute("Name") == NULL ? "" : string(child->Attribute("Name"));
-		string childComment = child->Attribute("Comment") == NULL ?
+		std::string childName = child->Attribute("Name") == NULL ? "" : std::string(child->Attribute("Name"));
+		std::string childComment = child->Attribute("Comment") == NULL ?
                                   "" :
-                                  "// " + string(child->Attribute("Comment")) + "\n";
+                                  "// " + std::string(child->Attribute("Comment")) + "\n";
 
 		// TODO: Bunch of repeated code between all of these that needs to be combined.
-		if (string(child->Name()) == "DListHint")
+		if (std::string(child->Name()) == "DListHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
@@ -118,9 +117,9 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			dList->GetSourceOutputCode(name);
 			delete dList;
 		}
-		else if (string(child->Name()) == "CutsceneHint")
+		else if (std::string(child->Name()) == "CutsceneHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
@@ -131,24 +130,24 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			delete cutscene;
 		}
-		else if (string(child->Name()) == "AltHeaderHint")
+		else if (std::string(child->Name()) == "AltHeaderHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			uint32_t commandsCount = UINT32_MAX;
 
 			if (child->FindAttribute("Count") != NULL)
 			{
-				string commandCountStr = child->Attribute("Count");
+				std::string commandCountStr = child->Attribute("Count");
 				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
 			}
 
 			commandSets.push_back(CommandSet(address, commandsCount));
 		}
-		else if (string(child->Name()) == "PathHint")
+		else if (std::string(child->Name()) == "PathHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
@@ -188,7 +187,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 		ZRoomCommand* cmd = nullptr;
 
-		auto start = chrono::steady_clock::now();
+		auto start = std::chrono::steady_clock::now();
 
 		switch (opcode)
 		{
@@ -292,8 +291,8 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
 		}
 
-		auto end = chrono::steady_clock::now();
-		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+		auto end = std::chrono::steady_clock::now();
+		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 		if (Globals::Instance->profile)
 		{
@@ -330,7 +329,7 @@ void ZRoom::ProcessCommandSets()
 		{
 			ZRoomCommand* cmd = setCommands[i];
 			cmd->commandSet = commandSet & 0x00FFFFFF;
-			string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
+			std::string pass1 = cmd->GenerateSourceCodePass1(name, cmd->commandSet);
 
 			Declaration* decl = parent->AddDeclaration(
 				cmd->cmdAddress,
@@ -351,7 +350,7 @@ void ZRoom::ProcessCommandSets()
 
 	for (ZRoomCommand* cmd : commands)
 	{
-		string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
+		std::string pass2 = cmd->GenerateSourceCodePass2(name, cmd->commandSet);
 
 		if (pass2 != "")
 			parent->AddDeclaration(
@@ -402,7 +401,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int32_t declarationAddress)
 	size_t declarationIndex = -1;
 
 	// Copy it into a vector.
-	vector<pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(),
+	std::vector<std::pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(),
 	                                                          parent->declarations.end());
 
 	// Sort the vector according to the word count in descending order.
@@ -454,7 +453,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 	return 0;
 }
 
-string ZRoom::GetSourceOutputHeader(const std::string& prefix)
+std::string ZRoom::GetSourceOutputHeader(const std::string& prefix)
 {
 	sourceOutput = "";
 
@@ -469,7 +468,7 @@ string ZRoom::GetSourceOutputHeader(const std::string& prefix)
 	return sourceOutput;
 }
 
-string ZRoom::GetSourceOutputCode(const std::string& prefix)
+std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
@@ -487,10 +486,10 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 	// Check for texture intersections
 	{
-		string defines = "";
+		std::string defines = "";
 		if (textures.size() != 0)
 		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
+			std::vector<std::pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
 
 			sort(texturesSorted.begin(), texturesSorted.end(),
 			     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
@@ -521,9 +520,9 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		parent->defines += defines;
 	}
 
-	for (pair<int32_t, ZTexture*> item : textures)
+	for (std::pair<int32_t, ZTexture*> item : textures)
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		declaration += item.second->GetSourceOutputCode(prefix);
 
@@ -573,7 +572,7 @@ void ZRoom::PreGenSourceFiles()
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nText)
+                         size_t nSize, std::string nText)
 {
 	alignment = nAlignment;
 	padding = nPadding;
@@ -590,11 +589,11 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	arrayItemCnt = 0;
 	includePath = "";
 	isExternal = false;
-	references = vector<uint32_t>();
+	references = std::vector<uint32_t>();
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
-                         string nVarName, bool nIsArray, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+                         std::string nVarName, bool nIsArray, std::string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -603,8 +602,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         string nText)
+                         size_t nSize, std::string nVarType, std::string nVarName, bool nIsArray,
+                         std::string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
@@ -612,8 +611,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
-                         string nVarName, bool nIsArray, size_t nArrayItemCnt, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -631,8 +630,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         size_t nArrayItemCnt, string nText)
+                         size_t nSize, std::string nVarType, std::string nVarName, bool nIsArray,
+                         size_t nArrayItemCnt, std::string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
@@ -641,7 +640,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(std::string nIncludePath, size_t nSize, string nVarType, string nVarName)
+Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName)
 	: Declaration(DeclarationAlignment::None, DeclarationPadding::None, nSize, "")
 {
 	includePath = nIncludePath;

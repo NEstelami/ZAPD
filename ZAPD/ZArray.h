@@ -22,6 +22,4 @@ public:
 protected:
 	size_t arrayCnt;
 	ZFile* testFile;
-
-	// void ParseRawData(const std::vector<uint8_t>& data, const int32_t offset);
 };

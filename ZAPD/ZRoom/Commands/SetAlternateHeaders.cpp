@@ -3,8 +3,6 @@
 #include "../../StringHelper.h"
 #include "../../ZFile.h"
 
-using namespace std;
-
 SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> rawData,
                                          uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -18,9 +16,9 @@ SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, std::vector<uint8_t> raw
 	_rawDataIndex = rawDataIndex;
 }
 
-string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetAlternateHeaders::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 	int32_t numHeaders = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 4;
 
 	for (int32_t i = 0; i < numHeaders; i++)
@@ -37,7 +35,7 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, uint32_t ba
 	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 	                          roomName.c_str(), segmentOffset);
 
-	string declaration = "";
+	std::string declaration = "";
 
 	for (int32_t i = 0; i < numHeaders; i++)
 	{
@@ -63,7 +61,7 @@ size_t SetAlternateHeaders::GetRawDataSize() const
 	return ZRoomCommand::GetRawDataSize() + 0;
 }
 
-string SetAlternateHeaders::GetCommandCName() const
+std::string SetAlternateHeaders::GetCommandCName() const
 {
 	return "SCmdAltHeaders";
 }

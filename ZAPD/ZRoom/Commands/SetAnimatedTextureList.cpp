@@ -5,8 +5,6 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
                                                uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -14,7 +12,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		int32_t currentPtr = segmentOffset;
 
@@ -29,7 +27,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 			currentPtr += 8;
 			textures.push_back(lastTexture);
 
-			string textureName =
+			std::string textureName =
 				(lastTexture->segmentOffset != 0) ?
                     StringHelper::Sprintf("&%sAnimatedTextureParams0x%06X",
 			                              zRoom->GetName().c_str(), lastTexture->segmentOffset) :
@@ -49,7 +47,7 @@ SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, std::vector<uint8_
 
 	for (AnimatedTexture* texture : textures)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		switch (texture->type)
@@ -107,7 +105,7 @@ AnitmatedTextureParams::~AnitmatedTextureParams()
 {
 }
 
-string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetAnimatedTextureList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0, (u32)%sAnimatedTextureList0x%06X",
@@ -129,12 +127,12 @@ size_t SetAnimatedTextureList::GetRawDataSize() const
 	return ZRoomCommand::GetRawDataSize() + paramsSize;
 }
 
-string SetAnimatedTextureList::GenerateExterns() const
+std::string SetAnimatedTextureList::GenerateExterns() const
 {
 	return "";
 }
 
-string SetAnimatedTextureList::GetCommandCName() const
+std::string SetAnimatedTextureList::GetCommandCName() const
 {
 	return "SCmdTextureAnimations";
 }
@@ -144,7 +142,7 @@ RoomCommand SetAnimatedTextureList::GetRoomCommand() const
 	return RoomCommand::SetAnimatedTextureList;
 }
 
-string SetAnimatedTextureList::GetSourceOutputCode(std::string prefix)
+std::string SetAnimatedTextureList::GetSourceOutputCode(std::string prefix)
 {
 	return "";
 }
@@ -244,7 +242,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 {
 	if (primColorSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (FlashingTexturePrimColor& color : primColors)
@@ -268,7 +266,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 
 	if (envColorSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (FlashingTextureEnvColor& color : envColors)
@@ -292,7 +290,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 
 	if (keyFrameSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (uint16_t keyFrame : keyFrames)
@@ -367,7 +365,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, uint32_t base
 {
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (uint32_t offset : textureSegmentOffsets)
@@ -391,7 +389,7 @@ std::string CyclingTextureParams::GenerateSourceCode(ZRoom* zRoom, uint32_t base
 
 	if (textureIndicesSegmentOffset != 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 
 		for (uint8_t textureIndex : textureIndices)

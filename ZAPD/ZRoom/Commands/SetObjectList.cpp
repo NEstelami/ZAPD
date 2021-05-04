@@ -6,12 +6,11 @@
 #include "../ZNames.h"
 #include "../ZRoom.h"
 
-using namespace std;
 
 SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	objects = vector<uint16_t>();
+	objects = std::vector<uint16_t>();
 	uint8_t objectCnt = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 	uint32_t currentPtr = segmentOffset;
@@ -27,22 +26,22 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-string SetObjectList::GenerateExterns() const
+std::string SetObjectList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(),
 	                             segmentOffset);
 }
 
-string SetObjectList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetObjectList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput +=
 		StringHelper::Sprintf("%s 0x%02X, (u32)%sObjectList0x%06X",
 	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 	                          objects.size(), zRoom->GetName().c_str(), segmentOffset);
 
-	string declaration = "";
+	std::string declaration = "";
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -66,7 +65,7 @@ size_t SetObjectList::GetRawDataSize() const
 	return ZRoomCommand::GetRawDataSize() + (objects.size() * 2);
 }
 
-string SetObjectList::GetCommandCName() const
+std::string SetObjectList::GetCommandCName() const
 {
 	return "SCmdObjectList";
 }
