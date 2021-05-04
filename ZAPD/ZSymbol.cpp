@@ -57,7 +57,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-size_t ZSymbol::GetRawDataSize()
+size_t ZSymbol::GetRawDataSize() const
 {
 	if (isArray)
 		return count * typeSize;
@@ -80,12 +80,12 @@ std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
 	return StringHelper::Sprintf("extern %s %s%s;\n", type.c_str(), prefix.c_str(), name.c_str());
 }
 
-std::string ZSymbol::GetSourceTypeName()
+std::string ZSymbol::GetSourceTypeName() const
 {
 	return type;
 }
 
-ZResourceType ZSymbol::GetResourceType()
+ZResourceType ZSymbol::GetResourceType() const
 {
 	return ZResourceType::Symbol;
 }

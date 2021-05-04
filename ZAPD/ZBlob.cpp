@@ -91,22 +91,22 @@ void ZBlob::Save(const std::string& outFolder)
 	File::WriteAllBytes(outFolder + "/" + name + ".bin", rawData);
 }
 
-bool ZBlob::IsExternalResource()
+bool ZBlob::IsExternalResource() const
 {
 	return true;
 }
 
-string ZBlob::GetExternalExtension()
+string ZBlob::GetExternalExtension() const
 {
 	return "bin";
 }
 
-std::string ZBlob::GetSourceTypeName()
+std::string ZBlob::GetSourceTypeName() const
 {
 	return "u8";
 }
 
-ZResourceType ZBlob::GetResourceType()
+ZResourceType ZBlob::GetResourceType() const
 {
 	return ZResourceType::Blob;
 }

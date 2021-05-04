@@ -73,21 +73,21 @@ public:
 	virtual void Save(const std::string& outFolder);
 
 	// Properties
-	virtual bool IsExternalResource();
-	virtual bool DoesSupportArray();  // Can this type be wrapped in an <Array> node?
-	virtual std::string GetSourceTypeName();
-	virtual ZResourceType GetResourceType();
-	virtual std::string GetExternalExtension();
+	virtual bool IsExternalResource() const;
+	virtual bool DoesSupportArray() const;  // Can this type be wrapped in an <Array> node?
+	virtual std::string GetSourceTypeName() const;
+	virtual ZResourceType GetResourceType() const;
+	virtual std::string GetExternalExtension() const;
 
 	// Getters/Setters
-	std::string GetName();
+	std::string GetName() const;
 	void SetName(std::string nName);
 	std::string GetOutName();
 	void SetOutName(std::string nName);
 	std::string GetRelativePath();
-	virtual uint32_t GetRawDataIndex();
+	virtual uint32_t GetRawDataIndex() const;
 	virtual void SetRawDataIndex(uint32_t value);
-	virtual size_t GetRawDataSize();
+	virtual size_t GetRawDataSize() const;
 	virtual std::vector<uint8_t> GetRawData();
 	virtual void SetRawData(std::vector<uint8_t> nData);
 

@@ -27,7 +27,7 @@ SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
-string SetObjectList::GenerateExterns()
+string SetObjectList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("s16 %sObjectList0x%06X[];\n", zRoom->GetName().c_str(),
 	                             segmentOffset);
@@ -61,17 +61,17 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, uint32_t baseAddr
 	return sourceOutput;
 }
 
-size_t SetObjectList::GetRawDataSize()
+size_t SetObjectList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (objects.size() * 2);
 }
 
-string SetObjectList::GetCommandCName()
+string SetObjectList::GetCommandCName() const
 {
 	return "SCmdObjectList";
 }
 
-RoomCommand SetObjectList::GetRoomCommand()
+RoomCommand SetObjectList::GetRoomCommand() const
 {
 	return RoomCommand::SetObjectList;
 }

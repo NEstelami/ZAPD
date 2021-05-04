@@ -58,17 +58,17 @@ string SetAlternateHeaders::GenerateSourceCodePass1(string roomName, uint32_t ba
 	return sourceOutput;
 }
 
-size_t SetAlternateHeaders::GetRawDataSize()
+size_t SetAlternateHeaders::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + 0;
 }
 
-string SetAlternateHeaders::GetCommandCName()
+string SetAlternateHeaders::GetCommandCName() const
 {
 	return "SCmdAltHeaders";
 }
 
-RoomCommand SetAlternateHeaders::GetRoomCommand()
+RoomCommand SetAlternateHeaders::GetRoomCommand() const
 {
 	return RoomCommand::SetAlternateHeaders;
 }

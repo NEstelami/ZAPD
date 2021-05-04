@@ -14,12 +14,12 @@ string EndMarker::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 		"%s 0x00, 0x00", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
 }
 
-string EndMarker::GetCommandCName()
+string EndMarker::GetCommandCName() const
 {
 	return "SCmdEndMarker";
 }
 
-RoomCommand EndMarker::GetRoomCommand()
+RoomCommand EndMarker::GetRoomCommand() const
 {
 	return RoomCommand::EndMarker;
 }

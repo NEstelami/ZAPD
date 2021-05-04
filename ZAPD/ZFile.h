@@ -41,7 +41,7 @@ public:
 	~ZFile();
 
 	std::string GetVarName(uint32_t address);
-	std::string GetName();
+	std::string GetName() const;
 	void ExtractResources(fs::path outputDir);
 	void BuildSourceFile(fs::path outputDir);
 	void AddResource(ZResource* res);

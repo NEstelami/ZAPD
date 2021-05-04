@@ -19,12 +19,12 @@ string SetRoomBehavior::GenerateSourceCodePass1(string roomName, uint32_t baseAd
 	;
 }
 
-string SetRoomBehavior::GetCommandCName()
+string SetRoomBehavior::GetCommandCName() const
 {
 	return "SCmdRoomBehavior";
 }
 
-RoomCommand SetRoomBehavior::GetRoomCommand()
+RoomCommand SetRoomBehavior::GetRoomCommand() const
 {
 	return RoomCommand::SetRoomBehavior;
 }

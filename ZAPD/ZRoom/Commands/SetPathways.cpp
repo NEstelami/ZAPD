@@ -27,7 +27,7 @@ ZSetPathways::~ZSetPathways()
 	delete pathwayList;
 }
 
-void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
 	                       StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
@@ -81,7 +81,7 @@ string ZSetPathways::GenerateSourceCodePass2(string roomName, uint32_t baseAddre
 	return sourceOutput;
 }
 
-size_t ZSetPathways::GetRawDataSize()
+size_t ZSetPathways::GetRawDataSize() const
 {
 	size_t size = 0;
 	if (pathwayList != nullptr)
@@ -90,7 +90,7 @@ size_t ZSetPathways::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + size;
 }
 
-string ZSetPathways::GenerateExterns()
+string ZSetPathways::GenerateExterns() const
 {
 	if (pathwayList != nullptr)
 		return pathwayList->GenerateExterns(parent->GetName());
@@ -98,12 +98,12 @@ string ZSetPathways::GenerateExterns()
 	return "";
 }
 
-string ZSetPathways::GetCommandCName()
+string ZSetPathways::GetCommandCName() const
 {
 	return "SCmdPathList";
 }
 
-RoomCommand ZSetPathways::GetRoomCommand()
+RoomCommand ZSetPathways::GetRoomCommand() const
 {
 	return RoomCommand::SetPathways;
 }
@@ -130,7 +130,7 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 
 	if (numPoints == 0)  // Hack for SharpOcarina
 	{
-		for (int32_t i = 0; i < 3; i++)
+		for (uint32_t i = 0; i < 3; i++)
 		{
 			Vec3s point = Vec3s(0, 0, 0);
 			points.push_back(point);
@@ -216,7 +216,7 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 	}
 }
 
-size_t PathwayList::GetRawDataSize()
+size_t PathwayList::GetRawDataSize() const
 {
 	size_t pointsSize = 0;
 

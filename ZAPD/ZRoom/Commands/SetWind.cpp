@@ -20,12 +20,12 @@ string SetWind::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 		windVertical, windSouth, clothFlappingStrength);
 }
 
-string SetWind::GetCommandCName()
+string SetWind::GetCommandCName() const
 {
 	return "SCmdWindSettings";
 }
 
-RoomCommand SetWind::GetRoomCommand()
+RoomCommand SetWind::GetRoomCommand() const
 {
 	return RoomCommand::SetWind;
 }

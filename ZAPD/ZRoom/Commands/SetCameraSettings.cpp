@@ -18,12 +18,12 @@ string SetCameraSettings::GenerateSourceCodePass1(string roomName, uint32_t base
 		cameraMovement, mapHighlight);
 }
 
-string SetCameraSettings::GetCommandCName()
+string SetCameraSettings::GetCommandCName() const
 {
 	return "SCmdMiscSettings";
 }
 
-RoomCommand SetCameraSettings::GetRoomCommand()
+RoomCommand SetCameraSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetCameraSettings;
 }

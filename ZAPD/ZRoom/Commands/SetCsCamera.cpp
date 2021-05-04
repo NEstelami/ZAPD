@@ -125,22 +125,22 @@ string SetCsCamera::GenerateSourceCodePass2(string roomName, uint32_t baseAddres
 	return sourceOutput;
 }
 
-size_t SetCsCamera::GetRawDataSize()
+size_t SetCsCamera::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }
 
-string SetCsCamera::GenerateExterns()
+string SetCsCamera::GenerateExterns() const
 {
 	return "";
 }
 
-string SetCsCamera::GetCommandCName()
+string SetCsCamera::GetCommandCName() const
 {
 	return "SCmdCsCameraList";
 }
 
-RoomCommand SetCsCamera::GetRoomCommand()
+RoomCommand SetCsCamera::GetRoomCommand() const
 {
 	return RoomCommand::SetCsCamera;
 }

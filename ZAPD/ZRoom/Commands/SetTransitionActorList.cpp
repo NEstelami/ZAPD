@@ -72,23 +72,23 @@ string SetTransitionActorList::GenerateSourceCodePass2(string roomName, uint32_t
 	return "";
 }
 
-size_t SetTransitionActorList::GetRawDataSize()
+size_t SetTransitionActorList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (transitionActors.size() * 16);
 }
 
-string SetTransitionActorList::GenerateExterns()
+string SetTransitionActorList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern TransitionActorEntry %sTransitionActorList0x%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetTransitionActorList::GetCommandCName()
+string SetTransitionActorList::GetCommandCName() const
 {
 	return "SCmdTransiActorList";
 }
 
-RoomCommand SetTransitionActorList::GetRoomCommand()
+RoomCommand SetTransitionActorList::GetRoomCommand() const
 {
 	return RoomCommand::SetTransitionActorList;
 }

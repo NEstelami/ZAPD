@@ -301,8 +301,6 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
 
-		// printf("OP: %s\n", cmd->GetCommandCName().c_str());
-
 		cmd->cmdIndex = currentIndex;
 		cmd->cmdSet = rawDataIndex;
 
@@ -547,7 +545,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	return sourceOutput;
 }
 
-size_t ZRoom::GetRawDataSize()
+size_t ZRoom::GetRawDataSize() const
 {
 	size_t size = 0;
 
@@ -557,7 +555,7 @@ size_t ZRoom::GetRawDataSize()
 	return size;
 }
 
-ZResourceType ZRoom::GetResourceType()
+ZResourceType ZRoom::GetResourceType() const
 {
 	return ZResourceType::Room;
 }
@@ -651,13 +649,13 @@ Declaration::Declaration(std::string nIncludePath, size_t nSize, string nVarType
 	varName = nVarName;
 }
 
-CommandSet::CommandSet(int32_t nAddress)
+CommandSet::CommandSet(uint32_t nAddress)
 {
 	address = nAddress;
-	commandCount = 9999999;
+	commandCount = UINT32_MAX;
 }
 
-CommandSet::CommandSet(int32_t nAddress, uint32_t nCommandCount)
+CommandSet::CommandSet(uint32_t nAddress, uint32_t nCommandCount)
 {
 	address = nAddress;
 	commandCount = nCommandCount;

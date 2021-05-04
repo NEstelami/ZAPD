@@ -51,16 +51,16 @@ public:
 	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             ZFile* nParent, ZRoom* nRoom);
 
-	size_t GetRawDataSize();
+	size_t GetRawDataSize() const;
 
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 
 	std::string GetBodySourceCode(bool arrayElement);
 	void DeclareAndGenerateOutputCode();
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
-	std::string GetSourceTypeName();
-	std::string GetName();
+	std::string GetSourceTypeName() const;
+	std::string GetName() const;
 
 	ZDisplayList* opaDList = nullptr;  // Gfx*
 	ZDisplayList* xluDList = nullptr;  // Gfx*
@@ -103,7 +103,7 @@ public:
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	static std::string GetSourceTypeName();
-	std::string GetName();
+	std::string GetName() const;
 };
 
 class PolygonType1
@@ -132,16 +132,16 @@ public:
 	PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             ZFile* nParent, ZRoom* nRoom);
 
-	size_t GetRawDataSize() ;
+	size_t GetRawDataSize() const;
 
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 
 	std::string GetBodySourceCode();
 	void DeclareAndGenerateOutputCode();
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
-	std::string GetSourceTypeName();
-	std::string GetName();
+	std::string GetSourceTypeName() const;
+	std::string GetName() const;
 
 	PolygonDlist polyGfxList;
 };
@@ -153,10 +153,10 @@ public:
 	~SetMesh();
 
 	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
-	virtual std::string GenerateExterns() override;
-	virtual std::string GetCommandCName() override;
-	virtual RoomCommand GetRoomCommand() override;
-	virtual size_t GetRawDataSize() override;
+	virtual std::string GenerateExterns() const override;
+	virtual std::string GetCommandCName() const override;
+	virtual RoomCommand GetRoomCommand() const override;
+	virtual size_t GetRawDataSize() const override;
 
 private:
 	MeshHeaderBase* meshHeader = nullptr;

@@ -110,12 +110,12 @@ string SetActorList::GenerateSourceCodePass2(string roomName, uint32_t baseAddre
 	return sourceOutput;
 }
 
-size_t SetActorList::GetRawDataSize()
+size_t SetActorList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + ((int32_t)actors.size() * 16);
 }
 
-size_t SetActorList::GetActorListArraySize()
+size_t SetActorList::GetActorListArraySize() const
 {
 	size_t actorCount = 0;
 
@@ -138,18 +138,18 @@ size_t SetActorList::GetActorListArraySize()
 	return actorCount;
 }
 
-string SetActorList::GenerateExterns()
+string SetActorList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern ActorEntry %sActorList0x%06X[%i];\n",
 	                             zRoom->GetName().c_str(), segmentOffset, GetActorListArraySize());
 }
 
-string SetActorList::GetCommandCName()
+string SetActorList::GetCommandCName() const
 {
 	return "SCmdActorList";
 }
 
-RoomCommand SetActorList::GetRoomCommand()
+RoomCommand SetActorList::GetRoomCommand() const
 {
 	return RoomCommand::SetActorList;
 }

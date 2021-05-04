@@ -1969,8 +1969,8 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
 					if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-						printf("SAVED IMAGE TO %s in %ims\n", Globals::Instance->outputPath.c_str(),
-						       (int32_t)diff);
+						printf("SAVED IMAGE TO %s in %ll ms\n", Globals::Instance->outputPath.c_str(),
+						       diff);
 
 					auto filepath = Globals::Instance->outputPath /
 									Path::GetFileNameWithoutExtension(item.second->GetName());
@@ -2287,27 +2287,27 @@ void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	mdl->blocks.push_back(new HLTerminator());
 }
 
-bool ZDisplayList::IsExternalResource()
+bool ZDisplayList::IsExternalResource() const
 {
 	return false;
 }
 
-std::string ZDisplayList::GetExternalExtension()
+std::string ZDisplayList::GetExternalExtension() const
 {
 	return "dlist";
 }
 
-std::string ZDisplayList::GetSourceTypeName()
+std::string ZDisplayList::GetSourceTypeName() const
 {
 	return "Gfx";
 }
 
-ZResourceType ZDisplayList::GetResourceType()
+ZResourceType ZDisplayList::GetResourceType() const
 {
 	return ZResourceType::DisplayList;
 }
 
-size_t ZDisplayList::GetRawDataSize()
+size_t ZDisplayList::GetRawDataSize() const
 {
 	return instructions.size() * 8;
 }

@@ -29,7 +29,7 @@ string ZRoomCommand::GenerateSourceCodePass3(string roomName)
 	return "";
 }
 
-string ZRoomCommand::GenerateExterns()
+string ZRoomCommand::GenerateExterns() const
 {
 	return "";
 }
@@ -44,17 +44,17 @@ std::string ZRoomCommand::PreGenSourceFiles()
 	return std::string();
 }
 
-size_t ZRoomCommand::GetRawDataSize()
+size_t ZRoomCommand::GetRawDataSize() const
 {
 	return 8;
 }
 
-string ZRoomCommand::GetCommandCName()
+string ZRoomCommand::GetCommandCName() const
 {
 	return "SCmdBase";
 }
 
-RoomCommand ZRoomCommand::GetRoomCommand()
+RoomCommand ZRoomCommand::GetRoomCommand() const
 {
 	return RoomCommand::Error;
 }

@@ -16,12 +16,12 @@ string SetEchoSettings::GenerateSourceCodePass1(string roomName, uint32_t baseAd
 		echo);
 }
 
-string SetEchoSettings::GetCommandCName()
+string SetEchoSettings::GetCommandCName() const
 {
 	return "SCmdEchoSettings";
 }
 
-RoomCommand SetEchoSettings::GetRoomCommand()
+RoomCommand SetEchoSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetEchoSettings;
 }

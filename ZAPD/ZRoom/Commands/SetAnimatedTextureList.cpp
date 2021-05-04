@@ -115,7 +115,7 @@ string SetAnimatedTextureList::GenerateSourceCodePass1(string roomName, uint32_t
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-size_t SetAnimatedTextureList::GetRawDataSize()
+size_t SetAnimatedTextureList::GetRawDataSize() const
 {
 	size_t paramsSize = 0;
 	for (AnimatedTexture* texture : textures)
@@ -129,17 +129,17 @@ size_t SetAnimatedTextureList::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + paramsSize;
 }
 
-string SetAnimatedTextureList::GenerateExterns()
+string SetAnimatedTextureList::GenerateExterns() const
 {
 	return "";
 }
 
-string SetAnimatedTextureList::GetCommandCName()
+string SetAnimatedTextureList::GetCommandCName() const
 {
 	return "SCmdTextureAnimations";
 }
 
-RoomCommand SetAnimatedTextureList::GetRoomCommand()
+RoomCommand SetAnimatedTextureList::GetRoomCommand() const
 {
 	return RoomCommand::SetAnimatedTextureList;
 }

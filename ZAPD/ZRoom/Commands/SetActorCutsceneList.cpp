@@ -61,23 +61,23 @@ string SetActorCutsceneList::GenerateSourceCodePass2(string roomName, uint32_t b
 	return "";
 }
 
-size_t SetActorCutsceneList::GetRawDataSize()
+size_t SetActorCutsceneList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);
 }
 
-string SetActorCutsceneList::GenerateExterns()
+string SetActorCutsceneList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern ActorCutscene %sActorCutsceneList0x%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetActorCutsceneList::GetCommandCName()
+string SetActorCutsceneList::GetCommandCName() const
 {
 	return "SCmdCutsceneActorList";
 }
 
-RoomCommand SetActorCutsceneList::GetRoomCommand()
+RoomCommand SetActorCutsceneList::GetRoomCommand() const
 {
 	return RoomCommand::SetActorCutsceneList;
 }

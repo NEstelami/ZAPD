@@ -86,23 +86,23 @@ string SetMinimapList::GenerateSourceCodePass2(string roomName, uint32_t baseAdd
 	return sourceOutput;
 }
 
-string SetMinimapList::GenerateExterns()
+string SetMinimapList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern MinimapList %sMinimapList0x%06X;\n",
 	                             zRoom->GetName().c_str(), listSegmentOffset);
 }
 
-string SetMinimapList::GetCommandCName()
+string SetMinimapList::GetCommandCName() const
 {
 	return "SCmdMinimapSettings";
 }
 
-RoomCommand SetMinimapList::GetRoomCommand()
+RoomCommand SetMinimapList::GetRoomCommand() const
 {
 	return RoomCommand::SetMinimapList;
 }
 
-size_t SetMinimapList::GetRawDataSize()
+size_t SetMinimapList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (minimaps.size() * 10);
 }

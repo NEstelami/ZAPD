@@ -136,7 +136,7 @@ size_t ZScalar::MapTypeToSize(const ZScalarType scalarType)
 	}
 }
 
-size_t ZScalar::GetRawDataSize()
+size_t ZScalar::GetRawDataSize() const
 {
 	return ZScalar::MapTypeToSize(scalarType);
 }
@@ -187,12 +187,12 @@ void ZScalar::ParseRawData(const std::vector<uint8_t>& data, const uint32_t offs
 	}
 }
 
-std::string ZScalar::GetSourceTypeName()
+std::string ZScalar::GetSourceTypeName() const
 {
 	return ZScalar::MapScalarTypeToOutputType(scalarType);
 }
 
-std::string ZScalar::GetSourceValue()
+std::string ZScalar::GetSourceValue() const
 {
 	switch (scalarType)
 	{
@@ -230,12 +230,12 @@ std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-ZResourceType ZScalar::GetResourceType()
+ZResourceType ZScalar::GetResourceType() const
 {
 	return ZResourceType::Scalar;
 }
 
-bool ZScalar::DoesSupportArray()
+bool ZScalar::DoesSupportArray() const
 {
 	return true;
 }

@@ -18,12 +18,12 @@ string SetSpecialObjects::GenerateSourceCodePass1(string roomName, uint32_t base
 		elfMessage, globalObject);
 }
 
-string SetSpecialObjects::GetCommandCName()
+string SetSpecialObjects::GetCommandCName() const
 {
 	return "SCmdSpecialFiles";
 }
 
-RoomCommand SetSpecialObjects::GetRoomCommand()
+RoomCommand SetSpecialObjects::GetRoomCommand() const
 {
 	return RoomCommand::SetSpecialObjects;
 }

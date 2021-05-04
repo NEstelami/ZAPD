@@ -67,18 +67,18 @@ string SetStartPositionList::GenerateSourceCodePass2(string roomName, uint32_t b
 	return "";
 }
 
-string SetStartPositionList::GenerateExterns()
+string SetStartPositionList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern ActorEntry %sStartPositionList0x%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetStartPositionList::GetCommandCName()
+string SetStartPositionList::GetCommandCName() const
 {
 	return "SCmdSpawnList";
 }
 
-RoomCommand SetStartPositionList::GetRoomCommand()
+RoomCommand SetStartPositionList::GetRoomCommand() const
 {
 	return RoomCommand::SetStartPositionList;
 }

@@ -89,7 +89,7 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-string ZResource::GetName()
+string ZResource::GetName() const
 {
 	return name;
 }
@@ -109,17 +109,17 @@ void ZResource::SetName(string nName)
 	name = std::move(nName);
 }
 
-bool ZResource::IsExternalResource()
+bool ZResource::IsExternalResource() const
 {
 	return false;
 }
 
-bool ZResource::DoesSupportArray()
+bool ZResource::DoesSupportArray() const
 {
 	return false;
 }
 
-std::string ZResource::GetExternalExtension()
+std::string ZResource::GetExternalExtension() const
 {
 	return "";
 }
@@ -139,12 +139,12 @@ void ZResource::SetRawData(std::vector<uint8_t> nData)
 	rawData = nData;
 }
 
-uint32_t ZResource::GetRawDataIndex()
+uint32_t ZResource::GetRawDataIndex() const
 {
 	return rawDataIndex;
 }
 
-size_t ZResource::GetRawDataSize()
+size_t ZResource::GetRawDataSize() const
 {
 	return rawData.size();
 }
@@ -172,12 +172,12 @@ void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 }
 
-std::string ZResource::GetSourceTypeName()
+std::string ZResource::GetSourceTypeName() const
 {
 	return "u8";
 }
 
-ZResourceType ZResource::GetResourceType()
+ZResourceType ZResource::GetResourceType() const
 {
 	return ZResourceType::Error;
 }

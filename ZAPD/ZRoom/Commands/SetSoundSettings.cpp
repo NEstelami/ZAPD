@@ -19,12 +19,12 @@ string SetSoundSettings::GenerateSourceCodePass1(string roomName, uint32_t baseA
 		musicSequence);
 }
 
-string SetSoundSettings::GetCommandCName()
+string SetSoundSettings::GetCommandCName() const
 {
 	return "SCmdSoundSettings";
 }
 
-RoomCommand SetSoundSettings::GetRoomCommand()
+RoomCommand SetSoundSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetSoundSettings;
 }

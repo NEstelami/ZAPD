@@ -48,7 +48,7 @@ string ZAnimation::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-ZResourceType ZAnimation::GetResourceType()
+ZResourceType ZAnimation::GetResourceType() const
 {
 	return ZResourceType::Animation;
 }
@@ -112,12 +112,12 @@ std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-size_t ZNormalAnimation::GetRawDataSize()
+size_t ZNormalAnimation::GetRawDataSize() const
 {
 	return 16;
 }
 
-std::string ZNormalAnimation::GetSourceTypeName()
+std::string ZNormalAnimation::GetSourceTypeName() const
 {
 	return "AnimationHeader";
 }
@@ -187,12 +187,12 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-size_t ZLinkAnimation::GetRawDataSize()
+size_t ZLinkAnimation::GetRawDataSize() const
 {
 	return 8;
 }
 
-std::string ZLinkAnimation::GetSourceTypeName()
+std::string ZLinkAnimation::GetSourceTypeName() const
 {
 	return "LinkAnimationHeader";
 }
@@ -427,7 +427,7 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 	}
 }
 
-size_t ZCurveAnimation::GetRawDataSize()
+size_t ZCurveAnimation::GetRawDataSize() const
 {
 	return 0x10;
 }
@@ -506,7 +506,7 @@ std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZCurveAnimation::GetSourceTypeName()
+std::string ZCurveAnimation::GetSourceTypeName() const
 {
 	return "TransformUpdateIndex";
 }

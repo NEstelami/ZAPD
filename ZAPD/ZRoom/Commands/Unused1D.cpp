@@ -14,12 +14,12 @@ string Unused1D::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 		"%s 0x00, 0x00", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
 }
 
-string Unused1D::GetCommandCName()
+string Unused1D::GetCommandCName() const
 {
 	return "SCmdBase";
 }
 
-RoomCommand Unused1D::GetRoomCommand()
+RoomCommand Unused1D::GetRoomCommand() const
 {
 	return RoomCommand::Unused1D;
 }

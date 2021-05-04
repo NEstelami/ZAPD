@@ -19,12 +19,12 @@ string SetSkyboxModifier::GenerateSourceCodePass1(string roomName, uint32_t base
 	;
 }
 
-string SetSkyboxModifier::GetCommandCName()
+string SetSkyboxModifier::GetCommandCName() const
 {
 	return "SCmdSkyboxDisables";
 }
 
-RoomCommand SetSkyboxModifier::GetRoomCommand()
+RoomCommand SetSkyboxModifier::GetRoomCommand() const
 {
 	return RoomCommand::SetSkyboxModifier;
 }

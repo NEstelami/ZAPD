@@ -33,22 +33,22 @@ string ZRoomCommandUnk::GenerateSourceCodePass3(string roomName)
 	return "";
 }
 
-string ZRoomCommandUnk::GenerateExterns()
+string ZRoomCommandUnk::GenerateExterns() const
 {
 	return "";
 }
 
-size_t ZRoomCommandUnk::GetRawDataSize()
+size_t ZRoomCommandUnk::GetRawDataSize() const
 {
 	return 8;
 }
 
-string ZRoomCommandUnk::GetCommandCName()
+string ZRoomCommandUnk::GetCommandCName() const
 {
 	return "SCmdBase";
 }
 
-RoomCommand ZRoomCommandUnk::GetRoomCommand()
+RoomCommand ZRoomCommandUnk::GetRoomCommand() const
 {
 	return RoomCommand::Error;
 }

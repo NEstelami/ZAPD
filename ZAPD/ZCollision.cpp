@@ -21,7 +21,7 @@ ZCollisionHeader::~ZCollisionHeader()
 	delete camData;
 }
 
-ZResourceType ZCollisionHeader::GetResourceType()
+ZResourceType ZCollisionHeader::GetResourceType() const
 {
 	return ZResourceType::CollisionHeader;
 }

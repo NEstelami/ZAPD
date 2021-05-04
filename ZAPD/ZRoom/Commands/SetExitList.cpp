@@ -53,19 +53,19 @@ string SetExitList::GenerateSourceCodePass1(string roomName, uint32_t baseAddres
 	return sourceOutput;
 }
 
-string SetExitList::GenerateExterns()
+string SetExitList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern u16 %sExitList0x%06X[];\n", zRoom->GetName().c_str(),
 	                             segmentOffset);
 	;
 }
 
-string SetExitList::GetCommandCName()
+string SetExitList::GetCommandCName() const
 {
 	return "SCmdExitList";
 }
 
-RoomCommand SetExitList::GetRoomCommand()
+RoomCommand SetExitList::GetRoomCommand() const
 {
 	return RoomCommand::SetExitList;
 }

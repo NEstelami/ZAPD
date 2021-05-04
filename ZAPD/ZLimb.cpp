@@ -479,7 +479,7 @@ void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	}
 }
 
-size_t ZLimb::GetRawDataSize()
+size_t ZLimb::GetRawDataSize() const
 {
 	switch (type)
 	{
@@ -543,12 +543,12 @@ string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZLimb::GetSourceTypeName()
+std::string ZLimb::GetSourceTypeName() const
 {
 	return GetSourceTypeName(type);
 }
 
-ZResourceType ZLimb::GetResourceType()
+ZResourceType ZLimb::GetResourceType() const
 {
 	return ZResourceType::Limb;
 }

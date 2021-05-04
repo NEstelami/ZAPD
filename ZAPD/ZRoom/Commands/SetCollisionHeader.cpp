@@ -32,17 +32,17 @@ string SetCollisionHeader::GenerateSourceCodePass2(string roomName, uint32_t bas
 	return "";
 }
 
-string SetCollisionHeader::GetCommandCName()
+string SetCollisionHeader::GetCommandCName() const
 {
 	return "SCmdColHeader";
 }
 
-string SetCollisionHeader::GenerateExterns()
+string SetCollisionHeader::GenerateExterns() const
 {
 	return "";
 }
 
-RoomCommand SetCollisionHeader::GetRoomCommand()
+RoomCommand SetCollisionHeader::GetRoomCommand() const
 {
 	return RoomCommand::SetCollisionHeader;
 }

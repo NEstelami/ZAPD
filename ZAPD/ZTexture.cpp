@@ -689,7 +689,7 @@ void ZTexture::PrepareRawDataPalette8(string palPath)
 	}
 }
 
-float ZTexture::GetPixelMultiplyer()
+float ZTexture::GetPixelMultiplyer() const
 {
 	switch (type)
 	{
@@ -711,7 +711,7 @@ float ZTexture::GetPixelMultiplyer()
 	}
 }
 
-size_t ZTexture::GetRawDataSize()
+size_t ZTexture::GetRawDataSize() const
 {
 	return (width * height * GetPixelMultiplyer());
 }
@@ -866,17 +866,17 @@ string ZTexture::GetSourceOutputCode(const std::string& prefix)
 	return sourceOutput;
 }
 
-bool ZTexture::IsExternalResource()
+bool ZTexture::IsExternalResource() const
 {
 	return true;
 }
 
-ZResourceType ZTexture::GetResourceType()
+ZResourceType ZTexture::GetResourceType() const
 {
 	return ZResourceType::Texture;
 }
 
-std::string ZTexture::GetSourceTypeName()
+std::string ZTexture::GetSourceTypeName() const
 {
 	return "u64";
 }
@@ -895,7 +895,7 @@ void ZTexture::CalcHash()
 		FixRawData();
 }
 
-std::string ZTexture::GetExternalExtension()
+std::string ZTexture::GetExternalExtension() const
 {
 	switch (type)
 	{

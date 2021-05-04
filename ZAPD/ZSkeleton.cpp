@@ -161,7 +161,7 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	mdl->blocks.push_back(new HLTerminator());
 }
 
-size_t ZSkeleton::GetRawDataSize()
+size_t ZSkeleton::GetRawDataSize() const
 {
 	switch (type)
 	{
@@ -244,7 +244,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZSkeleton::GetSourceTypeName()
+std::string ZSkeleton::GetSourceTypeName() const
 {
 	switch (type)
 	{
@@ -259,7 +259,7 @@ std::string ZSkeleton::GetSourceTypeName()
 	return "SkeletonHeader";
 }
 
-ZResourceType ZSkeleton::GetResourceType()
+ZResourceType ZSkeleton::GetResourceType() const
 {
 	return ZResourceType::Skeleton;
 }

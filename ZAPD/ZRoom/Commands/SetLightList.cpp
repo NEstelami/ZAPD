@@ -52,18 +52,18 @@ string SetLightList::GenerateSourceCodePass1(string roomName, uint32_t baseAddre
 		this->ptrRoom->GetName().c_str(), this->segment);
 }
 
-string SetLightList::GetCommandCName()
+string SetLightList::GetCommandCName() const
 {
 	return "SCmdLightList";
 }
 
-string SetLightList::GenerateExterns()
+string SetLightList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern LightInfo %sLightInfo0x%06X[];\n",
 	                             this->ptrRoom->GetName().c_str(), this->segment);
 }
 
-RoomCommand SetLightList::GetRoomCommand()
+RoomCommand SetLightList::GetRoomCommand() const
 {
 	return RoomCommand::SetLightList;
 }

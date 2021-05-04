@@ -47,18 +47,18 @@ string SetRoomList::GenerateSourceCodePass2(string roomName, uint32_t baseAddres
 	return "";
 }
 
-string SetRoomList::GenerateExterns()
+string SetRoomList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern RomFile %sRoomList0x%06X[];\n", zRoom->GetName().c_str(),
 	                             segmentOffset);
 }
 
-string SetRoomList::GetCommandCName()
+string SetRoomList::GetCommandCName() const
 {
 	return "SCmdRoomList";
 }
 
-RoomCommand SetRoomList::GetRoomCommand()
+RoomCommand SetRoomList::GetRoomCommand() const
 {
 	return RoomCommand::SetRoomList;
 }
@@ -94,7 +94,7 @@ std::string SetRoomList::Save()
 	return std::string();
 }
 
-RoomEntry::RoomEntry(int32_t nVAS, int32_t nVAE)
+RoomEntry::RoomEntry(uint32_t nVAS, uint32_t nVAE)
 {
 	virtualAddressStart = nVAS;
 	virtualAddressEnd = nVAE;

@@ -56,7 +56,7 @@ protected:
 	void PrepareRawDataGrayscaleAlpha16(std::string grayAlphaPath);
 	void PrepareRawDataPalette4(std::string palPath);
 	void PrepareRawDataPalette8(std::string palPath);
-	float GetPixelMultiplyer();
+	float GetPixelMultiplyer() const;
 
 public:
 	ZTexture(ZFile* nParent);
@@ -78,7 +78,7 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
 	uint16_t GetWidth();
@@ -87,11 +87,11 @@ public:
 	void SetHeight(uint16_t nHeight);
 	TextureType GetTextureType();
 	void Save(const std::string& outFolder) override;
-	std::string GetExternalExtension() override;
+	std::string GetExternalExtension() const override;
 	std::string GetPoolOutPath(std::string defaultValue);
 	void CalcHash() override;
 
-	bool IsExternalResource() override;
-	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	bool IsExternalResource() const override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 };

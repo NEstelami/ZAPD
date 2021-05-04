@@ -254,7 +254,7 @@ std::string ZFile::GetVarName(uint32_t address)
 	return "";
 }
 
-std::string ZFile::GetName()
+std::string ZFile::GetName() const
 {
 	return name;
 }

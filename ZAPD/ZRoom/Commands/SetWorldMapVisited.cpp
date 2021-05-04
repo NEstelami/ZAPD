@@ -15,12 +15,12 @@ string SetWorldMapVisited::GenerateSourceCodePass1(string roomName, uint32_t bas
 		"%s 0x00, 0x00", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
 }
 
-string SetWorldMapVisited::GetCommandCName()
+string SetWorldMapVisited::GetCommandCName() const
 {
 	return "SCmdWorldMapVisited";
 }
 
-RoomCommand SetWorldMapVisited::GetRoomCommand()
+RoomCommand SetWorldMapVisited::GetRoomCommand() const
 {
 	return RoomCommand::SetWorldMapVisited;
 }

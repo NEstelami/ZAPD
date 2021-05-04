@@ -63,18 +63,18 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, uint32_t baseAd
 	return sourceOutput;
 }
 
-string SetEntranceList::GenerateExterns()
+string SetEntranceList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern EntranceEntry %sEntranceList0x%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetEntranceList::GetCommandCName()
+string SetEntranceList::GetCommandCName() const
 {
 	return "SCmdEntranceList";
 }
 
-RoomCommand SetEntranceList::GetRoomCommand()
+RoomCommand SetEntranceList::GetRoomCommand() const
 {
 	return RoomCommand::SetEntranceList;
 }

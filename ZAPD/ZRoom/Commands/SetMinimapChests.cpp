@@ -70,23 +70,23 @@ string SetMinimapChests::GenerateSourceCodePass2(string roomName, uint32_t baseA
 	return sourceOutput;
 }
 
-string SetMinimapChests::GenerateExterns()
+string SetMinimapChests::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern MinimapChest %sMinimapChests0x%06X[%i];\n",
 	                             zRoom->GetName().c_str(), segmentOffset, chests.size());
 }
 
-string SetMinimapChests::GetCommandCName()
+string SetMinimapChests::GetCommandCName() const
 {
 	return "SCmdMinimapChests";
 }
 
-RoomCommand SetMinimapChests::GetRoomCommand()
+RoomCommand SetMinimapChests::GetRoomCommand() const
 {
 	return RoomCommand::SetMinimapChests;
 }
 
-size_t SetMinimapChests::GetRawDataSize()
+size_t SetMinimapChests::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (chests.size() * 10);
 }

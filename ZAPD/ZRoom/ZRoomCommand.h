@@ -62,10 +62,10 @@ public:
 	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress);
 	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress);
 	virtual std::string GenerateSourceCodePass3(std::string roomName);
-	virtual RoomCommand GetRoomCommand();
-	virtual size_t GetRawDataSize();
-	virtual std::string GetCommandCName();
-	virtual std::string GenerateExterns();
+	virtual RoomCommand GetRoomCommand() const;
+	virtual size_t GetRawDataSize() const;
+	virtual std::string GetCommandCName() const;
+	virtual std::string GenerateExterns() const;
 	virtual std::string Save();
 	virtual std::string PreGenSourceFiles();
 

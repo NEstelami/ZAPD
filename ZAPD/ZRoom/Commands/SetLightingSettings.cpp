@@ -64,18 +64,18 @@ string SetLightingSettings::GenerateSourceCodePass2(string roomName, uint32_t ba
 	return "";
 }
 
-string SetLightingSettings::GetCommandCName()
+string SetLightingSettings::GetCommandCName() const
 {
 	return "SCmdLightSettingList";
 }
 
-string SetLightingSettings::GenerateExterns()
+string SetLightingSettings::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern LightSettings %sLightSettings_%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-RoomCommand SetLightingSettings::GetRoomCommand()
+RoomCommand SetLightingSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetLightingSettings;
 }

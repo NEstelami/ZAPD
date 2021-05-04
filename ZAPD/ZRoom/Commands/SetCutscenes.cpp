@@ -100,12 +100,12 @@ string SetCutscenes::GenerateSourceCodePass1(string roomName, uint32_t baseAddre
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-size_t SetCutscenes::GetRawDataSize()
+size_t SetCutscenes::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (0);
 }
 
-string SetCutscenes::GenerateExterns()
+string SetCutscenes::GenerateExterns() const
 {
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
@@ -122,12 +122,12 @@ string SetCutscenes::GenerateExterns()
 	                             segmentOffset);
 }
 
-string SetCutscenes::GetCommandCName()
+string SetCutscenes::GetCommandCName() const
 {
 	return "SCmdCutsceneData";
 }
 
-RoomCommand SetCutscenes::GetRoomCommand()
+RoomCommand SetCutscenes::GetRoomCommand() const
 {
 	return RoomCommand::SetCutscenes;
 }

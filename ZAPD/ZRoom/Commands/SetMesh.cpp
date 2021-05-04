@@ -298,22 +298,22 @@ string SetMesh::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 	return sourceOutput;
 }
 
-string SetMesh::GenerateExterns()
+string SetMesh::GenerateExterns() const
 {
 	return "";
 }
 
-size_t SetMesh::GetRawDataSize()
+size_t SetMesh::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize();
 }
 
-string SetMesh::GetCommandCName()
+string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
 }
 
-RoomCommand SetMesh::GetRoomCommand()
+RoomCommand SetMesh::GetRoomCommand() const
 {
 	return RoomCommand::SetMesh;
 }
@@ -362,12 +362,12 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	return dlist;
 }
 
-size_t PolygonDlist::GetRawDataSize()
+size_t PolygonDlist::GetRawDataSize() const
 {
 	return 0x08;
 }
 
-void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	std::string auxName = name;
 	if (name == "")
@@ -453,12 +453,12 @@ std::string PolygonDlist::GetDefaultName(const std::string& prefix, uint32_t add
 	return StringHelper::Sprintf("%sPolyDlist_%06X", prefix.c_str(), address);
 }
 
-std::string PolygonDlist::GetSourceTypeName()
+std::string PolygonDlist::GetSourceTypeName() const
 {
 	return "PolygonDlist";
 }
 
-std::string PolygonDlist::GetName()
+std::string PolygonDlist::GetName() const
 {
 	return name;
 }
@@ -604,7 +604,7 @@ std::string BgImage::GetSourceTypeName()
 	return "BgImage";
 }
 
-std::string BgImage::GetName()
+std::string BgImage::GetName() const
 {
 	return name;
 }
@@ -681,7 +681,7 @@ void PolygonType1::ParseRawData()
 	}
 }
 
-size_t PolygonType1::GetRawDataSize()
+size_t PolygonType1::GetRawDataSize() const
 {
 	switch (format)
 	{
@@ -694,7 +694,7 @@ size_t PolygonType1::GetRawDataSize()
 	return 0x20;
 }
 
-void PolygonType1::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void PolygonType1::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	std::string auxName = name;
 	if (name == "")
@@ -783,7 +783,7 @@ std::string PolygonType1::GetDefaultName(const std::string& prefix, uint32_t add
 	return StringHelper::Sprintf("%sPolygonType1_%06X", prefix.c_str(), address);
 }
 
-std::string PolygonType1::GetSourceTypeName()
+std::string PolygonType1::GetSourceTypeName() const
 {
 	switch (format)
 	{
@@ -797,7 +797,7 @@ std::string PolygonType1::GetSourceTypeName()
 	// return "PolygonType1";
 }
 
-std::string PolygonType1::GetName()
+std::string PolygonType1::GetName() const
 {
 	return name;
 }

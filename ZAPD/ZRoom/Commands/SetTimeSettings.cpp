@@ -19,12 +19,12 @@ string SetTimeSettings::GenerateSourceCodePass1(string roomName, uint32_t baseAd
 		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), hour, min, unk);
 }
 
-string SetTimeSettings::GetCommandCName()
+string SetTimeSettings::GetCommandCName() const
 {
 	return "SCmdTimeSettings";
 }
 
-RoomCommand SetTimeSettings::GetRoomCommand()
+RoomCommand SetTimeSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetTimeSettings;
 }

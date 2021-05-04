@@ -44,19 +44,18 @@ string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-void ZCutsceneMM::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void ZCutsceneMM::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	std::string auxName = name;
 
 	if (auxName == "")
 		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
-	// auxName = GetDefaultName(prefix, getSegmentOffset());
 
 	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4, GetRawDataSize(),
 	                            "s32", auxName, 0, bodyStr);
 }
 
-size_t ZCutsceneMM::GetRawDataSize()
+size_t ZCutsceneMM::GetRawDataSize() const
 {
 	return 8 + data.size() * 4;
 }
@@ -89,7 +88,7 @@ void ZCutsceneMM::ParseRawData()
 	} while (lastData != 0xFFFFFFFF);
 }
 
-ZResourceType ZCutsceneMM::GetResourceType()
+ZResourceType ZCutsceneMM::GetResourceType() const
 {
 	return ZResourceType::Cutscene;
 }

@@ -21,12 +21,12 @@ string SetSkyboxSettings::GenerateSourceCodePass1(string roomName, uint32_t base
 		cloudsType, lightingSettingsControl);
 }
 
-string SetSkyboxSettings::GetCommandCName()
+string SetSkyboxSettings::GetCommandCName() const
 {
 	return "SCmdSkyboxSettings";
 }
 
-RoomCommand SetSkyboxSettings::GetRoomCommand()
+RoomCommand SetSkyboxSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetSkyboxSettings;
 }
