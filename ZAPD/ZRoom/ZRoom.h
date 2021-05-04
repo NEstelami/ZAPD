@@ -21,7 +21,6 @@ protected:
 
 public:
 	ZRoom* scene;
-	std::map<uint32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
 	int32_t roomCount;  // Only valid for scenes
 

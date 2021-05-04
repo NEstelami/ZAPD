@@ -85,6 +85,8 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 	model->blocks.push_back(vertIntr);
 
 	// Go through textures
+    // TODO: Textures are now stored directly in ZFile
+    /*
 	for (pair<uint32_t, ZTexture*> pair : zDisplayList->textures)
 	{
 		HLTextureIntermediette* texIntr = new HLTextureIntermediette();
@@ -93,6 +95,7 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 
 		model->blocks.push_back(texIntr);
 	}
+    */
 
 	// Analyze display lists to determine components
 	HLDisplayListIntermediette* dList = new HLDisplayListIntermediette();
@@ -173,9 +176,10 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 				lastMat->clrM = lastClrM;
 
 				// Bit of a hack here...
-				int32_t lastData = (int32_t)(zDisplayList->instructions[i - 1]);
-				string texName = zDisplayList->textures[lastData & 0x00FFFFFF]->GetName();
-				lastMat->textureName = texName;
+				//int32_t lastData = (int32_t)(zDisplayList->instructions[i - 1]);
+                // TODO
+				//string texName = zDisplayList->textures[lastData & 0x00FFFFFF]->GetName();
+				//lastMat->textureName = texName;
 
 				// --------------------------
 				model->blocks.push_back(mesh);
@@ -189,10 +193,11 @@ void HLModelIntermediette::FromZDisplayList(HLModelIntermediette* model, ZDispla
 		}
 		else if (opcode == F3DZEXOpcode::G_SETTIMG)
 		{
-			int32_t texAddress = data & 0x00FFFFFF;
+			//int32_t texAddress = data & 0x00FFFFFF;
 
-			string texName = zDisplayList->textures[texAddress]->GetName();
-			lastMat->textureName = texName;
+            // TODO
+			//string texName = zDisplayList->textures[texAddress]->GetName();
+			//lastMat->textureName = texName;
 		}
 		else if (opcode == F3DZEXOpcode::G_VTX)
 		{

@@ -36,16 +36,10 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 	instructions = vector<uint64_t>();
 	vtxDeclarations = map<uint32_t, string>();
 	otherDLists = vector<ZDisplayList*>();
-	textures = map<uint32_t, ZTexture*>();
 }
 
 ZDisplayList::~ZDisplayList()
 {
-	for (auto t : textures)
-	{
-		delete t.second;
-	}
-
 	for (auto o : otherDLists)
 	{
 		delete o;
@@ -1801,56 +1795,6 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	return 1;
 }
 
-std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures, std::string prefix,
-                                        ZFile* parent)
-{
-	if (textures.empty())
-		return "";
-
-	std::string defines = "";
-	vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
-
-	for (size_t i = 0; i < texturesSorted.size() - 1; i++)
-	{
-		uint32_t currentOffset = texturesSorted[i].first;
-		uint32_t nextOffset = texturesSorted[i + 1].first;
-		auto& currentTex = textures.at(currentOffset);
-		int texSize = currentTex->GetRawDataSize();
-
-		if ((currentOffset + texSize) > nextOffset)
-		{
-			uint32_t offsetDiff = nextOffset - currentOffset;
-			if (currentTex->isPalette)
-			{
-				// Shrink palette so it doesn't overlaps
-				currentTex->SetDimensions(offsetDiff / currentTex->GetPixelMultiplyer(), 1);
-			}
-			else
-			{
-				std::string texName = parent->GetDeclarationPtrName(currentOffset);
-				std::string texNextName;
-
-				Declaration* nextDecl = parent->GetDeclaration(nextOffset);
-				if (nextDecl == nullptr)
-					texNextName = textures.at(nextOffset)->GetName();
-				else
-					texNextName = nextDecl->varName;
-
-				defines += StringHelper::Sprintf("#define %s ((u32)%s + 0x%06X)\n",
-				                                 texNextName.c_str(), texName.c_str(), offsetDiff);
-
-				parent->declarations.erase(nextOffset);
-				textures.erase(nextOffset);
-				texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-				i--;
-			}
-		}
-	}
-
-	return defines;
-}
-
 string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
 	string sourceOutput = "";
@@ -1931,12 +1875,11 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	{
 		if (scene != nullptr)
 		{
-			scene->extDefines += ProcessTextureIntersections(scene->textures, scene->GetName(), scene->parent);
 			defines += scene->extDefines;
 		}
-		defines += ProcessTextureIntersections(textures, prefix, parent);
 
 		// Generate Texture Declarations
+        /*
 		for (auto& item : textures)
 		{
 			if (parent != nullptr && parent->GetDeclaration(item.first) == nullptr)
@@ -1964,6 +1907,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					item.first, incStr, item.second->GetRawDataSize(), "u64", texName, 0);
 			}
 		}
+        */
 	}
 
 	if (parent != nullptr)
@@ -2144,7 +2088,8 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 
 void ZDisplayList::TextureGenCheck(string prefix)
 {
-	if (TextureGenCheck(fileData, textures, scene, parent, prefix, lastTexWidth, lastTexHeight,
+    map<uint32_t, ZTexture*> textures2;
+	if (TextureGenCheck(fileData, textures2, scene, parent, prefix, lastTexWidth, lastTexHeight,
 	                    lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded,
 	                    lastTexIsPalette, this))
 	{
@@ -2178,12 +2123,18 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 		{
 			if (texAddr < parent->GetRawData().size())
 			{
-				ZTexture* tex = new ZTexture(parent);
-				tex->isPalette = texIsPalette;
-				tex->FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
-				                StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
-				                texWidth, texHeight);
-				textures[texAddr] = tex;
+				ZTexture* tex = parent->GetTextureResource(texAddr);
+                if (tex != nullptr)
+				    tex->isPalette = texIsPalette;
+                else
+                {
+                    tex = new ZTexture(parent);
+                    tex->isPalette = texIsPalette;
+                    tex->FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
+                                    StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
+                                    texWidth, texHeight);
+                    parent->AddTextureResource(texAddr, tex);
+                }
 
 				if (!texIsPalette)
 					self->lastTexture = tex;
@@ -2192,20 +2143,30 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
 
 				return true;
 			}
+            else
+            {
+                fprintf(stderr, "\n\ntexAddr >= parent->GetRawData().size() ??\n%u >= %zu\n\n", texAddr, parent->GetRawData().size());
+            }
 		}
 		else if (scene != nullptr)
 		{
 			if (scene->parent->GetDeclaration(texAddr) == nullptr)
 			{
-				ZTexture* tex = new ZTexture(scene->parent);
-				tex->isPalette = texIsPalette;
-				tex->FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
-								StringHelper::Sprintf("%sTex_%06X",
-													Globals::Instance->lastScene->GetName().c_str(),
-													texAddr),
-								texWidth, texHeight);
+				ZTexture* tex = scene->parent->GetTextureResource(texAddr);
+                if (tex != nullptr)
+				    tex->isPalette = texIsPalette;
+                else
+                {
+                    tex = new ZTexture(scene->parent);
+                    tex->isPalette = texIsPalette;
+                    tex->FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
+                                    StringHelper::Sprintf("%sTex_%06X",
+                                                        Globals::Instance->lastScene->GetName().c_str(),
+                                                        texAddr),
+                                    texWidth, texHeight);
 
-				scene->textures[texAddr] = tex;
+                    scene->parent->AddTextureResource(texAddr, tex);
+                }
 
 				if (!texIsPalette)
 					self->lastTexture = tex;

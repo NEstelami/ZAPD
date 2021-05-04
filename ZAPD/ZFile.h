@@ -4,6 +4,7 @@
 #include <vector>
 #include "Directory.h"
 #include "ZResource.h"
+#include "ZTexture.h"
 #include "tinyxml2.h"
 
 enum class ZFileMode
@@ -81,6 +82,9 @@ public:
 	std::string GetHeaderInclude();
 	void GeneratePlaceholderDeclarations();
 
+    void AddTextureResource(uint32_t offset, ZTexture* tex);
+    ZTexture* GetTextureResource(uint32_t offset) const;
+
 	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
 	static void RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc);
 
@@ -90,6 +94,10 @@ protected:
 	fs::path basePath;
 	fs::path outputPath;
 	fs::path xmlFilePath;
+    // Keep track of every texture of this ZFile.
+    // The pointers declared here are "borrowed" (somebody else is the owner),
+    // so ZFile shouldn't delete/free those textures.
+	std::map<uint32_t, ZTexture*> texturesResources;
 
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
@@ -101,4 +109,6 @@ protected:
 	std::string ProcessDeclarations();
 	void ProcessDeclarationText(Declaration* decl);
 	std::string ProcessExterns();
+
+    std::string ProcessTextureIntersections(std::string prefix);
 };

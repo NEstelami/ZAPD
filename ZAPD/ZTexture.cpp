@@ -820,6 +820,7 @@ bool ZTexture::IsColorIndexed() const
 void ZTexture::SetTlut(ZTexture* nTlut)
 {
 	assert(IsColorIndexed());
+    //assert(nTlut->isPalette);
 	tlut = nTlut;
 
 	textureData.SetPalette(tlut->textureData);

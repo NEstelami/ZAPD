@@ -341,7 +341,6 @@ public:
 	std::map<uint32_t, std::string> vtxDeclarations;
 	std::vector<ZDisplayList*> otherDLists;
 
-	std::map<uint32_t, ZTexture*> textures;
 	ZTexture* lastTexture = nullptr;
 	ZTexture* lastTlut = nullptr;
 
@@ -382,6 +381,3 @@ public:
 
 	ZResourceType GetResourceType() override;
 };
-
-std::string ProcessTextureIntersections(std::map<uint32_t, ZTexture*>& textures, std::string prefix,
-                                        ZFile* parent);

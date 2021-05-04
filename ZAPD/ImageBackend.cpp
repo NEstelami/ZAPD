@@ -378,6 +378,7 @@ void ImageBackend::SetPaletteIndex(size_t index, uint8_t nR, uint8_t nG, uint8_t
 
 void ImageBackend::SetPalette(const ImageBackend& pal)
 {
+	assert(isColorIndexed);
 	size_t bytePerPixel = pal.GetBytesPerPixel();
 
 	for(size_t y = 0; y < pal.height; y++)

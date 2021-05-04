@@ -213,7 +213,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 					Globals::Instance->AddSegment(segment);
 			}
 
-			resources.push_back(nRes);
+            auto resType = nRes->GetResourceType();
+            if (resType == ZResourceType::Texture)
+                AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
+            else
+			    resources.push_back(nRes);
+
 			rawDataIndex += nRes->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "File")
@@ -577,8 +582,10 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	GeneratePlaceholderDeclarations();
 
 	// Generate Code
-	for (ZResource* res : resources)
+	//for (ZResource* res : resources)
+    for (size_t i = 0; i < resources.size(); i++)
 	{
+        ZResource* res = resources.at(i);
 		string resSrc = res->GetSourceOutputCode(name);
 
 		if (res->IsExternalResource())
@@ -695,6 +702,26 @@ void ZFile::GeneratePlaceholderDeclarations()
 	}
 }
 
+void ZFile::AddTextureResource(uint32_t offset, ZTexture* tex)
+{
+    for (auto res : resources)
+    {
+        assert(res->GetRawDataIndex() != offset);
+    }
+
+    resources.push_back(tex);
+    texturesResources[offset] = tex;
+}
+
+ZTexture* ZFile::GetTextureResource(uint32_t offset) const
+{
+    auto tex = texturesResources.find(offset);
+    if (tex != texturesResources.end())
+        return tex->second;
+
+    return nullptr;
+}
+
 std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
 {
 	static std::map<std::string, ZResourceFactoryFunc*> nodeMap;
@@ -714,6 +741,8 @@ string ZFile::ProcessDeclarations()
 	if (declarations.size() == 0)
 		return output;
 
+    defines += ProcessTextureIntersections(name);
+
 	// Account for padding/alignment
 	uint32_t lastAddr = 0;
 	uint32_t lastSize = 0;
@@ -721,12 +750,9 @@ string ZFile::ProcessDeclarations()
 	// printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
 	// Optimization: See if there are any arrays side by side that can be merged...
-	auto declarationKeys =
-		vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeys.begin(), declarationKeys.end(),
-	     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
+	std::vector<pair<int32_t, Declaration*>> declarationKeys(declarations.begin(), declarations.end());
 
-	pair<int32_t, Declaration*> lastItem = declarationKeys[0];
+	pair<int32_t, Declaration*> lastItem = declarationKeys.at(0);
 
 	for (size_t i = 1; i < declarationKeys.size(); i++)
 	{
@@ -1183,4 +1209,53 @@ string ZFile::ProcessExterns()
 	output += defines;
 
 	return output;
+}
+
+std::string ZFile::ProcessTextureIntersections(std::string prefix)
+{
+	if (texturesResources.empty())
+		return "";
+
+	std::string defines = "";
+	vector<pair<uint32_t, ZTexture*>> texturesSorted(texturesResources.begin(), texturesResources.end());
+
+	for (size_t i = 0; i < texturesSorted.size() - 1; i++)
+	{
+		uint32_t currentOffset = texturesSorted[i].first;
+		uint32_t nextOffset = texturesSorted[i + 1].first;
+		auto& currentTex = texturesResources.at(currentOffset);
+		int texSize = currentTex->GetRawDataSize();
+
+		if ((currentOffset + texSize) > nextOffset)
+		{
+			uint32_t offsetDiff = nextOffset - currentOffset;
+			if (currentTex->isPalette)
+			{
+				// Shrink palette so it doesn't overlap
+				currentTex->SetDimensions(offsetDiff / currentTex->GetPixelMultiplyer(), 1);
+			}
+			else
+			{
+				std::string texName = GetDeclarationPtrName(currentOffset);
+				std::string texNextName;
+
+				Declaration* nextDecl = GetDeclaration(nextOffset);
+				if (nextDecl == nullptr)
+					texNextName = texturesResources.at(nextOffset)->GetName();
+				else
+					texNextName = nextDecl->varName;
+
+				defines += StringHelper::Sprintf("#define %s ((u32)%s + 0x%06X)\n",
+				                                 texNextName.c_str(), texName.c_str(), offsetDiff);
+
+				declarations.erase(nextOffset);
+				texturesResources.erase(nextOffset);
+				texturesSorted.erase(texturesSorted.begin() + i + 1);
+
+				i--;
+			}
+		}
+	}
+
+	return defines;
 }

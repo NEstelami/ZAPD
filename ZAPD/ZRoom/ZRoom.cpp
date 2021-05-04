@@ -60,9 +60,6 @@ ZRoom::~ZRoom()
 {
 	for (ZRoomCommand* cmd : commands)
 		delete cmd;
-
-	for(auto t : textures)
-		delete t.second;
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -485,30 +482,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	// sourceOutput += "\n";
 
 	ProcessCommandSets();
-
-	// Check for texture intersections
-	parent->defines += ProcessTextureIntersections(textures, prefix, parent);
-
-	for (pair<int32_t, ZTexture*> item : textures)
-	{
-		string declaration = "";
-
-		declaration += item.second->GetSourceOutputCode(prefix);
-
-		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath);
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", outPath.c_str());
-
-		item.second->Save(outPath);
-
-		auto filepath = Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(item.second->GetName());
-		parent->AddDeclarationIncludeArray(
-			item.first,
-			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), item.second->GetExternalExtension().c_str()),
-			item.second->GetRawDataSize(), "u64",
-			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
-	}
 
 	return sourceOutput;
 }
