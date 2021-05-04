@@ -4,7 +4,7 @@
 
 using namespace std;
 
-SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	this->ptrRoom = nZRoom;
@@ -16,7 +16,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 	string declarations = "";
 
 	int32_t currentPtr = this->segment;
-	for (int i = 0; i < this->numLights; i++)
+	for (int32_t i = 0; i < this->numLights; i++)
 	{
 		uint8_t type = rawData[currentPtr + 0];
 		int16_t x = BitConverter::ToInt16BE(rawData, currentPtr + 2);
@@ -31,7 +31,8 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 		currentPtr += 14;
 
 		declarations += StringHelper::Sprintf(
-			"    { 0x%02X, { %i, %i, %i, { 0x%02X, 0x%02X, 0x%02X }, 0x%02X, 0x%04X } },", type, x, y, z, r, g, b, drawGlow, radius);
+			"    { 0x%02X, { %i, %i, %i, { 0x%02X, 0x%02X, 0x%02X }, 0x%02X, 0x%04X } },", type, x,
+			y, z, r, g, b, drawGlow, radius);
 
 		if (i < this->numLights - 1)
 			declarations += "\n";
@@ -43,7 +44,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawD
 		this->numLights, declarations);
 }
 
-string SetLightList::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetLightList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s %i, &%sLightInfo0x%06X",

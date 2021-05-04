@@ -7,39 +7,39 @@
 
 using namespace std;
 
-SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+                                           uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
-	int numCutscenes = rawData[rawDataIndex + 1];
+	int32_t numCutscenes = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
 	cutscenes = vector<ActorCutsceneEntry*>();
 
 	int32_t currentPtr = segmentOffset;
 
-	for (int i = 0; i < numCutscenes; i++)
+	for (int32_t i = 0; i < numCutscenes; i++)
 	{
 		ActorCutsceneEntry* entry = new ActorCutsceneEntry(rawData, currentPtr);
 		cutscenes.push_back(entry);
 
 		currentPtr += 16;
 	}
-	
+
 	string declaration = "";
 
 	for (ActorCutsceneEntry* entry : cutscenes)
 	{
-		declaration +=
-			StringHelper::Sprintf("    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", entry->priority,
-				entry->length, entry->unk4, entry->unk6, entry->additionalCutscene, entry->sound,
-				entry->unkB, entry->unkC, entry->unkE, entry->letterboxSize);
-
+		declaration += StringHelper::Sprintf(
+			"    { %i, %i, %i, %i, %i, %i, %i, %i, %i, %i },\n", entry->priority, entry->length,
+			entry->unk4, entry->unk6, entry->additionalCutscene, entry->sound, entry->unkB,
+			entry->unkC, entry->unkE, entry->letterboxSize);
 	}
 
 	zRoom->parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, cutscenes.size() * 16, "ActorCutscene",
-		StringHelper::Sprintf("%sActorCutsceneList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
-		declaration);
+		StringHelper::Sprintf("%sActorCutsceneList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+		0, declaration);
 }
 
 SetActorCutsceneList::~SetActorCutsceneList()
@@ -48,7 +48,7 @@ SetActorCutsceneList::~SetActorCutsceneList()
 		delete entry;
 }
 
-string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x%02X, (u32)&%sActorCutsceneList0x%06X",
@@ -56,20 +56,20 @@ string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, int baseAd
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetActorCutsceneList::GenerateSourceCodePass2(string roomName, int baseAddress)
+string SetActorCutsceneList::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-int32_t SetActorCutsceneList::GetRawDataSize()
+size_t SetActorCutsceneList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);
 }
 
 string SetActorCutsceneList::GenerateExterns()
 {
-	return StringHelper::Sprintf("extern ActorCutscene %sActorCutsceneList0x%06X[];\n", zRoom->GetName().c_str(),
-								 segmentOffset);
+	return StringHelper::Sprintf("extern ActorCutscene %sActorCutsceneList0x%06X[];\n",
+	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
 string SetActorCutsceneList::GetCommandCName()
@@ -82,16 +82,14 @@ RoomCommand SetActorCutsceneList::GetRoomCommand()
 	return RoomCommand::SetActorCutsceneList;
 }
 
-ActorCutsceneEntry::ActorCutsceneEntry(std::vector<uint8_t> rawData, int rawDataIndex) :
-	priority(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
-	length(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
-	unk4(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)),
-	unk6(BitConverter::ToInt16BE(rawData, rawDataIndex + 6)),
-	additionalCutscene(BitConverter::ToInt16BE(rawData, rawDataIndex + 8)),
-	sound(rawData[rawDataIndex + 0xA]),
-	unkB(rawData[rawDataIndex + 0xB]),
-	unkC(BitConverter::ToInt16BE(rawData, rawDataIndex + 0xC)),
-	unkE(rawData[rawDataIndex + 0xE]),
-	letterboxSize(rawData[rawDataIndex + 0xF])
+ActorCutsceneEntry::ActorCutsceneEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
+	: priority(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
+	  length(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
+	  unk4(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)),
+	  unk6(BitConverter::ToInt16BE(rawData, rawDataIndex + 6)),
+	  additionalCutscene(BitConverter::ToInt16BE(rawData, rawDataIndex + 8)),
+	  sound(rawData[rawDataIndex + 0xA]), unkB(rawData[rawDataIndex + 0xB]),
+	  unkC(BitConverter::ToInt16BE(rawData, rawDataIndex + 0xC)), unkE(rawData[rawDataIndex + 0xE]),
+	  letterboxSize(rawData[rawDataIndex + 0xF])
 {
 }

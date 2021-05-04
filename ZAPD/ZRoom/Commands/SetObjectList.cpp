@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, int rawDataIndex)
+SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	objects = vector<uint16_t>();
@@ -33,7 +33,7 @@ string SetObjectList::GenerateExterns()
 	                             segmentOffset);
 }
 
-string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
+string SetObjectList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
 	string sourceOutput = "";
 
@@ -47,8 +47,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		uint16_t objectIndex = objects[i];
-		declaration += StringHelper::Sprintf(
-			"    %s,", Globals::Instance->cfg->objectList[objectIndex].c_str());
+		declaration += StringHelper::Sprintf("    %s,", ZNames::GetObjectName(objectIndex).c_str());
 
 		if (i < objects.size() - 1)
 			declaration += "\n";
@@ -62,7 +61,7 @@ string SetObjectList::GenerateSourceCodePass1(string roomName, int baseAddress)
 	return sourceOutput;
 }
 
-int32_t SetObjectList::GetRawDataSize()
+size_t SetObjectList::GetRawDataSize()
 {
 	return ZRoomCommand::GetRawDataSize() + (objects.size() * 2);
 }

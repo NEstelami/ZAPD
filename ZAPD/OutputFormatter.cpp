@@ -1,66 +1,91 @@
 #include "OutputFormatter.h"
 
+void OutputFormatter::Flush()
+{
+	if (col > lineLimit)
+	{
+		str.append(1, '\n');
+		str.append(currentIndent, ' ');
+
+		uint32_t newCol = currentIndent + (wordP - word);
+
+		for (uint32_t i = 0; i < wordNests; i++)
+			nestIndent[nest - i] -= col - newCol;
+
+		col = newCol;
+	}
+	else
+	{
+		str.append(space, spaceP - space);
+	}
+	spaceP = space;
+
+	str.append(word, wordP - word);
+	wordP = word;
+	wordNests = 0;
+}
+
 int OutputFormatter::Write(const char* buf, int count)
 {
 	for (int i = 0; i < count; i++)
 	{
 		char c = buf[i];
 
-		if (c == '\n')
+		if (c == ' ' || c == '\t' || c == '\n')
 		{
-			col = 0;
+			if (wordP - word != 0)
+			{
+				Flush();
+			}
+
+			if (c == '\n')
+			{
+				col = 0;
+				*spaceP++ = c;
+			}
+			else if (c == '\t')
+			{
+				int n = tabSize - (col % tabSize);
+				col += n;
+				for (int j = 0; j < n; j++)
+					*spaceP++ = ' ';
+			}
+			else
+			{
+				col++;
+				*spaceP++ = c;
+			}
+
 			currentIndent = nestIndent[nest];
-		}
-		else if (c == '\t')
-		{
-			int n = tabSize - (col % tabSize);
-			for (int j = 0; j < n - 1; j++)
-				*spaceP++ = ' ';
-			c = ' ';
-			col += n;
 		}
 		else
 		{
 			col++;
-		}
 
-		if (c == '(')
-		{
-			nest++;
-			nestIndent[nest] = col;
-			currentIndent = col;
-		}
-		else if (c == ')')
-		{
-			nest--;
-		}
-
-		if (c == ' ' || c == '\t' || c == '\n')
-		{
-			str.append(word, wordP - word);
-			wordP = word;
-
-			*spaceP++ = c;
-		}
-		else
-		{
-			if (col > lineLimit)
+			if (c == '(')
 			{
-				str.append(1, '\n');
-				str.append(currentIndent, ' ');
-				col = currentIndent + 1 + (wordP - word);
+				nest++;
+				nestIndent[nest] = col;
+				wordNests++;
 			}
-			else
+			else if (c == ')')
 			{
-				str.append(space, spaceP - space);
+				if (nest > 0)
+					nest--;
+				if (wordNests > 0)
+					wordNests--;
 			}
-			spaceP = space;
 
 			*wordP++ = c;
 		}
 	}
 
 	return count;
+}
+
+int OutputFormatter::Write(const std::string& buf)
+{
+	return Write(buf.data(), buf.size());
 }
 
 OutputFormatter* OutputFormatter::Instance;
@@ -76,19 +101,16 @@ int (*OutputFormatter::StaticWriter())(const char* buf, int count)
 	return &WriteStatic;
 }
 
-OutputFormatter::OutputFormatter(int tabSize, int defaultIndent, int lineLimit)
+OutputFormatter::OutputFormatter(uint32_t tabSize, uint32_t defaultIndent, uint32_t lineLimit)
 	: tabSize{tabSize}, defaultIndent{defaultIndent}, lineLimit{lineLimit}, col{0}, nest{0},
-	  nestIndent{defaultIndent}, currentIndent{defaultIndent}, wordP{word}, spaceP{space}
+	  nestIndent{defaultIndent}, currentIndent{defaultIndent},
+	  wordNests(0), wordP{word}, spaceP{space}
 {
 }
 
 std::string OutputFormatter::GetOutput()
 {
-	str.append(space, spaceP - space);
-	spaceP = space;
-
-	str.append(word, wordP - word);
-	wordP = word;
+	Flush();
 
 	return std::move(str);
 }
