@@ -17,6 +17,7 @@ endif
 ifneq ($(DEPRECATION_OFF),0)
   CFLAGS += -DDEPRECATION_OFF
 endif
+CFLAGS += -DTEXTURE_DEBUG
 
 LDFLAGS := -ldl -lpng
 UNAME := $(shell uname)

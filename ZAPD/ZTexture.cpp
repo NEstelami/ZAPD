@@ -538,10 +538,10 @@ void ZTexture::PrepareRawDataPalette4(const fs::path& palPath)
 		{
 			size_t pos = ((y * width) + x) / 2;
 
-			uint8_t cR1 = textureData.GetPixel(y, x).r;
-			uint8_t cR2 = textureData.GetPixel(y, x + 1).r;
+			uint8_t cR1 = textureData.GetIndexedPixel(y, x);
+			uint8_t cR2 = textureData.GetIndexedPixel(y, x + 1);
 
-			textureDataRaw[pos] = ((cR1 / 16) << 4) + (cR2 / 16);
+			textureDataRaw[pos] = (cR1 << 4) | (cR2);
 		}
 	}
 }
@@ -560,9 +560,8 @@ void ZTexture::PrepareRawDataPalette8(const fs::path& palPath)
 		for (uint16_t x = 0; x < width; x++)
 		{
 			size_t pos = ((y * width) + x);
-			RGBAPixel pixel = textureData.GetPixel(y, x);
+			uint8_t cR = textureData.GetIndexedPixel(y, x);
 
-			uint8_t cR = pixel.r;
 			textureDataRaw[pos] = cR;
 		}
 	}
