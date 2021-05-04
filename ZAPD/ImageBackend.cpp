@@ -94,8 +94,8 @@ void ImageBackend::ReadPng(const char* filename)
 	    *color_type == PNG_COLOR_TYPE_PALETTE)
 	    png_set_filler(png, 0xFF, PNG_FILLER_AFTER);*/
 
-	//if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
-	//	png_set_gray_to_rgb(png);
+	if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+		png_set_gray_to_rgb(png);
 
 	png_read_update_info(png, info);
 
@@ -356,7 +356,6 @@ void ImageBackend::SetIndexedPixel(size_t y, size_t x, uint8_t index, uint8_t gr
 	size_t bytePerPixel = GetBytesPerPixel();
 	pixelMatrix[y][x * bytePerPixel + 0] = index;
 
-	//size_t index = grayscale;
 	assert(index < paletteSize);
 	png_color* pal = static_cast<png_color*>(colorPalette);
 	pal[index].red = grayscale;

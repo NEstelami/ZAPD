@@ -1,11 +1,12 @@
 OPTIMIZATION_ON ?= 1
 ASAN ?= 0
 DEPRECATION_OFF ?= 0
+CFLAGS ?= 
 
 CC := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
 
-CFLAGS := -g3 -ggdb -fpic -Wl,-export-dynamic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
+CFLAGS += -g3 -ggdb -fpic -Wl,-export-dynamic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
 ifeq ($(OPTIMIZATION_ON),0)
   CFLAGS += -O0
 else
@@ -17,12 +18,12 @@ endif
 ifneq ($(DEPRECATION_OFF),0)
   CFLAGS += -DDEPRECATION_OFF
 endif
-CFLAGS += -DTEXTURE_DEBUG
+# CFLAGS += -DTEXTURE_DEBUG
 
 LDFLAGS := -ldl -lpng
 UNAME := $(shell uname)
 
-FS_INC =
+FS_INC ?=
 ifneq ($(UNAME), Darwin)
     FS_INC += -lstdc++fs
 endif

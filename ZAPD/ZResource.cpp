@@ -78,6 +78,8 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			                          "with inner element/child detected.\n",
 			                          name.c_str(), reader->Name()));
 		}
+
+        declaredInXml = true;
 	}
 }
 

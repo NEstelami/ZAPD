@@ -103,6 +103,7 @@ protected:
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
+    bool declaredInXml = false;
 };
 
 enum class DeclarationAlignment
