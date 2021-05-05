@@ -85,8 +85,8 @@ void ImageBackend::ReadPng(const char* filename)
 	if (colorType == PNG_COLOR_TYPE_GRAY && bitDepth < 8)
 		png_set_expand_gray_1_2_4_to_8(png);
 
-	//if (png_get_valid(png, info, PNG_INFO_tRNS))
-		//png_set_tRNS_to_alpha(png);
+	/*if (png_get_valid(png, info, PNG_INFO_tRNS))
+		png_set_tRNS_to_alpha(png);*/
 
 	// These color_type don't have an alpha channel then fill it with 0xff.
 	/*if(*color_type == PNG_COLOR_TYPE_RGB ||
@@ -434,7 +434,6 @@ double ImageBackend::GetBytesPerPixel() const
 
 void ImageBackend::FreeImageData()
 {
-	/*
 	if (hasImageData)
 	{
 		for (size_t y = 0; y < height; y++)
@@ -442,14 +441,11 @@ void ImageBackend::FreeImageData()
 		free(pixelMatrix);
 		pixelMatrix = nullptr;
 	}
-	*/
 
 	if (isColorIndexed)
 	{
-        /*
 		free(colorPalette);
 		free(alphaPalette);
-        */
 		colorPalette = nullptr;
 		alphaPalette = nullptr;
 		isColorIndexed = false;

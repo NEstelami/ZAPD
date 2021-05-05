@@ -102,26 +102,29 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
 	}
 
-	if (reader->Attribute("BaseAddress") != NULL)
-		baseAddress = (uint32_t)strtoul(
-			StringHelper::Split(reader->Attribute("BaseAddress"), "0x")[1].c_str(), NULL, 16);
+	if (reader->Attribute("BaseAddress") != nullptr)
+		baseAddress = StringHelper::StrToL(reader->Attribute("BaseAddress"), 16);
 
-	if (reader->Attribute("RangeStart") != NULL)
-		rangeStart = (uint32_t)strtoul(
-			StringHelper::Split(reader->Attribute("RangeStart"), "0x")[1].c_str(), NULL, 16);
+	if (reader->Attribute("RangeStart") != nullptr)
+		rangeStart = StringHelper::StrToL(reader->Attribute("RangeStart"), 16);
 
-	if (reader->Attribute("RangeEnd") != NULL)
-		rangeEnd = (uint32_t)strtoul(
-			StringHelper::Split(reader->Attribute("RangeEnd"), "0x")[1].c_str(), NULL, 16);
+	if (reader->Attribute("RangeEnd") != nullptr)
+		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	if (reader->Attribute("Segment") != NULL)
-		segment = strtol(reader->Attribute("Segment"), NULL, 10);
+    // Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
+    /*
+	if (reader->Attribute("Segment") == nullptr)
+        throw std::runtime_error(StringHelper::Sprintf(
+            "ZFile::ParseXML: Error in '%s'.\n"
+            "\t Missing 'Segment' attribute in File node. \n",
+            name.c_str()));
+    */
 
-	if (segment != -1)
-	{
-		Globals::Instance->AddSegment(segment);
-		Globals::Instance->segmentRefFiles[segment] = this;
-	}
+    if (reader->Attribute("Segment") != nullptr)
+    {
+        segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
+        Globals::Instance->AddSegment(segment, this);
+    }
 
 	string folderName = basePath / Path::GetFileNameWithoutExtension(name);
 
@@ -195,26 +198,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			if (mode == ZFileMode::Extract)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
 
-			// TODO: See if we can make this part of the ZRoom code...
-			if (nRes->GetResourceType() == ZResourceType::Room)
-			{
-				if (nodeName == "Scene")
-				{
-					Globals::Instance->lastScene = (ZRoom*)nRes;
-
-					if (segment == -1)
-						segment = SEGMENT_SCENE;
-				}
-				else
-				{
-					if (segment == -1)
-						segment = SEGMENT_ROOM;
-				}
-
-				if (segment != -1)
-					Globals::Instance->AddSegment(segment);
-			}
-
             auto resType = nRes->GetResourceType();
             if (resType == ZResourceType::Texture)
                 AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
@@ -271,6 +254,11 @@ std::string ZFile::GetVarName(uint32_t address)
 std::string ZFile::GetName()
 {
 	return name;
+}
+
+const fs::path& ZFile::GetXmlFilePath() const
+{
+    return xmlFilePath;
 }
 
 const std::vector<uint8_t>& ZFile::GetRawData() const
@@ -592,7 +580,6 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	GeneratePlaceholderDeclarations();
 
 	// Generate Code
-	//for (ZResource* res : resources)
     for (size_t i = 0; i < resources.size(); i++)
 	{
         ZResource* res = resources.at(i);

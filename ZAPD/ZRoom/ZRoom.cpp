@@ -76,9 +76,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		Globals::Instance->lastScene = this;
 	}
 
-	Globals::Instance->AddSegment(SEGMENT_ROOM);
-	Globals::Instance->AddSegment(SEGMENT_SCENE);
-
 	uint32_t cmdCount = UINT32_MAX;
 
 	if (name == "syotes_room_0")

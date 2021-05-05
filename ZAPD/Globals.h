@@ -67,7 +67,7 @@ public:
 	void ReadConfigFile(const std::string& configFilePath);
 	void ReadTexturePool(const std::string& texturePoolXmlPath);
 	void GenSymbolMap(const std::string& symbolMapPath);
-	void AddSegment(int32_t segment);
+	void AddSegment(int32_t segment, ZFile* file);
 	bool HasSegment(int32_t segment);
 };
 

@@ -44,6 +44,7 @@ public:
 
 	std::string GetVarName(uint32_t address);
 	std::string GetName();
+    const fs::path& GetXmlFilePath() const;
 	const std::vector<uint8_t>& GetRawData() const;
 	void ExtractResources(fs::path outputDir);
 	void BuildSourceFile(fs::path outputDir);
