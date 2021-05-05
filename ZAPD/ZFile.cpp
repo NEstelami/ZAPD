@@ -63,7 +63,7 @@ ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBase
 		outputPath = nOutPath;
 
 	ParseXML(mode, reader, filename, placeholderMode);
-    DeclareResourceSubReferences();
+	DeclareResourceSubReferences();
 }
 
 ZFile::~ZFile()
@@ -111,20 +111,20 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-    // Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
-    /*
+	// Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
+	/*
 	if (reader->Attribute("Segment") == nullptr)
-        throw std::runtime_error(StringHelper::Sprintf(
-            "ZFile::ParseXML: Error in '%s'.\n"
-            "\t Missing 'Segment' attribute in File node. \n",
-            name.c_str()));
-    */
+	    throw std::runtime_error(StringHelper::Sprintf(
+	        "ZFile::ParseXML: Error in '%s'.\n"
+	        "\t Missing 'Segment' attribute in File node. \n",
+	        name.c_str()));
+	*/
 
-    if (reader->Attribute("Segment") != nullptr)
-    {
-        segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
-        Globals::Instance->AddSegment(segment, this);
-    }
+	if (reader->Attribute("Segment") != nullptr)
+	{
+		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
+		Globals::Instance->AddSegment(segment, this);
+	}
 
 	string folderName = basePath / Path::GetFileNameWithoutExtension(name);
 
@@ -154,7 +154,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("%s: 0x%06X\n", nameXml, rawDataIndex);
 
-        // Check for repeated attributes.
+		// Check for repeated attributes.
 		if (offsetXml != nullptr)
 		{
 			rawDataIndex = strtol(StringHelper::Split(offsetXml, "0x")[1].c_str(), NULL, 16);
@@ -198,11 +198,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			if (mode == ZFileMode::Extract)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
 
-            auto resType = nRes->GetResourceType();
-            if (resType == ZResourceType::Texture)
-                AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
-            else
-			    resources.push_back(nRes);
+			auto resType = nRes->GetResourceType();
+			if (resType == ZResourceType::Texture)
+				AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
+			else
+				resources.push_back(nRes);
 
 			rawDataIndex += nRes->GetRawDataSize();
 		}
@@ -224,10 +224,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 void ZFile::DeclareResourceSubReferences()
 {
-    for (size_t i = 0; i < resources.size(); i++)
-    {
-        resources.at(i)->DeclareReferences(name);
-    }
+	for (size_t i = 0; i < resources.size(); i++)
+	{
+		resources.at(i)->DeclareReferences(name);
+	}
 }
 
 void ZFile::BuildSourceFile(fs::path outputDir)
@@ -258,7 +258,7 @@ std::string ZFile::GetName()
 
 const fs::path& ZFile::GetXmlFilePath() const
 {
-    return xmlFilePath;
+	return xmlFilePath;
 }
 
 const std::vector<uint8_t>& ZFile::GetRawData() const
@@ -580,9 +580,9 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	GeneratePlaceholderDeclarations();
 
 	// Generate Code
-    for (size_t i = 0; i < resources.size(); i++)
+	for (size_t i = 0; i < resources.size(); i++)
 	{
-        ZResource* res = resources.at(i);
+		ZResource* res = resources.at(i);
 		string resSrc = res->GetSourceOutputCode(name);
 
 		if (res->IsExternalResource())
@@ -701,20 +701,20 @@ void ZFile::GeneratePlaceholderDeclarations()
 
 void ZFile::AddTextureResource(uint32_t offset, ZTexture* tex)
 {
-    for (auto res : resources)
-        assert(res->GetRawDataIndex() != offset);
+	for (auto res : resources)
+		assert(res->GetRawDataIndex() != offset);
 
-    resources.push_back(tex);
-    texturesResources[offset] = tex;
+	resources.push_back(tex);
+	texturesResources[offset] = tex;
 }
 
 ZTexture* ZFile::GetTextureResource(uint32_t offset) const
 {
-    auto tex = texturesResources.find(offset);
-    if (tex != texturesResources.end())
-        return tex->second;
+	auto tex = texturesResources.find(offset);
+	if (tex != texturesResources.end())
+		return tex->second;
 
-    return nullptr;
+	return nullptr;
 }
 
 std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
@@ -736,7 +736,7 @@ string ZFile::ProcessDeclarations()
 	if (declarations.size() == 0)
 		return output;
 
-    defines += ProcessTextureIntersections(name);
+	defines += ProcessTextureIntersections(name);
 
 	// Account for padding/alignment
 	uint32_t lastAddr = 0;
@@ -745,7 +745,8 @@ string ZFile::ProcessDeclarations()
 	// printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
 	// Optimization: See if there are any arrays side by side that can be merged...
-	std::vector<pair<int32_t, Declaration*>> declarationKeys(declarations.begin(), declarations.end());
+	std::vector<pair<int32_t, Declaration*>> declarationKeys(declarations.begin(),
+	                                                         declarations.end());
 
 	pair<int32_t, Declaration*> lastItem = declarationKeys.at(0);
 
@@ -1212,7 +1213,8 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 		return "";
 
 	std::string defines = "";
-	vector<pair<uint32_t, ZTexture*>> texturesSorted(texturesResources.begin(), texturesResources.end());
+	vector<pair<uint32_t, ZTexture*>> texturesSorted(texturesResources.begin(),
+	                                                 texturesResources.end());
 
 	for (size_t i = 0; i < texturesSorted.size() - 1; i++)
 	{
@@ -1221,11 +1223,11 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 		auto& currentTex = texturesResources.at(currentOffset);
 		int texSize = currentTex->GetRawDataSize();
 
-        if (currentTex->WasDeclaredInXml())
-        {
-            // We believe the user is right.
-            continue;
-        }
+		if (currentTex->WasDeclaredInXml())
+		{
+			// We believe the user is right.
+			continue;
+		}
 
 		if ((currentOffset + texSize) > nextOffset)
 		{
@@ -1234,7 +1236,7 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 			{
 				// Shrink palette so it doesn't overlap
 				currentTex->SetDimensions(offsetDiff / currentTex->GetPixelMultiplyer(), 1);
-                declarations.at(currentOffset)->size = currentTex->GetRawDataSize();
+				declarations.at(currentOffset)->size = currentTex->GetRawDataSize();
 			}
 			else
 			{

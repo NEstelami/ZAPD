@@ -67,7 +67,7 @@ public:
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	virtual void ParseRawData();
-    virtual void DeclareReferences(const std::string& prefix);
+	virtual void DeclareReferences(const std::string& prefix);
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void PreGenSourceFiles();
@@ -93,7 +93,7 @@ public:
 	virtual size_t GetRawDataSize();
 	virtual const std::vector<uint8_t>& GetRawData();
 	virtual void SetRawData(const std::vector<uint8_t>& nData);
-    bool WasDeclaredInXml() const;
+	bool WasDeclaredInXml() const;
 
 protected:
 	std::string name;
@@ -105,7 +105,7 @@ protected:
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
-    bool declaredInXml = false;
+	bool declaredInXml = false;
 };
 
 enum class DeclarationAlignment

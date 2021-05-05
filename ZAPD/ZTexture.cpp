@@ -3,10 +3,10 @@
 #include <cassert>
 #include "BitConverter.h"
 #include "CRC32.h"
+#include "Directory.h"
 #include "File.h"
 #include "Globals.h"
 #include "Path.h"
-#include "Directory.h"
 
 REGISTER_ZFILENODE(Texture, ZTexture);
 
@@ -17,27 +17,27 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 }
 
 void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            const uint32_t nRawDataIndex, const std::string& nRelPath)
+                              const uint32_t nRawDataIndex, const std::string& nRelPath)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
 
 	auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
 
 	std::string incStr =
-		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-								GetExternalExtension().c_str());
+		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 
-	parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), name, 0);
+	parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
+	                                   name, 0);
 }
 
 void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-	                        int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette)
+                          int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette)
 {
 	width = nWidth;
 	height = nHeight;
 	format = nType;
 	rawDataIndex = nRawDataIndex;
-    isPalette = nIsPalette;
+	isPalette = nIsPalette;
 	name = GetDefaultName(parent->GetName());
 	outName = name;
 
@@ -70,7 +70,8 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 	}
 	else
 	{
-		throw std::runtime_error("Width == nullptr for asset " + std::string(reader->Attribute("Name")));
+		throw std::runtime_error("Width == nullptr for asset " +
+		                         std::string(reader->Attribute("Name")));
 	}
 
 	if (reader->Attribute("Height") != nullptr)
@@ -90,22 +91,24 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 	if (format == TextureType::Error)
 		throw std::runtime_error("Format " + formatStr + " is not supported!");
 
-    auto tlutOffsetXml = reader->Attribute("TlutOffset");
-    if (tlutOffsetXml != nullptr)
-    {
-        switch (format)
-        {
-        case TextureType::Palette4bpp:
-        case TextureType::Palette8bpp:
-            tlutOffset = StringHelper::StrToL(std::string(tlutOffsetXml), 16);
-            break;
+	auto tlutOffsetXml = reader->Attribute("TlutOffset");
+	if (tlutOffsetXml != nullptr)
+	{
+		switch (format)
+		{
+		case TextureType::Palette4bpp:
+		case TextureType::Palette8bpp:
+			tlutOffset = StringHelper::StrToL(std::string(tlutOffsetXml), 16);
+			break;
 
-        default:
-            throw std::runtime_error(StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
-            "\t 'TlutOffset' declared in non color-indexed (ci4 or ci8) texture.\n", name.c_str()));
-            break;
-        }
-    }
+		default:
+			throw std::runtime_error(StringHelper::Sprintf(
+				"ZTexture::ParseXML: Error in %s\n"
+				"\t 'TlutOffset' declared in non color-indexed (ci4 or ci8) texture.\n",
+				name.c_str()));
+			break;
+		}
+	}
 }
 
 void ZTexture::ParseRawData()
@@ -301,7 +304,7 @@ void ZTexture::PrepareBitmapPalette4()
 				else
 					paletteIndex = (parentRawData.at(pos) & 0x0F);
 
-				textureData.SetIndexedPixel(y, x+i, paletteIndex, paletteIndex * 16);
+				textureData.SetIndexedPixel(y, x + i, paletteIndex, paletteIndex * 16);
 			}
 		}
 	}
@@ -325,31 +328,31 @@ void ZTexture::PrepareBitmapPalette8()
 
 void ZTexture::DeclareReferences(const std::string& prefix)
 {
-    if (tlutOffset != static_cast<uint32_t>(-1))
-    {
-        tlut = parent->GetTextureResource(tlutOffset);
-        if (tlut == nullptr)
-        {
-            int32_t tlutDim = 16;
-            if (format == TextureType::Palette4bpp)
-                tlutDim = 4;
+	if (tlutOffset != static_cast<uint32_t>(-1))
+	{
+		tlut = parent->GetTextureResource(tlutOffset);
+		if (tlut == nullptr)
+		{
+			int32_t tlutDim = 16;
+			if (format == TextureType::Palette4bpp)
+				tlutDim = 4;
 
-            auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
-            std::string incStr =
-                StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-                                        GetExternalExtension().c_str());
+			auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
+			std::string incStr = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+			                                           GetExternalExtension().c_str());
 
-            tlut = new ZTexture(parent);
-            tlut->FromBinary(rawData, tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
-            parent->AddTextureResource(tlutOffset, tlut);
-	        parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(), tlut->GetSourceTypeName(), tlut->GetName(), 0);
-        }
-        else
-        {
-            tlut->isPalette = true;
-        }
-        SetTlut(tlut);
-    }
+			tlut = new ZTexture(parent);
+			tlut->FromBinary(rawData, tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
+			parent->AddTextureResource(tlutOffset, tlut);
+			parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(),
+			                                   tlut->GetSourceTypeName(), tlut->GetName(), 0);
+		}
+		else
+		{
+			tlut->isPalette = true;
+		}
+		SetTlut(tlut);
+	}
 }
 
 void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
@@ -682,10 +685,10 @@ std::string ZTexture::GetIMSizFromType()
 
 std::string ZTexture::GetDefaultName(const std::string& prefix)
 {
-    const char* suffix = "Tex";
-    if (isPalette)
-        suffix = "TLUT";
-    return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), suffix, rawDataIndex);
+	const char* suffix = "Tex";
+	if (isPalette)
+		suffix = "TLUT";
+	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), suffix, rawDataIndex);
 }
 
 uint32_t ZTexture::GetWidth() const
@@ -731,18 +734,18 @@ void ZTexture::Save(const fs::path& outFolder)
 
 	auto outFileName = outPath / (outName + "." + GetExternalExtension() + ".png");
 
-	#ifdef TEXTURE_DEBUG
+#ifdef TEXTURE_DEBUG
 	printf("Saving PNG: %s\n", outFileName.c_str());
 	printf("\t Var name: %s\n", name.c_str());
 	if (tlut != nullptr)
 		printf("\t TLUT name: %s\n", tlut->name.c_str());
-	#endif
+#endif
 
 	textureData.WritePng(outFileName);
 
-	#ifdef TEXTURE_DEBUG
+#ifdef TEXTURE_DEBUG
 	printf("\n");
-	#endif
+#endif
 }
 
 std::string ZTexture::GetBodySourceCode() const
@@ -868,7 +871,7 @@ bool ZTexture::IsColorIndexed() const
 void ZTexture::SetTlut(ZTexture* nTlut)
 {
 	assert(IsColorIndexed());
-    assert(nTlut->isPalette);
+	assert(nTlut->isPalette);
 	tlut = nTlut;
 
 	textureData.SetPalette(tlut->textureData);

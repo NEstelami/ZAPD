@@ -36,7 +36,7 @@ public:
 	void InitEmptyPaletteImage(uint32_t nWidth, uint32_t nHeight);
 
 	RGBAPixel GetPixel(size_t y, size_t x) const;
-    uint8_t GetIndexedPixel(size_t y, size_t x) const;
+	uint8_t GetIndexedPixel(size_t y, size_t x) const;
 
 	void SetRGBPixel(size_t y, size_t x, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA = 0);
 	void SetGrayscalePixel(size_t y, size_t x, uint8_t grayscale, uint8_t alpha = 0);
@@ -55,7 +55,7 @@ protected:
 
 	void* colorPalette = nullptr;
 	uint8_t* alphaPalette = nullptr;
-	size_t paletteSize = 16*16;
+	size_t paletteSize = 16 * 16;
 
 	uint32_t width = 0;
 	uint32_t height = 0;

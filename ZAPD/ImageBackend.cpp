@@ -43,31 +43,31 @@ void ImageBackend::ReadPng(const char* filename)
 	colorType = png_get_color_type(png, info);
 	bitDepth = png_get_bit_depth(png, info);
 
-	#ifdef TEXTURE_DEBUG
+#ifdef TEXTURE_DEBUG
 	printf("Width: %u\n", width);
 	printf("Height: %u\n", height);
 	printf("ColorType: ");
-    switch (colorType)
-    {
+	switch (colorType)
+	{
 	case PNG_COLOR_TYPE_RGBA:
-	    printf("PNG_COLOR_TYPE_RGBA\n");
-        break;
+		printf("PNG_COLOR_TYPE_RGBA\n");
+		break;
 
 	case PNG_COLOR_TYPE_RGB:
-	    printf("PNG_COLOR_TYPE_RGB\n");
-        break;
+		printf("PNG_COLOR_TYPE_RGB\n");
+		break;
 
 	case PNG_COLOR_TYPE_PALETTE:
-	    printf("PNG_COLOR_TYPE_PALETTE\n");
-        break;
-    
-    default:
-	    printf("%u\n", colorType);
-        break;
-    }
+		printf("PNG_COLOR_TYPE_PALETTE\n");
+		break;
+
+	default:
+		printf("%u\n", colorType);
+		break;
+	}
 	printf("BitDepth: %u\n", bitDepth);
 	printf("\n");
-	#endif
+#endif
 
 	// Read any color_type into 8bit depth, RGBA format.
 	// See http://www.libpng.org/pub/png/libpng-manual.txt
@@ -76,17 +76,17 @@ void ImageBackend::ReadPng(const char* filename)
 		png_set_strip_16(png);
 
 	if (colorType == PNG_COLOR_TYPE_PALETTE)
-    {
-		//png_set_palette_to_rgb(png);
-        isColorIndexed = true;
-    }
+	{
+		// png_set_palette_to_rgb(png);
+		isColorIndexed = true;
+	}
 
 	// PNG_COLOR_TYPE_GRAY_ALPHA is always 8 or 16bit depth.
 	if (colorType == PNG_COLOR_TYPE_GRAY && bitDepth < 8)
 		png_set_expand_gray_1_2_4_to_8(png);
 
 	/*if (png_get_valid(png, info, PNG_INFO_tRNS))
-		png_set_tRNS_to_alpha(png);*/
+	    png_set_tRNS_to_alpha(png);*/
 
 	// These color_type don't have an alpha channel then fill it with 0xff.
 	/*if(*color_type == PNG_COLOR_TYPE_RGB ||
@@ -99,7 +99,7 @@ void ImageBackend::ReadPng(const char* filename)
 
 	png_read_update_info(png, info);
 
-    size_t rowBytes = png_get_rowbytes(png, info);
+	size_t rowBytes = png_get_rowbytes(png, info);
 	pixelMatrix = (uint8_t**)malloc(sizeof(uint8_t*) * height);
 	for (size_t y = 0; y < height; y++)
 	{
@@ -108,8 +108,8 @@ void ImageBackend::ReadPng(const char* filename)
 
 	png_read_image(png, pixelMatrix);
 
-	#ifdef TEXTURE_DEBUG
-    printf("rowBytes: %zu\n", rowBytes);
+#ifdef TEXTURE_DEBUG
+	printf("rowBytes: %zu\n", rowBytes);
 
 	size_t bytePerPixel = GetBytesPerPixel();
 	printf("imgData\n");
@@ -117,16 +117,16 @@ void ImageBackend::ReadPng(const char* filename)
 	{
 		for (size_t x = 0; x < width; x++)
 		{
-            for (size_t z = 0; z < bytePerPixel; z++)
-            {
-			    printf("%02X ", pixelMatrix[y][x*bytePerPixel + z]);
-            }
-            printf(" ");
+			for (size_t z = 0; z < bytePerPixel; z++)
+			{
+				printf("%02X ", pixelMatrix[y][x * bytePerPixel + z]);
+			}
+			printf(" ");
 		}
 		printf("\n");
 	}
 	printf("\n");
-	#endif
+#endif
 
 	fclose(fp);
 
@@ -171,7 +171,7 @@ void ImageBackend::WritePng(const char* filename)
 	{
 		png_set_PLTE(png, info, static_cast<png_color*>(colorPalette), paletteSize);
 
-		#ifdef TEXTURE_DEBUG
+#ifdef TEXTURE_DEBUG
 		printf("palette\n");
 		png_color* aux = (png_color*)colorPalette;
 		for (size_t y = 0; y < paletteSize; y++)
@@ -181,7 +181,7 @@ void ImageBackend::WritePng(const char* filename)
 				printf("\n");
 		}
 		printf("\n");
-		#endif
+#endif
 
 		png_set_tRNS(png, info, alphaPalette, paletteSize, nullptr);
 	}
@@ -192,7 +192,7 @@ void ImageBackend::WritePng(const char* filename)
 	// Use png_set_filler().
 	// png_set_filler(png, 0, PNG_FILLER_AFTER);
 
-	#ifdef TEXTURE_DEBUG
+#ifdef TEXTURE_DEBUG
 	size_t bytePerPixel = GetBytesPerPixel();
 	printf("imgData\n");
 	for (size_t y = 0; y < height; y++)
@@ -204,7 +204,7 @@ void ImageBackend::WritePng(const char* filename)
 		printf("\n");
 	}
 	printf("\n");
-	#endif
+#endif
 
 	png_write_image(png, pixelMatrix);
 	png_write_end(png, nullptr);
@@ -258,7 +258,7 @@ void ImageBackend::InitEmptyRGBImage(uint32_t nWidth, uint32_t nHeight, bool alp
 	colorType = PNG_COLOR_TYPE_RGB;
 	if (alpha)
 		colorType = PNG_COLOR_TYPE_RGBA;
-	bitDepth = 8; // nBitDepth;
+	bitDepth = 8;  // nBitDepth;
 
 	size_t bytePerPixel = GetBytesPerPixel();
 
@@ -298,7 +298,7 @@ RGBAPixel ImageBackend::GetPixel(size_t y, size_t x) const
 {
 	assert(y < height);
 	assert(x < width);
-    assert(!isColorIndexed);
+	assert(!isColorIndexed);
 
 	RGBAPixel pixel;
 	size_t bytePerPixel = GetBytesPerPixel();
@@ -314,9 +314,9 @@ uint8_t ImageBackend::GetIndexedPixel(size_t y, size_t x) const
 {
 	assert(y < height);
 	assert(x < width);
-    assert(isColorIndexed);
+	assert(isColorIndexed);
 
-    return pixelMatrix[y][x];
+	return pixelMatrix[y][x];
 }
 
 void ImageBackend::SetRGBPixel(size_t y, size_t x, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA)
@@ -381,9 +381,9 @@ void ImageBackend::SetPalette(const ImageBackend& pal)
 	assert(isColorIndexed);
 	size_t bytePerPixel = pal.GetBytesPerPixel();
 
-	for(size_t y = 0; y < pal.height; y++)
+	for (size_t y = 0; y < pal.height; y++)
 	{
-		for(size_t x = 0; x < pal.width; x++)
+		for (size_t x = 0; x < pal.width; x++)
 		{
 			uint8_t r = pal.pixelMatrix[y][x * bytePerPixel + 0];
 			uint8_t g = pal.pixelMatrix[y][x * bytePerPixel + 1];

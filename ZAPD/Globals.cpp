@@ -178,8 +178,8 @@ void Globals::AddSegment(int32_t segment, ZFile* file)
 	if (std::find(segments.begin(), segments.end(), segment) == segments.end())
 		segments.push_back(segment);
 
-    segmentRefs[segment] = file->GetXmlFilePath();
-    segmentRefFiles[segment] = file;
+	segmentRefs[segment] = file->GetXmlFilePath();
+	segmentRefFiles[segment] = file;
 }
 
 bool Globals::HasSegment(int32_t segment)

@@ -44,7 +44,7 @@ public:
 
 	std::string GetVarName(uint32_t address);
 	std::string GetName();
-    const fs::path& GetXmlFilePath() const;
+	const fs::path& GetXmlFilePath() const;
 	const std::vector<uint8_t>& GetRawData() const;
 	void ExtractResources(fs::path outputDir);
 	void BuildSourceFile(fs::path outputDir);
@@ -83,8 +83,8 @@ public:
 	std::string GetHeaderInclude();
 	void GeneratePlaceholderDeclarations();
 
-    void AddTextureResource(uint32_t offset, ZTexture* tex);
-    ZTexture* GetTextureResource(uint32_t offset) const;
+	void AddTextureResource(uint32_t offset, ZTexture* tex);
+	ZTexture* GetTextureResource(uint32_t offset) const;
 
 	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
 	static void RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc);
@@ -95,15 +95,15 @@ protected:
 	fs::path basePath;
 	fs::path outputPath;
 	fs::path xmlFilePath;
-    // Keep track of every texture of this ZFile.
-    // The pointers declared here are "borrowed" (somebody else is the owner),
-    // so ZFile shouldn't delete/free those textures.
+	// Keep track of every texture of this ZFile.
+	// The pointers declared here are "borrowed" (somebody else is the owner),
+	// so ZFile shouldn't delete/free those textures.
 	std::map<uint32_t, ZTexture*> texturesResources;
 
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
 	              bool placeholderMode);
-    void DeclareResourceSubReferences();
+	void DeclareResourceSubReferences();
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();
 	void GenerateHLIntermediette();
@@ -112,5 +112,5 @@ protected:
 	void ProcessDeclarationText(Declaration* decl);
 	std::string ProcessExterns();
 
-    std::string ProcessTextureIntersections(std::string prefix);
+	std::string ProcessTextureIntersections(std::string prefix);
 };

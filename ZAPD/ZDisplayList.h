@@ -359,11 +359,11 @@ public:
 	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
 
 	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene,
-	                            ZFile* parent, std::string prefix, int32_t texWidth,
-	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
-	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
-	                            bool texIsPalette, ZDisplayList* self);
+	static bool TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, ZFile* parent,
+	                            std::string prefix, int32_t texWidth, int32_t texHeight,
+	                            uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
+	                            F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
+	                            ZDisplayList* self);
 	static int32_t GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 

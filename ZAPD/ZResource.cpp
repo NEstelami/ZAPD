@@ -79,7 +79,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			                          name.c_str(), reader->Name()));
 		}
 
-        declaredInXml = true;
+		declaredInXml = true;
 	}
 }
 
@@ -143,7 +143,7 @@ void ZResource::SetRawData(const std::vector<uint8_t>& nData)
 
 bool ZResource::WasDeclaredInXml() const
 {
-    return declaredInXml;
+	return declaredInXml;
 }
 
 uint32_t ZResource::GetRawDataIndex()

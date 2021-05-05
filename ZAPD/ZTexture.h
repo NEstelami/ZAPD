@@ -29,7 +29,7 @@ protected:
 
 	ImageBackend textureData;
 	std::vector<uint8_t> textureDataRaw;  // When reading from a PNG file.
-    uint32_t tlutOffset = static_cast<uint32_t>(-1);
+	uint32_t tlutOffset = static_cast<uint32_t>(-1);
 	ZTexture* tlut = nullptr;
 
 	void PrepareBitmapRGBA16();
@@ -59,16 +59,16 @@ public:
 	bool isPalette = false;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            const uint32_t nRawDataIndex, const std::string& nRelPath) override;
-	void FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-	                int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette);
+	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
+	void FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, int32_t nWidth,
+	                int32_t nHeight, TextureType nType, bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
 	void FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-    void DeclareReferences(const std::string& prefix) override;
+	void DeclareReferences(const std::string& prefix) override;
 	std::string GetBodySourceCode() const;
 	void CalcHash() override;
 	void Save(const fs::path& outFolder) override;
@@ -81,7 +81,7 @@ public:
 	size_t GetRawDataSize() override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
-    std::string GetDefaultName(const std::string& prefix);
+	std::string GetDefaultName(const std::string& prefix);
 	uint32_t GetWidth() const;
 	uint32_t GetHeight() const;
 	void SetDimensions(uint32_t nWidth, uint32_t nHeight);

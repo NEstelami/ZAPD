@@ -212,7 +212,8 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, ErrorHandler);
 			signal(SIGABRT, ErrorHandler);
 #else
-			fprintf(stderr, "Warning: Tried to set error handler, but this build lacks support for one.\n");
+			fprintf(stderr,
+			        "Warning: Tried to set error handler, but this build lacks support for one.\n");
 #endif
 		}
 		else if (arg == "-v")  // Verbose
@@ -230,9 +231,8 @@ int main(int argc, char* argv[])
 
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
-		bool parseSuccessful =
-			Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-					Globals::Instance->outputPath, fileMode);
+		bool parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
+		                             Globals::Instance->outputPath, fileMode);
 
 		if (!parseSuccessful)
 			return 1;
@@ -258,13 +258,13 @@ int main(int argc, char* argv[])
 	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
 	{
 		BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
-											Globals::Instance->outputPath);
+		                                 Globals::Instance->outputPath);
 	}
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
 		ZOverlay* overlay =
 			ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath),
-								Path::GetDirectoryName(Globals::Instance->cfgPath));
+		                        Path::GetDirectoryName(Globals::Instance->cfgPath));
 
 		if (overlay)
 			File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
