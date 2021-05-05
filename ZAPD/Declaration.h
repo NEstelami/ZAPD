@@ -37,6 +37,7 @@ public:
 	bool isExternal = false;
 	bool isArray = false;
 	size_t arrayItemCnt = 0;
+	std::string arrayItemCntStr;
 	std::vector<uint32_t> references;
 	bool isUnaccounted = false;
 
@@ -47,6 +48,8 @@ public:
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+		std::string nVarName, bool nIsArray, std::string nArrayItemCntStr, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
 	            bool nIsExternal);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
@@ -55,7 +58,6 @@ public:
 	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
 
 protected:
-	Declaration() = default;
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
 	            std::string nText);
 };
