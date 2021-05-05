@@ -72,7 +72,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 				fprintf(stderr, 
 					"ZResource::ParseXML: Warning while parsing '%s'.\n"
 					"\t Unexpected '%s' attribute in resource '%s'.\n",
-					parent->GetName().c_str(), attrName.c_str(), reader->Name()));
+					parent->GetName().c_str(), attrName.c_str(), reader->Name());
 			attrs = attrs->Next();
 		}
 
