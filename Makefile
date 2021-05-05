@@ -5,8 +5,8 @@ CFLAGS ?=
 
 CC := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
+CFLAGS += -g3 -ggdb -fpic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
 
-CFLAGS += -g3 -ggdb -fpic -Wl,-export-dynamic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
 ifeq ($(OPTIMIZATION_ON),0)
   CFLAGS += -O0
 else
@@ -26,9 +26,10 @@ UNAME := $(shell uname)
 FS_INC ?=
 ifneq ($(UNAME), Darwin)
     FS_INC += -lstdc++fs
+	CFLAGS += -Wl,-export-dynamic
 endif
 
-SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel ZAPD/OpenFBX
+SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel
 
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 CPP_FILES += lib/tinyxml2/tinyxml2.cpp
