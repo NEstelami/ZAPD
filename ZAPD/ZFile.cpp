@@ -123,15 +123,15 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		Globals::Instance->AddSegment(segment);
 	}
 
-	string folderName = basePath / Path::GetFileNameWithoutExtension(name);
+	string folderName = (basePath / Path::GetFileNameWithoutExtension(name)).string();
 
 	if (mode == ZFileMode::Extract)
 	{
-		if (!File::Exists(basePath / name))
+		if (!File::Exists((basePath / name).string()))
 			throw std::runtime_error(
 				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 
-		rawData = File::ReadAllBytes(basePath / name);
+		rawData = File::ReadAllBytes((basePath / name).string());
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -235,10 +235,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 void ZFile::BuildSourceFile(fs::path outputDir)
 {
-	string folderName = Path::GetFileNameWithoutExtension(outputPath);
+	string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
 
-	if (!Directory::Exists(outputPath))
-		Directory::CreateDirectory(outputPath);
+	if (!Directory::Exists(outputPath.string()))
+		Directory::CreateDirectory(outputPath.string());
 
 	GenerateSourceFiles(outputDir);
 }
@@ -261,13 +261,13 @@ std::string ZFile::GetName()
 
 void ZFile::ExtractResources(fs::path outputDir)
 {
-	string folderName = Path::GetFileNameWithoutExtension(outputPath);
+	string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
 
-	if (!Directory::Exists(outputPath))
-		Directory::CreateDirectory(outputPath);
+	if (!Directory::Exists(outputPath.string()))
+		Directory::CreateDirectory(outputPath.string());
 
-	if (!Directory::Exists(Globals::Instance->sourceOutputPath))
-		Directory::CreateDirectory(Globals::Instance->sourceOutputPath);
+	if (!Directory::Exists(Globals::Instance->sourceOutputPath.string()))
+		Directory::CreateDirectory(Globals::Instance->sourceOutputPath.string());
 
 	for (ZResource* res : resources)
 		res->PreGenSourceFiles();
@@ -280,8 +280,8 @@ void ZFile::ExtractResources(fs::path outputDir)
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
-		res->CalcHash();  // TEST
-		res->Save(outputPath);
+		res->CalcHash();
+		res->Save(outputPath.string());
 	}
 
 	if (Globals::Instance->testMode)
@@ -530,7 +530,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 		{
 			string path = Path::GetFileNameWithoutExtension(res->GetName()).c_str();
 
-			string assetOutDir = outputDir / Path::GetFileNameWithoutExtension(res->GetOutName());
+			string assetOutDir = (outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
 			string declType = res->GetSourceTypeName();
 
 			std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
@@ -574,7 +574,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	sourceOutput += ProcessDeclarations();
 
 	string outPath =
-		Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c");
+		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c")).string();
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -602,7 +602,7 @@ void ZFile::GenerateSourceHeaderFiles()
 	fs::path headerFilename =
 		Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".h");
 
-	File::WriteAllText(headerFilename, formatter.GetOutput());
+	File::WriteAllText(headerFilename.string(), formatter.GetOutput());
 }
 
 void ZFile::GenerateHLIntermediette()

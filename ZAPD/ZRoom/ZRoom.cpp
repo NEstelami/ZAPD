@@ -529,7 +529,7 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 		declaration += item.second->GetSourceOutputCode(prefix);
 
-		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath);
+		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath.string());
 
 		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 			printf("SAVING IMAGE TO %s\n", outPath.c_str());
