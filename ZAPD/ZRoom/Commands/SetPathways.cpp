@@ -15,30 +15,30 @@ ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, bool nIsFromHeader)
 	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
-	ZResource::rawData = nRawData;
-	ZResource::rawDataIndex = nRawDataIndex;
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
 	isFromHeader = nIsFromHeader;
 
 	if (segmentOffset != 0)
-		ZResource::parent->AddDeclarationPlaceholder(segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 void ZSetPathways::ParseRawDataLate()
 {
 	if (isFromHeader)
 		segmentOffset =
-			GETSEGOFFSET(BitConverter::ToUInt32BE(ZResource::rawData, ZResource::rawDataIndex + 4));
+			GETSEGOFFSET(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4));
 	else
-		segmentOffset = ZResource::rawDataIndex;
+		segmentOffset = rawDataIndex;
 
 	if (segmentOffset != 0)
-		ZResource::parent->AddDeclarationPlaceholder(segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 
 	int numPaths = 1;
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 		numPaths = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
 
-	pathwayList = PathwayList(ZResource::parent, ZResource::rawData, segmentOffset, numPaths);
+	pathwayList = PathwayList(parent, rawData, segmentOffset, numPaths);
 }
 
 void ZSetPathways::DeclareReferencesLate(const std::string& prefix)
@@ -48,7 +48,7 @@ void ZSetPathways::DeclareReferencesLate(const std::string& prefix)
 
 void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	ZResource::parent->AddDeclaration(
+	parent->AddDeclaration(
 		cmdAddress, DeclarationAlignment::None, 8,
 		StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
 		StringHelper::Sprintf("%sSet%04XCmd%02X", name.c_str(), commandSet & 0x00FFFFFF, cmdIndex,
@@ -58,14 +58,14 @@ void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& body
 
 std::string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 {
-	pathwayList.GetSourceOutputCode(ZResource::parent->GetName());
+	pathwayList.GetSourceOutputCode(parent->GetName());
 
 	return "";
 }
 
 std::string ZSetPathways::GetBodySourceCode() const
 {
-	std::string listName = ZResource::parent->GetDeclarationPtrName(segmentOffset);
+	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
 	return StringHelper::Sprintf("SCENE_CMD_PATH_LIST(%s)", listName.c_str());
 }
 
