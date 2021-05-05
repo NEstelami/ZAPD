@@ -2037,8 +2037,7 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 
 void ZDisplayList::TextureGenCheck(string prefix)
 {
-    map<uint32_t, ZTexture*> textures2;
-	if (TextureGenCheck(fileData, textures2, scene, parent, prefix, lastTexWidth, lastTexHeight,
+	if (TextureGenCheck(fileData, scene, parent, prefix, lastTexWidth, lastTexHeight,
 	                    lastTexAddr, lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded,
 	                    lastTexIsPalette, this))
 	{
@@ -2048,7 +2047,7 @@ void ZDisplayList::TextureGenCheck(string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZTexture*>& textures,
+bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData,
                                    ZRoom* scene, ZFile* parent, string prefix, int32_t texWidth,
                                    int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
                                    F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
@@ -2079,7 +2078,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
                 {
                     tex = new ZTexture(parent);
                     tex->FromBinary(fileData, texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz), texIsPalette);
-                    tex = parent->AddTextureResource(texAddr, tex);
+                    parent->AddTextureResource(texAddr, tex);
                 }
 
 				if (!texIsPalette)
@@ -2102,7 +2101,7 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
                     tex = new ZTexture(scene->parent);
                     tex->FromBinary(scene->GetRawData(), texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz), texIsPalette);
 
-                    tex = scene->parent->AddTextureResource(texAddr, tex);
+                    scene->parent->AddTextureResource(texAddr, tex);
                 }
 
 				if (!texIsPalette)

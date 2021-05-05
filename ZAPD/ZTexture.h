@@ -42,7 +42,7 @@ protected:
 	void PrepareBitmapPalette4();
 	void PrepareBitmapPalette8();
 
-	void PrepareRawData(const fs::path& inFolder);
+	void PrepareRawDataFromFile(const fs::path& inFolder);
 	void PrepareRawDataRGBA16(const fs::path& rgbaPath);
 	void PrepareRawDataRGBA32(const fs::path& rgbaPath);
 	void PrepareRawDataGrayscale4(const fs::path& grayPath);
@@ -68,6 +68,7 @@ public:
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
+    void DeclareReferences(const std::string& prefix) override;
 	std::string GetBodySourceCode() const;
 	void CalcHash() override;
 	void Save(const fs::path& outFolder) override;

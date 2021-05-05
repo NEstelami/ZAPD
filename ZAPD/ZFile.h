@@ -82,7 +82,7 @@ public:
 	std::string GetHeaderInclude();
 	void GeneratePlaceholderDeclarations();
 
-    ZTexture* AddTextureResource(uint32_t offset, ZTexture* tex);
+    void AddTextureResource(uint32_t offset, ZTexture* tex);
     ZTexture* GetTextureResource(uint32_t offset) const;
 
 	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
@@ -102,6 +102,7 @@ protected:
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
 	              bool placeholderMode);
+    void DeclareResourceSubReferences();
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();
 	void GenerateHLIntermediette();

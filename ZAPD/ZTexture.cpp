@@ -28,27 +28,6 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 								GetExternalExtension().c_str());
 
 	parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), name, 0);
-
-    if (tlutOffset != static_cast<uint32_t>(-1))
-    {
-        tlut = parent->GetTextureResource(tlutOffset);
-        if (tlut == nullptr)
-        {
-            int32_t tlutDim = 16;
-            if (format == TextureType::Palette4bpp)
-                tlutDim = 4;
-
-            tlut = new ZTexture(parent);
-            tlut->FromBinary(nRawData, tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
-            tlut = parent->AddTextureResource(tlutOffset, tlut);
-	        parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(), tlut->GetSourceTypeName(), tlut->GetName(), 0);
-        }
-        else
-        {
-            tlut->isPalette = true;
-        }
-        SetTlut(tlut);
-    }
 }
 
 void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
@@ -71,7 +50,7 @@ void ZTexture::FromPNG(const fs::path& pngFilePath, TextureType texType)
 {
 	format = texType;
 	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
-	PrepareRawData(pngFilePath);
+	PrepareRawDataFromFile(pngFilePath);
 }
 
 void ZTexture::FromHLTexture(HLTexture* hlTex)
@@ -345,7 +324,36 @@ void ZTexture::PrepareBitmapPalette8()
 	}
 }
 
-void ZTexture::PrepareRawData(const fs::path& pngFilePath)
+void ZTexture::DeclareReferences(const std::string& prefix)
+{
+    if (tlutOffset != static_cast<uint32_t>(-1))
+    {
+        tlut = parent->GetTextureResource(tlutOffset);
+        if (tlut == nullptr)
+        {
+            int32_t tlutDim = 16;
+            if (format == TextureType::Palette4bpp)
+                tlutDim = 4;
+
+            auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
+            std::string incStr =
+                StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+                                        GetExternalExtension().c_str());
+
+            tlut = new ZTexture(parent);
+            tlut->FromBinary(rawData, tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
+            parent->AddTextureResource(tlutOffset, tlut);
+	        parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(), tlut->GetSourceTypeName(), tlut->GetName(), 0);
+        }
+        else
+        {
+            tlut->isPalette = true;
+        }
+        SetTlut(tlut);
+    }
+}
+
+void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 {
 	switch (format)
 	{

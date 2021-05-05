@@ -63,6 +63,7 @@ ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBase
 		outputPath = nOutPath;
 
 	ParseXML(mode, reader, filename, placeholderMode);
+    DeclareResourceSubReferences();
 }
 
 ZFile::~ZFile()
@@ -150,7 +151,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("%s: 0x%06X\n", nameXml, rawDataIndex);
 
-		if (offsetXml != NULL)
+        // Check for repeated attributes.
+		if (offsetXml != nullptr)
 		{
 			rawDataIndex = strtol(StringHelper::Split(offsetXml, "0x")[1].c_str(), NULL, 16);
 
@@ -162,7 +164,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			offsetSet.insert(offsetXml);
 		}
-		if (outNameXml != NULL)
+		if (outNameXml != nullptr)
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
 			{
@@ -172,7 +174,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			outNameSet.insert(outNameXml);
 		}
-		if (nameXml != NULL)
+		if (nameXml != nullptr)
 		{
 			if (nameSet.find(nameXml) != nameSet.end())
 			{
@@ -189,12 +191,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		{
 			ZResource* nRes = nodeMap[nodeName]();
 			nRes->parent = this;
-
-            auto resType = nRes->GetResourceType();
-            if (resType == ZResourceType::Texture)
-                nRes = AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
-            else
-			    resources.push_back(nRes);
 
 			if (mode == ZFileMode::Extract)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
@@ -219,6 +215,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 					Globals::Instance->AddSegment(segment);
 			}
 
+            auto resType = nRes->GetResourceType();
+            if (resType == ZResourceType::Texture)
+                AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
+            else
+			    resources.push_back(nRes);
+
 			rawDataIndex += nRes->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "File")
@@ -235,6 +237,14 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			                          name.c_str(), nodeName.c_str()));
 		}
 	}
+}
+
+void ZFile::DeclareResourceSubReferences()
+{
+    for (size_t i = 0; i < resources.size(); i++)
+    {
+        resources.at(i)->DeclareReferences(name);
+    }
 }
 
 void ZFile::BuildSourceFile(fs::path outputDir)
@@ -702,18 +712,13 @@ void ZFile::GeneratePlaceholderDeclarations()
 	}
 }
 
-ZTexture* ZFile::AddTextureResource(uint32_t offset, ZTexture* tex)
+void ZFile::AddTextureResource(uint32_t offset, ZTexture* tex)
 {
-    auto currentTex = texturesResources.find(offset);
-    if (currentTex != texturesResources.end())
-    {
-        delete tex;
-        return currentTex->second;
-    }
+    for (auto res : resources)
+        assert(res->GetRawDataIndex() != offset);
 
     resources.push_back(tex);
     texturesResources[offset] = tex;
-    return tex;
 }
 
 ZTexture* ZFile::GetTextureResource(uint32_t offset) const

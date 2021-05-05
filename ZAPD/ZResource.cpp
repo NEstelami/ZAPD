@@ -175,6 +175,10 @@ void ZResource::ParseRawData()
 {
 }
 
+void ZResource::DeclareReferences(const std::string& prefix)
+{
+}
+
 void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 }
