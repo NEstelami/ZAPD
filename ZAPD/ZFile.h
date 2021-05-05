@@ -82,7 +82,7 @@ public:
 	std::string GetHeaderInclude();
 	void GeneratePlaceholderDeclarations();
 
-    void AddTextureResource(uint32_t offset, ZTexture* tex);
+    ZTexture* AddTextureResource(uint32_t offset, ZTexture* tex);
     ZTexture* GetTextureResource(uint32_t offset) const;
 
 	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();

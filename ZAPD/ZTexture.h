@@ -9,6 +9,7 @@
 
 enum class TextureType
 {
+	Error,
 	RGBA32bpp,
 	RGBA16bpp,
 	Palette4bpp,
@@ -18,17 +19,17 @@ enum class TextureType
 	GrayscaleAlpha4bpp,
 	GrayscaleAlpha8bpp,
 	GrayscaleAlpha16bpp,
-	Error
 };
 
 class ZTexture : public ZResource
 {
 protected:
-	TextureType type = TextureType::Error;
+	TextureType format = TextureType::Error;
 	uint32_t width, height;
 
 	ImageBackend textureData;
 	std::vector<uint8_t> textureDataRaw;  // When reading from a PNG file.
+    uint32_t tlutOffset = static_cast<uint32_t>(-1);
 	ZTexture* tlut = nullptr;
 
 	void PrepareBitmapRGBA16();
@@ -59,8 +60,8 @@ public:
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                            const uint32_t nRawDataIndex, const std::string& nRelPath) override;
-	void FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t rawDataIndex,
-	                std::string nName, int32_t nWidth, int32_t nHeight);
+	void FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+	                int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
 	void FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);
@@ -79,6 +80,7 @@ public:
 	size_t GetRawDataSize() override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
+    std::string GetDefaultName(const std::string& prefix);
 	uint32_t GetWidth() const;
 	uint32_t GetHeight() const;
 	void SetDimensions(uint32_t nWidth, uint32_t nHeight);

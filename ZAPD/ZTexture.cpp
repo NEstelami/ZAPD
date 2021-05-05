@@ -1,5 +1,3 @@
-//#define TINYGLTF_IMPLEMENTATION
-
 #include "ZTexture.h"
 
 #include <cassert>
@@ -30,17 +28,39 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 								GetExternalExtension().c_str());
 
 	parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), name, 0);
+
+    if (tlutOffset != static_cast<uint32_t>(-1))
+    {
+        tlut = parent->GetTextureResource(tlutOffset);
+        if (tlut == nullptr)
+        {
+            int32_t tlutDim = 16;
+            if (format == TextureType::Palette4bpp)
+                tlutDim = 4;
+
+            tlut = new ZTexture(parent);
+            tlut->FromBinary(nRawData, tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
+            tlut = parent->AddTextureResource(tlutOffset, tlut);
+	        parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(), tlut->GetSourceTypeName(), tlut->GetName(), 0);
+        }
+        else
+        {
+            tlut->isPalette = true;
+        }
+        SetTlut(tlut);
+    }
 }
 
-void ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,
-                          std::string nName, int32_t nWidth, int32_t nHeight)
+void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+	                        int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette)
 {
 	width = nWidth;
 	height = nHeight;
-	type = nType;
-	name = nName;
-	outName = nName;
+	format = nType;
 	rawDataIndex = nRawDataIndex;
+    isPalette = nIsPalette;
+	name = GetDefaultName(parent->GetName());
+	outName = name;
 
 	rawData.assign(nRawData.begin(), nRawData.end());
 
@@ -49,7 +69,7 @@ void ZTexture::FromBinary(TextureType nType, std::vector<uint8_t> nRawData, uint
 
 void ZTexture::FromPNG(const fs::path& pngFilePath, TextureType texType)
 {
-	type = texType;
+	format = texType;
 	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
 	PrepareRawData(pngFilePath);
 }
@@ -58,7 +78,7 @@ void ZTexture::FromHLTexture(HLTexture* hlTex)
 {
 	width = hlTex->width;
 	height = hlTex->height;
-	type = static_cast<TextureType>(hlTex->type);
+	format = static_cast<TextureType>(hlTex->type);
 }
 
 void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
@@ -86,15 +106,32 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	std::string formatStr = reader->Attribute("Format");
 
-	type = GetTextureTypeFromString(formatStr);
+	format = GetTextureTypeFromString(formatStr);
 
-	if (type == TextureType::Error)
+	if (format == TextureType::Error)
 		throw std::runtime_error("Format " + formatStr + " is not supported!");
+
+    auto tlutOffsetXml = reader->Attribute("TlutOffset");
+    if (tlutOffsetXml != nullptr)
+    {
+        switch (format)
+        {
+        case TextureType::Palette4bpp:
+        case TextureType::Palette8bpp:
+            tlutOffset = StringHelper::StrToL(std::string(tlutOffsetXml), 16);
+            break;
+
+        default:
+            throw std::runtime_error(StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
+            "\t 'TlutOffset' declared in non color-indexed (ci4 or ci8) texture.\n", name.c_str()));
+            break;
+        }
+    }
 }
 
 void ZTexture::ParseRawData()
 {
-	switch (type)
+	switch (format)
 	{
 	case TextureType::RGBA16bpp:
 		PrepareBitmapRGBA16();
@@ -303,7 +340,6 @@ void ZTexture::PrepareBitmapPalette8()
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
 			uint8_t grayscale = rawData.at(pos);
 
-			//textureData.SetGrayscalePixel(y, x, rawData.at(pos));
 			textureData.SetIndexedPixel(y, x, grayscale, grayscale);
 		}
 	}
@@ -311,7 +347,7 @@ void ZTexture::PrepareBitmapPalette8()
 
 void ZTexture::PrepareRawData(const fs::path& pngFilePath)
 {
-	switch (type)
+	switch (format)
 	{
 	case TextureType::RGBA16bpp:
 		PrepareRawDataRGBA16(pngFilePath);
@@ -569,7 +605,7 @@ void ZTexture::PrepareRawDataPalette8(const fs::path& palPath)
 
 float ZTexture::GetPixelMultiplyer() const
 {
-	switch (type)
+	switch (format)
 	{
 	case TextureType::Grayscale4bpp:
 	case TextureType::GrayscaleAlpha4bpp:
@@ -596,7 +632,7 @@ size_t ZTexture::GetRawDataSize()
 
 std::string ZTexture::GetIMFmtFromType()
 {
-	switch (type)
+	switch (format)
 	{
 	case TextureType::RGBA32bpp:
 	case TextureType::RGBA16bpp:
@@ -618,7 +654,7 @@ std::string ZTexture::GetIMFmtFromType()
 
 std::string ZTexture::GetIMSizFromType()
 {
-	switch (type)
+	switch (format)
 	{
 	case TextureType::Grayscale4bpp:
 	case TextureType::Palette4bpp:
@@ -635,6 +671,14 @@ std::string ZTexture::GetIMSizFromType()
 	default:
 		return "ERROR";
 	}
+}
+
+std::string ZTexture::GetDefaultName(const std::string& prefix)
+{
+    const char* suffix = "Tex";
+    if (isPalette)
+        suffix = "TLUT";
+    return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), suffix, rawDataIndex);
 }
 
 uint32_t ZTexture::GetWidth() const
@@ -656,7 +700,7 @@ void ZTexture::SetDimensions(uint32_t nWidth, uint32_t nHeight)
 
 TextureType ZTexture::GetTextureType()
 {
-	return type;
+	return format;
 }
 
 void ZTexture::Save(const fs::path& outFolder)
@@ -672,9 +716,6 @@ void ZTexture::Save(const fs::path& outFolder)
 		File::WriteAllText(Globals::Instance->outputPath / (outName + ".txt"),
 		                   StringHelper::Sprintf("%08lX", hash));
 	}
-
-	//if (IsColorIndexed())
-		//textureData.SetPalette(tlut->textureData);
 
 	auto outPath = GetPoolOutPath(outFolder);
 
@@ -744,7 +785,7 @@ void ZTexture::CalcHash()
 
 std::string ZTexture::GetExternalExtension()
 {
-	switch (type)
+	switch (format)
 	{
 	case TextureType::RGBA32bpp:
 		return "rgba32";
@@ -800,13 +841,13 @@ TextureType ZTexture::GetTextureTypeFromString(std::string str)
 	else if (str == "ci8")
 		texType = TextureType::Palette8bpp;
 	else
-		fprintf(stderr, "Encountered Unknown Texture Type %s \n", str.c_str());
+		fprintf(stderr, "Encountered Unknown Texture format %s \n", str.c_str());
 	return texType;
 }
 
 bool ZTexture::IsColorIndexed() const
 {
-	switch (type)
+	switch (format)
 	{
 	case TextureType::Palette4bpp:
 	case TextureType::Palette8bpp:
@@ -820,7 +861,7 @@ bool ZTexture::IsColorIndexed() const
 void ZTexture::SetTlut(ZTexture* nTlut)
 {
 	assert(IsColorIndexed());
-    //assert(nTlut->isPalette);
+    assert(nTlut->isPalette);
 	tlut = nTlut;
 
 	textureData.SetPalette(tlut->textureData);

@@ -190,6 +190,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZResource* nRes = nodeMap[nodeName]();
 			nRes->parent = this;
 
+            auto resType = nRes->GetResourceType();
+            if (resType == ZResourceType::Texture)
+                nRes = AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
+            else
+			    resources.push_back(nRes);
+
 			if (mode == ZFileMode::Extract)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
 
@@ -212,12 +218,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				if (segment != -1)
 					Globals::Instance->AddSegment(segment);
 			}
-
-            auto resType = nRes->GetResourceType();
-            if (resType == ZResourceType::Texture)
-                AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
-            else
-			    resources.push_back(nRes);
 
 			rawDataIndex += nRes->GetRawDataSize();
 		}
@@ -702,15 +702,18 @@ void ZFile::GeneratePlaceholderDeclarations()
 	}
 }
 
-void ZFile::AddTextureResource(uint32_t offset, ZTexture* tex)
+ZTexture* ZFile::AddTextureResource(uint32_t offset, ZTexture* tex)
 {
-    for (auto res : resources)
+    auto currentTex = texturesResources.find(offset);
+    if (currentTex != texturesResources.end())
     {
-        assert(res->GetRawDataIndex() != offset);
+        delete tex;
+        return currentTex->second;
     }
 
     resources.push_back(tex);
     texturesResources[offset] = tex;
+    return tex;
 }
 
 ZTexture* ZFile::GetTextureResource(uint32_t offset) const
@@ -1225,6 +1228,12 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 		uint32_t nextOffset = texturesSorted[i + 1].first;
 		auto& currentTex = texturesResources.at(currentOffset);
 		int texSize = currentTex->GetRawDataSize();
+
+        if (currentTex->WasDeclaredInXml())
+        {
+            // We believe the user is right.
+            continue;
+        }
 
 		if ((currentOffset + texSize) > nextOffset)
 		{

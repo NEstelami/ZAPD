@@ -82,16 +82,17 @@ public:
 	virtual std::string GetExternalExtension();
 
 	// Getters/Setters
-	std::string GetName();
+	const std::string& GetName() const;
 	void SetName(std::string nName);
-	std::string GetOutName();
+	const std::string& GetOutName() const;
 	void SetOutName(std::string nName);
 	std::string GetRelativePath();
 	virtual uint32_t GetRawDataIndex();
 	virtual void SetRawDataIndex(uint32_t value);
 	virtual size_t GetRawDataSize();
-	virtual std::vector<uint8_t> GetRawData();
-	virtual void SetRawData(std::vector<uint8_t> nData);
+	virtual const std::vector<uint8_t>& GetRawData();
+	virtual void SetRawData(const std::vector<uint8_t>& nData);
+    bool WasDeclaredInXml() const;
 
 protected:
 	std::string name;

@@ -503,36 +503,19 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, str
 			texAddr = Seg2Filespace(data, parent->baseAddress);
 			int32_t segmentNumber = GETSEGNUM(data);
 
-			lastTexSeg = (data & 0xFF000000);
+			lastTexSeg = segmentNumber;
 
-			Declaration* texDecl = nullptr;
+            ZFile* auxParent = parent;
+            if (parent->segment != segmentNumber && Globals::Instance->HasSegment(segmentNumber))
+                auxParent = Globals::Instance->segmentRefFiles.at(segmentNumber);
 
-			if (parent != nullptr &&
-			    segmentNumber != 2)  // HACK: Until we have declarations use segment addresses,
-			                         // we'll exclude scene references...
-			{
-				texDecl = parent->GetDeclaration(texAddr);
-
-				if (texDecl == nullptr)
-					texDecl = parent->GetDeclaration(data);
-			}
-
-			if (texAddr != 0)
-			{
-				if (texDecl != nullptr)
-					texStr = StringHelper::Sprintf("%s", texDecl->varName.c_str());
-				else if (segmentNumber == 2)
-					texStr = StringHelper::Sprintf("%sTex_%06X", scene->GetName().c_str(), texAddr);
-				else if (!Globals::Instance->HasSegment(
-							 segmentNumber))  // Probably an external asset we are unable to track
-					texStr = StringHelper::Sprintf("0x%06X", data);
-				else
-					texStr = StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr);
-			}
-			else if (segmentNumber != SEGMENT_ROOM)
-				texStr = StringHelper::Sprintf("0x%06X", data);
-			else
-				texStr = StringHelper::Sprintf("0");
+            Declaration* decl = auxParent->GetDeclaration(texAddr);
+            if (Globals::Instance->HasSegment(segmentNumber) && decl != nullptr)
+                texStr = decl->varName;
+            else if (lastTexture != nullptr)
+                texStr = lastTexture->GetName();
+            else
+                texStr = auxParent->GetDeclarationPtrName(data & 0xFFFFFFFF);
 		}
 
 		// gsDPSetTile
@@ -950,9 +933,7 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* lin
 			sprintf(texStr, "%sTex_%06X", prefix.c_str(), texAddress);
 		else
 		{
-			{
-				sprintf(texStr, "0x%08lX", data & 0xFFFFFFFF);
-			}
+            sprintf(texStr, "0x%08lX", data & 0xFFFFFFFF);
 		}
 
 		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt].c_str(),
@@ -1578,7 +1559,7 @@ static int32_t GfxdCallback_FormatSingleEntry(void)
 					printf("CI texture '%s' (0x%X), TLUT: null\n", tex->GetName().c_str(), tex->GetRawDataIndex());
 			}
 
-			if(tlut != nullptr)
+			if(tlut != nullptr && !tex->HasTlut())
 				tex->SetTlut(tlut);
 		}
 		break;
@@ -2097,11 +2078,8 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
                 else
                 {
                     tex = new ZTexture(parent);
-                    tex->isPalette = texIsPalette;
-                    tex->FromBinary(TexFormatToTexType(texFmt, texSiz), fileData, texAddr,
-                                    StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), texAddr),
-                                    texWidth, texHeight);
-                    parent->AddTextureResource(texAddr, tex);
+                    tex->FromBinary(fileData, texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz), texIsPalette);
+                    tex = parent->AddTextureResource(texAddr, tex);
                 }
 
 				if (!texIsPalette)
@@ -2122,14 +2100,9 @@ bool ZDisplayList::TextureGenCheck(vector<uint8_t> fileData, map<uint32_t, ZText
                 else
                 {
                     tex = new ZTexture(scene->parent);
-                    tex->isPalette = texIsPalette;
-                    tex->FromBinary(TexFormatToTexType(texFmt, texSiz), scene->GetRawData(), texAddr,
-                                    StringHelper::Sprintf("%sTex_%06X",
-                                                        Globals::Instance->lastScene->GetName().c_str(),
-                                                        texAddr),
-                                    texWidth, texHeight);
+                    tex->FromBinary(scene->GetRawData(), texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz), texIsPalette);
 
-                    scene->parent->AddTextureResource(texAddr, tex);
+                    tex = scene->parent->AddTextureResource(texAddr, tex);
                 }
 
 				if (!texIsPalette)

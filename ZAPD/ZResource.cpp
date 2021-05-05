@@ -91,12 +91,12 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-string ZResource::GetName()
+const std::string& ZResource::GetName() const
 {
 	return name;
 }
 
-std::string ZResource::GetOutName()
+const std::string& ZResource::GetOutName() const
 {
 	return outName;
 }
@@ -131,14 +131,19 @@ string ZResource::GetRelativePath()
 	return relativePath;
 }
 
-vector<uint8_t> ZResource::GetRawData()
+const std::vector<uint8_t>& ZResource::GetRawData()
 {
 	return rawData;
 }
 
-void ZResource::SetRawData(std::vector<uint8_t> nData)
+void ZResource::SetRawData(const std::vector<uint8_t>& nData)
 {
 	rawData = nData;
+}
+
+bool ZResource::WasDeclaredInXml() const
+{
+    return declaredInXml;
 }
 
 uint32_t ZResource::GetRawDataIndex()
