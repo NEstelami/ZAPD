@@ -905,15 +905,16 @@ string ZFile::ProcessDeclarations()
 						item.second->varName.c_str(),
 						item.second->arrayItemCntStr.c_str());
 				}
+				else if (item.second->arrayItemCnt == 0)
+				{
+					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
+						item.second->varName.c_str());
+				}
 				else
 				{
-					if (item.second->arrayItemCnt == 0)
-						output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
-							item.second->varName.c_str());
-					else
-						output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
-							item.second->varName.c_str(),
-							item.second->arrayItemCnt);
+					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
+						item.second->varName.c_str(),
+						item.second->arrayItemCnt);
 				}
 			}
 			else
