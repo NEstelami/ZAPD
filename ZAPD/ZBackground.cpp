@@ -50,10 +50,10 @@ void ZBackground::ParseRawData()
 void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutName)
 {
 	fs::path filepath(inFolder);
+
 	if (appendOutName)
-	{
 		filepath = filepath / (outName + "." + GetExternalExtension());
-	}
+	
 	data = File::ReadAllBytes(filepath.string());
 
 	// Add padding.
@@ -142,7 +142,7 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, 0, bodyStr);
+	                            GetSourceTypeName(), auxName, "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
 }
 
 bool ZBackground::IsExternalResource()
