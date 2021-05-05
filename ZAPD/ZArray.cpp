@@ -22,7 +22,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	arrayCnt = StringHelper::StrToL(requiredAttributes.at("Count"), 0);
+	arrayCnt = StringHelper::StrToL(registeredAttributes.at("Count").value, 0);
 	// TODO: do a better check.
 	assert(arrayCnt > 0);
 

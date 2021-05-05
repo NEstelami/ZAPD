@@ -56,7 +56,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	std::string skelTypeXml = requiredAttributes.at("Type");
+	std::string skelTypeXml = registeredAttributes.at("Type").value;
 
 	if (skelTypeXml == "Flex")
 		type = ZSkeletonType::Flex;
@@ -72,7 +72,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		type = ZSkeletonType::Normal;
 	}
 
-	std::string limbTypeXml = requiredAttributes.at("LimbType");
+	std::string limbTypeXml = registeredAttributes.at("LimbType").value;
 
 	if (limbTypeXml == "Standard")
 		limbType = ZLimbType::Standard;

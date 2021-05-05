@@ -169,10 +169,10 @@ void ZTexture::ParseXML(XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	width = StringHelper::StrToL(requiredAttributes.at("Width"));
-	height = StringHelper::StrToL(requiredAttributes.at("Height"));
+	width = StringHelper::StrToL(registeredAttributes.at("Width").value);
+	height = StringHelper::StrToL(registeredAttributes.at("Height").value);
 
-	std::string formatStr = requiredAttributes.at("Format");
+	std::string formatStr = registeredAttributes.at("Format").value;
 	type = GetTextureTypeFromString(formatStr);
 
 	if (type == TextureType::Error)

@@ -47,6 +47,15 @@ enum class ZResourceType
 	Background,
 };
 
+class ResourceAttribute
+{
+public:
+    std::string key = "";
+    std::string value = "";
+    bool isRequired = false;
+    bool wasSet = false;
+};
+
 class ZResource
 {
 public:
@@ -108,9 +117,7 @@ protected:
 	                     // actually try to extract it from the file
 
 	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
-	std::map<std::string, std::string> requiredAttributes;
-	std::map<std::string, std::string> optionalAttributes;
-	std::map<std::string, bool> nonValueAttributes;
+    std::map<std::string, ResourceAttribute> registeredAttributes;
 
 	// XML attributes registers.
 	// Registering XML attributes should be done in constructors.
@@ -118,10 +125,8 @@ protected:
 	// The resource needs this attribute. If it is not provided, then the program will throw an
 	// exception.
 	void RegisterRequiredAttribute(const std::string& attr);
-	// Optional attribute. The resource has to do manual checks and manual warnings.
+	// Optional attribute. The resource has to do manual checks and manual warnings. It may or may not have a value.
 	void RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue = "");
-	// Optional attribute. It may be provided or not.
-	void RegisterNonValueAttribute(const std::string& attr);
 };
 
 enum class DeclarationAlignment

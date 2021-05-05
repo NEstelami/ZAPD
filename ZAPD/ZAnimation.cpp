@@ -239,7 +239,7 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZAnimation::ParseXML(reader);
 
-	std::string skelOffsetXml = optionalAttributes.at("SkelOffset");
+	std::string skelOffsetXml = registeredAttributes.at("SkelOffset").value;
 	if (skelOffsetXml == "")
 	{
 		throw std::runtime_error(

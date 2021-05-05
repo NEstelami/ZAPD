@@ -41,7 +41,7 @@ void ZBlob::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	blobSize = StringHelper::StrToL(requiredAttributes.at("Size"), 16);
+	blobSize = StringHelper::StrToL(registeredAttributes.at("Size").value, 16);
 }
 
 void ZBlob::ParseRawData()

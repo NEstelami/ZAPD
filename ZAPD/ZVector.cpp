@@ -33,9 +33,9 @@ void ZVector::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	this->scalarType = ZScalar::MapOutputTypeToScalarType(requiredAttributes.at("Type"));
+	this->scalarType = ZScalar::MapOutputTypeToScalarType(registeredAttributes.at("Type").value);
 
-	this->dimensions = StringHelper::StrToL(requiredAttributes.at("Dimensions"), 16);
+	this->dimensions = StringHelper::StrToL(registeredAttributes.at("Dimensions").value, 16);
 }
 
 void ZVector::ParseRawData()

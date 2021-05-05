@@ -23,7 +23,7 @@ void ZScalar::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	scalarType = ZScalar::MapOutputTypeToScalarType(requiredAttributes.at("Type"));
+	scalarType = ZScalar::MapOutputTypeToScalarType(registeredAttributes.at("Type").value);
 }
 
 ZScalarType ZScalar::MapOutputTypeToScalarType(const std::string& type)

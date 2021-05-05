@@ -381,9 +381,9 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	// Reading from a <Skeleton/>
-	std::string limbType = optionalAttributes.at("LimbType");
+	std::string limbType = registeredAttributes.at("LimbType").value;
 	if (limbType == "")  // Reading from a <Limb/>
-		limbType = optionalAttributes.at("Type");
+		limbType = registeredAttributes.at("Type").value;
 
 	if (limbType == "")
 	{

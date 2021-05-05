@@ -9,7 +9,6 @@ ZSymbol::ZSymbol(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("Type");
 	RegisterOptionalAttribute("TypeSize");
 	RegisterOptionalAttribute("Count");
-	RegisterNonValueAttribute("Count");
 }
 
 void ZSymbol::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -22,7 +21,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	std::string typeXml = optionalAttributes.at("Type");
+	std::string typeXml = registeredAttributes.at("Type").value;
 
 	if (typeXml == "")
 	{
@@ -38,7 +37,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 		type = typeXml;
 	}
 
-	std::string typeSizeXml = optionalAttributes.at("TypeSize");
+	std::string typeSizeXml = registeredAttributes.at("TypeSize").value;
 	if (typeSizeXml == "")
 	{
 		fprintf(stderr,
@@ -53,11 +52,11 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 		typeSize = StringHelper::StrToL(typeSizeXml, 0);
 	}
 
-	if (nonValueAttributes.at("Count"))
+	if (registeredAttributes.at("Count").wasSet)
 	{
 		isArray = true;
 
-		std::string countXml = optionalAttributes.at("Count");
+		std::string countXml = registeredAttributes.at("Count").value;
 		if (countXml != "")
 			count = StringHelper::StrToL(countXml, 0);
 	}
