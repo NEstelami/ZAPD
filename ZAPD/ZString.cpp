@@ -13,9 +13,11 @@ ZString::ZString(ZFile* nParent) : ZResource(nParent)
 void ZString::ParseRawData()
 {
 	size_t size = 0;
-    for (size_t i = rawDataIndex; i < rawData.size(); ++i) {
+	uint8_t* rawDataArr = rawData.data();
+	size_t rawDataSize = rawData.size();
+    for (size_t i = rawDataIndex; i < rawDataSize; ++i) {
         ++size;
-        if (rawData.at(i) == '\0') {
+        if (rawDataArr[i] == '\0') {
             break;
         }
     }
