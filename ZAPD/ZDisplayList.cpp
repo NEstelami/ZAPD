@@ -1960,7 +1960,7 @@ string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				{
 					// TEXTURE POOL CHECK
 					std::string texOutPath =
-						item.second->GetPoolOutPath(Globals::Instance->outputPath);
+						item.second->GetPoolOutPath(Globals::Instance->outputPath.string());
 					std::string texOutName = item.second->GetName();
 
 					auto start = chrono::steady_clock::now();
