@@ -240,7 +240,6 @@ int main(int argc, char* argv[])
 	else if (fileMode == ZFileMode::BuildTexture)
 	{
 		TextureType texType = Globals::Instance->texType;
-
 		BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
 	}
 	else if (fileMode == ZFileMode::BuildBackground)

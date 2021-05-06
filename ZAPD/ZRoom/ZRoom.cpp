@@ -561,7 +561,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
-	string nVarName, bool nIsArray, std::string nArrayItemCntStr, string nText)
+                         string nVarName, bool nIsArray, std::string nArrayItemCntStr, string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;

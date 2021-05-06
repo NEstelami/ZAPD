@@ -25,7 +25,6 @@ SetActorList::~SetActorList()
 {
 	for (ActorSpawnEntry* entry : actors)
 		delete entry;
-
 }
 
 string SetActorList::GetSourceOutputCode(std::string prefix)
