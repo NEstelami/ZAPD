@@ -21,7 +21,6 @@ MemoryStream::MemoryStream(char* nBuffer, size_t nBufferSize) : MemoryStream()
 
 MemoryStream::~MemoryStream()
 {
-	int bp = 0;
 }
 
 uint64_t MemoryStream::GetLength()
