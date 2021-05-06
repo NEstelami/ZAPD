@@ -267,7 +267,7 @@ int main(int argc, char* argv[])
 		                        Path::GetDirectoryName(Globals::Instance->cfgPath));
 
 		if (overlay)
-			File::WriteAllText(Globals::Instance->outputPath, overlay->GetSourceOutputCode(""));
+			File::WriteAllText(Globals::Instance->outputPath.string(), overlay->GetSourceOutputCode(""));
 	}
 
 	delete g;
@@ -278,7 +278,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
            ZFileMode fileMode)
 {
 	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());
+	XMLError eResult = doc.LoadFile(xmlFilePath.string().c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
@@ -330,36 +330,36 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath)
 {
-	string name = outPath.stem();
+	string name = outPath.stem().string();
 
 	ZTexture tex(nullptr);
 	tex.FromPNG(pngFilePath, texType);
-	string cfgPath = StringHelper::Split(pngFilePath, ".")[0] + ".cfg";
+	string cfgPath = StringHelper::Split(pngFilePath.string(), ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))
 		name = File::ReadAllText(cfgPath);
 
 	string src = tex.GetBodySourceCode();
 
-	File::WriteAllText(outPath, src);
+	File::WriteAllText(outPath.string(), src);
 }
 
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath)
 {
 	ZBackground background(nullptr);
-	background.ParseBinaryFile(imageFilePath, false);
+	background.ParseBinaryFile(imageFilePath.string(), false);
 
-	File::WriteAllText(outPath, background.GetBodySourceCode());
+	File::WriteAllText(outPath.string(), background.GetBodySourceCode());
 }
 
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 {
-	ZBlob* blob = ZBlob::FromFile(blobFilePath);
-	string name = outPath.stem();  // filename without extension
+	ZBlob* blob = ZBlob::FromFile(blobFilePath.string());
+	string name = outPath.stem().string();  // filename without extension
 
 	string src = blob->GetSourceOutputCode(name);
 
-	File::WriteAllText(outPath, src);
+	File::WriteAllText(outPath.string(), src);
 
 	delete blob;
 }
@@ -371,16 +371,16 @@ void BuildAssetModelIntermediette(const fs::path& outPath)
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
 	string output = mdl->OutputCode();
 
-	File::WriteAllText(outPath, output);
+	File::WriteAllText(outPath.string(), output);
 
 	delete mdl;
 }
 
 void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath)
 {
-	vector<string> split = StringHelper::Split(outPath, "/");
+	vector<string> split = StringHelper::Split(outPath.string(), "/");
 	ZFile* file = new ZFile("", split[split.size() - 2]);
-	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath);
+	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath.string());
 	ZAnimation* zAnim = anim->ToZAnimation();
 	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
 	zAnim->parent = file;
@@ -392,7 +392,7 @@ void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& 
 	output += file->declarations[1]->text + "\n";
 	output += file->declarations[0]->text + "\n";
 
-	File::WriteAllText(outPath, output);
+	File::WriteAllText(outPath.string(), output);
 
 	delete zAnim;
 	delete file;

@@ -526,6 +526,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	varName = "";
 	isArray = false;
 	arrayItemCnt = 0;
+	arrayItemCntStr = "";
 	includePath = "";
 	isExternal = false;
 	references = vector<uint32_t>();
@@ -557,6 +558,16 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 	varName = nVarName;
 	isArray = nIsArray;
 	arrayItemCnt = nArrayItemCnt;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
+	string nVarName, bool nIsArray, std::string nArrayItemCntStr, string nText)
+	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
+{
+	varType = nVarType;
+	varName = nVarName;
+	isArray = nIsArray;
+	arrayItemCntStr = nArrayItemCntStr;
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
