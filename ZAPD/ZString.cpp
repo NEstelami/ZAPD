@@ -49,7 +49,7 @@ std::string ZString::GetSourceTypeName()
 	return "char";
 }
 
-ZResourceType ZString::GetResourceType()
+ZResourceType ZString::GetResourceType() const
 {
 	return ZResourceType::String;
 }
