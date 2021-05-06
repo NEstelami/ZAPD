@@ -41,9 +41,6 @@ std::unique_ptr<char[]> MemoryStream::Read(size_t length)
 	memcpy_s(result.get(), length, &buffer[baseAddress], length);
 	baseAddress += length;
 
-	if (baseAddress >= bufferSize)
-		; // EXCEPTION
-
 	return result;
 }
 
@@ -62,9 +59,6 @@ void MemoryStream::Write(char* srcBuffer, size_t length)
 
 	memcpy_s(&buffer[baseAddress], length, srcBuffer, length);
 	baseAddress += length;
-
-	if (baseAddress >= bufferSize)
-		; // EXCEPTION
 }
 
 void MemoryStream::WriteByte(int8_t value)
