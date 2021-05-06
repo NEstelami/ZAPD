@@ -350,8 +350,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	size_t size, std::string varType, std::string varName,
-	std::string arrayItemCntStr, std::string body)
+                                        size_t size, std::string varType, std::string varName,
+                                        std::string arrayItemCntStr, std::string body)
 {
 	AddDeclarationDebugChecks(address);
 
@@ -530,7 +530,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 		{
 			string path = Path::GetFileNameWithoutExtension(res->GetName()).c_str();
 
-			string assetOutDir = (outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
+			string assetOutDir =
+				(outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
 			string declType = res->GetSourceTypeName();
 
 			std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
@@ -574,7 +575,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	sourceOutput += ProcessDeclarations();
 
 	string outPath =
-		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c")).string();
+		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c"))
+			.string();
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -901,19 +903,19 @@ string ZFile::ProcessDeclarations()
 				if (item.second->arrayItemCntStr != "")
 				{
 					output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
-						item.second->varName.c_str(),
-						item.second->arrayItemCntStr.c_str());
+					                                item.second->varName.c_str(),
+					                                item.second->arrayItemCntStr.c_str());
 				}
 				else if (item.second->arrayItemCnt == 0)
 				{
 					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
-						item.second->varName.c_str());
+					                                item.second->varName.c_str());
 				}
 				else
 				{
 					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
-						item.second->varName.c_str(),
-						item.second->arrayItemCnt);
+					                                item.second->varName.c_str(),
+					                                item.second->arrayItemCnt);
 				}
 			}
 			else
@@ -1001,7 +1003,8 @@ string ZFile::ProcessDeclarations()
 				if (item.second->arrayItemCntStr != "")
 					output += StringHelper::Sprintf(
 						"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-						item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(), item.second->includePath.c_str());
+						item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(),
+						item.second->includePath.c_str());
 				else
 					output += StringHelper::Sprintf(
 						"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
@@ -1018,16 +1021,16 @@ string ZFile::ProcessDeclarations()
 				{
 					if (item.second->arrayItemCntStr != "")
 					{
-						output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
-							item.second->varName.c_str(),
-							item.second->arrayItemCntStr.c_str());
+						output += StringHelper::Sprintf(
+							"%s %s[%s];\n", item.second->varType.c_str(),
+							item.second->varName.c_str(), item.second->arrayItemCntStr.c_str());
 					}
 					else
 					{
 						if (item.second->arrayItemCnt == 0)
 							output +=
-							StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
-								item.second->varName.c_str());
+								StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
+							                          item.second->varName.c_str());
 						else
 							output += StringHelper::Sprintf(
 								"%s %s[%i] = {\n", item.second->varType.c_str(),

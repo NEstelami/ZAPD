@@ -64,7 +64,7 @@ ZRoom::~ZRoom()
 	for (ZRoomCommand* cmd : commands)
 		delete cmd;
 
-	for(auto t : textures)
+	for (auto t : textures)
 		delete t.second;
 }
 
@@ -503,8 +503,8 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
 				{
-					// int32_t intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
-					// 1].first;
+					// int32_t intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i
+					// + 1].first;
 
 					defines += StringHelper::Sprintf(
 						"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
@@ -536,10 +536,12 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 		item.second->Save(outPath);
 
-		auto filepath = Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(item.second->GetName());
+		auto filepath = Globals::Instance->outputPath /
+						Path::GetFileNameWithoutExtension(item.second->GetName());
 		parent->AddDeclarationIncludeArray(
 			item.first,
-			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), item.second->GetExternalExtension().c_str()),
+			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+		                          item.second->GetExternalExtension().c_str()),
 			item.second->GetRawDataSize(), "u64",
 			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
 	}
@@ -574,8 +576,8 @@ void ZRoom::PreGenSourceFiles()
 		cmd->PreGenSourceFiles();
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         string nText)
 {
 	alignment = nAlignment;
 	padding = nPadding;
@@ -605,9 +607,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         string nVarType, string nVarName, bool nIsArray, string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
@@ -626,7 +627,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
-	string nVarName, bool nIsArray, std::string nArrayItemCntStr, string nText)
+                         string nVarName, bool nIsArray, std::string nArrayItemCntStr, string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -636,16 +637,16 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-                         bool nIsExternal)
+                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         std::string nText, bool nIsExternal)
 	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
 	isExternal = nIsExternal;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, string nVarType, string nVarName, bool nIsArray,
-                         size_t nArrayItemCnt, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         string nVarType, string nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
 	varType = nVarType;
