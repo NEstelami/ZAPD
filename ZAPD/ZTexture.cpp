@@ -838,8 +838,7 @@ void ZTexture::Save(const std::string& outFolder)
 string ZTexture::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
-
-	relativePath = "build/assets/" + relativePath;
+	
 	FixRawData();
 
 	uint8_t* rawDataArr = rawData.data();

@@ -10,7 +10,6 @@ ZResource::ZResource(ZFile* nParent)
 	parent = nParent;
 	name = "";
 	outName = "";
-	relativePath = "";
 	sourceOutput = "";
 	rawData = vector<uint8_t>();
 	rawDataIndex = 0;
@@ -119,11 +118,6 @@ bool ZResource::DoesSupportArray()
 std::string ZResource::GetExternalExtension()
 {
 	return "";
-}
-
-string ZResource::GetRelativePath()
-{
-	return relativePath;
 }
 
 vector<uint8_t> ZResource::GetRawData()

@@ -83,7 +83,6 @@ public:
 	void SetName(std::string nName);
 	std::string GetOutName();
 	void SetOutName(std::string nName);
-	std::string GetRelativePath();
 	virtual uint32_t GetRawDataIndex();
 	virtual void SetRawDataIndex(uint32_t value);
 	virtual size_t GetRawDataSize();
@@ -93,7 +92,6 @@ public:
 protected:
 	std::string name;
 	std::string outName;
-	std::string relativePath;
 	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	std::string sourceOutput;
