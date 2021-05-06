@@ -20,7 +20,8 @@ public:
 	SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 	~SetEntranceList();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass1(std::string roomName,
+	                                            uint32_t baseAddress) override;
 	virtual std::string GenerateExterns() override;
 	virtual std::string GetCommandCName() override;
 	virtual RoomCommand GetRoomCommand() override;

@@ -149,7 +149,8 @@ public:
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-		std::string nVarName, bool nIsArray, std::string nArrayItemCntStr, std::string nText);
+	            std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
+	            std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
 	            bool nIsExternal);

@@ -19,10 +19,12 @@ ifneq ($(UNAME), Darwin)
 	CFLAGS += -Wl,-export-dynamic
 endif
 
-SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel ZAPD/OpenFBX
+SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel
 
-CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
-CPP_FILES += lib/tinyxml2/tinyxml2.cpp
+ZAPD_CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
+ZAPD_H_FILES   := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
+
+CPP_FILES += $(ZAPD_CPP_FILES) lib/tinyxml2/tinyxml2.cpp
 O_FILES   := $(CPP_FILES:.cpp=.o)
 
 all: ZAPD.out copycheck
@@ -38,6 +40,11 @@ clean:
 	$(MAKE) -C lib/libgfxd clean
 
 rebuild: clean all
+
+format:
+	clang-format-11 -i $(ZAPD_CPP_FILES) $(ZAPD_H_FILES)
+
+.PHONY: all genbuildinfo copycheck clean rebuild format
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@ $(LDFLAGS)
