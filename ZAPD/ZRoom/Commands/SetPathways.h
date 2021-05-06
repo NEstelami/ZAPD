@@ -21,10 +21,11 @@ public:
 struct PathwayList
 {
 public:
-	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t length);
+	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex,
+	            int32_t length);
 	~PathwayList();
 
-	void GetSourceOutputCode(const std::string& prefix) ;
+	void GetSourceOutputCode(const std::string& prefix);
 	size_t GetRawDataSize();
 	std::string GenerateExterns(const std::string& prefix);
 

@@ -875,7 +875,8 @@ void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 
 	// tex = HLTexture::FromPNG(fileName,
 	// (HLTextureType)ZTexture::GetTextureTypeFromString(format));
-	tex = ZTexture::FromPNG(Path::GetDirectoryName(Globals::Instance->inputPath) + "/" + fileName,
+	tex = ZTexture::FromPNG(Path::GetDirectoryName(Globals::Instance->inputPath.string()) + "/" +
+	                            fileName,
 	                        ZTexture::GetTextureTypeFromString(format));
 }
 
@@ -892,7 +893,7 @@ void HLTextureIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XML
 	element->SetAttribute("Name", name.c_str());
 	element->SetAttribute("TextureName",
 	                      (name + "." + tex->GetExternalExtension() + ".png").c_str());
-	tex->Save(Globals::Instance->outputPath);
+	tex->Save(Globals::Instance->outputPath.string());
 
 	root->InsertEndChild(element);
 }

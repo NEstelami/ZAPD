@@ -13,8 +13,8 @@ ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                           bool nIsFromHeader)
+ZSetPathways::ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData,
+                           uint32_t nRawDataIndex, bool nIsFromHeader)
 	: ZResource(nZRoom->parent), ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
 {
 	rawData = nRawData;
@@ -55,8 +55,8 @@ void ZSetPathways::ParseRawData()
 		parent->AddDeclarationPlaceholder(segmentOffset);
 
 	int32_t numPaths = (Globals::Instance->game != ZGame::MM_RETAIL) ?
-                       1 :
-                       zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
+                           1 :
+                           zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
 
 	pathwayList = new PathwayList(parent, rawData, segmentOffset, numPaths);
 }
@@ -138,7 +138,8 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	}
 }
 
-PathwayList::PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t length)
+PathwayList::PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex,
+                         int32_t length)
 {
 	parent = nParent;
 	_rawDataIndex = rawDataIndex;
