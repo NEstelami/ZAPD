@@ -266,7 +266,8 @@ int main(int argc, char* argv[])
 		                        Path::GetDirectoryName(Globals::Instance->cfgPath));
 
 		if (overlay)
-			File::WriteAllText(Globals::Instance->outputPath.string(), overlay->GetSourceOutputCode(""));
+			File::WriteAllText(Globals::Instance->outputPath.string(),
+			                   overlay->GetSourceOutputCode(""));
 	}
 
 	delete g;
