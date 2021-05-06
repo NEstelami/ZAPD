@@ -192,7 +192,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			nRes->parent = this;
 
 			if (mode == ZFileMode::Extract)
-				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				nRes->ExtractFromXML(child, rawData, rawDataIndex);
 
 			// TODO: See if we can make this part of the ZRoom code...
 			if (nRes->GetResourceType() == ZResourceType::Room)

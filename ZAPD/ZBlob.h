@@ -11,8 +11,7 @@ public:
 	      std::string nName, ZFile* nParent);
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex,
-	                    const std::string& nRelPath) override;  // Extract Mode
+	                    const uint32_t nRawDataIndex) override;  // Extract Mode
 
 	static ZBlob* BuildFromXML(tinyxml2::XMLElement* reader, const std::string& inFolder,
 	                           bool readFile);

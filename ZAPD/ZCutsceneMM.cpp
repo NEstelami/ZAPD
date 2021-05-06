@@ -62,9 +62,9 @@ size_t ZCutsceneMM::GetRawDataSize()
 }
 
 void ZCutsceneMM::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                                 const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                 const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 	DeclareVar(parent->GetName(), "");
 }
 
