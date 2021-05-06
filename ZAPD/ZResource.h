@@ -7,7 +7,14 @@
 #include <vector>
 #include "tinyxml2.h"
 #include <BinaryWriter.h>
+
+#if __has_include(<filesystem>)
 #include <filesystem>
+namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
 
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3
@@ -169,7 +176,7 @@ class ZResourceExporter
 public:
 	ZResourceExporter() = default;
 
-	virtual void Save(ZResource* res, std::filesystem::path outPath, BinaryWriter* writer) = 0;
+	virtual void Save(ZResource* res, fs::path outPath, BinaryWriter* writer) = 0;
 };
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);

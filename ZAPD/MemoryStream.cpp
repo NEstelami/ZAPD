@@ -1,4 +1,9 @@
 #include "MemoryStream.h"
+#include <string.h>
+
+#ifndef _MSC_VER
+#define memcpy_s(dest, destSize, source, sourceSize) memcpy(dest, source, destSize)
+#endif
 
 MemoryStream::MemoryStream()
 {

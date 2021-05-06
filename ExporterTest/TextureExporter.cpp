@@ -1,6 +1,6 @@
 #include "TextureExporter.h"
 
-void ExporterExample_Texture::Save(ZResource* res, std::filesystem::path outPath, BinaryWriter* writer)
+void ExporterExample_Texture::Save(ZResource* res, fs::path outPath, BinaryWriter* writer)
 {
 	ZTexture* tex = (ZTexture*)res;
 
