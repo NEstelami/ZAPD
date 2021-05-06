@@ -7,5 +7,5 @@
 class ExporterExample_Texture : public ZResourceExporter
 {
 public:
-	virtual void Save(ZResource* res, std::string outPath, BinaryWriter* writer) override;
+	virtual void Save(ZResource* res, std::filesystem::path outPath, BinaryWriter* writer) override;
 };

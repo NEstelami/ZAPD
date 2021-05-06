@@ -286,7 +286,7 @@ void ZFile::ExtractResources(fs::path outputDir)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
 		res->CalcHash();
-		res->Save(outputPath);
+		res->Save(outputPath.string());
 
         // Check if we have an exporter "registered" for this resource type
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());

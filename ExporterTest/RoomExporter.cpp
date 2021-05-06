@@ -21,7 +21,7 @@
 #include <ZRoom/Commands/SetEchoSettings.h>
 #include <CollisionExporter.h>
 
-void ExporterExample_Room::Save(ZResource* res, std::string outPath, BinaryWriter* writer)
+void ExporterExample_Room::Save(ZResource* res, std::filesystem::path outPath, BinaryWriter* writer)
 {
 	ZRoom* room = (ZRoom*)res;
 

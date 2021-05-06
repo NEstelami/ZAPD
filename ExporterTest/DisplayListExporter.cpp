@@ -1,6 +1,6 @@
 #include "DisplayListExporter.h"
 
-void ExporterExample_DisplayList::Save(ZResource* res, std::string outPath, BinaryWriter* writer)
+void ExporterExample_DisplayList::Save(ZResource* res, std::filesystem::path outPath, BinaryWriter* writer)
 {
 	ZDisplayList* dList = (ZDisplayList*)res;
 
