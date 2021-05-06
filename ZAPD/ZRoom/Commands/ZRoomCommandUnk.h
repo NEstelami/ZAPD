@@ -14,8 +14,10 @@ public:
 
 	ZRoomCommandUnk(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
-	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass1(std::string roomName,
+	                                            uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass2(std::string roomName,
+	                                            uint32_t baseAddress) override;
 	virtual std::string GenerateSourceCodePass3(std::string roomName) override;
 	virtual RoomCommand GetRoomCommand() override;
 	virtual size_t GetRawDataSize() override;

@@ -197,13 +197,15 @@ size_t ScrollingTexture::GetParamsSize()
 	return 4;
 }
 
-FlashingTexturePrimColor::FlashingTexturePrimColor(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
+FlashingTexturePrimColor::FlashingTexturePrimColor(std::vector<uint8_t> rawData,
+                                                   uint32_t rawDataIndex)
 	: r(rawData[rawDataIndex + 0]), g(rawData[rawDataIndex + 1]), b(rawData[rawDataIndex + 2]),
 	  a(rawData[rawDataIndex + 3]), lodFrac(rawData[rawDataIndex + 4])
 {
 }
 
-FlashingTextureEnvColor::FlashingTextureEnvColor(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
+FlashingTextureEnvColor::FlashingTextureEnvColor(std::vector<uint8_t> rawData,
+                                                 uint32_t rawDataIndex)
 	: r(rawData[rawDataIndex + 0]), g(rawData[rawDataIndex + 1]), b(rawData[rawDataIndex + 2]),
 	  a(rawData[rawDataIndex + 3])
 {
