@@ -28,6 +28,7 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 		ParseXML(reader);
 
 	ParseRawData();
+	CalcHash();
 }
 
 void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
@@ -38,6 +39,7 @@ void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t n
 	relativePath = nRelPath;
 
 	ParseRawData();
+	CalcHash();
 }
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)

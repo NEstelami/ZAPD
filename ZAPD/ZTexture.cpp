@@ -44,6 +44,7 @@ void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDat
 	rawData.assign(nRawData.begin(), nRawData.end());
 
 	ParseRawData();
+	CalcHash();
 }
 
 void ZTexture::FromPNG(const fs::path& pngFilePath, TextureType texType)
@@ -719,10 +720,6 @@ void ZTexture::Save(const fs::path& outFolder)
 	// process for generating the Texture Pool XML.
 	if (Globals::Instance->outputCrc)
 	{
-		if (hash == 0)
-		{
-			CalcHash();
-		}
 		File::WriteAllText(Globals::Instance->outputPath / (outName + ".txt"),
 		                   StringHelper::Sprintf("%08lX", hash));
 	}

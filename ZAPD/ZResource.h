@@ -52,8 +52,8 @@ class ZResource
 {
 public:
 	ZFile* parent;
-	bool outputDeclaration;
-	uint32_t hash;
+	bool outputDeclaration = true;
+	uint32_t hash = 0;
 
 	ZResource(ZFile* nParent);
 	virtual ~ZResource();
@@ -187,4 +187,4 @@ typedef ZResource*(ZResourceFactoryFunc)();
 			ZFile::RegisterNode(#nodeName, &ZResourceFactory_##zResClass_##nodeName);              \
 		}                                                                                          \
 	};                                                                                             \
-	static ZRes_##nodeName inst_ZRes_##nodeName;
+	static ZRes_##nodeName inst_ZRes_##nodeName
