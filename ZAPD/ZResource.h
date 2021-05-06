@@ -26,21 +26,22 @@ class HLFileIntermediette;
 enum class ZResourceType
 {
 	Error,
-	Texture,
-	DisplayList,
-	Room,
 	Animation,
-	Cutscene,
+	Background,
 	Blob,
+	CollisionHeader,
+	Cutscene,
+	DisplayList,
 	Limb,
-	Skeleton,
+	Mtx,
+	Room,
 	Scalar,
+	Skeleton,
+	String,
+	Symbol,
+	Texture,
 	Vector,
 	Vertex,
-	CollisionHeader,
-	Symbol,
-	Mtx,
-	Background,
 };
 
 class ZResource
