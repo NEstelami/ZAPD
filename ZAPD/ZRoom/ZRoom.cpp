@@ -529,18 +529,17 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 		declaration += item.second->GetSourceOutputCode(prefix);
 
-		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath);
+		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath.string());
 
 		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
 			printf("SAVING IMAGE TO %s\n", outPath.c_str());
 
 		item.second->Save(outPath);
 
+		auto filepath = Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(item.second->GetName());
 		parent->AddDeclarationIncludeArray(
 			item.first,
-			StringHelper::Sprintf("%s/%s.%s.inc.c", outPath.c_str(),
-		                          Path::GetFileNameWithoutExtension(item.second->GetName()).c_str(),
-		                          item.second->GetExternalExtension().c_str()),
+			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), item.second->GetExternalExtension().c_str()),
 			item.second->GetRawDataSize(), "u64",
 			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
 	}
@@ -591,6 +590,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	varName = "";
 	isArray = false;
 	arrayItemCnt = 0;
+	arrayItemCntStr = "";
 	includePath = "";
 	isExternal = false;
 	references = vector<uint32_t>();
@@ -623,6 +623,16 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string n
 	varName = nVarName;
 	isArray = nIsArray;
 	arrayItemCnt = nArrayItemCnt;
+}
+
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
+	string nVarName, bool nIsArray, std::string nArrayItemCntStr, string nText)
+	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
+{
+	varType = nVarType;
+	varName = nVarName;
+	isArray = nIsArray;
+	arrayItemCntStr = nArrayItemCntStr;
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,

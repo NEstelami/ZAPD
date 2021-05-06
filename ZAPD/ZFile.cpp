@@ -6,6 +6,7 @@
 #include "File.h"
 #include "Globals.h"
 #include "HighLevel/HLModelIntermediette.h"
+#include "OutputFormatter.h"
 #include "Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
@@ -41,14 +42,15 @@ ZFile::ZFile()
 	rangeEnd = 0xFFFFFFFF;
 }
 
-ZFile::ZFile(string nOutPath, string nName) : ZFile()
+ZFile::ZFile(const fs::path& nOutPath, string nName) : ZFile()
 {
 	outputPath = nOutPath;
 	name = nName;
 }
 
-ZFile::ZFile(ZFileMode mode, XMLElement* reader, string nBasePath, string nOutPath,
-             std::string filename, const std::string& nXmlFilePath, bool placeholderMode)
+ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
+             const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
+             bool placeholderMode)
 	: ZFile()
 {
 	xmlFilePath = nXmlFilePath;
@@ -72,7 +74,8 @@ ZFile::~ZFile()
 		delete res;
 	}
 
-	for(auto d : declarations) {
+	for (auto d : declarations)
+	{
 		delete d.second;
 	}
 }
@@ -122,15 +125,15 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		Globals::Instance->AddSegment(segment);
 	}
 
-	string folderName = basePath + "/" + Path::GetFileNameWithoutExtension(name);
+	string folderName = (basePath / Path::GetFileNameWithoutExtension(name)).string();
 
 	if (mode == ZFileMode::Extract)
 	{
-		if (!File::Exists(basePath + "/" + name))
-			throw std::runtime_error(StringHelper::Sprintf("Error! File %s does not exist.",
-			                                               (basePath + "/" + name).c_str()));
+		if (!File::Exists((basePath / name).string()))
+			throw std::runtime_error(
+				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 
-		rawData = File::ReadAllBytes(basePath + "/" + name);
+		rawData = File::ReadAllBytes((basePath / name).string());
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -232,12 +235,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	}
 }
 
-void ZFile::BuildSourceFile(string outputDir)
+void ZFile::BuildSourceFile(fs::path outputDir)
 {
-	string folderName = Path::GetFileNameWithoutExtension(outputPath);
+	string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
 
-	if (!Directory::Exists(outputPath))
-		Directory::CreateDirectory(outputPath);
+	if (!Directory::Exists(outputPath.string()))
+		Directory::CreateDirectory(outputPath.string());
 
 	GenerateSourceFiles(outputDir);
 }
@@ -258,15 +261,15 @@ std::string ZFile::GetName()
 	return name;
 }
 
-void ZFile::ExtractResources(string outputDir)
+void ZFile::ExtractResources(fs::path outputDir)
 {
-	string folderName = Path::GetFileNameWithoutExtension(outputPath);
+	string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
 
-	if (!Directory::Exists(outputPath))
-		Directory::CreateDirectory(outputPath);
+	if (!Directory::Exists(outputPath.string()))
+		Directory::CreateDirectory(outputPath.string());
 
-	if (!Directory::Exists(Globals::Instance->sourceOutputPath))
-		Directory::CreateDirectory(Globals::Instance->sourceOutputPath);
+	if (!Directory::Exists(Globals::Instance->sourceOutputPath.string()))
+		Directory::CreateDirectory(Globals::Instance->sourceOutputPath.string());
 
 	for (ZResource* res : resources)
 		res->PreGenSourceFiles();
@@ -282,9 +285,10 @@ void ZFile::ExtractResources(string outputDir)
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
-		res->CalcHash();  // TEST
+		res->CalcHash();
 		res->Save(outputPath);
 
+        // Check if we have an exporter "registered" for this resource type
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
 
 		if (exporter != nullptr)
@@ -334,13 +338,6 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
                                    std::string varType, std::string varName, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
@@ -352,13 +349,6 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
                                    DeclarationPadding padding, size_t size, string varType,
                                    string varName, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -370,13 +360,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -385,16 +368,20 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+	size_t size, std::string varType, std::string varName,
+	std::string arrayItemCntStr, std::string body)
+{
+	AddDeclarationDebugChecks(address);
+
+	declarations[address] =
+		new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
+	return declarations[address];
+}
+
+Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body, bool isExternal)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -406,13 +393,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         DeclarationPadding padding, size_t size, string varType,
                                         string varName, size_t arrayItemCnt, std::string body)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
@@ -456,18 +436,6 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
                                                size_t size, std::string varType,
                                                std::string varName, size_t arrayItemCnt)
 {
-#if _DEBUG
-	if (declarations.find(address) != declarations.end())
-	{
-		int32_t bp = 0;
-	}
-
-	if (address == 0)
-	{
-		int32_t bp = 0;
-	}
-#endif
-
 	AddDeclarationDebugChecks(address);
 
 	if (StringHelper::StartsWith(includePath, "assets/extracted/"))
@@ -560,9 +528,9 @@ bool ZFile::HasDeclaration(uint32_t address)
 	return (declarations.find(address) != declarations.end());
 }
 
-void ZFile::GenerateSourceFiles(string outputDir)
+void ZFile::GenerateSourceFiles(fs::path outputDir)
 {
-	sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput += "#include \"ultra64.h\"\n";
 	sourceOutput += "#include \"z64.h\"\n";
@@ -580,16 +548,11 @@ void ZFile::GenerateSourceFiles(string outputDir)
 		{
 			string path = Path::GetFileNameWithoutExtension(res->GetName()).c_str();
 
-			while (StringHelper::EndsWith(outputDir, "/"))
-				outputDir = outputDir.substr(0, outputDir.length() - 1);
-
-			string assetOutDir = outputDir;
+			string assetOutDir = (outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
 			string declType = res->GetSourceTypeName();
 
-			std::string incStr =
-				StringHelper::Sprintf("%s/%s.%s.inc", assetOutDir.c_str(),
-			                          Path::GetFileNameWithoutExtension(res->GetOutName()).c_str(),
-			                          res->GetExternalExtension().c_str());
+			std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
+			                                           res->GetExternalExtension().c_str());
 
 			if (res->GetResourceType() == ZResourceType::Texture)
 			{
@@ -597,16 +560,12 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 				tex->CalcHash();
 
-				if (res->GetRawDataIndex() == 0xF0A0)
-				{
-					int bp = 0;
-				}
-
 				// TEXTURE POOL CHECK
 				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
 				    Globals::Instance->cfg.texturePool.end())
 				{
-					incStr = Globals::Instance->cfg.texturePool[tex->hash].path + "." + res->GetExternalExtension() + ".inc";
+					incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
+							 res->GetExternalExtension() + ".inc";
 				}
 
 				incStr += ".c";
@@ -632,31 +591,36 @@ void ZFile::GenerateSourceFiles(string outputDir)
 
 	sourceOutput += ProcessDeclarations();
 
-	string sourceOutDir = Globals::Instance->sourceOutputPath;
+	string outPath =
+		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c")).string();
 
-	while (StringHelper::EndsWith(sourceOutDir, "/"))
-		sourceOutDir = sourceOutDir.substr(0, sourceOutDir.length() - 1);
+	OutputFormatter formatter;
+	formatter.Write(sourceOutput);
 
-	string outPath = sourceOutDir + "/" + Path::GetFileNameWithoutExtension(name) + ".c";
+	File::WriteAllText(outPath, formatter.GetOutput());
 
-	File::WriteAllText(outPath, sourceOutput);
+	GenerateSourceHeaderFiles();
+}
 
-	// Generate Header
-	sourceOutput = "";
+void ZFile::GenerateSourceHeaderFiles()
+{
+	OutputFormatter formatter;
 
 	for (ZResource* res : resources)
 	{
 		string resSrc = res->GetSourceOutputHeader("");
-		sourceOutput += resSrc;
+		formatter.Write(resSrc);
 
 		if (resSrc != "")
-			sourceOutput += "\n";
+			formatter.Write("\n");
 	}
 
-	sourceOutput += ProcessExterns();
+	formatter.Write(ProcessExterns());
 
-	File::WriteAllText(sourceOutDir + "/" + Path::GetFileNameWithoutExtension(name) + ".h",
-	                   sourceOutput);
+	fs::path headerFilename =
+		Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".h");
+
+	File::WriteAllText(headerFilename.string(), formatter.GetOutput());
 }
 
 void ZFile::GenerateHLIntermediette()
@@ -906,7 +870,7 @@ string ZFile::ProcessDeclarations()
 
 					if (diff < 16 && !nonZeroUnaccounted)
 						unaccountedPrefix = "possiblePadding";
-					
+
 					Declaration* decl = AddDeclarationArray(
 						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
 						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
@@ -952,13 +916,23 @@ string ZFile::ProcessDeclarations()
 		{
 			if (item.second->isArray)
 			{
-				if (item.second->arrayItemCnt == 0)
+				if (item.second->arrayItemCntStr != "")
+				{
+					output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
+						item.second->varName.c_str(),
+						item.second->arrayItemCntStr.c_str());
+				}
+				else if (item.second->arrayItemCnt == 0)
+				{
 					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str());
+						item.second->varName.c_str());
+				}
 				else
+				{
 					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str(),
-					                                item.second->arrayItemCnt);
+						item.second->varName.c_str(),
+						item.second->arrayItemCnt);
+				}
 			}
 			else
 				output += StringHelper::Sprintf("%s %s;\n", item.second->varType.c_str(),
@@ -996,9 +970,9 @@ string ZFile::ProcessDeclarations()
 				else if (item.second->varType == "Vtx" || item.second->varType == "static Vtx")
 					extType = "vtx";
 
+				auto filepath = Globals::Instance->outputPath / item.second->varName;
 				File::WriteAllText(
-					StringHelper::Sprintf("%s/%s.%s.inc", Globals::Instance->outputPath.c_str(),
-				                          item.second->varName.c_str(), extType.c_str()),
+					StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), extType.c_str()),
 					item.second->text);
 			}
 
@@ -1041,9 +1015,15 @@ string ZFile::ProcessDeclarations()
 				// item.second->varType.c_str(), item.second->varName.c_str(),
 				// StringHelper::Replace(item.second->includePath, "assets/",
 				// "assets/extracted/").c_str());
-				output += StringHelper::Sprintf(
-					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-					item.second->varName.c_str(), item.second->includePath.c_str());
+
+				if (item.second->arrayItemCntStr != "")
+					output += StringHelper::Sprintf(
+						"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
+						item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(), item.second->includePath.c_str());
+				else
+					output += StringHelper::Sprintf(
+						"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
+						item.second->varName.c_str(), item.second->includePath.c_str());
 			}
 		}
 		else if (item.second->varType != "")
@@ -1054,14 +1034,23 @@ string ZFile::ProcessDeclarations()
 			{
 				if (item.second->isArray)
 				{
-					if (item.second->arrayItemCnt == 0)
-						output +=
-							StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
-						                          item.second->varName.c_str());
+					if (item.second->arrayItemCntStr != "")
+					{
+						output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
+							item.second->varName.c_str(),
+							item.second->arrayItemCntStr.c_str());
+					}
 					else
-						output += StringHelper::Sprintf(
-							"%s %s[%i] = {\n", item.second->varType.c_str(),
-							item.second->varName.c_str(), item.second->arrayItemCnt);
+					{
+						if (item.second->arrayItemCnt == 0)
+							output +=
+							StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
+								item.second->varName.c_str());
+						else
+							output += StringHelper::Sprintf(
+								"%s %s[%i] = {\n", item.second->varType.c_str(),
+								item.second->varName.c_str(), item.second->arrayItemCnt);
+					}
 
 					output += item.second->text + "\n";
 				}
@@ -1116,7 +1105,8 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 						if (refDecl->arrayItemCnt != 0)
 						{
 							int32_t itemSize = refDecl->size / refDecl->arrayItemCnt;
-							int32_t itemIndex = (decl->references[refIndex] - refDeclAddr) / itemSize;
+							int32_t itemIndex =
+								(decl->references[refIndex] - refDeclAddr) / itemSize;
 
 							decl->text.replace(i, 2,
 							                   StringHelper::Sprintf(

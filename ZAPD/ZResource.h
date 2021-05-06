@@ -29,21 +29,22 @@ struct CommandSet;
 enum class ZResourceType
 {
 	Error,
-	Texture,
-	DisplayList,
-	Room,
 	Animation,
-	Cutscene,
+	Background,
 	Blob,
+	CollisionHeader,
+	Cutscene,
+	DisplayList,
 	Limb,
-	Skeleton,
+	Mtx,
+	Room,
 	Scalar,
+	Skeleton,
+	String,
+	Symbol,
+	Texture,
 	Vector,
 	Vertex,
-	CollisionHeader,
-	Symbol,
-	Mtx,
-	Background,
 };
 
 class ZResource
@@ -138,6 +139,7 @@ public:
 	bool isExternal;
 	bool isArray;
 	size_t arrayItemCnt;
+	std::string arrayItemCntStr;
 	std::vector<uint32_t> references;
 	bool isUnaccounted = false;
 
@@ -148,13 +150,14 @@ public:
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+		std::string nVarName, bool nIsArray, std::string nArrayItemCntStr, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
 	            bool nIsExternal);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
 	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
 	            std::string nText);
-	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType,
-	            std::string nVarName);
+	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
 
 protected:
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
