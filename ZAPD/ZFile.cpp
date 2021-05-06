@@ -280,6 +280,11 @@ void ZFile::ExtractResources(fs::path outputDir)
 	MemoryStream* memStream = new MemoryStream();
 	BinaryWriter writer = BinaryWriter(memStream);
 
+	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
+
+	if (exporterSet != nullptr && exporterSet->BeginFunc != nullptr)
+		exporterSet->BeginFunc(this);
+
 	for (ZResource* res : resources)
 	{
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
@@ -302,8 +307,11 @@ void ZFile::ExtractResources(fs::path outputDir)
 
 	writer.Close();
 
-	if (Globals::Instance->testMode)
-		GenerateHLIntermediette();
+	if (exporterSet != nullptr && exporterSet->EndFunc != nullptr)
+		exporterSet->EndFunc(this);
+
+	//if (Globals::Instance->testMode)
+		//GenerateHLIntermediette();
 }
 
 void ZFile::AddResource(ZResource* res)
@@ -623,21 +631,21 @@ void ZFile::GenerateSourceHeaderFiles()
 	File::WriteAllText(headerFilename.string(), formatter.GetOutput());
 }
 
-void ZFile::GenerateHLIntermediette()
-{
-	// This is kinda hacky but it gets the job done for now...
-	HLModelIntermediette* mdl = new HLModelIntermediette();
-
-	for (ZResource* res : resources)
-	{
-		if (res->GetResourceType() == ZResourceType::DisplayList ||
-		    res->GetResourceType() == ZResourceType::Skeleton)
-			res->GenerateHLIntermediette(*mdl);
-	}
-
-	// std::string test = mdl->ToOBJFile();
-	// std::string test2 = mdl->ToAssimpFile();
-}
+//void ZFile::GenerateHLIntermediette()
+//{
+//	// This is kinda hacky but it gets the job done for now...
+//	HLModelIntermediette* mdl = new HLModelIntermediette();
+//
+//	for (ZResource* res : resources)
+//	{
+//		if (res->GetResourceType() == ZResourceType::DisplayList ||
+//		    res->GetResourceType() == ZResourceType::Skeleton)
+//			res->GenerateHLIntermediette(*mdl);
+//	}
+//
+//	// std::string test = mdl->ToOBJFile();
+//	// std::string test2 = mdl->ToAssimpFile();
+//}
 
 std::string ZFile::GetHeaderInclude()
 {

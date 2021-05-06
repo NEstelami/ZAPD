@@ -40,18 +40,6 @@
     <Filter Include="Header Files\Z64\ZRoom\Commands">
       <UniqueIdentifier>{73db0879-6df8-4f6a-8cc2-a1f836e9e796}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\HighLevel">
-      <UniqueIdentifier>{9464ff21-96af-4b7d-a57b-f62bd9b7389a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\HighLevel\Model">
-      <UniqueIdentifier>{e9865c34-fd69-413c-8cce-3f51331c3503}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\HighLevel">
-      <UniqueIdentifier>{0f9980bb-ae46-4891-a39e-275bf255f010}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\HighLevel\Room">
-      <UniqueIdentifier>{11dbd8e6-d97a-42a5-b40c-e1350389544d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Libraries\fbx">
       <UniqueIdentifier>{be9a5be0-ec6a-4200-8e39-bb58c7da7aa8}</UniqueIdentifier>
     </Filter>
@@ -173,15 +161,6 @@
     </ClCompile>
     <ClCompile Include="Overlays\ZOverlay.cpp">
       <Filter>Source Files\Z64</Filter>
-    </ClCompile>
-    <ClCompile Include="HighLevel\HLAnimationIntermediette.cpp">
-      <Filter>Source Files\HighLevel</Filter>
-    </ClCompile>
-    <ClCompile Include="HighLevel\HLModelIntermediette.cpp">
-      <Filter>Source Files\HighLevel</Filter>
-    </ClCompile>
-    <ClCompile Include="HighLevel\HLTexture.cpp">
-      <Filter>Source Files\HighLevel</Filter>
     </ClCompile>
     <ClCompile Include="ZSkeleton.cpp">
       <Filter>Source Files\Z64</Filter>
@@ -452,23 +431,8 @@
     <ClInclude Include="ZResource.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
-    <ClInclude Include="HighLevel\HLTexture.h">
-      <Filter>Header Files\HighLevel</Filter>
-    </ClInclude>
-    <ClInclude Include="HighLevel\HLAnimation.h">
-      <Filter>Header Files\HighLevel</Filter>
-    </ClInclude>
-    <ClInclude Include="HighLevel\HLAnimationIntermediette.h">
-      <Filter>Header Files\HighLevel</Filter>
-    </ClInclude>
-    <ClInclude Include="HighLevel\HLModelIntermediette.h">
-      <Filter>Header Files\HighLevel</Filter>
-    </ClInclude>
     <ClInclude Include="ZSkeleton.h">
       <Filter>Header Files\Z64</Filter>
-    </ClInclude>
-    <ClInclude Include="HighLevel\HLFileIntermediette.h">
-      <Filter>Header Files\HighLevel</Filter>
     </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetLightList.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>

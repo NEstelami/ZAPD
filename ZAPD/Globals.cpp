@@ -190,24 +190,34 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-std::map<std::string, std::map<ZResourceType, ZResourceExporter*>>* Globals::GetExporterMap()
+std::map<std::string, ExporterSet*>* Globals::GetExporterMap()
 {
-	static std::map<std::string, std::map<ZResourceType, ZResourceExporter*>> exporters;
+	static std::map<std::string, ExporterSet*> exporters;
 	return &exporters;
 }
 
-void Globals::AddExporter(std::string exporterName, ZResourceType resType, ZResourceExporter* exporter)
+void Globals::AddExporter(std::string exporterName, ExporterSet* exporterSet)
 {
-	std::map<std::string, std::map<ZResourceType, ZResourceExporter*>>* exporters = GetExporterMap();
-	(*exporters)[exporterName][resType] = exporter;
+	std::map<std::string, ExporterSet*>* exporters = GetExporterMap();
+	(*exporters)[exporterName] = exporterSet;
 }
 
 ZResourceExporter* Globals::GetExporter(ZResourceType resType)
 {
 	auto exporters = *GetExporterMap();
 
-	if (currentExporter != "" && exporters[currentExporter].find(resType) != exporters[currentExporter].end())
-		return exporters[currentExporter][resType];
+	if (currentExporter != "" && exporters[currentExporter]->exporters.find(resType) != exporters[currentExporter]->exporters.end())
+		return exporters[currentExporter]->exporters[resType];
+	else
+		return nullptr;
+}
+
+ExporterSet* Globals::GetExporterSet()
+{
+	auto exporters = *GetExporterMap();
+
+	if (currentExporter != "")
+		return exporters[currentExporter];
 	else
 		return nullptr;
 }

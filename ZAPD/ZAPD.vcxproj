@@ -151,9 +151,6 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClCompile Include="..\lib\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="BinaryWriter.cpp" />
     <ClCompile Include="Globals.cpp" />
-    <ClCompile Include="HighLevel\HLAnimationIntermediette.cpp" />
-    <ClCompile Include="HighLevel\HLModelIntermediette.cpp" />
-    <ClCompile Include="HighLevel\HLTexture.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MemoryStream.cpp" />
     <ClCompile Include="OutputFormatter.cpp" />
@@ -239,11 +236,6 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="Directory.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="Globals.h" />
-    <ClInclude Include="HighLevel\HLAnimation.h" />
-    <ClInclude Include="HighLevel\HLAnimationIntermediette.h" />
-    <ClInclude Include="HighLevel\HLFileIntermediette.h" />
-    <ClInclude Include="HighLevel\HLModelIntermediette.h" />
-    <ClInclude Include="HighLevel\HLTexture.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="OutputFormatter.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />

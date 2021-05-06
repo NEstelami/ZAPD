@@ -35,6 +35,16 @@ public:
 	GameConfig() = default;
 };
 
+typedef void (*ExporterSetFunc)(ZFile*);
+
+class ExporterSet
+{
+public:
+	std::map<ZResourceType, ZResourceExporter*> exporters;
+	ExporterSetFunc BeginFunc = nullptr;
+	ExporterSetFunc EndFunc = nullptr;
+};
+
 class Globals
 {
 public:
@@ -62,10 +72,8 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 
 	std::string currentExporter;
-	//std::map<std::string, std::map<ZResourceType, ZResourceExporter*>> exporters;
-	//std::map<ZResourceType, ZResourceExporter*> exporters;
-	static std::map<std::string, std::map<ZResourceType, ZResourceExporter*>>* GetExporterMap();
-	static void AddExporter(std::string exporterName, ZResourceType resType, ZResourceExporter* exporter);
+	static std::map<std::string, ExporterSet*>* GetExporterMap();
+	static void AddExporter(std::string exporterName, ExporterSet* exporterSet);
 
 	Globals();
 	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
@@ -75,6 +83,7 @@ public:
 	void AddSegment(int32_t segment);
 	bool HasSegment(int32_t segment);
 	ZResourceExporter* GetExporter(ZResourceType resType);
+	ExporterSet* GetExporterSet();
 };
 
 /*

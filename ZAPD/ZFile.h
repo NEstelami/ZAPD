@@ -96,7 +96,7 @@ protected:
 	              bool placeholderMode);
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();
-	void GenerateHLIntermediette();
+	//void GenerateHLIntermediette();
 	void AddDeclarationDebugChecks(uint32_t address);
 	std::string ProcessDeclarations();
 	void ProcessDeclarationText(Declaration* decl);

@@ -154,12 +154,12 @@ void ZSkeleton::Save(const std::string& outFolder)
 {
 }
 
-void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
-{
-	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
-	HLModelIntermediette::FromZSkeleton(mdl, this);
-	mdl->blocks.push_back(new HLTerminator());
-}
+//void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
+//{
+//	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
+//	HLModelIntermediette::FromZSkeleton(mdl, this);
+//	mdl->blocks.push_back(new HLTerminator());
+//}
 
 size_t ZSkeleton::GetRawDataSize()
 {

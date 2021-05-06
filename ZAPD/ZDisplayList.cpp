@@ -2280,12 +2280,12 @@ void ZDisplayList::Save(const std::string& outFolder)
 {
 }
 
-void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
-{
-	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
-	HLModelIntermediette::FromZDisplayList(mdl, this);
-	mdl->blocks.push_back(new HLTerminator());
-}
+//void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
+//{
+//	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
+//	HLModelIntermediette::FromZDisplayList(mdl, this);
+//	mdl->blocks.push_back(new HLTerminator());
+//}
 
 bool ZDisplayList::IsExternalResource()
 {
