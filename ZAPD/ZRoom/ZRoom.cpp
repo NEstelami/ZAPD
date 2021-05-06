@@ -622,8 +622,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, string nVarType,
-	string nVarName, bool nIsArray, std::string nArrayItemCntStr, string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
+	std::string nVarName, bool nIsArray, std::string nArrayItemCntStr, std::string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
