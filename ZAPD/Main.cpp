@@ -251,15 +251,6 @@ int main(int argc, char* argv[])
 			{
 				BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
 			}
-			/*else if (fileMode == ZFileMode::BuildModelIntermediette)
-			{
-				BuildAssetModelIntermediette(Globals::Instance->outputPath);
-			}
-			else if (fileMode == ZFileMode::BuildAnimationIntermediette)
-			{
-				BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
-												 Globals::Instance->outputPath);
-			}*/
 			else if (fileMode == ZFileMode::BuildOverlay)
 			{
 				ZOverlay* overlay =
@@ -369,37 +360,3 @@ void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 
 	delete blob;
 }
-
-//void BuildAssetModelIntermediette(const fs::path& outPath)
-//{
-//	XMLDocument doc;
-//
-//	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
-//	string output = mdl->OutputCode();
-//
-//	File::WriteAllText(outPath.string(), output);
-//
-//	delete mdl;
-//}
-//
-//void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath)
-//{
-//	vector<string> split = StringHelper::Split(outPath.string(), "/");
-//	ZFile* file = new ZFile("", split[split.size() - 2]);
-//	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath.string());
-//	ZAnimation* zAnim = anim->ToZAnimation();
-//	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
-//	zAnim->parent = file;
-//
-//	zAnim->GetSourceOutputCode(split[split.size() - 2]);
-//	string output = "";
-//
-//	output += file->declarations[2]->text + "\n";
-//	output += file->declarations[1]->text + "\n";
-//	output += file->declarations[0]->text + "\n";
-//
-//	File::WriteAllText(outPath.string(), output);
-//
-//	delete zAnim;
-//	delete file;
-//}
