@@ -1,6 +1,5 @@
 #pragma once
 
-#include "HighLevel/HLTexture.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
 
@@ -72,7 +71,6 @@ public:
 	                            uint32_t rawDataIndex, std::string nName, int32_t nWidth,
 	                            int32_t nHeight, ZFile* nParent);
 	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
-	static ZTexture* FromHLTexture(HLTexture* hlTex);
 	static TextureType GetTextureTypeFromString(std::string str);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;

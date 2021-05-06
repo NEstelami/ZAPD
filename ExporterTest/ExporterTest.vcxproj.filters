@@ -24,9 +24,6 @@
     <ClInclude Include="CollisionExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DisplayListExporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TextureExporter.cpp">
@@ -39,9 +36,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CollisionExporter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DisplayListExporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

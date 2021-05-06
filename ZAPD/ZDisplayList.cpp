@@ -6,7 +6,6 @@
 #include <math.h>
 #include "BitConverter.h"
 #include "Globals.h"
-#include "HighLevel/HLModelIntermediette.h"
 #include "OutputFormatter.h"
 #include "StringHelper.h"
 #include "gfxd.h"
@@ -2279,13 +2278,6 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 void ZDisplayList::Save(const std::string& outFolder)
 {
 }
-
-//void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
-//{
-//	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
-//	HLModelIntermediette::FromZDisplayList(mdl, this);
-//	mdl->blocks.push_back(new HLTerminator());
-//}
 
 bool ZDisplayList::IsExternalResource()
 {

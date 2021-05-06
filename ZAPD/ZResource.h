@@ -22,7 +22,6 @@
 typedef uint32_t segptr_t;
 
 class ZFile;
-//class HLFileIntermediette;
 
 class Declaration;
 struct CommandSet;
@@ -71,7 +70,6 @@ public:
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void PreGenSourceFiles();
-	//virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	virtual void CalcHash();
 	virtual void Save(const std::string& outFolder);
 

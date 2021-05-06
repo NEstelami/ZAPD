@@ -168,10 +168,6 @@ void ZResource::ParseRawData()
 {
 }
 
-//void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
-//{
-//}
-
 std::string ZResource::GetSourceTypeName()
 {
 	return "u8";

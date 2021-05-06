@@ -36,13 +36,19 @@ public:
 };
 
 typedef void (*ExporterSetFunc)(ZFile*);
+typedef bool (*ExporterSetFuncBool)(ZFileMode fileMode);
+typedef void (*ExporterSetFuncVoid)(int argc, char* argv[], int& i);
+typedef void (*ExporterSetFuncVoid2)(std::string buildMode, ZFileMode& fileMode);
 
 class ExporterSet
 {
 public:
 	std::map<ZResourceType, ZResourceExporter*> exporters;
-	ExporterSetFunc BeginFunc = nullptr;
-	ExporterSetFunc EndFunc = nullptr;
+	ExporterSetFuncVoid parseArgsFunc = nullptr;
+	ExporterSetFuncVoid2 parseFileModeFunc = nullptr;
+	ExporterSetFuncBool processFileModeFunc = nullptr;
+	ExporterSetFunc beginFileFunc = nullptr;
+	ExporterSetFunc endFileFunc = nullptr;
 };
 
 class Globals

@@ -7,7 +7,7 @@ MemoryStream::MemoryStream()
 	baseAddress = 0;
 }
 
-MemoryStream::MemoryStream(char* nBuffer, int32_t nBufferSize) : MemoryStream()
+MemoryStream::MemoryStream(char* nBuffer, size_t nBufferSize) : MemoryStream()
 {
 	buffer = std::vector<char>(nBuffer, nBuffer + nBufferSize);
 	bufferSize = nBufferSize;
@@ -34,7 +34,7 @@ void MemoryStream::Seek(int32_t offset, SeekOffsetType seekType)
 		baseAddress = bufferSize - 1 - offset;
 }
 
-std::unique_ptr<char[]> MemoryStream::Read(int32_t length)
+std::unique_ptr<char[]> MemoryStream::Read(size_t length)
 {
 	std::unique_ptr<char[]> result = std::make_unique<char[]>(length);
 
@@ -52,9 +52,9 @@ int8_t MemoryStream::ReadByte()
 	return buffer[baseAddress++];
 }
 
-void MemoryStream::Write(char* srcBuffer, int32_t length)
+void MemoryStream::Write(char* srcBuffer, size_t length)
 {
-	if (baseAddress + length >= bufferSize)
+	if (baseAddress + length >= buffer.size())
 	{
 		buffer.resize(baseAddress + length);
 		bufferSize += length;
@@ -69,7 +69,7 @@ void MemoryStream::Write(char* srcBuffer, int32_t length)
 
 void MemoryStream::WriteByte(int8_t value)
 {
-	if (baseAddress >= bufferSize)
+	if (baseAddress >= buffer.size())
 	{
 		buffer.resize(baseAddress + 1);
 		bufferSize = baseAddress;

@@ -144,13 +144,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CollisionExporter.h" />
-    <ClInclude Include="DisplayListExporter.h" />
     <ClInclude Include="TextureExporter.h" />
     <ClInclude Include="RoomExporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionExporter.cpp" />
-    <ClCompile Include="DisplayListExporter.cpp" />
     <ClCompile Include="TextureExporter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RoomExporter.cpp" />

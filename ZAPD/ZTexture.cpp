@@ -149,17 +149,6 @@ ZTexture* ZTexture::FromPNG(string pngFilePath, TextureType texType)
 	return tex;
 }
 
-ZTexture* ZTexture::FromHLTexture(HLTexture* hlTex)
-{
-	ZTexture* tex = new ZTexture(nullptr);
-
-	tex->width = hlTex->width;
-	tex->height = hlTex->height;
-	tex->type = (TextureType)hlTex->type;
-
-	return tex;
-}
-
 void ZTexture::ParseXML(XMLElement* reader)
 {
 	ZResource::ParseXML(reader);

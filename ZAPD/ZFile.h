@@ -16,7 +16,8 @@ enum class ZFileMode
 	BuildSourceFile,
 	BuildBackground,
 	Extract,
-	Invalid
+	Invalid,
+	Custom = 1000 // Used for exporter file modes
 };
 
 enum class ZGame
@@ -96,7 +97,6 @@ protected:
 	              bool placeholderMode);
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();
-	//void GenerateHLIntermediette();
 	void AddDeclarationDebugChecks(uint32_t address);
 	std::string ProcessDeclarations();
 	void ProcessDeclarationText(Declaration* decl);

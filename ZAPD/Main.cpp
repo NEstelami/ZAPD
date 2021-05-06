@@ -2,8 +2,6 @@
 #include "Directory.h"
 #include "File.h"
 #include "Globals.h"
-#include "HighLevel/HLAnimationIntermediette.h"
-#include "HighLevel/HLModelIntermediette.h"
 #include "Overlays/ZOverlay.h"
 #include "Path.h"
 #include "ZAnimation.h"
@@ -89,33 +87,6 @@ int main(int argc, char* argv[])
 	}
 
 	Globals* g = new Globals();
-
-	// Parse File Mode
-	string buildMode = argv[1];
-	ZFileMode fileMode = ZFileMode::Invalid;
-
-	if (buildMode == "btex")
-		fileMode = ZFileMode::BuildTexture;
-	else if (buildMode == "bren")
-		fileMode = ZFileMode::BuildBackground;
-	else if (buildMode == "bovl")
-		fileMode = ZFileMode::BuildOverlay;
-	else if (buildMode == "bsf")
-		fileMode = ZFileMode::BuildSourceFile;
-	else if (buildMode == "bblb")
-		fileMode = ZFileMode::BuildBlob;
-	else if (buildMode == "bmdlintr")
-		fileMode = ZFileMode::BuildModelIntermediette;
-	else if (buildMode == "bamnintr")
-		fileMode = ZFileMode::BuildAnimationIntermediette;
-	else if (buildMode == "e")
-		fileMode = ZFileMode::Extract;
-
-	if (fileMode == ZFileMode::Invalid)
-	{
-		printf("Error: Invalid file mode '%s'\n", buildMode.c_str());
-		return 1;
-	}
 
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
@@ -203,51 +174,100 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	// Parse File Mode
+	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
+	string buildMode = argv[1];
+	ZFileMode fileMode = ZFileMode::Invalid;
+
+	if (buildMode == "btex")
+		fileMode = ZFileMode::BuildTexture;
+	else if (buildMode == "bren")
+		fileMode = ZFileMode::BuildBackground;
+	else if (buildMode == "bovl")
+		fileMode = ZFileMode::BuildOverlay;
+	else if (buildMode == "bsf")
+		fileMode = ZFileMode::BuildSourceFile;
+	else if (buildMode == "bblb")
+		fileMode = ZFileMode::BuildBlob;
+	else if (buildMode == "bmdlintr")
+		fileMode = ZFileMode::BuildModelIntermediette;
+	else if (buildMode == "bamnintr")
+		fileMode = ZFileMode::BuildAnimationIntermediette;
+	else if (buildMode == "e")
+		fileMode = ZFileMode::Extract;
+	else if (exporterSet != nullptr && exporterSet->parseFileModeFunc != nullptr)
+		exporterSet->parseFileModeFunc(buildMode, fileMode);
+
+	if (fileMode == ZFileMode::Invalid)
+	{
+		printf("Error: Invalid file mode '%s'\n", buildMode.c_str());
+		return 1;
+	}
+
+	// We've parsed through our commands once. If an exporter exists, it's been set by now. 
+	// Now we'll parse through them again but pass them on to our exporter if one is available.
+
+	if (exporterSet != nullptr && exporterSet->parseArgsFunc != nullptr)
+	{
+		for (int32_t i = 2; i < argc; i++)
+			exporterSet->parseArgsFunc(argc, argv, i);
+	}
+
+
+
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	try
 	{
-		if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
-		{
-			bool parseSuccessful =
-				Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-			          Globals::Instance->outputPath, fileMode);
+		bool procFileModeSuccess = false;
 
-			if (!parseSuccessful)
-				return 1;
-		}
-		else if (fileMode == ZFileMode::BuildTexture)
-		{
-			TextureType texType = Globals::Instance->texType;
+		if (exporterSet != nullptr && exporterSet->processFileModeFunc != nullptr)
+			procFileModeSuccess = exporterSet->processFileModeFunc(fileMode);
 
-			BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildBackground)
+		if (!procFileModeSuccess)
 		{
-			BuildAssetBackground(Globals::Instance->inputPath, Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildBlob)
-		{
-			BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildModelIntermediette)
-		{
-			BuildAssetModelIntermediette(Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildAnimationIntermediette)
-		{
-			BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
-			                                 Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildOverlay)
-		{
-			ZOverlay* overlay =
-				ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath.string()),
-			                        Path::GetDirectoryName(Globals::Instance->cfgPath.string()));
+			if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
+			{
+				bool parseSuccessful =
+					Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
+						Globals::Instance->outputPath, fileMode);
 
-			if (overlay)
-				File::WriteAllText(Globals::Instance->outputPath.string(), overlay->GetSourceOutputCode(""));
+				if (!parseSuccessful)
+					return 1;
+			}
+			else if (fileMode == ZFileMode::BuildTexture)
+			{
+				TextureType texType = Globals::Instance->texType;
+
+				BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
+			}
+			else if (fileMode == ZFileMode::BuildBackground)
+			{
+				BuildAssetBackground(Globals::Instance->inputPath, Globals::Instance->outputPath);
+			}
+			else if (fileMode == ZFileMode::BuildBlob)
+			{
+				BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
+			}
+			/*else if (fileMode == ZFileMode::BuildModelIntermediette)
+			{
+				BuildAssetModelIntermediette(Globals::Instance->outputPath);
+			}
+			else if (fileMode == ZFileMode::BuildAnimationIntermediette)
+			{
+				BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
+												 Globals::Instance->outputPath);
+			}*/
+			else if (fileMode == ZFileMode::BuildOverlay)
+			{
+				ZOverlay* overlay =
+					ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath.string()),
+						Path::GetDirectoryName(Globals::Instance->cfgPath.string()));
+
+				if (overlay)
+					File::WriteAllText(Globals::Instance->outputPath.string(), overlay->GetSourceOutputCode(""));
+			}
 		}
 	}
 	catch (std::runtime_error& e)
@@ -349,36 +369,36 @@ void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 	delete blob;
 }
 
-void BuildAssetModelIntermediette(const fs::path& outPath)
-{
-	XMLDocument doc;
-
-	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
-	string output = mdl->OutputCode();
-
-	File::WriteAllText(outPath.string(), output);
-
-	delete mdl;
-}
-
-void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath)
-{
-	vector<string> split = StringHelper::Split(outPath.string(), "/");
-	ZFile* file = new ZFile("", split[split.size() - 2]);
-	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath.string());
-	ZAnimation* zAnim = anim->ToZAnimation();
-	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
-	zAnim->parent = file;
-
-	zAnim->GetSourceOutputCode(split[split.size() - 2]);
-	string output = "";
-
-	output += file->declarations[2]->text + "\n";
-	output += file->declarations[1]->text + "\n";
-	output += file->declarations[0]->text + "\n";
-
-	File::WriteAllText(outPath.string(), output);
-
-	delete zAnim;
-	delete file;
-}
+//void BuildAssetModelIntermediette(const fs::path& outPath)
+//{
+//	XMLDocument doc;
+//
+//	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
+//	string output = mdl->OutputCode();
+//
+//	File::WriteAllText(outPath.string(), output);
+//
+//	delete mdl;
+//}
+//
+//void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath)
+//{
+//	vector<string> split = StringHelper::Split(outPath.string(), "/");
+//	ZFile* file = new ZFile("", split[split.size() - 2]);
+//	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath.string());
+//	ZAnimation* zAnim = anim->ToZAnimation();
+//	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
+//	zAnim->parent = file;
+//
+//	zAnim->GetSourceOutputCode(split[split.size() - 2]);
+//	string output = "";
+//
+//	output += file->declarations[2]->text + "\n";
+//	output += file->declarations[1]->text + "\n";
+//	output += file->declarations[0]->text + "\n";
+//
+//	File::WriteAllText(outPath.string(), output);
+//
+//	delete zAnim;
+//	delete file;
+//}
