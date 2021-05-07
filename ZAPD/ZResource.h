@@ -60,10 +60,9 @@ public:
 
 	// Parsing from File
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            const uint32_t nRawDataIndex, const std::string& nRelPath);
+	                            const uint32_t nRawDataIndex);
 	// Extract Mode
-	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-	                             const std::string& nRelPath);
+	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex);
 
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
@@ -88,7 +87,6 @@ public:
 	void SetName(std::string nName);
 	const std::string& GetOutName() const;
 	void SetOutName(std::string nName);
-	std::string GetRelativePath();
 	virtual uint32_t GetRawDataIndex();
 	virtual void SetRawDataIndex(uint32_t value);
 	virtual size_t GetRawDataSize();
@@ -99,7 +97,6 @@ public:
 protected:
 	std::string name;
 	std::string outName;
-	std::string relativePath;
 	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	std::string sourceOutput;

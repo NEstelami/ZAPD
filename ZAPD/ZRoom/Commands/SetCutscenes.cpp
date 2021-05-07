@@ -18,7 +18,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
 	{
 		ZCutscene* cutscene = new ZCutscene(nZRoom->parent);
-		cutscene->ExtractFromFile(rawData, segmentOffset, "");
+		cutscene->ExtractFromFile(rawData, segmentOffset);
 
 		auto decl = nZRoom->parent->GetDeclaration(segmentOffset);
 		if (decl == nullptr)
@@ -48,8 +48,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t
 
 			ZCutsceneMM* cutscene = new ZCutsceneMM(nZRoom->parent);
 			cutscene->ExtractFromXML(
-				nullptr, rawData, entry->segmentOffset,
-				"");  // TODO: Use ExtractFromFile() here when that gets implemented
+				nullptr, rawData, entry->segmentOffset);  // TODO: Use ExtractFromFile() here when that gets implemented
 			cutscenes.push_back(cutscene);
 		}
 

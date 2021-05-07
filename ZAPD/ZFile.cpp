@@ -196,7 +196,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			nRes->parent = this;
 
 			if (mode == ZFileMode::Extract)
-				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				nRes->ExtractFromXML(child, rawData, rawDataIndex);
 
 			auto resType = nRes->GetResourceType();
 			if (resType == ZResourceType::Texture)

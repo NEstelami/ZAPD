@@ -124,7 +124,7 @@ std::string ZNormalAnimation::GetSourceTypeName()
 
 void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
                                       const std::vector<uint8_t>& nRawData,
-                                      const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                      const uint32_t nRawDataIndex)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -199,7 +199,7 @@ std::string ZLinkAnimation::GetSourceTypeName()
 
 void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
                                     const std::vector<uint8_t>& nRawData,
-                                    const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                    const uint32_t nRawDataIndex)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -287,9 +287,9 @@ void ZCurveAnimation::ParseRawData()
 
 void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
                                      const std::vector<uint8_t>& nRawData,
-                                     const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                     const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
 	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData,
 	                     Seg2Filespace(skelOffset, parent->baseAddress), parent);

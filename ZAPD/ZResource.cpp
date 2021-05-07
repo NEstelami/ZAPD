@@ -10,7 +10,6 @@ ZResource::ZResource(ZFile* nParent)
 	parent = nParent;
 	name = "";
 	outName = "";
-	relativePath = "";
 	sourceOutput = "";
 	rawData = vector<uint8_t>();
 	rawDataIndex = 0;
@@ -18,11 +17,10 @@ ZResource::ZResource(ZFile* nParent)
 }
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const uint32_t nRawDataIndex, const std::string& nRelPath)
+                               const uint32_t nRawDataIndex)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
-	relativePath = nRelPath;
 
 	if (reader != nullptr)
 		ParseXML(reader);
@@ -31,12 +29,10 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 	CalcHash();
 }
 
-void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                                const std::string& nRelPath)
+void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
-	relativePath = nRelPath;
 
 	ParseRawData();
 	CalcHash();
@@ -133,7 +129,7 @@ string ZResource::GetRelativePath()
 	return relativePath;
 }
 
-const std::vector<uint8_t>& ZResource::GetRawData()
+const std::vector<uint8_t>& ZResource::GetRawData() const
 {
 	return rawData;
 }

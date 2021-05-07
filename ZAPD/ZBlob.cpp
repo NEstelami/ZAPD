@@ -25,7 +25,7 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, size_
 }
 
 void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex, const std::string& nRelPath)
+                           const uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 
@@ -33,7 +33,6 @@ void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	long size = strtol(reader->Attribute("Size"), NULL, 16);
 	rawData =
 		vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
-	relativePath = std::move(nRelPath);
 }
 
 // Build Source File Mode
