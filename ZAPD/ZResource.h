@@ -90,7 +90,7 @@ public:
 	virtual uint32_t GetRawDataIndex();
 	virtual void SetRawDataIndex(uint32_t value);
 	virtual size_t GetRawDataSize();
-	virtual const std::vector<uint8_t>& GetRawData();
+	virtual const std::vector<uint8_t>& GetRawData() const;
 	virtual void SetRawData(const std::vector<uint8_t>& nData);
 	bool WasDeclaredInXml() const;
 

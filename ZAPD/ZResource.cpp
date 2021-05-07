@@ -124,11 +124,6 @@ std::string ZResource::GetExternalExtension()
 	return "";
 }
 
-string ZResource::GetRelativePath()
-{
-	return relativePath;
-}
-
 const std::vector<uint8_t>& ZResource::GetRawData() const
 {
 	return rawData;
