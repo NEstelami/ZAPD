@@ -38,6 +38,35 @@ pipeline {
                 }
             }
         }
+
+        stage('Checkout mm') {
+            steps {
+                dir('mm') {
+                    git url: 'https://github.com/zeldaret/mm.git'
+                }
+            }
+        }
+        stage('Set up mm') {
+            steps {
+                dir('mm') {
+                    sh 'cp /usr/local/etc/roms/mm.us.rev1.z64 baserom.z64'
+
+                    // Identical to `make setup` except for copying our newer ZAPD.out into oot
+                    sh 'git submodule update --init --recursive'
+                    sh 'python3 -m pip install -r requirements.txt'
+                    sh 'make -C tools'
+                    sh 'cp ../ZAPD.out tools/ZAPD/'
+                    sh 'python3 tools/extract_rom.py baserom.z64'
+                }
+            }
+        }
+        stage('Build mm') {
+            steps {
+                dir('mm') {
+                    sh 'make rom_uncompressed.z64 -j'
+                }
+            }
+        }
     }
     post {
         always {
