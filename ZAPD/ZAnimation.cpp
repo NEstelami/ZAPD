@@ -26,13 +26,13 @@ void ZAnimation::ParseRawData()
 	frameCount = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 }
 
-void ZAnimation::Save(const std::string& outFolder)
+void ZAnimation::Save(const fs::path& outFolder)
 {
 	if (Globals::Instance->testMode)
 	{
 		HLAnimationIntermediette* anim = HLAnimationIntermediette::FromZAnimation(this);
 		string xml = anim->OutputXML();
-		File::WriteAllText(outFolder + "/" + name + ".anmi", xml);
+		File::WriteAllText(outFolder / (name + ".anmi"), xml);
 
 		delete anim;
 	}

@@ -19,8 +19,24 @@ ZVtx::ZVtx(ZFile* nParent) : ZResource(nParent)
 	a = 0;
 }
 
-void ZVtx::ParseXML(tinyxml2::XMLElement* reader)
+void ZVtx::ParseRawData()
 {
+	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
+	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+	flag = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
+	s = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
+	t = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
+	r = rawData[rawDataIndex + 12];
+	g = rawData[rawDataIndex + 13];
+	b = rawData[rawDataIndex + 14];
+	a = rawData[rawDataIndex + 15];
+}
+
+std::string ZVtx::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b,
+	                             a);
 }
 
 std::string ZVtx::GetSourceTypeName()
@@ -30,8 +46,7 @@ std::string ZVtx::GetSourceTypeName()
 
 std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string output =
-		StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b, a);
+	std::string output = GetBodySourceCode();
 
 	if (parent != nullptr)
 	{
@@ -42,22 +57,6 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 	}
 
 	return "";
-}
-
-void ZVtx::ParseRawData()
-{
-	const uint8_t* data = rawData.data();
-
-	x = BitConverter::ToInt16BE(data, rawDataIndex + 0);
-	y = BitConverter::ToInt16BE(data, rawDataIndex + 2);
-	z = BitConverter::ToInt16BE(data, rawDataIndex + 4);
-	flag = BitConverter::ToInt16BE(data, rawDataIndex + 6);
-	s = BitConverter::ToInt16BE(data, rawDataIndex + 8);
-	t = BitConverter::ToInt16BE(data, rawDataIndex + 10);
-	r = data[rawDataIndex + 12];
-	g = data[rawDataIndex + 13];
-	b = data[rawDataIndex + 14];
-	a = data[rawDataIndex + 15];
 }
 
 size_t ZVtx::GetRawDataSize()

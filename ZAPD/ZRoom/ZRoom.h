@@ -21,7 +21,6 @@ protected:
 
 public:
 	ZRoom* scene;
-	std::map<int32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
 	int32_t roomCount;  // Only valid for scenes
 
@@ -38,7 +37,7 @@ public:
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 	size_t GetRawDataSize() override;
 	virtual ZResourceType GetResourceType() override;
-	virtual void Save(const std::string& outFolder) override;
+	virtual void Save(const fs::path& outFolder) override;
 	virtual void PreGenSourceFiles() override;
 };
 

@@ -33,7 +33,7 @@ public:
 
 protected:
 	void ParseRawData() override;
-	void Save(const std::string& outFolder) override;
+	void Save(const fs::path& outFolder) override;
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 };
 

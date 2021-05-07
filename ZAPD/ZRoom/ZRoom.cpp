@@ -50,9 +50,6 @@ REGISTER_ZFILENODE(Scene, ZRoom);
 
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
-	textures = map<int32_t, ZTexture*>();
-	commands = vector<ZRoomCommand*>();
-	commandSets = vector<CommandSet>();
 	extDefines = "";
 	scene = nullptr;
 	roomCount = -1;
@@ -63,9 +60,6 @@ ZRoom::~ZRoom()
 {
 	for (ZRoomCommand* cmd : commands)
 		delete cmd;
-
-	for (auto t : textures)
-		delete t.second;
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -81,9 +75,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		scene = this;
 		Globals::Instance->lastScene = this;
 	}
-
-	Globals::Instance->AddSegment(SEGMENT_ROOM);
-	Globals::Instance->AddSegment(SEGMENT_SCENE);
 
 	uint32_t cmdCount = UINT32_MAX;
 
@@ -158,12 +149,14 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			delete pathway;
 		}
 
+#ifndef DEPRECATION_OFF
 		fprintf(stderr,
 		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
 		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
 		        "version.\n"
 		        "\t Use the non-hint version instead.\n",
 		        name.c_str(), child->Name());
+#endif
 	}
 
 	// ParseCommands(rawDataIndex);
@@ -487,65 +480,6 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 	ProcessCommandSets();
 
-	// Check for texture intersections
-	{
-		string defines = "";
-		if (textures.size() != 0)
-		{
-			vector<pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
-
-			sort(texturesSorted.begin(), texturesSorted.end(),
-			     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
-
-			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
-			{
-				int32_t texSize = textures[texturesSorted[i].first]->GetRawDataSize();
-
-				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
-				{
-					// int32_t intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i
-					// + 1].first;
-
-					defines += StringHelper::Sprintf(
-						"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
-						texturesSorted[i + 1].first, prefix.c_str(), texturesSorted[i].first,
-						texturesSorted[i + 1].first - texturesSorted[i].first);
-
-					parent->declarations.erase(texturesSorted[i + 1].first);
-					textures.erase(texturesSorted[i + 1].first);
-					texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-					i--;
-				}
-			}
-		}
-
-		parent->defines += defines;
-	}
-
-	for (pair<int32_t, ZTexture*> item : textures)
-	{
-		string declaration = "";
-
-		declaration += item.second->GetSourceOutputCode(prefix);
-
-		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath.string());
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", outPath.c_str());
-
-		item.second->Save(outPath);
-
-		auto filepath = Globals::Instance->outputPath /
-						Path::GetFileNameWithoutExtension(item.second->GetName());
-		parent->AddDeclarationIncludeArray(
-			item.first,
-			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-		                          item.second->GetExternalExtension().c_str()),
-			item.second->GetRawDataSize(), "u64",
-			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
-	}
-
 	return sourceOutput;
 }
 
@@ -564,7 +498,7 @@ ZResourceType ZRoom::GetResourceType()
 	return ZResourceType::Room;
 }
 
-void ZRoom::Save(const std::string& outFolder)
+void ZRoom::Save(const fs::path& outFolder)
 {
 	for (ZRoomCommand* cmd : commands)
 		cmd->Save();

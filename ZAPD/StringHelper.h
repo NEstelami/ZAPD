@@ -92,4 +92,9 @@ public:
 								   return ss.empty() ? s : ss + separator + s;
 							   });
 	}
+
+	static int64_t StrToL(const std::string& str, int32_t base = 10)
+	{
+		return std::strtoull(str.c_str(), nullptr, base);
+	}
 };

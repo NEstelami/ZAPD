@@ -26,7 +26,7 @@ public:
 
 	bool IsExternalResource() override;
 	std::string GetExternalExtension() override;
-	void Save(const std::string& outFolder) override;
+	void Save(const fs::path& outFolder) override;
 
 	std::string GetBodySourceCode();
 	std::string GetSourceOutputCode(const std::string& prefix) override;

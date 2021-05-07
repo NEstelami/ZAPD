@@ -150,10 +150,6 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 	}
 }
 
-void ZSkeleton::Save(const std::string& outFolder)
-{
-}
-
 void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
