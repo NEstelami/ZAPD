@@ -1,5 +1,4 @@
 #include "HLTexture.h"
-#include <stb_image.h>
 #include "../StringHelper.h"
 
 using namespace std;
