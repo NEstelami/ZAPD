@@ -63,6 +63,7 @@ ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBase
 		outputPath = nOutPath;
 
 	ParseXML(mode, reader, filename, placeholderMode);
+	DeclareResourceSubReferences();
 }
 
 ZFile::~ZFile()
@@ -85,8 +86,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	else
 		name = filename;
 
-	int32_t segment = -1;
-
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
@@ -103,24 +102,28 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
 	}
 
-	if (reader->Attribute("BaseAddress") != NULL)
-		baseAddress = (uint32_t)strtoul(
-			StringHelper::Split(reader->Attribute("BaseAddress"), "0x")[1].c_str(), NULL, 16);
+	if (reader->Attribute("BaseAddress") != nullptr)
+		baseAddress = StringHelper::StrToL(reader->Attribute("BaseAddress"), 16);
 
-	if (reader->Attribute("RangeStart") != NULL)
-		rangeStart = (uint32_t)strtoul(
-			StringHelper::Split(reader->Attribute("RangeStart"), "0x")[1].c_str(), NULL, 16);
+	if (reader->Attribute("RangeStart") != nullptr)
+		rangeStart = StringHelper::StrToL(reader->Attribute("RangeStart"), 16);
 
-	if (reader->Attribute("RangeEnd") != NULL)
-		rangeEnd = (uint32_t)strtoul(
-			StringHelper::Split(reader->Attribute("RangeEnd"), "0x")[1].c_str(), NULL, 16);
+	if (reader->Attribute("RangeEnd") != nullptr)
+		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	if (reader->Attribute("Segment") != NULL)
-		segment = strtol(reader->Attribute("Segment"), NULL, 10);
+	// Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
+	/*
+	if (reader->Attribute("Segment") == nullptr)
+	    throw std::runtime_error(StringHelper::Sprintf(
+	        "ZFile::ParseXML: Error in '%s'.\n"
+	        "\t Missing 'Segment' attribute in File node. \n",
+	        name.c_str()));
+	*/
 
-	if (segment != -1)
+	if (reader->Attribute("Segment") != nullptr)
 	{
-		Globals::Instance->AddSegment(segment);
+		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
+		Globals::Instance->AddSegment(segment, this);
 	}
 
 	string folderName = (basePath / Path::GetFileNameWithoutExtension(name)).string();
@@ -151,7 +154,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("%s: 0x%06X\n", nameXml, rawDataIndex);
 
-		if (offsetXml != NULL)
+		// Check for repeated attributes.
+		if (offsetXml != nullptr)
 		{
 			rawDataIndex = strtol(StringHelper::Split(offsetXml, "0x")[1].c_str(), NULL, 16);
 
@@ -163,7 +167,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			offsetSet.insert(offsetXml);
 		}
-		if (outNameXml != NULL)
+		if (outNameXml != nullptr)
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
 			{
@@ -173,7 +177,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			outNameSet.insert(outNameXml);
 		}
-		if (nameXml != NULL)
+		if (nameXml != nullptr)
 		{
 			if (nameSet.find(nameXml) != nameSet.end())
 			{
@@ -192,29 +196,14 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			nRes->parent = this;
 
 			if (mode == ZFileMode::Extract)
-				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				nRes->ExtractFromXML(child, rawData, rawDataIndex);
 
-			// TODO: See if we can make this part of the ZRoom code...
-			if (nRes->GetResourceType() == ZResourceType::Room)
-			{
-				if (nodeName == "Scene")
-				{
-					Globals::Instance->lastScene = (ZRoom*)nRes;
+			auto resType = nRes->GetResourceType();
+			if (resType == ZResourceType::Texture)
+				AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
+			else
+				resources.push_back(nRes);
 
-					if (segment == -1)
-						segment = SEGMENT_SCENE;
-				}
-				else
-				{
-					if (segment == -1)
-						segment = SEGMENT_ROOM;
-				}
-
-				if (segment != -1)
-					Globals::Instance->AddSegment(segment);
-			}
-
-			resources.push_back(nRes);
 			rawDataIndex += nRes->GetRawDataSize();
 		}
 		else if (string(child->Name()) == "File")
@@ -230,6 +219,14 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			                          "inside a File element: '%s'.\n",
 			                          name.c_str(), nodeName.c_str()));
 		}
+	}
+}
+
+void ZFile::DeclareResourceSubReferences()
+{
+	for (size_t i = 0; i < resources.size(); i++)
+	{
+		resources.at(i)->DeclareReferences(name);
 	}
 }
 
@@ -259,6 +256,16 @@ std::string ZFile::GetName()
 	return name;
 }
 
+const fs::path& ZFile::GetXmlFilePath() const
+{
+	return xmlFilePath;
+}
+
+const std::vector<uint8_t>& ZFile::GetRawData() const
+{
+	return rawData;
+}
+
 void ZFile::ExtractResources(fs::path outputDir)
 {
 	string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
@@ -280,8 +287,7 @@ void ZFile::ExtractResources(fs::path outputDir)
 		if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
-		res->CalcHash();
-		res->Save(outputPath.string());
+		res->Save(outputPath);
 	}
 
 	if (Globals::Instance->testMode)
@@ -350,8 +356,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	size_t size, std::string varType, std::string varName,
-	std::string arrayItemCntStr, std::string body)
+                                        size_t size, std::string varType, std::string varName,
+                                        std::string arrayItemCntStr, std::string body)
 {
 	AddDeclarationDebugChecks(address);
 
@@ -460,30 +466,46 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #endif
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address)
+std::string ZFile::GetDeclarationName(uint32_t address) const
 {
 	return GetDeclarationName(address,
 	                          "ERROR_COULD_NOT_FIND_DECLARATION");  // Note: For now that default
 	                                                                // message is just for testing
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult)
+std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult) const
 {
 	if (declarations.find(address) != declarations.end())
-		return declarations[address]->varName;
+		return declarations.at(address)->varName;
 
 	return defaultResult;
 }
 
-Declaration* ZFile::GetDeclaration(uint32_t address)
+std::string ZFile::GetDeclarationPtrName(segptr_t segAddress) const
+{
+	if (segAddress == 0)
+		return "NULL";
+
+	Declaration* decl = GetDeclaration(Seg2Filespace(segAddress, baseAddress));
+
+	if (!Globals::Instance->HasSegment(GETSEGNUM(segAddress)) || decl == nullptr)
+		return StringHelper::Sprintf("0x%08X", segAddress);
+
+	if (!decl->isArray)
+		return "&" + decl->varName;
+
+	return decl->varName;
+}
+
+Declaration* ZFile::GetDeclaration(uint32_t address) const
 {
 	if (declarations.find(address) != declarations.end())
-		return declarations[address];
+		return declarations.at(address);
 
 	return nullptr;
 }
 
-Declaration* ZFile::GetDeclarationRanged(uint32_t address)
+Declaration* ZFile::GetDeclarationRanged(uint32_t address) const
 {
 	for (const auto decl : declarations)
 	{
@@ -494,7 +516,7 @@ Declaration* ZFile::GetDeclarationRanged(uint32_t address)
 	return nullptr;
 }
 
-uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address)
+uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address) const
 {
 	for (const auto decl : declarations)
 	{
@@ -522,15 +544,17 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	GeneratePlaceholderDeclarations();
 
 	// Generate Code
-	for (ZResource* res : resources)
+	for (size_t i = 0; i < resources.size(); i++)
 	{
+		ZResource* res = resources.at(i);
 		string resSrc = res->GetSourceOutputCode(name);
 
 		if (res->IsExternalResource())
 		{
 			string path = Path::GetFileNameWithoutExtension(res->GetName()).c_str();
 
-			string assetOutDir = (outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
+			string assetOutDir =
+				(outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
 			string declType = res->GetSourceTypeName();
 
 			std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
@@ -538,16 +562,19 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 			if (res->GetResourceType() == ZResourceType::Texture)
 			{
-				ZTexture* tex = (ZTexture*)res;
+				ZTexture* tex = static_cast<ZTexture*>(res);
 
-				tex->CalcHash();
-
-				// TEXTURE POOL CHECK
-				if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
-				    Globals::Instance->cfg.texturePool.end())
+				if (!Globals::Instance->cfg.texturePool.empty())
 				{
-					incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-							 res->GetExternalExtension() + ".inc";
+					tex->CalcHash();
+
+					// TEXTURE POOL CHECK
+					if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
+					    Globals::Instance->cfg.texturePool.end())
+					{
+						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
+								 res->GetExternalExtension() + ".inc";
+					}
 				}
 
 				incStr += ".c";
@@ -574,7 +601,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	sourceOutput += ProcessDeclarations();
 
 	string outPath =
-		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c")).string();
+		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c"))
+			.string();
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -637,6 +665,24 @@ void ZFile::GeneratePlaceholderDeclarations()
 	}
 }
 
+void ZFile::AddTextureResource(uint32_t offset, ZTexture* tex)
+{
+	for (auto res : resources)
+		assert(res->GetRawDataIndex() != offset);
+
+	resources.push_back(tex);
+	texturesResources[offset] = tex;
+}
+
+ZTexture* ZFile::GetTextureResource(uint32_t offset) const
+{
+	auto tex = texturesResources.find(offset);
+	if (tex != texturesResources.end())
+		return tex->second;
+
+	return nullptr;
+}
+
 std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
 {
 	static std::map<std::string, ZResourceFactoryFunc*> nodeMap;
@@ -656,6 +702,8 @@ string ZFile::ProcessDeclarations()
 	if (declarations.size() == 0)
 		return output;
 
+	defines += ProcessTextureIntersections(name);
+
 	// Account for padding/alignment
 	uint32_t lastAddr = 0;
 	uint32_t lastSize = 0;
@@ -663,12 +711,10 @@ string ZFile::ProcessDeclarations()
 	// printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
 	// Optimization: See if there are any arrays side by side that can be merged...
-	auto declarationKeys =
-		vector<pair<int32_t, Declaration*>>(declarations.begin(), declarations.end());
-	sort(declarationKeys.begin(), declarationKeys.end(),
-	     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
+	std::vector<pair<int32_t, Declaration*>> declarationKeys(declarations.begin(),
+	                                                         declarations.end());
 
-	pair<int32_t, Declaration*> lastItem = declarationKeys[0];
+	pair<int32_t, Declaration*> lastItem = declarationKeys.at(0);
 
 	for (size_t i = 1; i < declarationKeys.size(); i++)
 	{
@@ -901,19 +947,19 @@ string ZFile::ProcessDeclarations()
 				if (item.second->arrayItemCntStr != "")
 				{
 					output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
-						item.second->varName.c_str(),
-						item.second->arrayItemCntStr.c_str());
+					                                item.second->varName.c_str(),
+					                                item.second->arrayItemCntStr.c_str());
 				}
 				else if (item.second->arrayItemCnt == 0)
 				{
 					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
-						item.second->varName.c_str());
+					                                item.second->varName.c_str());
 				}
 				else
 				{
 					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
-						item.second->varName.c_str(),
-						item.second->arrayItemCnt);
+					                                item.second->varName.c_str(),
+					                                item.second->arrayItemCnt);
 				}
 			}
 			else
@@ -1001,7 +1047,8 @@ string ZFile::ProcessDeclarations()
 				if (item.second->arrayItemCntStr != "")
 					output += StringHelper::Sprintf(
 						"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-						item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(), item.second->includePath.c_str());
+						item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(),
+						item.second->includePath.c_str());
 				else
 					output += StringHelper::Sprintf(
 						"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
@@ -1018,16 +1065,16 @@ string ZFile::ProcessDeclarations()
 				{
 					if (item.second->arrayItemCntStr != "")
 					{
-						output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
-							item.second->varName.c_str(),
-							item.second->arrayItemCntStr.c_str());
+						output += StringHelper::Sprintf(
+							"%s %s[%s];\n", item.second->varType.c_str(),
+							item.second->varName.c_str(), item.second->arrayItemCntStr.c_str());
 					}
 					else
 					{
 						if (item.second->arrayItemCnt == 0)
 							output +=
-							StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
-								item.second->varName.c_str());
+								StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
+							                          item.second->varName.c_str());
 						else
 							output += StringHelper::Sprintf(
 								"%s %s[%i] = {\n", item.second->varType.c_str(),
@@ -1150,4 +1197,61 @@ string ZFile::ProcessExterns()
 	output += defines;
 
 	return output;
+}
+
+std::string ZFile::ProcessTextureIntersections(std::string prefix)
+{
+	if (texturesResources.empty())
+		return "";
+
+	std::string defines = "";
+	vector<pair<uint32_t, ZTexture*>> texturesSorted(texturesResources.begin(),
+	                                                 texturesResources.end());
+
+	for (size_t i = 0; i < texturesSorted.size() - 1; i++)
+	{
+		uint32_t currentOffset = texturesSorted[i].first;
+		uint32_t nextOffset = texturesSorted[i + 1].first;
+		auto& currentTex = texturesResources.at(currentOffset);
+		int texSize = currentTex->GetRawDataSize();
+
+		if (currentTex->WasDeclaredInXml())
+		{
+			// We believe the user is right.
+			continue;
+		}
+
+		if ((currentOffset + texSize) > nextOffset)
+		{
+			uint32_t offsetDiff = nextOffset - currentOffset;
+			if (currentTex->isPalette)
+			{
+				// Shrink palette so it doesn't overlap
+				currentTex->SetDimensions(offsetDiff / currentTex->GetPixelMultiplyer(), 1);
+				declarations.at(currentOffset)->size = currentTex->GetRawDataSize();
+			}
+			else
+			{
+				std::string texName = GetDeclarationPtrName(currentOffset);
+				std::string texNextName;
+
+				Declaration* nextDecl = GetDeclaration(nextOffset);
+				if (nextDecl == nullptr)
+					texNextName = texturesResources.at(nextOffset)->GetName();
+				else
+					texNextName = nextDecl->varName;
+
+				defines += StringHelper::Sprintf("#define %s ((u32)%s + 0x%06X)\n",
+				                                 texNextName.c_str(), texName.c_str(), offsetDiff);
+
+				declarations.erase(nextOffset);
+				texturesResources.erase(nextOffset);
+				texturesSorted.erase(texturesSorted.begin() + i + 1);
+
+				i--;
+			}
+		}
+	}
+
+	return defines;
 }

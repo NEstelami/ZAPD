@@ -19,9 +19,18 @@ ZVtx::ZVtx(ZFile* nParent) : ZResource(nParent)
 	a = 0;
 }
 
-std::string ZVtx::GetSourceTypeName()
+void ZVtx::ParseRawData()
 {
-	return "Vtx";
+	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
+	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+	flag = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
+	s = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
+	t = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
+	r = rawData[rawDataIndex + 12];
+	g = rawData[rawDataIndex + 13];
+	b = rawData[rawDataIndex + 14];
+	a = rawData[rawDataIndex + 15];
 }
 
 std::string ZVtx::GetBodySourceCode() const
@@ -45,20 +54,6 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-void ZVtx::ParseRawData()
-{
-	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	flag = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	s = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-	t = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-	r = rawData[rawDataIndex + 12];
-	g = rawData[rawDataIndex + 13];
-	b = rawData[rawDataIndex + 14];
-	a = rawData[rawDataIndex + 15];
-}
-
 size_t ZVtx::GetRawDataSize()
 {
 	return 16;
@@ -77,6 +72,11 @@ ZResourceType ZVtx::GetResourceType() const
 bool ZVtx::IsExternalResource()
 {
 	return true;
+}
+
+std::string ZVtx::GetSourceTypeName()
+{
+	return "Vtx";
 }
 
 std::string ZVtx::GetExternalExtension()

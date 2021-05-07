@@ -16,7 +16,7 @@ public:
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    uint32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    uint32_t nRawDataIndex) override;
 
 	void CheckValidJpeg(const std::string& filepath);
 
@@ -26,7 +26,7 @@ public:
 
 	bool IsExternalResource() override;
 	std::string GetExternalExtension() override;
-	void Save(const std::string& outFolder) override;
+	void Save(const fs::path& outFolder) override;
 
 	std::string GetBodySourceCode();
 	std::string GetSourceOutputCode(const std::string& prefix) override;

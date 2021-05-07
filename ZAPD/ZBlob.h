@@ -16,7 +16,7 @@ public:
 	void ParseRawData() override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
-	void Save(const std::string& outFolder) override;
+	void Save(const fs::path& outFolder) override;
 
 	bool IsExternalResource() override;
 	std::string GetSourceTypeName() override;

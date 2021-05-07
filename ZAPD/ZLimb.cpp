@@ -463,9 +463,9 @@ void ZLimb::ParseRawData()
 }
 
 void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex, const std::string& nRelPath)
+                           const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 	segAddress = nRawDataIndex;
 
 	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),

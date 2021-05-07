@@ -13,7 +13,7 @@ public:
 
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    uint32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    uint32_t nRawDataIndex) override;
 
 	size_t GetRawDataSize() override;
 

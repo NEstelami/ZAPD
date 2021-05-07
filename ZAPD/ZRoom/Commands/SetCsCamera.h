@@ -21,8 +21,10 @@ public:
 	~SetCsCamera();
 
 	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
-	virtual std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass1(std::string roomName,
+	                                            uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass2(std::string roomName,
+	                                            uint32_t baseAddress) override;
 	virtual RoomCommand GetRoomCommand() override;
 	virtual size_t GetRawDataSize() override;
 	virtual std::string GetCommandCName() override;

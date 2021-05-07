@@ -26,13 +26,13 @@ void ZAnimation::ParseRawData()
 	frameCount = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 }
 
-void ZAnimation::Save(const std::string& outFolder)
+void ZAnimation::Save(const fs::path& outFolder)
 {
 	if (Globals::Instance->testMode)
 	{
 		HLAnimationIntermediette* anim = HLAnimationIntermediette::FromZAnimation(this);
 		string xml = anim->OutputXML();
-		File::WriteAllText(outFolder + "/" + name + ".anmi", xml);
+		File::WriteAllText(outFolder / (name + ".anmi"), xml);
 
 		delete anim;
 	}
@@ -264,9 +264,9 @@ void ZCurveAnimation::ParseRawData()
 
 void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
                                      const std::vector<uint8_t>& nRawData,
-                                     const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                     const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
 	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData,
 	                     Seg2Filespace(skelOffset, parent->baseAddress), parent);

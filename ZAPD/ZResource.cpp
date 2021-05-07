@@ -11,7 +11,6 @@ ZResource::ZResource(ZFile* nParent)
 	parent = nParent;
 	name = "";
 	outName = "";
-	relativePath = "";
 	sourceOutput = "";
 	rawDataIndex = 0;
 	outputDeclaration = true;
@@ -23,26 +22,25 @@ ZResource::ZResource(ZFile* nParent)
 }
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const uint32_t nRawDataIndex, const std::string& nRelPath)
+                               const uint32_t nRawDataIndex)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
-	relativePath = nRelPath;
 
 	if (reader != nullptr)
 		ParseXML(reader);
 
 	ParseRawData();
+	CalcHash();
 }
 
-void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                                const std::string& nRelPath)
+void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;
-	relativePath = nRelPath;
 
 	ParseRawData();
+	CalcHash();
 }
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
@@ -114,10 +112,12 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			outName = name;
 
 		isCustomAsset = registeredAttributes["Custom"].wasSet;
+
+		declaredInXml = true;
 	}
 }
 
-void ZResource::Save(const std::string& outFolder)
+void ZResource::Save(const fs::path& outFolder)
 {
 }
 
@@ -125,12 +125,12 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-string ZResource::GetName()
+const std::string& ZResource::GetName() const
 {
 	return name;
 }
 
-std::string ZResource::GetOutName()
+const std::string& ZResource::GetOutName() const
 {
 	return outName;
 }
@@ -160,19 +160,19 @@ std::string ZResource::GetExternalExtension()
 	return "";
 }
 
-string ZResource::GetRelativePath()
-{
-	return relativePath;
-}
-
-vector<uint8_t> ZResource::GetRawData()
+const std::vector<uint8_t>& ZResource::GetRawData() const
 {
 	return rawData;
 }
 
-void ZResource::SetRawData(std::vector<uint8_t> nData)
+void ZResource::SetRawData(const std::vector<uint8_t>& nData)
 {
 	rawData = nData;
+}
+
+bool ZResource::WasDeclaredInXml() const
+{
+	return declaredInXml;
 }
 
 uint32_t ZResource::GetRawDataIndex()
@@ -201,6 +201,10 @@ string ZResource::GetSourceOutputHeader(const std::string& prefix)
 }
 
 void ZResource::ParseRawData()
+{
+}
+
+void ZResource::DeclareReferences(const std::string& prefix)
 {
 }
 

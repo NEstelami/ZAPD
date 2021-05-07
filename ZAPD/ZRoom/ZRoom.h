@@ -21,7 +21,6 @@ protected:
 
 public:
 	ZRoom* scene;
-	std::map<int32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
 	int32_t roomCount;  // Only valid for scenes
 
@@ -31,15 +30,15 @@ public:
 	virtual ~ZRoom();
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    const uint32_t nRawDataIndex) override;
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
 	size_t GetDeclarationSizeFromNeighbor(int32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 	size_t GetRawDataSize() override;
-	virtual ZResourceType GetResourceType() const override;
-	virtual void Save(const std::string& outFolder) override;
-	virtual void PreGenSourceFiles() override;
+	ZResourceType GetResourceType() const override;
+	void Save(const fs::path& outFolder) override;
+	void PreGenSourceFiles() override;
 };
 
 struct CommandSet

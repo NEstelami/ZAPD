@@ -33,7 +33,7 @@ public:
 
 protected:
 	void ParseRawData() override;
-	void Save(const std::string& outFolder) override;
+	void Save(const fs::path& outFolder) override;
 };
 
 class ZNormalAnimation : public ZAnimation
@@ -127,7 +127,7 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    const uint32_t nRawDataIndex) override;
 
 	void PreGenValues(const std::string& prefix);
 	size_t GetRawDataSize() override;
