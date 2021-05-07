@@ -34,8 +34,7 @@ protected:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void FixRawData();
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex,
-	                    const std::string& nRelPath) override;  // Extract Mode
+	                    const uint32_t nRawDataIndex) override;  // Extract Mode
 
 	void PrepareBitmap();
 	void PrepareBitmapRGBA16();

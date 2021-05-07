@@ -40,7 +40,7 @@ public:
 	virtual ~ZRoom();
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    uint32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    uint32_t nRawDataIndex) override;
 
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
 	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);

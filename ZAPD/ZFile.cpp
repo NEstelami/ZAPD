@@ -192,7 +192,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			nRes->parent = this;
 
 			if (mode == ZFileMode::Extract)
-				nRes->ExtractFromXML(child, rawData, rawDataIndex, folderName);
+				nRes->ExtractFromXML(child, rawData, rawDataIndex);
 
 			resources.push_back(nRes);
 			rawDataIndex += nRes->GetRawDataSize();

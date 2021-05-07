@@ -57,14 +57,13 @@ ZDisplayList::~ZDisplayList()
 // EXTRACT MODE
 void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
                                   const std::vector<uint8_t>& nRawData,
-                                  const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                  const uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
 
 	// name = reader->Attribute("Name");
 	fileData = nRawData;
-	relativePath = nRelPath;
 	int32_t rawDataSize = ZDisplayList::GetDListLength(
 		nRawData, rawDataIndex,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);

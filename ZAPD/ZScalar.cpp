@@ -19,9 +19,9 @@ ZScalar::ZScalar(const ZScalarType scalarType, ZFile* nParent) : ZScalar(nParent
 }
 
 void ZScalar::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                             const uint32_t nRawDataIndex, const std::string& nRelPath)
+                             const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 }
 
 void ZScalar::ParseXML(tinyxml2::XMLElement* reader)

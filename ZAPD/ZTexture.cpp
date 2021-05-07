@@ -49,14 +49,12 @@ ZTexture::~ZTexture()
 }
 
 void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                              const uint32_t nRawDataIndex, const std::string& nRelPath)
+                              const uint32_t nRawDataIndex)
 {
 	ParseXML(reader);
 	rawDataIndex = nRawDataIndex;
 	rawData = vector<uint8_t>(nRawData.data() + rawDataIndex,
 	                          nRawData.data() + rawDataIndex + GetRawDataSize());
-
-	relativePath = nRelPath;
 
 	FixRawData();
 	PrepareBitmap();
@@ -840,8 +838,7 @@ void ZTexture::Save(const std::string& outFolder)
 string ZTexture::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
-
-	relativePath = "build/assets/" + relativePath;
+	
 	FixRawData();
 
 	uint8_t* rawDataArr = rawData.data();

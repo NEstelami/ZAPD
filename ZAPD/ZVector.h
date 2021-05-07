@@ -26,7 +26,7 @@ public:
 	void SetDimensions(uint32_t dim);
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
+	                    const uint32_t nRawDataIndex) override;
 
 protected:
 	std::vector<ZScalar*> scalars;
