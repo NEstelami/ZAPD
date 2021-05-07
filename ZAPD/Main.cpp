@@ -150,11 +150,6 @@ int main(int argc, char* argv[])
 			Globals::Instance->genSourceFile = string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-ifp")  // Include file prefix in generated symbols
-		{
-			Globals::Instance->includeFilePrefix = string(argv[i + 1]) == "1";
-			i++;
-		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
 			Globals::Instance->testMode = string(argv[i + 1]) == "1";

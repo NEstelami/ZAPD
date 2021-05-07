@@ -91,11 +91,8 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
 	std::string sourceOutput = "";
 
-	if (Globals::Instance->includeFilePrefix)
-		sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(),
-		                                      dList->GetRawDataIndex());
-	else
-		sourceOutput += StringHelper::Sprintf("extern Gfx DL_%06X[];\n", dList->GetRawDataIndex());
+	sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(),
+											dList->GetRawDataIndex());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);

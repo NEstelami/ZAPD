@@ -44,7 +44,6 @@ public:
 	bool useExternalResources;
 	bool testMode;           // Enables certain experimental features
 	bool profile;            // Measure performance of certain operations
-	bool includeFilePrefix;  // Include the file prefix in symbols
 	bool useLegacyZDList;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
 	ZFileMode fileMode;

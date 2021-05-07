@@ -22,7 +22,6 @@ Globals::Globals()
 	genSourceFile = true;
 	testMode = false;
 	profile = false;
-	includeFilePrefix = false;
 	useLegacyZDList = false;
 	useExternalResources = true;
 	lastScene = nullptr;
