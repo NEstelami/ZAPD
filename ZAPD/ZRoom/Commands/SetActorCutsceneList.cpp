@@ -46,7 +46,8 @@ SetActorCutsceneList::~SetActorCutsceneList()
 		delete entry;
 }
 
-std::string SetActorCutsceneList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+std::string SetActorCutsceneList::GenerateSourceCodePass1(std::string roomName,
+                                                          uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x%02X, (u32)&%sActorCutsceneList0x%06X",
@@ -54,7 +55,8 @@ std::string SetActorCutsceneList::GenerateSourceCodePass1(std::string roomName, 
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-std::string SetActorCutsceneList::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
+std::string SetActorCutsceneList::GenerateSourceCodePass2(std::string roomName,
+                                                          uint32_t baseAddress)
 {
 	return "";
 }

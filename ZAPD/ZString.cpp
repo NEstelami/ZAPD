@@ -1,8 +1,8 @@
 #include "ZString.h"
 
 #include "File.h"
-#include "ZFile.h"
 #include "StringHelper.h"
+#include "ZFile.h"
 
 REGISTER_ZFILENODE(String, ZString);
 
@@ -15,12 +15,14 @@ void ZString::ParseRawData()
 	size_t size = 0;
 	uint8_t* rawDataArr = rawData.data();
 	size_t rawDataSize = rawData.size();
-    for (size_t i = rawDataIndex; i < rawDataSize; ++i) {
-        ++size;
-        if (rawDataArr[i] == '\0') {
-            break;
-        }
-    }
+	for (size_t i = rawDataIndex; i < rawDataSize; ++i)
+	{
+		++size;
+		if (rawDataArr[i] == '\0')
+		{
+			break;
+		}
+	}
 
 	auto dataStart = rawData.begin() + rawDataIndex;
 	strData.assign(dataStart, dataStart + size);

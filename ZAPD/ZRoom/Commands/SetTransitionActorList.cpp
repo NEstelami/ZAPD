@@ -37,7 +37,8 @@ std::string SetTransitionActorList::GetSourceOutputCode(std::string prefix)
 	return "";
 }
 
-std::string SetTransitionActorList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+std::string SetTransitionActorList::GenerateSourceCodePass1(std::string roomName,
+                                                            uint32_t baseAddress)
 {
 	std::string sourceOutput =
 		StringHelper::Sprintf("%s 0x%02X, (u32)%sTransitionActorList0x%06X",
@@ -65,7 +66,8 @@ std::string SetTransitionActorList::GenerateSourceCodePass1(std::string roomName
 	return sourceOutput;
 }
 
-std::string SetTransitionActorList::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
+std::string SetTransitionActorList::GenerateSourceCodePass2(std::string roomName,
+                                                            uint32_t baseAddress)
 {
 	return "";
 }

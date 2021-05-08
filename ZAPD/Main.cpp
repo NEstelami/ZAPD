@@ -42,9 +42,15 @@ void ErrorHandler(int sig)
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
-	// To prevent unused parameter warning
-	(void)sig;
+	fprintf(stderr, "\nZAPD crashed. (Signal: %i)\n", sig);
 
+	fprintf(stderr, "\n\t\tYou've met with a terrible fate, haven't you?\n\n");
+	/**
+	 * Other possible options:
+	 * - SEA BEARS FOAM. SLEEP BEARS DREAMS. \n BOTH END IN THE SAME WAY: CRASSSH!
+	 */
+
+	fprintf(stderr, "Traceback:\n");
 	for (size_t i = 1; i < size; i++)
 	{
 		Dl_info info;
@@ -70,7 +76,8 @@ void ErrorHandler(int sig)
 		fprintf(stderr, "%-3zd %s\n", i, functionName.c_str());
 	}
 
-	// backtrace_symbols_fd(array, size, STDERR_FILENO);
+	fprintf(stderr, "\n");
+
 	free(symbols);
 	exit(1);
 }
@@ -159,6 +166,11 @@ int main(int argc, char* argv[])
 			Globals::Instance->testMode = std::string(argv[i + 1]) == "1";
 			i++;
 		}
+		else if (arg == "-crc" ||
+		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
+		{
+			Globals::Instance->outputCrc = true;
+		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
 			Globals::Instance->useLegacyZDList = std::string(argv[i + 1]) == "1";
@@ -181,8 +193,9 @@ int main(int argc, char* argv[])
 			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
 			i++;
 		}
-		else if (arg == "-cfg")  // Set cfg path (for overlays) 
-								 // TODO: Change the name of this to something else so it doesn't get confused with XML config files.
+		else if (arg == "-cfg")  // Set cfg path (for overlays)
+		                         // TODO: Change the name of this to something else so it doesn't
+		                         // get confused with XML config files.
 		{
 			Globals::Instance->cfgPath = argv[i + 1];
 			i++;
@@ -198,7 +211,8 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, ErrorHandler);
 			signal(SIGABRT, ErrorHandler);
 #else
-			printf("Warning: Tried to set error handler, but this build lacks support for one.\n");
+			fprintf(stderr,
+			        "Warning: Tried to set error handler, but this build lacks support for one.\n");
 #endif
 		}
 		else if (arg == "-v")  // Verbose
@@ -214,54 +228,47 @@ int main(int argc, char* argv[])
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
-	try
+	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
-		if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
-		{
-			bool parseSuccessful =
-				Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-			          Globals::Instance->outputPath, fileMode);
+		bool parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
+		                             Globals::Instance->outputPath, fileMode);
 
-			if (!parseSuccessful)
-				return 1;
-		}
-		else if (fileMode == ZFileMode::BuildTexture)
-		{
-			TextureType texType = Globals::Instance->texType;
-
-			BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildBackground)
-		{
-			BuildAssetBackground(Globals::Instance->inputPath, Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildBlob)
-		{
-			BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildModelIntermediette)
-		{
-			BuildAssetModelIntermediette(Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildAnimationIntermediette)
-		{
-			BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
-			                                 Globals::Instance->outputPath);
-		}
-		else if (fileMode == ZFileMode::BuildOverlay)
-		{
-			ZOverlay* overlay =
-				ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath.string()),
-			                        Path::GetDirectoryName(Globals::Instance->cfgPath.string()));
-
-			if (overlay)
-				File::WriteAllText(Globals::Instance->outputPath.string(), overlay->GetSourceOutputCode(""));
-		}
+		if (!parseSuccessful)
+			return 1;
 	}
-	catch (std::runtime_error& e)
+	else if (fileMode == ZFileMode::BuildTexture)
 	{
-		printf("Exception occurred: %s\n", e.what());
+		TextureType texType = Globals::Instance->texType;
+		BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
 	}
+	else if (fileMode == ZFileMode::BuildBackground)
+	{
+		BuildAssetBackground(Globals::Instance->inputPath, Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildBlob)
+	{
+		BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildModelIntermediette)
+	{
+		BuildAssetModelIntermediette(Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
+	{
+		BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
+		                                 Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildOverlay)
+	{
+		ZOverlay* overlay =
+			ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath),
+		                        Path::GetDirectoryName(Globals::Instance->cfgPath));
+
+		if (overlay)
+			File::WriteAllText(Globals::Instance->outputPath.string(),
+			                   overlay->GetSourceOutputCode(""));
+	}
+
 	delete g;
 	return 0;
 }
@@ -324,17 +331,16 @@ void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const f
 {
 	std::string name = outPath.stem().string();
 
-	ZTexture* tex = ZTexture::FromPNG(pngFilePath.string(), texType);
+	ZTexture tex(nullptr);
+	tex.FromPNG(pngFilePath, texType);
 	std::string cfgPath = StringHelper::Split(pngFilePath.string(), ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))
 		name = File::ReadAllText(cfgPath);
 
-	std::string src = tex->GetSourceOutputCode(name);
+	std::string src = tex.GetBodySourceCode();
 
 	File::WriteAllText(outPath.string(), src);
-
-	delete tex;
 }
 
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath)

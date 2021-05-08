@@ -1,9 +1,9 @@
 #pragma once
 
+#include <cstring>
 #include <numeric>
 #include <stdarg.h>
 #include <string>
-#include <cstring>
 #include <vector>
 
 class StringHelper
@@ -91,5 +91,10 @@ public:
 		                       [separator](std::string& ss, std::string& s) {
 								   return ss.empty() ? s : ss + separator + s;
 							   });
+	}
+
+	static int64_t StrToL(const std::string& str, int32_t base = 10)
+	{
+		return std::strtoull(str.c_str(), nullptr, base);
 	}
 };

@@ -6,7 +6,6 @@
 #include "../ZNames.h"
 #include "../ZRoom.h"
 
-
 SetObjectList::SetObjectList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {

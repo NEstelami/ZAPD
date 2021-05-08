@@ -24,7 +24,7 @@ ZBlob::ZBlob(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, size_
 }
 
 void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex, const std::string& nRelPath)
+                           const uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 
@@ -32,7 +32,6 @@ void ZBlob::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	long size = strtol(reader->Attribute("Size"), NULL, 16);
 	rawData =
 		std::vector<uint8_t>(nRawData.data() + rawDataIndex, nRawData.data() + rawDataIndex + size);
-	relativePath = std::move(nRelPath);
 }
 
 // Build Source File Mode
@@ -85,9 +84,9 @@ std::string ZBlob::GetSourceOutputHeader(const std::string& prefix)
 	return StringHelper::Sprintf("extern u8 %s[];\n", name.c_str());
 }
 
-void ZBlob::Save(const std::string& outFolder)
+void ZBlob::Save(const fs::path& outFolder)
 {
-	File::WriteAllBytes(outFolder + "/" + name + ".bin", rawData);
+	File::WriteAllBytes(outFolder / (name + ".bin"), rawData);
 }
 
 bool ZBlob::IsExternalResource() const

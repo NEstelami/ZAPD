@@ -48,19 +48,19 @@ protected:
 
 public:
 	PolygonDlist() = default;
-	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-	             ZFile* nParent, ZRoom* nRoom);
+	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+	             uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
 
-	size_t GetRawDataSize() const;
+	size_t GetRawDataSize();
 
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	std::string GetBodySourceCode(bool arrayElement);
 	void DeclareAndGenerateOutputCode();
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
-	std::string GetSourceTypeName() const;
-	std::string GetName() const;
+	std::string GetSourceTypeName();
+	std::string GetName();
 
 	ZDisplayList* opaDList = nullptr;  // Gfx*
 	ZDisplayList* xluDList = nullptr;  // Gfx*
@@ -97,13 +97,13 @@ public:
 	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
 	        uint32_t nRawDataIndex, ZFile* nParent);
 
-	static size_t GetRawDataSize() ;
+	static size_t GetRawDataSize();
 
 	std::string GetBodySourceCode(bool arrayElement);
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
 	static std::string GetSourceTypeName();
-	std::string GetName() const;
+	std::string GetName();
 };
 
 class PolygonType1
@@ -129,19 +129,19 @@ protected:
 	void ParseRawData();
 
 public:
-	PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-	             ZFile* nParent, ZRoom* nRoom);
+	PolygonType1(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+	             uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
 
-	size_t GetRawDataSize() const;
+	size_t GetRawDataSize();
 
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	std::string GetBodySourceCode();
 	void DeclareAndGenerateOutputCode();
 
 	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
-	std::string GetSourceTypeName() const;
-	std::string GetName() const;
+	std::string GetSourceTypeName();
+	std::string GetName();
 
 	PolygonDlist polyGfxList;
 };
@@ -149,10 +149,12 @@ public:
 class SetMesh : public ZRoomCommand
 {
 public:
-	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex, int32_t segAddressOffset);
+	SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex,
+	        int32_t segAddressOffset);
 	~SetMesh();
 
-	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass1(std::string roomName,
+	                                            uint32_t baseAddress) override;
 	virtual std::string GenerateExterns() const override;
 	virtual std::string GetCommandCName() const override;
 	virtual RoomCommand GetRoomCommand() const override;

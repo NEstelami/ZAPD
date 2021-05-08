@@ -49,9 +49,6 @@ REGISTER_ZFILENODE(Scene, ZRoom);
 
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
-	textures = std::map<int32_t, ZTexture*>();
-	commands = std::vector<ZRoomCommand*>();
-	commandSets = std::vector<CommandSet>();
 	extDefines = "";
 	scene = nullptr;
 	roomCount = -1;
@@ -62,15 +59,12 @@ ZRoom::~ZRoom()
 {
 	for (ZRoomCommand* cmd : commands)
 		delete cmd;
-
-	for(auto t : textures)
-		delete t.second;
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex, const std::string& nRelPath)
+                           const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
 	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
@@ -80,9 +74,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		scene = this;
 		Globals::Instance->lastScene = this;
 	}
-
-	Globals::Instance->AddSegment(SEGMENT_ROOM);
-	Globals::Instance->AddSegment(SEGMENT_SCENE);
 
 	uint32_t cmdCount = UINT32_MAX;
 
@@ -95,10 +86,11 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		std::string childName = child->Attribute("Name") == NULL ? "" : std::string(child->Attribute("Name"));
+		std::string childName =
+			child->Attribute("Name") == NULL ? "" : std::string(child->Attribute("Name"));
 		std::string childComment = child->Attribute("Comment") == NULL ?
-                                  "" :
-                                  "// " + std::string(child->Attribute("Comment")) + "\n";
+                                       "" :
+                                       "// " + std::string(child->Attribute("Comment")) + "\n";
 
 		// TODO: Bunch of repeated code between all of these that needs to be combined.
 		if (std::string(child->Name()) == "DListHint")
@@ -124,7 +116,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->ExtractFromXML(child, rawData, address, "");
+			cutscene->ExtractFromXML(child, rawData, address);
 
 			cutscene->GetSourceOutputCode(name);
 
@@ -157,12 +149,14 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			delete pathway;
 		}
 
+#ifndef DEPRECATION_OFF
 		fprintf(stderr,
 		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
 		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
 		        "version.\n"
 		        "\t Use the non-hint version instead.\n",
 		        name.c_str(), child->Name());
+#endif
 	}
 
 	// ParseCommands(rawDataIndex);
@@ -401,8 +395,8 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(int32_t declarationAddress)
 	size_t declarationIndex = -1;
 
 	// Copy it into a vector.
-	std::vector<std::pair<int32_t, Declaration*>> declarationKeysSorted(parent->declarations.begin(),
-	                                                          parent->declarations.end());
+	std::vector<std::pair<int32_t, Declaration*>> declarationKeysSorted(
+		parent->declarations.begin(), parent->declarations.end());
 
 	// Sort the vector according to the word count in descending order.
 	sort(declarationKeysSorted.begin(), declarationKeysSorted.end(),
@@ -484,63 +478,6 @@ std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 	ProcessCommandSets();
 
-	// Check for texture intersections
-	{
-		std::string defines = "";
-		if (textures.size() != 0)
-		{
-			std::vector<std::pair<uint32_t, ZTexture*>> texturesSorted(textures.begin(), textures.end());
-
-			sort(texturesSorted.begin(), texturesSorted.end(),
-			     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
-
-			for (size_t i = 0; i < texturesSorted.size() - 1; i++)
-			{
-				int32_t texSize = textures[texturesSorted[i].first]->GetRawDataSize();
-
-				if ((texturesSorted[i].first + texSize) > texturesSorted[i + 1].first)
-				{
-					// int32_t intersectAmt = (texturesSorted[i].first + texSize) - texturesSorted[i +
-					// 1].first;
-
-					defines += StringHelper::Sprintf(
-						"#define %sTex_%06X ((u32)%sTex_%06X + 0x%06X)\n", prefix.c_str(),
-						texturesSorted[i + 1].first, prefix.c_str(), texturesSorted[i].first,
-						texturesSorted[i + 1].first - texturesSorted[i].first);
-
-					parent->declarations.erase(texturesSorted[i + 1].first);
-					textures.erase(texturesSorted[i + 1].first);
-					texturesSorted.erase(texturesSorted.begin() + i + 1);
-
-					i--;
-				}
-			}
-		}
-
-		parent->defines += defines;
-	}
-
-	for (std::pair<int32_t, ZTexture*> item : textures)
-	{
-		std::string declaration = "";
-
-		declaration += item.second->GetSourceOutputCode(prefix);
-
-		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath.string());
-
-		if (Globals::Instance->verbosity >= VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", outPath.c_str());
-
-		item.second->Save(outPath);
-
-		auto filepath = Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(item.second->GetName());
-		parent->AddDeclarationIncludeArray(
-			item.first,
-			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), item.second->GetExternalExtension().c_str()),
-			item.second->GetRawDataSize(), "u64",
-			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
-	}
-
 	return sourceOutput;
 }
 
@@ -559,7 +496,7 @@ ZResourceType ZRoom::GetResourceType() const
 	return ZResourceType::Room;
 }
 
-void ZRoom::Save(const std::string& outFolder)
+void ZRoom::Save(const fs::path& outFolder)
 {
 	for (ZRoomCommand* cmd : commands)
 		cmd->Save();
@@ -571,8 +508,8 @@ void ZRoom::PreGenSourceFiles()
 		cmd->PreGenSourceFiles();
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, std::string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         std::string nText)
 {
 	alignment = nAlignment;
 	padding = nPadding;
@@ -602,8 +539,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, std::string nVarType, std::string nVarName, bool nIsArray,
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         std::string nVarType, std::string nVarName, bool nIsArray,
                          std::string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
@@ -613,7 +550,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText)
+                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         std::string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -623,7 +561,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	std::string nVarName, bool nIsArray, std::string nArrayItemCntStr, std::string nText)
+                         std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
+                         std::string nText)
 	: Declaration(nAlignment, DeclarationPadding::None, nSize, nText)
 {
 	varType = nVarType;
@@ -633,15 +572,15 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-                         bool nIsExternal)
+                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         std::string nText, bool nIsExternal)
 	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
 	isExternal = nIsExternal;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding,
-                         size_t nSize, std::string nVarType, std::string nVarName, bool nIsArray,
+Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+                         std::string nVarType, std::string nVarName, bool nIsArray,
                          size_t nArrayItemCnt, std::string nText)
 	: Declaration(nAlignment, nPadding, nSize, nText)
 {
@@ -651,7 +590,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPa
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName)
+Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVarType,
+                         std::string nVarName)
 	: Declaration(DeclarationAlignment::None, DeclarationPadding::None, nSize, "")
 {
 	includePath = nIncludePath;

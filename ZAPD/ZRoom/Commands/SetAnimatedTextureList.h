@@ -99,7 +99,8 @@ public:
 	~SetAnimatedTextureList();
 
 	std::string GetSourceOutputCode(std::string prefix);
-	virtual std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
+	virtual std::string GenerateSourceCodePass1(std::string roomName,
+	                                            uint32_t baseAddress) override;
 	virtual RoomCommand GetRoomCommand() const override;
 	virtual size_t GetRawDataSize() const override;
 	virtual std::string GetCommandCName() const override;

@@ -46,14 +46,12 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 			if (root == nullptr)
 				return "ERROR";
 
-			// vector<ZFile*> files = vector<ZFile*>();
-
 			for (XMLElement* child = root->FirstChildElement(); child != NULL;
 			     child = child->NextSiblingElement())
 			{
 				if (std::string(child->Name()) == "File")
 				{
-					ZFile* file = new ZFile(fileMode, child, "", "", "", "", true);
+					ZFile* file = new ZFile(fileMode, child, "", "", "", filePath, true);
 					file->GeneratePlaceholderDeclarations();
 					segmentRefFiles[segNumber] = file;
 					break;
@@ -174,10 +172,13 @@ void Globals::GenSymbolMap(const std::string& symbolMapPath)
 	}
 }
 
-void Globals::AddSegment(int32_t segment)
+void Globals::AddSegment(int32_t segment, ZFile* file)
 {
 	if (std::find(segments.begin(), segments.end(), segment) == segments.end())
 		segments.push_back(segment);
+
+	segmentRefs[segment] = file->GetXmlFilePath();
+	segmentRefFiles[segment] = file;
 }
 
 bool Globals::HasSegment(int32_t segment)

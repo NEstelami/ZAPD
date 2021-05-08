@@ -4,7 +4,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <string>
 #include <vector>
 #include "StringHelper.h"
 

@@ -53,7 +53,7 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 
 	if (appendOutName)
 		filepath = filepath / (outName + "." + GetExternalExtension());
-	
+
 	data = File::ReadAllBytes(filepath.string());
 
 	// Add padding.
@@ -62,9 +62,9 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 }
 
 void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                                 uint32_t nRawDataIndex, const std::string& nRelPath)
+                                 uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 	DeclareVar("", "");
 }
 
@@ -142,7 +142,8 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
+	                            GetSourceTypeName(), auxName, "SCREEN_WIDTH * SCREEN_HEIGHT / 4",
+	                            bodyStr);
 }
 
 bool ZBackground::IsExternalResource() const
@@ -155,10 +156,9 @@ std::string ZBackground::GetExternalExtension() const
 	return "jpg";
 }
 
-void ZBackground::Save(const std::string& outFolder)
+void ZBackground::Save(const fs::path& outFolder)
 {
-	fs::path folder(outFolder);
-	fs::path filepath = folder / (outName + "." + GetExternalExtension());
+	fs::path filepath = outFolder / (outName + "." + GetExternalExtension());
 	File::WriteAllBytes(filepath.string(), data);
 }
 

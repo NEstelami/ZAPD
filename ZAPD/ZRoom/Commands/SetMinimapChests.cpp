@@ -5,7 +5,8 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
+SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+                                   uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	int32_t numChests = rawData[rawDataIndex + 1];

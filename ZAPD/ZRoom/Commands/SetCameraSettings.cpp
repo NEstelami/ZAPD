@@ -2,7 +2,8 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
-SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
+SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData,
+                                     uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	cameraMovement = rawData[rawDataIndex + 0x01];

@@ -24,13 +24,13 @@ void ZAnimation::ParseRawData()
 	frameCount = BitConverter::ToInt16BE(data, rawDataIndex + 0);
 }
 
-void ZAnimation::Save(const std::string& outFolder)
+void ZAnimation::Save(const fs::path& outFolder)
 {
 	if (Globals::Instance->testMode)
 	{
 		HLAnimationIntermediette* anim = HLAnimationIntermediette::FromZAnimation(this);
 		std::string xml = anim->OutputXML();
-		File::WriteAllText(outFolder + "/" + name + ".anmi", xml);
+		File::WriteAllText(outFolder / (name + ".anmi"), xml);
 
 		delete anim;
 	}
@@ -122,7 +122,7 @@ std::string ZNormalAnimation::GetSourceTypeName() const
 
 void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
                                       const std::vector<uint8_t>& nRawData,
-                                      const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                      const uint32_t nRawDataIndex)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -170,11 +170,12 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
 	{
-		std::string segSymbol = segmentAddress == 0 ?
-                               "NULL" :
-                               parent->GetDeclarationName(
-								   segmentAddress, StringHelper::Sprintf("%sSeg%06X", name.c_str(),
-		                                                                 segmentAddress));
+		std::string segSymbol =
+			segmentAddress == 0 ?
+                "NULL" :
+                parent->GetDeclarationName(
+					segmentAddress,
+					StringHelper::Sprintf("%sSeg%06X", name.c_str(), segmentAddress));
 		std::string headerStr =
 			StringHelper::Sprintf("\n\t{ %i },\n\t0x%08X\n", frameCount, segmentAddress);
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
@@ -197,7 +198,7 @@ std::string ZLinkAnimation::GetSourceTypeName() const
 
 void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
                                     const std::vector<uint8_t>& nRawData,
-                                    const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                    const uint32_t nRawDataIndex)
 {
 	rawData = std::move(nRawData);
 	rawDataIndex = nRawDataIndex;
@@ -285,9 +286,9 @@ void ZCurveAnimation::ParseRawData()
 
 void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
                                      const std::vector<uint8_t>& nRawData,
-                                     const uint32_t nRawDataIndex, const std::string& nRelPath)
+                                     const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
 	skel = new ZSkeleton(ZSkeletonType::Curve, ZLimbType::Curve, "CurveAnim", nRawData,
 	                     Seg2Filespace(skelOffset, parent->baseAddress), parent);

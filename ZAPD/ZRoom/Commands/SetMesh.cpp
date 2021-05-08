@@ -7,6 +7,8 @@
 #include "../ZRoom.h"
 #include "ZBackground.h"
 
+using namespace std;
+
 SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex,
                  int32_t segAddressOffset)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -14,7 +16,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIn
 	data = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
-	std::string declaration = "";
+	string declaration = "";
 	meshHeaderType = rawData[segmentOffset + 0];
 
 	if (meshHeaderType == 0)
@@ -114,7 +116,7 @@ SetMesh::SetMesh(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIn
 		MeshHeader2* meshHeader2 = new MeshHeader2();
 		meshHeader2->headerType = 2;
 
-		meshHeader2->entries = std::vector<MeshEntry2*>();
+		meshHeader2->entries = vector<MeshEntry2*>();
 		meshHeader2->dListStart = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 4));
 		meshHeader2->dListEnd = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 8));
 
@@ -235,16 +237,16 @@ SetMesh::~SetMesh()
 
 void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* dList)
 {
-	std::string srcVarName =
+	string srcVarName =
 		StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
-	std::string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
+	string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(rawData, otherDList);
 
-	for (std::pair<uint32_t, std::string> vtxEntry : dList->vtxDeclarations)
+	for (pair<uint32_t, string> vtxEntry : dList->vtxDeclarations)
 	{
 		DeclarationAlignment alignment = DeclarationAlignment::Align8;
 		if (Globals::Instance->game == ZGame::MM_RETAIL)
@@ -254,16 +256,11 @@ void SetMesh::GenDListDeclarations(std::vector<uint8_t> rawData, ZDisplayList* d
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}
-
-	for (std::pair<uint32_t, std::string> texEntry : dList->texDeclarations)
-	{
-		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
-	}
 }
 
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
-	std::string sourceOutput = "";
+	string sourceOutput = "";
 
 	if (Globals::Instance->includeFilePrefix)
 		sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(),
@@ -274,18 +271,14 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
-	for (std::pair<uint32_t, std::string> texEntry : dList->texDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n",
-		                                      zRoom->GetName().c_str(), texEntry.first);
-
 	sourceOutput += dList->defines;
 
 	return sourceOutput;
 }
 
-std::string SetMesh::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+string SetMesh::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 {
-	std::string sourceOutput = "";
+	string sourceOutput = "";
 
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
 
@@ -296,7 +289,7 @@ std::string SetMesh::GenerateSourceCodePass1(std::string roomName, uint32_t base
 	return sourceOutput;
 }
 
-std::string SetMesh::GenerateExterns() const
+string SetMesh::GenerateExterns() const
 {
 	return "";
 }
@@ -306,7 +299,7 @@ size_t SetMesh::GetRawDataSize() const
 	return ZRoomCommand::GetRawDataSize();
 }
 
-std::string SetMesh::GetCommandCName() const
+string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
 }
@@ -352,7 +345,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	ZDisplayList* dlist = new ZDisplayList(rawData, dlistAddress, dlistLength, parent);
 
-	std::string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
+	string dListStr = StringHelper::Sprintf("%sPolygonDlist_%06X", prefix.c_str(), dlistAddress);
 	dlist->SetName(dListStr);
 	dlist->scene = room->scene;
 	dlist->GetSourceOutputCode(prefix);
@@ -360,12 +353,12 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	return dlist;
 }
 
-size_t PolygonDlist::GetRawDataSize() const
+size_t PolygonDlist::GetRawDataSize()
 {
 	return 0x08;
 }
 
-void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
+void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
 	std::string auxName = name;
 	if (name == "")
@@ -451,12 +444,12 @@ std::string PolygonDlist::GetDefaultName(const std::string& prefix, uint32_t add
 	return StringHelper::Sprintf("%sPolyDlist_%06X", prefix.c_str(), address);
 }
 
-std::string PolygonDlist::GetSourceTypeName() const
+std::string PolygonDlist::GetSourceTypeName()
 {
 	return "PolygonDlist";
 }
 
-std::string PolygonDlist::GetName() const
+std::string PolygonDlist::GetName()
 {
 	return name;
 }
@@ -602,7 +595,7 @@ std::string BgImage::GetSourceTypeName()
 	return "BgImage";
 }
 
-std::string BgImage::GetName() const
+std::string BgImage::GetName()
 {
 	return name;
 }
@@ -679,7 +672,7 @@ void PolygonType1::ParseRawData()
 	}
 }
 
-size_t PolygonType1::GetRawDataSize() const
+size_t PolygonType1::GetRawDataSize()
 {
 	switch (format)
 	{
@@ -692,7 +685,7 @@ size_t PolygonType1::GetRawDataSize() const
 	return 0x20;
 }
 
-void PolygonType1::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
+void PolygonType1::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
 	std::string auxName = name;
 	if (name == "")
@@ -781,7 +774,7 @@ std::string PolygonType1::GetDefaultName(const std::string& prefix, uint32_t add
 	return StringHelper::Sprintf("%sPolygonType1_%06X", prefix.c_str(), address);
 }
 
-std::string PolygonType1::GetSourceTypeName() const
+std::string PolygonType1::GetSourceTypeName()
 {
 	switch (format)
 	{
@@ -795,7 +788,7 @@ std::string PolygonType1::GetSourceTypeName() const
 	// return "PolygonType1";
 }
 
-std::string PolygonType1::GetName() const
+std::string PolygonType1::GetName()
 {
 	return name;
 }

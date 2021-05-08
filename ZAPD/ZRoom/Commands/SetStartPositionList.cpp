@@ -33,7 +33,8 @@ SetStartPositionList::~SetStartPositionList()
 		delete entry;
 }
 
-std::string SetStartPositionList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+std::string SetStartPositionList::GenerateSourceCodePass1(std::string roomName,
+                                                          uint32_t baseAddress)
 {
 	std::string sourceOutput = "";
 
@@ -60,7 +61,8 @@ std::string SetStartPositionList::GenerateSourceCodePass1(std::string roomName, 
 	return sourceOutput;
 }
 
-std::string SetStartPositionList::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
+std::string SetStartPositionList::GenerateSourceCodePass2(std::string roomName,
+                                                          uint32_t baseAddress)
 {
 	return "";
 }

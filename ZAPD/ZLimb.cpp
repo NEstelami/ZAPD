@@ -292,7 +292,8 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 		unk_8_dlist = new ZDisplayList(rawData, unk_8_Offset, dlistLength, parent);
 
-		std::string dListStr = StringHelper::Sprintf("%sSkinLimbDL_%06X", prefix.c_str(), unk_8_Offset);
+		std::string dListStr =
+			StringHelper::Sprintf("%sSkinLimbDL_%06X", prefix.c_str(), unk_8_Offset);
 		unk_8_dlist->SetName(dListStr);
 		unk_8_dlist->GetSourceOutputCode(prefix);
 	}
@@ -459,9 +460,9 @@ void ZLimb::ParseRawData()
 }
 
 void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex, const std::string& nRelPath)
+                           const uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex, nRelPath);
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 	segAddress = nRawDataIndex;
 
 	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),

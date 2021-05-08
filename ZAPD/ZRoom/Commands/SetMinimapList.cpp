@@ -50,7 +50,7 @@ std::string SetMinimapList::GenerateSourceCodePass2(std::string roomName, uint32
 
 	{
 		std::string declaration = StringHelper::Sprintf("(u32)%sMinimapEntryList0x%06X, 0x%08X",
-		                                           roomName.c_str(), listSegmentOffset, unk4);
+		                                                roomName.c_str(), listSegmentOffset, unk4);
 
 		zRoom->parent->AddDeclaration(
 			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::None, 8, "MinimapList",
