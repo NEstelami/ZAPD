@@ -119,7 +119,7 @@ PathwayList::PathwayList(ZFile* nParent, const std::vector<uint8_t>& rawData, ui
                          size_t length)
 {
 	parent = nParent;
-	_rawDataIndex = rawDataIndex;
+	rawDataIndex = rawDataIndex;
 
 	uint32_t currentPtr = rawDataIndex;
 
@@ -158,9 +158,9 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			_rawDataIndex, DeclarationAlignment::None, DeclarationPadding::None,
+			rawDataIndex, DeclarationAlignment::None, DeclarationPadding::None,
 			pathways.size() * 8, "Path",
-			StringHelper::Sprintf("%sPathway0x%06X", prefix.c_str(), _rawDataIndex),
+			StringHelper::Sprintf("%sPathway0x%06X", prefix.c_str(), rawDataIndex),
 			pathways.size(), declaration);
 	}
 

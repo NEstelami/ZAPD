@@ -105,12 +105,12 @@ protected:
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
 
-typedef ZResource*(ZResourceFactoryFunc)();
+typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
 
 #define REGISTER_ZFILENODE(nodeName, zResClass)                                                    \
-	static ZResource* ZResourceFactory_##zResClass_##nodeName()                                    \
+	static ZResource* ZResourceFactory_##zResClass_##nodeName(ZFile* nParent)                      \
 	{                                                                                              \
-		return static_cast<ZResource*>(new zResClass(nullptr));                                    \
+		return static_cast<ZResource*>(new zResClass(nParent));                                    \
 	}                                                                                              \
                                                                                                    \
 	class ZRes_##nodeName                                                                          \

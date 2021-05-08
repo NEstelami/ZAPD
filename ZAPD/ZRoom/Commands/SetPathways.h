@@ -18,7 +18,7 @@ public:
 	std::vector<Vec3s> points;
 };
 
-struct PathwayList
+class PathwayList
 {
 public:
 	PathwayList() = default;
@@ -31,7 +31,7 @@ public:
 private:
 	ZFile* parent;
 	std::vector<PathwayEntry> pathways;
-	int _rawDataIndex;
+	int rawDataIndex;
 };
 
 class ZSetPathways : public ZRoomCommand

@@ -191,8 +191,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 		if (nodeMap.find(nodeName) != nodeMap.end())
 		{
-			ZResource* nRes = nodeMap[nodeName]();
-			nRes->parent = this;
+			ZResource* nRes = nodeMap[nodeName](this);
 
 			if (mode == ZFileMode::Extract)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex);
