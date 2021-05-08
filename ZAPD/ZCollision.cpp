@@ -21,11 +21,6 @@ ZCollisionHeader::~ZCollisionHeader()
 	delete camData;
 }
 
-ZResourceType ZCollisionHeader::GetResourceType()
-{
-	return ZResourceType::CollisionHeader;
-}
-
 void ZCollisionHeader::ParseRawData()
 {
 	const uint8_t* data = rawData.data();
