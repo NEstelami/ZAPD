@@ -107,7 +107,7 @@ PathwayEntry::PathwayEntry(const std::vector<uint8_t>& rawData, uint32_t rawData
 
 	if (numPoints == 0)  // Hack for SharpOcarina
 	{
-		for (int32_t i = 0; i < 3; i++)
+		for (uint32_t i = 0; i < 3; i++)
 		{
 			Vec3s point = Vec3s(0, 0, 0);
 			points.push_back(point);
@@ -188,7 +188,7 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 	}
 }
 
-size_t PathwayList::GetRawDataSize()
+size_t PathwayList::GetRawDataSize() const
 {
 	size_t pointsSize = 0;
 

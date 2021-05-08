@@ -1,4 +1,5 @@
 #include "SetActorList.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
@@ -68,12 +69,12 @@ std::string SetActorList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_ACTOR_LIST(%i, %s)", numActors, listName.c_str());
 }
 
-size_t SetActorList::GetRawDataSize()
+size_t SetActorList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + ((int32_t)actors.size() * 16);
 }
 
-size_t SetActorList::GetActorListArraySize()
+size_t SetActorList::GetActorListArraySize() const
 {
 	size_t actorCount = 0;
 

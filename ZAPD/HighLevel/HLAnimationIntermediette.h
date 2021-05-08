@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <tinyxml2.h>
+#include "tinyxml2.h"
 #include "../ZAnimation.h"
 #include "HLFileIntermediette.h"
 

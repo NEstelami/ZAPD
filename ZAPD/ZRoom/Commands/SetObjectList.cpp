@@ -1,4 +1,5 @@
 #include "SetObjectList.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
@@ -57,7 +58,7 @@ std::string SetObjectList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_OBJECT_LIST(%i, %s)", objects.size(), listName.c_str());
 }
 
-size_t SetObjectList::GetRawDataSize()
+size_t SetObjectList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (objects.size() * 2);
 }

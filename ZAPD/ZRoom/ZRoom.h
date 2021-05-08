@@ -4,10 +4,9 @@
 #include <string>
 #include <vector>
 
-#include <tinyxml2.h>
+#include "tinyxml2.h"
 #include "ZResource.h"
 #include "ZRoomCommand.h"
-#include "ZTexture.h"
 
 struct CommandSet
 {
@@ -30,7 +29,6 @@ protected:
 
 public:
 	ZRoom* scene;
-	std::map<uint32_t, ZTexture*> textures;
 	std::vector<CommandSet> commandSets;
 	int32_t roomCount;  // Only valid for scenes
 
@@ -47,7 +45,7 @@ public:
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 
-	size_t GetRawDataSize() override;
-	virtual ZResourceType GetResourceType() override;
+	size_t GetRawDataSize() const override;
+	ZResourceType GetResourceType() const override;
 	virtual void PreGenSourceFiles() override;
 };

@@ -1,4 +1,5 @@
 #include "SetMinimapList.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
@@ -76,7 +77,7 @@ RoomCommand SetMinimapList::GetRoomCommand() const
 	return RoomCommand::SetMinimapList;
 }
 
-size_t SetMinimapList::GetRawDataSize()
+size_t SetMinimapList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (minimaps.size() * 10);
 }

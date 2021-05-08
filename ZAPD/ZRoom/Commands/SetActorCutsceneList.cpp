@@ -60,7 +60,7 @@ std::string SetActorCutsceneList::GetBodySourceCode() const
 	                             listName.c_str());
 }
 
-size_t SetActorCutsceneList::GetRawDataSize()
+size_t SetActorCutsceneList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);
 }

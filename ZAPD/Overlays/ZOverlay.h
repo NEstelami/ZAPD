@@ -1,7 +1,7 @@
 #pragma once
 
 #include <elfio/elfio.hpp>
-#include <tinyxml2.h>
+#include "tinyxml2.h"
 #include "../ZResource.h"
 
 enum SectionType

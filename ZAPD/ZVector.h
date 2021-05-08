@@ -14,13 +14,13 @@ public:
 	~ZVector();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
-	std::string GetSourceTypeName() override;
-	std::string GetSourceValue();
+	std::string GetSourceTypeName() const override;
+	std::string GetSourceValue() const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void ParseRawData() override;
-	size_t GetRawDataSize() override;
-	bool DoesSupportArray() override;
-	ZResourceType GetResourceType() override;
+	size_t GetRawDataSize() const override;
+	bool DoesSupportArray() const override;
+	ZResourceType GetResourceType() const override;
 
 	void SetScalarType(ZScalarType type);
 	void SetDimensions(uint32_t dim);

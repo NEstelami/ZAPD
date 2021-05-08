@@ -42,7 +42,6 @@
 #include "ZCutscene.h"
 #include "ZFile.h"
 
-using namespace std;
 using namespace tinyxml2;
 
 REGISTER_ZFILENODE(Room, ZRoom);
@@ -58,9 +57,6 @@ ZRoom::~ZRoom()
 {
 	for (ZRoomCommand* cmd : commands)
 		delete cmd;
-
-	for (auto t : textures)
-		delete t.second;
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -71,7 +67,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
 
-	if (string(reader->Name()) == "Scene")
+	if (std::string(reader->Name()) == "Scene")
 	{
 		scene = this;
 		Globals::Instance->lastScene = this;
@@ -88,15 +84,16 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		string childName = child->Attribute("Name") == NULL ? "" : string(child->Attribute("Name"));
-		string childComment = child->Attribute("Comment") == NULL ?
-                                  "" :
-                                  "// " + string(child->Attribute("Comment")) + "\n";
+		std::string childName =
+			child->Attribute("Name") == NULL ? "" : std::string(child->Attribute("Name"));
+		std::string childComment = child->Attribute("Comment") == NULL ?
+                                       "" :
+                                       "// " + std::string(child->Attribute("Comment")) + "\n";
 
 		// TODO: Bunch of repeated code between all of these that needs to be combined.
-		if (string(child->Name()) == "DListHint")
+		if (std::string(child->Name()) == "DListHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
@@ -110,9 +107,9 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			dList->GetSourceOutputCode(name);
 			delete dList;
 		}
-		else if (string(child->Name()) == "CutsceneHint")
+		else if (std::string(child->Name()) == "CutsceneHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
@@ -123,24 +120,24 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			delete cutscene;
 		}
-		else if (string(child->Name()) == "AltHeaderHint")
+		else if (std::string(child->Name()) == "AltHeaderHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			uint32_t commandsCount = UINT32_MAX;
 
 			if (child->FindAttribute("Count") != NULL)
 			{
-				string commandCountStr = child->Attribute("Count");
+				std::string commandCountStr = child->Attribute("Count");
 				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
 			}
 
 			commandSets.push_back(CommandSet(address, commandsCount));
 		}
-		else if (string(child->Name()) == "PathHint")
+		else if (std::string(child->Name()) == "PathHint")
 		{
-			string addressStr = child->Attribute("Offset");
+			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			// TODO: add this to command set
@@ -151,12 +148,14 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			delete pathway;
 		}
 
+#ifndef DEPRECATION_OFF
 		fprintf(stderr,
 		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
 		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
 		        "version.\n"
 		        "\t Use the non-hint version instead.\n",
 		        name.c_str(), child->Name());
+#endif
 	}
 
 	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
@@ -180,7 +179,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 		ZRoomCommand* cmd = nullptr;
 
-		auto start = chrono::steady_clock::now();
+		auto start = std::chrono::steady_clock::now();
 
 		switch (opcode)
 		{
@@ -287,8 +286,8 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		cmd->ParseRawData();
 		cmd->DeclareReferences(GetName());
 
-		auto end = chrono::steady_clock::now();
-		auto diff = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+		auto end = std::chrono::steady_clock::now();
+		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 		if (Globals::Instance->profile)
 		{
@@ -427,12 +426,12 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 	return 0;
 }
 
-string ZRoom::GetSourceOutputHeader(const std::string& prefix)
+std::string ZRoom::GetSourceOutputHeader(const std::string& prefix)
 {
 	return "\n" + extDefines + "\n\n";
 }
 
-string ZRoom::GetSourceOutputCode(const std::string& prefix)
+std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
@@ -446,36 +445,10 @@ string ZRoom::GetSourceOutputCode(const std::string& prefix)
 
 	ProcessCommandSets();
 
-	// Check for texture intersections
-	parent->defines += ProcessTextureIntersections(textures, prefix, parent);
-
-	for (pair<int32_t, ZTexture*> item : textures)
-	{
-		string declaration = "";
-
-		declaration += item.second->GetSourceOutputCode(prefix);
-
-		std::string outPath = item.second->GetPoolOutPath(Globals::Instance->outputPath.string());
-
-		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-			printf("SAVING IMAGE TO %s\n", outPath.c_str());
-
-		item.second->Save(outPath);
-
-		auto filepath = Globals::Instance->outputPath /
-						Path::GetFileNameWithoutExtension(item.second->GetName());
-		parent->AddDeclarationIncludeArray(
-			item.first,
-			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-		                          item.second->GetExternalExtension().c_str()),
-			item.second->GetRawDataSize(), "u64",
-			StringHelper::Sprintf("%sTex_%06X", prefix.c_str(), item.first), 0);
-	}
-
 	return sourceOutput;
 }
 
-size_t ZRoom::GetRawDataSize()
+size_t ZRoom::GetRawDataSize() const
 {
 	size_t size = 0;
 
@@ -485,7 +458,7 @@ size_t ZRoom::GetRawDataSize()
 	return size;
 }
 
-ZResourceType ZRoom::GetResourceType()
+ZResourceType ZRoom::GetResourceType() const
 {
 	return ZResourceType::Room;
 }
@@ -498,13 +471,13 @@ void ZRoom::PreGenSourceFiles()
 
 /* CommandSet */
 
-CommandSet::CommandSet(int32_t nAddress)
+CommandSet::CommandSet(uint32_t nAddress)
 {
 	address = nAddress;
-	commandCount = 9999999;
+	commandCount = UINT32_MAX;
 }
 
-CommandSet::CommandSet(int32_t nAddress, uint32_t nCommandCount)
+CommandSet::CommandSet(uint32_t nAddress, uint32_t nCommandCount)
 {
 	address = nAddress;
 	commandCount = nCommandCount;

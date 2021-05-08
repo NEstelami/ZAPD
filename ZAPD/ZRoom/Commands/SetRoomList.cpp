@@ -1,4 +1,5 @@
 #include "SetRoomList.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
@@ -74,7 +75,7 @@ void SetRoomList::PreGenSourceFiles()
 		declaration);
 }
 
-RoomEntry::RoomEntry(int32_t nVAS, int32_t nVAE)
+RoomEntry::RoomEntry(uint32_t nVAS, uint32_t nVAE)
 {
 	virtualAddressStart = nVAS;
 	virtualAddressEnd = nVAE;

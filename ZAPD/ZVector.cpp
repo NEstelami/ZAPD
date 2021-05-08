@@ -66,7 +66,7 @@ void ZVector::ParseRawData()
 	assert(this->scalars.size() == this->dimensions);
 }
 
-size_t ZVector::GetRawDataSize()
+size_t ZVector::GetRawDataSize() const
 {
 	size_t size = 0;
 
@@ -76,12 +76,12 @@ size_t ZVector::GetRawDataSize()
 	return size;
 }
 
-bool ZVector::DoesSupportArray()
+bool ZVector::DoesSupportArray() const
 {
 	return true;
 }
 
-std::string ZVector::GetSourceTypeName()
+std::string ZVector::GetSourceTypeName() const
 {
 	if (dimensions == 3 && scalarType == ZScalarType::ZSCALAR_F32)
 		return "Vec3f";
@@ -102,7 +102,7 @@ std::string ZVector::GetSourceTypeName()
 	}
 }
 
-std::string ZVector::GetSourceValue()
+std::string ZVector::GetSourceValue() const
 {
 	std::vector<std::string> strings = std::vector<std::string>();
 
@@ -121,7 +121,7 @@ std::string ZVector::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-ZResourceType ZVector::GetResourceType()
+ZResourceType ZVector::GetResourceType() const
 {
 	return ZResourceType::Vector;
 }

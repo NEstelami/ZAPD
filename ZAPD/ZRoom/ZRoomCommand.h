@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tinyxml2.h>
+#include "tinyxml2.h"
 
 #include <string>
 #include <vector>
@@ -59,6 +59,7 @@ public:
 
 	ZRoomCommand(ZFile* nParent);
 	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex);
+	virtual ~ZRoomCommand() = default;
 
 	// virtual void ParseRawData();
 	virtual void DeclareReferences(const std::string& prefix);
@@ -70,7 +71,9 @@ public:
 
 	// Getters/Setters
 	virtual RoomCommand GetRoomCommand() const;
+	virtual size_t GetRawDataSize() const;
 	virtual std::string GetCommandCName() const;
+
 	virtual std::string GetCommandHex() const;
 
 protected:

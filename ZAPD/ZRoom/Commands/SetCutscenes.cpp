@@ -1,4 +1,5 @@
 #include "SetCutscenes.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"

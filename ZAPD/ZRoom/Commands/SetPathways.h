@@ -26,7 +26,7 @@ public:
 	            size_t length);
 
 	void GetSourceOutputCode(const std::string& prefix);
-	size_t GetRawDataSize();
+	size_t GetRawDataSize() const;
 
 private:
 	ZFile* parent;
@@ -44,7 +44,7 @@ public:
 	void ParseRawDataLate() override;
 	void DeclareReferencesLate(const std::string& prefix) override;
 
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const override;

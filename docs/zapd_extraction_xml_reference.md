@@ -110,6 +110,7 @@ u64 gCraterSmokeConeTex[] = {
   - `Format`: Required. The format of the image. Valid values: `rgba32`, `rgb5a1`, `i4`, `i8`, `ia4`, `ia8`, `ia16`, `ci4` and `ci8`.
   - `Width`: Required. Width in pixels of the image.
   - `Height`: Required. Height in pixels of the image.
+  - `TlutOffset`: Optional. Specifies the tlut's offset used by this texture. This attribute is only valid if `Format` is either `ci4` or `ci8`, otherwise an exception would be thrown.
 
 The following is a list of the texture formats the Nintendo 64 supports, with their gfxdis names and ZAPD format names.
 

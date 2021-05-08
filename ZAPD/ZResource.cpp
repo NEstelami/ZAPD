@@ -3,15 +3,13 @@
 #include <regex>
 #include "StringHelper.h"
 
-using namespace std;
-
 ZResource::ZResource(ZFile* nParent)
 {
 	parent = nParent;
 	name = "";
 	outName = "";
 	sourceOutput = "";
-	rawData = vector<uint8_t>();
+	rawData = std::vector<uint8_t>();
 	rawDataIndex = 0;
 	outputDeclaration = true;
 }
@@ -26,6 +24,7 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 		ParseXML(reader);
 
 	ParseRawData();
+	CalcHash();
 }
 
 void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
@@ -34,6 +33,7 @@ void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t n
 	rawDataIndex = nRawDataIndex;
 
 	ParseRawData();
+	CalcHash();
 }
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
@@ -74,10 +74,12 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			                          "with inner element/child detected.\n",
 			                          name.c_str(), reader->Name()));
 		}
+
+		declaredInXml = true;
 	}
 }
 
-void ZResource::Save(const std::string& outFolder)
+void ZResource::Save(const fs::path& outFolder)
 {
 }
 
@@ -85,12 +87,12 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-string ZResource::GetName()
+std::string ZResource::GetName() const
 {
 	return name;
 }
 
-std::string ZResource::GetOutName()
+const std::string& ZResource::GetOutName() const
 {
 	return outName;
 }
@@ -100,42 +102,47 @@ void ZResource::SetOutName(std::string nName)
 	outName = nName;
 }
 
-void ZResource::SetName(string nName)
+void ZResource::SetName(std::string nName)
 {
 	name = std::move(nName);
 }
 
-bool ZResource::IsExternalResource()
+bool ZResource::IsExternalResource() const
 {
 	return false;
 }
 
-bool ZResource::DoesSupportArray()
+bool ZResource::DoesSupportArray() const
 {
 	return false;
 }
 
-std::string ZResource::GetExternalExtension()
+std::string ZResource::GetExternalExtension() const
 {
 	return "";
 }
 
-vector<uint8_t> ZResource::GetRawData()
+const std::vector<uint8_t>& ZResource::GetRawData() const
 {
 	return rawData;
 }
 
-void ZResource::SetRawData(std::vector<uint8_t> nData)
+void ZResource::SetRawData(const std::vector<uint8_t>& nData)
 {
 	rawData = nData;
 }
 
-uint32_t ZResource::GetRawDataIndex()
+bool ZResource::WasDeclaredInXml() const
+{
+	return declaredInXml;
+}
+
+uint32_t ZResource::GetRawDataIndex() const
 {
 	return rawDataIndex;
 }
 
-size_t ZResource::GetRawDataSize()
+size_t ZResource::GetRawDataSize() const
 {
 	return rawData.size();
 }
@@ -145,12 +152,12 @@ void ZResource::SetRawDataIndex(uint32_t value)
 	rawDataIndex = value;
 }
 
-string ZResource::GetSourceOutputCode(const std::string& prefix)
+std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 {
 	return "";
 }
 
-string ZResource::GetSourceOutputHeader(const std::string& prefix)
+std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
 {
 	return "";
 }
@@ -159,16 +166,20 @@ void ZResource::ParseRawData()
 {
 }
 
+void ZResource::DeclareReferences(const std::string& prefix)
+{
+}
+
 void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 }
 
-std::string ZResource::GetSourceTypeName()
+std::string ZResource::GetSourceTypeName() const
 {
 	return "u8";
 }
 
-ZResourceType ZResource::GetResourceType()
+ZResourceType ZResource::GetResourceType() const
 {
 	return ZResourceType::Error;
 }

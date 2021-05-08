@@ -118,7 +118,7 @@ std::string SetAnimatedTextureList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_TEXTURE_ANIM_LIST(%s)", listName.c_str());
 }
 
-size_t SetAnimatedTextureList::GetRawDataSize()
+size_t SetAnimatedTextureList::GetRawDataSize() const
 {
 	size_t paramsSize = 0;
 	for (const auto& texture : textures)

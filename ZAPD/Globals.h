@@ -42,7 +42,8 @@ public:
 
 	bool genSourceFile;  // Used for extraction
 	bool useExternalResources;
-	bool testMode;           // Enables certain experimental features
+	bool testMode;  // Enables certain experimental features
+	bool outputCrc = false;
 	bool profile;            // Measure performance of certain operations
 	bool useLegacyZDList;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
@@ -65,7 +66,7 @@ public:
 	void ReadConfigFile(const std::string& configFilePath);
 	void ReadTexturePool(const std::string& texturePoolXmlPath);
 	void GenSymbolMap(const std::string& symbolMapPath);
-	void AddSegment(int32_t segment);
+	void AddSegment(int32_t segment, ZFile* file);
 	bool HasSegment(int32_t segment);
 };
 

@@ -1,4 +1,5 @@
 #include "SetMinimapChests.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
@@ -64,7 +65,7 @@ RoomCommand SetMinimapChests::GetRoomCommand() const
 	return RoomCommand::SetMinimapChests;
 }
 
-size_t SetMinimapChests::GetRawDataSize()
+size_t SetMinimapChests::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (chests.size() * 10);
 }

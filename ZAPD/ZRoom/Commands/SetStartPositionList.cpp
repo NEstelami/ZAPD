@@ -1,4 +1,5 @@
 #include "SetStartPositionList.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"

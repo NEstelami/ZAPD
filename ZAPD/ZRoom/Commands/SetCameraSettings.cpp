@@ -1,4 +1,5 @@
 #include "SetCameraSettings.h"
+
 #include "BitConverter.h"
 #include "StringHelper.h"
 

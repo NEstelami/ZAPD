@@ -1,4 +1,5 @@
 #include "SetTransitionActorList.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
@@ -57,7 +58,7 @@ std::string SetTransitionActorList::GetBodySourceCode() const
 	                             listName.c_str());
 }
 
-size_t SetTransitionActorList::GetRawDataSize()
+size_t SetTransitionActorList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (transitionActors.size() * 16);
 }

@@ -80,11 +80,6 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}
-
-	for (const auto& texEntry : dList->texDeclarations)
-	{
-		zRoom->textures[texEntry.first] = dList->textures[texEntry.first];
-	}
 }
 
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
@@ -97,10 +92,6 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);
 
-	for (auto& texEntry : dList->texDeclarations)
-		sourceOutput += StringHelper::Sprintf("extern u64 %sTex_%06X[];\n",
-		                                      zRoom->GetName().c_str(), texEntry.first);
-
 	sourceOutput += dList->defines;
 
 	return sourceOutput;
@@ -112,7 +103,7 @@ std::string SetMesh::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_MESH(%s)", list.c_str());
 }
 
-size_t SetMesh::GetRawDataSize()
+size_t SetMesh::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize();
 }
