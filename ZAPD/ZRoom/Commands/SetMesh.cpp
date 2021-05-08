@@ -289,22 +289,22 @@ string SetMesh::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
 	return sourceOutput;
 }
 
-string SetMesh::GenerateExterns()
+string SetMesh::GenerateExterns() const
 {
 	return "";
 }
 
-size_t SetMesh::GetRawDataSize()
+size_t SetMesh::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize();
 }
 
-string SetMesh::GetCommandCName()
+string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
 }
 
-RoomCommand SetMesh::GetRoomCommand()
+RoomCommand SetMesh::GetRoomCommand() const
 {
 	return RoomCommand::SetMesh;
 }

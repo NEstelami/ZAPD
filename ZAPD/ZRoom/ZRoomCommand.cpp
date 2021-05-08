@@ -1,8 +1,6 @@
 #include "ZRoomCommand.h"
 #include "StringHelper.h"
 
-using namespace std;
-
 ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 {
 	cmdID = (RoomCommand)rawData[rawDataIndex];
@@ -14,22 +12,22 @@ ZRoomCommand::~ZRoomCommand()
 {
 }
 
-string ZRoomCommand::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string ZRoomCommand::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf("0x%02X,", (uint8_t)cmdID);
 }
 
-string ZRoomCommand::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string ZRoomCommand::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-string ZRoomCommand::GenerateSourceCodePass3(string roomName)
+std::string ZRoomCommand::GenerateSourceCodePass3(std::string roomName)
 {
 	return "";
 }
 
-string ZRoomCommand::GenerateExterns()
+std::string ZRoomCommand::GenerateExterns() const
 {
 	return "";
 }
@@ -44,17 +42,17 @@ std::string ZRoomCommand::PreGenSourceFiles()
 	return std::string();
 }
 
-size_t ZRoomCommand::GetRawDataSize()
+size_t ZRoomCommand::GetRawDataSize() const
 {
 	return 8;
 }
 
-string ZRoomCommand::GetCommandCName()
+std::string ZRoomCommand::GetCommandCName() const
 {
 	return "SCmdBase";
 }
 
-RoomCommand ZRoomCommand::GetRoomCommand()
+RoomCommand ZRoomCommand::GetRoomCommand() const
 {
 	return RoomCommand::Error;
 }

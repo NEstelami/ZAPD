@@ -367,16 +367,16 @@ public:
 	static int32_t GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string ProcessLegacy(const std::string& prefix);
 	std::string ProcessGfxDis(const std::string& prefix);
 
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
-	bool IsExternalResource() override;
-	virtual std::string GetExternalExtension() override;
-	std::string GetSourceTypeName() override;
+	bool IsExternalResource() const override;
+	virtual std::string GetExternalExtension() const override;
+	std::string GetSourceTypeName() const override;
 
-	ZResourceType GetResourceType() override;
+	ZResourceType GetResourceType() const override;
 };

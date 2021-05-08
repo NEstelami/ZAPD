@@ -2178,27 +2178,27 @@ void ZDisplayList::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	mdl->blocks.push_back(new HLTerminator());
 }
 
-bool ZDisplayList::IsExternalResource()
+bool ZDisplayList::IsExternalResource() const
 {
 	return false;
 }
 
-std::string ZDisplayList::GetExternalExtension()
+std::string ZDisplayList::GetExternalExtension() const
 {
 	return "dlist";
 }
 
-std::string ZDisplayList::GetSourceTypeName()
+std::string ZDisplayList::GetSourceTypeName() const
 {
 	return "Gfx";
 }
 
-ZResourceType ZDisplayList::GetResourceType()
+ZResourceType ZDisplayList::GetResourceType() const
 {
 	return ZResourceType::DisplayList;
 }
 
-size_t ZDisplayList::GetRawDataSize()
+size_t ZDisplayList::GetRawDataSize() const
 {
 	return instructions.size() * 8;
 }

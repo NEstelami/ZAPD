@@ -636,7 +636,7 @@ float ZTexture::GetPixelMultiplyer() const
 	}
 }
 
-size_t ZTexture::GetRawDataSize()
+size_t ZTexture::GetRawDataSize() const
 {
 	return (width * height * GetPixelMultiplyer());
 }
@@ -769,17 +769,17 @@ std::string ZTexture::GetBodySourceCode() const
 	return sourceOutput;
 }
 
-bool ZTexture::IsExternalResource()
+bool ZTexture::IsExternalResource() const
 {
 	return true;
 }
 
-ZResourceType ZTexture::GetResourceType()
+ZResourceType ZTexture::GetResourceType() const
 {
 	return ZResourceType::Texture;
 }
 
-std::string ZTexture::GetSourceTypeName()
+std::string ZTexture::GetSourceTypeName() const
 {
 	return "u64";
 }
@@ -790,7 +790,7 @@ void ZTexture::CalcHash()
 	hash = CRC32B(parentRawData.data() + rawDataIndex, GetRawDataSize());
 }
 
-std::string ZTexture::GetExternalExtension()
+std::string ZTexture::GetExternalExtension() const
 {
 	switch (format)
 	{

@@ -34,11 +34,11 @@ public:
 	                    const uint32_t nRawDataIndex) override;
 	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
-	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 
 	segptr_t GetAddress();
 	uint8_t GetLimbCount();

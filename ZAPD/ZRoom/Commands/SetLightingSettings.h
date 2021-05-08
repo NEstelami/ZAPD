@@ -27,9 +27,9 @@ public:
 	                                            uint32_t baseAddress) override;
 	virtual std::string GenerateSourceCodePass2(std::string roomName,
 	                                            uint32_t baseAddress) override;
-	virtual std::string GetCommandCName() override;
-	virtual std::string GenerateExterns() override;
-	virtual RoomCommand GetRoomCommand() override;
+	virtual std::string GetCommandCName() const override;
+	virtual std::string GenerateExterns() const override;
+	virtual RoomCommand GetRoomCommand() const override;
 
 private:
 	uint32_t segmentOffset;

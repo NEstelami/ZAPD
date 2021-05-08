@@ -13,10 +13,10 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
-	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 
 protected:
 	std::vector<uint8_t> strData;

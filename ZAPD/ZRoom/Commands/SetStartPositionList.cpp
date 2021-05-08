@@ -6,8 +6,6 @@
 #include "../ZNames.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
                                            uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -18,7 +16,7 @@ SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, std::vector<uint8_t> r
 	if (segmentOffset != 0)
 		zRoom->parent->AddDeclarationPlaceholder(segmentOffset);
 
-	actors = vector<ActorSpawnEntry*>();
+	actors = std::vector<ActorSpawnEntry*>();
 
 	uint32_t currentPtr = segmentOffset;
 
@@ -35,16 +33,17 @@ SetStartPositionList::~SetStartPositionList()
 		delete entry;
 }
 
-string SetStartPositionList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetStartPositionList::GenerateSourceCodePass1(std::string roomName,
+                                                          uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput +=
 		StringHelper::Sprintf("%s 0x%02X, (u32)&%sStartPositionList0x%06X",
 	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 	                          actors.size(), zRoom->GetName().c_str(), segmentOffset);
 
-	string declaration = "";
+	std::string declaration = "";
 
 	for (ActorSpawnEntry* entry : actors)
 	{
@@ -62,23 +61,24 @@ string SetStartPositionList::GenerateSourceCodePass1(string roomName, uint32_t b
 	return sourceOutput;
 }
 
-string SetStartPositionList::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string SetStartPositionList::GenerateSourceCodePass2(std::string roomName,
+                                                          uint32_t baseAddress)
 {
 	return "";
 }
 
-string SetStartPositionList::GenerateExterns()
+std::string SetStartPositionList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern ActorEntry %sStartPositionList0x%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetStartPositionList::GetCommandCName()
+std::string SetStartPositionList::GetCommandCName() const
 {
 	return "SCmdSpawnList";
 }
 
-RoomCommand SetStartPositionList::GetRoomCommand()
+RoomCommand SetStartPositionList::GetRoomCommand() const
 {
 	return RoomCommand::SetStartPositionList;
 }

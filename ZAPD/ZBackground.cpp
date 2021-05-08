@@ -128,13 +128,13 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 	}
 }
 
-size_t ZBackground::GetRawDataSize()
+size_t ZBackground::GetRawDataSize() const
 {
 	// Jpgs use the whole sceen buffer, which is a u16 matrix.
 	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
 }
 
-void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	std::string auxName = name;
 
@@ -146,12 +146,12 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
 	                            bodyStr);
 }
 
-bool ZBackground::IsExternalResource()
+bool ZBackground::IsExternalResource() const
 {
 	return true;
 }
 
-std::string ZBackground::GetExternalExtension()
+std::string ZBackground::GetExternalExtension() const
 {
 	return "jpg";
 }
@@ -198,12 +198,12 @@ std::string ZBackground::GetDefaultName(const std::string& prefix, uint32_t addr
 	return StringHelper::Sprintf("%sBackground_%06X", prefix.c_str(), address);
 }
 
-std::string ZBackground::GetSourceTypeName()
+std::string ZBackground::GetSourceTypeName() const
 {
 	return "u64";
 }
 
-ZResourceType ZBackground::GetResourceType()
+ZResourceType ZBackground::GetResourceType() const
 {
 	return ZResourceType::Background;
 }

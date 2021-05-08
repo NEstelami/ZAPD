@@ -27,10 +27,10 @@ public:
 
 	std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
 	std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
-	std::string GetCommandCName() override;
-	std::string GenerateExterns() override;
-	RoomCommand GetRoomCommand() override;
-	size_t GetRawDataSize() override;
+	std::string GetCommandCName() const override;
+	std::string GenerateExterns() const override;
+	RoomCommand GetRoomCommand() const override;
+	size_t GetRawDataSize() const override;
 
 private:
 	std::vector<ActorCutsceneEntry*> cutscenes;

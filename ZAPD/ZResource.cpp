@@ -3,15 +3,13 @@
 #include <regex>
 #include "StringHelper.h"
 
-using namespace std;
-
 ZResource::ZResource(ZFile* nParent)
 {
 	parent = nParent;
 	name = "";
 	outName = "";
 	sourceOutput = "";
-	rawData = vector<uint8_t>();
+	rawData = std::vector<uint8_t>();
 	rawDataIndex = 0;
 	outputDeclaration = true;
 }
@@ -89,7 +87,7 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-const std::string& ZResource::GetName() const
+std::string ZResource::GetName() const
 {
 	return name;
 }
@@ -104,22 +102,22 @@ void ZResource::SetOutName(std::string nName)
 	outName = nName;
 }
 
-void ZResource::SetName(string nName)
+void ZResource::SetName(std::string nName)
 {
 	name = std::move(nName);
 }
 
-bool ZResource::IsExternalResource()
+bool ZResource::IsExternalResource() const
 {
 	return false;
 }
 
-bool ZResource::DoesSupportArray()
+bool ZResource::DoesSupportArray() const
 {
 	return false;
 }
 
-std::string ZResource::GetExternalExtension()
+std::string ZResource::GetExternalExtension() const
 {
 	return "";
 }
@@ -139,12 +137,12 @@ bool ZResource::WasDeclaredInXml() const
 	return declaredInXml;
 }
 
-uint32_t ZResource::GetRawDataIndex()
+uint32_t ZResource::GetRawDataIndex() const
 {
 	return rawDataIndex;
 }
 
-size_t ZResource::GetRawDataSize()
+size_t ZResource::GetRawDataSize() const
 {
 	return rawData.size();
 }
@@ -154,12 +152,12 @@ void ZResource::SetRawDataIndex(uint32_t value)
 	rawDataIndex = value;
 }
 
-string ZResource::GetSourceOutputCode(const std::string& prefix)
+std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 {
 	return "";
 }
 
-string ZResource::GetSourceOutputHeader(const std::string& prefix)
+std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
 {
 	return "";
 }
@@ -176,12 +174,12 @@ void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 }
 
-std::string ZResource::GetSourceTypeName()
+std::string ZResource::GetSourceTypeName() const
 {
 	return "u8";
 }
 
-ZResourceType ZResource::GetResourceType()
+ZResourceType ZResource::GetResourceType() const
 {
 	return ZResourceType::Error;
 }

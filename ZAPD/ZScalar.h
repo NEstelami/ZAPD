@@ -47,12 +47,12 @@ public:
 	ZScalar(const ZScalarType scalarType, ZFile* nParent);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
-	std::string GetSourceTypeName() override;
-	std::string GetSourceValue();
+	std::string GetSourceTypeName() const override;
+	std::string GetSourceValue() const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	size_t GetRawDataSize() override;
-	ZResourceType GetResourceType() override;
-	bool DoesSupportArray() override;
+	size_t GetRawDataSize() const override;
+	ZResourceType GetResourceType() const override;
+	bool DoesSupportArray() const override;
 	void ParseRawData() override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,

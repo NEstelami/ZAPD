@@ -2,8 +2,6 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
 SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -12,19 +10,19 @@ SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, ui
 	unk = rawData[rawDataIndex + 6];
 }
 
-string SetTimeSettings::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetTimeSettings::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X",
 		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), hour, min, unk);
 }
 
-string SetTimeSettings::GetCommandCName()
+std::string SetTimeSettings::GetCommandCName() const
 {
 	return "SCmdTimeSettings";
 }
 
-RoomCommand SetTimeSettings::GetRoomCommand()
+RoomCommand SetTimeSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetTimeSettings;
 }

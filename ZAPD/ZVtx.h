@@ -24,13 +24,13 @@ public:
 	std::string GetBodySourceCode() const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
-	bool IsExternalResource() override;
-	bool DoesSupportArray() override;
-	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
-	virtual std::string GetExternalExtension() override;
+	bool IsExternalResource() const override;
+	bool DoesSupportArray() const override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
+	virtual std::string GetExternalExtension() const override;
 
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 
 protected:
 };

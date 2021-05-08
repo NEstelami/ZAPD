@@ -6,8 +6,6 @@
 #include "../ZNames.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetActorList::SetActorList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -27,21 +25,21 @@ SetActorList::~SetActorList()
 		delete entry;
 }
 
-string SetActorList::GetSourceOutputCode(std::string prefix)
+std::string SetActorList::GetSourceOutputCode(std::string prefix)
 {
 	return "";
 }
 
-string SetActorList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetActorList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-string SetActorList::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string SetActorList::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 	size_t numActorsReal = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 16;
-	actors = vector<ActorSpawnEntry*>();
+	actors = std::vector<ActorSpawnEntry*>();
 	uint32_t currentPtr = segmentOffset;
 
 	for (size_t i = 0; i < numActorsReal; i++)
@@ -61,7 +59,7 @@ string SetActorList::GenerateSourceCodePass2(string roomName, uint32_t baseAddre
 	// DeclarationPadding::None, GetRawDataSize(), "SCmdActorList",
 	// ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress), sourceOutput);
 
-	string declaration = "";
+	std::string declaration = "";
 
 	size_t index = 0;
 	for (ActorSpawnEntry* entry : actors)
@@ -109,12 +107,12 @@ string SetActorList::GenerateSourceCodePass2(string roomName, uint32_t baseAddre
 	return sourceOutput;
 }
 
-size_t SetActorList::GetRawDataSize()
+size_t SetActorList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + ((int32_t)actors.size() * 16);
 }
 
-size_t SetActorList::GetActorListArraySize()
+size_t SetActorList::GetActorListArraySize() const
 {
 	size_t actorCount = 0;
 
@@ -137,18 +135,18 @@ size_t SetActorList::GetActorListArraySize()
 	return actorCount;
 }
 
-string SetActorList::GenerateExterns()
+std::string SetActorList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern ActorEntry %sActorList0x%06X[%i];\n",
 	                             zRoom->GetName().c_str(), segmentOffset, GetActorListArraySize());
 }
 
-string SetActorList::GetCommandCName()
+std::string SetActorList::GetCommandCName() const
 {
 	return "SCmdActorList";
 }
 
-RoomCommand SetActorList::GetRoomCommand()
+RoomCommand SetActorList::GetRoomCommand() const
 {
 	return RoomCommand::SetActorList;
 }

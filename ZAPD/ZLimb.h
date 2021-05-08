@@ -152,10 +152,10 @@ public:
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex) override;
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	std::string GetSourceTypeName() override;
-	ZResourceType GetResourceType() override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 
 	ZLimbType GetLimbType();
 	void SetLimbType(ZLimbType value);
