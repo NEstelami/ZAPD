@@ -471,12 +471,6 @@ void ZRoom::PreGenSourceFiles()
 
 /* CommandSet */
 
-CommandSet::CommandSet(uint32_t nAddress)
-{
-	address = nAddress;
-	commandCount = UINT32_MAX;
-}
-
 CommandSet::CommandSet(uint32_t nAddress, uint32_t nCommandCount)
 {
 	address = nAddress;

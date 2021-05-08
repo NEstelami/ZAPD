@@ -15,7 +15,7 @@ public:
 	void ParseRawData();
 	void DeclareReferences(const std::string& prefix);
 
-	size_t GetRawDataSize();
+	size_t GetRawDataSize() const;
 	void SetPolyType(uint8_t nPolyType);
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
@@ -180,7 +180,7 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetCommandCName() const override;
 
 private:

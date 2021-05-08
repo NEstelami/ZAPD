@@ -5,7 +5,7 @@
 class RoomEntry
 {
 public:
-	RoomEntry(int32_t nVAS, int32_t nVAE);
+	RoomEntry(uint32_t nVAS, uint32_t nVAE);
 	RoomEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 protected:

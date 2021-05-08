@@ -110,7 +110,7 @@ std::string SetCsCamera::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_CAM_LIST(%i, %s)", cameras.size(), listName.c_str());
 }
 
-size_t SetCsCamera::GetRawDataSize()
+size_t SetCsCamera::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }

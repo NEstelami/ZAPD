@@ -10,11 +10,10 @@
 
 struct CommandSet
 {
-	int32_t address;
+	uint32_t address;
 	uint32_t commandCount;  // Only used if explicitly specified in the XML
 
-	CommandSet(int32_t nAddress);
-	CommandSet(int32_t nAddress, uint32_t nCommandCount);
+	CommandSet(uint32_t nAddress, uint32_t nCommandCount = UINT32_MAX);
 };
 
 class ZRoom : public ZResource

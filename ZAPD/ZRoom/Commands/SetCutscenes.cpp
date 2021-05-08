@@ -93,7 +93,7 @@ std::string SetCutscenes::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_DATA(%s)", listName.c_str());
 }
 
-size_t SetCutscenes::GetRawDataSize()
+size_t SetCutscenes::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize();
 }

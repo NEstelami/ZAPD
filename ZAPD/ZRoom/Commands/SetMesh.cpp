@@ -184,7 +184,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	return dlist;
 }
 
-size_t PolygonDlist::GetRawDataSize()
+size_t PolygonDlist::GetRawDataSize() const
 {
 	switch (polyType)
 	{

@@ -1784,7 +1784,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	// Iterate through our vertex lists, connect intersecting lists.
 	if (vertices.size() > 0)
 	{
-		std::vector<std::pair<int32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(), vertices.end());
+		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(), vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{

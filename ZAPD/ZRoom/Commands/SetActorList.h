@@ -36,11 +36,11 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetCommandCName() const override;
 
 protected:
-	size_t GetActorListArraySize();
+	size_t GetActorListArraySize() const;
 
 	uint8_t numActors;
 	std::vector<ActorSpawnEntry> actors;

@@ -14,7 +14,7 @@ public:
 
 	std::string GetCommandCName() const override;
 	RoomCommand GetRoomCommand() const override;
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 
 private:
 	std::vector<uint16_t> objects;
