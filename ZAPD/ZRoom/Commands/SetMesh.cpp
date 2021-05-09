@@ -113,17 +113,6 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
-// TODO: delete
-void SetMesh::SyotesHack(int segAddressOffset)
-{
-	// Hack for Syotes
-	for (int i = 0; i < abs(segAddressOffset); i++)
-	{
-		rawData.erase(rawData.begin());
-		segmentOffset--;
-	}
-}
-
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {

@@ -362,25 +362,13 @@ void ZRoom::ProcessCommandSets()
  */
 void ZRoom::SyotesRoomHack()
 {
-	//char headerData[] = {0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08};
-
-	//for (size_t i = 0; i < sizeof(headerData); i++)
-	//	rawData.insert(rawData.begin() + i, headerData[i]);
-
 	PolygonType2 poly(parent, parent->GetRawData(), 0, this);
 
-	//SetMesh* cmdSetMesh = new SetMesh(parent);
-	//cmdSetMesh->SetRawDataIndex(0);
 	poly.ParseRawData();
 	poly.DeclareReferences(GetName());
-	parent->AddDeclaration(0, DeclarationAlignment::Align4, poly.GetRawDataSize(), poly.GetSourceTypeName(), poly.GetDefaultName(GetName()), poly.GetBodySourceCode());
-
-	//for (size_t i = 0; i < sizeof(headerData); i++)
-	//	rawData.erase(rawData.begin());
-
-	//cmdSetMesh->cmdIndex = 0;
-
-	//commands.push_back(cmdSetMesh);
+	parent->AddDeclaration(0, DeclarationAlignment::Align4, poly.GetRawDataSize(),
+	                       poly.GetSourceTypeName(), poly.GetDefaultName(GetName()),
+	                       poly.GetBodySourceCode());
 }
 
 ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)

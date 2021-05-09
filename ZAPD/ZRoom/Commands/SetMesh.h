@@ -187,5 +187,4 @@ private:
 	std::shared_ptr<PolygonTypeBase> polyType;
 
 	std::string GenDListExterns(ZDisplayList* dList);
-	void SyotesHack(int segAddressOffset);
 };
