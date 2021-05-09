@@ -5,8 +5,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetEntranceList::SetEntranceList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetEntranceList::SetEntranceList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

@@ -5,8 +5,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetCsCamera::SetCsCamera(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetCsCamera::SetCsCamera(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
@@ -57,8 +56,9 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		size_t index = 0;
 		for (auto& point : points)
 		{
-			declaration += StringHelper::Sprintf("\t%s, //0x%06X", point.GetBodySourceCode().c_str(),
-			                                     cameras.at(0).segmentOffset + (index * 6));
+			declaration +=
+				StringHelper::Sprintf("\t%s, //0x%06X", point.GetBodySourceCode().c_str(),
+			                          cameras.at(0).segmentOffset + (index * 6));
 
 			if (index < points.size() - 1)
 				declaration += "\n";

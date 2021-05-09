@@ -53,19 +53,19 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 		nRawData, rawDataIndex,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	rawData = std::vector<uint8_t>(nRawData.data() + rawDataIndex,
-	                          nRawData.data() + rawDataIndex + rawDataSize);
+	                               nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
 
-ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex, int32_t rawDataSize,
-                           ZFile* nParent)
+ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,
+                           int32_t rawDataSize, ZFile* nParent)
 	: ZDisplayList(nParent)
 {
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
 	rawData = std::vector<uint8_t>(nRawData.data() + rawDataIndex,
-	                          nRawData.data() + rawDataIndex + rawDataSize);
+	                               nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
 
@@ -445,7 +445,8 @@ bool ZDisplayList::SequenceCheck(std::vector<F3DZEXOpcode> sequence, int32_t sta
 	return false;
 }
 
-int32_t ZDisplayList::OptimizationChecks(int32_t startIndex, std::string& output, std::string prefix)
+int32_t ZDisplayList::OptimizationChecks(int32_t startIndex, std::string& output,
+                                         std::string prefix)
 {
 	int32_t result = -1;
 
@@ -578,7 +579,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 		}
 
 		std::string fmtTbl[] = {"G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA",
-		                   "G_IM_FMT_I"};
+		                        "G_IM_FMT_I"};
 		std::string sizTbl[] = {"G_IM_SIZ_4b", "G_IM_SIZ_8b", "G_IM_SIZ_16b", "G_IM_SIZ_32b"};
 
 		// output += StringHelper::Sprintf("gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i,
@@ -888,7 +889,8 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* lin
 {
 	int32_t __ = (data & 0x00FF000000000000) >> 48;
 	int32_t www = (data & 0x00000FFF00000000) >> 32;
-	std::string fmtTbl[] = {"G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA", "G_IM_FMT_I"};
+	std::string fmtTbl[] = {"G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA",
+	                        "G_IM_FMT_I"};
 	std::string sizTbl[] = {"G_IM_SIZ_4b", "G_IM_SIZ_8b", "G_IM_SIZ_16b", "G_IM_SIZ_32b"};
 
 	uint32_t fmt = (__ & 0xE0) >> 5;
@@ -959,7 +961,8 @@ void ZDisplayList::Opcode_G_SETTILE(uint64_t data, char* line)
 	int32_t bbbb = (data & 0b0000000000000000000000000000000000000000000000000000000011110000) >> 4;
 	int32_t uuuu = (data & 0b0000000000000000000000000000000000000000000000000000000000001111);
 
-	std::string fmtTbl[] = {"G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA", "G_IM_FMT_I"};
+	std::string fmtTbl[] = {"G_IM_FMT_RGBA", "G_IM_FMT_YUV", "G_IM_FMT_CI", "G_IM_FMT_IA",
+	                        "G_IM_FMT_I"};
 	std::string sizTbl[] = {"G_IM_SIZ_4b", "G_IM_SIZ_8b", "G_IM_SIZ_16b", "G_IM_SIZ_32b"};
 
 	if (fff == (int32_t)F3DZEXTexFormats::G_IM_FMT_CI)
@@ -1044,50 +1047,50 @@ void ZDisplayList::Opcode_G_SETCOMBINE(uint64_t data, char* line)
 	int32_t ad1 = (data & 0b00000000000000000000000000000000000000000000000000000000000111) >> 0;
 
 	std::string modesA[] = {"COMBINED", "TEXEL0", "TEXEL1", "PRIMITIVE", "SHADE", "ENVIRONMENT",
-	                   "1",        "NOISE",  "0",      "9",         "10",    "11",
-	                   "12",       "13",     "14",     "0"};
+	                        "1",        "NOISE",  "0",      "9",         "10",    "11",
+	                        "12",       "13",     "14",     "0"};
 	std::string modesB[] = {"COMBINED", "TEXEL0", "TEXEL1", "PRIMITIVE", "SHADE", "ENVIRONMENT",
-	                   "CENTER",   "K4",     "8",      "9",         "10",    "11",
-	                   "12",       "13",     "14",     "0"};
+	                        "CENTER",   "K4",     "8",      "9",         "10",    "11",
+	                        "12",       "13",     "14",     "0"};
 	std::string modesC[] = {"COMBINED",
-	                   "TEXEL0",
-	                   "TEXEL1",
-	                   "PRIMITIVE",
-	                   "SHADE",
-	                   "ENVIRONMENT",
-	                   "1",
-	                   "COMBINED_ALPHA",
-	                   "TEXEL0_ALPHA",
-	                   "TEXEL1_ALPHA",
-	                   "PRIMITIVE_ALPHA",
-	                   "SHADE_ALPHA",
-	                   "ENV_ALPHA",
-	                   "LOD_FRACTION",
-	                   "PRIM_LOD_FRAC",
-	                   "K5",
-	                   "16",
-	                   "17",
-	                   "18",
-	                   "19",
-	                   "20",
-	                   "21",
-	                   "22",
-	                   "23",
-	                   "24",
-	                   "25",
-	                   "26",
-	                   "27",
-	                   "28",
-	                   "29",
-	                   "30",
-	                   "0"};
+	                        "TEXEL0",
+	                        "TEXEL1",
+	                        "PRIMITIVE",
+	                        "SHADE",
+	                        "ENVIRONMENT",
+	                        "1",
+	                        "COMBINED_ALPHA",
+	                        "TEXEL0_ALPHA",
+	                        "TEXEL1_ALPHA",
+	                        "PRIMITIVE_ALPHA",
+	                        "SHADE_ALPHA",
+	                        "ENV_ALPHA",
+	                        "LOD_FRACTION",
+	                        "PRIM_LOD_FRAC",
+	                        "K5",
+	                        "16",
+	                        "17",
+	                        "18",
+	                        "19",
+	                        "20",
+	                        "21",
+	                        "22",
+	                        "23",
+	                        "24",
+	                        "25",
+	                        "26",
+	                        "27",
+	                        "28",
+	                        "29",
+	                        "30",
+	                        "0"};
 	std::string modesD[] = {"COMBINED", "TEXEL0",      "TEXEL1", "PRIMITIVE",
-	                   "SHADE",    "ENVIRONMENT", "1",      "0"};
+	                        "SHADE",    "ENVIRONMENT", "1",      "0"};
 
 	std::string modes2[] = {"COMBINED", "TEXEL0",      "TEXEL1", "PRIMITIVE",
-	                   "SHADE",    "ENVIRONMENT", "1",      "0"};
+	                        "SHADE",    "ENVIRONMENT", "1",      "0"};
 	std::string modes2C[] = {"LOD_FRACTION", "TEXEL0",      "TEXEL1",        "PRIMITIVE",
-	                    "SHADE",        "ENVIRONMENT", "PRIM_LOD_FRAC", "0"};
+	                         "SHADE",        "ENVIRONMENT", "PRIM_LOD_FRAC", "0"};
 
 	sprintf(line,
 	        "gsDPSetCombineLERP(%s, %s, %s, %s, %s, %s, %s, %s,\n                       %s, %s, "
@@ -1784,7 +1787,8 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	// Iterate through our vertex lists, connect intersecting lists.
 	if (vertices.size() > 0)
 	{
-		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(), vertices.end());
+		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1855,7 +1859,8 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	// Iterate through our vertex lists, connect intersecting lists.
 	if (vertices.size() > 0)
 	{
-		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(), vertices.end());
+		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{

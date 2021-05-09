@@ -2,8 +2,7 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetLightList::SetLightList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetLightList::SetLightList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

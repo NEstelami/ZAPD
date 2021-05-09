@@ -6,15 +6,15 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetMinimapList::SetMinimapList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetMinimapList::SetMinimapList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
 void SetMinimapList::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
-	listSegmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset + 0));
+	listSegmentOffset =
+		GETSEGOFFSET(BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset + 0));
 	unk4 = BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset + 4);
 
 	int32_t currentPtr = listSegmentOffset;

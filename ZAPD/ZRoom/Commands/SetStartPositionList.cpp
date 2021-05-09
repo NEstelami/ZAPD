@@ -7,8 +7,7 @@
 #include "ZRoom/ZNames.h"
 #include "ZRoom/ZRoom.h"
 
-SetStartPositionList::SetStartPositionList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetStartPositionList::SetStartPositionList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
@@ -16,9 +15,6 @@ void SetStartPositionList::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
 	uint8_t numActors = cmdArg1;
-
-	/*if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);*/
 
 	uint32_t currentPtr = segmentOffset;
 

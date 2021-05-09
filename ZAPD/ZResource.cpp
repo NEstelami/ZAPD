@@ -6,7 +6,7 @@
 
 ZResource::ZResource(ZFile* nParent)
 {
-	//assert(nParent != nullptr);
+	// assert(nParent != nullptr);
 	parent = nParent;
 	name = "";
 	outName = "";

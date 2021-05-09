@@ -1,8 +1,7 @@
 #include "SetEchoSettings.h"
 #include "StringHelper.h"
 
-SetEchoSettings::SetEchoSettings(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetEchoSettings::SetEchoSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

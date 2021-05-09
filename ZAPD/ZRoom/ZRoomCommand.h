@@ -71,7 +71,7 @@ public:
 
 	// Getters/Setters
 	virtual RoomCommand GetRoomCommand() const = 0;
-	//virtual size_t GetRawDataSize() const;
+	// virtual size_t GetRawDataSize() const;
 	virtual std::string GetCommandCName() const;
 
 	virtual std::string GetCommandHex() const;

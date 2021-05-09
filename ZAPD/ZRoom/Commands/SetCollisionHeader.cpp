@@ -5,8 +5,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetCollisionHeader::SetCollisionHeader(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetCollisionHeader::SetCollisionHeader(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

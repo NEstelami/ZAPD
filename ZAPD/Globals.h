@@ -44,7 +44,7 @@ public:
 	bool useExternalResources;
 	bool testMode;  // Enables certain experimental features
 	bool outputCrc = false;
-	bool profile;            // Measure performance of certain operations
+	bool profile;  // Measure performance of certain operations
 	bool useLegacyZDList;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
 	ZFileMode fileMode;

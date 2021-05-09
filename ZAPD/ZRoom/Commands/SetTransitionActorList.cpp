@@ -7,8 +7,7 @@
 #include "ZRoom/ZNames.h"
 #include "ZRoom/ZRoom.h"
 
-SetTransitionActorList::SetTransitionActorList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetTransitionActorList::SetTransitionActorList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

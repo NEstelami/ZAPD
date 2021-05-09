@@ -6,8 +6,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetCutscenes::SetCutscenes(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetCutscenes::SetCutscenes(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

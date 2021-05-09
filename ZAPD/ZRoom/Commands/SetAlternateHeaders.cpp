@@ -4,8 +4,7 @@
 #include "StringHelper.h"
 #include "ZFile.h"
 
-SetAlternateHeaders::SetAlternateHeaders(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetAlternateHeaders::SetAlternateHeaders(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

@@ -1,8 +1,7 @@
 #include "Unused09.h"
 #include "StringHelper.h"
 
-Unused09::Unused09(ZFile* nParent)
-	: ZRoomCommand(nParent)
+Unused09::Unused09(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

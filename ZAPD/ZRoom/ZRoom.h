@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "tinyxml2.h"
 #include "ZResource.h"
 #include "ZRoomCommand.h"
+#include "tinyxml2.h"
 
 struct CommandSet
 {

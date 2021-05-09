@@ -5,8 +5,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetExitList::SetExitList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetExitList::SetExitList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

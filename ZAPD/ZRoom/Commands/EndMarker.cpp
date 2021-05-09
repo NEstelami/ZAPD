@@ -1,8 +1,6 @@
 #include "EndMarker.h"
 
-
-EndMarker::EndMarker(ZFile* nParent)
-	: ZRoomCommand(nParent)
+EndMarker::EndMarker(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

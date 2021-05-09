@@ -5,8 +5,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetAnimatedTextureList::SetAnimatedTextureList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetAnimatedTextureList::SetAnimatedTextureList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

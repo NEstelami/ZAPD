@@ -6,8 +6,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetMinimapChests::SetMinimapChests(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetMinimapChests::SetMinimapChests(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

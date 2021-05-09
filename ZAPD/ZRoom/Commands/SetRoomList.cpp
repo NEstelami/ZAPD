@@ -6,8 +6,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetRoomList::SetRoomList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetRoomList::SetRoomList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

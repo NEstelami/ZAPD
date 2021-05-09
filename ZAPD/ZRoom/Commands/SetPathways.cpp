@@ -5,8 +5,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetPathways::SetPathways(ZFile* nParent)
-	: ZRoomCommand(nParent), pathwayList(nParent)
+SetPathways::SetPathways(ZFile* nParent) : ZRoomCommand(nParent), pathwayList(nParent)
 {
 }
 

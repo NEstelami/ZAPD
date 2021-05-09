@@ -2,8 +2,7 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetTimeSettings::SetTimeSettings(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetTimeSettings::SetTimeSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

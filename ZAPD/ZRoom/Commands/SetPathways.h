@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Vec3s.h"
+#include "ZPath.h"
 #include "ZResource.h"
 #include "ZRoom/ZRoomCommand.h"
-#include "ZPath.h"
 
 class SetPathways : public ZRoomCommand
 {

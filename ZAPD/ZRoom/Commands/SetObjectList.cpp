@@ -7,8 +7,7 @@
 #include "ZRoom/ZNames.h"
 #include "ZRoom/ZRoom.h"
 
-SetObjectList::SetObjectList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetObjectList::SetObjectList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

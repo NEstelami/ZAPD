@@ -6,20 +6,9 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetActorCutsceneList::SetActorCutsceneList(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetActorCutsceneList::SetActorCutsceneList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
-
-/*
-SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                           uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
-{
-	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
-}
-*/
 
 void SetActorCutsceneList::ParseRawData()
 {

@@ -3,8 +3,7 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetCameraSettings::SetCameraSettings(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetCameraSettings::SetCameraSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

@@ -3,8 +3,7 @@
 #include "StringHelper.h"
 #include "ZRoom/ZRoom.h"
 
-ZRoomCommandUnk::ZRoomCommandUnk(ZFile* nParent)
-	: ZRoomCommand(nParent)
+ZRoomCommandUnk::ZRoomCommandUnk(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

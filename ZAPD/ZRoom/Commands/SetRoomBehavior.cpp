@@ -3,8 +3,7 @@
 #include "Globals.h"
 #include "StringHelper.h"
 
-SetRoomBehavior::SetRoomBehavior(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetRoomBehavior::SetRoomBehavior(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

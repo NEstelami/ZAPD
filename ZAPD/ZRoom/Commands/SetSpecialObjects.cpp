@@ -2,8 +2,7 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetSpecialObjects::SetSpecialObjects(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetSpecialObjects::SetSpecialObjects(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

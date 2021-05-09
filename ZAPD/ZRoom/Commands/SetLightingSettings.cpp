@@ -4,8 +4,7 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetLightingSettings::SetLightingSettings(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetLightingSettings::SetLightingSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 

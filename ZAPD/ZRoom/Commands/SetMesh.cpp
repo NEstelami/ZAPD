@@ -9,8 +9,7 @@
 
 void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList);
 
-SetMesh::SetMesh(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetMesh::SetMesh(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
@@ -83,7 +82,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 	std::string sourceOutput = "";
 
 	sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(),
-											dList->GetRawDataIndex());
+	                                      dList->GetRawDataIndex());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		sourceOutput += GenDListExterns(otherDList);

@@ -2,8 +2,7 @@
 #include "Globals.h"
 #include "StringHelper.h"
 
-SetSkyboxSettings::SetSkyboxSettings(ZFile* nParent)
-	: ZRoomCommand(nParent)
+SetSkyboxSettings::SetSkyboxSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
