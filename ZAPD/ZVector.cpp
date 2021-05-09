@@ -33,21 +33,23 @@ void ZVector::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZVector::ParseRawData()
 {
-	int32_t currentRawDataIndex = this->rawDataIndex;
+	int32_t currentRawDataIndex = rawDataIndex;
+	// TODO: this shouldn't be necessary.
+	scalars.clear();
 
-	for (uint32_t i = 0; i < this->dimensions; i++)
+	for (uint32_t i = 0; i < dimensions; i++)
 	{
 		ZScalar scalar(scalarType, parent);
 		scalar.rawDataIndex = currentRawDataIndex;
-		scalar.rawData = this->rawData;
+		scalar.rawData = rawData;
 		scalar.ParseRawData();
 		currentRawDataIndex += scalar.GetRawDataSize();
 
-		this->scalars.push_back(scalar);
+		scalars.push_back(scalar);
 	}
 
 	// Ensure the scalars vector has the same number of elements as the vector dimension.
-	assert(this->scalars.size() == this->dimensions);
+	assert(scalars.size() == dimensions);
 }
 
 size_t ZVector::GetRawDataSize() const
