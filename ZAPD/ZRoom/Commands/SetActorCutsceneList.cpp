@@ -64,7 +64,7 @@ void SetActorCutsceneList::DeclareReferences(const std::string& prefix)
 
 std::string SetActorCutsceneList::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
+	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
 	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_LIST(%i, %s)", cutscenes.size(),
 	                             listName.c_str());
 }

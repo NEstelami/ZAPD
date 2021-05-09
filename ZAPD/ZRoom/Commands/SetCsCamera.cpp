@@ -107,7 +107,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 
 std::string SetCsCamera::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
+	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
 	return StringHelper::Sprintf("SCENE_CMD_CAM_LIST(%i, %s)", cameras.size(), listName.c_str());
 }
 

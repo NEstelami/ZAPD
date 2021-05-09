@@ -95,7 +95,7 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 
 std::string SetMesh::GetBodySourceCode() const
 {
-	std::string list = parent->GetDeclarationPtrName(segmentOffset);
+	std::string list = parent->GetDeclarationPtrName(cmdArg2);
 	return StringHelper::Sprintf("SCENE_CMD_MESH(%s)", list.c_str());
 }
 

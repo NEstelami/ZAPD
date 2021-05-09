@@ -52,7 +52,7 @@ void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 
 std::string SetTransitionActorList::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(segmentOffset);
+	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
 	return StringHelper::Sprintf("SCENE_CMD_TRANSITION_ACTOR_LIST(%i, %s)", transitionActors.size(),
 	                             listName.c_str());
 }
