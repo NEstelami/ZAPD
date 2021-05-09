@@ -397,23 +397,36 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
+	Declaration* decl;
 
 	if (declarations.find(address) == declarations.end())
-		declarations[address] = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+	{
+		decl = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+		decl->isPlaceholder = true;
+		declarations[address] = decl;
+	}
+	else
+		decl = declarations[address];
 
-	return declarations[address];
+	return decl;
 }
 
 Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
+	Declaration* decl;
 
 	if (declarations.find(address) == declarations.end())
-		declarations[address] =
-			new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
+	{
+		decl = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
+		decl->isPlaceholder = true;
+		declarations[address] = decl;
+	}
+	else
+		decl = declarations[address];
 
-	return declarations[address];
+	return decl;
 }
 
 Declaration* ZFile::AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,
