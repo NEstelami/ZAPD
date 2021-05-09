@@ -17,8 +17,9 @@ protected:
 class SetEntranceList : public ZRoomCommand
 {
 public:
-	SetEntranceList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetEntranceList(ZFile* nParent);
 
+	void DeclareReferences(const std::string& prefix) override;
 	void ParseRawDataLate() override;
 	void DeclareReferencesLate(const std::string& prefix) override;
 

@@ -141,9 +141,11 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			// TODO: add this to command set
-			ZSetPathways* pathway = new ZSetPathways(this, rawData, address, false);
-			pathway->ParseRawDataLate();
-			pathway->DeclareReferencesLate(name);
+			ZPath* pathway = new ZPath(parent);
+			pathway->SetRawDataIndex(address);
+			pathway->ParseRawData();
+			pathway->DeclareReferences(name);
+			pathway->GetSourceOutputCode(name);
 
 			delete pathway;
 		}
@@ -184,106 +186,106 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		switch (opcode)
 		{
 		case RoomCommand::SetStartPositionList:
-			cmd = new SetStartPositionList(this, rawData, rawDataIndex);
+			cmd = new SetStartPositionList(parent);
 			break;  // 0x00
 		case RoomCommand::SetActorList:
-			cmd = new SetActorList(this, rawData, rawDataIndex);
+			cmd = new SetActorList(parent);
 			break;  // 0x01
 		case RoomCommand::SetCsCamera:
-			cmd = new SetCsCamera(this, rawData, rawDataIndex);
+			cmd = new SetCsCamera(parent);
 			break;  // 0x02 (MM-ONLY)
 		case RoomCommand::SetCollisionHeader:
-			cmd = new SetCollisionHeader(this, rawData, rawDataIndex);
+			cmd = new SetCollisionHeader(parent);
 			break;  // 0x03
 		case RoomCommand::SetRoomList:
-			cmd = new SetRoomList(this, rawData, rawDataIndex);
+			cmd = new SetRoomList(parent);
 			break;  // 0x04
 		case RoomCommand::SetWind:
-			cmd = new SetWind(this, rawData, rawDataIndex);
+			cmd = new SetWind(parent);
 			break;  // 0x05
 		case RoomCommand::SetEntranceList:
-			cmd = new SetEntranceList(this, rawData, rawDataIndex);
+			cmd = new SetEntranceList(parent);
 			break;  // 0x06
 		case RoomCommand::SetSpecialObjects:
-			cmd = new SetSpecialObjects(this, rawData, rawDataIndex);
+			cmd = new SetSpecialObjects(parent);
 			break;  // 0x07
 		case RoomCommand::SetRoomBehavior:
-			cmd = new SetRoomBehavior(this, rawData, rawDataIndex);
+			cmd = new SetRoomBehavior(parent);
 			break;  // 0x08
 		case RoomCommand::Unused09:
-			cmd = new Unused09(this, rawData, rawDataIndex);
+			cmd = new Unused09(parent);
 			break;  // 0x09
 		case RoomCommand::SetMesh:
-			cmd = new SetMesh(this, rawData, rawDataIndex);
+			cmd = new SetMesh(parent);
 			break;  // 0x0A
 		case RoomCommand::SetObjectList:
-			cmd = new SetObjectList(this, rawData, rawDataIndex);
+			cmd = new SetObjectList(parent);
 			break;  // 0x0B
 		case RoomCommand::SetLightList:
-			cmd = new SetLightList(this, rawData, rawDataIndex);
+			cmd = new SetLightList(parent);
 			break;  // 0x0C (MM-ONLY)
 		case RoomCommand::SetPathways:
-			cmd = new ZSetPathways(this, rawData, rawDataIndex);
+			cmd = new SetPathways(parent);
 			break;  // 0x0D
 		case RoomCommand::SetTransitionActorList:
-			cmd = new SetTransitionActorList(this, rawData, rawDataIndex);
+			cmd = new SetTransitionActorList(parent);
 			break;  // 0x0E
 		case RoomCommand::SetLightingSettings:
-			cmd = new SetLightingSettings(this, rawData, rawDataIndex);
+			cmd = new SetLightingSettings(parent);
 			break;  // 0x0F
 		case RoomCommand::SetTimeSettings:
-			cmd = new SetTimeSettings(this, rawData, rawDataIndex);
+			cmd = new SetTimeSettings(parent);
 			break;  // 0x10
 		case RoomCommand::SetSkyboxSettings:
-			cmd = new SetSkyboxSettings(this, rawData, rawDataIndex);
+			cmd = new SetSkyboxSettings(parent);
 			break;  // 0x11
 		case RoomCommand::SetSkyboxModifier:
-			cmd = new SetSkyboxModifier(this, rawData, rawDataIndex);
+			cmd = new SetSkyboxModifier(parent);
 			break;  // 0x12
 		case RoomCommand::SetExitList:
-			cmd = new SetExitList(this, rawData, rawDataIndex);
+			cmd = new SetExitList(parent);
 			break;  // 0x13
 		case RoomCommand::EndMarker:
-			cmd = new EndMarker(this, rawData, rawDataIndex);
+			cmd = new EndMarker(parent);
 			break;  // 0x14
 		case RoomCommand::SetSoundSettings:
-			cmd = new SetSoundSettings(this, rawData, rawDataIndex);
+			cmd = new SetSoundSettings(parent);
 			break;  // 0x15
 		case RoomCommand::SetEchoSettings:
-			cmd = new SetEchoSettings(this, rawData, rawDataIndex);
+			cmd = new SetEchoSettings(parent);
 			break;  // 0x16
 		case RoomCommand::SetCutscenes:
-			cmd = new SetCutscenes(this, rawData, rawDataIndex);
+			cmd = new SetCutscenes(parent);
 			break;  // 0x17
 		case RoomCommand::SetAlternateHeaders:
-			cmd = new SetAlternateHeaders(this, rawData, rawDataIndex);
+			cmd = new SetAlternateHeaders(parent);
 			break;  // 0x18
 		case RoomCommand::SetCameraSettings:
 			if (Globals::Instance->game == ZGame::MM_RETAIL)
-				cmd = new SetWorldMapVisited(this, rawData, rawDataIndex);
+				cmd = new SetWorldMapVisited(parent);
 			else
-				cmd = new SetCameraSettings(this, rawData, rawDataIndex);
+				cmd = new SetCameraSettings(parent);
 			break;  // 0x19
 		case RoomCommand::SetAnimatedTextureList:
-			cmd = new SetAnimatedTextureList(this, rawData, rawDataIndex);
+			cmd = new SetAnimatedTextureList(parent);
 			break;  // 0x1A (MM-ONLY)
 		case RoomCommand::SetActorCutsceneList:
-			cmd = new SetActorCutsceneList(this, rawData, rawDataIndex);
+			cmd = new SetActorCutsceneList(parent);
 			break;  // 0x1B (MM-ONLY)
 		case RoomCommand::SetMinimapList:
-			cmd = new SetMinimapList(this, rawData, rawDataIndex);
+			cmd = new SetMinimapList(parent);
 			break;  // 0x1C (MM-ONLY)
 		case RoomCommand::Unused1D:
-			cmd = new Unused1D(this, rawData, rawDataIndex);
+			cmd = new Unused1D(parent);
 			break;  // 0x1D
 		case RoomCommand::SetMinimapChests:
-			cmd = new SetMinimapChests(this, rawData, rawDataIndex);
+			cmd = new SetMinimapChests(parent);
 			break;  // 0x1E (MM-ONLY)
 		default:
-			cmd = new ZRoomCommandUnk(this, rawData, rawDataIndex);
+			cmd = new ZRoomCommandUnk(parent);
 		}
 
-		cmd->ParseRawData();
+		cmd->ExtractCommandFromRoom(this, rawDataIndex);
 		cmd->DeclareReferences(GetName());
 
 		auto end = std::chrono::steady_clock::now();
@@ -360,21 +362,25 @@ void ZRoom::ProcessCommandSets()
  */
 void ZRoom::SyotesRoomHack()
 {
-	char headerData[] = {0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08};
+	//char headerData[] = {0x0A, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x08};
 
-	for (size_t i = 0; i < sizeof(headerData); i++)
-		rawData.insert(rawData.begin() + i, headerData[i]);
+	//for (size_t i = 0; i < sizeof(headerData); i++)
+	//	rawData.insert(rawData.begin() + i, headerData[i]);
 
-	SetMesh* cmdSetMesh = new SetMesh(this, rawData, 0, -8);
-	cmdSetMesh->ParseRawData();
-	cmdSetMesh->DeclareReferences(GetName());
+	PolygonType2 poly(parent, parent->GetRawData(), 0, this);
 
-	for (size_t i = 0; i < sizeof(headerData); i++)
-		rawData.erase(rawData.begin());
+	//SetMesh* cmdSetMesh = new SetMesh(parent);
+	//cmdSetMesh->SetRawDataIndex(0);
+	poly.ParseRawData();
+	poly.DeclareReferences(GetName());
+	parent->AddDeclaration(0, DeclarationAlignment::Align4, poly.GetRawDataSize(), poly.GetSourceTypeName(), poly.GetDefaultName(GetName()), poly.GetBodySourceCode());
 
-	cmdSetMesh->cmdIndex = 0;
+	//for (size_t i = 0; i < sizeof(headerData); i++)
+	//	rawData.erase(rawData.begin());
 
-	commands.push_back(cmdSetMesh);
+	//cmdSetMesh->cmdIndex = 0;
+
+	//commands.push_back(cmdSetMesh);
 }
 
 ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)

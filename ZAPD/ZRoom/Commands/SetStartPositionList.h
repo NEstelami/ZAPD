@@ -6,7 +6,7 @@
 class SetStartPositionList : public ZRoomCommand
 {
 public:
-	SetStartPositionList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetStartPositionList(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

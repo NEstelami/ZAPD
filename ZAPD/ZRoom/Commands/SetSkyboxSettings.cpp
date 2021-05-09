@@ -2,14 +2,18 @@
 #include "Globals.h"
 #include "StringHelper.h"
 
-SetSkyboxSettings::SetSkyboxSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                     uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetSkyboxSettings::SetSkyboxSettings(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
+}
+
+void SetSkyboxSettings::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
 	unk1 = cmdArg1;
-	skyboxNumber = rawData.at(rawDataIndex + 0x04);
-	cloudsType = rawData.at(rawDataIndex + 0x05);
-	isIndoors = rawData.at(rawDataIndex + 0x06);
+	skyboxNumber = parent->GetRawData().at(rawDataIndex + 0x04);
+	cloudsType = parent->GetRawData().at(rawDataIndex + 0x05);
+	isIndoors = parent->GetRawData().at(rawDataIndex + 0x06);
 }
 
 std::string SetSkyboxSettings::GetBodySourceCode() const

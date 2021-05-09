@@ -5,7 +5,9 @@
 class SetSkyboxModifier : public ZRoomCommand
 {
 public:
-	SetSkyboxModifier(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetSkyboxModifier(ZFile* nParent);
+
+	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
 

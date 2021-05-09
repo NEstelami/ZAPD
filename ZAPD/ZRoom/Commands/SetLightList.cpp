@@ -2,21 +2,21 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetLightList::SetLightList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                           uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetLightList::SetLightList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	numLights = cmdArg1;
 }
 
 void SetLightList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	std::string declarations = "";
 
+	numLights = cmdArg1;
 	int32_t currentPtr = segmentOffset;
 	for (int i = 0; i < this->numLights; i++)
 	{
-		LightInfo light(rawData, currentPtr);
+		LightInfo light(parent->GetRawData(), currentPtr);
 
 		currentPtr += light.GetRawDataSize();
 		lights.push_back(light);

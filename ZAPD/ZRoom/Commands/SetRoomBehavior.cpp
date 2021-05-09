@@ -3,16 +3,16 @@
 #include "Globals.h"
 #include "StringHelper.h"
 
-SetRoomBehavior::SetRoomBehavior(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetRoomBehavior::SetRoomBehavior(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetRoomBehavior::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	gameplayFlags = cmdArg1;
-	gameplayFlags2 = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x04);
+	gameplayFlags2 = BitConverter::ToInt32BE(parent->GetRawData(), rawDataIndex + 0x04);
 
 	currRoomUnk2 = gameplayFlags2 & 0xFF;
 

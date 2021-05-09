@@ -5,20 +5,20 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetAnimatedTextureList::SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetAnimatedTextureList::SetAnimatedTextureList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetAnimatedTextureList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	int32_t currentPtr = segmentOffset;
 	bool keepGoing = true;
 
 	do
 	{
-		AnimatedTexture lastTexture(rawData, currentPtr);
+		AnimatedTexture lastTexture(parent->GetRawData(), currentPtr);
 		keepGoing = (lastTexture.segment != 0) && (lastTexture.segment > -1);
 		currentPtr += 8;
 		textures.push_back(lastTexture);

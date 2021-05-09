@@ -2,12 +2,16 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetSpecialObjects::SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                     uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetSpecialObjects::SetSpecialObjects(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
+}
+
+void SetSpecialObjects::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
 	elfMessage = cmdArg1;
-	globalObject = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
+	globalObject = BitConverter::ToUInt16BE(parent->GetRawData(), rawDataIndex + 0x06);
 }
 
 std::string SetSpecialObjects::GetBodySourceCode() const

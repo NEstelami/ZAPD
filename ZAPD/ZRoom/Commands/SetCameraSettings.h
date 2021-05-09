@@ -5,7 +5,9 @@
 class SetCameraSettings : public ZRoomCommand
 {
 public:
-	SetCameraSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetCameraSettings(ZFile* nParent);
+
+	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
 

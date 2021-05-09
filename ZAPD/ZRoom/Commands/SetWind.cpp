@@ -1,13 +1,19 @@
 #include "SetWind.h"
 #include "StringHelper.h"
 
-SetWind::SetWind(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetWind::SetWind(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	windWest = rawData[rawDataIndex + 0x04];
-	windVertical = rawData[rawDataIndex + 0x05];
-	windSouth = rawData[rawDataIndex + 0x06];
-	clothFlappingStrength = rawData[rawDataIndex + 0x07];
+}
+
+void SetWind::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
+	auto& parentRawData = parent->GetRawData();
+	windWest = parentRawData.at(rawDataIndex + 0x04);
+	windVertical = parentRawData.at(rawDataIndex + 0x05);
+	windSouth = parentRawData.at(rawDataIndex + 0x06);
+	clothFlappingStrength = parentRawData.at(rawDataIndex + 0x07);
 }
 
 std::string SetWind::GetBodySourceCode() const

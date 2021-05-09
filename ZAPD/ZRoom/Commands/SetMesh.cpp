@@ -9,33 +9,29 @@
 
 void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList);
 
-SetMesh::SetMesh(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                 int32_t segAddressOffset)
-	: ZRoomCommand(nZRoom, nRawData, nRawDataIndex)
+SetMesh::SetMesh(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	meshHeaderType = rawData.at(segmentOffset + 0);
-
-	if (meshHeaderType == 0)
-	{
-		// Hack for Syotes
-		SyotesHack(segAddressOffset);
-	}
 }
 
 void SetMesh::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
+	auto& parentRawData = parent->GetRawData();
+	meshHeaderType = parentRawData.at(segmentOffset);
+
 	switch (meshHeaderType)
 	{
 	case 0:
-		polyType = std::make_shared<PolygonType2>(parent, rawData, segmentOffset, zRoom);
+		polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
 		break;
 
 	case 1:
-		polyType = std::make_shared<PolygonType1>(parent, rawData, segmentOffset, zRoom);
+		polyType = std::make_shared<PolygonType1>(parent, parentRawData, segmentOffset, zRoom);
 		break;
 
 	case 2:
-		polyType = std::make_shared<PolygonType2>(parent, rawData, segmentOffset, zRoom);
+		polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
 		break;
 
 	default:
@@ -118,6 +114,7 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
+// TODO: delete
 void SetMesh::SyotesHack(int segAddressOffset)
 {
 	// Hack for Syotes

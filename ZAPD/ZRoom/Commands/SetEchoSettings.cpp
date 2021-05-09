@@ -1,11 +1,15 @@
 #include "SetEchoSettings.h"
 #include "StringHelper.h"
 
-SetEchoSettings::SetEchoSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetEchoSettings::SetEchoSettings(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	echo = rawData[rawDataIndex + 0x07];
+}
+
+void SetEchoSettings::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
+	echo = parent->GetRawData().at(rawDataIndex + 0x07);
 }
 
 std::string SetEchoSettings::GetBodySourceCode() const

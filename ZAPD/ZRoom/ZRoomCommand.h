@@ -58,11 +58,11 @@ public:
 	uint32_t commandSet;
 
 	ZRoomCommand(ZFile* nParent);
-	ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex);
 	virtual ~ZRoomCommand() = default;
 
-	// virtual void ParseRawData();
-	virtual void DeclareReferences(const std::string& prefix);
+	virtual void ExtractCommandFromRoom(ZRoom* nZRoom, uint32_t nRawDataIndex);
+
+	void ParseRawData() override;
 
 	virtual void ParseRawDataLate();
 	virtual void DeclareReferencesLate(const std::string& prefix);
@@ -70,7 +70,7 @@ public:
 	virtual std::string GetBodySourceCode() const = 0;
 
 	// Getters/Setters
-	virtual RoomCommand GetRoomCommand() const;
+	virtual RoomCommand GetRoomCommand() const = 0;
 	//virtual size_t GetRawDataSize() const;
 	virtual std::string GetCommandCName() const;
 
@@ -81,5 +81,6 @@ protected:
 
 	RoomCommand cmdID;
 	uint8_t cmdArg1;
+	segptr_t cmdArg2;
 	uint32_t segmentOffset;
 };

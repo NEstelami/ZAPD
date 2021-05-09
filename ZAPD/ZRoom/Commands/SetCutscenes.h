@@ -18,7 +18,7 @@ public:
 class SetCutscenes : public ZRoomCommand
 {
 public:
-	SetCutscenes(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetCutscenes(ZFile* nParent);
 	~SetCutscenes();
 
 	void ParseRawData() override;

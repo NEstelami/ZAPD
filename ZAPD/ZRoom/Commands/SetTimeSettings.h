@@ -5,7 +5,9 @@
 class SetTimeSettings : public ZRoomCommand
 {
 public:
-	SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetTimeSettings(ZFile* nParent);
+
+	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
 

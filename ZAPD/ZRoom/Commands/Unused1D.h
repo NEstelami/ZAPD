@@ -5,7 +5,7 @@
 class Unused1D : public ZRoomCommand
 {
 public:
-	Unused1D(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	Unused1D(ZFile* nParent);
 
 	std::string GetBodySourceCode() const override;
 

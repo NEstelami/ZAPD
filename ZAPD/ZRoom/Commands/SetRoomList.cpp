@@ -6,20 +6,21 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetRoomList::SetRoomList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetRoomList::SetRoomList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetRoomList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	int numRooms = cmdArg1;
 
 	int32_t currentPtr = segmentOffset;
 
 	for (int32_t i = 0; i < numRooms; i++)
 	{
-		RoomEntry entry(rawData, currentPtr);
+		RoomEntry entry(parent->GetRawData(), currentPtr);
 		rooms.push_back(entry);
 
 		currentPtr += 8;

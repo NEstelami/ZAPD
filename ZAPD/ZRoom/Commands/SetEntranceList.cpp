@@ -5,11 +5,15 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetEntranceList::SetEntranceList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetEntranceList::SetEntranceList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	parent->AddDeclarationPlaceholder(segmentOffset);  // Make sure this segment is defined
+}
+
+void SetEntranceList::DeclareReferences(const std::string& prefix)
+{
+	if (segmentOffset != 0)
+		parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 void SetEntranceList::ParseRawDataLate()
@@ -20,7 +24,7 @@ void SetEntranceList::ParseRawDataLate()
 
 	for (int32_t i = 0; i < numEntrances; i++)
 	{
-		EntranceEntry entry(rawData, currentPtr);
+		EntranceEntry entry(parent->GetRawData(), currentPtr);
 		entrances.push_back(entry);
 
 		currentPtr += 2;

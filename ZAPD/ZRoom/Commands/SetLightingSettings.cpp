@@ -4,18 +4,18 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                         uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetLightingSettings::SetLightingSettings(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetLightingSettings::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	uint8_t numLights = cmdArg1;
 
 	for (int i = 0; i < numLights; i++)
-		settings.push_back(LightingSettings(rawData, segmentOffset + (i * 22)));
+		settings.push_back(LightingSettings(parent->GetRawData(), segmentOffset + (i * 22)));
 }
 
 void SetLightingSettings::DeclareReferences(const std::string& prefix)

@@ -94,8 +94,7 @@ public:
 class SetAnimatedTextureList : public ZRoomCommand
 {
 public:
-	SetAnimatedTextureList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-	                       uint32_t rawDataIndex);
+	SetAnimatedTextureList(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

@@ -1,8 +1,8 @@
 #include "Unused1D.h"
 #include "StringHelper.h"
 
-Unused1D::Unused1D(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+Unused1D::Unused1D(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 

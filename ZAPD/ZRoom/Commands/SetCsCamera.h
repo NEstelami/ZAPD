@@ -23,7 +23,7 @@ public:
 class SetCsCamera : public ZRoomCommand
 {
 public:
-	SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetCsCamera(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

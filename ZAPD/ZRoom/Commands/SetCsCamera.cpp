@@ -5,13 +5,14 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetCsCamera::SetCsCamera(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetCsCamera::SetCsCamera(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetCsCamera::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	int numCameras = cmdArg1;
 
 	uint32_t currentPtr = segmentOffset;
@@ -19,7 +20,7 @@ void SetCsCamera::ParseRawData()
 
 	for (int32_t i = 0; i < numCameras; i++)
 	{
-		CsCameraEntry entry(rawData, currentPtr);
+		CsCameraEntry entry(parent->GetRawData(), currentPtr);
 		numPoints += entry.GetNumPoints();
 
 		currentPtr += entry.GetRawDataSize();
@@ -33,7 +34,7 @@ void SetCsCamera::ParseRawData()
 		for (int32_t i = 0; i < numPoints; i++)
 		{
 			ZVector vec(parent);
-			vec.SetRawData(rawData);
+			vec.SetRawData(parent->GetRawData());
 			vec.SetRawDataIndex(currentPtr);
 			vec.SetScalarType(ZScalarType::ZSCALAR_S16);
 			vec.SetDimensions(3);
@@ -56,7 +57,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		size_t index = 0;
 		for (auto& point : points)
 		{
-			declaration += StringHelper::Sprintf("\t%s, //0x%06X", point.GetSourceValue().c_str(),
+			declaration += StringHelper::Sprintf("\t%s, //0x%06X", point.GetBodySourceCode().c_str(),
 			                                     cameras.at(0).segmentOffset + (index * 6));
 
 			if (index < points.size() - 1)

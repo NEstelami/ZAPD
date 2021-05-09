@@ -6,21 +6,22 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetMinimapList::SetMinimapList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                               uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetMinimapList::SetMinimapList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	listSegmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, segmentOffset + 0));
-	unk4 = BitConverter::ToInt32BE(rawData, segmentOffset + 4);
 }
 
 void SetMinimapList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
+	listSegmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset + 0));
+	unk4 = BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset + 4);
+
 	int32_t currentPtr = listSegmentOffset;
 
 	for (int32_t i = 0; i < zRoom->roomCount; i++)
 	{
-		MinimapEntry entry(rawData, currentPtr);
+		MinimapEntry entry(parent->GetRawData(), currentPtr);
 		minimaps.push_back(entry);
 
 		currentPtr += 10;

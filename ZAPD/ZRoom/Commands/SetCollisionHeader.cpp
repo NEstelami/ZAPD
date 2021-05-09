@@ -5,16 +5,16 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                       uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetCollisionHeader::SetCollisionHeader(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetCollisionHeader::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	collisionHeader = new ZCollisionHeader(parent);
-	collisionHeader->SetRawData(rawData);
+	collisionHeader->SetRawData(parent->GetRawData());
 	collisionHeader->SetRawDataIndex(segmentOffset);
 	collisionHeader->SetName(
 		StringHelper::Sprintf("%sCollisionHeader_%06X", parent->GetName().c_str(), segmentOffset));

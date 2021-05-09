@@ -1,8 +1,8 @@
 #include "Unused09.h"
 #include "StringHelper.h"
 
-Unused09::Unused09(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+Unused09::Unused09(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 

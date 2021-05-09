@@ -5,7 +5,7 @@
 class SetRoomBehavior : public ZRoomCommand
 {
 public:
-	SetRoomBehavior(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetRoomBehavior(ZFile* nParent);
 
 	void ParseRawData() override;
 

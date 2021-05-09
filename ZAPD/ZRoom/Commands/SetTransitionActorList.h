@@ -23,11 +23,10 @@ protected:
 class SetTransitionActorList : public ZRoomCommand
 {
 public:
-	SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-	                       uint32_t rawDataIndex);
+	SetTransitionActorList(ZFile* nParent);
 
-	virtual void ParseRawData();
-	virtual void DeclareReferences(const std::string& prefix);
+	void ParseRawData() override;
+	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const override;
 

@@ -6,21 +6,21 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                   uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetMinimapChests::SetMinimapChests(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetMinimapChests::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	int numChests = cmdArg1;
 
 	int32_t currentPtr = segmentOffset;
 
 	for (int32_t i = 0; i < numChests; i++)
 	{
-		MinimapChest chest(rawData, currentPtr);
+		MinimapChest chest(parent->GetRawData(), currentPtr);
 		chests.push_back(chest);
 
 		currentPtr += 10;

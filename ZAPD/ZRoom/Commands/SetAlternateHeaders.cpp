@@ -4,9 +4,12 @@
 #include "StringHelper.h"
 #include "ZFile.h"
 
-SetAlternateHeaders::SetAlternateHeaders(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                         uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetAlternateHeaders::SetAlternateHeaders(ZFile* nParent)
+	: ZRoomCommand(nParent)
+{
+}
+
+void SetAlternateHeaders::DeclareReferences(const std::string& prefix)
 {
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
@@ -18,7 +21,7 @@ void SetAlternateHeaders::ParseRawDataLate()
 
 	for (int32_t i = 0; i < numHeaders; i++)
 	{
-		int32_t address = BitConverter::ToInt32BE(rawData, segmentOffset + (i * 4));
+		int32_t address = BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset + (i * 4));
 		headers.push_back(address);
 
 		if (address != 0)

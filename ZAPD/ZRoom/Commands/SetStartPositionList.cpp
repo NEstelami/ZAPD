@@ -7,24 +7,24 @@
 #include "ZRoom/ZNames.h"
 #include "ZRoom/ZRoom.h"
 
-SetStartPositionList::SetStartPositionList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                           uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetStartPositionList::SetStartPositionList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetStartPositionList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	uint8_t numActors = cmdArg1;
 
-	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
+	/*if (segmentOffset != 0)
+		parent->AddDeclarationPlaceholder(segmentOffset);*/
 
 	uint32_t currentPtr = segmentOffset;
 
 	for (int32_t i = 0; i < numActors; i++)
 	{
-		actors.push_back(ActorSpawnEntry(rawData, currentPtr));
+		actors.push_back(ActorSpawnEntry(parent->GetRawData(), currentPtr));
 		currentPtr += 16;
 	}
 }

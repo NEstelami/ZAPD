@@ -28,7 +28,7 @@ protected:
 class SetActorList : public ZRoomCommand
 {
 public:
-	SetActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetActorList(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

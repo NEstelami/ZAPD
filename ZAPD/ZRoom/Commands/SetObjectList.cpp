@@ -7,20 +7,20 @@
 #include "ZRoom/ZNames.h"
 #include "ZRoom/ZRoom.h"
 
-SetObjectList::SetObjectList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                             uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetObjectList::SetObjectList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetObjectList::ParseRawData()
 {
-	uint8_t objectCnt = rawData[rawDataIndex + 1];
+	ZRoomCommand::ParseRawData();
+	uint8_t objectCnt = parent->GetRawData().at(rawDataIndex + 1);
 	uint32_t currentPtr = segmentOffset;
 
 	for (uint8_t i = 0; i < objectCnt; i++)
 	{
-		uint16_t objectIndex = BitConverter::ToInt16BE(rawData, currentPtr);
+		uint16_t objectIndex = BitConverter::ToInt16BE(parent->GetRawData(), currentPtr);
 		objects.push_back(objectIndex);
 		currentPtr += 2;
 	}

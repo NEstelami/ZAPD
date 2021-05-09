@@ -1,4 +1,5 @@
 #include "ZRoomCommand.h"
+
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "ZRoom.h"
@@ -7,21 +8,23 @@ ZRoomCommand::ZRoomCommand(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData,
-                           uint32_t nRawDataIndex)
-	: ZResource(nZRoom->parent), zRoom{nZRoom}
+void ZRoomCommand::ExtractCommandFromRoom(ZRoom* nZRoom, uint32_t nRawDataIndex)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
+	zRoom = nZRoom;
 	rawDataIndex = nRawDataIndex;
-	cmdID = static_cast<RoomCommand>(rawData.at(rawDataIndex));
-	cmdAddress = rawDataIndex;
 
-	cmdArg1 = rawData.at(rawDataIndex + 1);
-	segmentOffset = GETSEGOFFSET(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4));
+	ParseRawData();
 }
 
-void ZRoomCommand::DeclareReferences(const std::string& prefix)
+void ZRoomCommand::ParseRawData()
 {
+	auto& parentRawData = parent->GetRawData();
+	cmdID = static_cast<RoomCommand>(parentRawData.at(rawDataIndex));
+	cmdAddress = rawDataIndex;
+
+	cmdArg1 = parentRawData.at(rawDataIndex + 1);
+	cmdArg2 = BitConverter::ToUInt32BE(parentRawData, rawDataIndex + 4);
+	segmentOffset = GETSEGOFFSET(cmdArg2);
 }
 
 void ZRoomCommand::ParseRawDataLate()

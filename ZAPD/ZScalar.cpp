@@ -192,7 +192,7 @@ std::string ZScalar::GetSourceTypeName() const
 	return ZScalar::MapScalarTypeToOutputType(scalarType);
 }
 
-std::string ZScalar::GetSourceValue() const
+std::string ZScalar::GetBodySourceCode() const
 {
 	switch (scalarType)
 	{
@@ -225,7 +225,7 @@ std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetSourceValue());
+		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
 
 	return "";
 }

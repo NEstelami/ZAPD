@@ -1,10 +1,17 @@
 #include "SetActorCutsceneList.h"
+
 #include "BitConverter.h"
 #include "Globals.h"
 #include "StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
+SetActorCutsceneList::SetActorCutsceneList(ZFile* nParent)
+	: ZRoomCommand(nParent)
+{
+}
+
+/*
 SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
                                            uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -12,15 +19,17 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }
+*/
 
 void SetActorCutsceneList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	int numCutscenes = cmdArg1;
 	int32_t currentPtr = segmentOffset;
 
 	for (int32_t i = 0; i < numCutscenes; i++)
 	{
-		ActorCutsceneEntry entry(rawData, currentPtr);
+		ActorCutsceneEntry entry(parent->GetRawData(), currentPtr);
 		cutscenes.push_back(entry);
 
 		currentPtr += 16;

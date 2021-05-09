@@ -1,8 +1,8 @@
 #include "EndMarker.h"
-#include "StringHelper.h"
 
-EndMarker::EndMarker(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+
+EndMarker::EndMarker(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 

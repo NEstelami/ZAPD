@@ -5,7 +5,9 @@
 class SetSpecialObjects : public ZRoomCommand
 {
 public:
-	SetSpecialObjects(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetSpecialObjects(ZFile* nParent);
+
+	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
 

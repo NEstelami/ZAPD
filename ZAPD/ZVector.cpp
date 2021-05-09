@@ -10,22 +10,8 @@ REGISTER_ZFILENODE(Vector, ZVector);
 
 ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 {
-	scalars = std::vector<ZScalar*>();
-	this->scalarType = ZScalarType::ZSCALAR_NONE;
-	this->dimensions = 0;
-}
-
-ZVector::~ZVector()
-{
-	ClearScalars();
-}
-
-void ZVector::ClearScalars()
-{
-	for (auto s : scalars)
-		delete s;
-
-	scalars.clear();
+	scalarType = ZScalarType::ZSCALAR_NONE;
+	dimensions = 0;
 }
 
 void ZVector::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -49,15 +35,13 @@ void ZVector::ParseRawData()
 {
 	int32_t currentRawDataIndex = this->rawDataIndex;
 
-	ClearScalars();
-
 	for (uint32_t i = 0; i < this->dimensions; i++)
 	{
-		ZScalar* scalar = new ZScalar(this->scalarType, this->parent);
-		scalar->rawDataIndex = currentRawDataIndex;
-		scalar->rawData = this->rawData;
-		scalar->ParseRawData();
-		currentRawDataIndex += scalar->GetRawDataSize();
+		ZScalar scalar(scalarType, parent);
+		scalar.rawDataIndex = currentRawDataIndex;
+		scalar.rawData = this->rawData;
+		scalar.ParseRawData();
+		currentRawDataIndex += scalar.GetRawDataSize();
 
 		this->scalars.push_back(scalar);
 	}
@@ -71,7 +55,7 @@ size_t ZVector::GetRawDataSize() const
 	size_t size = 0;
 
 	for (size_t i = 0; i < this->scalars.size(); i++)
-		size += this->scalars[i]->GetRawDataSize();
+		size += this->scalars[i].GetRawDataSize();
 
 	return size;
 }
@@ -102,21 +86,21 @@ std::string ZVector::GetSourceTypeName() const
 	}
 }
 
-std::string ZVector::GetSourceValue() const
+std::string ZVector::GetBodySourceCode() const
 {
-	std::vector<std::string> strings = std::vector<std::string>();
+	std::string body = "";
 
 	for (size_t i = 0; i < this->scalars.size(); i++)
-		strings.push_back(scalars[i]->GetSourceValue());
+		body += StringHelper::Sprintf("%6s, ", scalars[i].GetBodySourceCode().c_str());
 
-	return "{ " + StringHelper::Implode(strings, ", ") + " }";
+	return "{ " + body + "}";
 }
 
 std::string ZVector::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetSourceValue());
+		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
 
 	return "";
 }

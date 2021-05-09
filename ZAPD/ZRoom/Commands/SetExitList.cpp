@@ -1,11 +1,16 @@
 #include "SetExitList.h"
+
 #include "BitConverter.h"
 #include "StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetExitList::SetExitList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetExitList::SetExitList(ZFile* nParent)
+	: ZRoomCommand(nParent)
+{
+}
+
+void SetExitList::DeclareReferences(const std::string& prefix)
 {
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
@@ -19,7 +24,7 @@ void SetExitList::ParseRawDataLate()
 
 	for (int32_t i = 0; i < numEntrances; i++)
 	{
-		uint16_t exit = BitConverter::ToUInt16BE(rawData, currentPtr);
+		uint16_t exit = BitConverter::ToUInt16BE(parent->GetRawData(), currentPtr);
 		exits.push_back(exit);
 
 		currentPtr += 2;

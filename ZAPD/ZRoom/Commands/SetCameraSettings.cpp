@@ -3,12 +3,16 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                     uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetCameraSettings::SetCameraSettings(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
+}
+
+void SetCameraSettings::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
 	cameraMovement = cmdArg1;
-	mapHighlight = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+	mapHighlight = BitConverter::ToUInt32BE(parent->GetRawData(), rawDataIndex + 4);
 }
 
 std::string SetCameraSettings::GetBodySourceCode() const

@@ -1,12 +1,17 @@
 #include "SetSkyboxModifier.h"
+
 #include "StringHelper.h"
 
-SetSkyboxModifier::SetSkyboxModifier(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                     uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetSkyboxModifier::SetSkyboxModifier(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	disableSky = rawData.at(rawDataIndex + 0x04);
-	disableSunMoon = rawData.at(rawDataIndex + 0x05);
+}
+
+void SetSkyboxModifier::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
+	disableSky = parent->GetRawData().at(rawDataIndex + 0x04);
+	disableSunMoon = parent->GetRawData().at(rawDataIndex + 0x05);
 }
 
 std::string SetSkyboxModifier::GetBodySourceCode() const

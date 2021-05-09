@@ -26,7 +26,7 @@ public:
 class SetActorCutsceneList : public ZRoomCommand
 {
 public:
-	SetActorCutsceneList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetActorCutsceneList(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

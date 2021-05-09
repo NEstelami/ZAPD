@@ -5,7 +5,9 @@
 class SetSoundSettings : public ZRoomCommand
 {
 public:
-	SetSoundSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	SetSoundSettings(ZFile* nParent);
+
+	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
 

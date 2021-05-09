@@ -2,13 +2,17 @@
 #include "BitConverter.h"
 #include "StringHelper.h"
 
-SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                 uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetTimeSettings::SetTimeSettings(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
-	hour = rawData.at(rawDataIndex + 4);
-	min = rawData.at(rawDataIndex + 5);
-	unk = rawData.at(rawDataIndex + 6);
+}
+
+void SetTimeSettings::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
+	hour = parent->GetRawData().at(rawDataIndex + 4);
+	min = parent->GetRawData().at(rawDataIndex + 5);
+	unk = parent->GetRawData().at(rawDataIndex + 6);
 }
 
 std::string SetTimeSettings::GetBodySourceCode() const

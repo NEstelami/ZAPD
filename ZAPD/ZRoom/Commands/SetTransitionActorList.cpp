@@ -7,21 +7,20 @@
 #include "ZRoom/ZNames.h"
 #include "ZRoom/ZRoom.h"
 
-SetTransitionActorList::SetTransitionActorList(ZRoom* nZRoom, const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetTransitionActorList::SetTransitionActorList(ZFile* nParent)
+	: ZRoomCommand(nParent)
 {
 }
 
 void SetTransitionActorList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	int numActors = cmdArg1;
-
 	uint32_t currentPtr = segmentOffset;
 
 	for (int32_t i = 0; i < numActors; i++)
 	{
-		TransitionActorEntry entry(rawData, currentPtr);
+		TransitionActorEntry entry(parent->GetRawData(), currentPtr);
 		transitionActors.push_back(entry);
 
 		currentPtr += 16;
