@@ -36,6 +36,11 @@ void ZPath::ParseXML(tinyxml2::XMLElement* reader)
 	if (numPathsXml != nullptr)
 	{
 		numPaths = StringHelper::StrToL(std::string(numPathsXml));
+        if (numPaths < 1)
+            throw std::runtime_error(
+                StringHelper::Sprintf(
+                    "ZPath::ParseXML: Fatal error in '%s'.\n"
+                    "\t Invalid value for attribute 'NumPaths': '%i'\n", name.c_str(), numPaths));
 	}
 }
 
