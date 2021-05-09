@@ -10,7 +10,6 @@ class SetPathways : public ZRoomCommand
 public:
 	SetPathways(ZFile* nParent);
 
-	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
 	void ParseRawDataLate() override;
