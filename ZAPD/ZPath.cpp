@@ -10,7 +10,7 @@ REGISTER_ZFILENODE(Path, ZPath);
 ZPath::ZPath(ZFile* nParent) : ZResource(nParent)
 {
 	numPaths = 1;
-	RegisterOptionalAttribute("NumPaths", "1")
+	RegisterOptionalAttribute("NumPaths", "1");
 }
 
 void ZPath::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -70,7 +70,7 @@ std::string ZPath::GetBodySourceCode() const
 	size_t index = 0;
 	for (const auto& entry : pathways)
 	{
-		declaration += StringHelper::Sprintf("\t%s,\n", entry.GetBodySourceCode().c_str());
+		declaration += StringHelper::Sprintf("\t%s,", entry.GetBodySourceCode().c_str());
 
 		if (index < pathways.size() - 1)
 			declaration += "\n";
