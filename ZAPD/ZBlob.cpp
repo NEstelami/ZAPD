@@ -78,7 +78,7 @@ std::string ZBlob::GetSourceOutputHeader(const std::string& prefix)
 
 void ZBlob::Save(const fs::path& outFolder)
 {
-	File::WriteAllBytes(outFolder / (name + ".bin"), rawData);
+	File::WriteAllBytes(outFolder / (name + ".bin"), blobData);
 }
 
 bool ZBlob::IsExternalResource() const
