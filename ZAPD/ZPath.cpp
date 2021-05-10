@@ -70,7 +70,7 @@ std::string ZPath::GetBodySourceCode() const
 	size_t index = 0;
 	for (const auto& entry : pathways)
 	{
-		declaration += StringHelper::Sprintf("\t%s,", entry.GetBodySourceCode().c_str());
+		declaration += StringHelper::Sprintf("\t{ %s },", entry.GetBodySourceCode().c_str());
 
 		if (index < pathways.size() - 1)
 			declaration += "\n";
