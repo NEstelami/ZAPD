@@ -123,7 +123,7 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-std::string ZResource::GetName() const
+const std::string& ZResource::GetName() const
 {
 	return name;
 }

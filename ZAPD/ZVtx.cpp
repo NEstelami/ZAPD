@@ -74,12 +74,12 @@ bool ZVtx::IsExternalResource() const
 	return true;
 }
 
-std::string ZVtx::GetSourceTypeName()
+std::string ZVtx::GetSourceTypeName() const
 {
 	return "Vtx";
 }
 
-std::string ZVtx::GetExternalExtension()
+std::string ZVtx::GetExternalExtension() const
 {
 	return "vtx";
 }

@@ -193,7 +193,7 @@ ZResourceType ZCollisionHeader::GetResourceType() const
 	return ZResourceType::CollisionHeader;
 }
 
-size_t ZCollisionHeader::GetRawDataSize()
+size_t ZCollisionHeader::GetRawDataSize() const
 {
 	return 44;
 }

@@ -48,7 +48,7 @@ void ZBlob::ParseRawData()
 	blobData.assign(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + blobSize);
 }
 
-string ZBlob::GetSourceOutputCode(const std::string& prefix)
+std::string ZBlob::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
 
@@ -101,7 +101,7 @@ ZResourceType ZBlob::GetResourceType() const
 	return ZResourceType::Blob;
 }
 
-size_t ZBlob::GetRawDataSize()
+size_t ZBlob::GetRawDataSize() const
 {
 	return blobSize;
 }

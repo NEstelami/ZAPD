@@ -94,5 +94,5 @@ public:
 
 	ZResourceType GetResourceType() const override;
 
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 };
