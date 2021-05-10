@@ -65,7 +65,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
-	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
 
 	if (std::string(reader->Name()) == "Scene")
@@ -82,7 +81,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		cmdCount = 0;
 	}
 
-	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
+	for (XMLElement* child = reader->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		std::string childName =

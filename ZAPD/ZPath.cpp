@@ -10,6 +10,7 @@ REGISTER_ZFILENODE(Path, ZPath);
 ZPath::ZPath(ZFile* nParent) : ZResource(nParent)
 {
 	numPaths = 1;
+	RegisterOptionalAttribute("NumPaths", "1")
 }
 
 void ZPath::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -25,16 +26,13 @@ void ZPath::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	const char* numPathsXml = reader->Attribute("NumPaths");
-	if (numPathsXml != nullptr)
-	{
-		numPaths = StringHelper::StrToL(std::string(numPathsXml));
-		if (numPaths < 1)
-			throw std::runtime_error(
-				StringHelper::Sprintf("ZPath::ParseXML: Fatal error in '%s'.\n"
-			                          "\t Invalid value for attribute 'NumPaths': '%i'\n",
-			                          name.c_str(), numPaths));
-	}
+	numPaths = StringHelper::StrToL(registeredAttributes.at("NumPaths").value);
+
+	if (numPaths < 1)
+		throw std::runtime_error(
+			StringHelper::Sprintf("ZPath::ParseXML: Fatal error in '%s'.\n"
+		                          "\t Invalid value for attribute 'NumPaths': '%i'\n",
+		                          name.c_str(), numPaths));
 }
 
 void ZPath::ParseRawData()
