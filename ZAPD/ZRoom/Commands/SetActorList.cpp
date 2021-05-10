@@ -118,19 +118,21 @@ ActorSpawnEntry::ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t r
 
 std::string ActorSpawnEntry::GetBodySourceCode() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf(
-			"\n\t\t%s,\n\t\t{ %6i, %6i, %6i },\n\t\t{ SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X), "
-			"SPAWN_ROT_FLAGS(%i, 0x%04X)},\n\t\t0x%04X\n   ",
-			ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ, (rotX >> 7) & 0b111111111,
-			rotX & 0b1111111, (rotY >> 7) & 0b111111111, rotY & 0b1111111,
-			(rotZ >> 7) & 0b111111111, rotZ & 0b1111111, initVar);
-	}
+	std::string body = "\n";
 
-	return StringHelper::Sprintf(
-		"\n\t\t%s,\n\t\t{ %6i, %6i, %6i },\n\t\t{ %6i, %6i, %6i },\n\t\t0x%04X\n   ",
-		ZNames::GetActorName(actorNum).c_str(), posX, posY, posZ, rotX, rotY, rotZ, initVar);
+	body += "\t\t" + ZNames::GetActorName(actorNum) + ",\n";
+	body += StringHelper::Sprintf("\t\t{ %6i, %6i, %6i },\n", posX, posY, posZ);
+	if (Globals::Instance->game == ZGame::MM_RETAIL)
+		body += StringHelper::Sprintf("\t\t{ SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, "
+		                              "0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X)},\n",
+		                              (rotX >> 7) & 0b111111111, rotX & 0b1111111,
+		                              (rotY >> 7) & 0b111111111, rotY & 0b1111111,
+		                              (rotZ >> 7) & 0b111111111, rotZ & 0b1111111);
+	else
+		body += StringHelper::Sprintf("\t\t{ %6i, %6i, %6i },\n", rotX, rotY, rotZ);
+	body += StringHelper::Sprintf("\t\t0x%04X\n   ", initVar);
+
+	return body;
 }
 
 std::string ActorSpawnEntry::GetSourceTypeName() const

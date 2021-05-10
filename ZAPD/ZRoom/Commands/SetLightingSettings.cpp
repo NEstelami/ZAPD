@@ -33,7 +33,7 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, DeclarationPadding::None,
+			segmentOffset, DeclarationAlignment::Align4,
 			settings.size() * settings.front().GetRawDataSize(), "LightSettings",
 			StringHelper::Sprintf("%sLightSettings0x%06X", prefix.c_str(), segmentOffset),
 			settings.size(), declaration);

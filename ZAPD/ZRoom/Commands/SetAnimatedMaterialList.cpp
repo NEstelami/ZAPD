@@ -184,8 +184,7 @@ size_t ScrollingTexture::GetParamsSize()
 	return 4;
 }
 
-F3DPrimColor::F3DPrimColor(const std::vector<uint8_t>& rawData,
-                                                   uint32_t rawDataIndex)
+F3DPrimColor::F3DPrimColor(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: r(rawData.at(rawDataIndex + 0)), g(rawData.at(rawDataIndex + 1)),
 	  b(rawData.at(rawDataIndex + 2)), a(rawData.at(rawDataIndex + 3)),
 	  lodFrac(rawData.at(rawDataIndex + 4))
@@ -250,8 +249,8 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 		}
 
 		zRoom->parent->AddDeclarationArray(
-			primColorSegmentOffset, DeclarationAlignment::Align4, DeclarationPadding::None,
-			primColors.size() * 5, "F3DPrimColor",
+			primColorSegmentOffset, DeclarationAlignment::Align4, primColors.size() * 5,
+			"F3DPrimColor",
 			StringHelper::Sprintf("%sAnimatedMaterialPrimColor0x%06X", zRoom->GetName().c_str(),
 		                          primColorSegmentOffset),
 			primColors.size(), declaration);
@@ -274,8 +273,8 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 		}
 
 		zRoom->parent->AddDeclarationArray(
-			envColorSegmentOffset, DeclarationAlignment::Align4, DeclarationPadding::None,
-			envColors.size() * 4, "Color_RGBA8",
+			envColorSegmentOffset, DeclarationAlignment::Align4, envColors.size() * 4,
+			"Color_RGBA8",
 			StringHelper::Sprintf("%sAnimatedMaterialEnvColors0x%06X", zRoom->GetName().c_str(),
 		                          envColorSegmentOffset),
 			envColors.size(), declaration);
@@ -296,12 +295,11 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 			index++;
 		}
 
-		zRoom->parent->AddDeclarationArray(keyFrameSegmentOffset, DeclarationAlignment::Align4,
-		                                   DeclarationPadding::None, keyFrames.size() * 2, "u16",
-		                                   StringHelper::Sprintf("%sAnimatedMaterialKeyFrames0x%06X",
-		                                                         zRoom->GetName().c_str(),
-		                                                         keyFrameSegmentOffset),
-		                                   keyFrames.size(), declaration);
+		zRoom->parent->AddDeclarationArray(
+			keyFrameSegmentOffset, DeclarationAlignment::Align4, keyFrames.size() * 2, "u16",
+			StringHelper::Sprintf("%sAnimatedMaterialKeyFrames0x%06X", zRoom->GetName().c_str(),
+		                          keyFrameSegmentOffset),
+			keyFrames.size(), declaration);
 	}
 
 	std::string primName = zRoom->parent->GetDeclarationPtrName(primColorSegmentOffset);
@@ -318,7 +316,7 @@ size_t FlashingTexture::GetParamsSize()
 }
 
 AnimatedMatTexCycleParams::AnimatedMatTexCycleParams(const std::vector<uint8_t>& rawData,
-                                           uint32_t rawDataIndex)
+                                                     uint32_t rawDataIndex)
 	: cycleLength(BitConverter::ToUInt16BE(rawData, rawDataIndex + 0)),
 	  textureSegmentOffsetsSegmentOffset(
 		  GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4))),
@@ -364,7 +362,7 @@ std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t
 
 		zRoom->parent->AddDeclarationArray(
 			textureSegmentOffsetsSegmentOffset, DeclarationAlignment::Align4,
-			DeclarationPadding::None, textureSegmentOffsets.size() * 4, "u64*",
+			textureSegmentOffsets.size() * 4, "u64*",
 			StringHelper::Sprintf("%sAnimatedMaterialTexSegOffsets0x%06X", zRoom->GetName().c_str(),
 		                          textureSegmentOffsetsSegmentOffset),
 			textureSegmentOffsets.size(), declaration);
@@ -386,8 +384,7 @@ std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t
 		}
 
 		zRoom->parent->AddDeclarationArray(
-			textureIndicesSegmentOffset, DeclarationAlignment::Align4, DeclarationPadding::None,
-			textureIndices.size(), "u8",
+			textureIndicesSegmentOffset, DeclarationAlignment::Align4, textureIndices.size(), "u8",
 			StringHelper::Sprintf("%sAnimatedMaterialTexIndices0x%06X", zRoom->GetName().c_str(),
 		                          textureIndicesSegmentOffset),
 			textureIndices.size(), declaration);

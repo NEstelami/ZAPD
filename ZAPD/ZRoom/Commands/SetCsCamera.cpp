@@ -69,10 +69,9 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		uint32_t segOffset = cameras.at(0).GetSegmentOffset();
 
 		parent->AddDeclarationArray(
-			segOffset, DeclarationAlignment::None,
-			points.size() * points.at(0).GetRawDataSize(), points.at(0).GetSourceTypeName().c_str(),
-			StringHelper::Sprintf("%sCsCameraPoints_%06X", prefix.c_str(),
-		                          segOffset),
+			segOffset, DeclarationAlignment::Align4, points.size() * points.at(0).GetRawDataSize(),
+			points.at(0).GetSourceTypeName().c_str(),
+			StringHelper::Sprintf("%sCsCameraPoints_%06X", prefix.c_str(), segOffset),
 			points.size(), declaration);
 	}
 
@@ -110,7 +109,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 std::string SetCsCamera::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
-	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(%i, %s)", cameras.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(%i, %s)", cameras.size(),
+	                             listName.c_str());
 }
 
 size_t SetCsCamera::GetRawDataSize() const
