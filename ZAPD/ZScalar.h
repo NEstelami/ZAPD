@@ -6,7 +6,7 @@
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-typedef enum ZScalarType
+enum class ZScalarType
 {
 	ZSCALAR_NONE,
 	ZSCALAR_S8,
@@ -19,7 +19,7 @@ typedef enum ZScalarType
 	ZSCALAR_U64,
 	ZSCALAR_F32,
 	ZSCALAR_F64
-} ZScalarType;
+};
 
 typedef union ZScalarData
 {
@@ -48,7 +48,7 @@ public:
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	std::string GetSourceTypeName() const override;
-	std::string GetSourceValue() const;
+	std::string GetBodySourceCode() const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
 	ZResourceType GetResourceType() const override;

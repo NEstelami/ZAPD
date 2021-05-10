@@ -4,11 +4,11 @@
 #include <assimp/scene.h>
 #include <stdint.h>
 #include <string>
-#include <tinyxml2.h>
 #include <vector>
 #include "../ZDisplayList.h"
 #include "../ZSkeleton.h"
 #include "HLFileIntermediette.h"
+#include "tinyxml2.h"
 
 /*
  * An intermediette format for models. Goes from FBX<-->Intermediette<-->Display List C Code.

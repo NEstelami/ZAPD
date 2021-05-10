@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include "Declaration.h"
 #include "tinyxml2.h"
 
 #include "Directory.h"
@@ -24,9 +25,6 @@ typedef uint32_t segptr_t;
 class ZFile;
 class HLFileIntermediette;
 
-class Declaration;
-struct CommandSet;
-
 enum class ZResourceType
 {
 	Error,
@@ -38,6 +36,7 @@ enum class ZResourceType
 	DisplayList,
 	Limb,
 	Mtx,
+	Path,
 	Room,
 	Scalar,
 	Skeleton,
@@ -60,14 +59,14 @@ public:
 
 	// Parsing from File
 	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            const uint32_t nRawDataIndex);
-	// Extract Mode
+	                            uint32_t nRawDataIndex);
 	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex);
 
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	virtual void ParseRawData();
 	virtual void DeclareReferences(const std::string& prefix);
+
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void PreGenSourceFiles();
@@ -106,74 +105,14 @@ protected:
 	bool declaredInXml = false;
 };
 
-enum class DeclarationAlignment
-{
-	None,
-	Align4,
-	Align8,
-	Align16
-};
-
-enum class DeclarationPadding
-{
-	None,
-	Pad4,
-	Pad8,
-	Pad16
-};
-
-class Declaration
-{
-public:
-	DeclarationAlignment alignment;
-	DeclarationPadding padding;
-	size_t size;
-	std::string preText;
-	std::string text;
-	std::string rightText;
-	std::string postText;
-	std::string preComment;
-	std::string postComment;
-	std::string varType;
-	std::string varName;
-	std::string includePath;
-	bool isExternal;
-	bool isArray;
-	size_t arrayItemCnt;
-	std::string arrayItemCntStr;
-	std::vector<uint32_t> references;
-	bool isUnaccounted = false;
-
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
-	            std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-	            bool nIsExternal);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
-	            std::string nText);
-	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
-
-protected:
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nText);
-};
-
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
 
-typedef ZResource*(ZResourceFactoryFunc)();
+typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
 
 #define REGISTER_ZFILENODE(nodeName, zResClass)                                                    \
-	static ZResource* ZResourceFactory_##zResClass_##nodeName()                                    \
+	static ZResource* ZResourceFactory_##zResClass_##nodeName(ZFile* nParent)                      \
 	{                                                                                              \
-		return static_cast<ZResource*>(new zResClass(nullptr));                                    \
+		return static_cast<ZResource*>(new zResClass(nParent));                                    \
 	}                                                                                              \
                                                                                                    \
 	class ZRes_##nodeName                                                                          \

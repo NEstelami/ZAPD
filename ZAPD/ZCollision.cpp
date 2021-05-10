@@ -284,7 +284,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 			        index);
 		}
 		else
-			sprintf(camSegLine, "0x%08X", entries[i]->cameraPosDataSeg);
+			sprintf(camSegLine, "NULL");
 
 		declaration +=
 			StringHelper::Sprintf("    { 0x%04X, %i, %s },", entries[i]->cameraSType,

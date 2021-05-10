@@ -1,20 +1,23 @@
 #include "SetCameraSettings.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
 
-SetCameraSettings::SetCameraSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                     uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+#include "BitConverter.h"
+#include "StringHelper.h"
+
+SetCameraSettings::SetCameraSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
-	cameraMovement = rawData[rawDataIndex + 0x01];
-	mapHighlight = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 }
 
-std::string SetCameraSettings::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+void SetCameraSettings::ParseRawData()
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, 0x%08X", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
-		cameraMovement, mapHighlight);
+	ZRoomCommand::ParseRawData();
+	cameraMovement = cmdArg1;
+	mapHighlight = BitConverter::ToUInt32BE(parent->GetRawData(), rawDataIndex + 4);
+}
+
+std::string SetCameraSettings::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("SCENE_CMD_MISC_SETTINGS(0x%02X, 0x%08X)", cameraMovement,
+	                             mapHighlight);
 }
 
 std::string SetCameraSettings::GetCommandCName() const
