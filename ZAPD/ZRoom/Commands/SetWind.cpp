@@ -1,21 +1,24 @@
 #include "SetWind.h"
-#include "../../StringHelper.h"
+#include "StringHelper.h"
 
-SetWind::SetWind(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetWind::SetWind(ZFile* nParent) : ZRoomCommand(nParent)
 {
-	windWest = rawData[rawDataIndex + 0x04];
-	windVertical = rawData[rawDataIndex + 0x05];
-	windSouth = rawData[rawDataIndex + 0x06];
-	clothFlappingStrength = rawData[rawDataIndex + 0x07];
 }
 
-std::string SetWind::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+void SetWind::ParseRawData()
 {
-	return StringHelper::Sprintf(
-		"%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X, 0x%02X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), windWest,
-		windVertical, windSouth, clothFlappingStrength);
+	ZRoomCommand::ParseRawData();
+	auto& parentRawData = parent->GetRawData();
+	windWest = parentRawData.at(rawDataIndex + 0x04);
+	windVertical = parentRawData.at(rawDataIndex + 0x05);
+	windSouth = parentRawData.at(rawDataIndex + 0x06);
+	clothFlappingStrength = parentRawData.at(rawDataIndex + 0x07);
+}
+
+std::string SetWind::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("SCENE_CMD_WIND_SETTINGS(%i, %i, %i, %i)", windWest, windVertical,
+	                             windSouth, clothFlappingStrength);
 }
 
 std::string SetWind::GetCommandCName() const

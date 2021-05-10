@@ -6,7 +6,7 @@
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-typedef enum ZScalarType
+enum class ZScalarType
 {
 	ZSCALAR_NONE,
 	ZSCALAR_S8,
@@ -19,7 +19,7 @@ typedef enum ZScalarType
 	ZSCALAR_U64,
 	ZSCALAR_F32,
 	ZSCALAR_F64
-} ZScalarType;
+};
 
 typedef union ZScalarData
 {
@@ -40,9 +40,6 @@ class ZScalar : public ZResource
 	friend class ZVector;
 
 public:
-	ZScalarData scalarData;
-	ZScalarType scalarType;
-
 	ZScalar(ZFile* nParent);
 	ZScalar(const ZScalarType scalarType, ZFile* nParent);
 
@@ -60,4 +57,8 @@ public:
 	static size_t MapTypeToSize(const ZScalarType scalarType);
 	static ZScalarType MapOutputTypeToScalarType(const std::string& type);
 	static std::string MapScalarTypeToOutputType(const ZScalarType scalarType);
+
+protected:
+	ZScalarData scalarData;
+	ZScalarType scalarType;
 };

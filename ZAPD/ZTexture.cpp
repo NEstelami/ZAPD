@@ -696,7 +696,7 @@ void ZTexture::SetDimensions(uint32_t nWidth, uint32_t nHeight)
 	ParseRawData();
 }
 
-TextureType ZTexture::GetTextureType()
+TextureType ZTexture::GetTextureType() const
 {
 	return format;
 }

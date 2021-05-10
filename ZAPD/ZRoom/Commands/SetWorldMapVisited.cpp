@@ -1,16 +1,14 @@
 #include "SetWorldMapVisited.h"
-#include "../../StringHelper.h"
 
-SetWorldMapVisited::SetWorldMapVisited(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                       uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+#include "StringHelper.h"
+
+SetWorldMapVisited::SetWorldMapVisited(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-std::string SetWorldMapVisited::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+std::string SetWorldMapVisited::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf(
-		"%s 0x00, 0x00", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
+	return "SCENE_CMD_MISC_SETTINGS()";
 }
 
 std::string SetWorldMapVisited::GetCommandCName() const

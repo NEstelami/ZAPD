@@ -1,20 +1,22 @@
 #include "SetTimeSettings.h"
-#include "../../BitConverter.h"
-#include "../../StringHelper.h"
+#include "BitConverter.h"
+#include "StringHelper.h"
 
-SetTimeSettings::SetTimeSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetTimeSettings::SetTimeSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
-	hour = rawData[rawDataIndex + 4];
-	min = rawData[rawDataIndex + 5];
-	unk = rawData[rawDataIndex + 6];
 }
 
-std::string SetTimeSettings::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+void SetTimeSettings::ParseRawData()
 {
-	return StringHelper::Sprintf(
-		"%s 0x00, 0x00, 0x00, 0x%02X, 0x%02X, 0x%02X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), hour, min, unk);
+	ZRoomCommand::ParseRawData();
+	hour = parent->GetRawData().at(rawDataIndex + 4);
+	min = parent->GetRawData().at(rawDataIndex + 5);
+	unk = parent->GetRawData().at(rawDataIndex + 6);
+}
+
+std::string SetTimeSettings::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("SCENE_CMD_TIME_SETTINGS(%i, %i, %i)", hour, min, unk);
 }
 
 std::string SetTimeSettings::GetCommandCName() const

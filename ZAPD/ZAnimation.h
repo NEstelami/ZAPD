@@ -94,8 +94,8 @@ public:
 
 	[[nodiscard]] std::string GetBody(const std::string& prefix) const;
 
-	static size_t GetRawDataSize();
-	static std::string GetSourceTypeName();
+	size_t GetRawDataSize() const;
+	std::string GetSourceTypeName();
 };
 
 class ZCurveAnimation : public ZAnimation

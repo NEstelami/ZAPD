@@ -27,6 +27,7 @@ This document aims to be a small reference of how to create a compatible xml fil
     - [Mtx](#mtx)
     - [Cutscene](#cutscene)
     - [Array](#array)
+    - [Path](#path)
 
 ## Basic XML
 
@@ -460,5 +461,22 @@ Currently, only [`Scalar`](#scalar), [`Vector`](#vector) and [`Vtx`](#vtx) suppo
 
   - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g`. The sufix is mandated by the element contained.
   - `Count`: Required. Amount of elements. Integer.
+
+-------------------------
+
+-------------------------
+
+### Path
+
+- Example:
+
+```xml
+<Path Name="gSpot09Path_002F60" Offset="0x2F60"/>
+```
+
+- Attributes:
+
+  - `Name`: Required. Suxffixed by `Path`.
+  - `NumPaths`: Optional. The amount of paths contained in the array. It must be a positive integer.
 
 -------------------------

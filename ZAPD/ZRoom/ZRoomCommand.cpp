@@ -1,50 +1,38 @@
 #include "ZRoomCommand.h"
+
+#include "BitConverter.h"
 #include "StringHelper.h"
+#include "ZRoom.h"
 
-ZRoomCommand::ZRoomCommand(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
+ZRoomCommand::ZRoomCommand(ZFile* nParent) : ZResource(nParent)
 {
-	cmdID = (RoomCommand)rawData[rawDataIndex];
-	cmdAddress = rawDataIndex;
+}
+
+void ZRoomCommand::ExtractCommandFromRoom(ZRoom* nZRoom, uint32_t nRawDataIndex)
+{
 	zRoom = nZRoom;
+	rawDataIndex = nRawDataIndex;
+
+	ParseRawData();
 }
 
-ZRoomCommand::~ZRoomCommand()
+void ZRoomCommand::ParseRawData()
+{
+	auto& parentRawData = parent->GetRawData();
+	cmdID = static_cast<RoomCommand>(parentRawData.at(rawDataIndex));
+	cmdAddress = rawDataIndex;
+
+	cmdArg1 = parentRawData.at(rawDataIndex + 1);
+	cmdArg2 = BitConverter::ToUInt32BE(parentRawData, rawDataIndex + 4);
+	segmentOffset = GETSEGOFFSET(cmdArg2);
+}
+
+void ZRoomCommand::ParseRawDataLate()
 {
 }
 
-std::string ZRoomCommand::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
 {
-	return StringHelper::Sprintf("0x%02X,", (uint8_t)cmdID);
-}
-
-std::string ZRoomCommand::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
-{
-	return "";
-}
-
-std::string ZRoomCommand::GenerateSourceCodePass3(std::string roomName)
-{
-	return "";
-}
-
-std::string ZRoomCommand::GenerateExterns() const
-{
-	return "";
-}
-
-std::string ZRoomCommand::Save()
-{
-	return std::string();
-}
-
-std::string ZRoomCommand::PreGenSourceFiles()
-{
-	return std::string();
-}
-
-size_t ZRoomCommand::GetRawDataSize() const
-{
-	return 8;
 }
 
 std::string ZRoomCommand::GetCommandCName() const
@@ -55,4 +43,9 @@ std::string ZRoomCommand::GetCommandCName() const
 RoomCommand ZRoomCommand::GetRoomCommand() const
 {
 	return RoomCommand::Error;
+}
+
+std::string ZRoomCommand::GetCommandHex() const
+{
+	return StringHelper::Sprintf("0x%02X", static_cast<uint8_t>(cmdID));
 }

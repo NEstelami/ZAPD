@@ -156,11 +156,6 @@ int main(int argc, char* argv[])
 			Globals::Instance->genSourceFile = std::string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-ifp")  // Include file prefix in generated symbols
-		{
-			Globals::Instance->includeFilePrefix = std::string(argv[i + 1]) == "1";
-			i++;
-		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
 			Globals::Instance->testMode = std::string(argv[i + 1]) == "1";
@@ -217,7 +212,7 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-v")  // Verbose
 		{
-			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
+			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
 		}
 		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
 		{
@@ -225,7 +220,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)

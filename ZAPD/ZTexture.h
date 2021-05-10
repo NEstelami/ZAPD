@@ -87,7 +87,7 @@ public:
 	uint32_t GetHeight() const;
 	void SetDimensions(uint32_t nWidth, uint32_t nHeight);
 	float GetPixelMultiplyer() const;
-	TextureType GetTextureType();
+	TextureType GetTextureType() const;
 	fs::path GetPoolOutPath(const fs::path& defaultValue);
 	bool IsColorIndexed() const;
 	void SetTlut(ZTexture* nTlut);

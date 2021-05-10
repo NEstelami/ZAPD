@@ -214,7 +214,7 @@ std::string TransformData::GetBody(const std::string& prefix) const
 	                             unk_08);
 }
 
-size_t TransformData::GetRawDataSize()
+size_t TransformData::GetRawDataSize() const
 {
 	return 0x0C;
 }
@@ -346,9 +346,9 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 	if (transformData != 0)
 	{
 		uint32_t transformDataOffset = Seg2Filespace(transformData, parent->baseAddress);
-		std::string transformDataStr =
-			StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(),
-		                          TransformData::GetSourceTypeName().c_str(), transformDataOffset);
+		std::string transformDataStr = StringHelper::Sprintf(
+			"%sCurveAnime_%s_%06X", prefix.c_str(),
+			transformDataArr.at(0).GetSourceTypeName().c_str(), transformDataOffset);
 
 		std::string entryStr = "";
 		uint16_t arrayItemCnt = transformDataArr.size();
@@ -364,9 +364,9 @@ void ZCurveAnimation::PreGenValues(const std::string& prefix)
 		if (decl == nullptr)
 		{
 			parent->AddDeclarationArray(transformDataOffset, DeclarationAlignment::None,
-			                            arrayItemCnt * TransformData::GetRawDataSize(),
-			                            TransformData::GetSourceTypeName(), transformDataStr,
-			                            arrayItemCnt, entryStr);
+			                            arrayItemCnt * transformDataArr.at(0).GetRawDataSize(),
+			                            transformDataArr.at(0).GetSourceTypeName(),
+			                            transformDataStr, arrayItemCnt, entryStr);
 		}
 		else
 		{
@@ -438,9 +438,9 @@ std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(transformDataOffset);
 		if (decl == nullptr)
 		{
-			transformDataStr = StringHelper::Sprintf("%sCurveAnime_%s_%06X", prefix.c_str(),
-			                                         TransformData::GetSourceTypeName().c_str(),
-			                                         transformDataOffset);
+			transformDataStr = StringHelper::Sprintf(
+				"%sCurveAnime_%s_%06X", prefix.c_str(),
+				transformDataArr.at(0).GetSourceTypeName().c_str(), transformDataOffset);
 		}
 		else
 		{

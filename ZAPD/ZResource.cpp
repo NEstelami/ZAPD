@@ -1,11 +1,13 @@
 #include "ZResource.h"
 
+#include <cassert>
 #include <regex>
 #include "StringHelper.h"
 #include "ZFile.h"
 
 ZResource::ZResource(ZFile* nParent)
 {
+	// assert(nParent != nullptr);
 	parent = nParent;
 	name = "";
 	outName = "";

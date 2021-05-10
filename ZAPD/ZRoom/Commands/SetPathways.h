@@ -1,65 +1,30 @@
 #pragma once
 
-#include "../../Vec3s.h"
-#include "../ZRoomCommand.h"
+#include "Vec3s.h"
+#include "ZPath.h"
 #include "ZResource.h"
+#include "ZRoom/ZRoomCommand.h"
 
-class PathwayEntry
+class SetPathways : public ZRoomCommand
 {
 public:
-	int16_t x, y, z;
+	SetPathways(ZFile* nParent);
 
-	PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex);
+	void DeclareReferences(const std::string& prefix) override;
 
-	int32_t numPoints;
-	int8_t unk1;   // (MM Only)
-	int16_t unk2;  // (MM Only)
-	uint32_t listSegmentOffset;
-	std::vector<Vec3s> points;
-};
+	void ParseRawDataLate() override;
+	void DeclareReferencesLate(const std::string& prefix) override;
 
-struct PathwayList
-{
-public:
-	PathwayList(ZFile* nParent, std::vector<uint8_t> rawData, uint32_t rawDataIndex,
-	            int32_t length);
-	~PathwayList();
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
-	void GetSourceOutputCode(const std::string& prefix);
-	size_t GetRawDataSize() const;
-	std::string GenerateExterns(const std::string& prefix);
+	std::string GetBodySourceCode() const override;
 
-private:
-	ZFile* parent;
-	std::vector<PathwayEntry*> pathways;
-	std::vector<uint8_t> _rawData;
-	uint32_t _rawDataIndex;
-};
-
-class ZSetPathways : public ZResource, public ZRoomCommand
-{
-public:
-	ZSetPathways(ZFile* nParent);
-	ZSetPathways(ZRoom* nZRoom, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-	             bool nIsFromHeader);
-	~ZSetPathways();
-
-	void ParseRawData() override;
-
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
-
-	std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
-	std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
 	RoomCommand GetRoomCommand() const override;
 	size_t GetRawDataSize() const override;
 	std::string GetCommandCName() const override;
-	std::string GenerateExterns() const override;
 
 	ZResourceType GetResourceType() const override;
 
 private:
-	uint32_t segmentOffset;
-	PathwayList* pathwayList;
-	bool isFromHeader = false;
+	ZPath pathwayList;
 };

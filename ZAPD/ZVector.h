@@ -11,7 +11,6 @@ class ZVector : public ZResource
 {
 public:
 	ZVector(ZFile* nParent);
-	~ZVector();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
@@ -22,13 +21,13 @@ public:
 	bool DoesSupportArray() const override;
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
-
 	size_t GetRawDataSize() const override;
 
-private:
-	std::vector<ZScalar*> scalars;
+	void SetScalarType(ZScalarType type);
+	void SetDimensions(uint32_t dim);
+
+protected:
+	std::vector<ZScalar> scalars;
 	ZScalarType scalarType;
 	uint32_t dimensions;
-
-	void ClearScalars();
 };

@@ -1,13 +1,20 @@
 #pragma once
 
-#include <tinyxml2.h>
-#include "../ZResource.h"
-#include "ZRoomCommand.h"
-#include "ZTexture.h"
-
 #include <map>
 #include <string>
 #include <vector>
+
+#include "ZResource.h"
+#include "ZRoomCommand.h"
+#include "tinyxml2.h"
+
+struct CommandSet
+{
+	uint32_t address;
+	uint32_t commandCount;  // Only used if explicitly specified in the XML
+
+	CommandSet(uint32_t nAddress, uint32_t nCommandCount = UINT32_MAX);
+};
 
 class ZRoom : public ZResource
 {
@@ -30,23 +37,14 @@ public:
 	virtual ~ZRoom();
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	                    uint32_t nRawDataIndex) override;
+
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
-	size_t GetDeclarationSizeFromNeighbor(int32_t declarationAddress);
+	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
+
 	size_t GetRawDataSize() const override;
 	ZResourceType GetResourceType() const override;
-	void Save(const fs::path& outFolder) override;
-
 	void PreGenSourceFiles() override;
-};
-
-struct CommandSet
-{
-	uint32_t address;
-	uint32_t commandCount;  // Only used if explicitly specified in the XML
-
-	CommandSet(uint32_t nAddress);
-	CommandSet(uint32_t nAddress, uint32_t nCommandCount);
 };
