@@ -1,19 +1,20 @@
 #pragma once
 
-#include "../ZRoomCommand.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class SetTimeSettings : public ZRoomCommand
 {
 public:
-	SetTimeSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
-
-	virtual std::string GenerateSourceCodePass1(std::string roomName,
-	                                            uint32_t baseAddress) override;
-	virtual std::string GetCommandCName() override;
-	virtual RoomCommand GetRoomCommand() override;
-
 	uint8_t hour;
 	uint8_t min;
 	uint8_t unk;
-private:
+
+	SetTimeSettings(ZFile* nParent);
+
+	void ParseRawData() override;
+
+	std::string GetBodySourceCode() const override;
+
+	std::string GetCommandCName() const override;
+	RoomCommand GetRoomCommand() const override;
 };

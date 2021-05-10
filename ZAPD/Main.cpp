@@ -23,7 +23,6 @@
 //#include <HighLevel/HLExporterTest.h>
 
 using namespace tinyxml2;
-using namespace std;
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
            ZFileMode fileMode);
@@ -42,14 +41,20 @@ void ErrorHandler(int sig)
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
-	// To prevent unused parameter warning
-	(void)sig;
+	fprintf(stderr, "\nZAPD crashed. (Signal: %i)\n", sig);
 
+	fprintf(stderr, "\n\t\tYou've met with a terrible fate, haven't you?\n\n");
+	/**
+	 * Other possible options:
+	 * - SEA BEARS FOAM. SLEEP BEARS DREAMS. \n BOTH END IN THE SAME WAY: CRASSSH!
+	 */
+
+	fprintf(stderr, "Traceback:\n");
 	for (size_t i = 1; i < size; i++)
 	{
 		Dl_info info;
 		uint32_t gotAddress = dladdr(array[i], &info);
-		string functionName(symbols[i]);
+		std::string functionName(symbols[i]);
 
 		if (gotAddress != 0 && info.dli_sname != nullptr)
 		{
@@ -70,7 +75,8 @@ void ErrorHandler(int sig)
 		fprintf(stderr, "%-3zd %s\n", i, functionName.c_str());
 	}
 
-	// backtrace_symbols_fd(array, size, STDERR_FILENO);
+	fprintf(stderr, "\n");
+
 	free(symbols);
 	exit(1);
 }
@@ -91,7 +97,7 @@ int main(int argc, char* argv[])
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
 	{
-		string arg = argv[i];
+		std::string arg = argv[i];
 
 		if (arg == "-o" || arg == "--outputpath")  // Set output path
 		{
@@ -116,11 +122,12 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->genSourceFile = string(argv[++i]) == "1";
 		}
-		else if (arg == "-ifp")  // Include file prefix in generated symbols
+		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
 			Globals::Instance->includeFilePrefix = string(argv[++i]) == "1";
 		}
-		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
+		else if (arg == "-crc" ||
+		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
 		{
 			Globals::Instance->testMode = string(argv[++i]) == "1";
 		}
@@ -158,12 +165,13 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, ErrorHandler);
 			signal(SIGABRT, ErrorHandler);
 #else
-			printf("Warning: Tried to set error handler, but this build lacks support for one.\n");
+			fprintf(stderr,
+			        "Warning: Tried to set error handler, but this build lacks support for one.\n");
 #endif
 		}
 		else if (arg == "-v")  // Verbose
 		{
-			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
+			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
 		}
 		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
 		{
@@ -219,7 +227,7 @@ int main(int argc, char* argv[])
 	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
-	try
+	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
 		bool procFileModeSuccess = false;
 
@@ -262,10 +270,39 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-	catch (std::runtime_error& e)
+	else if (fileMode == ZFileMode::BuildTexture)
 	{
-		printf("Exception occurred: %s\n", e.what());
+		TextureType texType = Globals::Instance->texType;
+		BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
 	}
+	else if (fileMode == ZFileMode::BuildBackground)
+	{
+		BuildAssetBackground(Globals::Instance->inputPath, Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildBlob)
+	{
+		BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildModelIntermediette)
+	{
+		BuildAssetModelIntermediette(Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
+	{
+		BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
+		                                 Globals::Instance->outputPath);
+	}
+	else if (fileMode == ZFileMode::BuildOverlay)
+	{
+		ZOverlay* overlay =
+			ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath),
+		                        Path::GetDirectoryName(Globals::Instance->cfgPath));
+
+		if (overlay)
+			File::WriteAllText(Globals::Instance->outputPath.string(),
+			                   overlay->GetSourceOutputCode(""));
+	}
+
 	delete g;
 	return 0;
 }
@@ -293,7 +330,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	for (XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		if (string(child->Name()) == "File")
+		if (std::string(child->Name()) == "File")
 		{
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);
@@ -326,19 +363,18 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath)
 {
-	string name = outPath.stem().string();
+	std::string name = outPath.stem().string();
 
-	ZTexture* tex = ZTexture::FromPNG(pngFilePath.string(), texType);
-	string cfgPath = StringHelper::Split(pngFilePath.string(), ".")[0] + ".cfg";
+	ZTexture tex(nullptr);
+	tex.FromPNG(pngFilePath, texType);
+	std::string cfgPath = StringHelper::Split(pngFilePath.string(), ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))
 		name = File::ReadAllText(cfgPath);
 
-	string src = tex->GetSourceOutputCode(name);
+	std::string src = tex.GetBodySourceCode();
 
 	File::WriteAllText(outPath.string(), src);
-
-	delete tex;
 }
 
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath)
@@ -352,9 +388,9 @@ void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 {
 	ZBlob* blob = ZBlob::FromFile(blobFilePath.string());
-	string name = outPath.stem().string();  // filename without extension
+	std::string name = outPath.stem().string();  // filename without extension
 
-	string src = blob->GetSourceOutputCode(name);
+	std::string src = blob->GetSourceOutputCode(name);
 
 	File::WriteAllText(outPath.string(), src);
 
