@@ -12,11 +12,13 @@ public:
 	int32_t GetRawDataSize() const;
 
 	int16_t GetNumPoints() const;
-	int GetSegmentOffset() const;
+	segptr_t GetCamAddress() const;
+	uint32_t GetSegmentOffset() const;
 
 	int baseOffset;
 	int16_t type;
 	int16_t numPoints;
+	segptr_t camAddress;
 	uint32_t segmentOffset;
 };
 

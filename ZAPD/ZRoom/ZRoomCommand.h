@@ -41,7 +41,7 @@ enum class RoomCommand : uint8_t
 
 	// MM Commands
 	SetWorldMapVisited = 0x19,
-	SetAnimatedTextureList = 0x1A,
+	SetAnimatedMaterialList = 0x1A,
 	SetActorCutsceneList = 0x1B,
 	SetMinimapList = 0x1C,
 	Unused1D = 0x1D,

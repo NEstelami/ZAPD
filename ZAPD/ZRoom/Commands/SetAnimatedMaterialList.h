@@ -24,10 +24,10 @@ public:
 	uint8_t height;
 };
 
-class FlashingTexturePrimColor
+class F3DPrimColor
 {
 public:
-	FlashingTexturePrimColor(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	F3DPrimColor(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	uint8_t r;
 	uint8_t g;
@@ -60,15 +60,15 @@ public:
 	uint32_t envColorSegmentOffset;
 	uint32_t keyFrameSegmentOffset;
 
-	std::vector<FlashingTexturePrimColor> primColors;
+	std::vector<F3DPrimColor> primColors;
 	std::vector<FlashingTextureEnvColor> envColors;
 	std::vector<uint16_t> keyFrames;
 };
 
-class CyclingTextureParams : public AnitmatedTextureParams
+class AnimatedMatTexCycleParams : public AnitmatedTextureParams
 {
 public:
-	CyclingTextureParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	AnimatedMatTexCycleParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	std::string GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress) override;
 	size_t GetParamsSize() override;
 
@@ -80,10 +80,10 @@ public:
 	std::vector<uint8_t> textureIndices;
 };
 
-class AnimatedTexture
+class AnimatedMaterial
 {
 public:
-	AnimatedTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	AnimatedMaterial(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	int8_t segment;
 	int16_t type;
@@ -91,10 +91,10 @@ public:
 	std::vector<std::shared_ptr<AnitmatedTextureParams>> params;
 };
 
-class SetAnimatedTextureList : public ZRoomCommand
+class SetAnimatedMaterialList : public ZRoomCommand
 {
 public:
-	SetAnimatedTextureList(ZFile* nParent);
+	SetAnimatedMaterialList(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -106,5 +106,5 @@ public:
 	std::string GetCommandCName() const override;
 
 private:
-	std::vector<AnimatedTexture> textures;
+	std::vector<AnimatedMaterial> textures;
 };

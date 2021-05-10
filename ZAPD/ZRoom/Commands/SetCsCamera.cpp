@@ -66,17 +66,19 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 			index++;
 		}
 
+		uint32_t segOffset = cameras.at(0).GetSegmentOffset();
+
 		parent->AddDeclarationArray(
-			cameras.at(0).GetSegmentOffset(), DeclarationAlignment::None, DeclarationPadding::None,
+			segOffset, DeclarationAlignment::None,
 			points.size() * points.at(0).GetRawDataSize(), points.at(0).GetSourceTypeName().c_str(),
 			StringHelper::Sprintf("%sCsCameraPoints_%06X", prefix.c_str(),
-		                          cameras.at(0).GetSegmentOffset()),
+		                          segOffset),
 			points.size(), declaration);
 	}
 
 	if (!cameras.empty())
 	{
-		std::string camPointsName = parent->GetDeclarationPtrName(cameras.at(0).GetSegmentOffset());
+		std::string camPointsName = parent->GetDeclarationName(cameras.at(0).GetSegmentOffset());
 		std::string declaration = "";
 
 		size_t index = 0;
@@ -84,7 +86,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		for (const auto& entry : cameras)
 		{
 			declaration +=
-				StringHelper::Sprintf("\t{ %i, %i, %s[%i] },", entry.type, entry.numPoints,
+				StringHelper::Sprintf("\t{ %i, %i, &%s[%i] },", entry.type, entry.numPoints,
 			                          camPointsName.c_str(), pointsIndex);
 
 			if (index < cameras.size() - 1)
@@ -108,7 +110,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 std::string SetCsCamera::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
-	return StringHelper::Sprintf("SCENE_CMD_CAM_LIST(%i, %s)", cameras.size(), listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(%i, %s)", cameras.size(), listName.c_str());
 }
 
 size_t SetCsCamera::GetRawDataSize() const
@@ -128,9 +130,10 @@ RoomCommand SetCsCamera::GetRoomCommand() const
 
 CsCameraEntry::CsCameraEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: baseOffset(rawDataIndex), type(BitConverter::ToInt16BE(rawData, rawDataIndex + 0)),
-	  numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
-	  segmentOffset(GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4)))
+	  numPoints(BitConverter::ToInt16BE(rawData, rawDataIndex + 2))
 {
+	camAddress = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
+	segmentOffset = GETSEGOFFSET(camAddress);
 }
 
 std::string CsCameraEntry::GetSourceTypeName() const
@@ -148,7 +151,12 @@ int16_t CsCameraEntry::GetNumPoints() const
 	return numPoints;
 }
 
-int CsCameraEntry::GetSegmentOffset() const
+segptr_t CsCameraEntry::GetCamAddress() const
+{
+	return camAddress;
+}
+
+uint32_t CsCameraEntry::GetSegmentOffset() const
 {
 	return segmentOffset;
 }

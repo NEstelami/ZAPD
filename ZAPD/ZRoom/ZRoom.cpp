@@ -10,7 +10,7 @@
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
 #include "Commands/SetAlternateHeaders.h"
-#include "Commands/SetAnimatedTextureList.h"
+#include "Commands/SetAnimatedMaterialList.h"
 #include "Commands/SetCameraSettings.h"
 #include "Commands/SetCollisionHeader.h"
 #include "Commands/SetCsCamera.h"
@@ -266,8 +266,8 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 			else
 				cmd = new SetCameraSettings(parent);
 			break;  // 0x19
-		case RoomCommand::SetAnimatedTextureList:
-			cmd = new SetAnimatedTextureList(parent);
+		case RoomCommand::SetAnimatedMaterialList:
+			cmd = new SetAnimatedMaterialList(parent);
 			break;  // 0x1A (MM-ONLY)
 		case RoomCommand::SetActorCutsceneList:
 			cmd = new SetActorCutsceneList(parent);
