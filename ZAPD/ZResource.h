@@ -52,10 +52,10 @@ enum class ZResourceType
 class ResourceAttribute
 {
 public:
-    std::string key = "";
-    std::string value = "";
-    bool isRequired = false;
-    bool wasSet = false;
+	std::string key = "";
+	std::string value = "";
+	bool isRequired = false;
+	bool wasSet = false;
 };
 
 class ZResource
@@ -119,7 +119,7 @@ protected:
 	bool declaredInXml = false;
 
 	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
-    std::map<std::string, ResourceAttribute> registeredAttributes;
+	std::map<std::string, ResourceAttribute> registeredAttributes;
 
 	// XML attributes registers.
 	// Registering XML attributes should be done in constructors.
@@ -127,7 +127,8 @@ protected:
 	// The resource needs this attribute. If it is not provided, then the program will throw an
 	// exception.
 	void RegisterRequiredAttribute(const std::string& attr);
-	// Optional attribute. The resource has to do manual checks and manual warnings. It may or may not have a value.
+	// Optional attribute. The resource has to do manual checks and manual warnings. It may or may
+	// not have a value.
 	void RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue = "");
 };
 

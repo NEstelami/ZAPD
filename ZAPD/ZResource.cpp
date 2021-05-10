@@ -18,7 +18,7 @@ ZResource::ZResource(ZFile* nParent)
 	RegisterRequiredAttribute("Name");
 	RegisterOptionalAttribute("OutName");
 	RegisterOptionalAttribute("Offset");
-    RegisterOptionalAttribute("Custom");
+	RegisterOptionalAttribute("Custom");
 }
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
@@ -50,7 +50,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		// If it is an inner node, then 'Name' isn't required
 		if (isInner)
 		{
-            registeredAttributes.at("Name").isRequired = false;
+			registeredAttributes.at("Name").isRequired = false;
 		}
 
 		auto attrs = reader->FirstAttribute();
@@ -59,7 +59,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			std::string attrName = attrs->Name();
 			bool attrDeclared = false;
 
-            if (registeredAttributes.find(attrName) != registeredAttributes.end())
+			if (registeredAttributes.find(attrName) != registeredAttributes.end())
 			{
 				registeredAttributes[attrName].value = attrs->Value();
 				registeredAttributes[attrName].wasSet = true;
@@ -67,10 +67,10 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			}
 
 			if (!attrDeclared)
-				fprintf(stderr, 
-					"ZResource::ParseXML: Warning while parsing '%s'.\n"
-					"\t Unexpected '%s' attribute in resource '%s'.\n",
-					parent->GetName().c_str(), attrName.c_str(), reader->Name());
+				fprintf(stderr,
+				        "ZResource::ParseXML: Warning while parsing '%s'.\n"
+				        "\t Unexpected '%s' attribute in resource '%s'.\n",
+				        parent->GetName().c_str(), attrName.c_str(), reader->Name());
 			attrs = attrs->Next();
 		}
 
@@ -92,7 +92,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 					parent->GetName().c_str(), attr.first.c_str(), reader->Name()));
 		}
 
-        name = registeredAttributes.at("Name").value;
+		name = registeredAttributes.at("Name").value;
 
 		static std::regex r("[a-zA-Z_]+[a-zA-Z0-9_]*", std::regex::icase | std::regex::optimize);
 
@@ -234,18 +234,18 @@ void ZResource::SetInnerNode(bool inner)
 
 void ZResource::RegisterRequiredAttribute(const std::string& attr)
 {
-    ResourceAttribute resAtrr;
-    resAtrr.key = attr;
-    resAtrr.isRequired = true;
-    registeredAttributes[attr] = resAtrr;
+	ResourceAttribute resAtrr;
+	resAtrr.key = attr;
+	resAtrr.isRequired = true;
+	registeredAttributes[attr] = resAtrr;
 }
 
 void ZResource::RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue)
 {
-    ResourceAttribute resAtrr;
-    resAtrr.key = attr;
-    resAtrr.value = defaultValue;
-    registeredAttributes[attr] = resAtrr;
+	ResourceAttribute resAtrr;
+	resAtrr.key = attr;
+	resAtrr.value = defaultValue;
+	registeredAttributes[attr] = resAtrr;
 }
 
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
