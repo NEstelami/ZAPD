@@ -5,13 +5,11 @@
 #include "../ZRoom.h"
 #include "SetStartPositionList.h"
 
-using namespace std;
-
 SetEntranceList::SetEntranceList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
-	entrances = vector<EntranceEntry*>();
+	entrances = std::vector<EntranceEntry*>();
 
 	_rawData = rawData;
 	_rawDataIndex = rawDataIndex;
@@ -23,9 +21,9 @@ SetEntranceList::~SetEntranceList()
 		delete entry;
 }
 
-string SetEntranceList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetEntranceList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput =
+	std::string sourceOutput =
 		StringHelper::Sprintf("%s 0x00, (u32)&%sEntranceList0x%06X",
 	                          ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(),
 	                          zRoom->GetName().c_str(), segmentOffset);
@@ -43,7 +41,7 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, uint32_t baseAd
 		currentPtr += 2;
 	}
 
-	string declaration = "";
+	std::string declaration = "";
 
 	int32_t index = 0;
 
@@ -63,18 +61,18 @@ string SetEntranceList::GenerateSourceCodePass1(string roomName, uint32_t baseAd
 	return sourceOutput;
 }
 
-string SetEntranceList::GenerateExterns()
+std::string SetEntranceList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern EntranceEntry %sEntranceList0x%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetEntranceList::GetCommandCName()
+std::string SetEntranceList::GetCommandCName() const
 {
 	return "SCmdEntranceList";
 }
 
-RoomCommand SetEntranceList::GetRoomCommand()
+RoomCommand SetEntranceList::GetRoomCommand() const
 {
 	return RoomCommand::SetEntranceList;
 }

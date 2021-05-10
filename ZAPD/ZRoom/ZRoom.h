@@ -35,17 +35,18 @@ public:
 	size_t GetDeclarationSizeFromNeighbor(int32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	ZResourceType GetResourceType() const override;
 	void Save(const fs::path& outFolder) override;
+
 	void PreGenSourceFiles() override;
 };
 
 struct CommandSet
 {
-	int32_t address;
+	uint32_t address;
 	uint32_t commandCount;  // Only used if explicitly specified in the XML
 
-	CommandSet(int32_t nAddress);
-	CommandSet(int32_t nAddress, uint32_t nCommandCount);
+	CommandSet(uint32_t nAddress);
+	CommandSet(uint32_t nAddress, uint32_t nCommandCount);
 };

@@ -4,8 +4,6 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawData,
                                        uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -19,7 +17,7 @@ SetCollisionHeader::SetCollisionHeader(ZRoom* nZRoom, std::vector<uint8_t> rawDa
 	collisionHeader->ParseRawData();
 }
 
-string SetCollisionHeader::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetCollisionHeader::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x00, (u32)&%sCollisionHeader0x%06X",
@@ -27,22 +25,22 @@ string SetCollisionHeader::GenerateSourceCodePass1(string roomName, uint32_t bas
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetCollisionHeader::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string SetCollisionHeader::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-string SetCollisionHeader::GetCommandCName()
+std::string SetCollisionHeader::GetCommandCName() const
 {
 	return "SCmdColHeader";
 }
 
-string SetCollisionHeader::GenerateExterns()
+std::string SetCollisionHeader::GenerateExterns() const
 {
 	return "";
 }
 
-RoomCommand SetCollisionHeader::GetRoomCommand()
+RoomCommand SetCollisionHeader::GetRoomCommand() const
 {
 	return RoomCommand::SetCollisionHeader;
 }

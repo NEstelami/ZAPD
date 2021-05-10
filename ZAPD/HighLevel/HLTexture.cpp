@@ -1,8 +1,6 @@
 #include "HLTexture.h"
 #include "../StringHelper.h"
 
-using namespace std;
-
 HLTexture* HLTexture::FromPNG(std::string pngFilePath, HLTextureType texType)
 {
 	// int32_t comp;

@@ -54,12 +54,12 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-size_t ZVtx::GetRawDataSize()
+size_t ZVtx::GetRawDataSize() const
 {
 	return 16;
 }
 
-bool ZVtx::DoesSupportArray()
+bool ZVtx::DoesSupportArray() const
 {
 	return true;
 }
@@ -69,7 +69,7 @@ ZResourceType ZVtx::GetResourceType() const
 	return ZResourceType::Vertex;
 }
 
-bool ZVtx::IsExternalResource()
+bool ZVtx::IsExternalResource() const
 {
 	return true;
 }

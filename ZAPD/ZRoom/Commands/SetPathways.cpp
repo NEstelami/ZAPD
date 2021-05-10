@@ -7,8 +7,6 @@
 
 REGISTER_ZFILENODE(Path, ZSetPathways);
 
-using namespace std;
-
 ZSetPathways::ZSetPathways(ZFile* nParent) : ZResource(nParent)
 {
 }
@@ -27,7 +25,7 @@ ZSetPathways::~ZSetPathways()
 	delete pathwayList;
 }
 
-void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	parent->AddDeclaration(cmdAddress, DeclarationAlignment::None, 8,
 	                       StringHelper::Sprintf("static %s", GetCommandCName().c_str()),
@@ -36,7 +34,7 @@ void ZSetPathways::DeclareVar(const std::string& prefix, const std::string& body
 	                       StringHelper::Sprintf("%s // 0x%04X", bodyStr.c_str(), cmdAddress));
 }
 
-string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
+std::string ZSetPathways::GetSourceOutputCode(const std::string& prefix)
 {
 	if (pathwayList != nullptr)
 		pathwayList->GetSourceOutputCode(parent->GetName());
@@ -61,15 +59,15 @@ void ZSetPathways::ParseRawData()
 	pathwayList = new PathwayList(parent, rawData, segmentOffset, numPaths);
 }
 
-string ZSetPathways::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string ZSetPathways::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	ParseRawData();
 	return "";
 }
 
-string ZSetPathways::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string ZSetPathways::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput += StringHelper::Sprintf("\n\t%s 0, (u32)%sPathway0x%06X\n};",
 	                                      ZRoomCommand::GenerateSourceCodePass1("", 0).c_str(),
@@ -81,7 +79,7 @@ string ZSetPathways::GenerateSourceCodePass2(string roomName, uint32_t baseAddre
 	return sourceOutput;
 }
 
-size_t ZSetPathways::GetRawDataSize()
+size_t ZSetPathways::GetRawDataSize() const
 {
 	size_t size = 0;
 	if (pathwayList != nullptr)
@@ -90,7 +88,7 @@ size_t ZSetPathways::GetRawDataSize()
 	return ZRoomCommand::GetRawDataSize() + size;
 }
 
-string ZSetPathways::GenerateExterns()
+std::string ZSetPathways::GenerateExterns() const
 {
 	if (pathwayList != nullptr)
 		return pathwayList->GenerateExterns(parent->GetName());
@@ -98,12 +96,12 @@ string ZSetPathways::GenerateExterns()
 	return "";
 }
 
-string ZSetPathways::GetCommandCName()
+std::string ZSetPathways::GetCommandCName() const
 {
 	return "SCmdPathList";
 }
 
-RoomCommand ZSetPathways::GetRoomCommand()
+RoomCommand ZSetPathways::GetRoomCommand() const
 {
 	return RoomCommand::SetPathways;
 }
@@ -135,7 +133,7 @@ PathwayEntry::PathwayEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 
 	if (numPoints == 0)  // Hack for SharpOcarina
 	{
-		for (int32_t i = 0; i < 3; i++)
+		for (uint32_t i = 0; i < 3; i++)
 		{
 			Vec3s point = Vec3s(0, 0, 0);
 			points.push_back(point);
@@ -172,7 +170,7 @@ PathwayList::~PathwayList()
 void PathwayList::GetSourceOutputCode(const std::string& prefix)
 {
 	{
-		string declaration = "";
+		std::string declaration = "";
 		size_t index = 0;
 		for (PathwayEntry* entry : pathways)
 		{
@@ -200,7 +198,7 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 
 	for (PathwayEntry* entry : pathways)
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		size_t index = 0;
 		for (Vec3s& point : entry->points)
@@ -222,7 +220,7 @@ void PathwayList::GetSourceOutputCode(const std::string& prefix)
 	}
 }
 
-size_t PathwayList::GetRawDataSize()
+size_t PathwayList::GetRawDataSize() const
 {
 	size_t pointsSize = 0;
 
@@ -234,9 +232,9 @@ size_t PathwayList::GetRawDataSize()
 	return pathways.size() * 8 + pointsSize;
 }
 
-string PathwayList::GenerateExterns(const std::string& prefix)
+std::string PathwayList::GenerateExterns(const std::string& prefix)
 {
-	string declaration = "";
+	std::string declaration = "";
 	for (PathwayEntry* entry : pathways)
 	{
 		declaration += StringHelper::Sprintf("extern Vec3s %sPathwayList0x%06X[];\n",

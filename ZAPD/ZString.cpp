@@ -46,7 +46,7 @@ std::string ZString::GetSourceOutputHeader(const std::string& prefix)
 	return StringHelper::Sprintf("#define %s_macro \"%s\"", name.c_str(), rawData.data());
 }
 
-std::string ZString::GetSourceTypeName()
+std::string ZString::GetSourceTypeName() const
 {
 	return "char";
 }
@@ -56,7 +56,7 @@ ZResourceType ZString::GetResourceType() const
 	return ZResourceType::String;
 }
 
-size_t ZString::GetRawDataSize()
+size_t ZString::GetRawDataSize() const
 {
 	return strData.size();
 }

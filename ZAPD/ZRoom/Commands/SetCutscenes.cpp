@@ -5,15 +5,13 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
 	numCutscenes = rawData[rawDataIndex + 1];
 	segmentOffset = GETSEGOFFSET(BitConverter::ToInt32BE(rawData, rawDataIndex + 4));
 
-	string output = "";
+	std::string output = "";
 
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
 	{
@@ -31,7 +29,7 @@ SetCutscenes::SetCutscenes(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t
 	else
 	{
 		int32_t currentPtr = segmentOffset;
-		string declaration = "";
+		std::string declaration = "";
 
 		for (uint8_t i = 0; i < numCutscenes; i++)
 		{
@@ -87,9 +85,9 @@ SetCutscenes::~SetCutscenes()
 		delete entry;
 }
 
-string SetCutscenes::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetCutscenes::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
-	string pass1 = ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress);
+	std::string pass1 = ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress);
 	Declaration* decl = zRoom->parent->GetDeclaration(segmentOffset);
 	if (decl != nullptr)
 	{
@@ -100,12 +98,12 @@ string SetCutscenes::GenerateSourceCodePass1(string roomName, uint32_t baseAddre
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-size_t SetCutscenes::GetRawDataSize()
+size_t SetCutscenes::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (0);
 }
 
-string SetCutscenes::GenerateExterns()
+std::string SetCutscenes::GenerateExterns() const
 {
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
@@ -122,17 +120,17 @@ string SetCutscenes::GenerateExterns()
 	                             segmentOffset);
 }
 
-string SetCutscenes::GetCommandCName()
+std::string SetCutscenes::GetCommandCName() const
 {
 	return "SCmdCutsceneData";
 }
 
-RoomCommand SetCutscenes::GetRoomCommand()
+RoomCommand SetCutscenes::GetRoomCommand() const
 {
 	return RoomCommand::SetCutscenes;
 }
 
-string SetCutscenes::GetSourceOutputCode(std::string prefix)
+std::string SetCutscenes::GetSourceOutputCode(std::string prefix)
 {
 	return "";
 }

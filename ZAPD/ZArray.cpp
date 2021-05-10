@@ -72,7 +72,7 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-size_t ZArray::GetRawDataSize()
+size_t ZArray::GetRawDataSize() const
 {
 	size_t size = 0;
 	for (auto res : resList)

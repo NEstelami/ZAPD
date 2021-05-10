@@ -130,7 +130,7 @@ size_t ZScalar::MapTypeToSize(const ZScalarType scalarType)
 	}
 }
 
-size_t ZScalar::GetRawDataSize()
+size_t ZScalar::GetRawDataSize() const
 {
 	return ZScalar::MapTypeToSize(scalarType);
 }
@@ -176,7 +176,7 @@ void ZScalar::ParseRawData()
 	}
 }
 
-std::string ZScalar::GetSourceTypeName()
+std::string ZScalar::GetSourceTypeName() const
 {
 	return ZScalar::MapScalarTypeToOutputType(scalarType);
 }
@@ -224,7 +224,7 @@ ZResourceType ZScalar::GetResourceType() const
 	return ZResourceType::Scalar;
 }
 
-bool ZScalar::DoesSupportArray()
+bool ZScalar::DoesSupportArray() const
 {
 	return true;
 }

@@ -4,8 +4,6 @@
 #include "StringHelper.h"
 #include "ZFile.h"
 
-using namespace std;
-
 ZResource::ZResource(ZFile* nParent)
 {
 	parent = nParent;
@@ -125,7 +123,7 @@ void ZResource::PreGenSourceFiles()
 {
 }
 
-const std::string& ZResource::GetName() const
+std::string ZResource::GetName() const
 {
 	return name;
 }
@@ -145,17 +143,17 @@ void ZResource::SetName(const std::string& nName)
 	name = nName;
 }
 
-bool ZResource::IsExternalResource()
+bool ZResource::IsExternalResource() const
 {
 	return false;
 }
 
-bool ZResource::DoesSupportArray()
+bool ZResource::DoesSupportArray() const
 {
 	return false;
 }
 
-std::string ZResource::GetExternalExtension()
+std::string ZResource::GetExternalExtension() const
 {
 	return "";
 }
@@ -175,7 +173,7 @@ bool ZResource::WasDeclaredInXml() const
 	return declaredInXml;
 }
 
-uint32_t ZResource::GetRawDataIndex()
+uint32_t ZResource::GetRawDataIndex() const
 {
 	return rawDataIndex;
 }
@@ -190,12 +188,12 @@ std::string ZResource::GetBodySourceCode() const
 	return "ERROR";
 }
 
-string ZResource::GetSourceOutputCode(const std::string& prefix)
+std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 {
 	return "";
 }
 
-string ZResource::GetSourceOutputHeader(const std::string& prefix)
+std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
 {
 	return "";
 }
@@ -212,7 +210,7 @@ void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
 }
 
-std::string ZResource::GetSourceTypeName()
+std::string ZResource::GetSourceTypeName() const
 {
 	return "u8";
 }

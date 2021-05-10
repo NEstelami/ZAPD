@@ -74,12 +74,12 @@ public:
 	void CalcHash() override;
 	void Save(const fs::path& outFolder) override;
 
-	bool IsExternalResource() override;
-	std::string GetSourceTypeName() override;
+	bool IsExternalResource() const override;
+	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
-	std::string GetExternalExtension() override;
+	std::string GetExternalExtension() const override;
 
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
 	std::string GetDefaultName(const std::string& prefix);

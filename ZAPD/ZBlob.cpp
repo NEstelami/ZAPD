@@ -6,7 +6,6 @@
 #include "ZFile.h"
 
 using namespace tinyxml2;
-using namespace std;
 
 REGISTER_ZFILENODE(Blob, ZBlob);
 
@@ -72,7 +71,7 @@ string ZBlob::GetSourceOutputCode(const std::string& prefix)
 	return sourceOutput;
 }
 
-string ZBlob::GetSourceOutputHeader(const std::string& prefix)
+std::string ZBlob::GetSourceOutputHeader(const std::string& prefix)
 {
 	return StringHelper::Sprintf("extern u8 %s[];\n", name.c_str());
 }
@@ -82,17 +81,17 @@ void ZBlob::Save(const fs::path& outFolder)
 	File::WriteAllBytes(outFolder / (name + ".bin"), rawData);
 }
 
-bool ZBlob::IsExternalResource()
+bool ZBlob::IsExternalResource() const
 {
 	return true;
 }
 
-string ZBlob::GetExternalExtension()
+std::string ZBlob::GetExternalExtension() const
 {
 	return "bin";
 }
 
-std::string ZBlob::GetSourceTypeName()
+std::string ZBlob::GetSourceTypeName() const
 {
 	return "u8";
 }

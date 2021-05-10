@@ -5,8 +5,6 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetMinimapChests::SetMinimapChests(ZRoom* nZRoom, std::vector<uint8_t> rawData,
                                    uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -31,14 +29,14 @@ SetMinimapChests::~SetMinimapChests()
 		delete chest;
 }
 
-string SetMinimapChests::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetMinimapChests::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return std::string();
 }
 
-string SetMinimapChests::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string SetMinimapChests::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
-	string sourceOutput = "";
+	std::string sourceOutput = "";
 
 	sourceOutput +=
 		StringHelper::Sprintf("%s 0x%02X, (u32)%sMinimapChests0x%06X };",
@@ -46,7 +44,7 @@ string SetMinimapChests::GenerateSourceCodePass2(string roomName, uint32_t baseA
 	                          chests.size(), roomName.c_str(), segmentOffset);
 
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		size_t index = 0;
 		for (MinimapChest* chest : chests)
@@ -71,23 +69,23 @@ string SetMinimapChests::GenerateSourceCodePass2(string roomName, uint32_t baseA
 	return sourceOutput;
 }
 
-string SetMinimapChests::GenerateExterns()
+std::string SetMinimapChests::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern MinimapChest %sMinimapChests0x%06X[%i];\n",
 	                             zRoom->GetName().c_str(), segmentOffset, chests.size());
 }
 
-string SetMinimapChests::GetCommandCName()
+std::string SetMinimapChests::GetCommandCName() const
 {
 	return "SCmdMinimapChests";
 }
 
-RoomCommand SetMinimapChests::GetRoomCommand()
+RoomCommand SetMinimapChests::GetRoomCommand() const
 {
 	return RoomCommand::SetMinimapChests;
 }
 
-size_t SetMinimapChests::GetRawDataSize()
+size_t SetMinimapChests::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (chests.size() * 10);
 }

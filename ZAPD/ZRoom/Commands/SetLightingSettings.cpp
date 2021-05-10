@@ -4,8 +4,6 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData,
                                          uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -18,7 +16,7 @@ SetLightingSettings::SetLightingSettings(ZRoom* nZRoom, std::vector<uint8_t> raw
 
 	if (numLights > 0)
 	{
-		string declaration = "";
+		std::string declaration = "";
 
 		for (int32_t i = 0; i < numLights; i++)
 		{
@@ -51,7 +49,7 @@ SetLightingSettings::~SetLightingSettings()
 		delete setting;
 }
 
-string SetLightingSettings::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetLightingSettings::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s %i, (u32)&%sLightSettings_%06X",
@@ -59,28 +57,28 @@ string SetLightingSettings::GenerateSourceCodePass1(string roomName, uint32_t ba
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetLightingSettings::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string SetLightingSettings::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
 {
 	return "";
 }
 
-string SetLightingSettings::GetCommandCName()
+std::string SetLightingSettings::GetCommandCName() const
 {
 	return "SCmdLightSettingList";
 }
 
-string SetLightingSettings::GenerateExterns()
+std::string SetLightingSettings::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern LightSettings %sLightSettings_%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-RoomCommand SetLightingSettings::GetRoomCommand()
+RoomCommand SetLightingSettings::GetRoomCommand() const
 {
 	return RoomCommand::SetLightingSettings;
 }
 
-LightingSettings::LightingSettings(vector<uint8_t> rawData, uint32_t rawDataIndex)
+LightingSettings::LightingSettings(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();
 

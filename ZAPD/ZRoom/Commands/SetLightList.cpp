@@ -2,8 +2,6 @@
 #include "../../BitConverter.h"
 #include "../../StringHelper.h"
 
-using namespace std;
-
 SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
 {
@@ -11,9 +9,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t
 	this->numLights = rawData[rawDataIndex + 1];
 	this->segment = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
-	// std::string declarations = StringHelper::Sprintf("LightInfo %sLightInfo0x%06X[] =\n{\n",
-	// this->ptrRoom->GetName().c_str(), this->segment);
-	string declarations = "";
+	std::string declarations = "";
 
 	int32_t currentPtr = this->segment;
 	for (int32_t i = 0; i < this->numLights; i++)
@@ -44,7 +40,7 @@ SetLightList::SetLightList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t
 		this->numLights, declarations);
 }
 
-string SetLightList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetLightList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s %i, &%sLightInfo0x%06X",
@@ -52,18 +48,18 @@ string SetLightList::GenerateSourceCodePass1(string roomName, uint32_t baseAddre
 		this->ptrRoom->GetName().c_str(), this->segment);
 }
 
-string SetLightList::GetCommandCName()
+std::string SetLightList::GetCommandCName() const
 {
 	return "SCmdLightList";
 }
 
-string SetLightList::GenerateExterns()
+std::string SetLightList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern LightInfo %sLightInfo0x%06X[];\n",
 	                             this->ptrRoom->GetName().c_str(), this->segment);
 }
 
-RoomCommand SetLightList::GetRoomCommand()
+RoomCommand SetLightList::GetRoomCommand() const
 {
 	return RoomCommand::SetLightList;
 }

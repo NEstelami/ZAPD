@@ -18,10 +18,10 @@ public:
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	void Save(const fs::path& outFolder) override;
 
-	bool IsExternalResource() override;
-	std::string GetSourceTypeName() override;
+	bool IsExternalResource() const override;
+	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
-	std::string GetExternalExtension() override;
+	std::string GetExternalExtension() const override;
 
 	size_t GetRawDataSize() override;
 

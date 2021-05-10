@@ -48,8 +48,8 @@ public:
 	ZNormalAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	size_t GetRawDataSize() override;
-	std::string GetSourceTypeName() override;
+	size_t GetRawDataSize() const override;
+	std::string GetSourceTypeName() const override;
 
 protected:
 	virtual void ParseRawData() override;
@@ -63,8 +63,8 @@ public:
 	ZLinkAnimation(ZFile* nParent);
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	size_t GetRawDataSize() override;
-	std::string GetSourceTypeName() override;
+	size_t GetRawDataSize() const override;
+	std::string GetSourceTypeName() const override;
 
 protected:
 	virtual void ParseRawData() override;
@@ -130,9 +130,9 @@ public:
 	                    const uint32_t nRawDataIndex) override;
 
 	void PreGenValues(const std::string& prefix);
-	size_t GetRawDataSize() override;
+	size_t GetRawDataSize() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
-	std::string GetSourceTypeName() override;
+	std::string GetSourceTypeName() const override;
 };
 // TransformUpdateIndex

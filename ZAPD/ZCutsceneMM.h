@@ -16,10 +16,10 @@ public:
 	virtual ~ZCutsceneMM();
 
 	std::string GetBodySourceCode() override;
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	size_t GetRawDataSize() override;
-	uint32_t getSegmentOffset() override { return segmentOffset; }
+	size_t GetRawDataSize() const override;
+	uint32_t getSegmentOffset() const override { return segmentOffset; }
 
 	void ParseRawData() override;
 	ZResourceType GetResourceType() const override;

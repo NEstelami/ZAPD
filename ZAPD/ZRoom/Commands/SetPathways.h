@@ -26,7 +26,7 @@ public:
 	~PathwayList();
 
 	void GetSourceOutputCode(const std::string& prefix);
-	size_t GetRawDataSize();
+	size_t GetRawDataSize() const;
 	std::string GenerateExterns(const std::string& prefix);
 
 private:
@@ -46,15 +46,15 @@ public:
 
 	void ParseRawData() override;
 
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress) override;
 	std::string GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress) override;
-	RoomCommand GetRoomCommand() override;
-	size_t GetRawDataSize() override;
-	std::string GetCommandCName() override;
-	std::string GenerateExterns() override;
+	RoomCommand GetRoomCommand() const override;
+	size_t GetRawDataSize() const override;
+	std::string GetCommandCName() const override;
+	std::string GenerateExterns() const override;
 
 	ZResourceType GetResourceType() const override;
 

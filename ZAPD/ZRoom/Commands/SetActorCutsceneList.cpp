@@ -5,8 +5,6 @@
 #include "../../ZFile.h"
 #include "../ZRoom.h"
 
-using namespace std;
-
 SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> rawData,
                                            uint32_t rawDataIndex)
 	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
@@ -14,7 +12,7 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> r
 	int32_t numCutscenes = rawData[rawDataIndex + 1];
 	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
 
-	cutscenes = vector<ActorCutsceneEntry*>();
+	cutscenes = std::vector<ActorCutsceneEntry*>();
 
 	int32_t currentPtr = segmentOffset;
 
@@ -26,7 +24,7 @@ SetActorCutsceneList::SetActorCutsceneList(ZRoom* nZRoom, std::vector<uint8_t> r
 		currentPtr += 16;
 	}
 
-	string declaration = "";
+	std::string declaration = "";
 
 	for (ActorCutsceneEntry* entry : cutscenes)
 	{
@@ -48,7 +46,8 @@ SetActorCutsceneList::~SetActorCutsceneList()
 		delete entry;
 }
 
-string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, uint32_t baseAddress)
+std::string SetActorCutsceneList::GenerateSourceCodePass1(std::string roomName,
+                                                          uint32_t baseAddress)
 {
 	return StringHelper::Sprintf(
 		"%s 0x%02X, (u32)&%sActorCutsceneList0x%06X",
@@ -56,28 +55,29 @@ string SetActorCutsceneList::GenerateSourceCodePass1(string roomName, uint32_t b
 		zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetActorCutsceneList::GenerateSourceCodePass2(string roomName, uint32_t baseAddress)
+std::string SetActorCutsceneList::GenerateSourceCodePass2(std::string roomName,
+                                                          uint32_t baseAddress)
 {
 	return "";
 }
 
-size_t SetActorCutsceneList::GetRawDataSize()
+size_t SetActorCutsceneList::GetRawDataSize() const
 {
 	return ZRoomCommand::GetRawDataSize() + (cutscenes.size() * 16);
 }
 
-string SetActorCutsceneList::GenerateExterns()
+std::string SetActorCutsceneList::GenerateExterns() const
 {
 	return StringHelper::Sprintf("extern ActorCutscene %sActorCutsceneList0x%06X[];\n",
 	                             zRoom->GetName().c_str(), segmentOffset);
 }
 
-string SetActorCutsceneList::GetCommandCName()
+std::string SetActorCutsceneList::GetCommandCName() const
 {
 	return "SCmdCutsceneActorList";
 }
 
-RoomCommand SetActorCutsceneList::GetRoomCommand()
+RoomCommand SetActorCutsceneList::GetRoomCommand() const
 {
 	return RoomCommand::SetActorCutsceneList;
 }

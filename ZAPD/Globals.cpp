@@ -5,7 +5,6 @@
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
-using namespace std;
 
 Globals* Globals::Instance;
 
@@ -16,8 +15,8 @@ Globals::Globals()
 	files = std::vector<ZFile*>();
 	segments = std::vector<int32_t>();
 	symbolMap = std::map<uint32_t, std::string>();
-	segmentRefs = map<int32_t, string>();
-	segmentRefFiles = map<int32_t, ZFile*>();
+	segmentRefs = std::map<int32_t, std::string>();
+	segmentRefFiles = std::map<int32_t, ZFile*>();
 	game = ZGame::OOT_RETAIL;
 	genSourceFile = true;
 	testMode = false;
@@ -29,14 +28,14 @@ Globals::Globals()
 	verbosity = VERBOSITY_SILENT;
 }
 
-string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
+std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 {
 	if (segmentRefs.find(segNumber) != segmentRefs.end())
 	{
 		if (segmentRefFiles.find(segNumber) == segmentRefFiles.end())
 		{
 			XMLDocument doc;
-			string filePath = segmentRefs[segNumber];
+			std::string filePath = segmentRefs[segNumber];
 			XMLError eResult = doc.LoadFile(filePath.c_str());
 
 			if (eResult != tinyxml2::XML_SUCCESS)
@@ -50,7 +49,7 @@ string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 			for (XMLElement* child = root->FirstChildElement(); child != NULL;
 			     child = child->NextSiblingElement())
 			{
-				if (string(child->Name()) == "File")
+				if (std::string(child->Name()) == "File")
 				{
 					ZFile* file = new ZFile(fileMode, child, "", "", "", filePath, true);
 					file->GeneratePlaceholderDeclarations();
@@ -85,41 +84,41 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 	for (XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		if (string(child->Name()) == "SymbolMap")
+		if (std::string(child->Name()) == "SymbolMap")
 		{
-			string fileName = string(child->Attribute("File"));
+			std::string fileName = std::string(child->Attribute("File"));
 			GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 		}
-		else if (string(child->Name()) == "Segment")
+		else if (std::string(child->Name()) == "Segment")
 		{
-			string fileName = string(child->Attribute("File"));
+			std::string fileName = std::string(child->Attribute("File"));
 			int32_t segNumber = child->IntAttribute("Number");
 			segmentRefs[segNumber] = fileName;
 		}
-		else if (string(child->Name()) == "ActorList")
+		else if (std::string(child->Name()) == "ActorList")
 		{
-			string fileName = string(child->Attribute("File"));
+			std::string fileName = std::string(child->Attribute("File"));
 			std::vector<std::string> lines =
 				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
 			for (std::string line : lines)
 				cfg.actorList.push_back(StringHelper::Strip(line, "\r"));
 		}
-		else if (string(child->Name()) == "ObjectList")
+		else if (std::string(child->Name()) == "ObjectList")
 		{
-			string fileName = string(child->Attribute("File"));
+			std::string fileName = std::string(child->Attribute("File"));
 			std::vector<std::string> lines =
 				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
 			for (std::string line : lines)
 				cfg.objectList.push_back(StringHelper::Strip(line, "\r"));
 		}
-		else if (string(child->Name()) == "TexturePool")
+		else if (std::string(child->Name()) == "TexturePool")
 		{
-			string fileName = string(child->Attribute("File"));
+			std::string fileName = std::string(child->Attribute("File"));
 			ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 		}
-		else if (string(child->Name()) == "BGConfig")
+		else if (std::string(child->Name()) == "BGConfig")
 		{
 			cfg.bgScreenWidth = child->IntAttribute("ScreenWidth", 320);
 			cfg.bgScreenHeight = child->IntAttribute("ScreenHeight", 240);
@@ -146,11 +145,11 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 	for (XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		if (string(child->Name()) == "Texture")
+		if (std::string(child->Name()) == "Texture")
 		{
-			string crcStr = string(child->Attribute("CRC"));
-			string texPath = string(child->Attribute("Path"));
-			string texName = "";
+			std::string crcStr = std::string(child->Attribute("CRC"));
+			std::string texPath = std::string(child->Attribute("Path"));
+			std::string texName = "";
 
 			uint32_t crc = strtoul(crcStr.c_str(), NULL, 16);
 
