@@ -64,12 +64,8 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
-	// room->scene = nScene;
-	scene = Globals::Instance->lastScene;
-
 	if (std::string(reader->Name()) == "Scene")
 	{
-		scene = this;
 		Globals::Instance->lastScene = this;
 	}
 
@@ -434,8 +430,8 @@ std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	sourceOutput += "#include \"z64cutscene_commands.h\"\n";
 	sourceOutput += "#include \"variables.h\"\n";
 
-	if (scene != nullptr)
-		sourceOutput += scene->parent->GetHeaderInclude();
+	if (Globals::Instance->lastScene != nullptr)
+		sourceOutput += Globals::Instance->lastScene->parent->GetHeaderInclude();
 
 	ProcessCommandSets();
 

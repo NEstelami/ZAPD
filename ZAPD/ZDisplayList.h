@@ -325,7 +325,6 @@ protected:
 
 public:
 	std::string sceneSegName;
-	ZRoom* scene;
 	std::vector<uint64_t> instructions;
 	std::string curPrefix;
 
@@ -359,7 +358,7 @@ public:
 	                    const uint32_t nRawDataIndex) override;
 
 	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, ZFile* parent,
+	static bool TextureGenCheck(std::vector<uint8_t> fileData, ZFile* parent,
 	                            std::string prefix, int32_t texWidth, int32_t texHeight,
 	                            uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
 	                            F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,

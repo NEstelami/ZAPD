@@ -27,7 +27,6 @@ protected:
 	void SyotesRoomHack();
 
 public:
-	ZRoom* scene;
 	std::vector<CommandSet> commandSets;
 	int32_t roomCount;  // Only valid for scenes
 
