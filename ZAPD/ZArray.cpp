@@ -37,7 +37,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 	size_t childIndex = rawDataIndex;
 	for (size_t i = 0; i < arrayCnt; i++)
 	{
-		ZResource* res = nodeMap->at(childName)();
+		ZResource* res = nodeMap->at(childName)(parent);
 		if (!res->DoesSupportArray())
 		{
 			throw std::runtime_error(StringHelper::Sprintf(

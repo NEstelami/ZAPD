@@ -72,7 +72,7 @@ std::string ZPath::GetBodySourceCode() const
 	size_t index = 0;
 	for (const auto& entry : pathways)
 	{
-		declaration += entry.GetBodySourceCode();
+		declaration += StringHelper::Sprintf("\t%s,\n", entry.GetBodySourceCode().c_str());
 
 		if (index < pathways.size() - 1)
 			declaration += "\n";
@@ -100,6 +100,11 @@ std::string ZPath::GetSourceOutputCode(const std::string& prefix)
 std::string ZPath::GetSourceTypeName() const
 {
 	return "Path";
+}
+
+ZResourceType ZPath::GetResourceType() const
+{
+	return ZResourceType::Path;
 }
 
 size_t ZPath::GetRawDataSize() const
@@ -183,11 +188,21 @@ std::string PathwayEntry::GetBodySourceCode() const
 
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 		declaration +=
-			StringHelper::Sprintf("	{ %i, %i, %i, %s },", numPoints, unk1, unk2, listName.c_str());
+			StringHelper::Sprintf("%i, %i, %i, %s", numPoints, unk1, unk2, listName.c_str());
 	else
-		declaration += StringHelper::Sprintf("	{ %i, %s },", numPoints, listName.c_str());
+		declaration += StringHelper::Sprintf("%i, %s", numPoints, listName.c_str());
 
 	return declaration;
+}
+
+std::string PathwayEntry::GetSourceTypeName() const
+{
+	return "Path";
+}
+
+ZResourceType PathwayEntry::GetResourceType() const
+{
+	return ZResourceType::Path;
 }
 
 size_t PathwayEntry::GetRawDataSize() const

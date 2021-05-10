@@ -23,8 +23,6 @@ public:
 	size_t GetRawDataSize() const override;
 	std::string GetCommandCName() const override;
 
-	ZResourceType GetResourceType() const override;
-
 private:
 	ZPath pathwayList;
 };

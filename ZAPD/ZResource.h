@@ -39,6 +39,7 @@ enum class ZResourceType
 	Mtx,
 	Path,
 	Room,
+	RoomCommand,
 	Scalar,
 	Skeleton,
 	String,
