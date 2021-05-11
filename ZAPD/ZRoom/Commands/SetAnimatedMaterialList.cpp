@@ -118,20 +118,6 @@ std::string SetAnimatedMaterialList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_ANIMATED_MATERIAL_LIST(%s)", listName.c_str());
 }
 
-size_t SetAnimatedMaterialList::GetRawDataSize() const
-{
-	size_t paramsSize = 0;
-	for (const auto& texture : textures)
-	{
-		for (const auto& param : texture.params)
-		{
-			paramsSize += param->GetParamsSize();
-		}
-	}
-
-	return ZRoomCommand::GetRawDataSize() + paramsSize;
-}
-
 std::string SetAnimatedMaterialList::GetCommandCName() const
 {
 	return "SCmdTextureAnimations";

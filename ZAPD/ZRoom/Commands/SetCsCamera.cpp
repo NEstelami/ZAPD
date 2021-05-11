@@ -113,11 +113,6 @@ std::string SetCsCamera::GetBodySourceCode() const
 	                             listName.c_str());
 }
 
-size_t SetCsCamera::GetRawDataSize() const
-{
-	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
-}
-
 std::string SetCsCamera::GetCommandCName() const
 {
 	return "SCmdCsCameraList";

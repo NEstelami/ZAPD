@@ -24,7 +24,14 @@ void SetAlternateHeaders::ParseRawDataLate()
 		headers.push_back(address);
 
 		if (address != 0 && parent->GetDeclaration(GETSEGOFFSET(address)) == nullptr)
-			zRoom->commandSets.push_back(CommandSet(address));
+		{
+			//zRoom->commandSets.push_back(CommandSet(address));
+			ZRoom* altheader = new ZRoom(parent);
+			altheader->ExtractFromBinary(parent->GetRawData(), GETSEGOFFSET(address), zRoom->GetResourceType());
+			altheader->DeclareReferences(parent->GetName());
+
+			parent->resources.push_back(altheader);
+		}
 	}
 }
 

@@ -274,11 +274,10 @@ void ZFile::ExtractResources(fs::path outputDir)
 	if (!Directory::Exists(Globals::Instance->sourceOutputPath.string()))
 		Directory::CreateDirectory(Globals::Instance->sourceOutputPath.string());
 
-	for (ZResource* res : resources)
-		res->ParseRawDataLate();
-
-	for (ZResource* res : resources)
-		res->DeclareReferencesLate(name);
+	for (size_t i = 0; i < resources.size(); i++)
+		resources[i]->ParseRawDataLate();
+	for (size_t i = 0; i < resources.size(); i++)
+		resources[i]->DeclareReferencesLate(name);
 
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles(outputDir);

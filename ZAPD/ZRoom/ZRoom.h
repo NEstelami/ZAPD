@@ -18,18 +18,9 @@ struct CommandSet
 
 class ZRoom : public ZResource
 {
-protected:
-	std::vector<ZRoomCommand*> commands;
-
-	std::string GetSourceOutputHeader(const std::string& prefix) override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
-	void ProcessCommandSets();
-	void SyotesRoomHack();
-
 public:
-	std::vector<CommandSet> commandSets;
 	int32_t roomCount;  // Only valid for scenes
-	bool isScene = false;
+	//bool isScene = false;
 
 	std::string extDefines;
 
@@ -38,8 +29,18 @@ public:
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    uint32_t nRawDataIndex) override;
+	void ExtractFromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZResourceType parentType);
 
-	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
+	void ParseXML(tinyxml2::XMLElement* reader) override;
+	void ParseRawData() override;
+	void DeclareReferences(const std::string& prefix) override;
+	void ParseRawDataLate() override;
+	void DeclareReferencesLate(const std::string& prefix) override;
+
+	void DeclareVar(const std::string& prefix, const std::string body);
+	std::string GetBodySourceCode() const;
+
+	std::string GetDefaultName(const std::string& prefix) const;
 	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
@@ -48,4 +49,14 @@ public:
 
 	size_t GetRawDataSize() const override;
 	ZResourceType GetResourceType() const override;
+
+protected:
+	std::vector<ZRoomCommand*> commands;
+	std::string hackMode = "";
+
+	ZResourceType zroomType = ZResourceType::Error;
+
+	std::string GetSourceOutputHeader(const std::string& prefix) override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+	void SyotesRoomHack();
 };

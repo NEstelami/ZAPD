@@ -97,11 +97,6 @@ std::string SetMesh::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_MESH(%s)", list.c_str());
 }
 
-size_t SetMesh::GetRawDataSize() const
-{
-	return ZRoomCommand::GetRawDataSize();
-}
-
 std::string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
