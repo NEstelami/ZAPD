@@ -68,12 +68,9 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
-	uint32_t cmdCount = UINT32_MAX;
-
-	if (name == "syotes_room_0" || hackMode == "syotes_room")
+	if (hackMode == "syotes_room")
 	{
 		SyotesRoomHack();
-		cmdCount = 0;
 	}
 	else
 	{
@@ -116,6 +113,12 @@ void ZRoom::ExtractFromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRa
 void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
+
+	// TODO: HACK: remove this specific check
+	if (name == "syotes_room_0")
+	{
+		hackMode = "syotes_room";
+	}
 
 	std::string nodeName = std::string(reader->Name());
 	if (nodeName == "Scene")
@@ -218,7 +221,6 @@ void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZRoom::ParseRawData()
 {
-
 	if (hackMode == "syotes_room")
 		return;
 
@@ -388,7 +390,7 @@ void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
 		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
 
 	parent->AddDeclarationArray(
-		rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+		rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 		GetSourceTypeName(), auxName, 0, body);
 }
 
@@ -497,6 +499,9 @@ std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 		if (Globals::Instance->lastScene != nullptr)
 			sourceOutput += Globals::Instance->lastScene->parent->GetHeaderInclude();
 	}
+
+	if (hackMode == "syotes_room")
+		return sourceOutput;
 
 	DeclareVar(prefix, GetBodySourceCode());
 
