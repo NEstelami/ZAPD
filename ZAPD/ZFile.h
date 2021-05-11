@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include "Directory.h"
-#include "ZResource.h"
 #include "ZTexture.h"
 #include "tinyxml2.h"
 
@@ -11,8 +10,8 @@ enum class ZFileMode
 {
 	BuildTexture,
 	BuildOverlay,
-	BuildModelIntermediette,
-	BuildAnimationIntermediette,
+	//BuildModelIntermediette,
+	//BuildAnimationIntermediette,
 	BuildBlob,
 	BuildSourceFile,
 	BuildBackground,
@@ -99,6 +98,7 @@ protected:
 	fs::path basePath;
 	fs::path outputPath;
 	fs::path xmlFilePath;
+
 	// Keep track of every texture of this ZFile.
 	// The pointers declared here are "borrowed" (somebody else is the owner),
 	// so ZFile shouldn't delete/free those textures.

@@ -1007,9 +1007,7 @@ std::string ZFile::ProcessDeclarations()
 	for (std::pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
-		{
 			continue;
-		}
 
 		if (item.second->includePath != "")
 		{

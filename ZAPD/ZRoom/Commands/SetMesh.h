@@ -171,13 +171,10 @@ protected:
 class SetMesh : public ZRoomCommand
 {
 public:
-	MeshHeaderBase* meshHeader = nullptr;
-	uint32_t segmentOffset;
 	uint8_t data;
 	uint8_t meshHeaderType;
 
 	SetMesh(ZFile* nParent);
-	~SetMesh();
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -189,7 +186,6 @@ public:
 	std::string GetCommandCName() const override;
 
 private:
-	uint8_t meshHeaderType;
 	std::shared_ptr<PolygonTypeBase> polyType;
 
 	std::string GenDListExterns(ZDisplayList* dList);

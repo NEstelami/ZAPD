@@ -1,7 +1,3 @@
-#ifdef _MSC_VER
-#include <Windows.h>
-#endif
-
 #include "Globals.h"
 #include <algorithm>
 #include "File.h"
@@ -181,7 +177,7 @@ void Globals::AddSegment(int32_t segment, ZFile* file)
 	if (std::find(segments.begin(), segments.end(), segment) == segments.end())
 		segments.push_back(segment);
 
-	segmentRefs[segment] = file->GetXmlFilePath();
+	segmentRefs[segment] = file->GetXmlFilePath().string();
 	segmentRefFiles[segment] = file;
 }
 

@@ -147,11 +147,11 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 	}
 }
 
-void ZSkeleton::Save(const std::string& outFolder)
+void ZSkeleton::Save(const fs::path& outFolder)
 {
 }
 
-size_t ZSkeleton::GetRawDataSize()
+size_t ZSkeleton::GetRawDataSize() const
 {
 	switch (type)
 	{

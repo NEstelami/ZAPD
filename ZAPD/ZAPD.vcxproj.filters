@@ -228,9 +228,6 @@
     <ClCompile Include="ZRoom\Commands\SetActorCutsceneList.cpp">
       <Filter>Source Files\Z64\ZRoom\Commands</Filter>
     </ClCompile>
-    <ClCompile Include="ZRoom\Commands\SetAnimatedTextureList.cpp">
-      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
-    </ClCompile>
     <ClCompile Include="ZRoom\Commands\SetCsCamera.cpp">
       <Filter>Source Files\Z64\ZRoom\Commands</Filter>
     </ClCompile>
@@ -250,6 +247,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MemoryStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZRoom\Commands\SetAnimatedMaterialList.cpp">
+      <Filter>Source Files\Z64\ZRoom\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBackend.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZPath.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
+    <ClCompile Include="Declaration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -491,9 +500,6 @@
     <ClInclude Include="ZRoom\Commands\Unused1D.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="ZRoom\Commands\SetAnimatedTextureList.h">
-      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
-    </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetCsCamera.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
@@ -518,6 +524,18 @@
     <ClInclude Include="MemoryStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZRoom\Commands\SetAnimatedMaterialList.h">
+      <Filter>Header Files\Z64\ZRoom\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBackend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZPath.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="Declaration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\SymbolMap_OoTMqDbg.txt">
@@ -528,5 +546,8 @@
     <CopyFileToFolders Include="..\lib\assimp-built\assimp-vc142-mt.dll">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

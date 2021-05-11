@@ -5,23 +5,20 @@
 class EntranceEntry
 {
 public:
+	uint8_t startPositionIndex;
+	uint8_t roomToLoad;
+
 	EntranceEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const;
-
-protected:
-	uint8_t startPositionIndex;
-	uint8_t roomToLoad;
 };
 
 class SetEntranceList : public ZRoomCommand
 {
 public:
 	std::vector<EntranceEntry> entrances;
-	uint32_t segmentOffset;
 
 	SetEntranceList(ZFile* nParent);
-	~SetEntranceList();
 
 	void DeclareReferences(const std::string& prefix) override;
 	void ParseRawDataLate() override;

@@ -31,8 +31,8 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex, const std::string& nRelPath) override;
-	void Save(const std::string& outFolder) override;
+						uint32_t nRawDataIndex) override;
+	void Save(const fs::path& outFolder) override;
 
 	size_t GetRawDataSize() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;

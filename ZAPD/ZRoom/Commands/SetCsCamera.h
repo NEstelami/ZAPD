@@ -25,12 +25,10 @@ public:
 class SetCsCamera : public ZRoomCommand
 {
 public:
-	uint32_t segmentOffset;
-	std::vector<CsCameraEntry*> cameras;
+	std::vector<CsCameraEntry> cameras;
 	std::vector<ZVector> points;
 
-	SetCsCamera(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex);
-	~SetCsCamera();
+	SetCsCamera(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

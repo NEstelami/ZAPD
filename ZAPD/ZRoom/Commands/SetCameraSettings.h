@@ -9,6 +9,11 @@ public:
 
 	void ParseRawData() override;
 
+	std::string GetBodySourceCode() const override;
+
+	std::string GetCommandCName() const override;
+	RoomCommand GetRoomCommand() const override;
+
 	uint8_t cameraMovement;
 	uint32_t mapHighlight;
 private:

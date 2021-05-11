@@ -55,14 +55,11 @@ public:
 
 	bool isPalette = false;
 
-	static ZTexture* BuildFromXML(tinyxml2::XMLElement* reader, std::string inFolder,
-	                              bool readFile);
-	// static ZTexture* ExtractFromXML(tinyxml2::XMLElement* reader, std::vector<uint8_t> nRawData,
-	// uint32_t rawDataIndex, std::string nRelPath, ZFile* nParent);
-	static ZTexture* FromBinary(TextureType nType, std::vector<uint8_t> nRawData,
-	                            uint32_t rawDataIndex, std::string nName, int32_t nWidth,
-	                            int32_t nHeight, ZFile* nParent);
-	static ZTexture* FromPNG(std::string pngFilePath, TextureType texType);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+		const uint32_t nRawDataIndex) override;
+	void FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, int32_t nWidth,
+		int32_t nHeight, TextureType nType, bool nIsPalette);
+	void FromPNG(const fs::path& pngFilePath, TextureType texType);
 	static TextureType GetTextureTypeFromString(std::string str);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;

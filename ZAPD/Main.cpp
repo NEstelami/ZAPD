@@ -30,8 +30,6 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath);
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
-void BuildAssetModelIntermediette(const fs::path& outPath);
-void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 void ErrorHandler(int sig)
@@ -52,7 +50,7 @@ void ErrorHandler(int sig)
 	fprintf(stderr, "Traceback:\n");
 	for (size_t i = 1; i < size; i++)
 	{
-		Dl_info info;
+		Dl_info info;	
 		uint32_t gotAddress = dladdr(array[i], &info);
 		std::string functionName(symbols[i]);
 
@@ -120,30 +118,30 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-gsf")  // Generate source file during extraction
 		{
-			Globals::Instance->genSourceFile = string(argv[++i]) == "1";
+			Globals::Instance->genSourceFile = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
-			Globals::Instance->includeFilePrefix = string(argv[++i]) == "1";
+			Globals::Instance->testMode = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-crc" ||
 		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
 		{
-			Globals::Instance->testMode = string(argv[++i]) == "1";
+			Globals::Instance->testMode = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
-			Globals::Instance->useLegacyZDList = string(argv[++i]) == "1";
+			Globals::Instance->useLegacyZDList = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-profile")  // Enable profiling
 		{
-			Globals::Instance->profile = string(argv[++i]) == "1";
+			Globals::Instance->profile = std::string(argv[++i]) == "1";
 		}
 		else if (arg ==
 		         "-uer")  // Split resources into their individual components (enabled by default)
 		                  // TODO: We may wish to make this a part of the config file...
 		{
-			Globals::Instance->useExternalResources = string(argv[++i]) == "1";
+			Globals::Instance->useExternalResources = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-tt")  // Set texture type
 		{
@@ -185,7 +183,7 @@ int main(int argc, char* argv[])
 
 	// Parse File Mode
 	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
-	string buildMode = argv[1];
+	std::string buildMode = argv[1];
 	ZFileMode fileMode = ZFileMode::Invalid;
 
 	if (buildMode == "btex")
@@ -198,10 +196,6 @@ int main(int argc, char* argv[])
 		fileMode = ZFileMode::BuildSourceFile;
 	else if (buildMode == "bblb")
 		fileMode = ZFileMode::BuildBlob;
-	else if (buildMode == "bmdlintr")
-		fileMode = ZFileMode::BuildModelIntermediette;
-	else if (buildMode == "bamnintr")
-		fileMode = ZFileMode::BuildAnimationIntermediette;
 	else if (buildMode == "e")
 		fileMode = ZFileMode::Extract;
 	else if (exporterSet != nullptr && exporterSet->parseFileModeFunc != nullptr)
@@ -224,7 +218,7 @@ int main(int argc, char* argv[])
 
 
 
-	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
@@ -282,15 +276,6 @@ int main(int argc, char* argv[])
 	else if (fileMode == ZFileMode::BuildBlob)
 	{
 		BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
-	}
-	else if (fileMode == ZFileMode::BuildModelIntermediette)
-	{
-		BuildAssetModelIntermediette(Globals::Instance->outputPath);
-	}
-	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
-	{
-		BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
-		                                 Globals::Instance->outputPath);
 	}
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
@@ -366,7 +351,7 @@ void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const f
 	std::string name = outPath.stem().string();
 
 	ZTexture tex(nullptr);
-	tex.FromPNG(pngFilePath, texType);
+	tex.FromPNG(pngFilePath.string(), texType);
 	std::string cfgPath = StringHelper::Split(pngFilePath.string(), ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))

@@ -5,12 +5,11 @@
 class RoomEntry
 {
 public:
-	RoomEntry(uint32_t nVAS, uint32_t nVAE);
-	RoomEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-protected:
 	int32_t virtualAddressStart;
 	int32_t virtualAddressEnd;
+
+	RoomEntry(uint32_t nVAS, uint32_t nVAE);
+	RoomEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 };
 
 class SetRoomList : public ZRoomCommand
@@ -19,7 +18,6 @@ public:
 	std::vector<RoomEntry> rooms;
 
 	SetRoomList(ZFile* nParent);
-	~SetRoomList();
 
 	void ParseRawData() override;
 	virtual void DeclareReferences(const std::string& prefix);

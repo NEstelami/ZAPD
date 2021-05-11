@@ -119,7 +119,7 @@ void ExporterExample_Room::Save(ZResource* res, fs::path outPath, BinaryWriter* 
 			writer->Write((uint8_t)0); // 0x03
 			writer->Write((uint8_t)cmdSkybox->skyboxNumber); // 0x04
 			writer->Write((uint8_t)cmdSkybox->cloudsType); // 0x05
-			writer->Write((uint8_t)cmdSkybox->lightingSettingsControl); // 0x06
+			writer->Write((uint8_t)cmdSkybox->isIndoors); // 0x06
 		}
 		break;
 		case RoomCommand::SetRoomBehavior:
@@ -200,34 +200,34 @@ void ExporterExample_Room::Save(ZResource* res, fs::path outPath, BinaryWriter* 
 			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(cmdLight->segmentOffset, SeekOffsetType::Start);
 
-			for (LightingSettings* setting : cmdLight->settings)
+			for (LightingSettings setting : cmdLight->settings)
 			{
-				writer->Write(setting->ambientClrR);
-				writer->Write(setting->ambientClrG);
-				writer->Write(setting->ambientClrB);
+				writer->Write(setting.ambientClrR);
+				writer->Write(setting.ambientClrG);
+				writer->Write(setting.ambientClrB);
 
-				writer->Write(setting->diffuseClrA_R);
-				writer->Write(setting->diffuseClrA_G);
-				writer->Write(setting->diffuseClrA_B);
+				writer->Write(setting.diffuseClrA_R);
+				writer->Write(setting.diffuseClrA_G);
+				writer->Write(setting.diffuseClrA_B);
 
-				writer->Write(setting->diffuseDirA_X);
-				writer->Write(setting->diffuseDirA_Y);
-				writer->Write(setting->diffuseDirA_Z);
+				writer->Write(setting.diffuseDirA_X);
+				writer->Write(setting.diffuseDirA_Y);
+				writer->Write(setting.diffuseDirA_Z);
 
-				writer->Write(setting->diffuseClrB_R);
-				writer->Write(setting->diffuseClrB_G);
-				writer->Write(setting->diffuseClrB_B);
+				writer->Write(setting.diffuseClrB_R);
+				writer->Write(setting.diffuseClrB_G);
+				writer->Write(setting.diffuseClrB_B);
 
-				writer->Write(setting->diffuseDirB_X);
-				writer->Write(setting->diffuseDirB_Y);
-				writer->Write(setting->diffuseDirB_Z);
+				writer->Write(setting.diffuseDirB_X);
+				writer->Write(setting.diffuseDirB_Y);
+				writer->Write(setting.diffuseDirB_Z);
 
-				writer->Write(setting->fogClrR);
-				writer->Write(setting->fogClrG);
-				writer->Write(setting->fogClrB);
+				writer->Write(setting.fogClrR);
+				writer->Write(setting.fogClrG);
+				writer->Write(setting.fogClrB);
 
-				writer->Write(setting->unk);
-				writer->Write(setting->drawDistance);
+				writer->Write(setting.unk);
+				writer->Write(setting.drawDistance);
 			}
 
 			writer->Seek(oldOffset, SeekOffsetType::Start);
@@ -247,10 +247,10 @@ void ExporterExample_Room::Save(ZResource* res, fs::path outPath, BinaryWriter* 
 			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(baseStreamEnd, SeekOffsetType::Start);
 
-			for (RoomEntry* entry : cmdRoom->rooms)
+			for (RoomEntry entry : cmdRoom->rooms)
 			{
-				writer->Write(entry->virtualAddressStart);
-				writer->Write(entry->virtualAddressEnd);
+				writer->Write(entry.virtualAddressStart);
+				writer->Write(entry.virtualAddressEnd);
 			}
 
 			writer->Seek(oldOffset, SeekOffsetType::Start);
@@ -293,10 +293,10 @@ void ExporterExample_Room::Save(ZResource* res, fs::path outPath, BinaryWriter* 
 			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(baseStreamEnd, SeekOffsetType::Start);
 
-			for (EntranceEntry* entry : cmdEntrance->entrances)
+			for (EntranceEntry entry : cmdEntrance->entrances)
 			{
-				writer->Write((uint8_t)entry->startPositionIndex);
-				writer->Write((uint8_t)entry->roomToLoad);
+				writer->Write((uint8_t)entry.startPositionIndex);
+				writer->Write((uint8_t)entry.roomToLoad);
 			}
 
 			writer->Seek(oldOffset, SeekOffsetType::Start);
@@ -328,16 +328,16 @@ void ExporterExample_Room::Save(ZResource* res, fs::path outPath, BinaryWriter* 
 			uint32_t oldOffset = writer->GetBaseAddress();
 			writer->Seek(baseStreamEnd, SeekOffsetType::Start);
 
-			for (ActorSpawnEntry* entry : cmdStartPos->actors)
+			for (ActorSpawnEntry entry : cmdStartPos->actors)
 			{
-				writer->Write(entry->actorNum);
-				writer->Write(entry->posX);
-				writer->Write(entry->posY);
-				writer->Write(entry->posZ);
-				writer->Write(entry->rotX);
-				writer->Write(entry->rotY);
-				writer->Write(entry->rotZ);
-				writer->Write(entry->initVar);
+				writer->Write(entry.actorNum);
+				writer->Write(entry.posX);
+				writer->Write(entry.posY);
+				writer->Write(entry.posZ);
+				writer->Write(entry.rotX);
+				writer->Write(entry.rotY);
+				writer->Write(entry.rotZ);
+				writer->Write(entry.initVar);
 			}
 
 			writer->Seek(oldOffset, SeekOffsetType::Start);

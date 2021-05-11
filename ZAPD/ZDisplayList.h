@@ -373,10 +373,9 @@ public:
 	std::string ProcessLegacy(const std::string& prefix);
 	std::string ProcessGfxDis(const std::string& prefix);
 
-	void Save(const std::string& outFolder) override;
-	bool IsExternalResource() override;
-	virtual std::string GetExternalExtension() override;
-	std::string GetSourceTypeName() override;
+	bool IsExternalResource() const override;
+	virtual std::string GetExternalExtension() const override;
+	std::string GetSourceTypeName() const override;
 
 	ZResourceType GetResourceType() const override;
 };

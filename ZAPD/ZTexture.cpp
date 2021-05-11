@@ -50,11 +50,11 @@ void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDat
 void ZTexture::FromPNG(const fs::path& pngFilePath, TextureType texType)
 {
 	format = texType;
-	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
+	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath.string()), ".")[0];
 	PrepareRawDataFromFile(pngFilePath);
 }
 
-void ZTexture::ParseXML(XMLElement* reader)
+void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
@@ -713,14 +713,14 @@ void ZTexture::Save(const fs::path& outFolder)
 	// process for generating the Texture Pool XML.
 	if (Globals::Instance->outputCrc)
 	{
-		File::WriteAllText(Globals::Instance->outputPath / (outName + ".txt"),
+		File::WriteAllText((Globals::Instance->outputPath / (outName + ".txt")).string(),
 		                   StringHelper::Sprintf("%08lX", hash));
 	}
 
 	auto outPath = GetPoolOutPath(outFolder);
 
-	if (!Directory::Exists(outPath))
-		Directory::CreateDirectory(outPath);
+	if (!Directory::Exists(outPath.string()))
+		Directory::CreateDirectory(outPath.string());
 
 	auto outFileName = outPath / (outName + "." + GetExternalExtension() + ".png");
 

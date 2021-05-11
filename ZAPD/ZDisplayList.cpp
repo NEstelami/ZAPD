@@ -2081,6 +2081,7 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 			if (scene->parent->GetDeclaration(texAddr) == nullptr)
 			{
 				ZTexture* tex = scene->parent->GetTextureResource(texAddr);
+
 				if (tex != nullptr)
 					tex->isPalette = texIsPalette;
 				else
@@ -2155,11 +2156,8 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	return TextureType::RGBA16bpp;
 }
 
-void ZDisplayList::Save(const std::string& outFolder)
-{
-}
 
-bool ZDisplayList::IsExternalResource()
+bool ZDisplayList::IsExternalResource() const
 {
 	return false;
 }
