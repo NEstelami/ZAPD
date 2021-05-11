@@ -44,8 +44,6 @@
 #include "ZCutscene.h"
 #include "ZFile.h"
 
-//using namespace tinyxml2;
-
 REGISTER_ZFILENODE(Room, ZRoom);
 REGISTER_ZFILENODE(Scene, ZRoom);
 REGISTER_ZFILENODE(RoomAltHeader, ZRoom);
@@ -74,10 +72,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	}
 	else
 	{
-		/*std::string commandSetName = StringHelper::Sprintf("%sSet_%06X", name.c_str(), rawDataIndex);
-		parent->AddDeclarationArray(
-			rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
-			GetSourceTypeName(), commandSetName, 0, "");*/
 		DeclareVar(name, "");
 	}
 }
@@ -136,87 +130,6 @@ void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (reader->Attribute("HackMode") != nullptr)
 		hackMode = std::string(reader->Attribute("HackMode"));
-
-	for (tinyxml2::XMLElement* child = reader->FirstChildElement(); child != NULL;
-	     child = child->NextSiblingElement())
-	{
-		std::string childName =
-			child->Attribute("Name") == NULL ? "" : std::string(child->Attribute("Name"));
-		std::string childComment = child->Attribute("Comment") == NULL ?
-                                       "" :
-                                       "// " + std::string(child->Attribute("Comment")) + "\n";
-
-		// TODO: Bunch of repeated code between all of these that needs to be combined.
-		if (std::string(child->Name()) == "DListHint")
-		{
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			ZDisplayList* dList = new ZDisplayList(
-				rawData, address,
-				ZDisplayList::GetDListLength(rawData, address,
-			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
-                                                 DListType::F3DEX :
-                                                 DListType::F3DZEX),
-				parent);
-
-			dList->GetSourceOutputCode(name);
-			delete dList;
-		}
-		else if (std::string(child->Name()) == "CutsceneHint")
-		{
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
-			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->ExtractFromXML(child, rawData, address);
-
-			cutscene->GetSourceOutputCode(name);
-
-			delete cutscene;
-		}
-		else if (std::string(child->Name()) == "AltHeaderHint")
-		{
-			/*
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			uint32_t commandsCount = UINT32_MAX;
-
-			if (child->FindAttribute("Count") != NULL)
-			{
-				std::string commandCountStr = child->Attribute("Count");
-				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
-			}
-
-			commandSets.push_back(CommandSet(address, commandsCount));
-			*/
-		}
-		else if (std::string(child->Name()) == "PathHint")
-		{
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			// TODO: add this to command set
-			ZPath* pathway = new ZPath(parent);
-			pathway->SetRawDataIndex(address);
-			pathway->ParseRawData();
-			pathway->DeclareReferences(name);
-			pathway->GetSourceOutputCode(name);
-
-			delete pathway;
-		}
-
-#ifndef DEPRECATION_OFF
-		fprintf(stderr,
-		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
-		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
-		        "version.\n"
-		        "\t Use the non-hint version instead.\n",
-		        name.c_str(), child->Name());
-#endif
-	}
 }
 
 void ZRoom::ParseRawData()
@@ -340,7 +253,6 @@ void ZRoom::ParseRawData()
 
 		cmd->commandSet = rawDataIndex;
 		cmd->ExtractCommandFromRoom(this, currentPtr);
-		//cmd->DeclareReferences(GetName());
 
 		auto end = std::chrono::steady_clock::now();
 		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
