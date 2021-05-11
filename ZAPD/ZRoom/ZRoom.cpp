@@ -51,7 +51,7 @@ ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
 	roomCount = -1;
 	canHaveInner = true;
-	RegisterOptionalAttribute("Comment");
+	RegisterOptionalAttribute("HackMode");
 }
 
 ZRoom::~ZRoom()
