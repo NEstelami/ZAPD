@@ -54,6 +54,7 @@ RoomCommand SetRoomList::GetRoomCommand() const
 void SetRoomList::PreGenSourceFiles()
 {
 	std::string declaration = "";
+	bool isFirst = true;
 
 	for (ZFile* file : Globals::Instance->files)
 	{
@@ -62,9 +63,13 @@ void SetRoomList::PreGenSourceFiles()
 			if (res->GetResourceType() == ZResourceType::Room && res != zRoom)
 			{
 				std::string roomName = res->GetName();
+				if (!isFirst)
+					declaration += "\n";
+
 				declaration +=
-					StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n",
+					StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },",
 				                          roomName.c_str(), roomName.c_str());
+				isFirst = false;
 			}
 		}
 	}

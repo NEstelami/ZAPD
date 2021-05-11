@@ -27,14 +27,6 @@ void ZRoomCommand::ParseRawData()
 	segmentOffset = GETSEGOFFSET(cmdArg2);
 }
 
-void ZRoomCommand::ParseRawDataLate()
-{
-}
-
-void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
-{
-}
-
 std::string ZRoomCommand::GetCommandCName() const
 {
 	return "SCmdBase";

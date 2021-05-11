@@ -29,6 +29,7 @@ protected:
 public:
 	std::vector<CommandSet> commandSets;
 	int32_t roomCount;  // Only valid for scenes
+	bool isScene = false;
 
 	std::string extDefines;
 

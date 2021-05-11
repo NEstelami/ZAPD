@@ -39,6 +39,7 @@ enum class ZResourceType
 	Path,
 	Room,
 	Scalar,
+	Scene,
 	Skeleton,
 	String,
 	Symbol,
@@ -66,6 +67,8 @@ public:
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	virtual void ParseRawData();
 	virtual void DeclareReferences(const std::string& prefix);
+	virtual void ParseRawDataLate();
+	virtual void DeclareReferencesLate(const std::string& prefix);
 
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);

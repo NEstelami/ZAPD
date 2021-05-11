@@ -67,6 +67,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	if (std::string(reader->Name()) == "Scene")
 	{
 		Globals::Instance->lastScene = this;
+		isScene = true;
 	}
 
 	uint32_t cmdCount = UINT32_MAX;
@@ -75,6 +76,13 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	{
 		SyotesRoomHack();
 		cmdCount = 0;
+	}
+	else
+	{
+		std::string commandSetName = StringHelper::Sprintf("%sSet_%06X", name.c_str(), rawDataIndex);
+		parent->AddDeclarationArray(
+			rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+			GetSourceTypeName(), commandSetName, 0, "");
 	}
 
 	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
@@ -337,11 +345,10 @@ void ZRoom::ProcessCommandSets()
 					declaration += "\n";
 			}
 
+			std::string commandSetName = StringHelper::Sprintf("%sSet_%06X", name.c_str(), GETSEGOFFSET(commandSet));
 			parent->AddDeclarationArray(
 				GETSEGOFFSET(commandSet), DeclarationAlignment::Align16, 8 * setCommands.size(),
-				"static SCmdBase",
-				StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),
-				setCommands.size(), declaration);
+				GetSourceTypeName(), commandSetName, setCommands.size(), declaration);
 
 			sourceOutput += "\n";
 
@@ -450,6 +457,8 @@ size_t ZRoom::GetRawDataSize() const
 
 ZResourceType ZRoom::GetResourceType() const
 {
+	if (isScene)
+		return ZResourceType::Scene;
 	return ZResourceType::Room;
 }
 

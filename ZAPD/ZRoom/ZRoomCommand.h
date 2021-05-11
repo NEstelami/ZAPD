@@ -64,9 +64,6 @@ public:
 
 	void ParseRawData() override;
 
-	virtual void ParseRawDataLate();
-	virtual void DeclareReferencesLate(const std::string& prefix);
-
 	virtual std::string GetBodySourceCode() const = 0;
 
 	// Getters/Setters
