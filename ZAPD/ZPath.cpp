@@ -190,6 +190,11 @@ std::string PathwayEntry::GetBodySourceCode() const
 	return declaration;
 }
 
+std::string PathwayEntry::GetSourceTypeName() const
+{
+	return "Path";
+}
+
 size_t PathwayEntry::GetRawDataSize() const
 {
 	return 0x08;

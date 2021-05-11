@@ -12,7 +12,8 @@ public:
 	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const;
-	void DeclareVar();
+
+	std::string GetSourceTypeName() const override;
 
 	size_t GetRawDataSize() const;
 	segptr_t GetListAddress() const;

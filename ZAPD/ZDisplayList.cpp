@@ -1838,7 +1838,8 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	{
 		Declaration* decl = parent->AddDeclarationArray(
 			rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), "Gfx",
-			StringHelper::Sprintf("%s", name.c_str()), 0, sourceOutput, true);
+			StringHelper::Sprintf("%s", name.c_str()), 0, sourceOutput);
+		decl->isExternal = true;
 		decl->references = references;
 		// return "";
 		// return sourceOutput;

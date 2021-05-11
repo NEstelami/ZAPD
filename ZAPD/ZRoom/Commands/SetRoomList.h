@@ -19,10 +19,10 @@ public:
 	SetRoomList(ZFile* nParent);
 
 	void ParseRawData() override;
-	virtual void DeclareReferences(const std::string& prefix);
+	void DeclareReferences(const std::string& prefix) override;
+	void DeclareReferencesLate(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const override;
-	void PreGenSourceFiles() override;
 
 	RoomCommand GetRoomCommand() const override;
 	std::string GetCommandCName() const override;

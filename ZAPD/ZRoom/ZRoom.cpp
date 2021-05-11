@@ -326,10 +326,9 @@ void ZRoom::ProcessCommandSets()
 		commandSets.erase(commandSets.begin());
 
 		for (auto& cmd : setCommands)
-		{
 			cmd->ParseRawDataLate();
+		for (auto& cmd : setCommands)
 			cmd->DeclareReferencesLate(name);
-		}
 
 		if (!setCommands.empty())
 		{
@@ -455,17 +454,16 @@ size_t ZRoom::GetRawDataSize() const
 	return size;
 }
 
+std::string ZRoom::GetSourceTypeName() const
+{
+	return "SCmdBase";
+}
+
 ZResourceType ZRoom::GetResourceType() const
 {
 	if (isScene)
 		return ZResourceType::Scene;
 	return ZResourceType::Room;
-}
-
-void ZRoom::PreGenSourceFiles()
-{
-	for (ZRoomCommand* cmd : commands)
-		cmd->PreGenSourceFiles();
 }
 
 /* CommandSet */

@@ -27,7 +27,7 @@ void ZRoomCommand::ParseRawData()
 	segmentOffset = GETSEGOFFSET(cmdArg2);
 }
 
-std::string ZRoomCommand::GetCommandCName() const
+std::string ZRoomCommand::GetSourceTypeName() const 
 {
 	return "SCmdBase";
 }
@@ -35,6 +35,11 @@ std::string ZRoomCommand::GetCommandCName() const
 RoomCommand ZRoomCommand::GetRoomCommand() const
 {
 	return RoomCommand::Error;
+}
+
+std::string ZRoomCommand::GetCommandCName() const
+{
+	return "SCmdBase";
 }
 
 std::string ZRoomCommand::GetCommandHex() const

@@ -72,7 +72,6 @@ public:
 
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
-	virtual void PreGenSourceFiles();
 	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	virtual void CalcHash();
 	virtual void Save(const fs::path& outFolder);
@@ -80,7 +79,7 @@ public:
 	// Properties
 	virtual bool IsExternalResource() const;
 	virtual bool DoesSupportArray() const;  // Can this type be wrapped in an <Array> node?
-	virtual std::string GetSourceTypeName() const;
+	virtual std::string GetSourceTypeName() const = 0;
 	virtual ZResourceType GetResourceType() const;
 	virtual std::string GetExternalExtension() const;
 

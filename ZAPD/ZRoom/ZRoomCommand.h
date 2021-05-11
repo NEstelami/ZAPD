@@ -66,6 +66,8 @@ public:
 
 	virtual std::string GetBodySourceCode() const = 0;
 
+	std::string GetSourceTypeName() const override;
+
 	// Getters/Setters
 	virtual RoomCommand GetRoomCommand() const = 0;
 	// virtual size_t GetRawDataSize() const;

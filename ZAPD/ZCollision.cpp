@@ -196,8 +196,12 @@ void ZCollisionHeader::ParseRawData()
 		waterBoxStr);
 
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16, 44,
-	                       "CollisionHeader",
-	                       StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
+	                       GetSourceTypeName(), name, declaration);
+}
+
+std::string ZCollisionHeader::GetSourceTypeName() const
+{
+	return "CollisionHeader";
 }
 
 PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)

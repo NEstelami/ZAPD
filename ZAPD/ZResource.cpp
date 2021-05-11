@@ -101,10 +101,6 @@ void ZResource::Save(const fs::path& outFolder)
 {
 }
 
-void ZResource::PreGenSourceFiles()
-{
-}
-
 std::string ZResource::GetName() const
 {
 	return name;
@@ -182,11 +178,6 @@ std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
 
 void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 {
-}
-
-std::string ZResource::GetSourceTypeName() const
-{
-	return "u8";
 }
 
 ZResourceType ZResource::GetResourceType() const

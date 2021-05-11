@@ -35,23 +35,7 @@ void SetRoomList::DeclareReferences(const std::string& prefix)
 		StringHelper::Sprintf("%sRoomList0x%06X", prefix.c_str(), segmentOffset), 0, "");
 }
 
-std::string SetRoomList::GetBodySourceCode() const
-{
-	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
-	return StringHelper::Sprintf("SCENE_CMD_ROOM_LIST(%i, %s)", rooms.size(), listName.c_str());
-}
-
-std::string SetRoomList::GetCommandCName() const
-{
-	return "SCmdRoomList";
-}
-
-RoomCommand SetRoomList::GetRoomCommand() const
-{
-	return RoomCommand::SetRoomList;
-}
-
-void SetRoomList::PreGenSourceFiles()
+void SetRoomList::DeclareReferencesLate(const std::string& prefix)
 {
 	std::string declaration = "";
 	bool isFirst = true;
@@ -76,8 +60,24 @@ void SetRoomList::PreGenSourceFiles()
 
 	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, rooms.size() * 8, "RomFile",
-		StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
+		StringHelper::Sprintf("%sRoomList_%06X", prefix.c_str(), segmentOffset), 0,
 		declaration);
+}
+
+std::string SetRoomList::GetBodySourceCode() const
+{
+	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_LIST(%i, %s)", rooms.size(), listName.c_str());
+}
+
+std::string SetRoomList::GetCommandCName() const
+{
+	return "SCmdRoomList";
+}
+
+RoomCommand SetRoomList::GetRoomCommand() const
+{
+	return RoomCommand::SetRoomList;
 }
 
 RoomEntry::RoomEntry(uint32_t nVAS, uint32_t nVAE)

@@ -275,7 +275,10 @@ void ZFile::ExtractResources(fs::path outputDir)
 		Directory::CreateDirectory(Globals::Instance->sourceOutputPath.string());
 
 	for (ZResource* res : resources)
-		res->PreGenSourceFiles();
+		res->ParseRawDataLate();
+
+	for (ZResource* res : resources)
+		res->DeclareReferencesLate(name);
 
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles(outputDir);
@@ -348,12 +351,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
                                         size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
 {
-	assert(GETSEGNUM(address) == 0);
-	AddDeclarationDebugChecks(address);
-
-	declarations[address] =
-		new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
-	return declarations[address];
+	return AddDeclarationArray(address, alignment, DeclarationPadding::None, size, varType, varName, arrayItemCnt, body);
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
@@ -369,18 +367,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body, bool isExternal)
-{
-	assert(GETSEGNUM(address) == 0);
-	AddDeclarationDebugChecks(address);
-
-	declarations[address] =
-		new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body, isExternal);
-	return declarations[address];
-}
-
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         DeclarationPadding padding, size_t size,
                                         std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
@@ -388,9 +374,27 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
-	declarations[address] =
-		new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
-	return declarations[address];
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl = new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+		declarations[address] = decl;
+	}
+	else
+	{
+		if (decl->isPlaceholder)
+			decl->varName = varName;
+		decl->alignment = alignment;
+		decl->padding = padding;
+		decl->size = size;
+		decl->varType = varType;
+		decl->isArray = true;
+		decl->arrayItemCnt = arrayItemCnt;
+		if (body != "" && decl->text == "")
+			decl->text = body;
+	}
+
+	return decl;
 }
 
 Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)

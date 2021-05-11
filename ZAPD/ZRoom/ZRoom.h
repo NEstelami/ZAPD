@@ -44,7 +44,8 @@ public:
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 
+	std::string GetSourceTypeName() const override;
+
 	size_t GetRawDataSize() const override;
 	ZResourceType GetResourceType() const override;
-	virtual void PreGenSourceFiles() override;
 };

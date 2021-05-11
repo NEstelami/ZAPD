@@ -63,9 +63,14 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
+std::string ZArray::GetSourceTypeName() const
+{
+	return testFile->resources.at(0)->GetSourceTypeName();
+}
+
 size_t ZArray::GetRawDataSize() const
 {
-	return arrayCnt * testFile->resources[0]->GetRawDataSize();
+	return arrayCnt * testFile->resources.at(0)->GetRawDataSize();
 }
 
 void ZArray::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
