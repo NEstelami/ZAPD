@@ -334,7 +334,8 @@ std::string ZRoom::GetDefaultName(const std::string& prefix) const
 
 /*
  * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates back to very
- * early in the game's development. Since this room is a special case, declare automatically the data its contains whitout the need of a header.
+ * early in the game's development. Since this room is a special case, declare automatically the
+ * data its contains whitout the need of a header.
  */
 void ZRoom::SyotesRoomHack()
 {
