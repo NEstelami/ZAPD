@@ -52,7 +52,6 @@ REGISTER_ZFILENODE(SceneAltHeader, ZRoom);
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
 	roomCount = -1;
-	canHaveInner = true;
 }
 
 ZRoom::~ZRoom()
@@ -109,7 +108,7 @@ void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	// TODO: HACK: remove this specific check
+	// TODO: HACK: remove this specific check when the repo uses the correct HackMode="syotes_room"
 	if (name == "syotes_room_0")
 	{
 		hackMode = "syotes_room";
