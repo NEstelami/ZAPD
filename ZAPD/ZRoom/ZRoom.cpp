@@ -397,7 +397,7 @@ std::string ZRoom::GetSourceOutputHeader(const std::string& prefix)
 
 std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 {
-	sourceOutput = "";
+	std::string sourceOutput = "";
 
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 	{

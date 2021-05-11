@@ -10,7 +10,6 @@ ZResource::ZResource(ZFile* nParent)
 	parent = nParent;
 	name = "";
 	outName = "";
-	sourceOutput = "";
 	rawData = std::vector<uint8_t>();
 	rawDataIndex = 0;
 	outputDeclaration = true;

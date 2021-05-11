@@ -102,7 +102,6 @@ protected:
 	std::string outName;
 	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
-	std::string sourceOutput;
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file

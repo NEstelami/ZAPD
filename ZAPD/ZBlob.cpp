@@ -58,7 +58,7 @@ ZBlob* ZBlob::FromFile(const std::string& filePath)
 
 std::string ZBlob::GetSourceOutputCode(const std::string& prefix)
 {
-	sourceOutput = "";
+	std::string sourceOutput = "";
 
 	for (size_t i = 0; i < rawData.size(); i += 1)
 	{
