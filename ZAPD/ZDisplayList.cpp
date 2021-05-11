@@ -1810,12 +1810,9 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			for (auto vtx : item.second)
 			{
-				if (curAddr != item.first)
-					declaration += "\n";
+				declaration += StringHelper::Sprintf("\t%s,\n",  vtx.GetBodySourceCode().c_str());
 
-				declaration += StringHelper::Sprintf("\t%s,",  vtx.GetBodySourceCode().c_str());
-
-				curAddr += 16;
+				curAddr += vtx.GetRawDataSize();
 			}
 
 			vtxDeclarations[item.first] = declaration;
