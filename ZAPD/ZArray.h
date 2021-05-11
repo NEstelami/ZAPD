@@ -20,7 +20,7 @@ public:
 	size_t GetRawDataSize() const override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	                    uint32_t nRawDataIndex) override;
 
 protected:
 	size_t arrayCnt;

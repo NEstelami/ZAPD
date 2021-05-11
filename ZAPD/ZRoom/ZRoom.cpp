@@ -2,12 +2,8 @@
 
 #include <Path.h>
 #include <algorithm>
-#include <chrono>
 #include <cassert>
-#include "File.h"
-#include "Globals.h"
-#include "StringHelper.h"
-#include "ZBlob.h"
+#include <chrono>
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
@@ -41,6 +37,10 @@
 #include "Commands/Unused09.h"
 #include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
+#include "File.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZBlob.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
 
@@ -62,7 +62,7 @@ ZRoom::~ZRoom()
 }
 
 void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex)
+                           uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
@@ -76,7 +76,8 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	}
 }
 
-void ZRoom::ExtractFromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZResourceType parentType)
+void ZRoom::ExtractFromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+                              ZResourceType parentType)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
@@ -118,7 +119,6 @@ void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 	if (nodeName == "Scene")
 	{
 		Globals::Instance->lastScene = this;
-		//isScene = true;
 		zroomType = ZResourceType::Scene;
 	}
 	else if (nodeName == "Room")
@@ -301,9 +301,8 @@ void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
 
-	parent->AddDeclarationArray(
-		rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-		GetSourceTypeName(), auxName, 0, body);
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                            GetSourceTypeName(), auxName, 0, body);
 }
 
 std::string ZRoom::GetBodySourceCode() const
@@ -437,14 +436,7 @@ std::string ZRoom::GetSourceTypeName() const
 
 ZResourceType ZRoom::GetResourceType() const
 {
-	assert(zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room || zroomType == ZResourceType::SceneAltHeader || zroomType == ZResourceType::RoomAltHeader);
+	assert(zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room ||
+	       zroomType == ZResourceType::SceneAltHeader || zroomType == ZResourceType::RoomAltHeader);
 	return zroomType;
-}
-
-/* CommandSet */
-
-CommandSet::CommandSet(uint32_t nAddress, uint32_t nCommandCount)
-{
-	address = nAddress;
-	commandCount = nCommandCount;
 }

@@ -25,8 +25,7 @@ ZResourceType ZCollisionHeader::GetResourceType() const
 }
 
 void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                      const std::vector<uint8_t>& nRawData,
-                                      const uint32_t nRawDataIndex)
+                                      const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 }

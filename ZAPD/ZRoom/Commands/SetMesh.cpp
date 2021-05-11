@@ -643,8 +643,8 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 		                            polyDlistType, polyDListName, polyDLists.size(), declaration);
 	}
 
-	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "static s32", "terminatorMaybe",
-	                       "0x01000000");
+	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "static s32",
+	                       "terminatorMaybe", "0x01000000");
 }
 
 std::string PolygonType2::GetBodySourceCode() const

@@ -35,7 +35,8 @@ void SetRoomList::DeclareReferences(const std::string& prefix)
 std::string SetRoomList::GetBodySourceCode() const
 {
 	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
-	return StringHelper::Sprintf("SCENE_CMD_ROOM_LIST(%i, %s)", romfile->numRooms, listName.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_LIST(%i, %s)", romfile->numRooms,
+	                             listName.c_str());
 }
 
 std::string SetRoomList::GetCommandCName() const
@@ -83,9 +84,9 @@ void RomFile::DeclareVar(const std::string& prefix, const std::string body)
 	if (name == "")
 		auxName = StringHelper::Sprintf("%sRoomList0x%06X", prefix.c_str(), rawDataIndex);
 
-	parent->AddDeclarationArray(
-		rawDataIndex, DeclarationAlignment::Align4, rooms.size() * rooms.at(0).GetRawDataSize(), GetSourceTypeName(),
-		auxName, 0, body);
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4,
+	                            rooms.size() * rooms.at(0).GetRawDataSize(), GetSourceTypeName(),
+	                            auxName, 0, body);
 }
 
 std::string RomFile::GetBodySourceCode() const

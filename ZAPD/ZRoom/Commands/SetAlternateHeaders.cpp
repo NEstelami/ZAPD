@@ -25,9 +25,9 @@ void SetAlternateHeaders::ParseRawDataLate()
 
 		if (address != 0 && parent->GetDeclaration(GETSEGOFFSET(address)) == nullptr)
 		{
-			//zRoom->commandSets.push_back(CommandSet(address));
 			ZRoom* altheader = new ZRoom(parent);
-			altheader->ExtractFromBinary(parent->GetRawData(), GETSEGOFFSET(address), zRoom->GetResourceType());
+			altheader->ExtractFromBinary(parent->GetRawData(), GETSEGOFFSET(address),
+			                             zRoom->GetResourceType());
 			altheader->DeclareReferences(parent->GetName());
 
 			parent->resources.push_back(altheader);
@@ -43,7 +43,8 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 
 		for (size_t i = 0; i < headers.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("\t%s,", parent->GetDeclarationPtrName(headers.at(i)).c_str());
+			declaration += StringHelper::Sprintf(
+				"\t%s,", parent->GetDeclarationPtrName(headers.at(i)).c_str());
 
 			if (i + 1 < headers.size())
 				declaration += "\n";

@@ -17,7 +17,7 @@ ZResource::ZResource(ZFile* nParent)
 }
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const uint32_t nRawDataIndex)
+                               uint32_t nRawDataIndex)
 {
 	rawData = nRawData;
 	rawDataIndex = nRawDataIndex;

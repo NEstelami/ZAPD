@@ -56,7 +56,7 @@ public:
 	void ParseRawData() override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	                    uint32_t nRawDataIndex) override;
 	static size_t MapTypeToSize(const ZScalarType scalarType);
 	static ZScalarType MapOutputTypeToScalarType(const std::string& type);
 	static std::string MapScalarTypeToOutputType(const ZScalarType scalarType);

@@ -8,19 +8,10 @@
 #include "ZRoomCommand.h"
 #include "tinyxml2.h"
 
-struct CommandSet
-{
-	uint32_t address;
-	uint32_t commandCount;  // Only used if explicitly specified in the XML
-
-	CommandSet(uint32_t nAddress, uint32_t nCommandCount = UINT32_MAX);
-};
-
 class ZRoom : public ZResource
 {
 public:
 	int32_t roomCount;  // Only valid for scenes
-	//bool isScene = false;
 
 	std::string extDefines;
 
@@ -29,7 +20,8 @@ public:
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    uint32_t nRawDataIndex) override;
-	void ExtractFromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZResourceType parentType);
+	void ExtractFromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+	                       ZResourceType parentType);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;

@@ -53,7 +53,7 @@ public:
 	std::string GetSourceTypeName() const override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	                    uint32_t nRawDataIndex) override;
 
 protected:
 	virtual void ParseRawData() override;
@@ -71,7 +71,7 @@ public:
 	std::string GetSourceTypeName() const override;
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	                    uint32_t nRawDataIndex) override;
 
 protected:
 	virtual void ParseRawData() override;
@@ -134,7 +134,7 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	                    uint32_t nRawDataIndex) override;
 
 	void PreGenValues(const std::string& prefix);
 	size_t GetRawDataSize() const override;

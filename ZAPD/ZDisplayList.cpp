@@ -41,8 +41,7 @@ ZDisplayList::~ZDisplayList()
 
 // EXTRACT MODE
 void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                  const std::vector<uint8_t>& nRawData,
-                                  const uint32_t nRawDataIndex)
+                                  const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
@@ -926,7 +925,8 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* lin
 	else
 	{
 		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %sTex_%06lX),", fmtTbl[fmt].c_str(),
-		        sizTbl[siz].c_str(), www + 1, Globals::Instance->lastScene->GetName().c_str(), GETSEGOFFSET(data));
+		        sizTbl[siz].c_str(), www + 1, Globals::Instance->lastScene->GetName().c_str(),
+		        GETSEGOFFSET(data));
 	}
 }
 
@@ -1810,7 +1810,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			for (auto vtx : item.second)
 			{
-				declaration += StringHelper::Sprintf("\t%s,\n",  vtx.GetBodySourceCode().c_str());
+				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
 
 				curAddr += vtx.GetRawDataSize();
 			}
@@ -1892,8 +1892,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				if (curAddr != vtxKeys[i])
 					declaration += "\n";
 
-				declaration +=
-					StringHelper::Sprintf("\t%s,", vtx.GetBodySourceCode().c_str());
+				declaration += StringHelper::Sprintf("\t%s,", vtx.GetBodySourceCode().c_str());
 
 				curAddr += 16;
 			}
@@ -2019,11 +2018,10 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZFile* parent,
-                                   std::string prefix, int32_t texWidth, int32_t texHeight,
-                                   uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
-                                   F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
-                                   ZDisplayList* self)
+bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZFile* parent, std::string prefix,
+                                   int32_t texWidth, int32_t texHeight, uint32_t texAddr,
+                                   uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
+                                   bool texLoaded, bool texIsPalette, ZDisplayList* self)
 {
 	int32_t segmentNumber = GETSEGNUM(texSeg);
 
@@ -2072,8 +2070,8 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZFile* parent,
 				else
 				{
 					tex = new ZTexture(Globals::Instance->lastScene->parent);
-					tex->FromBinary(Globals::Instance->lastScene->GetRawData(), texAddr, texWidth, texHeight,
-					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
+					tex->FromBinary(Globals::Instance->lastScene->GetRawData(), texAddr, texWidth,
+					                texHeight, TexFormatToTexType(texFmt, texSiz), texIsPalette);
 
 					Globals::Instance->lastScene->parent->AddTextureResource(texAddr, tex);
 				}
@@ -2087,9 +2085,9 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZFile* parent,
 								Path::GetFileNameWithoutExtension(tex->GetName());
 				auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
 				                                      tex->GetExternalExtension().c_str());
-				Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(texAddr, filename, tex->GetRawDataSize(),
-				                                          tex->GetSourceTypeName(), tex->GetName(),
-				                                          0);
+				Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
+					texAddr, filename, tex->GetRawDataSize(), tex->GetSourceTypeName(),
+					tex->GetName(), 0);
 			}
 			return true;
 		}
