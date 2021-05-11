@@ -98,7 +98,7 @@ std::string RomFile::GetBodySourceCode() const
 	{
 		for (ZResource* res : file->resources)
 		{
-			if (res->GetResourceType() == ZResourceType::Room /*&& res != zRoom*/)
+			if (res->GetResourceType() == ZResourceType::Room)
 			{
 				std::string roomName = res->GetName();
 				if (!isFirst)
