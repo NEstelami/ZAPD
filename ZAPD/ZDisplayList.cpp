@@ -1813,7 +1813,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				if (curAddr != item.first)
 					declaration += "\n";
 
-				declaration += vtx.GetBodySourceCode();
+				declaration += StringHelper::Sprintf("\t%s,",  vtx.GetBodySourceCode().c_str());
 
 				curAddr += 16;
 			}
@@ -1896,8 +1896,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 					declaration += "\n";
 
 				declaration +=
-					StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i),", vtx.x,
-				                          vtx.y, vtx.z, vtx.s, vtx.t, vtx.r, vtx.g, vtx.b, vtx.a);
+					StringHelper::Sprintf("\t%s,", vtx.GetBodySourceCode().c_str());
 
 				curAddr += 16;
 			}
