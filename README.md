@@ -45,7 +45,10 @@ ZAPD needs a _File parsing mode_ to be passed as first parameter. The options ar
 - `e`: "Extraction" mode.
   - In this mode, ZAPD expects a XML file as input, a folder as ouput and a path to the baserom files.
   - ZAPD will read the XML and use it as a guide to extract the contents of the specified asset file from the baserom folder.
+    - For more info of the format of those XMLs, see the [ZAPD extraction XML reference](docs/zapd_extraction_xml_reference.md).
 - `bsf`: "Build source file" mode.
+  - This is an experimental mode.
+  - It was going to be used to let you have XMLs that aren't just for extraction. Might get used, might not. Still need to experiment on that.
 - `btex`: "Build texture" mode.
   - In this mode, ZAPD expects a PNG file as input, a filename as ouput and a texture type parameter (`-tt`).
   - ZAPD will try to convert the given PNG into the contents of a `uint64_t` C array.
@@ -56,6 +59,8 @@ ZAPD needs a _File parsing mode_ to be passed as first parameter. The options ar
   - In this mode, ZAPD expects a BIN file as input and a filename as ouput.
   - ZAPD will try to convert the given BIN into the contents of a `uint8_t` C array.
 - `bovl`: "Build overlay" mode.
+  - In this mode, ZAPD expects an overlay C file as input, a filename as ouput and an overlay configuration path (`-cfg`).
+  - ZAPD will generate a reloc `.s` file.
 
 ZAPD also accepts the following list of extra parameters:
 
