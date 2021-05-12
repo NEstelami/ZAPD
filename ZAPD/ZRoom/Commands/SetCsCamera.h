@@ -38,8 +38,4 @@ public:
 	RoomCommand GetRoomCommand() const override;
 	size_t GetRawDataSize() const override;
 	std::string GetCommandCName() const override;
-
-private:
-	std::vector<uint8_t> _rawData;
-	int32_t _rawDataIndex;
 };

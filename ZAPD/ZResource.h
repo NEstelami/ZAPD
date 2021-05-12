@@ -9,15 +9,15 @@
 #include "tinyxml2.h"
 #include <BinaryWriter.h>
 
-#if __has_include(<filesystem>)
-#include <filesystem>
-namespace fs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#endif
+//#if __has_include(<filesystem>)
+//#include <filesystem>
+//namespace fs = std::filesystem;
+//#else
+//#include <experimental/filesystem>
+//namespace fs = std::experimental::filesystem;
+//#endif
 
-//#include "Directory.h"
+#include "Directory.h"
 
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3

@@ -10,8 +10,6 @@ enum class ZFileMode
 {
 	BuildTexture,
 	BuildOverlay,
-	//BuildModelIntermediette,
-	//BuildAnimationIntermediette,
 	BuildBlob,
 	BuildSourceFile,
 	BuildBackground,
