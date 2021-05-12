@@ -1,4 +1,3 @@
-#include <Windows.h>
 #include <TextureExporter.h>
 #include <RoomExporter.h>
 #include <CollisionExporter.h>

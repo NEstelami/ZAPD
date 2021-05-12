@@ -6,7 +6,6 @@
 #include <ZRoom/Commands/SetTimeSettings.h>
 #include <ZRoom/Commands/SetSkyboxModifier.h>
 #include <ZRoom/Commands/SetSoundSettings.h>
-#include <Windows.h>
 #include <ZRoom/Commands/SetCameraSettings.h>
 #include <ZRoom/Commands/SetMesh.h>
 #include <ZRoom/Commands/SetRoomBehavior.h>
