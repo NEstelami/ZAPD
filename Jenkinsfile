@@ -51,9 +51,8 @@ pipeline {
                 dir('mm') {
                     sh 'cp /usr/local/etc/roms/mm.us.rev1.z64 baserom.z64'
 
-                    // Identical to `make setup` except for copying our newer ZAPD.out into oot
+                    // Identical to `make setup` except for copying our newer ZAPD.out into mm
                     sh 'git submodule update --init --recursive'
-                    sh 'python3 -m pip install -r requirements.txt'
                     sh 'make -C tools'
                     sh 'cp ../ZAPD.out tools/ZAPD/'
                     sh 'python3 tools/extract_rom.py baserom.z64'
