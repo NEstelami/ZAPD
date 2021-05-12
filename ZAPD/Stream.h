@@ -28,5 +28,5 @@ public:
 	virtual void Close() = 0;
 
 protected:
-	int64_t baseAddress;
+	uint64_t baseAddress;
 };
