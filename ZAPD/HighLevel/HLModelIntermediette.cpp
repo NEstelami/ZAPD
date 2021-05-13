@@ -877,7 +877,7 @@ void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 
 	fileName = xmlElement->Attribute("TextureName");
 	// std::string format = xmlElement->Attribute("Format");
-	std::string format = "rgb5a1";  // TEST
+	std::string format = "rgba16";  // TEST
 
 	// tex = HLTexture::FromPNG(fileName,
 	// (HLTextureType)ZTexture::GetTextureTypeFromString(format));
