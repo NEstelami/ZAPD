@@ -70,8 +70,26 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
 
-	width = StringHelper::StrToL(registeredAttributes.at("Width").value);
-	height = StringHelper::StrToL(registeredAttributes.at("Height").value);
+	std::string widthXml = registeredAttributes.at("Width").value;
+	std::string heightXml = registeredAttributes.at("Height").value;
+
+	if (!StringHelper::HasOnlyDigits(widthXml))
+	{
+		throw std::runtime_error(StringHelper::Sprintf(
+			"ZTexture::ParseXML: Error in %s\n"
+			"\t Value of 'Width' attribute has non-decimal digits: '%s'.\n",
+			name.c_str(), widthXml.c_str()));
+	}
+	if (!StringHelper::HasOnlyDigits(heightXml))
+	{
+		throw std::runtime_error(StringHelper::Sprintf(
+			"ZTexture::ParseXML: Error in %s\n"
+			"\t Value of 'Height' attribute has non-decimal digits: '%s'.\n",
+			name.c_str(), heightXml.c_str()));
+	}
+
+	width = StringHelper::StrToL(widthXml);
+	height = StringHelper::StrToL(heightXml);
 
 	std::string formatStr = registeredAttributes.at("Format").value;
 	format = GetTextureTypeFromString(formatStr);
