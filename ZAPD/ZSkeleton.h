@@ -28,6 +28,7 @@ public:
 	ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
 	          const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent);
 	~ZSkeleton();
+
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
