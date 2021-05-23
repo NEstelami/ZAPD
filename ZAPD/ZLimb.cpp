@@ -610,8 +610,13 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 	if (dListPtr == 0)
 		return "NULL";
 
-	// Check if it is already declared
 	uint32_t dListOffset = Seg2Filespace(dListPtr, parent->baseAddress);
+
+	// Check if pointing past the object's size
+	if (dListOffset > parent->GetRawData().size())
+		return StringHelper::Sprintf("0x%08X", dListPtr);
+
+	// Check if it is already declared
 	Declaration* decl = parent->GetDeclaration(dListOffset);
 	if (decl != nullptr)
 		return decl->varName;
