@@ -262,10 +262,10 @@ void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSk
 		FromZDisplayList(model, limb->dList);
 	}
 
-	for (ZLimb* childLimb : limb->children)
+	/*for (ZLimb* childLimb : limb->children)
 	{
 		ProcessZSkeletonLimb(model, zSkeleton, childLimb);
-	}
+	}*/
 }
 
 std::string HLModelIntermediette::ToOBJFile()

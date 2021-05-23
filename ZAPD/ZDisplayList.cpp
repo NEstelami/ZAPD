@@ -55,6 +55,9 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	rawData = std::vector<uint8_t>(nRawData.data() + rawDataIndex,
 	                               nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
+
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+								GetSourceTypeName(), name, 0, "", true);
 }
 
 ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,
@@ -1849,8 +1852,8 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	if (parent != nullptr)
 	{
 		Declaration* decl = parent->AddDeclarationArray(
-			rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), "Gfx",
-			StringHelper::Sprintf("%s", name.c_str()), 0, sourceOutput, true);
+			rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(), GetSourceTypeName(),
+			name, 0, sourceOutput, true);
 		decl->references = references;
 		// return "";
 		// return sourceOutput;
