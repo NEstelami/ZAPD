@@ -148,7 +148,6 @@ public:
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	void DeclareReferences(const std::string& prefix) override;
 
 	size_t GetRawDataSize() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;

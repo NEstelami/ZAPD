@@ -278,7 +278,8 @@ void ZCurveAnimation::ParseRawData()
 	unk_0C = BitConverter::ToInt16BE(rawData, rawDataIndex + 12);
 	unk_10 = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
 
-	limbCount = BitConverter::ToUInt8BE(rawData, Seg2Filespace(skelOffset, parent->baseAddress) + 4);
+	limbCount =
+		BitConverter::ToUInt8BE(rawData, Seg2Filespace(skelOffset, parent->baseAddress) + 4);
 
 	size_t transformDataSize = 0;
 	size_t copyValuesSize = 0;
@@ -315,8 +316,7 @@ void ZCurveAnimation::ParseRawData()
 }
 
 void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                     const std::vector<uint8_t>& nRawData,
-                                     uint32_t nRawDataIndex)
+                                     const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 

@@ -469,27 +469,6 @@ void ZLimb::ParseRawData()
 	}
 }
 
-void ZLimb::DeclareReferences(const std::string& prefix)
-{
-	ZResource::DeclareReferences(prefix);
-/*
-	if (dListPtr != 0)
-	{
-		std::string limbPrefix = type == ZLimbType::Curve ? "Curve" : "";
-		GetLimbDListSourceOutputCode(prefix, limbPrefix, dListPtr);
-	}
-	if (dList2Ptr != 0)
-	{
-		std::string limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
-		GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
-	}
-*/
-/*
-	if (type == ZLimbType::Skin)
-		GetSourceOutputCodeSkin(prefix);
-		*/
-}
-
 size_t ZLimb::GetRawDataSize() const
 {
 	switch (type)
@@ -511,18 +490,6 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	std::string dListStr = GetLimbDListSourceOutputCode(prefix, limbPrefix, dListPtr);
 	limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
 	std::string dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
-
-	/*
-	if (dListPtr != 0)
-	{
-		dListStr = GetLimbDListSourceOutputCode(prefix, limbPrefix, dListPtr);
-	}
-	if (dList2Ptr != 0)
-	{
-		std::string limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
-		dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
-	}
-	*/
 
 	std::string entryStr = "";
 	if (type != ZLimbType::Curve)
@@ -617,7 +584,7 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 		return decl->varName;
 
 	// Check if it points to the middle of a DList
-	for (const auto& declPair: parent->declarations)
+	for (const auto& declPair : parent->declarations)
 	{
 		if (dListOffset < declPair.first)
 			break;
@@ -635,16 +602,14 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 	}
 
 	// Create the DList
-	std::string dListStr = StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(),
-		                                 dListOffset);
+	std::string dListStr =
+		StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(), dListOffset);
 
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		rawData, dListOffset,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	auto dList = new ZDisplayList(rawData, dListOffset, dlistLength, parent);
 	dList->SetName(dListStr);
-	//dList->DeclareVar("", "");
-	//parent->AddResource(dList);
 	dList->GetSourceOutputCode(prefix);
 	return dListStr;
 }

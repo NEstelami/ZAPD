@@ -12,7 +12,6 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 	dListCount = 0;
 }
 
-
 ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
                      const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
@@ -223,8 +222,8 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		headerStr = StringHelper::Sprintf("\n\t%sLimbs, %i\n", defaultPrefix.c_str(), limbCount);
 		break;
 	case ZSkeletonType::Flex:
-		headerStr =
-			StringHelper::Sprintf("\n\t{ %sLimbs, %i }, %i\n", defaultPrefix.c_str(), limbCount, dListCount);
+		headerStr = StringHelper::Sprintf("\n\t{ %sLimbs, %i }, %i\n", defaultPrefix.c_str(),
+		                                  limbCount, dListCount);
 		break;
 	}
 
