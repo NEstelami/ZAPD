@@ -250,6 +250,7 @@ void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton*
 void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton,
                                                 ZLimb* limb)
 {
+	/*
 	if (limb->dList == nullptr && limb->dListPtr != 0)
 		limb->dList = (ZDisplayList*)zSkeleton->parent->FindResource(limb->dListPtr);
 
@@ -261,6 +262,7 @@ void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSk
 
 		FromZDisplayList(model, limb->dList);
 	}
+	*/
 
 	/*for (ZLimb* childLimb : limb->children)
 	{

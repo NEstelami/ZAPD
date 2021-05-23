@@ -224,7 +224,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		break;
 	case ZSkeletonType::Flex:
 		headerStr =
-			StringHelper::Sprintf("\n\t{ %sLimbs, %i },\n\t%i\n", defaultPrefix.c_str(), limbCount, dListCount);
+			StringHelper::Sprintf("\n\t{ %sLimbs, %i }, %i\n", defaultPrefix.c_str(), limbCount, dListCount);
 		break;
 	}
 

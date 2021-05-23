@@ -134,17 +134,14 @@ protected:
 	std::string GetSourceOutputCodeSkin_Type_4(const std::string& prefix);
 
 public:
-	ZDisplayList* dList;
 	segptr_t dListPtr = 0;
 	segptr_t farDListPtr = 0;  // LOD only
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
-	std::vector<ZDisplayList*> dLists;
 
 	ZLimb(ZFile* nParent);
 	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
 	      uint32_t nRawDataIndex, ZFile* nParent);
-	~ZLimb();
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    const uint32_t nRawDataIndex) override;

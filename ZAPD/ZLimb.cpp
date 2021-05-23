@@ -366,12 +366,6 @@ ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<ui
 	ParseRawData();
 }
 
-ZLimb::~ZLimb()
-{
-	for (auto DL : dLists)
-		delete DL;
-}
-
 void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
                            const uint32_t nRawDataIndex)
 {
@@ -489,7 +483,8 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 		std::string limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
 		GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
 	}
-
+*/
+/*
 	if (type == ZLimbType::Skin)
 		GetSourceOutputCodeSkin(prefix);
 		*/
@@ -647,8 +642,9 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 		rawData, dListOffset,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	auto dList = new ZDisplayList(rawData, dListOffset, dlistLength, parent);
-	dLists.push_back(dList);
 	dList->SetName(dListStr);
+	//dList->DeclareVar("", "");
+	//parent->AddResource(dList);
 	dList->GetSourceOutputCode(prefix);
 	return dListStr;
 }
