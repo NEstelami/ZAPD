@@ -3,6 +3,7 @@ ASAN ?= 0
 DEPRECATION_OFF ?= 0
 CFLAGS ?= 
 
+CXX := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
 CFLAGS += -g3 -ggdb -fpic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
 
