@@ -3,7 +3,6 @@ ASAN ?= 0
 DEPRECATION_OFF ?= 0
 CFLAGS ?= 
 
-CC := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
 CFLAGS += -g3 -ggdb -fpic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
 
@@ -57,13 +56,13 @@ format:
 .PHONY: all genbuildinfo copycheck clean rebuild format
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) $(INC) -c $< -o $@ $(LDFLAGS)
+	$(CXX) $(CFLAGS) $(INC) -c $< -o $@ $(LDFLAGS)
 
 ZAPD/Main.o: genbuildinfo ZAPD/Main.cpp
-	$(CC) $(CFLAGS) $(INC) -c ZAPD/Main.cpp -o $@ $(LDFLAGS)
+	$(CXX) $(CFLAGS) $(INC) -c ZAPD/Main.cpp -o $@ $(LDFLAGS)
 
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd
 
 ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
-	$(CC) $(CFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)
+	$(CXX) $(CFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)
