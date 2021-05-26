@@ -566,6 +566,7 @@ uint32_t ZLimb::GetFileAddress()
 	return Seg2Filespace(rawDataIndex, parent->baseAddress);
 }
 
+// Returns the ptrname of a dlist. Declares it if it has not been declared yet.
 std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
                                                 const std::string& limbPrefix, segptr_t dListPtr)
 {
@@ -584,18 +585,16 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 		return decl->varName;
 
 	// Check if it points to the middle of a DList
-	for (const auto& declPair : parent->declarations)
+	decl = parent->GetDeclarationRanged(dListOffset);
+	if (decl != nullptr)
 	{
-		if (dListOffset < declPair.first)
-			break;
-
-		auto& decl = declPair.second;
 		// TODO: Figure out a way to not hardcode the "Gfx" type.
 		if (decl->varType == "Gfx")
 		{
-			if (dListOffset < declPair.first + decl->size)
+			uint32_t declAddress = parent->GetDeclarationRangedAddress(dListOffset);
+			if (dListOffset < declAddress + decl->size)
 			{
-				uint32_t index = (dListOffset - declPair.first) / 8;
+				uint32_t index = (dListOffset - declAddress) / 8;
 				return StringHelper::Sprintf("&%s[%u]", decl->varName.c_str(), index);
 			}
 		}
