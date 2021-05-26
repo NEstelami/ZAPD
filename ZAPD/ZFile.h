@@ -95,6 +95,7 @@ public:
 protected:
 	std::vector<uint8_t> rawData;
 	std::string name;
+	fs::path outName = "";
 	fs::path basePath;
 	fs::path outputPath;
 	fs::path xmlFilePath;

@@ -85,6 +85,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	else
 		name = filename;
 
+	outName = name;
+	const char* outNameXml = reader->Attribute("OutName");
+	if (outNameXml != nullptr)
+		outName = outNameXml;
+
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
@@ -124,8 +129,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
 		Globals::Instance->AddSegment(segment, this);
 	}
-
-	std::string folderName = (basePath / Path::GetFileNameWithoutExtension(name)).string();
 
 	if (mode == ZFileMode::Extract)
 	{
@@ -623,9 +626,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 	sourceOutput += ProcessDeclarations();
 
-	std::string outPath =
-		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c"))
-			.string();
+
+	fs::path outPath = Globals::Instance->sourceOutputPath / outName.parent_path() / outName.stem().append(".c");
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -650,8 +652,7 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	formatter.Write(ProcessExterns());
 
-	fs::path headerFilename =
-		Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".h");
+	fs::path headerFilename = Globals::Instance->sourceOutputPath / outName.parent_path() / outName.stem().append(".h");
 
 	File::WriteAllText(headerFilename.string(), formatter.GetOutput());
 }
@@ -675,7 +676,7 @@ void ZFile::GenerateHLIntermediette()
 std::string ZFile::GetHeaderInclude()
 {
 	return StringHelper::Sprintf("#include \"%s\"\n\n",
-	                             (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
+	                             (outName.parent_path() / outName.stem().append(".h")).c_str());
 }
 
 void ZFile::GeneratePlaceholderDeclarations()
