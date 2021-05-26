@@ -627,7 +627,10 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	sourceOutput += ProcessDeclarations();
 
 
-	fs::path outPath = Globals::Instance->sourceOutputPath / outName.parent_path() / outName.stem().append(".c");
+	fs::path outPath = Globals::Instance->sourceOutputPath / outName.parent_path() / outName.stem().concat(".c");
+
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+		printf("Writing C file: %s\n", outPath.c_str());
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -652,9 +655,12 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	formatter.Write(ProcessExterns());
 
-	fs::path headerFilename = Globals::Instance->sourceOutputPath / outName.parent_path() / outName.stem().append(".h");
+	fs::path headerFilename = Globals::Instance->sourceOutputPath / outName.parent_path() / outName.stem().concat(".h");
 
-	File::WriteAllText(headerFilename.string(), formatter.GetOutput());
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+		printf("Writing H file: %s\n", headerFilename.c_str());
+
+	File::WriteAllText(headerFilename, formatter.GetOutput());
 }
 
 void ZFile::GenerateHLIntermediette()
@@ -676,7 +682,7 @@ void ZFile::GenerateHLIntermediette()
 std::string ZFile::GetHeaderInclude()
 {
 	return StringHelper::Sprintf("#include \"%s\"\n\n",
-	                             (outName.parent_path() / outName.stem().append(".h")).c_str());
+	                             (outName.parent_path() / outName.stem().concat(".h")).c_str());
 }
 
 void ZFile::GeneratePlaceholderDeclarations()
