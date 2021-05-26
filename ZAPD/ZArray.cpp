@@ -20,7 +20,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	arrayCnt = reader->IntAttribute("Count", 0);
-	testFile = new ZFile(ZFileMode::Extract, reader, Globals::Instance->baseRomPath, "",
+	testFile = new ZFile(ZFileMode::Extract, reader, Globals::Instance->baseRomPath,
 	                     parent->GetName(), "ZArray subfile", true);
 }
 

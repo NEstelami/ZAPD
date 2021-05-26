@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include "StringHelper.h"
 #include "Directory.h"
+#include "StringHelper.h"
 
 class File
 {
