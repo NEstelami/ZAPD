@@ -134,6 +134,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 
 		rawData = File::ReadAllBytes((basePath / name).string());
+		rangeEnd = rawData.size();
 	}
 
 	std::unordered_set<std::string> nameSet;
