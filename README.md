@@ -68,7 +68,7 @@ ZAPD also accepts the following list of extra parameters:
 - `-o PATH` / `--outputpath PATH`: Set output path.
 - `-b PATH` / `--baserompath`: Set baserom path.
   - Can be used only in `e` or `bsf` modes.
-- `-osf PATH`: Set source output path.
+- `-osf PATH`: Set source output path. This is the path where the `.c` and `.h` files will be extracted to. If omitted, it will use the value passed to `--outputpath` parameter.
 - `-gsf MODE`: Generate source file during extraction. If `MODE` is `1`, C source files will be generated.
   - Can be used only in `e` mode.
 - `-crc` / `--output-crc`: Outputs a CRC file for each extracted texture.
