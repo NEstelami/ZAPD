@@ -74,7 +74,7 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 
 std::string ZArray::GetSourceTypeName() const
 {
-	return testFile->resources.at(0)->GetSourceTypeName();
+	return resList.at(0)->GetSourceTypeName();
 }
 
 size_t ZArray::GetRawDataSize() const

@@ -28,6 +28,9 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;
+	virtual ZResourceType GetResourceType() const override;
+
+	virtual size_t GetRawDataSize() const override;
 
 	uint8_t numRooms = 0;
 	std::vector<RoomEntry> rooms;

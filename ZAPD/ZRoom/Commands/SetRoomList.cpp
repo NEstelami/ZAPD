@@ -127,6 +127,17 @@ std::string RomFile::GetSourceTypeName() const
 	return "RomFile";
 }
 
+ZResourceType RomFile::GetResourceType() const
+{
+	// TODO
+	return ZResourceType::Error;
+}
+
+size_t RomFile::GetRawDataSize() const
+{
+	return 8 * rooms.size();
+}
+
 RoomEntry::RoomEntry(uint32_t nVAS, uint32_t nVAE)
 {
 	virtualAddressStart = nVAS;

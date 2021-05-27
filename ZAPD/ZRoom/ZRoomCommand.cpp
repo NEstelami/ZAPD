@@ -47,11 +47,6 @@ ZResourceType ZRoomCommand::GetResourceType() const
 	return ZResourceType::RoomCommand;
 }
 
-size_t ZRoomCommand::GetRawDataSize() const
-{
-	return 0x08;
-}
-
 std::string ZRoomCommand::GetCommandCName() const
 {
 	return "SCmdBase";
