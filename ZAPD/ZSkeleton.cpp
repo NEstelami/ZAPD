@@ -116,10 +116,14 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 	{
 		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(rawData, ptr), parent->baseAddress);
 
-		// ZLimb* limb = new ZLimb(reader, rawData, ptr2, parent);
+		std::string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), ptr2);
+		Declaration* decl = parent->GetDeclaration(ptr2);
+		if (decl != nullptr)
+			limbName = decl->varName;
+
 		ZLimb* limb = new ZLimb(parent);
 		limb->SetLimbType(limbType);
-		limb->SetName(StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), ptr2));
+		limb->SetName(limbName);
 		limb->ExtractFromXML(nullptr, rawData, ptr2);
 		limbs.push_back(limb);
 
@@ -194,11 +198,11 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 	{
 	case ZSkeletonType::Normal:
 	case ZSkeletonType::Curve:
-		headerStr = StringHelper::Sprintf("%sLimbs, %i", defaultPrefix.c_str(), limbCount);
+		headerStr = StringHelper::Sprintf("\n\t%sLimbs, %i\n", defaultPrefix.c_str(), limbCount);
 		break;
 	case ZSkeletonType::Flex:
-		headerStr =
-			StringHelper::Sprintf("%sLimbs, %i, %i", defaultPrefix.c_str(), limbCount, dListCount);
+		headerStr = StringHelper::Sprintf("\n\t{ %sLimbs, %i }, %i\n", defaultPrefix.c_str(),
+		                                  limbCount, dListCount);
 		break;
 	}
 

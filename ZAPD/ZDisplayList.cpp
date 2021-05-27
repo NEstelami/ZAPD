@@ -54,6 +54,8 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	dlistRawData.assign(nRawData.data() + rawDataIndex,
 	                    nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
+
+	DeclareVar("", "");
 }
 
 ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,
@@ -77,6 +79,14 @@ void ZDisplayList::ParseRawData()
 
 	for (size_t i = 0; i < numInstructions; i++)
 		instructions.push_back(BitConverter::ToUInt64BE(dlistRawData, (i * 8)));
+}
+
+Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	                                   GetSourceTypeName(), name, 0, bodyStr);
+	decl->isExternal = true;
+	return decl;
 }
 
 void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, std::string prefix,
@@ -1834,10 +1844,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 	if (parent != nullptr)
 	{
-		Declaration* decl = parent->AddDeclarationArray(
-			rawDataIndex, DeclarationAlignment::None, GetRawDataSize(), "Gfx",
-			StringHelper::Sprintf("%s", name.c_str()), 0, sourceOutput);
-		decl->isExternal = true;
+		Declaration* decl = DeclareVar("", sourceOutput);
 		decl->references = references;
 		// return "";
 		// return sourceOutput;

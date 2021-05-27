@@ -114,7 +114,7 @@ protected:
 	///* 0x000E */ s16 unk_10;
 	int16_t unk_10;
 
-	ZSkeleton* skel;
+	uint8_t limbCount = 0;
 
 	std::vector<uint8_t> refIndexArr;
 	std::vector<TransformData> transformDataArr;
@@ -123,13 +123,13 @@ protected:
 public:
 	ZCurveAnimation();
 	ZCurveAnimation(ZFile* nParent);
-	~ZCurveAnimation();
+
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
 	                    uint32_t nRawDataIndex) override;
 
-	void PreGenValues(const std::string& prefix);
+	void DeclareReferences(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
