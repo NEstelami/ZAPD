@@ -36,11 +36,6 @@ void ZAnimation::Save(const fs::path& outFolder)
 	}
 }
 
-void ZAnimation::ParseXML(tinyxml2::XMLElement* reader)
-{
-	ZResource::ParseXML(reader);
-}
-
 std::string ZAnimation::GetSourceOutputCode(const std::string& prefix)
 {
 	return "";
@@ -120,15 +115,6 @@ std::string ZNormalAnimation::GetSourceTypeName() const
 	return "AnimationHeader";
 }
 
-void ZNormalAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                      const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
-{
-	rawData = std::move(nRawData);
-	rawDataIndex = nRawDataIndex;
-	ParseXML(reader);
-	ParseRawData();
-}
-
 void ZNormalAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
@@ -195,15 +181,6 @@ std::string ZLinkAnimation::GetSourceTypeName() const
 	return "LinkAnimationHeader";
 }
 
-void ZLinkAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                    const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
-{
-	rawData = std::move(nRawData);
-	rawDataIndex = nRawDataIndex;
-	ParseXML(reader);
-	ParseRawData();
-}
-
 void ZLinkAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
@@ -249,6 +226,7 @@ std::string TransformData::GetSourceTypeName()
 
 ZCurveAnimation::ZCurveAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
+	RegisterOptionalAttribute("SkelOffset");
 }
 
 ZCurveAnimation::~ZCurveAnimation()
@@ -260,15 +238,16 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZAnimation::ParseXML(reader);
 
-	const char* skelOffsetXml = reader->Attribute("SkelOffset");
-	if (skelOffsetXml == nullptr)
+	std::string skelOffsetXml = registeredAttributes.at("SkelOffset").value;
+	if (skelOffsetXml == "")
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-			"ZCurveAnimation::ParseXML: Fatal error in '%s'. Missing 'SkelOffset' attribute in "
-			"ZCurveAnimation. You need to provide the offset of the curve skeleton.",
-			name.c_str()));
+		throw std::runtime_error(
+			StringHelper::Sprintf("ZCurveAnimation::ParseXML: Fatal error in '%s'.\n"
+		                          "\t Missing 'SkelOffset' attribute in ZCurveAnimation.\n"
+		                          "\t You need to provide the offset of the curve skeleton.",
+		                          name.c_str()));
 	}
-	skelOffset = std::strtoul(skelOffsetXml, nullptr, 0);
+	skelOffset = StringHelper::StrToL(skelOffsetXml, 0);
 }
 
 void ZCurveAnimation::ParseRawData()

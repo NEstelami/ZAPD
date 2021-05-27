@@ -377,4 +377,7 @@ public:
 	std::string GetSourceTypeName() const override;
 
 	ZResourceType GetResourceType() const override;
+
+protected:
+	std::vector<uint8_t> dlistRawData;
 };

@@ -19,17 +19,6 @@ ZCollisionHeader::~ZCollisionHeader()
 	delete camData;
 }
 
-ZResourceType ZCollisionHeader::GetResourceType() const
-{
-	return ZResourceType::CollisionHeader;
-}
-
-void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                      const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-}
-
 void ZCollisionHeader::ParseRawData()
 {
 	const uint8_t* data = rawData.data();
@@ -201,6 +190,16 @@ void ZCollisionHeader::ParseRawData()
 std::string ZCollisionHeader::GetSourceTypeName() const
 {
 	return "CollisionHeader";
+}
+
+ZResourceType ZCollisionHeader::GetResourceType() const
+{
+	return ZResourceType::CollisionHeader;
+}
+
+size_t ZCollisionHeader::GetRawDataSize() const
+{
+	return 44;
 }
 
 PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)

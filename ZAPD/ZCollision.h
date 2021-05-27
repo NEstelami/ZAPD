@@ -90,10 +90,10 @@ public:
 	ZCollisionHeader(ZFile* nParent);
 	~ZCollisionHeader();
 
+	void ParseRawData() override;
+
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    uint32_t nRawDataIndex) override;
-	void ParseRawData() override;
+	size_t GetRawDataSize() const override;
 };

@@ -64,6 +64,7 @@ public:
 	                int32_t nHeight, TextureType nType, bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
 	void FromHLTexture(HLTexture* hlTex);
+
 	static TextureType GetTextureTypeFromString(std::string str);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;

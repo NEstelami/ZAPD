@@ -52,6 +52,8 @@ REGISTER_ZFILENODE(SceneAltHeader, ZRoom);
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
 	roomCount = -1;
+	canHaveInner = true;
+	RegisterOptionalAttribute("HackMode");
 }
 
 ZRoom::~ZRoom()
@@ -260,11 +262,10 @@ void ZRoom::ParseRawData()
 		cmd->commandSet = rawDataIndex;
 		cmd->ExtractCommandFromRoom(this, currentPtr);
 
-		auto end = std::chrono::steady_clock::now();
-		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
 		if (Globals::Instance->profile)
 		{
+			auto end = std::chrono::steady_clock::now();
+			auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 			if (diff > 50)
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
