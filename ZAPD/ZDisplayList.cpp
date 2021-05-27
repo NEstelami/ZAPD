@@ -45,6 +45,7 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
                                   const std::vector<uint8_t>& nRawData,
                                   const uint32_t nRawDataIndex)
 {
+	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
 
@@ -52,8 +53,8 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	int32_t rawDataSize = ZDisplayList::GetDListLength(
 		nRawData, rawDataIndex,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	rawData = std::vector<uint8_t>(nRawData.data() + rawDataIndex,
-	                               nRawData.data() + rawDataIndex + rawDataSize);
+	dlistRawData.assign(nRawData.data() + rawDataIndex,
+	                    nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
 
@@ -61,23 +62,23 @@ ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex
                            int32_t rawDataSize, ZFile* nParent)
 	: ZDisplayList(nParent)
 {
+	rawData.assign(nRawData.begin(), nRawData.end());
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
-	rawData = std::vector<uint8_t>(nRawData.data() + rawDataIndex,
-	                               nRawData.data() + rawDataIndex + rawDataSize);
+	dlistRawData.assign(nRawData.data() + rawDataIndex,
+	                    nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 }
 
 void ZDisplayList::ParseRawData()
 {
-	size_t numInstructions = rawData.size() / 8;
-	uint8_t* rawDataArr = rawData.data();
+	size_t numInstructions = dlistRawData.size() / 8;
 
 	instructions.reserve(numInstructions);
 
 	for (size_t i = 0; i < numInstructions; i++)
-		instructions.push_back(BitConverter::ToUInt64BE(rawDataArr, (i * 8)));
+		instructions.push_back(BitConverter::ToUInt64BE(dlistRawData, (i * 8)));
 }
 
 void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, std::string prefix,
@@ -416,7 +417,7 @@ int32_t ZDisplayList::GetDListLength(std::vector<uint8_t> rawData, uint32_t rawD
 
 	while (true)
 	{
-		uint8_t opcode = rawData[rawDataIndex + (i * 8)];
+		uint8_t opcode = rawData.at(rawDataIndex + (i * 8));
 		i++;
 
 		if (opcode == endDLOpcode)
