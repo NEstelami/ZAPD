@@ -241,12 +241,11 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 			index++;
 		}
 
-		zRoom->parent->AddDeclarationArray(
-			primColorSegmentOffset, DeclarationAlignment::Align4, primColors.size() * 5,
-			"F3DPrimColor",
-			StringHelper::Sprintf("%sAnimatedMaterialPrimColor_%06X", zRoom->GetName().c_str(),
-		                          primColorSegmentOffset),
-			primColors.size(), declaration);
+		std::string primColorName = StringHelper::Sprintf(
+			"%sAnimatedMaterialPrimColor_%06X", zRoom->GetName().c_str(), primColorSegmentOffset);
+		zRoom->parent->AddDeclarationArray(primColorSegmentOffset, DeclarationAlignment::Align4,
+		                                   primColors.size() * 5, "F3DPrimColor", primColorName,
+		                                   primColors.size(), declaration);
 	}
 
 	if (envColorSegmentOffset != 0)
@@ -265,12 +264,11 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 			index++;
 		}
 
-		zRoom->parent->AddDeclarationArray(
-			envColorSegmentOffset, DeclarationAlignment::Align4, envColors.size() * 4,
-			"Color_RGBA8",
-			StringHelper::Sprintf("%sAnimatedMaterialEnvColors0x%06X", zRoom->GetName().c_str(),
-		                          envColorSegmentOffset),
-			envColors.size(), declaration);
+		std::string envColorName = StringHelper::Sprintf(
+			"%sAnimatedMaterialEnvColors0x%06X", zRoom->GetName().c_str(), envColorSegmentOffset);
+		zRoom->parent->AddDeclarationArray(envColorSegmentOffset, DeclarationAlignment::Align4,
+		                                   envColors.size() * 4, "F3DEnvColor", envColorName,
+		                                   envColors.size(), declaration);
 	}
 
 	if (keyFrameSegmentOffset != 0)
@@ -386,7 +384,8 @@ std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t
 			textureIndices.size(), declaration);
 	}
 
-	std::string segmName = zRoom->parent->GetDeclarationPtrName(textureSegmentOffsetsSegmentAddress);
+	std::string segmName =
+		zRoom->parent->GetDeclarationPtrName(textureSegmentOffsetsSegmentAddress);
 	std::string indexesName = zRoom->parent->GetDeclarationPtrName(textureIndicesSegmentAddress);
 
 	return StringHelper::Sprintf("%i, %s, %s", cycleLength, segmName.c_str(), indexesName.c_str());

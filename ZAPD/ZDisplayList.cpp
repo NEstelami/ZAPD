@@ -83,8 +83,9 @@ void ZDisplayList::ParseRawData()
 
 Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                                   GetSourceTypeName(), name, 0, bodyStr);
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	                                GetSourceTypeName(), name, 0, bodyStr);
 	decl->isExternal = true;
 	return decl;
 }
