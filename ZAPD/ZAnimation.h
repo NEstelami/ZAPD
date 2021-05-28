@@ -131,6 +131,7 @@ public:
 
 	void DeclareReferences(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
+	DeclarationAlignment GetDeclarationAlignment() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;

@@ -21,7 +21,7 @@ ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& 
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
-	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+	name = GetDefaultName(prefix.c_str());
 	outName = name;
 
 	ParseRawData();
@@ -134,14 +134,19 @@ size_t ZBackground::GetRawDataSize() const
 	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
 }
 
+DeclarationAlignment ZBackground::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align8;
+}
+
 void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	std::string auxName = name;
 
 	if (name == "")
-		auxName = GetDefaultName(prefix, rawDataIndex);
+		auxName = GetDefaultName(prefix);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, "SCREEN_WIDTH * SCREEN_HEIGHT / 4",
 	                            bodyStr);
 }
@@ -193,9 +198,9 @@ std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZBackground::GetDefaultName(const std::string& prefix, uint32_t address)
+std::string ZBackground::GetDefaultName(const std::string& prefix) const
 {
-	return StringHelper::Sprintf("%sBackground_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%sBackground_%06X", prefix.c_str(), rawDataIndex);
 }
 
 std::string ZBackground::GetSourceTypeName() const

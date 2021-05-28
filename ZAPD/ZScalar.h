@@ -53,6 +53,7 @@ public:
 	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() const override;
+	DeclarationAlignment GetDeclarationAlignment() const override;
 
 	static size_t MapTypeToSize(const ZScalarType scalarType);
 	static ZScalarType MapOutputTypeToScalarType(const std::string& type);

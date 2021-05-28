@@ -13,8 +13,15 @@ ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint
            ZFile* nParent)
 	: ZResource(nParent)
 {
-	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+	name = GetDefaultName(prefix.c_str());
 	ExtractFromFile(nRawData, nRawDataIndex);
+	DeclareVar("", "");
+}
+
+void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+                          uint32_t nRawDataIndex)
+{
+	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 	DeclareVar("", "");
 }
 
@@ -27,26 +34,14 @@ void ZMtx::ParseRawData()
 			mtx[i][j] = BitConverter::ToInt32BE(rawData, rawDataIndex + (i * 4 + j) * 4);
 }
 
-void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                          uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-	DeclareVar("", "");
-}
-
-size_t ZMtx::GetRawDataSize() const
-{
-	return 64;
-}
-
 void ZMtx::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	std::string auxName = name;
 
 	if (name == "")
-		auxName = GetDefaultName(prefix, rawDataIndex);
+		auxName = GetDefaultName(prefix);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                       GetSourceTypeName(), auxName, bodyStr);
 }
 
@@ -81,11 +76,6 @@ std::string ZMtx::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZMtx::GetDefaultName(const std::string& prefix, uint32_t address)
-{
-	return StringHelper::Sprintf("%sMtx_%06X", prefix.c_str(), address);
-}
-
 std::string ZMtx::GetSourceTypeName() const
 {
 	return "Mtx";
@@ -94,4 +84,14 @@ std::string ZMtx::GetSourceTypeName() const
 ZResourceType ZMtx::GetResourceType() const
 {
 	return ZResourceType::Mtx;
+}
+
+size_t ZMtx::GetRawDataSize() const
+{
+	return 64;
+}
+
+DeclarationAlignment ZMtx::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align8;
 }

@@ -183,7 +183,7 @@ void ZCollisionHeader::ParseRawData()
 		name.c_str(), polyTypeDefSegmentOffset, name.c_str(), camDataSegmentOffset, numWaterBoxes,
 		waterBoxStr);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16,
+	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
 	                       GetRawDataSize(), "CollisionHeader",
 	                       StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
 }
@@ -196,6 +196,11 @@ ZResourceType ZCollisionHeader::GetResourceType() const
 size_t ZCollisionHeader::GetRawDataSize() const
 {
 	return 44;
+}
+
+DeclarationPadding ZCollisionHeader::GetDeclarationPadding() const
+{
+	return DeclarationPadding::Pad16;
 }
 
 PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)

@@ -53,7 +53,7 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 			padding = DeclarationPadding::None;
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, padding,
+			segmentOffset, GetDeclarationAlignment(), padding,
 			actors.size() * entry.GetRawDataSize(), entry.GetSourceTypeName(),
 			StringHelper::Sprintf("%sActorList_%06X", prefix.c_str(), segmentOffset),
 			GetActorListArraySize(), declaration);

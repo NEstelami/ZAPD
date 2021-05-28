@@ -18,7 +18,7 @@ void ZPath::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, pathways.size() * 8,
+	parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), pathways.size() * 8,
 	                            GetSourceTypeName(), name, pathways.size(), "");
 }
 
@@ -87,7 +87,7 @@ std::string ZPath::GetSourceOutputCode(const std::string& prefix)
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, pathways.size() * 8,
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), pathways.size() * 8,
 		                            GetSourceTypeName(), name, pathways.size(), declaration);
 	else
 		decl->text = declaration;

@@ -85,7 +85,7 @@ void ZDisplayList::ParseRawData()
 
 Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                                   GetSourceTypeName(), name, 0, bodyStr, true);
 }
 
@@ -2143,4 +2143,9 @@ ZResourceType ZDisplayList::GetResourceType() const
 size_t ZDisplayList::GetRawDataSize() const
 {
 	return instructions.size() * 8;
+}
+
+DeclarationAlignment ZDisplayList::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align8;
 }

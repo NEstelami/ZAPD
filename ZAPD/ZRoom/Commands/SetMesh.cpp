@@ -115,13 +115,14 @@ RoomCommand SetMesh::GetRoomCommand() const
 
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
+	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	zRoom = nRoom;
 
-	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+	name = GetDefaultName(prefix);
 }
 
 void PolygonDlist::ParseRawData()
@@ -186,17 +187,6 @@ void PolygonDlist::SetPolyType(uint8_t nPolyType)
 	polyType = nPolyType;
 }
 
-void PolygonDlist::DeclareVar(const std::string& prefix, const std::string& bodyStr)
-{
-	std::string auxName = name;
-	if (name == "")
-	{
-		auxName = GetDefaultName(prefix, rawDataIndex);
-	}
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
-}
-
 std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 {
 	std::string bodyStr = "";
@@ -246,12 +236,7 @@ void PolygonDlist::DeclareAndGenerateOutputCode()
 	}
 }
 
-std::string PolygonDlist::GetDefaultName(const std::string& prefix, uint32_t address)
-{
-	return StringHelper::Sprintf("%sPolyDlist_%06X", prefix.c_str(), address);
-}
-
-std::string PolygonDlist::GetSourceTypeName()
+std::string PolygonDlist::GetSourceTypeName() const
 {
 	switch (polyType)
 	{
@@ -263,20 +248,30 @@ std::string PolygonDlist::GetSourceTypeName()
 	}
 }
 
-std::string PolygonDlist::GetName()
+ZResourceType PolygonDlist::GetResourceType() const
 {
-	return name;
+	// TODO
+	return ZResourceType::Error;
+}
+
+
+/* BgImage */
+
+BgImage::BgImage(ZFile* nParent)
+	: ZResource(nParent)
+{
 }
 
 BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
                  uint32_t nRawDataIndex, ZFile* nParent)
+	: ZResource(nParent)
 {
 	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	isSubStruct = nIsSubStruct;
 
-	name = GetDefaultName(prefix.c_str(), rawDataIndex);
+	name = GetDefaultName(prefix);
 
 	ParseRawData();
 	sourceBackground = MakeBackground(source, prefix);
@@ -319,7 +314,7 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 	return background;
 }
 
-size_t BgImage::GetRawDataSize()
+size_t BgImage::GetRawDataSize() const
 {
 	return 0x1C;
 }
@@ -389,38 +384,27 @@ std::string BgImage::GetBodySourceCode(bool arrayElement) const
 	return bodyStr;
 }
 
-std::string BgImage::GetDefaultName(const std::string& prefix, uint32_t address)
-{
-	return StringHelper::Sprintf("%sBgImage_%06X", prefix.c_str(), address);
-}
-
-std::string BgImage::GetSourceTypeName()
+std::string BgImage::GetSourceTypeName() const
 {
 	return "BgImage";
 }
 
-std::string BgImage::GetName()
+ZResourceType BgImage::GetResourceType() const
 {
-	return name;
+	// TODO
+	return ZResourceType::Error;
 }
 
 /* PolygonType section */
 
 PolygonTypeBase::PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData,
                                  uint32_t nRawDataIndex, ZRoom* nRoom)
-	: rawData{nRawData}, rawDataIndex{nRawDataIndex}, parent{nParent}, zRoom{nRoom}
+	: ZResource(nParent), zRoom{nRoom}
 {
-	type = BitConverter::ToUInt8BE(rawData, rawDataIndex);
-}
+	rawData.assign(nRawData.begin(), nRawData.end());
+	rawDataIndex = nRawDataIndex;
 
-void PolygonTypeBase::DeclareVar(const std::string& prefix, const std::string& bodyStr)
-{
-	std::string auxName = name;
-	if (name == "")
-		auxName = GetDefaultName(prefix);
-
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
+	type = BitConverter::ToUInt8BE(nRawData, nRawDataIndex);
 }
 
 void PolygonTypeBase::DeclareAndGenerateOutputCode(const std::string& prefix)
@@ -453,25 +437,15 @@ std::string PolygonTypeBase::GetSourceTypeName() const
 	}
 }
 
-std::string PolygonTypeBase::GetName() const
+ZResourceType PolygonTypeBase::GetResourceType() const
 {
-	return name;
-}
-
-void PolygonTypeBase::SetName(const std::string& newName)
-{
-	name = newName;
-}
-
-std::string PolygonTypeBase::GetDefaultName(const std::string& prefix) const
-{
-	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), GetSourceTypeName().c_str(),
-	                             rawDataIndex);
+	// TODO
+	return ZResourceType::Error;
 }
 
 PolygonType1::PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZRoom* nRoom)
-	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom)
+	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom), single(nParent)
 {
 }
 
@@ -513,11 +487,13 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 		if (list != 0)
 		{
 			listAddress = Seg2Filespace(list, parent->baseAddress);
+			uint32_t auxPtr = listAddress;
 			for (size_t i = 0; i < count; ++i)
 			{
-				BgImage bg(false, prefix, rawData, listAddress + i * BgImage::GetRawDataSize(),
+				BgImage bg(false, prefix, rawData, auxPtr,
 				           parent);
 				multiList.push_back(bg);
+				auxPtr += bg.GetRawDataSize();
 				bgImageArrayBody += bg.GetBodySourceCode(true);
 				if (i + 1 < count)
 				{
@@ -529,8 +505,8 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 			if (decl == nullptr)
 			{
 				parent->AddDeclarationArray(
-					listAddress, DeclarationAlignment::Align4, count * BgImage::GetRawDataSize(),
-					BgImage::GetSourceTypeName(), multiList.at(0).GetName().c_str(), count,
+					listAddress, DeclarationAlignment::Align4, count * multiList.at(0).GetRawDataSize(),
+					multiList.at(0).GetSourceTypeName(), multiList.at(0).GetName().c_str(), count,
 					bgImageArrayBody);
 			}
 		}
@@ -668,4 +644,9 @@ std::string PolygonType2::GetBodySourceCode() const
 size_t PolygonType2::GetRawDataSize() const
 {
 	return 0x0C;
+}
+
+DeclarationAlignment PolygonType2::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align4;
 }

@@ -35,7 +35,7 @@ std::string ZString::GetBodySourceCode() const
 
 std::string ZString::GetSourceOutputCode(const std::string& prefix)
 {
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+	parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                            GetSourceTypeName(), name, 0, GetBodySourceCode());
 
 	return "";

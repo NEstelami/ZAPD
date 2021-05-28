@@ -64,7 +64,7 @@ std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
 		headerStr += StringHelper::Sprintf("\t%sFrameData,\n", defaultPrefix.c_str());
 		headerStr += StringHelper::Sprintf("\t%sJointIndices,\n", defaultPrefix.c_str());
 		headerStr += StringHelper::Sprintf("\t%i\n", limit);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
 		                       headerStr);
 
@@ -163,7 +163,7 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 					StringHelper::Sprintf("%sSeg%06X", name.c_str(), segmentAddress));
 		std::string headerStr =
 			StringHelper::Sprintf("\n\t{ %i },\n\t0x%08X\n", frameCount, segmentAddress);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
 		                       headerStr);
 	}
@@ -297,7 +297,7 @@ void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
 }
 
@@ -396,6 +396,11 @@ size_t ZCurveAnimation::GetRawDataSize() const
 	return 0x10;
 }
 
+DeclarationAlignment ZCurveAnimation::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align16;
+}
+
 std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 {
 	std::string bodyStr = "";
@@ -457,7 +462,7 @@ std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		parent->AddDeclaration(address, DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(address, GetDeclarationAlignment(), GetRawDataSize(),
 		                       GetSourceTypeName(), name, bodyStr);
 	}
 	else

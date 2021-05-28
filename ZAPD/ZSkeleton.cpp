@@ -105,7 +105,7 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
 
 	std::string defaultPrefix = name;
@@ -136,19 +136,6 @@ void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
 	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
 	HLModelIntermediette::FromZSkeleton(mdl, this);
 	mdl->blocks.push_back(new HLTerminator());
-}
-
-size_t ZSkeleton::GetRawDataSize() const
-{
-	switch (type)
-	{
-	case ZSkeletonType::Flex:
-		return 0xC;
-	case ZSkeletonType::Normal:
-	case ZSkeletonType::Curve:
-	default:
-		return 0x8;
-	}
 }
 
 std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
@@ -188,7 +175,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 			tblStr += decl;
 		}
 
-		parent->AddDeclarationArray(ptr, DeclarationAlignment::None, 4 * limbCount, limbArrTypeStr,
+		parent->AddDeclarationArray(ptr, DeclarationAlignment::Align4, 4 * limbCount, limbArrTypeStr,
 		                            StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()),
 		                            limbCount, tblStr);
 	}
@@ -210,7 +197,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 	if (decl == nullptr)
 	{
-		parent->AddDeclaration(GetAddress(), DeclarationAlignment::Align16, GetRawDataSize(),
+		parent->AddDeclaration(GetAddress(), GetDeclarationAlignment(), GetRawDataSize(),
 		                       GetSourceTypeName(), name, headerStr);
 	}
 	else
@@ -239,6 +226,24 @@ std::string ZSkeleton::GetSourceTypeName() const
 ZResourceType ZSkeleton::GetResourceType() const
 {
 	return ZResourceType::Skeleton;
+}
+
+size_t ZSkeleton::GetRawDataSize() const
+{
+	switch (type)
+	{
+	case ZSkeletonType::Flex:
+		return 0xC;
+	case ZSkeletonType::Normal:
+	case ZSkeletonType::Curve:
+	default:
+		return 0x8;
+	}
+}
+
+DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const 
+{
+	return DeclarationAlignment::Align16;
 }
 
 segptr_t ZSkeleton::GetAddress()

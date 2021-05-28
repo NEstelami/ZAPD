@@ -367,7 +367,7 @@ void ZRoom::SyotesRoomHack()
 
 	poly.ParseRawData();
 	poly.DeclareReferences(GetName());
-	parent->AddDeclaration(0, DeclarationAlignment::Align4, poly.GetRawDataSize(),
+	parent->AddDeclaration(0, poly.GetDeclarationAlignment(), poly.GetRawDataSize(),
 	                       poly.GetSourceTypeName(), poly.GetDefaultName(GetName()),
 	                       poly.GetBodySourceCode());
 }

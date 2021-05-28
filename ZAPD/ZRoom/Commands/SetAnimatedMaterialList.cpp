@@ -56,7 +56,7 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 			declSize = texture.params.size() * 4;
 			declTypeName = "AnimatedMatTexScrollParams";
 
-			parent->AddDeclarationArray(texture.segmentOffset, DeclarationAlignment::Align4,
+			parent->AddDeclarationArray(texture.segmentOffset, GetDeclarationAlignment(),
 			                            declSize, declTypeName, declName, texture.params.size(),
 			                            declaration);
 			break;
@@ -67,7 +67,7 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 			declTypeName = "AnimatedMatColorParams";
 			declaration = texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
 
-			parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4, declSize,
+			parent->AddDeclaration(texture.segmentOffset, GetDeclarationAlignment(), declSize,
 			                       declTypeName, declName,
 			                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
 			break;
@@ -76,7 +76,7 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 			declTypeName = "AnimatedMatTexCycleParams";
 			declaration = texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
 
-			parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4, declSize,
+			parent->AddDeclaration(texture.segmentOffset, GetDeclarationAlignment(), declSize,
 			                       declTypeName, declName,
 			                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
 			break;
@@ -106,7 +106,7 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 				declaration += "\n";
 		}
 
-		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
+		parent->AddDeclarationArray(segmentOffset, GetDeclarationAlignment(),
 		                            DeclarationPadding::Pad16, textures.size() * 8,
 		                            "AnimatedMaterial", nameStr, textures.size(), declaration);
 	}

@@ -130,11 +130,6 @@ size_t ZScalar::MapTypeToSize(const ZScalarType scalarType)
 	}
 }
 
-size_t ZScalar::GetRawDataSize() const
-{
-	return ZScalar::MapTypeToSize(scalarType);
-}
-
 void ZScalar::ParseRawData()
 {
 	switch (scalarType)
@@ -213,7 +208,7 @@ std::string ZScalar::GetBodySourceCode() const
 std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
 {
 	if (parent != nullptr)
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
 
 	return "";
@@ -227,4 +222,22 @@ ZResourceType ZScalar::GetResourceType() const
 bool ZScalar::DoesSupportArray() const
 {
 	return true;
+}
+
+size_t ZScalar::GetRawDataSize() const
+{
+	return ZScalar::MapTypeToSize(scalarType);
+}
+
+DeclarationAlignment ZScalar::GetDeclarationAlignment() const
+{
+	switch (scalarType)
+	{
+	case ZScalarType::ZSCALAR_S64:
+	case ZScalarType::ZSCALAR_U64:
+	case ZScalarType::ZSCALAR_F64:
+		return DeclarationAlignment::Align8;
+	default:
+		return DeclarationAlignment::Align4;
+	}
 }

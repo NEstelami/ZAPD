@@ -37,10 +37,11 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 
-	size_t GetRawDataSize() const override;
-
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
+
+	size_t GetRawDataSize() const override;
+	DeclarationAlignment GetDeclarationAlignment() const override;
 
 	segptr_t GetAddress();
 	uint8_t GetLimbCount();

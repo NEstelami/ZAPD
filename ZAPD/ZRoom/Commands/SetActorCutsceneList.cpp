@@ -45,7 +45,7 @@ void SetActorCutsceneList::DeclareReferences(const std::string& prefix)
 		std::string typeName = cutscenes.at(0).GetSourceTypeName();
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, cutscenes.size() * 16, typeName,
+			segmentOffset, GetDeclarationAlignment(), cutscenes.size() * 16, typeName,
 			StringHelper::Sprintf("%s%sList_%06X", prefix.c_str(), typeName.c_str(), segmentOffset),
 			0, declaration);
 	}

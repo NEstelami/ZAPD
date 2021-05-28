@@ -28,6 +28,7 @@ public:
 	std::string GetExternalExtension() const override;
 
 	size_t GetRawDataSize() const override;
+	DeclarationAlignment GetDeclarationAlignment() const override;
 
 protected:
 };

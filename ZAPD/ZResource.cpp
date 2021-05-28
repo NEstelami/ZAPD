@@ -160,6 +160,16 @@ std::string ZResource::GetExternalExtension() const
 	return "";
 }
 
+DeclarationAlignment ZResource::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align4;
+}
+
+DeclarationPadding ZResource::GetDeclarationPadding() const
+{
+	return DeclarationPadding::None;
+}
+
 const std::vector<uint8_t>& ZResource::GetRawData() const
 {
 	return rawData;
@@ -185,9 +195,25 @@ void ZResource::SetRawDataIndex(uint32_t value)
 	rawDataIndex = value;
 }
 
+Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
+	                       GetSourceTypeName(), auxName, bodyStr);
+}
+
 std::string ZResource::GetBodySourceCode() const
 {
 	return "ERROR";
+}
+
+std::string ZResource::GetDefaultName(const std::string& prefix) const
+{
+	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), GetSourceTypeName().c_str(), rawDataIndex);
 }
 
 std::string ZResource::GetSourceOutputCode(const std::string& prefix)

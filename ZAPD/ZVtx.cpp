@@ -46,17 +46,12 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 	if (parent != nullptr)
 	{
 		Declaration* decl =
-			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+			parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 		                           GetSourceTypeName(), name, output);
 		decl->isExternal = true;
 	}
 
 	return "";
-}
-
-size_t ZVtx::GetRawDataSize() const
-{
-	return 16;
 }
 
 bool ZVtx::DoesSupportArray() const
@@ -82,4 +77,14 @@ std::string ZVtx::GetSourceTypeName() const
 std::string ZVtx::GetExternalExtension() const
 {
 	return "vtx";
+}
+
+size_t ZVtx::GetRawDataSize() const
+{
+	return 16;
+}
+
+DeclarationAlignment ZVtx::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align16;
 }

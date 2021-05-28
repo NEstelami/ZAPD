@@ -82,7 +82,7 @@ public:
 	size_t GetRawDataSize() const override;
 	std::string GetIMFmtFromType();
 	std::string GetIMSizFromType();
-	std::string GetDefaultName(const std::string& prefix);
+	std::string GetDefaultName(const std::string& prefix) const override;
 	uint32_t GetWidth() const;
 	uint32_t GetHeight() const;
 	void SetDimensions(uint32_t nWidth, uint32_t nHeight);

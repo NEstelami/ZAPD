@@ -689,7 +689,7 @@ std::string ZTexture::GetIMSizFromType()
 	}
 }
 
-std::string ZTexture::GetDefaultName(const std::string& prefix)
+std::string ZTexture::GetDefaultName(const std::string& prefix) const
 {
 	const char* suffix = "Tex";
 	if (isPalette)

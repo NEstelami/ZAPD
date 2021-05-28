@@ -21,6 +21,7 @@ public:
 	void CheckValidJpeg(const std::string& filepath);
 
 	size_t GetRawDataSize() const override;
+	DeclarationAlignment GetDeclarationAlignment() const override;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 
@@ -29,7 +30,7 @@ public:
 	void Save(const fs::path& outFolder) override;
 	std::string GetBodySourceCode();
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	static std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	std::string GetDefaultName(const std::string& prefix) const override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
