@@ -189,7 +189,7 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-bool Globals::GetSegmentedPtrName(segptr_t segAddress, std::string& declName)
+bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::string& declName)
 {
 	if (segAddress == 0)
 	{
@@ -199,7 +199,16 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, std::string& declName)
 
 	uint8_t segment = GETSEGNUM(segAddress);
 
-	if (HasSegment(segment))
+	if (segment == currentFile->segment)
+	{
+		uint32_t address = Seg2Filespace(segAddress, currentFile->baseAddress);
+		if (currentFile->HasDeclaration(address))
+		{
+			declName = currentFile->GetDeclarationPtrName(segAddress);
+			return true;
+		}
+	}
+	else if (HasSegment(segment))
 	{
 		for (auto file : segmentRefFiles[segment])
 		{
@@ -215,7 +224,7 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, std::string& declName)
 	const auto& symbolFromMap = Globals::Instance->symbolMap.find(segAddress);
 	if (symbolFromMap != Globals::Instance->symbolMap.end())
 	{
-		declName = symbolFromMap->second;
+		declName = "&" + symbolFromMap->second;
 		return true;
 	}
 

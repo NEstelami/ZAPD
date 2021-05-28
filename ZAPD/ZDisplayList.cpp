@@ -67,7 +67,7 @@ ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex
 	rawData.assign(nRawData.begin(), nRawData.end());
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
-	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
+	name = StringHelper::Sprintf("%sDL_%06X", parent->GetName().c_str(), rawDataIndex);
 	dlistRawData.assign(nRawData.data() + rawDataIndex,
 	                    nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
@@ -509,7 +509,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 			lastTexSeg = segmentNumber;
 
 			texStr = "";
-			Globals::Instance->GetSegmentedPtrName(data & 0xFFFFFFFF, texStr);
+			Globals::Instance->GetSegmentedPtrName(data & 0xFFFFFFFF, parent, texStr);
 		}
 
 		// gsDPSetTile
@@ -1580,8 +1580,12 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	uint32_t vtxOffset = Seg2Filespace(seg, self->parent->baseAddress);
 	std::string vtxName = "";
 
-	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, vtxName);
-	if (!addressFound && GETSEGNUM(seg) == self->parent->segment)
+	// Probably an external asset we are unable to track
+	if (!Globals::Instance->HasSegment(GETSEGNUM(seg)))
+	{
+		vtxName = StringHelper::Sprintf("0x%08X", seg);
+	}
+	else
 	{
 		self->references.push_back(vtxOffset);
 
@@ -1657,7 +1661,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 	self->TextureGenCheck(self->curPrefix);
 
 	std::string texName = "";
-	Globals::Instance->GetSegmentedPtrName(seg, texName);
+	Globals::Instance->GetSegmentedPtrName(seg, self->parent, texName);
 
 	gfxd_puts(texName.c_str());
 
@@ -1682,7 +1686,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	self->TextureGenCheck(self->curPrefix);
 
 	std::string palName = "";
-	Globals::Instance->GetSegmentedPtrName(seg, palName);
+	Globals::Instance->GetSegmentedPtrName(seg, self->parent, palName);
 
 	gfxd_puts(palName.c_str());
 
@@ -1695,7 +1699,10 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	uint32_t dListOffset = GETSEGOFFSET(seg);
 	int32_t dListSegNum = GETSEGNUM(seg);
 
-	if ((dListSegNum <= 6) && Globals::Instance->HasSegment(dListSegNum))
+	std::string dListName = "";
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, dListName);
+
+	if (!addressFound && self->parent->segment == dListSegNum)
 	{
 		ZDisplayList* newDList = new ZDisplayList(
 			self->fileData, dListOffset,
@@ -1703,10 +1710,8 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 		newDList->scene = self->scene;
 		newDList->parent = self->parent;
 		self->otherDLists.push_back(newDList);
+		dListName = newDList->GetName();
 	}
-
-	std::string dListName = "";
-	Globals::Instance->GetSegmentedPtrName(seg, dListName);
 
 	gfxd_puts(dListName.c_str());
 
@@ -1718,7 +1723,7 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	std::string mtxName = "";
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 
-	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, mtxName);
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, mtxName);
 	if (!addressFound && GETSEGNUM(seg) == self->parent->segment)
 	{
 		ZMtx mtx(self->GetName(), self->fileData, Seg2Filespace(seg, self->parent->baseAddress),
@@ -2031,6 +2036,17 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 				else
 					self->lastTlut = tex;
 
+				if (parent->GetDeclaration(texAddr) == nullptr)
+				{
+					auto filepath = Globals::Instance->outputPath /
+									Path::GetFileNameWithoutExtension(tex->GetName());
+					auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+														tex->GetExternalExtension().c_str());
+					parent->AddDeclarationIncludeArray(texAddr, filename, tex->GetRawDataSize(),
+														tex->GetSourceTypeName(), tex->GetName(),
+														0);
+				}
+
 				return true;
 			}
 		}
@@ -2055,13 +2071,16 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 				else
 					self->lastTlut = tex;
 
-				auto filepath = Globals::Instance->outputPath /
-								Path::GetFileNameWithoutExtension(tex->GetName());
-				auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-				                                      tex->GetExternalExtension().c_str());
-				scene->parent->AddDeclarationIncludeArray(texAddr, filename, tex->GetRawDataSize(),
-				                                          tex->GetSourceTypeName(), tex->GetName(),
-				                                          0);
+				if (scene->parent->GetDeclaration(texAddr) == nullptr)
+				{
+					auto filepath = Globals::Instance->outputPath /
+									Path::GetFileNameWithoutExtension(tex->GetName());
+					auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
+														tex->GetExternalExtension().c_str());
+					scene->parent->AddDeclarationIncludeArray(texAddr, filename, tex->GetRawDataSize(),
+															tex->GetSourceTypeName(), tex->GetName(),
+															0);
+				}
 			}
 			return true;
 		}

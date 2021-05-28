@@ -76,7 +76,7 @@ public:
 	 * Returns `true` if the address is found. `false` otherwise,
 	 * in which case `declName` will be set to the address formatted as a pointer.
 	*/
-	bool GetSegmentedPtrName(segptr_t segAddress, std::string& declName);
+	bool GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::string& declName);
 };
 
 /*

@@ -562,7 +562,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	sourceOutput += "#include \"macros.h\"\n";
 	sourceOutput += GetHeaderInclude();
 	sourceOutput += GetExternalFileHeaderInclude();
-	sourceOutput += "\n";
+	sourceOutput += "\n\n";
 
 	GeneratePlaceholderDeclarations();
 
