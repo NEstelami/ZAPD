@@ -110,14 +110,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	// Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
-	/*
 	if (reader->Attribute("Segment") == nullptr)
 	    throw std::runtime_error(StringHelper::Sprintf(
 	        "ZFile::ParseXML: Error in '%s'.\n"
 	        "\t Missing 'Segment' attribute in File node. \n",
 	        name.c_str()));
-	*/
 
 	if (reader->Attribute("Segment") != nullptr)
 	{
@@ -127,7 +124,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 	std::string folderName = (basePath / Path::GetFileNameWithoutExtension(name)).string();
 
-	if (mode == ZFileMode::Extract)
+	if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 	{
 		if (!File::Exists((basePath / name).string()))
 			throw std::runtime_error(
@@ -193,7 +190,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		{
 			ZResource* nRes = nodeMap[nodeName](this);
 
-			if (mode == ZFileMode::Extract)
+			if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 				nRes->ExtractFromXML(child, rawData, rawDataIndex);
 
 			auto resType = nRes->GetResourceType();
@@ -564,6 +561,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	sourceOutput += "#include \"z64.h\"\n";
 	sourceOutput += "#include \"macros.h\"\n";
 	sourceOutput += GetHeaderInclude();
+	sourceOutput += GetExternalFileHeaderInclude();
+	sourceOutput += "\n";
 
 	GeneratePlaceholderDeclarations();
 
@@ -575,7 +574,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 		if (res->IsExternalResource())
 		{
-			std::string path = Path::GetFileNameWithoutExtension(res->GetName()).c_str();
+			std::string path = Path::GetFileNameWithoutExtension(res->GetName());
 
 			std::string assetOutDir =
 				(outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
@@ -672,10 +671,23 @@ void ZFile::GenerateHLIntermediette()
 	// std::string test2 = mdl->ToAssimpFile();
 }
 
-std::string ZFile::GetHeaderInclude()
+std::string ZFile::GetHeaderInclude() const
 {
-	return StringHelper::Sprintf("#include \"%s\"\n\n",
-	                             (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
+	return StringHelper::Sprintf("#include \"%s.h\"\n",
+	                             Path::GetFileNameWithoutExtension(name).c_str());
+}
+
+std::string ZFile::GetExternalFileHeaderInclude() const
+{
+	std::string externalFilesIncludes = "";
+
+	for (ZFile* externalFile : Globals::Instance->externalFiles)
+	{
+		externalFilesIncludes += StringHelper::Sprintf("#include \"%s.h\"\n",
+	                             externalFile->GetSourceOutputFolderPath().c_str());
+	}
+
+	return externalFilesIncludes;
 }
 
 void ZFile::GeneratePlaceholderDeclarations()
@@ -704,6 +716,12 @@ ZTexture* ZFile::GetTextureResource(uint32_t offset) const
 		return tex->second;
 
 	return nullptr;
+}
+
+fs::path ZFile::GetSourceOutputFolderPath() const
+{
+	// TODO: change `name` to `outName.parent_path()` when #146 gets merged
+	return Globals::Instance->sourceOutputPath / name;
 }
 
 std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()

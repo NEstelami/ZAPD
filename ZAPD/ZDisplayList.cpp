@@ -508,17 +508,8 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 
 			lastTexSeg = segmentNumber;
 
-			ZFile* auxParent = parent;
-			if (parent->segment != segmentNumber && Globals::Instance->HasSegment(segmentNumber))
-				auxParent = Globals::Instance->segmentRefFiles.at(segmentNumber);
-
-			Declaration* decl = auxParent->GetDeclaration(texAddr);
-			if (Globals::Instance->HasSegment(segmentNumber) && decl != nullptr)
-				texStr = decl->varName;
-			else if (lastTexture != nullptr)
-				texStr = lastTexture->GetName();
-			else
-				texStr = auxParent->GetDeclarationPtrName(data & 0xFFFFFFFF);
+			texStr = "";
+			Globals::Instance->GetSegmentedPtrName(data & 0xFFFFFFFF, texStr);
 		}
 
 		// gsDPSetTile
@@ -1589,12 +1580,8 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	uint32_t vtxOffset = Seg2Filespace(seg, self->parent->baseAddress);
 	std::string vtxName = "";
 
-	// Probably an external asset we are unable to track
-	if (!Globals::Instance->HasSegment(GETSEGNUM(seg)))
-	{
-		vtxName = StringHelper::Sprintf("0x%08X", seg);
-	}
-	else
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, vtxName);
+	if (!addressFound && GETSEGNUM(seg) == self->parent->segment)
 	{
 		self->references.push_back(vtxOffset);
 
@@ -1656,7 +1643,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t texOffset = Seg2Filespace(seg, self->parent->baseAddress);
-	int32_t texSegNum = GETSEGNUM(seg);
+	//int32_t texSegNum = GETSEGNUM(seg);
 
 	self->lastTexWidth = width;
 	self->lastTexHeight = height;
@@ -1670,18 +1657,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 	self->TextureGenCheck(self->curPrefix);
 
 	std::string texName = "";
-
-	ZFile* auxParent = self->parent;
-	if (self->parent->segment != texSegNum && Globals::Instance->HasSegment(texSegNum))
-		auxParent = Globals::Instance->segmentRefFiles.at(texSegNum);
-
-	Declaration* decl = auxParent->GetDeclaration(texOffset);
-	if (Globals::Instance->HasSegment(texSegNum) && decl != nullptr)
-		texName = decl->varName;
-	else if (self->lastTexture != nullptr)
-		texName = self->lastTexture->GetName();
-	else
-		texName = auxParent->GetDeclarationPtrName(seg);
+	Globals::Instance->GetSegmentedPtrName(seg, texName);
 
 	gfxd_puts(texName.c_str());
 
@@ -1692,7 +1668,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t palOffset = Seg2Filespace(seg, self->parent->baseAddress);
-	int32_t palSegNum = GETSEGNUM(seg);
+	//int32_t palSegNum = GETSEGNUM(seg);
 
 	self->lastTexWidth = sqrt(count);
 	self->lastTexHeight = sqrt(count);
@@ -1706,18 +1682,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	self->TextureGenCheck(self->curPrefix);
 
 	std::string palName = "";
-
-	ZFile* auxParent = self->parent;
-	if (self->parent->segment != palSegNum && Globals::Instance->HasSegment(palSegNum))
-		auxParent = Globals::Instance->segmentRefFiles.at(palSegNum);
-
-	Declaration* decl = auxParent->GetDeclaration(palOffset);
-	if (Globals::Instance->HasSegment(palSegNum) && decl != nullptr)
-		palName = decl->varName;
-	else if (self->lastTlut != nullptr)
-		palName = self->lastTlut->GetName();
-	else
-		palName = auxParent->GetDeclarationPtrName(seg);
+	Globals::Instance->GetSegmentedPtrName(seg, palName);
 
 	gfxd_puts(palName.c_str());
 
@@ -1740,11 +1705,8 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 		self->otherDLists.push_back(newDList);
 	}
 
-	ZFile* auxParent = self->parent;
-	if (self->parent->segment != dListSegNum && Globals::Instance->HasSegment(dListSegNum))
-		auxParent = Globals::Instance->segmentRefFiles.at(dListSegNum);
-
-	std::string dListName = auxParent->GetDeclarationPtrName(seg);
+	std::string dListName = "";
+	Globals::Instance->GetSegmentedPtrName(seg, dListName);
 
 	gfxd_puts(dListName.c_str());
 
@@ -1756,28 +1718,16 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	std::string mtxName = "";
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 
-	if (Globals::Instance->symbolMap.find(seg) != Globals::Instance->symbolMap.end())
-		mtxName = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[seg].c_str());
-	else if (Globals::Instance->HasSegment(GETSEGNUM(seg)))
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, mtxName);
+	if (!addressFound && GETSEGNUM(seg) == self->parent->segment)
 	{
-		Declaration* decl =
-			self->parent->GetDeclaration(Seg2Filespace(seg, self->parent->baseAddress));
-		if (decl == nullptr)
-		{
-			ZMtx mtx(self->GetName(), self->fileData, Seg2Filespace(seg, self->parent->baseAddress),
-			         self->parent);
+		ZMtx mtx(self->GetName(), self->fileData, Seg2Filespace(seg, self->parent->baseAddress),
+					self->parent);
 
-			mtx.GetSourceOutputCode(self->GetName());
-			self->mtxList.push_back(mtx);
-			mtxName = "&" + mtx.GetName();
-		}
-		else
-		{
-			mtxName = "&" + decl->varName;
-		}
+		mtx.GetSourceOutputCode(self->GetName());
+		self->mtxList.push_back(mtx);
+		mtxName = "&" + mtx.GetName();
 	}
-	else
-		mtxName = StringHelper::Sprintf("0x%08X", seg);
 
 	gfxd_puts(mtxName.c_str());
 

@@ -279,8 +279,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
            ZFileMode fileMode)
 {
 	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(xmlFilePath.string().c_str());
-
+	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
 		fprintf(stderr, "Invalid xml file: '%s'\n", xmlFilePath.c_str());
@@ -288,7 +287,6 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	}
 
 	XMLNode* root = doc.FirstChild();
-
 	if (root == nullptr)
 	{
 		fprintf(stderr, "Missing Root tag in xml file: '%s'\n", xmlFilePath.c_str());
@@ -302,6 +300,15 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 		{
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);
+			if (fileMode == ZFileMode::ExternalFile)
+				Globals::Instance->externalFiles.push_back(file);
+		}
+		else if (std::string(child->Name()) == "ExternalFile")
+		{
+			// TODO: add check for existance of the attribute.
+			fs::path externalXmlFilePath = Globals::Instance->externalXmlFolder / fs::path(child->Attribute("Path"));
+			// Recursion. What can go wrong?
+			Parse(externalXmlFilePath, basePath, outPath, ZFileMode::ExternalFile);
 		}
 		else
 		{
@@ -316,15 +323,15 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	{
 		if (fileMode == ZFileMode::BuildSourceFile)
 			file->BuildSourceFile(outPath);
-		else
+		else if (fileMode != ZFileMode::ExternalFile)
 			file->ExtractResources(outPath);
 	}
 
 	// All done, free files
-	for (ZFile* file : Globals::Instance->files)
+	/*for (ZFile* file : Globals::Instance->files)
 		delete file;
 
-	Globals::Instance->files.clear();
+	Globals::Instance->files.clear();*/
 
 	return true;
 }

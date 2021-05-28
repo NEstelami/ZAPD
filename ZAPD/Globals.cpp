@@ -12,11 +12,6 @@ Globals::Globals()
 {
 	Instance = this;
 
-	files = std::vector<ZFile*>();
-	segments = std::vector<int32_t>();
-	symbolMap = std::map<uint32_t, std::string>();
-	segmentRefs = std::map<int32_t, std::string>();
-	segmentRefFiles = std::map<int32_t, ZFile*>();
 	game = ZGame::OOT_RETAIL;
 	genSourceFile = true;
 	testMode = false;
@@ -25,6 +20,9 @@ Globals::Globals()
 	useExternalResources = true;
 	lastScene = nullptr;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
+
+	// TODO: don't hardcode
+	externalXmlFolder = "assets/xml/";
 }
 
 std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
@@ -52,13 +50,17 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 				{
 					ZFile* file = new ZFile(fileMode, child, "", "", "", filePath, true);
 					file->GeneratePlaceholderDeclarations();
-					segmentRefFiles[segNumber] = file;
+					AddSegment(segNumber, file);
 					break;
 				}
 			}
 		}
 
-		return segmentRefFiles[segNumber]->GetDeclarationName(symbolAddress, "ERROR");
+		for (auto& file : segmentRefFiles[segNumber])
+		{
+			if (file->HasDeclaration(symbolAddress))
+				return file->GetDeclarationName(symbolAddress);
+		}
 	}
 
 	return "ERROR";
@@ -175,12 +177,48 @@ void Globals::AddSegment(int32_t segment, ZFile* file)
 {
 	if (std::find(segments.begin(), segments.end(), segment) == segments.end())
 		segments.push_back(segment);
+	if (segmentRefFiles.find(segment) == segmentRefFiles.end())
+		segmentRefFiles[segment] = std::vector<ZFile*>();
 
 	segmentRefs[segment] = file->GetXmlFilePath();
-	segmentRefFiles[segment] = file;
+	segmentRefFiles[segment].push_back(file);
 }
 
 bool Globals::HasSegment(int32_t segment)
 {
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
+}
+
+bool Globals::GetSegmentedPtrName(segptr_t segAddress, std::string& declName)
+{
+	if (segAddress == 0)
+	{
+		declName = "NULL";
+		return true;
+	}
+
+	uint8_t segment = GETSEGNUM(segAddress);
+
+	if (HasSegment(segment))
+	{
+		for (auto file : segmentRefFiles[segment])
+		{
+			uint32_t address = Seg2Filespace(segAddress, file->baseAddress);
+			if (file->HasDeclaration(address))
+			{
+				declName = file->GetDeclarationPtrName(segAddress);
+				return true;
+			}
+		}
+	}
+
+	const auto& symbolFromMap = Globals::Instance->symbolMap.find(segAddress);
+	if (symbolFromMap != Globals::Instance->symbolMap.end())
+	{
+		declName = symbolFromMap->second;
+		return true;
+	}
+
+	declName = StringHelper::Sprintf("0x%08X", segAddress);
+	return false;
 }

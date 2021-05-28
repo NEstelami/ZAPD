@@ -17,6 +17,7 @@ enum class ZFileMode
 	BuildSourceFile,
 	BuildBackground,
 	Extract,
+	ExternalFile,
 	Invalid
 };
 
@@ -83,11 +84,14 @@ public:
 	Declaration* GetDeclarationRanged(uint32_t address) const;
 	uint32_t GetDeclarationRangedAddress(uint32_t address) const;
 	bool HasDeclaration(uint32_t address);
-	std::string GetHeaderInclude();
+	std::string GetHeaderInclude() const;
+	std::string GetExternalFileHeaderInclude() const;
 	void GeneratePlaceholderDeclarations();
 
 	void AddTextureResource(uint32_t offset, ZTexture* tex);
 	ZTexture* GetTextureResource(uint32_t offset) const;
+
+	fs::path GetSourceOutputFolderPath() const;
 
 	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
 	static void RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc);

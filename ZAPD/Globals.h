@@ -48,16 +48,17 @@ public:
 	bool useLegacyZDList;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
 	ZFileMode fileMode;
-	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
+	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath, externalXmlFolder;
 	TextureType texType;
 	ZGame game;
 	GameConfig cfg;
 	bool warnUnaccounted = false;
 
 	std::vector<ZFile*> files;
+	std::vector<ZFile*> externalFiles;
 	std::vector<int32_t> segments;
 	std::map<int32_t, std::string> segmentRefs;
-	std::map<int32_t, ZFile*> segmentRefFiles;
+	std::map<int32_t, std::vector<ZFile*>> segmentRefFiles;
 	ZRoom* lastScene;
 	std::map<uint32_t, std::string> symbolMap;
 
@@ -68,6 +69,14 @@ public:
 	void GenSymbolMap(const std::string& symbolMapPath);
 	void AddSegment(int32_t segment, ZFile* file);
 	bool HasSegment(int32_t segment);
+
+	/**
+	 * Search in every file (and the symbol map) for the `segAddress` passed as parameter.
+	 * The name of that variable will be stored in the `declName` parameter.
+	 * Returns `true` if the address is found. `false` otherwise,
+	 * in which case `declName` will be set to the address formatted as a pointer.
+	*/
+	bool GetSegmentedPtrName(segptr_t segAddress, std::string& declName);
 };
 
 /*
