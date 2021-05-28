@@ -55,10 +55,7 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 	{
 		return;
 	}
-	std::string srcVarName =
-		StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
-	dList->SetName(srcVarName);
 	dList->scene = zRoom->scene;
 	std::string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
