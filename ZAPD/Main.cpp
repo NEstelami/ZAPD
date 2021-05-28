@@ -305,10 +305,11 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 		}
 		else if (std::string(child->Name()) == "ExternalFile")
 		{
-			// TODO: add check for existance of the attribute.
-			fs::path externalXmlFilePath = Globals::Instance->externalXmlFolder / fs::path(child->Attribute("Path"));
+			// TODO: add checks.
+			fs::path externalXmlFilePath = Globals::Instance->externalXmlFolder / fs::path(child->Attribute("XmlPath"));
+			fs::path externalOutFilePath = fs::path(child->Attribute("OutPath"));
 			// Recursion. What can go wrong?
-			Parse(externalXmlFilePath, basePath, outPath, ZFileMode::ExternalFile);
+			Parse(externalXmlFilePath, basePath, externalOutFilePath, ZFileMode::ExternalFile);
 		}
 		else
 		{
@@ -319,12 +320,15 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 		}
 	}
 
-	for (ZFile* file : Globals::Instance->files)
+	if (fileMode != ZFileMode::ExternalFile)
 	{
-		if (fileMode == ZFileMode::BuildSourceFile)
-			file->BuildSourceFile(outPath);
-		else if (fileMode != ZFileMode::ExternalFile)
-			file->ExtractResources(outPath);
+		for (ZFile* file : Globals::Instance->files)
+		{
+			if (fileMode == ZFileMode::BuildSourceFile)
+				file->BuildSourceFile(outPath);
+			else
+				file->ExtractResources(outPath);
+		}
 	}
 
 	// All done, free files

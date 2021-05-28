@@ -34,11 +34,11 @@ public:
 	std::map<uint32_t, Declaration*> declarations;
 	std::string defines;
 	std::vector<ZResource*> resources;
-	int32_t segment;
+	uint32_t segment;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 
 	ZFile(const fs::path& nOutPath, std::string nName);
-	ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
+	ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
 	      const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
 	      bool placeholderMode);
 	~ZFile();
@@ -106,9 +106,10 @@ protected:
 	// The pointers declared here are "borrowed" (somebody else is the owner),
 	// so ZFile shouldn't delete/free those textures.
 	std::map<uint32_t, ZTexture*> texturesResources;
+	ZFileMode mode = ZFileMode::Invalid;
 
 	ZFile();
-	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
+	void ParseXML(tinyxml2::XMLElement* reader, std::string filename,
 	              bool placeholderMode);
 	void DeclareResourceSubReferences();
 	void GenerateSourceFiles(fs::path outputDir);

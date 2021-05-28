@@ -45,7 +45,7 @@ ZFile::ZFile(const fs::path& nOutPath, std::string nName) : ZFile()
 	name = nName;
 }
 
-ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
+ZFile::ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
              const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
              bool placeholderMode)
 	: ZFile()
@@ -61,7 +61,9 @@ ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBase
 	else
 		outputPath = nOutPath;
 
-	ParseXML(mode, reader, filename, placeholderMode);
+	mode = nMode;
+
+	ParseXML(reader, filename, placeholderMode);
 	DeclareResourceSubReferences();
 }
 
@@ -78,7 +80,7 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, bool placeholderMode)
+void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderMode)
 {
 	if (filename == "")
 		name = reader->Attribute("Name");
@@ -227,6 +229,9 @@ void ZFile::DeclareResourceSubReferences()
 
 void ZFile::BuildSourceFile(fs::path outputDir)
 {
+	if (mode == ZFileMode::ExternalFile)
+		return;
+
 	std::string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
 
 	if (!Directory::Exists(outputPath.string()))
@@ -263,6 +268,9 @@ const std::vector<uint8_t>& ZFile::GetRawData() const
 
 void ZFile::ExtractResources(fs::path outputDir)
 {
+	if (mode == ZFileMode::ExternalFile)
+		return;
+
 	std::string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
 
 	if (!Directory::Exists(outputPath.string()))
@@ -721,7 +729,7 @@ ZTexture* ZFile::GetTextureResource(uint32_t offset) const
 fs::path ZFile::GetSourceOutputFolderPath() const
 {
 	// TODO: change `name` to `outName.parent_path()` when #146 gets merged
-	return Globals::Instance->sourceOutputPath / name;
+	return outputPath / name;
 }
 
 std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
