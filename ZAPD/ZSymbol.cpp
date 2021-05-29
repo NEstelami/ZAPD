@@ -15,6 +15,15 @@ void ZSymbol::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uin
                              const uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+
+	if (isArray)
+	{
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(), GetSourceTypeName(), name, count, "");
+	}
+	else
+	{
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(), GetSourceTypeName(), name, "");
+	}
 }
 
 void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
