@@ -24,7 +24,7 @@ ZAPD uses the clasic `Makefile` approach. To build just run `make` (or even bett
 
 You can configure a bit your ZAPD build with the following options:
 
-- `OPTIMIZATION_ON`: If set to `0`, then optimizations will be disabled (compile with `-O0`). Any other value compiles with `-O2`. Defaults to `1`.
+- `OPTIMIZATION_ON`: If set to `0` optimizations will be disabled (compile with `-O0`) and development mode will be enabled. Any other value compiles with `-O2`. Defaults to `1`.
 - `ASAN`: If it is set to a non-zero then ZAPD will be compiled with Address Sanitizer enabled (`-fsanitize=address`). Defaults to `0`.
 - `DEPRECATION_OFF`: If it is set to a non-zero then deprecation warnings will be disabled. Defaults to `0`.
 
@@ -101,3 +101,5 @@ ZAPD also accepts the following list of extra parameters:
 - `-wu` / `--warn-unaccounted`: Enable warnings for each unaccounted block of data found.
   - Can be used only in `e` or `bsf` modes.
 - `-tm MODE`: Test Mode (enables certain experimental features). To enable it, set `MODE` to `1`.
+
+Additionally, you can pass the flag `--version` to see the current ZAPD version. If that flag is passed, ZAPD will ignore any other parameter passed.
