@@ -159,7 +159,7 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 	size_t index = 0;
 	for (const auto& point : points)
 	{
-		declaration += StringHelper::Sprintf("\t%s,", point.GetBodySourceCode().c_str());
+		declaration += StringHelper::Sprintf("\t{ %s },", point.GetBodySourceCode().c_str());
 
 		if (index < points.size() - 1)
 			declaration += "\n";

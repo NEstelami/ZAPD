@@ -59,7 +59,13 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 
 	for (size_t i = 0; i < arrayCnt; i++)
 	{
-		output += resList.at(i)->GetBodySourceCode();
+		const auto& res = resList[i];
+		output += "\t";
+
+		if (res->GetResourceType() == ZResourceType::Scalar || res->GetResourceType() == ZResourceType::Vertex)
+			output += resList.at(i)->GetBodySourceCode();
+		else
+			output += StringHelper::Sprintf("{ %s }", resList.at(i)->GetBodySourceCode().c_str());
 
 		if (i < arrayCnt - 1)
 			output += ",\n";

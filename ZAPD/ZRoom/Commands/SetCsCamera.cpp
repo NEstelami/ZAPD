@@ -57,8 +57,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		for (auto& point : points)
 		{
 			declaration +=
-				StringHelper::Sprintf("\t%s, //0x%06X", point.GetBodySourceCode().c_str(),
-			                          cameras.at(0).segmentOffset + (index * 6));
+				StringHelper::Sprintf("\t{ %s },", point.GetBodySourceCode().c_str());
 
 			if (index < points.size() - 1)
 				declaration += "\n";

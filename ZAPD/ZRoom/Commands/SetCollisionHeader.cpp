@@ -12,17 +12,19 @@ SetCollisionHeader::SetCollisionHeader(ZFile* nParent) : ZRoomCommand(nParent)
 void SetCollisionHeader::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
+
 	collisionHeader = new ZCollisionHeader(parent);
 	collisionHeader->SetRawData(parent->GetRawData());
 	collisionHeader->SetRawDataIndex(segmentOffset);
 	collisionHeader->SetName(
 		StringHelper::Sprintf("%sCollisionHeader_%06X", parent->GetName().c_str(), segmentOffset));
 	collisionHeader->ParseRawData();
+	parent->AddResource(collisionHeader);
 }
 
-SetCollisionHeader::~SetCollisionHeader()
+void SetCollisionHeader::DeclareReferences(const std::string& prefix)
 {
-	delete collisionHeader;
+	collisionHeader->DeclareVar(prefix, "");
 }
 
 std::string SetCollisionHeader::GetBodySourceCode() const
