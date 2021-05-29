@@ -332,8 +332,20 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
-	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
-	declarations[address] = decl;
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl = new Declaration(alignment, size, varType, varName, false, body);
+		declarations[address] = decl;
+	}
+	else
+	{
+		decl->alignment = alignment;
+		decl->size = size;
+		decl->varType = varType;
+		decl->varName = varName;
+		decl->text = body;
+	}
 	return decl;
 }
 
@@ -356,9 +368,23 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
-	declarations[address] =
-		new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
-	return declarations[address];
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
+		declarations[address] = decl;
+	}
+	else
+	{
+		decl->alignment = alignment;
+		decl->size = size;
+		decl->varType = varType;
+		decl->varName = varName;
+		decl->isArray = true;
+		decl->arrayItemCnt = arrayItemCnt;
+		decl->text = body;
+	}
+	return decl;
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
@@ -773,21 +799,24 @@ std::string ZFile::ProcessDeclarations()
 		{
 			if (curItem.second->varType == lastItem.second->varType)
 			{
-				// TEST: For now just do Vtx declarations...
-				if (lastItem.second->varType == "static Vtx")
+				if (!curItem.second->declaredInXml && !lastItem.second->declaredInXml)
 				{
-					int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
-
-					// Make sure there isn't an unaccounted inbetween these two
-					if (sizeDiff == 0)
+					// TEST: For now just do Vtx declarations...
+					if (lastItem.second->varType == "static Vtx" || lastItem.second->varType == "Vtx")
 					{
-						lastItem.second->size += curItem.second->size;
-						lastItem.second->arrayItemCnt += curItem.second->arrayItemCnt;
-						lastItem.second->text += "\n" + curItem.second->text;
-						declarations.erase(curItem.first);
-						declarationKeys.erase(declarationKeys.begin() + i);
-						i--;
-						continue;
+						int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
+
+						// Make sure there isn't an unaccounted inbetween these two
+						if (sizeDiff == 0)
+						{
+							lastItem.second->size += curItem.second->size;
+							lastItem.second->arrayItemCnt += curItem.second->arrayItemCnt;
+							lastItem.second->text += "\n" + curItem.second->text;
+							declarations.erase(curItem.first);
+							declarationKeys.erase(declarationKeys.begin() + i);
+							i--;
+							continue;
+						}
 					}
 				}
 			}

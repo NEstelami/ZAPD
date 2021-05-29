@@ -43,13 +43,11 @@ std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 {
 	std::string output = GetBodySourceCode();
 
-	if (parent != nullptr)
-	{
-		Declaration* decl =
-			parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-		                           GetSourceTypeName(), name, output);
-		decl->isExternal = true;
-	}
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+	if (decl == nullptr)
+		decl = parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+								GetSourceTypeName(), name, output);
+	decl->isExternal = true;
 
 	return "";
 }

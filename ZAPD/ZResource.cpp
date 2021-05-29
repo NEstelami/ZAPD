@@ -34,7 +34,10 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 	CalcHash();
 
 	if (!isInner)
+	{
 		Declaration* decl = DeclareVar(parent->GetName(), "");
+		decl->declaredInXml = true;
+	}
 }
 
 void ZResource::ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)

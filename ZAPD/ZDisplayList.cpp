@@ -58,6 +58,7 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	ParseRawData();
 
 	Declaration* decl = DeclareVar("", "");
+	decl->declaredInXml = true;
 }
 
 ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,
@@ -1697,7 +1698,7 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t dListOffset = GETSEGOFFSET(seg);
-	int32_t dListSegNum = GETSEGNUM(seg);
+	uint32_t dListSegNum = GETSEGNUM(seg);
 
 	std::string dListName = "";
 	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, dListName);

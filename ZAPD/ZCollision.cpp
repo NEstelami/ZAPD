@@ -30,7 +30,6 @@ void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader, const std::v
 
 	ParseRawData();
 	CalcHash();
-
 }
 
 void ZCollisionHeader::ParseRawData()

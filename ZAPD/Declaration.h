@@ -41,6 +41,7 @@ public:
 	std::vector<uint32_t> references;
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
+	bool declaredInXml = false;
 
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);
