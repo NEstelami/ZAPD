@@ -3,6 +3,7 @@
 #include "File.h"
 #include "Path.h"
 #include "StringHelper.h"
+#include "Globals.h"
 #include "ZFile.h"
 
 using namespace tinyxml2;
@@ -46,6 +47,25 @@ void ZBlob::ParseXML(tinyxml2::XMLElement* reader)
 void ZBlob::ParseRawData()
 {
 	blobData.assign(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + blobSize);
+}
+
+Declaration* ZBlob::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	std::string path = Path::GetFileNameWithoutExtension(auxName);
+
+	std::string assetOutDir =
+		(Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(GetOutName())).string();
+
+	std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
+												GetExternalExtension().c_str());
+
+	return parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
+								GetSourceTypeName(), auxName, 0);
 }
 
 std::string ZBlob::GetSourceOutputCode(const std::string& prefix)

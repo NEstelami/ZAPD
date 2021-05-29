@@ -18,13 +18,6 @@ ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint
 	DeclareVar("", "");
 }
 
-void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                          uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-	DeclareVar("", "");
-}
-
 void ZMtx::ParseRawData()
 {
 	ZResource::ParseRawData();

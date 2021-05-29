@@ -412,8 +412,10 @@ class ZCutsceneBase : public ZResource
 {
 public:
 	ZCutsceneBase(ZFile* nParent);
-	virtual std::string GetBodySourceCode() = 0;
-	virtual void DeclareVar(const std::string& prefix, const std::string& bodyStr) const = 0;
+
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+
+	std::string GetSourceTypeName() const override;
 	virtual uint32_t getSegmentOffset() const = 0;
 };
 
@@ -425,8 +427,7 @@ public:
 
 	void ParseRawData() override;
 
-	std::string GetBodySourceCode() override;
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const override;
+	std::string GetBodySourceCode() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	size_t GetRawDataSize() const override;
@@ -435,9 +436,6 @@ public:
 	uint32_t getSegmentOffset() const override { return rawDataIndex; }
 
 	ZResourceType GetResourceType() const override;
-
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
 
 protected:
 	int32_t numCommands;

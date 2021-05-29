@@ -13,15 +13,6 @@ ZPath::ZPath(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("NumPaths", "1");
 }
 
-void ZPath::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-
-	parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), pathways.size() * 8,
-	                            GetSourceTypeName(), name, pathways.size(), "");
-}
-
 void ZPath::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
@@ -61,6 +52,17 @@ void ZPath::DeclareReferences(const std::string& prefix)
 
 	for (auto& entry : pathways)
 		entry.DeclareReferences(prefix);
+}
+
+Declaration* ZPath::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
+	                            GetSourceTypeName(), name, pathways.size(), bodyStr);
 }
 
 std::string ZPath::GetBodySourceCode() const

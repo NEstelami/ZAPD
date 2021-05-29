@@ -11,21 +11,6 @@ ZSymbol::ZSymbol(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("Count");
 }
 
-void ZSymbol::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                             const uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-
-	if (isArray)
-	{
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(), GetSourceTypeName(), name, count, "");
-	}
-	else
-	{
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(), GetSourceTypeName(), name, "");
-	}
-}
-
 void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
@@ -71,12 +56,21 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-size_t ZSymbol::GetRawDataSize() const
+Declaration* ZSymbol::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	if (isArray)
-		return count * typeSize;
+	std::string auxName = name;
 
-	return typeSize;
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	if (isArray)
+	{
+		return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(), GetSourceTypeName(), auxName, count, bodyStr);
+	}
+	else
+	{
+		return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
+	}
 }
 
 std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
@@ -102,4 +96,12 @@ std::string ZSymbol::GetSourceTypeName() const
 ZResourceType ZSymbol::GetResourceType() const
 {
 	return ZResourceType::Symbol;
+}
+
+size_t ZSymbol::GetRawDataSize() const
+{
+	if (isArray)
+		return count * typeSize;
+
+	return typeSize;
 }

@@ -21,20 +21,6 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("TlutOffset");
 }
 
-void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                              uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-
-	auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
-
-	std::string incStr =
-		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
-
-	parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
-	                                   name, 0);
-}
-
 void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
                           int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette)
 {
@@ -748,6 +734,22 @@ void ZTexture::Save(const fs::path& outFolder)
 #ifdef TEXTURE_DEBUG
 	printf("\n");
 #endif
+}
+
+Declaration* ZTexture::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	auto filepath = Globals::Instance->outputPath / fs::path(auxName).stem();
+
+	std::string incStr =
+		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
+
+	return parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
+	                                   auxName, 0);
 }
 
 std::string ZTexture::GetBodySourceCode() const

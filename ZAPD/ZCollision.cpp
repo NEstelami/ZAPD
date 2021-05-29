@@ -19,6 +19,20 @@ ZCollisionHeader::~ZCollisionHeader()
 	delete camData;
 }
 
+void ZCollisionHeader::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	                            uint32_t nRawDataIndex)
+{
+	rawData = nRawData;
+	rawDataIndex = nRawDataIndex;
+
+	if (reader != nullptr)
+		ParseXML(reader);
+
+	ParseRawData();
+	CalcHash();
+
+}
+
 void ZCollisionHeader::ParseRawData()
 {
 	const uint8_t* data = rawData.data();
@@ -184,8 +198,13 @@ void ZCollisionHeader::ParseRawData()
 		waterBoxStr);
 
 	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
-	                       GetRawDataSize(), "CollisionHeader",
+	                       GetRawDataSize(), GetSourceTypeName(),
 	                       StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
+}
+
+std::string ZCollisionHeader::GetSourceTypeName() const
+{
+	return "CollisionHeader";
 }
 
 ZResourceType ZCollisionHeader::GetResourceType() const

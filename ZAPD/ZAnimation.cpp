@@ -292,15 +292,6 @@ void ZCurveAnimation::ParseRawData()
 	}
 }
 
-void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                     const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-
-	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
-}
-
 void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 {
 	if (refIndex != 0)

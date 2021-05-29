@@ -11,9 +11,6 @@ public:
 	ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	     ZFile* nParent);
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    uint32_t nRawDataIndex) override;
-
 	void ParseRawData() override;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;

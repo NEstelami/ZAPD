@@ -368,15 +368,6 @@ ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<ui
 	ParseRawData();
 }
 
-void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-
-	parent->AddDeclaration(GetFileAddress(), GetDeclarationAlignment(), GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
-}
-
 void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);

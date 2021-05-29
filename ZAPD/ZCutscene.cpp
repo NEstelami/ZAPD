@@ -84,7 +84,7 @@ CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
 {
 }
 
-std::string ZCutscene::GetBodySourceCode()
+std::string ZCutscene::GetBodySourceCode() const
 {
 	std::string output = "";
 	size_t size = 0;
@@ -119,18 +119,6 @@ std::string ZCutscene::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-void ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
-{
-	std::string auxName = name;
-
-	if (auxName == "")
-		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
-
-	parent->AddDeclarationArray(getSegmentOffset(), GetDeclarationAlignment(),
-	                            GetDeclarationPadding(), GetRawDataSize(), "s32", auxName, 0,
-	                            bodyStr);
-}
-
 size_t ZCutscene::GetRawDataSize() const
 {
 	size_t size = 0;
@@ -154,13 +142,6 @@ size_t ZCutscene::GetRawDataSize() const
 DeclarationPadding ZCutscene::GetDeclarationPadding() const
 {
 	return DeclarationPadding::Pad16;
-}
-
-void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-	DeclareVar(parent->GetName(), "");
 }
 
 void ZCutscene::ParseRawData()
@@ -1265,4 +1246,21 @@ size_t CutsceneCommandSceneTransFX::GetCommandSize()
 
 ZCutsceneBase::ZCutsceneBase(ZFile* nParent) : ZResource(nParent)
 {
+}
+
+Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (auxName == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclarationArray(getSegmentOffset(), GetDeclarationAlignment(),
+	                            GetDeclarationPadding(), GetRawDataSize(), GetSourceTypeName(), auxName, 0,
+	                            bodyStr);
+}
+
+std::string ZCutsceneBase::GetSourceTypeName() const
+{
+	return "CutsceneData";
 }

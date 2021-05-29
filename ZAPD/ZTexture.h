@@ -58,8 +58,6 @@ public:
 
 	bool isPalette = false;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    uint32_t nRawDataIndex) override;
 	void FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, int32_t nWidth,
 	                int32_t nHeight, TextureType nType, bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
@@ -70,7 +68,9 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
-	std::string GetBodySourceCode() const;
+
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+	std::string GetBodySourceCode() const override;
 	void CalcHash() override;
 	void Save(const fs::path& outFolder) override;
 

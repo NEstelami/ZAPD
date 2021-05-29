@@ -61,13 +61,6 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 	CheckValidJpeg(filepath.generic_string());
 }
 
-void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                                 uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-	DeclareVar("", "");
-}
-
 void ZBackground::CheckValidJpeg(const std::string& filepath)
 {
 	std::string filename = outName;

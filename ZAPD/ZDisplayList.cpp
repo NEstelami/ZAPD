@@ -57,7 +57,7 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	                    nRawData.data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 
-	DeclareVar("", "");
+	Declaration* decl = DeclareVar("", "");
 }
 
 ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex,

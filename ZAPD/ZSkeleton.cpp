@@ -100,16 +100,16 @@ void ZSkeleton::ParseRawData()
 	dListCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 8);
 }
 
-void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const uint32_t nRawDataIndex)
+void ZSkeleton::DeclareReferences(const std::string& prefix)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
-
-	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
-
 	std::string defaultPrefix = name;
-	defaultPrefix.replace(0, 1, "s");  // replace g prefix with s for local variables
+	if (defaultPrefix == "")
+		defaultPrefix = prefix;
+
+	// replace g prefix with s for local variables
+	if (defaultPrefix.at(0) == 'g')
+		defaultPrefix.replace(0, 1, "s");
+
 	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
 
 	for (size_t i = 0; i < limbCount; i++)
