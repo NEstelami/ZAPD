@@ -1581,10 +1581,9 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	uint32_t vtxOffset = Seg2Filespace(seg, self->parent->baseAddress);
 	std::string vtxName = "";
 
-	// Probably an external asset we are unable to track
-	if (!Globals::Instance->HasSegment(GETSEGNUM(seg)))
+	if (GETSEGNUM(seg) != self->parent->segment)
 	{
-		vtxName = StringHelper::Sprintf("0x%08X", seg);
+		Globals::Instance->GetSegmentedPtrName(seg, self->parent, vtxName);
 	}
 	else
 	{

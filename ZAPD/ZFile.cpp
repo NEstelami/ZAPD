@@ -955,6 +955,15 @@ std::string ZFile::ProcessDeclarations()
 
 			std::string src = "    ";
 
+			if (currentAddress > rawData.size())
+			{
+				throw std::runtime_error(StringHelper::Sprintf(
+					"ZFile::ProcessDeclarations(): Fatal error while processing XML '%s'.\n"
+					"\t Offset '0x%X' is outside of the limits of file '%s', which has a size of '0x%X'.\n"
+					"\t Aborting...",
+					xmlFilePath.c_str(), currentAddress, name.c_str(), rawData.size()));
+			}
+
 			for (int i = 0; i < diff; i++)
 			{
 				uint8_t val = rawData.at(unaccountedAddress + i);
