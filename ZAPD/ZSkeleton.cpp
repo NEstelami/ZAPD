@@ -19,7 +19,6 @@ ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string
                      uint32_t nRawDataIndex, ZFile* nParent)
 	: ZSkeleton(nParent)
 {
-	
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 
@@ -35,7 +34,8 @@ ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string
 
 	for (size_t i = 0; i < limbCount; i++)
 	{
-		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(parent->GetRawData(), ptr), parent->baseAddress);
+		uint32_t ptr2 =
+			Seg2Filespace(BitConverter::ToUInt32BE(parent->GetRawData(), ptr), parent->baseAddress);
 
 		ZLimb* limb = new ZLimb(limbType, prefix, ptr2, parent);
 		limbs.push_back(limb);
@@ -101,8 +101,7 @@ void ZSkeleton::ParseRawData()
 	dListCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 8);
 }
 
-void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader,
-                               uint32_t nRawDataIndex)
+void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 

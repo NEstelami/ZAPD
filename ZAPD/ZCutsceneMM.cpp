@@ -58,8 +58,7 @@ size_t ZCutsceneMM::GetRawDataSize() const
 	return 8 + data.size() * 4;
 }
 
-void ZCutsceneMM::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                 uint32_t nRawDataIndex)
+void ZCutsceneMM::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 	DeclareVar(parent->GetName(), "");

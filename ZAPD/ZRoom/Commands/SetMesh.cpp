@@ -116,7 +116,6 @@ RoomCommand SetMesh::GetRoomCommand() const
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
-	
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	zRoom = nRoom;
@@ -272,7 +271,6 @@ std::string PolygonDlist::GetName()
 BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
                  uint32_t nRawDataIndex, ZFile* nParent)
 {
-	
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	isSubStruct = nIsSubStruct;
@@ -519,8 +517,8 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 			listAddress = Seg2Filespace(list, parent->baseAddress);
 			for (size_t i = 0; i < count; ++i)
 			{
-				BgImage bg(false, prefix, parent->GetRawData(), listAddress + i * BgImage::GetRawDataSize(),
-				           parent);
+				BgImage bg(false, prefix, parent->GetRawData(),
+				           listAddress + i * BgImage::GetRawDataSize(), parent);
 				multiList.push_back(bg);
 				bgImageArrayBody += bg.GetBodySourceCode(true);
 				if (i + 1 < count)

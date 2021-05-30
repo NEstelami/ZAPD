@@ -139,11 +139,9 @@ public:
 	uint8_t childIndex, siblingIndex;
 
 	ZLimb(ZFile* nParent);
-	ZLimb(ZLimbType limbType, const std::string& prefix,
-	      uint32_t nRawDataIndex, ZFile* nParent);
+	ZLimb(ZLimbType limbType, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader,
-	                    uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;

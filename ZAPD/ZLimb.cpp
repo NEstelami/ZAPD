@@ -354,8 +354,7 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("Type");
 }
 
-ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix,
-             uint32_t nRawDataIndex, ZFile* nParent)
+ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent)
 	: ZLimb(nParent)
 {
 	rawDataIndex = nRawDataIndex;
@@ -367,8 +366,7 @@ ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix,
 	ParseRawData();
 }
 
-void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader,
-                           uint32_t nRawDataIndex)
+void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 

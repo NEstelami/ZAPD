@@ -8,12 +8,10 @@ class ZMtx : public ZResource
 {
 public:
 	ZMtx(ZFile* nParent);
-	ZMtx(const std::string& prefix, uint32_t nRawDataIndex,
-	     ZFile* nParent);
+	ZMtx(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
 
 	void ParseRawData() override;
-	void ExtractFromXML(tinyxml2::XMLElement* reader,
-	                    uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	size_t GetRawDataSize() const override;
 

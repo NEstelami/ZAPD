@@ -11,13 +11,11 @@ protected:
 
 public:
 	ZBackground(ZFile* nParent);
-	ZBackground(const std::string& prefix,
-	            uint32_t nRawDataIndex, ZFile* nParent);
+	ZBackground(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
 
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
-	void ExtractFromXML(tinyxml2::XMLElement* reader,
-	                    uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void CheckValidJpeg(const std::string& filepath);
 

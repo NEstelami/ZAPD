@@ -349,23 +349,20 @@ public:
 	std::vector<ZMtx> mtxList;
 
 	ZDisplayList(ZFile* nParent);
-	ZDisplayList(uint32_t rawDataIndex, int32_t rawDataSize,
-	             ZFile* nParent);
+	ZDisplayList(uint32_t rawDataIndex, int32_t rawDataSize, ZFile* nParent);
 	~ZDisplayList();
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader,
-	                    uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void ParseRawData() override;
 
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(ZRoom* scene, ZFile* parent,
-	                            std::string prefix, int32_t texWidth, int32_t texHeight,
-	                            uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
-	                            F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
-	                            ZDisplayList* self);
+	static bool TextureGenCheck(ZRoom* scene, ZFile* parent, std::string prefix, int32_t texWidth,
+	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
+	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
+	                            bool texIsPalette, ZDisplayList* self);
 	static int32_t GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 

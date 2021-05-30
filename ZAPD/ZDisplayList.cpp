@@ -43,8 +43,7 @@ ZDisplayList::~ZDisplayList()
 }
 
 // EXTRACT MODE
-void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                  uint32_t nRawDataIndex)
+void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
@@ -58,8 +57,7 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
 	DeclareVar("", "");
 }
 
-ZDisplayList::ZDisplayList(uint32_t nRawDataIndex,
-                           int32_t rawDataSize, ZFile* nParent)
+ZDisplayList::ZDisplayList(uint32_t nRawDataIndex, int32_t rawDataSize, ZFile* nParent)
 	: ZDisplayList(nParent)
 {
 	rawDataIndex = nRawDataIndex;
@@ -260,9 +258,9 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
 			        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList* nList =
-				new ZDisplayList(h & 0x00FFFFFF,
-			                     GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType), parent);
+			ZDisplayList* nList = new ZDisplayList(
+				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
+				parent);
 			nList->scene = scene;
 			otherDLists.push_back(nList);
 
@@ -427,10 +425,11 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 	{
 		if (ptr > rawDataSize)
 		{
-			throw std::runtime_error(StringHelper::Sprintf(
-				"%s: Fatal error.\n"
-				"\t End of file found when trying to find the end of the DisplayList at offset: '0x%X'.\n", 
-				__PRETTY_FUNCTION__, rawDataIndex));
+			throw std::runtime_error(
+				StringHelper::Sprintf("%s: Fatal error.\n"
+			                          "\t End of file found when trying to find the end of the "
+			                          "DisplayList at offset: '0x%X'.\n",
+			                          __PRETTY_FUNCTION__, rawDataIndex));
 			throw std::runtime_error("");
 		}
 
@@ -707,9 +706,9 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, std::string prefix, char* line)
 	}
 	else
 	{
-		ZDisplayList* nList =
-			new ZDisplayList(GETSEGOFFSET(data),
-		                     GetDListLength(parent->GetRawData(), GETSEGOFFSET(data), dListType), parent);
+		ZDisplayList* nList = new ZDisplayList(
+			GETSEGOFFSET(data), GetDListLength(parent->GetRawData(), GETSEGOFFSET(data), dListType),
+			parent);
 
 		// if (scene != nullptr)
 		{
@@ -1741,7 +1740,8 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	{
 		ZDisplayList* newDList = new ZDisplayList(
 			dListOffset,
-			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType), self->parent);
+			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType),
+			self->parent);
 		newDList->scene = self->scene;
 		newDList->parent = self->parent;
 		self->otherDLists.push_back(newDList);
@@ -1771,8 +1771,7 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 			self->parent->GetDeclaration(Seg2Filespace(seg, self->parent->baseAddress));
 		if (decl == nullptr)
 		{
-			ZMtx mtx(self->GetName(), Seg2Filespace(seg, self->parent->baseAddress),
-			         self->parent);
+			ZMtx mtx(self->GetName(), Seg2Filespace(seg, self->parent->baseAddress), self->parent);
 
 			mtx.GetSourceOutputCode(self->GetName());
 			self->mtxList.push_back(mtx);
@@ -2039,8 +2038,8 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 
 void ZDisplayList::TextureGenCheck(std::string prefix)
 {
-	if (TextureGenCheck(scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr,
-	                    lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette, this))
+	if (TextureGenCheck(scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg,
+	                    lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette, this))
 	{
 		lastTexAddr = 0;
 		lastTexLoaded = false;
@@ -2048,11 +2047,10 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent,
-                                   std::string prefix, int32_t texWidth, int32_t texHeight,
-                                   uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
-                                   F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
-                                   ZDisplayList* self)
+bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string prefix,
+                                   int32_t texWidth, int32_t texHeight, uint32_t texAddr,
+                                   uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
+                                   bool texLoaded, bool texIsPalette, ZDisplayList* self)
 {
 	int32_t segmentNumber = GETSEGNUM(texSeg);
 

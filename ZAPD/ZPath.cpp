@@ -13,8 +13,7 @@ ZPath::ZPath(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("NumPaths", "1");
 }
 
-void ZPath::ExtractFromXML(tinyxml2::XMLElement* reader,
-                           uint32_t nRawDataIndex)
+void ZPath::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 

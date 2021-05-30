@@ -15,8 +15,7 @@ ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZBackground::ZBackground(const std::string& prefix,
-                         uint32_t nRawDataIndex, ZFile* nParent)
+ZBackground::ZBackground(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
 	rawDataIndex = nRawDataIndex;
@@ -61,8 +60,7 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 	CheckValidJpeg(filepath.generic_string());
 }
 
-void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                 uint32_t nRawDataIndex)
+void ZBackground::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 	DeclareVar("", "");

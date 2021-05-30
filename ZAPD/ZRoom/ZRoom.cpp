@@ -60,8 +60,7 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader,
-                           uint32_t nRawDataIndex)
+void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
