@@ -1,11 +1,18 @@
 OPTIMIZATION_ON ?= 1
 ASAN ?= 0
 DEPRECATION_OFF ?= 0
+DEBUG ?= 0
 CFLAGS ?= 
 
 CC := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
-CFLAGS += -g3 -ggdb -fpic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
+CFLAGS += -fpic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
+
+ifneq ($(DEBUG),0)
+  OPTIMIZATION_ON = 0
+  DEPRECATION_OFF = 1
+  CFLAGS += -g3
+endif
 
 ifeq ($(OPTIMIZATION_ON),0)
   CFLAGS += -O0
