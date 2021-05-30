@@ -39,7 +39,6 @@ protected:
 	ZDisplayList* opaDList = nullptr;  // Gfx*
 	ZDisplayList* xluDList = nullptr;  // Gfx*
 
-	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	ZFile* parent;
 	ZRoom* zRoom;
@@ -65,7 +64,6 @@ protected:
 
 	ZBackground* sourceBackground;
 
-	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	ZFile* parent;
 	std::string name;

@@ -16,7 +16,7 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 }
 
 ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
-                     const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent)
+                     uint32_t nRawDataIndex, ZFile* nParent)
 	: ZSkeleton(nParent)
 {
 	
@@ -37,7 +37,7 @@ ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string
 	{
 		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(parent->GetRawData(), ptr), parent->baseAddress);
 
-		ZLimb* limb = new ZLimb(limbType, prefix, parent->GetRawData(), ptr2, parent);
+		ZLimb* limb = new ZLimb(limbType, prefix, ptr2, parent);
 		limbs.push_back(limb);
 
 		ptr += 4;

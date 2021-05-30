@@ -139,7 +139,7 @@ public:
 	uint8_t childIndex, siblingIndex;
 
 	ZLimb(ZFile* nParent);
-	ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+	ZLimb(ZLimbType limbType, const std::string& prefix,
 	      uint32_t nRawDataIndex, ZFile* nParent);
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader,

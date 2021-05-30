@@ -97,7 +97,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader,
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
-				parent->GetRawData(), address,
+				address,
 				ZDisplayList::GetDListLength(parent->GetRawData(), address,
 			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                  DListType::F3DEX :

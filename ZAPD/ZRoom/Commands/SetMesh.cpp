@@ -164,7 +164,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	ZDisplayList* dlist = new ZDisplayList(parent->GetRawData(), dlistAddress, dlistLength, parent);
+	ZDisplayList* dlist = new ZDisplayList(dlistAddress, dlistLength, parent);
 	GenDListDeclarations(zRoom, parent, dlist);
 
 	return dlist;
@@ -314,7 +314,7 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 
 	uint32_t backAddress = Seg2Filespace(ptr, parent->baseAddress);
 
-	ZBackground* background = new ZBackground(prefix, parent->GetRawData(), backAddress, parent);
+	ZBackground* background = new ZBackground(prefix, backAddress, parent);
 	background->DeclareVar(prefix, "");
 	parent->resources.push_back(background);
 

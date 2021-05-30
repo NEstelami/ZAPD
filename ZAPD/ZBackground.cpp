@@ -15,11 +15,10 @@ ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZBackground::ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+ZBackground::ZBackground(const std::string& prefix,
                          uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
-	
 	rawDataIndex = nRawDataIndex;
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
 	outName = name;

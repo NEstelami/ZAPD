@@ -9,7 +9,7 @@ ZMtx::ZMtx(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+ZMtx::ZMtx(const std::string& prefix, uint32_t nRawDataIndex,
            ZFile* nParent)
 	: ZResource(nParent)
 {
