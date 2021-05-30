@@ -60,10 +60,10 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex)
+void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader,
+                           uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	scene = Globals::Instance->lastScene;
 
@@ -97,8 +97,8 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
-				rawData, address,
-				ZDisplayList::GetDListLength(rawData, address,
+				parent->GetRawData(), address,
+				ZDisplayList::GetDListLength(parent->GetRawData(), address,
 			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                  DListType::F3DEX :
                                                  DListType::F3DZEX),
@@ -115,7 +115,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			ZCutscene* cutscene = new ZCutscene(parent);
 			cutscene->SetInnerNode(true);
-			cutscene->ExtractFromXML(child, rawData, address);
+			cutscene->ExtractFromXML(child, address);
 
 			cutscene->GetSourceOutputCode(name);
 
@@ -174,6 +174,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 	uint32_t commandsLeft = commandSet.commandCount;
 
+	const auto& rawData = parent->GetRawData();
 	while (shouldContinue)
 	{
 		if (commandsLeft <= 0)
@@ -392,7 +393,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
 	auto nextDecl = currentDecl;
 	std::advance(nextDecl, 1);
 	if (nextDecl == parent->declarations.end())
-		return rawData.size() - currentDecl->first;
+		return parent->GetRawData().size() - currentDecl->first;
 
 	return nextDecl->first - currentDecl->first;
 }
@@ -415,7 +416,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		if (cmdIndex + 1 < (int32_t)commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
 		else
-			return rawData.size() - commands[cmdIndex]->cmdAddress;
+			return parent->GetRawData().size() - commands[cmdIndex]->cmdAddress;
 	}
 
 	return 0;

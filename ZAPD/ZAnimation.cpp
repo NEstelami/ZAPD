@@ -18,10 +18,9 @@ ZAnimation::ZAnimation(ZFile* nParent) : ZResource(nParent)
 
 void ZAnimation::ParseRawData()
 {
-	const uint8_t* data = rawData.data();
+	ZResource::ParseRawData();
 
-	// Read the header
-	frameCount = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	frameCount = BitConverter::ToInt16BE(parent->GetRawData(), rawDataIndex + 0);
 }
 
 void ZAnimation::Save(const fs::path& outFolder)
@@ -119,7 +118,7 @@ void ZNormalAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
 
-	const uint8_t* data = rawData.data();
+	const uint8_t* data = parent->GetRawData().data();
 
 	rotationValuesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 4) & 0x00FFFFFF;
 	rotationIndicesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 8) & 0x00FFFFFF;
@@ -185,7 +184,7 @@ void ZLinkAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
 
-	const uint8_t* data = rawData.data();
+	const uint8_t* data = parent->GetRawData().data();
 	segmentAddress = (BitConverter::ToInt32BE(data, rawDataIndex + 4));
 }
 
@@ -249,6 +248,7 @@ void ZCurveAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	refIndex = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 	transformData = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	copyValues = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
@@ -292,10 +292,9 @@ void ZCurveAnimation::ParseRawData()
 	}
 }
 
-void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                     const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex)
+void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");

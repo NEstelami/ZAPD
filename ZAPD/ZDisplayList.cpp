@@ -42,19 +42,18 @@ ZDisplayList::~ZDisplayList()
 
 // EXTRACT MODE
 void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader,
-                                  const std::vector<uint8_t>& nRawData,
-                                  const uint32_t nRawDataIndex)
+                                  uint32_t nRawDataIndex)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
+	
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
 
-	fileData = nRawData;
+	fileData = parent->GetRawData();
 	int32_t rawDataSize = ZDisplayList::GetDListLength(
-		nRawData, rawDataIndex,
+		parent->GetRawData(), rawDataIndex,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	dlistRawData.assign(nRawData.data() + rawDataIndex,
-	                    nRawData.data() + rawDataIndex + rawDataSize);
+	dlistRawData.assign(parent->GetRawData().data() + rawDataIndex,
+	                    parent->GetRawData().data() + rawDataIndex + rawDataSize);
 	ParseRawData();
 
 	DeclareVar("", "");
@@ -64,7 +63,7 @@ ZDisplayList::ZDisplayList(std::vector<uint8_t> nRawData, uint32_t nRawDataIndex
                            int32_t rawDataSize, ZFile* nParent)
 	: ZDisplayList(nParent)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
+	
 	fileData = nRawData;
 	rawDataIndex = nRawDataIndex;
 	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
@@ -411,7 +410,7 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string pre
 	}
 }
 
-int32_t ZDisplayList::GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex,
+int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
                                      DListType dListType)
 {
 	int32_t i = 0;
@@ -863,7 +862,6 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, char* line)
 			for (int32_t i = 0; i < nn; i++)
 			{
 				ZVtx vtx(parent);
-				vtx.SetRawData(fileData);
 				vtx.SetRawDataIndex(currentPtr);
 				vtx.ParseRawData();
 				vtxList.push_back(vtx);
@@ -1633,7 +1631,6 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 			for (int32_t i = 0; i < count; i++)
 			{
 				ZVtx vtx(self->parent);
-				vtx.SetRawData(self->fileData);
 				vtx.SetRawDataIndex(currentPtr);
 				vtx.ParseRawData();
 
@@ -2094,7 +2091,7 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 				else
 				{
 					tex = new ZTexture(scene->parent);
-					tex->FromBinary(scene->GetRawData(), texAddr, texWidth, texHeight,
+					tex->FromBinary(scene->parent->GetRawData(), texAddr, texWidth, texHeight,
 					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
 
 					scene->parent->AddTextureResource(texAddr, tex);

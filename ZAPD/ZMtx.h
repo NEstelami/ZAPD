@@ -12,7 +12,7 @@ public:
 	     ZFile* nParent);
 
 	void ParseRawData() override;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	void ExtractFromXML(tinyxml2::XMLElement* reader,
 	                    uint32_t nRawDataIndex) override;
 
 	size_t GetRawDataSize() const override;

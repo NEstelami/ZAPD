@@ -14,7 +14,7 @@ ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint
 	: ZResource(nParent)
 {
 	name = GetDefaultName(prefix.c_str(), rawDataIndex);
-	ExtractFromFile(nRawData, nRawDataIndex);
+	ExtractFromFile(nRawDataIndex);
 	DeclareVar("", "");
 }
 
@@ -22,15 +22,16 @@ void ZMtx::ParseRawData()
 {
 	ZResource::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	for (size_t i = 0; i < 4; ++i)
 		for (size_t j = 0; j < 4; ++j)
 			mtx[i][j] = BitConverter::ToInt32BE(rawData, rawDataIndex + (i * 4 + j) * 4);
 }
 
-void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+void ZMtx::ExtractFromXML(tinyxml2::XMLElement* reader,
                           uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 	DeclareVar("", "");
 }
 

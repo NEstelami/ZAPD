@@ -21,10 +21,10 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("TlutOffset");
 }
 
-void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader,
                               uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
 
@@ -46,7 +46,7 @@ void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDat
 	name = GetDefaultName(parent->GetName());
 	outName = name;
 
-	rawData.assign(nRawData.begin(), nRawData.end());
+	
 
 	ParseRawData();
 	CalcHash();
@@ -348,7 +348,7 @@ void ZTexture::DeclareReferences(const std::string& prefix)
 			                                           GetExternalExtension().c_str());
 
 			tlut = new ZTexture(parent);
-			tlut->FromBinary(rawData, tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
+			tlut->FromBinary(parent->GetRawData(), tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
 			parent->AddTextureResource(tlutOffset, tlut);
 			parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(),
 			                                   tlut->GetSourceTypeName(), tlut->GetName(), 0);

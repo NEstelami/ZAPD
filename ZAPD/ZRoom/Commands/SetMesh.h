@@ -114,7 +114,6 @@ protected:
 
 	std::vector<PolygonDlist> polyDLists;
 
-	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	ZFile* parent;
 	ZRoom* zRoom;

@@ -354,8 +354,8 @@ public:
 	             ZFile* nParent);
 	~ZDisplayList();
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader,
+	                    uint32_t nRawDataIndex) override;
 
 	void ParseRawData() override;
 
@@ -367,7 +367,7 @@ public:
 	                            uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
 	                            F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
 	                            ZDisplayList* self);
-	static int32_t GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex,
+	static int32_t GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 
 	size_t GetRawDataSize() const override;

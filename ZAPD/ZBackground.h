@@ -15,7 +15,7 @@ public:
 	            uint32_t nRawDataIndex, ZFile* nParent);
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
+	void ExtractFromXML(tinyxml2::XMLElement* reader,
 	                    uint32_t nRawDataIndex) override;
 
 	void CheckValidJpeg(const std::string& filepath);
