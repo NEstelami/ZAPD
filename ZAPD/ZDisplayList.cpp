@@ -410,8 +410,6 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string pre
 int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
                                      DListType dListType)
 {
-	int32_t i = 0;
-
 	uint8_t endDLOpcode;
 
 	if (dListType == DListType::F3DZEX)
