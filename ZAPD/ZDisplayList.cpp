@@ -86,8 +86,10 @@ void ZDisplayList::ParseRawData()
 
 Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                                   GetSourceTypeName(), name, 0, bodyStr, true);
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                   GetSourceTypeName(), name, 0, bodyStr);
+	decl->isExternal = true;
+	return decl;
 }
 
 void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, std::string prefix,

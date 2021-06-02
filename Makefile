@@ -12,7 +12,7 @@ CFLAGS += -fpic -std=c++17 -rdynamic -Wall -fno-omit-frame-pointer
 ifneq ($(DEBUG),0)
   OPTIMIZATION_ON = 0
   DEPRECATION_OFF = 1
-  CFLAGS += -g3 -DDEVELOPMENT
+  CFLAGS += -g3 -DDEVELOPMENT -D_DEBUG
   COPYCHECK_ARGS += --devel
 endif
 

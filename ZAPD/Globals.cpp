@@ -25,6 +25,17 @@ Globals::Globals()
 	externalXmlFolder = "assets/xml/";
 }
 
+Globals::~Globals()
+{
+	for (auto& declPair : segmentRefFiles)
+	{
+		for (auto& file : declPair.second)
+		{
+			delete file;
+		}
+	}
+}
+
 std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 {
 	if (segmentRefs.find(segNumber) != segmentRefs.end())
@@ -59,7 +70,7 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 		for (auto& file : segmentRefFiles[segNumber])
 		{
 			if (file->HasDeclaration(symbolAddress))
-				return file->GetDeclarationName(symbolAddress);
+				return file->GetDeclarationPtrName((segNumber << 0x18) | symbolAddress);
 		}
 	}
 
