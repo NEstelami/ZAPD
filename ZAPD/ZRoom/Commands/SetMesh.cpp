@@ -91,7 +91,8 @@ std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 
 std::string SetMesh::GetBodySourceCode() const
 {
-	std::string list = parent->GetDeclarationPtrName(cmdArg2);
+	std::string list;
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, list);
 	return StringHelper::Sprintf("SCENE_CMD_MESH(%s)", list.c_str());
 }
 
@@ -187,8 +188,11 @@ void PolygonDlist::SetPolyType(uint8_t nPolyType)
 std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 {
 	std::string bodyStr = "";
-	std::string opaStr = parent->GetDeclarationPtrName(opa);
-	std::string xluStr = parent->GetDeclarationPtrName(xlu);
+	std::string opaStr;
+	std::string xluStr;
+	Globals::Instance->GetSegmentedPtrName(opa, parent, opaStr);
+	Globals::Instance->GetSegmentedPtrName(xlu, parent, xluStr);
+
 	if (arrayElement)
 	{
 		bodyStr += "    { ";
@@ -335,7 +339,8 @@ std::string BgImage::GetBodySourceCode(bool arrayElement) const
 		}
 	}
 
-	std::string backgroundName = parent->GetDeclarationPtrName(source);
+	std::string backgroundName;
+	Globals::Instance->GetSegmentedPtrName(source, parent, backgroundName);
 	bodyStr += StringHelper::Sprintf("%s, ", backgroundName.c_str());
 	bodyStr += "\n    ";
 	if (arrayElement)
@@ -536,7 +541,9 @@ std::string PolygonType1::GetBodySourceCode() const
 	bodyStr += "{ ";
 	bodyStr += StringHelper::Sprintf("%i, %i, ", type, format);
 
-	std::string dlistStr = parent->GetDeclarationPtrName(dlist);
+	std::string dlistStr;
+	Globals::Instance->GetSegmentedPtrName(dlist, parent, dlistStr);
+
 	bodyStr += StringHelper::Sprintf("%s, ", dlistStr.c_str());
 	bodyStr += "}, \n";
 
@@ -548,7 +555,7 @@ std::string PolygonType1::GetBodySourceCode() const
 		bodyStr += single.GetBodySourceCode(false);
 		break;
 	case 2:
-		listStr = parent->GetDeclarationPtrName(list);
+		Globals::Instance->GetSegmentedPtrName(list, parent, listStr);
 		bodyStr += StringHelper::Sprintf("    %i, %s, \n", count, listStr.c_str());
 		break;
 
@@ -629,7 +636,8 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 
 std::string PolygonType2::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(start);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(start, parent, listName);
 
 	std::string body = StringHelper::Sprintf("\n    %i, %i,\n", type, polyDLists.size());
 	body += StringHelper::Sprintf("    %s,\n", listName.c_str());

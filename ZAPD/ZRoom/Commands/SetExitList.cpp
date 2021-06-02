@@ -2,6 +2,7 @@
 
 #include "BitConverter.h"
 #include "StringHelper.h"
+#include "Globals.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
@@ -52,7 +53,8 @@ void SetExitList::DeclareReferencesLate(const std::string& prefix)
 
 std::string SetExitList::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_EXIT_LIST(%s)", listName.c_str());
 }
 

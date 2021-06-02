@@ -72,6 +72,8 @@ public:
 
 	/**
 	 * Search in every file (and the symbol map) for the `segAddress` passed as parameter.
+	 * If the segment of `currentFile` is the same segment of `segAddress`, then that file will be
+	 * used only, otherwise, the search will be performed in every other file.
 	 * The name of that variable will be stored in the `declName` parameter.
 	 * Returns `true` if the address is found. `false` otherwise,
 	 * in which case `declName` will be set to the address formatted as a pointer.

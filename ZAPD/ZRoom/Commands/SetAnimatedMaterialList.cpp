@@ -97,7 +97,8 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 
 		for (size_t i = 0; i < textures.size(); i++)
 		{
-			std::string textureName = parent->GetDeclarationPtrName(textures.at(i).segmentAddress);
+			std::string textureName;
+			Globals::Instance->GetSegmentedPtrName(textures.at(i).segmentAddress, parent, textureName);
 
 			declaration += StringHelper::Sprintf("\t{ %2i, %2i, %s },", textures.at(i).segment,
 			                                     textures.at(i).type, textureName.c_str());
@@ -114,7 +115,8 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 
 std::string SetAnimatedMaterialList::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_ANIMATED_MATERIAL_LIST(%s)", listName.c_str());
 }
 
@@ -309,9 +311,12 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 			keyFrames.size(), declaration);
 	}
 
-	std::string primName = zRoom->parent->GetDeclarationPtrName(primColorSegmentAddr);
-	std::string envName = zRoom->parent->GetDeclarationPtrName(envColorSegmentAddr);
-	std::string keyName = zRoom->parent->GetDeclarationPtrName(keyFrameSegmentAddr);
+	std::string primName;
+	std::string envName;
+	std::string keyName;
+	Globals::Instance->GetSegmentedPtrName(primColorSegmentAddr, zRoom->parent, primName);
+	Globals::Instance->GetSegmentedPtrName(envColorSegmentAddr, zRoom->parent, envName);
+	Globals::Instance->GetSegmentedPtrName(keyFrameSegmentAddr, zRoom->parent, keyName);
 
 	return StringHelper::Sprintf("%i, %i, %s, %s, %s", cycleLength, numKeyFrames, primName.c_str(),
 	                             envName.c_str(), keyName.c_str());
@@ -400,8 +405,10 @@ std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t
 			textureIndices.size(), declaration);
 	}
 
-	std::string segmName = zRoom->parent->GetDeclarationPtrName(textureSegmentOffsetsSegmentAddress);
-	std::string indexesName = zRoom->parent->GetDeclarationPtrName(textureIndicesSegmentAddress);
+	std::string segmName;
+	std::string indexesName;
+	Globals::Instance->GetSegmentedPtrName(textureSegmentOffsetsSegmentAddress, zRoom->parent, segmName);
+	Globals::Instance->GetSegmentedPtrName(textureIndicesSegmentAddress, zRoom->parent, indexesName);
 
 	return StringHelper::Sprintf("%i, %s, %s", cycleLength, segmName.c_str(), indexesName.c_str());
 }

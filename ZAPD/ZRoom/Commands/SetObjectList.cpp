@@ -53,7 +53,8 @@ void SetObjectList::DeclareReferences(const std::string& prefix)
 
 std::string SetObjectList::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_OBJECT_LIST(%i, %s)", objects.size(), listName.c_str());
 }
 

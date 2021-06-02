@@ -1,6 +1,7 @@
 #include "SetCsCamera.h"
 
 #include "BitConverter.h"
+#include "Globals.h"
 #include "StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
@@ -76,7 +77,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 
 	if (!cameras.empty())
 	{
-		std::string camPointsName = parent->GetDeclarationName(cameras.at(0).GetSegmentOffset());
+		std::string camPointsName;
+		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent, camPointsName);
 		std::string declaration = "";
 
 		size_t index = 0;
@@ -107,7 +109,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 
 std::string SetCsCamera::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(%i, %s)", cameras.size(),
 	                             listName.c_str());
 }

@@ -1,5 +1,7 @@
 #include "ZSkeleton.h"
+
 #include "BitConverter.h"
+#include "Globals.h"
 #include "HighLevel/HLModelIntermediette.h"
 #include "StringHelper.h"
 
@@ -35,9 +37,11 @@ ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string
 
 	for (size_t i = 0; i < limbCount; i++)
 	{
-		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(rawData, ptr), parent->baseAddress);
+		segptr_t limbAddress = BitConverter::ToUInt32BE(rawData, ptr);
+		uint32_t limbOffset = Seg2Filespace(limbAddress, parent->baseAddress);
 
-		ZLimb* limb = new ZLimb(limbType, prefix, rawData, ptr2, parent);
+		limbsTblAddresses.push_back(limbAddress);
+		ZLimb* limb = new ZLimb(limbType, prefix, rawData, limbOffset, parent);
 		limbs.push_back(limb);
 
 		ptr += 4;
@@ -114,17 +118,21 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 
 	for (size_t i = 0; i < limbCount; i++)
 	{
-		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(rawData, ptr), parent->baseAddress);
+		segptr_t limbAddress = BitConverter::ToUInt32BE(rawData, ptr);
+		uint32_t limbOffset = Seg2Filespace(limbAddress, parent->baseAddress);
 
-		std::string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), ptr2);
-		Declaration* decl = parent->GetDeclaration(ptr2);
+		limbsTblAddresses.push_back(limbAddress);
+
+		std::string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limbOffset);
+		Declaration* decl = parent->GetDeclaration(limbOffset);
 		if (decl != nullptr)
 			limbName = decl->varName;
 
 		ZLimb* limb = new ZLimb(parent);
 		limb->SetLimbType(limbType);
 		limb->SetName(limbName);
-		limb->ExtractFromXML(nullptr, rawData, ptr2);
+		//limb->ExtractFromXML(nullptr, rawData, limbOffset);
+		limb->ExtractFromFile(rawData, limbOffset);
 		limbs.push_back(limb);
 
 		ptr += 4;
@@ -161,18 +169,17 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 				StringHelper::Sprintf("static %s*", ZLimb::GetSourceTypeName(limbType));
 		}
 
-		for (size_t i = 0; i < limbs.size(); i++)
+		for (size_t i = 0; i < limbsTblAddresses.size(); i++)
 		{
-			ZLimb* limb = limbs.at(i);
+			segptr_t limbAddress = limbsTblAddresses.at(i);
 
-			std::string decl = StringHelper::Sprintf(
-				"    &%s,", parent->GetDeclarationName(limb->GetFileAddress()).c_str());
+			std::string decl;
+			Globals::Instance->GetSegmentedPtrName(limbAddress, parent, decl);
+
+			tblStr += StringHelper::Sprintf("\t%s,", decl.c_str());
+
 			if (i != (limbs.size() - 1))
-			{
-				decl += "\n";
-			}
-
-			tblStr += decl;
+				tblStr += "\n";
 		}
 
 		parent->AddDeclarationArray(ptr, DeclarationAlignment::Align4, 4 * limbCount, limbArrTypeStr,

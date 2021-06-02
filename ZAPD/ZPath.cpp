@@ -184,7 +184,8 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 std::string PathwayEntry::GetBodySourceCode() const
 {
 	std::string declaration = "";
-	std::string listName = parent->GetDeclarationPtrName(listSegmentAddress);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, listName);
 
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 		declaration +=

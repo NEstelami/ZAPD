@@ -2,6 +2,7 @@
 
 #include "BitConverter.h"
 #include "StringHelper.h"
+#include "Globals.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
@@ -29,7 +30,8 @@ void SetCollisionHeader::DeclareReferences(const std::string& prefix)
 
 std::string SetCollisionHeader::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_COL_HEADER(%s)", listName.c_str());
 }
 

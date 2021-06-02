@@ -1,6 +1,8 @@
 #include "SetEntranceList.h"
+
 #include "BitConverter.h"
 #include "SetStartPositionList.h"
+#include "Globals.h"
 #include "StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
@@ -57,7 +59,8 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 
 std::string SetEntranceList::GetBodySourceCode() const
 {
-	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	std::string listName;
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_ENTRANCE_LIST(%s)", listName.c_str());
 }
 

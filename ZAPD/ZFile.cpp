@@ -520,22 +520,6 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #endif
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address) const
-{
-	return GetDeclarationName(address,
-	                          "ERROR_COULD_NOT_FIND_DECLARATION");  // Note: For now that default
-	                                                                // message is just for testing
-}
-
-std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult) const
-{
-	Declaration* decl = GetDeclaration(address);
-	if (decl != nullptr)
-		return decl->varName;
-
-	return defaultResult;
-}
-
 std::string ZFile::GetDeclarationPtrName(segptr_t segAddress) const
 {
 	if (segAddress == 0)
