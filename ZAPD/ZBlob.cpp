@@ -68,14 +68,14 @@ Declaration* ZBlob::DeclareVar(const std::string& prefix, const std::string& bod
 								GetSourceTypeName(), auxName, 0);
 }
 
-std::string ZBlob::GetSourceOutputCode(const std::string& prefix)
+std::string ZBlob::GetBodySourceCode() const
 {
-	sourceOutput = "";
+	std::string sourceOutput = "";
 
 	for (size_t i = 0; i < blobData.size(); i += 1)
 	{
 		if (i % 16 == 0)
-			sourceOutput += "    ";
+			sourceOutput += "\t";
 
 		sourceOutput += StringHelper::Sprintf("0x%02X, ", blobData[i]);
 

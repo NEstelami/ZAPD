@@ -53,7 +53,18 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-std::string ZArray::GetSourceOutputCode(const std::string& prefix)
+Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
+		                            GetSourceTypeName(), name, arrayCnt, bodyStr);
+}
+
+std::string ZArray::GetBodySourceCode() const
 {
 	std::string output = "";
 
@@ -71,10 +82,7 @@ std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 			output += ",\n";
 	}
 
-	parent->AddDeclarationArray(rawDataIndex, resList.at(0)->GetDeclarationAlignment(), GetRawDataSize(),
-		                            resList.at(0)->GetSourceTypeName(), name, arrayCnt, output);
-
-	return "";
+	return output;
 }
 
 size_t ZArray::GetRawDataSize() const
@@ -85,7 +93,17 @@ size_t ZArray::GetRawDataSize() const
 	return size;
 }
 
+std::string ZArray::GetSourceTypeName() const
+{
+	return resList.at(0)->GetSourceTypeName();
+}
+
 ZResourceType ZArray::GetResourceType() const
 {
 	return ZResourceType::Array;
+}
+
+DeclarationAlignment ZArray::GetDeclarationAlignment() const
+{
+	return resList.at(0)->GetDeclarationAlignment();
 }

@@ -386,7 +386,7 @@ void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 	ZBlob* blob = ZBlob::FromFile(blobFilePath.string());
 	std::string name = outPath.stem().string();  // filename without extension
 
-	std::string src = blob->GetSourceOutputCode(name);
+	std::string src = blob->GetBodySourceCode();
 
 	File::WriteAllText(outPath.string(), src);
 

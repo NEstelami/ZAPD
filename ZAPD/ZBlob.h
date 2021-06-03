@@ -16,8 +16,8 @@ public:
 	void ParseRawData() override;
 
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	std::string GetBodySourceCode() const override;
 
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	void Save(const fs::path& outFolder) override;
 

@@ -9,49 +9,8 @@ REGISTER_ZFILENODE(Skeleton, ZSkeleton);
 
 ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 {
-	type = ZSkeletonType::Normal;
-	limbType = ZLimbType::Standard;
-	dListCount = 0;
-
 	RegisterRequiredAttribute("Type");
 	RegisterRequiredAttribute("LimbType");
-}
-
-ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
-                     const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent)
-	: ZSkeleton(nParent)
-{
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-
-	name = StringHelper::Sprintf("%sSkel_%06X", prefix.c_str(), rawDataIndex);
-	type = nType;
-	limbType = nLimbType;
-
-	ParseRawData();
-
-	std::string defaultPrefix = name;
-	defaultPrefix.replace(0, 1, "s");  // replace g prefix with s for local variables
-	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
-
-	for (size_t i = 0; i < limbCount; i++)
-	{
-		segptr_t limbAddress = BitConverter::ToUInt32BE(rawData, ptr);
-		uint32_t limbOffset = Seg2Filespace(limbAddress, parent->baseAddress);
-
-		limbsTblAddresses.push_back(limbAddress);
-		ZLimb* limb = new ZLimb(limbType, prefix, rawData, limbOffset, parent);
-		limbs.push_back(limb);
-
-		ptr += 4;
-	}
-}
-
-ZSkeleton::~ZSkeleton()
-{
-	for (auto& limb : limbs)
-		delete limb;
 }
 
 void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
@@ -115,7 +74,6 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 		defaultPrefix.replace(0, 1, "s");
 
 	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
-
 	for (size_t i = 0; i < limbCount; i++)
 	{
 		segptr_t limbAddress = BitConverter::ToUInt32BE(rawData, ptr);
@@ -123,41 +81,24 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 
 		limbsTblAddresses.push_back(limbAddress);
 
-		std::string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limbOffset);
 		Declaration* decl = parent->GetDeclaration(limbOffset);
-		if (decl != nullptr)
-			limbName = decl->varName;
+		if (decl == nullptr)
+		{
+			std::string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limbOffset);
 
-		ZLimb* limb = new ZLimb(parent);
-		limb->SetLimbType(limbType);
-		limb->SetName(limbName);
-		//limb->ExtractFromXML(nullptr, rawData, limbOffset);
-		limb->ExtractFromFile(rawData, limbOffset);
-		limbs.push_back(limb);
+			ZLimb* limb = new ZLimb(parent);
+			limb->SetLimbType(limbType);
+			limb->SetName(limbName);
+			limb->ExtractFromFile(rawData, limbOffset);
+			limb->DeclareVar(defaultPrefix, "");
+			parent->AddResource(limb);
+		}
 
 		ptr += 4;
 	}
-}
 
-void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
-{
-	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
-	HLModelIntermediette::FromZSkeleton(mdl, this);
-	mdl->blocks.push_back(new HLTerminator());
-}
-
-std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
-{
-	if (parent == nullptr)
-		return "";
-
-	std::string defaultPrefix = name.c_str();
-	defaultPrefix.replace(0, 1, "s");  // replace g prefix with s for local variables
-
-	for (auto& limb : limbs)
-		limb->GetSourceOutputCode(defaultPrefix);
-
-	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
+	// Limbs ptr array / table
+	ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
 	if (!parent->HasDeclaration(ptr))
 	{
 		// Table
@@ -178,7 +119,7 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 
 			tblStr += StringHelper::Sprintf("\t%s,", decl.c_str());
 
-			if (i != (limbs.size() - 1))
+			if (i != (limbCount - 1))
 				tblStr += "\n";
 		}
 
@@ -186,33 +127,33 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 		                            StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()),
 		                            limbCount, tblStr);
 	}
+}
 
-	std::string headerStr;
+std::string ZSkeleton::GetBodySourceCode() const
+{
+	std::string limbArrayName;
+	Globals::Instance->GetSegmentedPtrName(limbsArrayAddress, parent, limbArrayName);
+
 	switch (type)
 	{
 	case ZSkeletonType::Normal:
 	case ZSkeletonType::Curve:
-		headerStr = StringHelper::Sprintf("\n\t%sLimbs, %i\n", defaultPrefix.c_str(), limbCount);
-		break;
+		return StringHelper::Sprintf("\n\t%s, %i\n", limbArrayName.c_str(), limbCount);
+
 	case ZSkeletonType::Flex:
-		headerStr = StringHelper::Sprintf("\n\t{ %sLimbs, %i }, %i\n", defaultPrefix.c_str(),
+		return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbArrayName.c_str(),
 		                                  limbCount, dListCount);
-		break;
 	}
 
-	Declaration* decl = parent->GetDeclaration(GetAddress());
+	// TODO: Throw exception?
+	return "ERROR";
+}
 
-	if (decl == nullptr)
-	{
-		parent->AddDeclaration(GetAddress(), GetDeclarationAlignment(), GetRawDataSize(),
-		                       GetSourceTypeName(), name, headerStr);
-	}
-	else
-	{
-		decl->text = headerStr;
-	}
-
-	return "";
+void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
+{
+	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
+	HLModelIntermediette::FromZSkeleton(mdl, this);
+	mdl->blocks.push_back(new HLTerminator());
 }
 
 std::string ZSkeleton::GetSourceTypeName() const

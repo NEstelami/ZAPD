@@ -354,20 +354,6 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("Type");
 }
 
-ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-             uint32_t nRawDataIndex, ZFile* nParent)
-	: ZLimb(nParent)
-{
-	rawData.assign(nRawData.begin(), nRawData.end());
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-	type = limbType;
-
-	name = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), GetFileAddress());
-
-	ParseRawData();
-}
-
 void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);

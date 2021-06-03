@@ -1800,11 +1800,12 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			if (parent != nullptr)
 			{
-				parent->AddDeclarationArray(item.first, DeclarationAlignment::None,
+				Declaration *decl = parent->AddDeclarationArray(item.first, DeclarationAlignment::Align4,
 				                            item.second.size() * 16, "static Vtx",
 				                            StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(),
 				                                                  item.first, item.second.size()),
 				                            item.second.size(), declaration);
+				decl->isExternal = true;
 			}
 		}
 	}

@@ -17,24 +17,21 @@ enum class ZSkeletonType
 class ZSkeleton : public ZResource
 {
 public:
-	ZSkeletonType type;
-	ZLimbType limbType;
-	std::vector<ZLimb*> limbs;
+	ZSkeletonType type = ZSkeletonType::Normal;
+	ZLimbType limbType = ZLimbType::Standard;
 	std::vector<segptr_t> limbsTblAddresses;
 	segptr_t limbsArrayAddress;
 	uint8_t limbCount;
-	uint8_t dListCount;  // FLEX SKELETON ONLY
+	uint8_t dListCount = 0;  // FLEX SKELETON ONLY
 
 	ZSkeleton(ZFile* nParent);
-	ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
-	          const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent);
-	~ZSkeleton();
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetBodySourceCode() const override;
+
 	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 
 	std::string GetSourceTypeName() const override;
