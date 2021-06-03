@@ -1891,10 +1891,6 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				auto filepath = Globals::Instance->outputPath / vtxName;
 				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), "vtx");
 
-				parent->AddDeclarationArray(vtxKeys[i], DeclarationAlignment::None,
-				                            item.size() * 16, "static Vtx", vtxName, item.size(),
-				                            declaration);
-
 				Declaration* vtxDecl = parent->AddDeclarationIncludeArray(
 					vtxKeys[i], incStr, item.size() * 16, "static Vtx", vtxName, item.size());
 				vtxDecl->isExternal = true;

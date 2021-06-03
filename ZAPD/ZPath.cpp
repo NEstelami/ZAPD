@@ -154,6 +154,11 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 	if (points.empty())
 		return;
 
+	std::string pointsName = "";
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, pointsName);
+	if (addressFound)
+		return;
+
 	std::string declaration = "";
 
 	size_t index = 0;
@@ -167,18 +172,13 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 		index++;
 	}
 
-	Declaration* decl = parent->GetDeclaration(GETSEGOFFSET(listSegmentAddress));
-	if (decl == nullptr)
-	{
-		parent->AddDeclarationArray(GETSEGOFFSET(listSegmentAddress), DeclarationAlignment::Align4,
-		                            DeclarationPadding::Pad4, points.size() * 6,
-		                            points.at(0).GetSourceTypeName(),
-		                            StringHelper::Sprintf("%sPathwayList0x%06X", prefix.c_str(),
-		                                                  GETSEGOFFSET(listSegmentAddress)),
-		                            points.size(), declaration);
-	}
-	else
-		decl->text = declaration;
+	uint32_t pointsOffset = Seg2Filespace(listSegmentAddress, parent->baseAddress);
+	pointsName = StringHelper::Sprintf("%sPathwayList_%06X", prefix.c_str(),
+														pointsOffset);
+	parent->AddDeclarationArray(pointsOffset, DeclarationAlignment::Align4,
+								points.size() * 6,
+								points.at(0).GetSourceTypeName(),
+								pointsName, points.size(), declaration);
 }
 
 std::string PathwayEntry::GetBodySourceCode() const

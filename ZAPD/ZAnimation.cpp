@@ -159,10 +159,9 @@ std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
 		Globals::Instance->GetSegmentedPtrName(segmentAddress, parent, segSymbol);
 
 		std::string headerStr =
-			StringHelper::Sprintf("\n\t{ %i },\n\t0x%08X\n", frameCount, segmentAddress);
+			StringHelper::Sprintf("\n\t{ %i }, %s\n", frameCount, segSymbol.c_str());
 		parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
-		                       headerStr);
+		                       GetSourceTypeName(), name, headerStr);
 	}
 
 	return "";
