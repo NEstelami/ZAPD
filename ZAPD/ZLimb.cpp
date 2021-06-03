@@ -470,13 +470,13 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
 	std::string dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
 
-	std::string entryStr = "";
+	std::string entryStr = "\n\t";
 	if (type != ZLimbType::Curve)
 	{
-		entryStr += StringHelper::Sprintf("\n    { %i, %i, %i },", transX, transY, transZ);
+		entryStr += StringHelper::Sprintf("{ %i, %i, %i }, ", transX, transY, transZ);
 	}
 
-	entryStr += StringHelper::Sprintf("\n    0x%02X, 0x%02X,\n", childIndex, siblingIndex);
+	entryStr += StringHelper::Sprintf("0x%02X, 0x%02X,\n", childIndex, siblingIndex);
 
 	switch (type)
 	{
