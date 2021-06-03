@@ -55,7 +55,8 @@ pipeline {
                     sh 'git submodule update --init --recursive'
                     sh 'make -C tools'
                     sh 'cp ../ZAPD.out tools/ZAPD/'
-                    sh 'python3 tools/extract_rom.py baserom.z64'
+                    sh 'python3 tools/extract_rom.py baserom.mm.us.rev1.z64'
+                    sh 'python3 extract_assets.py'
                 }
             }
         }
