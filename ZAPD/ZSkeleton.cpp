@@ -25,11 +25,11 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		type = ZSkeletonType::Curve;
 	else if (skelTypeXml != "Normal")
 	{
-		fprintf(stderr,
-		        "ZSkeleton::ParseXML: Warning in '%s'.\n"
+		throw std::runtime_error(StringHelper::Sprintf(
+		        "ZSkeleton::ParseXML: Error in '%s'.\n"
 		        "\t Invalid Type found: '%s'.\n"
 		        "\t Defaulting to 'Normal'.\n",
-		        name.c_str(), skelTypeXml.c_str());
+		        name.c_str(), skelTypeXml.c_str()));
 		type = ZSkeletonType::Normal;
 	}
 
@@ -45,11 +45,11 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		limbType = ZLimbType::Curve;
 	else
 	{
-		fprintf(stderr,
-		        "ZSkeleton::ParseXML: Warning in '%s'.\n"
+		throw std::runtime_error(StringHelper::Sprintf(
+		        "ZSkeleton::ParseXML: Error in '%s'.\n"
 		        "\t Invalid LimbType found: '%s'.\n"
 		        "\t Defaulting to 'Standard'.\n",
-		        name.c_str(), limbTypeXml.c_str());
+		        name.c_str(), limbTypeXml.c_str()));
 		limbType = ZLimbType::Standard;
 	}
 }
@@ -119,7 +119,7 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 
 			tblStr += StringHelper::Sprintf("\t%s,", decl.c_str());
 
-			if (i != (limbCount - 1))
+			if (i + 1 < limbCount)
 				tblStr += "\n";
 		}
 
