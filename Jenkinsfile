@@ -63,7 +63,7 @@ pipeline {
             steps {
                 dir('mm') {
                     sh 'make assembly -j'
-                    sh 'make rom_uncompressed.z64 -j'
+                    sh 'make -j'
                 }
             }
         }
