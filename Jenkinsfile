@@ -49,7 +49,7 @@ pipeline {
         stage('Set up mm') {
             steps {
                 dir('mm') {
-                    sh 'cp /usr/local/etc/roms/mm.us.rev1.z64 baserom.z64'
+                    sh 'cp /usr/local/etc/roms/mm.us.rev1.z64 baserom.mm.us.rev1.z64'
 
                     // Identical to `make setup` except for copying our newer ZAPD.out into mm
                     sh 'git submodule update --init --recursive'
