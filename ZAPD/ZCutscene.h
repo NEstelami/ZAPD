@@ -428,7 +428,6 @@ public:
 	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	size_t GetRawDataSize() const override;
 	DeclarationPadding GetDeclarationPadding() const override;

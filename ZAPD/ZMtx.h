@@ -15,8 +15,7 @@ public:
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 
-	std::string GetBodySourceCode();
-	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;

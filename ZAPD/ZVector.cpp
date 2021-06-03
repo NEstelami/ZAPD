@@ -97,18 +97,15 @@ std::string ZVector::GetBodySourceCode() const
 	return body;
 }
 
-std::string ZVector::GetSourceOutputCode(const std::string& prefix)
-{
-	if (parent != nullptr)
-		parent->AddDeclaration(rawDataIndex, scalars.at(0).GetDeclarationAlignment(), GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
-
-	return "";
-}
-
 ZResourceType ZVector::GetResourceType() const
 {
 	return ZResourceType::Vector;
+}
+
+
+DeclarationAlignment ZVector::GetDeclarationAlignment() const
+{
+	return scalars.at(0).GetDeclarationAlignment();
 }
 
 void ZVector::SetScalarType(ZScalarType type)

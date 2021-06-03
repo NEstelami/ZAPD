@@ -205,15 +205,6 @@ std::string ZScalar::GetBodySourceCode() const
 	}
 }
 
-std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
-{
-	if (parent != nullptr)
-		parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
-
-	return "";
-}
-
 ZResourceType ZScalar::GetResourceType() const
 {
 	return ZResourceType::Scalar;

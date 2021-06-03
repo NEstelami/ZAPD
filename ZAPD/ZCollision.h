@@ -92,8 +92,6 @@ public:
 	std::string GetBodySourceCode() const override;
 	std::string GetDefaultName(const std::string& prefix) const override;
 
-	std::string GetSourceOutputCode(const std::string& prefix) override;
-
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
 

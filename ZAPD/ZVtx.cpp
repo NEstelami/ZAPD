@@ -33,23 +33,17 @@ void ZVtx::ParseRawData()
 	a = rawData[rawDataIndex + 15];
 }
 
+Declaration* ZVtx::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	Declaration* decl = ZResource::DeclareVar(prefix, bodyStr);
+	decl->isExternal = true;
+	return decl;
+}
+
 std::string ZVtx::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b,
 	                             a);
-}
-
-std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string output = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	if (decl == nullptr)
-		decl = parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-								GetSourceTypeName(), name, output);
-	decl->isExternal = true;
-
-	return "";
 }
 
 bool ZVtx::DoesSupportArray() const

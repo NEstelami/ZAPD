@@ -83,20 +83,6 @@ std::string ZPath::GetBodySourceCode() const
 	return declaration;
 }
 
-std::string ZPath::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string declaration = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	if (decl == nullptr || decl->isPlaceholder)
-		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), pathways.size() * 8,
-		                            GetSourceTypeName(), name, pathways.size(), declaration);
-	else
-		decl->text = declaration;
-
-	return "";
-}
-
 std::string ZPath::GetSourceTypeName() const
 {
 	return "Path";

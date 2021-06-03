@@ -38,7 +38,7 @@ void ZMtx::DeclareVar(const std::string& prefix, const std::string& bodyStr) con
 	                       GetSourceTypeName(), auxName, bodyStr);
 }
 
-std::string ZMtx::GetBodySourceCode()
+std::string ZMtx::GetBodySourceCode() const
 {
 	std::string bodyStr = "\n";
 
@@ -53,20 +53,6 @@ std::string ZMtx::GetBodySourceCode()
 	}
 
 	return bodyStr;
-}
-
-std::string ZMtx::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
 }
 
 std::string ZMtx::GetSourceTypeName() const

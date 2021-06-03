@@ -177,20 +177,6 @@ std::string ZBackground::GetBodySourceCode()
 	return bodyStr;
 }
 
-std::string ZBackground::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
-}
-
 std::string ZBackground::GetDefaultName(const std::string& prefix) const
 {
 	return StringHelper::Sprintf("%sBackground_%06X", prefix.c_str(), rawDataIndex);

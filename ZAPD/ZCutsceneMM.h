@@ -16,7 +16,6 @@ public:
 	virtual ~ZCutsceneMM();
 
 	std::string GetBodySourceCode() const override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
 	uint32_t getSegmentOffset() const override { return segmentOffset; }
 

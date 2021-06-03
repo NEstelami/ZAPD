@@ -10,7 +10,6 @@ public:
 
 	void ParseRawData() override;
 	std::string GetBodySourceCode() const;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceTypeName() const override;

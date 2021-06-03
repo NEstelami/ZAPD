@@ -38,7 +38,6 @@ public:
 
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
 	std::string GetBodySourceCode() const;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;

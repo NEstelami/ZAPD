@@ -211,20 +211,6 @@ std::string ZCollisionHeader::GetDefaultName(const std::string& prefix) const
 	return StringHelper::Sprintf("%sCol_%06X", prefix.c_str(), rawDataIndex);
 }
 
-std::string ZCollisionHeader::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
-}
-
 std::string ZCollisionHeader::GetSourceTypeName() const
 {
 	return "CollisionHeader";

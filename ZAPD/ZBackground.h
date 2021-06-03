@@ -28,7 +28,6 @@ public:
 	std::string GetExternalExtension() const override;
 	void Save(const fs::path& outFolder) override;
 	std::string GetBodySourceCode();
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 	std::string GetDefaultName(const std::string& prefix) const override;
 
 	std::string GetSourceTypeName() const override;

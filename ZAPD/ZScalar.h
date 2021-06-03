@@ -46,7 +46,6 @@ public:
 	void ParseRawData() override;
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	std::string GetBodySourceCode() const override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	bool DoesSupportArray() const override;
 	std::string GetSourceTypeName() const override;
