@@ -36,6 +36,7 @@ public:
 	std::vector<ZResource*> resources;
 	uint32_t segment;
 	uint32_t baseAddress, rangeStart, rangeEnd;
+	bool isExternalFile = false;
 
 	ZFile(const fs::path& nOutPath, std::string nName);
 	ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,

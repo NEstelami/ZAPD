@@ -65,14 +65,6 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 {
 	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 
-	scene = Globals::Instance->lastScene;
-
-	if (std::string(reader->Name()) == "Scene")
-	{
-		scene = this;
-		Globals::Instance->lastScene = this;
-	}
-
 	uint32_t cmdCount = UINT32_MAX;
 
 	if (name == "syotes_room_0")
@@ -421,11 +413,6 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 	return 0;
 }
 
-std::string ZRoom::GetSourceOutputHeader(const std::string& prefix)
-{
-	return "\n" + extDefines + "\n\n";
-}
-
 std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 {
 	sourceOutput = "";
@@ -435,8 +422,13 @@ std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
 	sourceOutput += "#include \"z64cutscene_commands.h\"\n";
 	sourceOutput += "#include \"variables.h\"\n";
 
-	if (scene != nullptr)
-		sourceOutput += scene->parent->GetHeaderInclude();
+	if (Globals::Instance->HasSegment(SEGMENT_SCENE))
+	{
+		for (const auto& sceneFile : Globals::Instance->segmentRefFiles[SEGMENT_SCENE])
+		{
+			sourceOutput += sceneFile->GetHeaderInclude();
+		}
+	}
 
 	ProcessCommandSets();
 

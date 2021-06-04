@@ -323,8 +323,6 @@ protected:
 	void Opcode_G_ENDDL(std::string prefix, char* line);
 
 public:
-	std::string sceneSegName;
-	ZRoom* scene;
 	std::vector<uint64_t> instructions;
 	std::string curPrefix;
 
@@ -337,7 +335,6 @@ public:
 	DListType dListType;
 
 	std::map<uint32_t, std::vector<ZVtx>> vertices;
-	std::map<uint32_t, std::string> vtxDeclarations;
 	std::vector<ZDisplayList*> otherDLists;
 
 	ZTexture* lastTexture = nullptr;
@@ -345,7 +342,6 @@ public:
 
 	std::vector<uint32_t> references;
 
-	std::string defines;  // Hack for special cases where vertex arrays intersect...
 	std::vector<uint8_t> fileData;
 	std::vector<ZMtx> mtxList;
 
@@ -362,8 +358,7 @@ public:
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, ZFile* parent,
-	                            std::string prefix, int32_t texWidth, int32_t texHeight,
+	static bool TextureGenCheck(int32_t texWidth, int32_t texHeight,
 	                            uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
 	                            F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
 	                            ZDisplayList* self);

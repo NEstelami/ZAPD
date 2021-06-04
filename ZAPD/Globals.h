@@ -69,7 +69,6 @@ public:
 	std::vector<ZFile*> externalFiles;
 	std::vector<int32_t> segments;
 	std::map<int32_t, std::vector<ZFile*>> segmentRefFiles;
-	ZRoom* lastScene;
 	std::map<uint32_t, std::string> symbolMap;
 
 	Globals();

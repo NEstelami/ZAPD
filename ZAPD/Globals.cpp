@@ -18,7 +18,6 @@ Globals::Globals()
 	profile = false;
 	useLegacyZDList = false;
 	useExternalResources = true;
-	lastScene = nullptr;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
 }
 
