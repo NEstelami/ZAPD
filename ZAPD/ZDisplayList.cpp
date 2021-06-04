@@ -2036,13 +2036,7 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 
 				if (parent->GetDeclaration(texAddr) == nullptr)
 				{
-					auto filepath = Globals::Instance->outputPath /
-									Path::GetFileNameWithoutExtension(tex->GetName());
-					auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-														tex->GetExternalExtension().c_str());
-					parent->AddDeclarationIncludeArray(texAddr, filename, tex->GetRawDataSize(),
-														tex->GetSourceTypeName(), tex->GetName(),
-														0);
+					tex->DeclareVar(self->GetName(), "");
 				}
 
 				return true;
@@ -2071,13 +2065,7 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 
 				if (scene->parent->GetDeclaration(texAddr) == nullptr)
 				{
-					auto filepath = Globals::Instance->outputPath /
-									Path::GetFileNameWithoutExtension(tex->GetName());
-					auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-														tex->GetExternalExtension().c_str());
-					scene->parent->AddDeclarationIncludeArray(texAddr, filename, tex->GetRawDataSize(),
-															tex->GetSourceTypeName(), tex->GetName(),
-															0);
+					tex->DeclareVar(self->GetName(), "");
 				}
 			}
 			return true;

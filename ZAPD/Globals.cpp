@@ -33,47 +33,6 @@ Globals::~Globals()
 	}
 }
 
-std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
-{
-	if (segmentRefs.find(segNumber) != segmentRefs.end())
-	{
-		if (segmentRefFiles.find(segNumber) == segmentRefFiles.end())
-		{
-			XMLDocument doc;
-			std::string filePath = segmentRefs[segNumber];
-			XMLError eResult = doc.LoadFile(filePath.c_str());
-
-			if (eResult != tinyxml2::XML_SUCCESS)
-				return "ERROR";
-
-			XMLNode* root = doc.FirstChild();
-
-			if (root == nullptr)
-				return "ERROR";
-
-			for (XMLElement* child = root->FirstChildElement(); child != NULL;
-			     child = child->NextSiblingElement())
-			{
-				if (std::string(child->Name()) == "File")
-				{
-					ZFile* file = new ZFile(fileMode, child, "", "", "", filePath, true);
-					file->GeneratePlaceholderDeclarations();
-					AddSegment(segNumber, file);
-					break;
-				}
-			}
-		}
-
-		for (auto& file : segmentRefFiles[segNumber])
-		{
-			if (file->HasDeclaration(symbolAddress))
-				return file->GetDeclarationPtrName((segNumber << 0x18) | symbolAddress);
-		}
-	}
-
-	return "ERROR";
-}
-
 void Globals::ReadConfigFile(const std::string& configFilePath)
 {
 	XMLDocument doc;
@@ -97,12 +56,6 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		{
 			std::string fileName = std::string(child->Attribute("File"));
 			GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-		}
-		else if (std::string(child->Name()) == "Segment")
-		{
-			std::string fileName = std::string(child->Attribute("File"));
-			int32_t segNumber = child->IntAttribute("Number");
-			segmentRefs[segNumber] = fileName;
 		}
 		else if (std::string(child->Name()) == "ActorList")
 		{
@@ -212,7 +165,6 @@ void Globals::AddSegment(int32_t segment, ZFile* file)
 	if (segmentRefFiles.find(segment) == segmentRefFiles.end())
 		segmentRefFiles[segment] = std::vector<ZFile*>();
 
-	segmentRefs[segment] = file->GetXmlFilePath();
 	segmentRefFiles[segment].push_back(file);
 }
 

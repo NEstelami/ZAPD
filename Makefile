@@ -14,6 +14,8 @@ ifneq ($(DEBUG),0)
   DEPRECATION_OFF = 1
   CFLAGS += -g3 -DDEVELOPMENT -D_DEBUG
   COPYCHECK_ARGS += --devel
+else
+  CFLAGS += -Werror
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
