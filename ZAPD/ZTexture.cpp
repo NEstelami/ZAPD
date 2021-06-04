@@ -21,10 +21,9 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("TlutOffset");
 }
 
-void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                              uint32_t nRawDataIndex)
+void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
 
@@ -35,8 +34,8 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<ui
 	                                   name, 0);
 }
 
-void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-                          int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette)
+void ZTexture::FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
+                          TextureType nType, bool nIsPalette)
 {
 	width = nWidth;
 	height = nHeight;
@@ -45,8 +44,6 @@ void ZTexture::FromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDat
 	isPalette = nIsPalette;
 	name = GetDefaultName(parent->GetName());
 	outName = name;
-
-	rawData.assign(nRawData.begin(), nRawData.end());
 
 	ParseRawData();
 	CalcHash();
@@ -75,17 +72,17 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (!StringHelper::HasOnlyDigits(widthXml))
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-			"ZTexture::ParseXML: Error in %s\n"
-			"\t Value of 'Width' attribute has non-decimal digits: '%s'.\n",
-			name.c_str(), widthXml.c_str()));
+		throw std::runtime_error(
+			StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
+		                          "\t Value of 'Width' attribute has non-decimal digits: '%s'.\n",
+		                          name.c_str(), widthXml.c_str()));
 	}
 	if (!StringHelper::HasOnlyDigits(heightXml))
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-			"ZTexture::ParseXML: Error in %s\n"
-			"\t Value of 'Height' attribute has non-decimal digits: '%s'.\n",
-			name.c_str(), heightXml.c_str()));
+		throw std::runtime_error(
+			StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
+		                          "\t Value of 'Height' attribute has non-decimal digits: '%s'.\n",
+		                          name.c_str(), heightXml.c_str()));
 	}
 
 	width = StringHelper::StrToL(widthXml);
@@ -348,7 +345,7 @@ void ZTexture::DeclareReferences(const std::string& prefix)
 			                                           GetExternalExtension().c_str());
 
 			tlut = new ZTexture(parent);
-			tlut->FromBinary(rawData, tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
+			tlut->FromBinary(tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
 			parent->AddTextureResource(tlutOffset, tlut);
 			parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(),
 			                                   tlut->GetSourceTypeName(), tlut->GetName(), 0);

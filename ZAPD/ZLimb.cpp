@@ -217,7 +217,7 @@ std::string Struct_800A598C::GetSourceTypeName()
 
 Struct_800A5E28::Struct_800A5E28(ZFile* parent, const std::vector<uint8_t>& nRawData,
                                  uint32_t fileOffset)
-	: parent(parent), rawData(nRawData)
+	: parent(parent)
 {
 	unk_0 = BitConverter::ToUInt16BE(nRawData, fileOffset + 0x00);
 	unk_2 = BitConverter::ToUInt16BE(nRawData, fileOffset + 0x02);
@@ -282,9 +282,9 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 		uint32_t unk_8_Offset = Seg2Filespace(unk_8, parent->baseAddress);
 
 		int32_t dlistLength = ZDisplayList::GetDListLength(
-			rawData, unk_8_Offset,
+			parent->GetRawData(), unk_8_Offset,
 			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-		unk_8_dlist = new ZDisplayList(rawData, unk_8_Offset, dlistLength, parent);
+		unk_8_dlist = new ZDisplayList(unk_8_Offset, dlistLength, parent);
 
 		std::string dListStr =
 			StringHelper::Sprintf("%sSkinLimbDL_%06X", prefix.c_str(), unk_8_Offset);
@@ -354,11 +354,9 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("Type");
 }
 
-ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-             uint32_t nRawDataIndex, ZFile* nParent)
+ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent)
 	: ZLimb(nParent)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	type = limbType;
@@ -368,10 +366,9 @@ ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, const std::vector<ui
 	ParseRawData();
 }
 
-void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex)
+void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
@@ -429,6 +426,7 @@ void ZLimb::ParseRawData()
 {
 	ZResource::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	if (type == ZLimbType::Curve)
 	{
 		childIndex = rawData.at(rawDataIndex + 0);
@@ -607,9 +605,9 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 		StringHelper::Sprintf("%s%sLimbDL_%06X", prefix.c_str(), limbPrefix.c_str(), dListOffset);
 
 	int32_t dlistLength = ZDisplayList::GetDListLength(
-		rawData, dListOffset,
+		parent->GetRawData(), dListOffset,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	auto dList = new ZDisplayList(rawData, dListOffset, dlistLength, parent);
+	auto dList = new ZDisplayList(dListOffset, dlistLength, parent);
 	dList->SetName(dListStr);
 	dList->GetSourceOutputCode(prefix);
 	return dListStr;

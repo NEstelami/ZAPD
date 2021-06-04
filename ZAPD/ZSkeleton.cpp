@@ -16,10 +16,9 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 }
 
 ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string& prefix,
-                     const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex, ZFile* nParent)
+                     uint32_t nRawDataIndex, ZFile* nParent)
 	: ZSkeleton(nParent)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 
@@ -35,9 +34,10 @@ ZSkeleton::ZSkeleton(ZSkeletonType nType, ZLimbType nLimbType, const std::string
 
 	for (size_t i = 0; i < limbCount; i++)
 	{
-		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(rawData, ptr), parent->baseAddress);
+		uint32_t ptr2 =
+			Seg2Filespace(BitConverter::ToUInt32BE(parent->GetRawData(), ptr), parent->baseAddress);
 
-		ZLimb* limb = new ZLimb(limbType, prefix, rawData, ptr2, parent);
+		ZLimb* limb = new ZLimb(limbType, prefix, ptr2, parent);
 		limbs.push_back(limb);
 
 		ptr += 4;
@@ -95,15 +95,15 @@ void ZSkeleton::ParseRawData()
 {
 	ZResource::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	limbsArrayAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex);
 	limbCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4);
 	dListCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 8);
 }
 
-void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                               const uint32_t nRawDataIndex)
+void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
@@ -112,6 +112,7 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 	defaultPrefix.replace(0, 1, "s");  // replace g prefix with s for local variables
 	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
 
+	const auto& rawData = parent->GetRawData();
 	for (size_t i = 0; i < limbCount; i++)
 	{
 		uint32_t ptr2 = Seg2Filespace(BitConverter::ToUInt32BE(rawData, ptr), parent->baseAddress);
@@ -124,7 +125,7 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<u
 		ZLimb* limb = new ZLimb(parent);
 		limb->SetLimbType(limbType);
 		limb->SetName(limbName);
-		limb->ExtractFromXML(nullptr, rawData, ptr2);
+		limb->ExtractFromXML(nullptr, ptr2);
 		limbs.push_back(limb);
 
 		ptr += 4;

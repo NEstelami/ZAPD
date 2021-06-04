@@ -137,6 +137,7 @@ size_t ZScalar::GetRawDataSize() const
 
 void ZScalar::ParseRawData()
 {
+	const auto& rawData = parent->GetRawData();
 	switch (scalarType)
 	{
 	case ZScalarType::ZSCALAR_S8:
