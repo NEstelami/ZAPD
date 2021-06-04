@@ -20,9 +20,6 @@ Globals::Globals()
 	useExternalResources = true;
 	lastScene = nullptr;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
-
-	// TODO: don't hardcode
-	externalXmlFolder = "assets/xml/";
 }
 
 Globals::~Globals()
@@ -135,6 +132,30 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 			cfg.bgScreenWidth = child->IntAttribute("ScreenWidth", 320);
 			cfg.bgScreenHeight = child->IntAttribute("ScreenHeight", 240);
 		}
+		else if (std::string(child->Name()) == "ExternalXMLFolder")
+		{
+			if (cfg.externalXmlFolder == "")
+				cfg.externalXmlFolder = child->Attribute("Path");
+		}
+		else if (std::string(child->Name()) == "ExternalFile")
+		{
+			const char* xmlPathValue = child->Attribute("XmlPath");
+			if (xmlPathValue == nullptr)
+			{
+				throw std::runtime_error(
+					StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
+										"\t Missing 'XmlPath' attribute in `ExternalFile` element.\n"));
+			}
+			const char* outPathValue = child->Attribute("OutPath");
+			if (outPathValue == nullptr)
+			{
+				throw std::runtime_error(
+					StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
+										"\t Missing 'OutPath' attribute in `ExternalFile` element.\n"));
+			}
+
+			cfg.externalFiles.push_back(ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
+		}
 	}
 }
 
@@ -241,4 +262,9 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
 	return false;
+}
+
+ExternalFile::ExternalFile(fs::path nXmlPath, fs::path nOutPath)
+: xmlPath{nXmlPath}, outPath{nOutPath}
+{
 }

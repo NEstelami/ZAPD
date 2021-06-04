@@ -2000,7 +2000,7 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
                                    F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
                                    ZDisplayList* self)
 {
-	int32_t segmentNumber = GETSEGNUM(texSeg);
+	uint32_t segmentNumber = GETSEGNUM(texSeg);
 
 	if (!texIsPalette)
 		self->lastTexture = nullptr;
@@ -2014,7 +2014,7 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 	if ((texSeg != 0 || texAddr != 0) && texWidth > 0 && texHeight > 0 && texLoaded &&
 	    Globals::Instance->HasSegment(segmentNumber))
 	{
-		if (segmentNumber != SEGMENT_SCENE)
+		if (segmentNumber == parent->segment)
 		{
 			if (texAddr < parent->GetRawData().size())
 			{
@@ -2048,7 +2048,7 @@ bool ZDisplayList::TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, 
 				return true;
 			}
 		}
-		else if (scene != nullptr)
+		else if (segmentNumber == SEGMENT_SCENE && scene != nullptr)
 		{
 			if (scene->parent->GetDeclaration(texAddr) == nullptr)
 			{

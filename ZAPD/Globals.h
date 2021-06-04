@@ -19,10 +19,17 @@ struct TexturePoolEntry
 	fs::path path = "";  // Path to Shared Texture
 };
 
+class ExternalFile
+{
+public:
+	fs::path xmlPath, outPath;
+
+	ExternalFile(fs::path nXmlPath, fs::path nOutPath);
+};
+
 class GameConfig
 {
 public:
-	std::map<int32_t, std::string> segmentRefs;
 	std::map<int32_t, ZFile*> segmentRefFiles;
 	std::map<uint32_t, std::string> symbolMap;
 	std::vector<std::string> actorList;
@@ -31,6 +38,10 @@ public:
 
 	// ZBackground
 	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
+
+	// ExternalFile
+	fs::path externalXmlFolder;
+	std::vector<ExternalFile> externalFiles;
 
 	GameConfig() = default;
 };
@@ -48,7 +59,7 @@ public:
 	bool useLegacyZDList;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
 	ZFileMode fileMode;
-	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath, externalXmlFolder;
+	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
 	TextureType texType;
 	ZGame game;
 	GameConfig cfg;
