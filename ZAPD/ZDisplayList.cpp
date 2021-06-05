@@ -1783,10 +1783,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			for (auto vtx : item.second)
 			{
-				if (curAddr != item.first)
-					declaration += "\n";
-
-				declaration += StringHelper::Sprintf("\t%s,", vtx.GetBodySourceCode().c_str());
+				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
 
 				curAddr += 16;
 			}
@@ -1850,10 +1847,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			for (auto& vtx : item)
 			{
-				if (curAddr != vtxKeys[i])
-					declaration += "\n";
-
-				declaration += StringHelper::Sprintf("\t%s,", vtx.GetBodySourceCode().c_str());
+				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
 
 				curAddr += 16;
 			}
