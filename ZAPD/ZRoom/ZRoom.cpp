@@ -51,6 +51,7 @@ ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
 	roomCount = -1;
 	canHaveInner = true;
+	RegisterOptionalAttribute("HackMode");
 }
 
 ZRoom::~ZRoom()
@@ -59,12 +60,10 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           const uint32_t nRawDataIndex)
+void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	// room->scene = nScene;
 	scene = Globals::Instance->lastScene;
 
 	if (std::string(reader->Name()) == "Scene")
@@ -81,7 +80,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 		cmdCount = 0;
 	}
 
-	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
+	for (XMLElement* child = reader->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		std::string childName =
@@ -97,12 +96,13 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
-				rawData, address,
-				ZDisplayList::GetDListLength(rawData, address,
+				address,
+				ZDisplayList::GetDListLength(parent->GetRawData(), address,
 			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                  DListType::F3DEX :
                                                  DListType::F3DZEX),
 				parent);
+			dList->SetInnerNode(true);
 
 			dList->GetSourceOutputCode(name);
 			delete dList;
@@ -112,9 +112,9 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			// ZCutscene* cutscene = new ZCutscene(rawData, address, 9999, parent);
 			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->ExtractFromXML(child, rawData, address);
+			cutscene->SetInnerNode(true);
+			cutscene->ExtractFromXML(child, address);
 
 			cutscene->GetSourceOutputCode(name);
 
@@ -142,6 +142,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 
 			// TODO: add this to command set
 			ZPath* pathway = new ZPath(parent);
+			pathway->SetInnerNode(true);
 			pathway->SetRawDataIndex(address);
 			pathway->ParseRawData();
 			pathway->DeclareReferences(name);
@@ -172,6 +173,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 	uint32_t commandsLeft = commandSet.commandCount;
 
+	const auto& rawData = parent->GetRawData();
 	while (shouldContinue)
 	{
 		if (commandsLeft <= 0)
@@ -288,11 +290,10 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 		cmd->ExtractCommandFromRoom(this, rawDataIndex);
 		cmd->DeclareReferences(GetName());
 
-		auto end = std::chrono::steady_clock::now();
-		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
 		if (Globals::Instance->profile)
 		{
+			auto end = std::chrono::steady_clock::now();
+			auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 			if (diff > 50)
 				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
 		}
@@ -391,7 +392,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
 	auto nextDecl = currentDecl;
 	std::advance(nextDecl, 1);
 	if (nextDecl == parent->declarations.end())
-		return rawData.size() - currentDecl->first;
+		return parent->GetRawData().size() - currentDecl->first;
 
 	return nextDecl->first - currentDecl->first;
 }
@@ -414,7 +415,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		if (cmdIndex + 1 < (int32_t)commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
 		else
-			return rawData.size() - commands[cmdIndex]->cmdAddress;
+			return parent->GetRawData().size() - commands[cmdIndex]->cmdAddress;
 	}
 
 	return 0;

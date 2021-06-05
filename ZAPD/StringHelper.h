@@ -1,10 +1,19 @@
 #pragma once
 
+#include <algorithm>
 #include <cstring>
 #include <numeric>
 #include <stdarg.h>
 #include <string>
 #include <vector>
+
+#ifndef __PRETTY_FUNCTION__
+#ifdef _MSC_VER
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#else
+#define __PRETTY_FUNCTION__ __func__
+#endif
+#endif
 
 class StringHelper
 {
@@ -99,4 +108,9 @@ public:
 	}
 
 	static std::string BoolStr(bool b) { return b ? "true" : "false"; }
+
+	static bool HasOnlyDigits(const std::string& str)
+	{
+		return std::all_of(str.begin(), str.end(), ::isdigit);
+	}
 };
