@@ -79,7 +79,7 @@ public:
 class PolygonTypeBase : public ZResource
 {
 public:
-	PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+	PolygonTypeBase(ZFile* nParent, uint32_t nRawDataIndex,
 	                ZRoom* nRoom);
 
 	void DeclareAndGenerateOutputCode(const std::string& prefix);
@@ -110,7 +110,7 @@ protected:
 	std::vector<BgImage> multiList;
 
 public:
-	PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+	PolygonType1(ZFile* nParent, uint32_t nRawDataIndex,
 	             ZRoom* nRoom);
 
 	void ParseRawData() override;
@@ -126,7 +126,7 @@ public:
 class PolygonType2 : public PolygonTypeBase
 {
 public:
-	PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+	PolygonType2(ZFile* nParent, uint32_t nRawDataIndex,
 	             ZRoom* nRoom);
 
 	void ParseRawData() override;

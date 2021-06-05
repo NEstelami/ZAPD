@@ -22,15 +22,15 @@ void SetMesh::ParseRawData()
 	switch (meshHeaderType)
 	{
 	case 0:
-		polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
+		polyType = std::make_shared<PolygonType2>(parent, segmentOffset, zRoom);
 		break;
 
 	case 1:
-		polyType = std::make_shared<PolygonType1>(parent, parentRawData, segmentOffset, zRoom);
+		polyType = std::make_shared<PolygonType1>(parent, segmentOffset, zRoom);
 		break;
 
 	case 2:
-		polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
+		polyType = std::make_shared<PolygonType2>(parent, segmentOffset, zRoom);
 		break;
 
 	default:
@@ -294,11 +294,12 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 	uint32_t backAddress = Seg2Filespace(ptr, parent->baseAddress);
 
 	ZBackground* background = new ZBackground(parent);
-	std::string defaultName = background->GetDefaultName(prefix);
+	background->ExtractFromFile(backAddress);
 
+	std::string defaultName = background->GetDefaultName(prefix);
 	background->SetName(defaultName);
 	background->SetOutName(defaultName);
-	background->ExtractFromFile(backAddress);
+
 	background->DeclareVar(prefix, "");
 	parent->resources.push_back(background);
 
@@ -389,10 +390,11 @@ ZResourceType BgImage::GetResourceType() const
 
 /* PolygonType section */
 
-PolygonTypeBase::PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData,
+PolygonTypeBase::PolygonTypeBase(ZFile* nParent,
                                  uint32_t nRawDataIndex, ZRoom* nRoom)
 	: ZResource(nParent), zRoom{nRoom}
 {
+	rawDataIndex = nRawDataIndex;
 	type = BitConverter::ToUInt8BE(parent->GetRawData(), rawDataIndex);
 }
 
@@ -432,9 +434,9 @@ ZResourceType PolygonTypeBase::GetResourceType() const
 	return ZResourceType::Error;
 }
 
-PolygonType1::PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData,
+PolygonType1::PolygonType1(ZFile* nParent,
                            uint32_t nRawDataIndex, ZRoom* nRoom)
-	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom), single(nParent)
+	: PolygonTypeBase(nParent, nRawDataIndex, nRoom), single(nParent)
 {
 }
 
@@ -569,9 +571,9 @@ std::string PolygonType1::GetSourceTypeName() const
 	// return "PolygonType1";
 }
 
-PolygonType2::PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData,
+PolygonType2::PolygonType2(ZFile* nParent,
                            uint32_t nRawDataIndex, ZRoom* nRoom)
-	: PolygonTypeBase(nParent, nRawData, nRawDataIndex, nRoom)
+	: PolygonTypeBase(nParent, nRawDataIndex, nRoom)
 {
 }
 

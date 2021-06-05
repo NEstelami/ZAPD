@@ -355,7 +355,7 @@ void ZRoom::ProcessCommandSets()
  */
 void ZRoom::SyotesRoomHack()
 {
-	PolygonType2 poly(parent, parent->GetRawData(), 0, this);
+	PolygonType2 poly(parent, 0, this);
 
 	poly.ParseRawData();
 	poly.DeclareReferences(GetName());

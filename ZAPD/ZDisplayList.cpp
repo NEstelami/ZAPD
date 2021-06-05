@@ -86,6 +86,11 @@ Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::stri
 	return decl;
 }
 
+std::string ZDisplayList::GetDefaultName(const std::string& prefix) const
+{
+	return StringHelper::Sprintf("%sDL_%06X", prefix.c_str(), rawDataIndex);
+}
+
 void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, std::string prefix,
                                char* line)
 {
@@ -421,7 +426,7 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 	size_t rawDataSize = rawData.size();
 	while (true)
 	{
-		if (ptr > rawDataSize)
+		if (ptr >= rawDataSize)
 		{
 			throw std::runtime_error(
 				StringHelper::Sprintf("%s: Fatal error.\n"

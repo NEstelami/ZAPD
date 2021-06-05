@@ -351,7 +351,8 @@ public:
 
 	void ParseRawData() override;
 
-	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+	std::string GetDefaultName(const std::string& prefix) const override;
 
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t texAddr,
