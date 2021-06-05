@@ -47,6 +47,7 @@ void ErrorHandler(int sig)
 
 	fprintf(stderr, "\nZAPD crashed. (Signal: %i)\n", sig);
 
+	// Feel free to add more crash messages.
 	const char* crashEasterEgg[] = {
 		"\tYou've met with a terrible fate, haven't you?",
 		"\tSEA BEARS FOAM. SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY: CRASSSH!",
@@ -92,12 +93,28 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
+	// Syntax: ZAPD.out [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
 
 	if (argc < 2)
 	{
-		printf("ZAPD.exe (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
+		printf("ZAPD.out (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
 		return 1;
+	}
+
+	for (int i = 1; i < argc; i++)
+	{
+		if (!strcmp(argv[i], "--version"))
+		{
+			printf("ZAPD.out %s\n", gBuildHash);
+			return 0;
+		}
+		else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h"))
+		{
+			printf("Congratulations!\n");
+			printf("You just found the (unimplemented and undocumented) ZAPD's help message.\n");
+			printf("Feel free to implement it if you want :D\n");
+			return 0;
+		}
 	}
 
 	Globals* g = new Globals();

@@ -62,10 +62,9 @@ ZRoom::~ZRoom()
 		delete cmd;
 }
 
-void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                           uint32_t nRawDataIndex)
+void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	if (hackMode == "syotes_room")
 	{
@@ -77,10 +76,9 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8
 	}
 }
 
-void ZRoom::ExtractFromBinary(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+void ZRoom::ExtractFromBinary(uint32_t nRawDataIndex,
                               ZResourceType parentType)
 {
-	rawData.assign(nRawData.begin(), nRawData.end());
 	rawDataIndex = nRawDataIndex;
 	name = GetDefaultName(parent->GetName());
 
@@ -149,6 +147,7 @@ void ZRoom::ParseRawData()
 	uint32_t currentIndex = 0;
 	uint32_t currentPtr = rawDataIndex;
 
+	const auto& rawData = parent->GetRawData();
 	while (shouldContinue)
 	{
 		RoomCommand opcode = static_cast<RoomCommand>(rawData.at(currentPtr));
@@ -369,7 +368,7 @@ size_t ZRoom::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
 	auto nextDecl = currentDecl;
 	std::advance(nextDecl, 1);
 	if (nextDecl == parent->declarations.end())
-		return rawData.size() - currentDecl->first;
+		return parent->GetRawData().size() - currentDecl->first;
 
 	return nextDecl->first - currentDecl->first;
 }
@@ -392,7 +391,7 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 		if (cmdIndex + 1 < (int32_t)commands.size())
 			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
 		else
-			return rawData.size() - commands[cmdIndex]->cmdAddress;
+			return parent->GetRawData().size() - commands[cmdIndex]->cmdAddress;
 	}
 
 	return 0;

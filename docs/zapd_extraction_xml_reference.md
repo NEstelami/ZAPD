@@ -1,10 +1,10 @@
-# ZAPD extraction xml reference
+# ZAPD extraction XML reference
 
 This document aims to be a small reference of how to create a compatible xml file for ZAPD.
 
 ## Table of contents
 
-- [ZAPD extraction xml reference](#zapd-extraction-xml-reference)
+- [ZAPD extraction XML reference](#zapd-extraction-xml-reference)
   - [Table of contents](#table-of-contents)
   - [Basic XML](#basic-xml)
   - [Resources types](#resources-types)
