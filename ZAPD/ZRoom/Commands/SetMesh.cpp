@@ -250,7 +250,7 @@ BgImage::BgImage(ZFile* nParent)
 {
 }
 
-BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+BgImage::BgImage(bool nIsSubStruct, const std::string& prefix,
                  uint32_t nRawDataIndex, ZFile* nParent)
 	: ZResource(nParent)
 {
@@ -468,7 +468,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 	switch (format)
 	{
 	case 1:
-		single = BgImage(true, prefix, parent->GetRawData(), rawDataIndex + 0x08, parent);
+		single = BgImage(true, prefix, rawDataIndex + 0x08, parent);
 		break;
 
 	case 2:
@@ -478,8 +478,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 			uint32_t auxPtr = listAddress;
 			for (size_t i = 0; i < count; ++i)
 			{
-				BgImage bg(false, prefix, rawData, auxPtr,
-				           parent);
+				BgImage bg(false, prefix, auxPtr, parent);
 				multiList.push_back(bg);
 				auxPtr += bg.GetRawDataSize();
 				bgImageArrayBody += bg.GetBodySourceCode(true);

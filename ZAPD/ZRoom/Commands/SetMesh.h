@@ -66,7 +66,7 @@ protected:
 
 public:
 	BgImage(ZFile* nParent);
-	BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+	BgImage(bool nIsSubStruct, const std::string& prefix,
 	        uint32_t nRawDataIndex, ZFile* nParent);
 
 	std::string GetBodySourceCode(bool arrayElement) const;

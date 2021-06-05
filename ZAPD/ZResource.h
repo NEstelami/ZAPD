@@ -106,8 +106,6 @@ public:
 	virtual size_t GetRawDataSize() const = 0;
 	virtual DeclarationAlignment GetDeclarationAlignment() const;
 	virtual DeclarationPadding GetDeclarationPadding() const;
-	virtual const std::vector<uint8_t>& GetRawData() const;
-	virtual void SetRawData(const std::vector<uint8_t>& nData);
 	void SetInnerNode(bool inner);
 	bool WasDeclaredInXml() const;
 

@@ -173,16 +173,6 @@ DeclarationPadding ZResource::GetDeclarationPadding() const
 	return DeclarationPadding::None;
 }
 
-const std::vector<uint8_t>& ZResource::GetRawData() const
-{
-	return rawData;
-}
-
-void ZResource::SetRawData(const std::vector<uint8_t>& nData)
-{
-	rawData = nData;
-}
-
 bool ZResource::WasDeclaredInXml() const
 {
 	return declaredInXml;

@@ -159,6 +159,7 @@ void ZLinkAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	segmentAddress = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 }
 
