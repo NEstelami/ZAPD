@@ -76,8 +76,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 	}
 }
 
-void ZRoom::ExtractFromBinary(uint32_t nRawDataIndex,
-                              ZResourceType parentType)
+void ZRoom::ExtractFromBinary(uint32_t nRawDataIndex, ZResourceType parentType)
 {
 	rawDataIndex = nRawDataIndex;
 	name = GetDefaultName(parent->GetName());

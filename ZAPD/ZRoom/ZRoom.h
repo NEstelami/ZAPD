@@ -18,10 +18,8 @@ public:
 	ZRoom(ZFile* nParent);
 	virtual ~ZRoom();
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, 
-	                    uint32_t nRawDataIndex) override;
-	void ExtractFromBinary(uint32_t nRawDataIndex,
-	                       ZResourceType parentType);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
+	void ExtractFromBinary(uint32_t nRawDataIndex, ZResourceType parentType);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;

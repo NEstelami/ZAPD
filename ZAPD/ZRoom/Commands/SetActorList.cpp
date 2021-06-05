@@ -46,8 +46,7 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 	for (auto& entry : actors)
 	{
 		entry.SetLargestActorName(largestlength);
-		declaration +=
-			StringHelper::Sprintf("\t{ %s },", entry.GetBodySourceCode().c_str());
+		declaration += StringHelper::Sprintf("\t{ %s },", entry.GetBodySourceCode().c_str());
 
 		if (index < actors.size() - 1)
 			declaration += "\n";
@@ -66,7 +65,6 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 		actors.size() * entry.GetRawDataSize(), entry.GetSourceTypeName(),
 		StringHelper::Sprintf("%sActorList_%06X", prefix.c_str(), segmentOffset),
 		GetActorListArraySize(), declaration);
-	
 }
 
 std::string SetActorList::GetBodySourceCode() const
@@ -124,14 +122,15 @@ std::string ActorSpawnEntry::GetBodySourceCode() const
 {
 	std::string body = "";
 
-	std::string actorNameFmt = StringHelper::Sprintf("%%-%zus ", largestActorName+1);
-	body = StringHelper::Sprintf(actorNameFmt.c_str(), (ZNames::GetActorName(actorNum) + ",").c_str());
+	std::string actorNameFmt = StringHelper::Sprintf("%%-%zus ", largestActorName + 1);
+	body =
+		StringHelper::Sprintf(actorNameFmt.c_str(), (ZNames::GetActorName(actorNum) + ",").c_str());
 
 	body += StringHelper::Sprintf("{ %6i, %6i, %6i }, ", posX, posY, posZ);
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
-		body += StringHelper::Sprintf("{ SPAWN_ROT_FLAGS(%#6hX, 0x%04X), "
-										"SPAWN_ROT_FLAGS(%#6hX, 0x%04X), "
-										"SPAWN_ROT_FLAGS(%#6hX, 0x%04X) }, ",
+		body += StringHelper::Sprintf("{ SPAWN_ROT_FLAGS(%#6hX, 0x%04X)"
+		                              ", SPAWN_ROT_FLAGS(%#6hX, 0x%04X)"
+		                              ", SPAWN_ROT_FLAGS(%#6hX, 0x%04X) }, ",
 		                              (rotX >> 7) & 0b111111111, rotX & 0b1111111,
 		                              (rotY >> 7) & 0b111111111, rotY & 0b1111111,
 		                              (rotZ >> 7) & 0b111111111, rotZ & 0b1111111);

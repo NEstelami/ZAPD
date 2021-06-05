@@ -260,9 +260,9 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
 			        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList* nList =
-				new ZDisplayList(h & 0x00FFFFFF,
-			                     GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType), parent);
+			ZDisplayList* nList = new ZDisplayList(
+				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
+				parent);
 			otherDLists.push_back(nList);
 
 			i++;
@@ -1731,7 +1731,8 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	{
 		ZDisplayList* newDList = new ZDisplayList(
 			dListOffset,
-			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType), self->parent);
+			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType),
+			self->parent);
 		newDList->parent = self->parent;
 		self->otherDLists.push_back(newDList);
 	}
@@ -2031,10 +2032,10 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(ZFile* parent, std::string prefix,
-                                   int32_t texWidth, int32_t texHeight, uint32_t texAddr,
-                                   uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
-                                   bool texLoaded, bool texIsPalette, ZDisplayList* self)
+bool ZDisplayList::TextureGenCheck(ZFile* parent, std::string prefix, int32_t texWidth,
+                                   int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
+                                   F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
+                                   bool texIsPalette, ZDisplayList* self)
 {
 	int32_t segmentNumber = GETSEGNUM(texSeg);
 
