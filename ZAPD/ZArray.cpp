@@ -60,9 +60,21 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	ZResource* res = resList.at(0);
+	if (res->IsExternalResource())
+	{
+		auto filepath = Globals::Instance->outputPath / name;
+		std::string includePath = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), res->GetExternalExtension().c_str());
+		Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, includePath, GetRawDataSize(), GetSourceTypeName(), name, arrayCnt);
+		decl->text = bodyStr;
+		return decl;
+	}
+	else 
+	{
+		return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
 	                                   GetDeclarationPadding(), GetRawDataSize(),
 	                                   GetSourceTypeName(), name, arrayCnt, bodyStr);
+	}
 }
 
 std::string ZArray::GetBodySourceCode() const

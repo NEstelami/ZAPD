@@ -525,6 +525,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 		declCheck->second->size = size;
 		declCheck->second->isArray = true;
 		declCheck->second->arrayItemCnt = arrayItemCnt;
+		declCheck->second->isExternal = true;
 
 		return declCheck->second;
 	}
@@ -534,6 +535,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
+		decl->isExternal = true;
 
 		declarations[address] = decl;
 		return declarations[address];
