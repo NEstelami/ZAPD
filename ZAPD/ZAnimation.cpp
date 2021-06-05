@@ -18,10 +18,9 @@ ZAnimation::ZAnimation(ZFile* nParent) : ZResource(nParent)
 
 void ZAnimation::ParseRawData()
 {
-	const uint8_t* data = rawData.data();
+	ZResource::ParseRawData();
 
-	// Read the header
-	frameCount = BitConverter::ToInt16BE(data, rawDataIndex + 0);
+	frameCount = BitConverter::ToInt16BE(parent->GetRawData(), rawDataIndex + 0);
 }
 
 void ZAnimation::Save(const fs::path& outFolder)
@@ -51,7 +50,7 @@ void ZNormalAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
 
-	const uint8_t* data = rawData.data();
+	const uint8_t* data = parent->GetRawData().data();
 
 	rotationValuesAddress = BitConverter::ToInt32BE(data, rawDataIndex + 4);
 	rotationIndicesAddress = BitConverter::ToInt32BE(data, rawDataIndex + 8);
@@ -241,6 +240,7 @@ void ZCurveAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	refIndex = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 	transformData = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	copyValues = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);

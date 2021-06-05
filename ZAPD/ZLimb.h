@@ -93,7 +93,6 @@ class Struct_800A5E28
 {
 protected:
 	ZFile* parent;
-	std::vector<uint8_t> rawData;
 
 	uint16_t unk_0;  // Vtx count
 	uint16_t unk_2;  // Length of unk_4

@@ -69,9 +69,8 @@ public:
 	virtual ~ZResource() = default;
 
 	// Parsing from File
-	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                            uint32_t nRawDataIndex);
-	virtual void ExtractFromFile(const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex);
+	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex);
+	virtual void ExtractFromFile(uint32_t nRawDataIndex);
 
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
@@ -115,7 +114,6 @@ public:
 protected:
 	std::string name;
 	std::string outName;
-	std::vector<uint8_t> rawData;
 	uint32_t rawDataIndex;
 	std::string sourceOutput;
 	bool isInner = false;  // Is this resource an inner node of another resource? inside of <Array>

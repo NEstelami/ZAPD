@@ -13,7 +13,8 @@ ZString::ZString(ZFile* nParent) : ZResource(nParent)
 void ZString::ParseRawData()
 {
 	size_t size = 0;
-	uint8_t* rawDataArr = rawData.data();
+	const auto& rawData = parent->GetRawData();
+	const auto& rawDataArr = rawData.data();
 	size_t rawDataSize = rawData.size();
 	for (size_t i = rawDataIndex; i < rawDataSize; ++i)
 	{
@@ -35,7 +36,7 @@ std::string ZString::GetBodySourceCode() const
 
 std::string ZString::GetSourceOutputHeader(const std::string& prefix)
 {
-	return StringHelper::Sprintf("#define %s_macro \"%s\"", name.c_str(), rawData.data());
+	return StringHelper::Sprintf("#define %s_macro \"%s\"", name.c_str(), strData.data());
 }
 
 std::string ZString::GetSourceTypeName() const

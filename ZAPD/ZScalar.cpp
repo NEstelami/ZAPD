@@ -132,6 +132,7 @@ size_t ZScalar::MapTypeToSize(const ZScalarType scalarType)
 
 void ZScalar::ParseRawData()
 {
+	const auto& rawData = parent->GetRawData();
 	switch (scalarType)
 	{
 	case ZScalarType::ZSCALAR_S8:

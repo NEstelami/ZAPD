@@ -257,12 +257,12 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 			index++;
 		}
 
-		zRoom->parent->AddDeclarationArray(
-			primColorSegmentOffset, DeclarationAlignment::Align4, primColors.size() * 5,
-			"F3DPrimColor",
-			StringHelper::Sprintf("%sAnimatedMaterialPrimColor_%06X", zRoom->GetName().c_str(),
-		                          primColorSegmentOffset),
-			primColors.size(), declaration);
+		zRoom->parent->AddDeclarationArray(primColorSegmentOffset, DeclarationAlignment::Align4,
+		                                   primColors.size() * 5, "F3DPrimColor",
+		                                   StringHelper::Sprintf("%sAnimatedMaterialPrimColor_%06X",
+		                                                         zRoom->GetName().c_str(),
+		                                                         primColorSegmentOffset),
+		                                   primColors.size(), declaration);
 	}
 
 	if (envColorSegmentOffset != 0)

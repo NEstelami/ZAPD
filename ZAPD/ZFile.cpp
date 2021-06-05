@@ -193,7 +193,7 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 			ZResource* nRes = nodeMap[nodeName](this);
 
 			if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
-				nRes->ExtractFromXML(child, rawData, rawDataIndex);
+				nRes->ExtractFromXML(child, rawDataIndex);
 
 			auto resType = nRes->GetResourceType();
 			if (resType == ZResourceType::Texture)

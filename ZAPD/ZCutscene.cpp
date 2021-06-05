@@ -132,6 +132,10 @@ DeclarationPadding ZCutscene::GetDeclarationPadding() const
 
 void ZCutscene::ParseRawData()
 {
+	ZResource::ParseRawData();
+
+	const auto& rawData = parent->GetRawData();
+
 	numCommands = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
 	commands = std::vector<CutsceneCommand*>();
 

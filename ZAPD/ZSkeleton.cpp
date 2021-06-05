@@ -58,6 +58,7 @@ void ZSkeleton::ParseRawData()
 {
 	ZResource::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	limbsArrayAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex);
 	limbCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4);
 	dListCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 8);
@@ -74,6 +75,8 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 		defaultPrefix.replace(0, 1, "s");
 
 	uint32_t ptr = Seg2Filespace(limbsArrayAddress, parent->baseAddress);
+
+	const auto& rawData = parent->GetRawData();
 	for (size_t i = 0; i < limbCount; i++)
 	{
 		segptr_t limbAddress = BitConverter::ToUInt32BE(rawData, ptr);
@@ -89,7 +92,7 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 			ZLimb* limb = new ZLimb(parent);
 			limb->SetLimbType(limbType);
 			limb->SetName(limbName);
-			limb->ExtractFromFile(rawData, limbOffset);
+			limb->ExtractFromFile(limbOffset);
 			limb->DeclareVar(defaultPrefix, "");
 			parent->AddResource(limb);
 		}

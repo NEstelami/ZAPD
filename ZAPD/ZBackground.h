@@ -11,8 +11,7 @@ protected:
 
 public:
 	ZBackground(ZFile* nParent);
-	ZBackground(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-	            uint32_t nRawDataIndex, ZFile* nParent);
+	ZBackground(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
 
 	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);

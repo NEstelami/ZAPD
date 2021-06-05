@@ -46,7 +46,8 @@ void ZBlob::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZBlob::ParseRawData()
 {
-	blobData.assign(rawData.data() + rawDataIndex, rawData.data() + rawDataIndex + blobSize);
+	blobData.assign(parent->GetRawData().begin() + rawDataIndex,
+	                parent->GetRawData().begin() + rawDataIndex + blobSize);
 }
 
 Declaration* ZBlob::DeclareVar(const std::string& prefix, const std::string& bodyStr)

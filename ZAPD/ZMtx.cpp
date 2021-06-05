@@ -9,12 +9,10 @@ ZMtx::ZMtx(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZMtx::ZMtx(const std::string& prefix, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
-           ZFile* nParent)
-	: ZResource(nParent)
+ZMtx::ZMtx(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent) : ZResource(nParent)
 {
-	name = GetDefaultName(prefix.c_str());
-	ExtractFromFile(nRawData, nRawDataIndex);
+	name = GetDefaultName(prefix);
+	ExtractFromFile(nRawDataIndex);
 	DeclareVar("", "");
 }
 
@@ -22,6 +20,7 @@ void ZMtx::ParseRawData()
 {
 	ZResource::ParseRawData();
 
+	const auto& rawData = parent->GetRawData();
 	for (size_t i = 0; i < 4; ++i)
 		for (size_t j = 0; j < 4; ++j)
 			mtx[i][j] = BitConverter::ToInt32BE(rawData, rawDataIndex + (i * 4 + j) * 4);

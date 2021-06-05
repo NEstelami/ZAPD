@@ -36,6 +36,7 @@ size_t ZCutsceneMM::GetRawDataSize() const
 void ZCutsceneMM::ParseRawData()
 {
 	segmentOffset = rawDataIndex;
+	const auto& rawData = parent->GetRawData();
 
 	numCommands = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
 	commands = std::vector<CutsceneCommand*>();
