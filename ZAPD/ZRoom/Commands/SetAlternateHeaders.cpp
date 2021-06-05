@@ -26,7 +26,7 @@ void SetAlternateHeaders::ParseRawDataLate()
 		if (address != 0 && parent->GetDeclaration(GETSEGOFFSET(address)) == nullptr)
 		{
 			ZRoom* altheader = new ZRoom(parent);
-			altheader->ExtractFromBinary(parent->GetRawData(), GETSEGOFFSET(address),
+			altheader->ExtractFromBinary(GETSEGOFFSET(address),
 			                             zRoom->GetResourceType());
 			altheader->DeclareReferences(parent->GetName());
 

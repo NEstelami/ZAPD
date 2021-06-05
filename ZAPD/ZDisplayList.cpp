@@ -263,7 +263,6 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 			ZDisplayList* nList =
 				new ZDisplayList(h & 0x00FFFFFF,
 			                     GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType), parent);
-			nList->scene = scene;
 			otherDLists.push_back(nList);
 
 			i++;
@@ -2023,7 +2022,7 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 
 void ZDisplayList::TextureGenCheck(std::string prefix)
 {
-	if (TextureGenCheck(scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg,
+	if (TextureGenCheck(parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg,
 	                    lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette, this))
 	{
 		lastTexAddr = 0;
@@ -2032,7 +2031,7 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string prefix,
+bool ZDisplayList::TextureGenCheck(ZFile* parent, std::string prefix,
                                    int32_t texWidth, int32_t texHeight, uint32_t texAddr,
                                    uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
                                    bool texLoaded, bool texIsPalette, ZDisplayList* self)
