@@ -1718,7 +1718,10 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 			self->parent->GetDeclaration(Seg2Filespace(seg, self->parent->baseAddress));
 		if (decl == nullptr)
 		{
-			ZMtx mtx(self->GetName(), Seg2Filespace(seg, self->parent->baseAddress), self->parent);
+			ZMtx mtx(self->parent);
+			mtx.SetName(mtx.GetDefaultName(self->GetName()));
+			mtx.ExtractFromFile(Seg2Filespace(seg, self->parent->baseAddress));
+			mtx.DeclareVar(self->GetName(), "");
 
 			mtx.GetSourceOutputCode(self->GetName());
 			self->mtxList.push_back(mtx);

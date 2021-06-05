@@ -8,7 +8,6 @@ class ZMtx : public ZResource
 {
 public:
 	ZMtx(ZFile* nParent);
-	ZMtx(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
 
 	void ParseRawData() override;
 

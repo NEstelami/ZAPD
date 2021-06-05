@@ -33,9 +33,8 @@ void ZVector::ParseRawData()
 
 	for (uint32_t i = 0; i < dimensions; i++)
 	{
-		ZScalar scalar(scalarType, parent);
-		scalar.rawDataIndex = currentRawDataIndex;
-		scalar.ParseRawData();
+		ZScalar scalar(parent);
+		scalar.ExtractFromBinary(currentRawDataIndex, scalarType);
 		currentRawDataIndex += scalar.GetRawDataSize();
 
 		scalars.push_back(scalar);

@@ -41,7 +41,8 @@ class ZScalar : public ZResource
 
 public:
 	ZScalar(ZFile* nParent);
-	ZScalar(const ZScalarType scalarType, ZFile* nParent);
+
+	void ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType);
 
 	void ParseRawData() override;
 	void ParseXML(tinyxml2::XMLElement* reader) override;

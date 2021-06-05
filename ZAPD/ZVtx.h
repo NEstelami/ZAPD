@@ -10,11 +10,6 @@
 class ZVtx : public ZResource
 {
 public:
-	int16_t x, y, z;
-	uint16_t flag;
-	int16_t s, t;
-	uint8_t r, g, b, a;
-
 	ZVtx(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -32,4 +27,8 @@ public:
 	DeclarationAlignment GetDeclarationAlignment() const override;
 
 protected:
+	int16_t x, y, z;
+	uint16_t flag;
+	int16_t s, t;
+	uint8_t r, g, b, a;
 };

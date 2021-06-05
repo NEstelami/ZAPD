@@ -14,9 +14,12 @@ ZScalar::ZScalar(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Type");
 }
 
-ZScalar::ZScalar(const ZScalarType scalarType, ZFile* nParent) : ZScalar(nParent)
+void ZScalar::ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType)
 {
-	this->scalarType = scalarType;
+	rawDataIndex = nRawDataIndex;
+	scalarType = nScalarType;
+
+	ParseRawData();
 }
 
 void ZScalar::ParseXML(tinyxml2::XMLElement* reader)

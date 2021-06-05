@@ -9,13 +9,6 @@ ZMtx::ZMtx(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZMtx::ZMtx(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent) : ZResource(nParent)
-{
-	name = GetDefaultName(prefix);
-	ExtractFromFile(nRawDataIndex);
-	DeclareVar("", "");
-}
-
 void ZMtx::ParseRawData()
 {
 	ZResource::ParseRawData();

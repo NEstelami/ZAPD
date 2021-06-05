@@ -293,7 +293,12 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 
 	uint32_t backAddress = Seg2Filespace(ptr, parent->baseAddress);
 
-	ZBackground* background = new ZBackground(prefix, backAddress, parent);
+	ZBackground* background = new ZBackground(parent);
+	std::string defaultName = background->GetDefaultName(prefix);
+
+	background->SetName(defaultName);
+	background->SetOutName(defaultName);
+	background->ExtractFromFile(backAddress);
 	background->DeclareVar(prefix, "");
 	parent->resources.push_back(background);
 

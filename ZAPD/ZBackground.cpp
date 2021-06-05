@@ -15,16 +15,6 @@ ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-ZBackground::ZBackground(const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent)
-	: ZResource(nParent)
-{
-	rawDataIndex = nRawDataIndex;
-	name = GetDefaultName(prefix.c_str());
-	outName = name;
-
-	ParseRawData();
-}
-
 void ZBackground::ParseRawData()
 {
 	ZResource::ParseRawData();
