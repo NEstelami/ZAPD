@@ -502,8 +502,8 @@ std::string HLVerticesIntermediette::OutputOBJ()
 	/*
 	for (auto& v : vertices)
 	{
-		output += StringHelper::Sprintf("v %f %f %f %i %i %i %i\n", (float)v.x * 0.1f,
-		                                (float)v.y * 0.1f, (float)v.z * 0.1f, v.r, v.g, v.b, v.a);
+	    output += StringHelper::Sprintf("v %f %f %f %i %i %i %i\n", (float)v.x * 0.1f,
+	                                    (float)v.y * 0.1f, (float)v.z * 0.1f, v.r, v.g, v.b, v.a);
 	}
 	*/
 
@@ -517,7 +517,7 @@ void HLVerticesIntermediette::OutputAssimp(aiScene* scene, std::vector<aiVector3
 	/*
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
-		verts->push_back(aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z));
+	    verts->push_back(aiVector3D(vertices[i].x, vertices[i].y, vertices[i].z));
 	}
 	*/
 }
@@ -531,19 +531,19 @@ void HLVerticesIntermediette::OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XM
 	/*
 	for (auto& v : vertices)
 	{
-		XMLElement* vElem = doc->NewElement("Vertex");
-		vElem->SetAttribute("X", v.x);
-		vElem->SetAttribute("Y", v.y);
-		vElem->SetAttribute("Z", v.z);
-		vElem->SetAttribute("Flag", v.flag);
-		vElem->SetAttribute("S", v.s);
-		vElem->SetAttribute("T", v.t);
-		vElem->SetAttribute("R", v.r);
-		vElem->SetAttribute("G", v.g);
-		vElem->SetAttribute("B", v.b);
-		vElem->SetAttribute("A", v.a);
+	    XMLElement* vElem = doc->NewElement("Vertex");
+	    vElem->SetAttribute("X", v.x);
+	    vElem->SetAttribute("Y", v.y);
+	    vElem->SetAttribute("Z", v.z);
+	    vElem->SetAttribute("Flag", v.flag);
+	    vElem->SetAttribute("S", v.s);
+	    vElem->SetAttribute("T", v.t);
+	    vElem->SetAttribute("R", v.r);
+	    vElem->SetAttribute("G", v.g);
+	    vElem->SetAttribute("B", v.b);
+	    vElem->SetAttribute("A", v.a);
 
-		element->InsertEndChild(vElem);
+	    element->InsertEndChild(vElem);
 	}
 	*/
 

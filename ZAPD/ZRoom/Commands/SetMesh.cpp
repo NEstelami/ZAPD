@@ -390,8 +390,7 @@ ZResourceType BgImage::GetResourceType() const
 
 /* PolygonType section */
 
-PolygonTypeBase::PolygonTypeBase(ZFile* nParent,
-                                 uint32_t nRawDataIndex, ZRoom* nRoom)
+PolygonTypeBase::PolygonTypeBase(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom)
 	: ZResource(nParent), zRoom{nRoom}
 {
 	rawDataIndex = nRawDataIndex;
@@ -434,8 +433,7 @@ ZResourceType PolygonTypeBase::GetResourceType() const
 	return ZResourceType::Error;
 }
 
-PolygonType1::PolygonType1(ZFile* nParent,
-                           uint32_t nRawDataIndex, ZRoom* nRoom)
+PolygonType1::PolygonType1(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom)
 	: PolygonTypeBase(nParent, nRawDataIndex, nRoom), single(nParent)
 {
 }
@@ -571,8 +569,7 @@ std::string PolygonType1::GetSourceTypeName() const
 	// return "PolygonType1";
 }
 
-PolygonType2::PolygonType2(ZFile* nParent,
-                           uint32_t nRawDataIndex, ZRoom* nRoom)
+PolygonType2::PolygonType2(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom)
 	: PolygonTypeBase(nParent, nRawDataIndex, nRoom)
 {
 }
