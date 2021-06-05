@@ -60,8 +60,9 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
-		                            GetSourceTypeName(), name, arrayCnt, bodyStr);
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetSourceTypeName(), name, arrayCnt, bodyStr);
 }
 
 std::string ZArray::GetBodySourceCode() const
@@ -73,7 +74,8 @@ std::string ZArray::GetBodySourceCode() const
 		const auto& res = resList[i];
 		output += "\t";
 
-		if (res->GetResourceType() == ZResourceType::Scalar || res->GetResourceType() == ZResourceType::Vertex)
+		if (res->GetResourceType() == ZResourceType::Scalar ||
+		    res->GetResourceType() == ZResourceType::Vertex)
 			output += resList.at(i)->GetBodySourceCode();
 		else
 			output += StringHelper::Sprintf("{ %s }", resList.at(i)->GetBodySourceCode().c_str());

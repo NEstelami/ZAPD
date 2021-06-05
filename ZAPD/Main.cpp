@@ -251,18 +251,19 @@ int main(int argc, char* argv[])
 	{
 		bool parseSuccessful;
 
-		for(auto& extFile : Globals::Instance->cfg.externalFiles)
+		for (auto& extFile : Globals::Instance->cfg.externalFiles)
 		{
-			fs::path externalXmlFilePath = Globals::Instance->cfg.externalXmlFolder / extFile.xmlPath;
+			fs::path externalXmlFilePath =
+				Globals::Instance->cfg.externalXmlFolder / extFile.xmlPath;
 			parseSuccessful = Parse(externalXmlFilePath, Globals::Instance->baseRomPath,
-		                            extFile.outPath, ZFileMode::ExternalFile);
+			                        extFile.outPath, ZFileMode::ExternalFile);
 
 			if (!parseSuccessful)
 				return 1;
 		}
 
 		parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-		                             Globals::Instance->outputPath, fileMode);
+		                        Globals::Instance->outputPath, fileMode);
 
 		if (!parseSuccessful)
 			return 1;
@@ -340,31 +341,32 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 			const char* xmlPathValue = child->Attribute("XmlPath");
 			if (xmlPathValue == nullptr)
 			{
-				throw std::runtime_error(
-					StringHelper::Sprintf("Parse: Fatal error in '%s'.\n"
-										"\t Missing 'XmlPath' attribute in `ExternalFile` element.\n",
-										xmlFilePath.c_str()));
+				throw std::runtime_error(StringHelper::Sprintf(
+					"Parse: Fatal error in '%s'.\n"
+					"\t Missing 'XmlPath' attribute in `ExternalFile` element.\n",
+					xmlFilePath.c_str()));
 			}
 			const char* outPathValue = child->Attribute("OutPath");
 			if (outPathValue == nullptr)
 			{
-				throw std::runtime_error(
-					StringHelper::Sprintf("Parse: Fatal error in '%s'.\n"
-										"\t Missing 'OutPath' attribute in `ExternalFile` element.\n",
-										xmlFilePath.c_str()));
+				throw std::runtime_error(StringHelper::Sprintf(
+					"Parse: Fatal error in '%s'.\n"
+					"\t Missing 'OutPath' attribute in `ExternalFile` element.\n",
+					xmlFilePath.c_str()));
 			}
 
-			fs::path externalXmlFilePath = Globals::Instance->cfg.externalXmlFolder / fs::path(xmlPathValue);
+			fs::path externalXmlFilePath =
+				Globals::Instance->cfg.externalXmlFolder / fs::path(xmlPathValue);
 			fs::path externalOutFilePath = fs::path(outPathValue);
 			// Recursion. What can go wrong?
 			Parse(externalXmlFilePath, basePath, externalOutFilePath, ZFileMode::ExternalFile);
 		}
 		else
 		{
-			throw std::runtime_error(
-				StringHelper::Sprintf("Parse: Fatal error in '%s'.\n\t A resource was found outside of "
-			                          "a File element: '%s'\n",
-			                          xmlFilePath.c_str(), child->Name()));
+			throw std::runtime_error(StringHelper::Sprintf(
+				"Parse: Fatal error in '%s'.\n\t A resource was found outside of "
+				"a File element: '%s'\n",
+				xmlFilePath.c_str(), child->Name()));
 		}
 	}
 

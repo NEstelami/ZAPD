@@ -1,9 +1,10 @@
 #include "ZBlob.h"
+
 #include "BitConverter.h"
 #include "File.h"
+#include "Globals.h"
 #include "Path.h"
 #include "StringHelper.h"
-#include "Globals.h"
 #include "ZFile.h"
 
 using namespace tinyxml2;
@@ -62,11 +63,11 @@ Declaration* ZBlob::DeclareVar(const std::string& prefix, const std::string& bod
 	std::string assetOutDir =
 		(Globals::Instance->outputPath / Path::GetFileNameWithoutExtension(GetOutName())).string();
 
-	std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
-												GetExternalExtension().c_str());
+	std::string incStr =
+		StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(), GetExternalExtension().c_str());
 
 	return parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
-								GetSourceTypeName(), auxName, 0);
+	                                          GetSourceTypeName(), auxName, 0);
 }
 
 std::string ZBlob::GetBodySourceCode() const

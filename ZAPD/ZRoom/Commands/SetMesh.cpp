@@ -242,16 +242,14 @@ ZResourceType PolygonDlist::GetResourceType() const
 	return ZResourceType::Error;
 }
 
-
 /* BgImage */
 
-BgImage::BgImage(ZFile* nParent)
-	: ZResource(nParent)
+BgImage::BgImage(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-BgImage::BgImage(bool nIsSubStruct, const std::string& prefix,
-                 uint32_t nRawDataIndex, ZFile* nParent)
+BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex,
+                 ZFile* nParent)
 	: ZResource(nParent)
 {
 	rawDataIndex = nRawDataIndex;
@@ -492,9 +490,9 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 			if (decl == nullptr)
 			{
 				parent->AddDeclarationArray(
-					listAddress, DeclarationAlignment::Align4, count * multiList.at(0).GetRawDataSize(),
-					multiList.at(0).GetSourceTypeName(), multiList.at(0).GetName().c_str(), count,
-					bgImageArrayBody);
+					listAddress, DeclarationAlignment::Align4,
+					count * multiList.at(0).GetRawDataSize(), multiList.at(0).GetSourceTypeName(),
+					multiList.at(0).GetName().c_str(), count, bgImageArrayBody);
 			}
 		}
 		break;

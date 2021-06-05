@@ -354,10 +354,9 @@ public:
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(int32_t texWidth, int32_t texHeight,
-	                            uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
-	                            F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
-	                            ZDisplayList* self);
+	static bool TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t texAddr,
+	                            uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
+	                            bool texLoaded, bool texIsPalette, ZDisplayList* self);
 	static int32_t GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 

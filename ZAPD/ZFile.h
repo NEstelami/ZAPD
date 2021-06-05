@@ -107,8 +107,7 @@ protected:
 	ZFileMode mode = ZFileMode::Invalid;
 
 	ZFile();
-	void ParseXML(tinyxml2::XMLElement* reader, std::string filename,
-	              bool placeholderMode);
+	void ParseXML(tinyxml2::XMLElement* reader, std::string filename, bool placeholderMode);
 	void DeclareResourceSubReferences();
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();

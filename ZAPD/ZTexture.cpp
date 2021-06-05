@@ -21,8 +21,8 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("TlutOffset");
 }
 
-void ZTexture::FromBinary(uint32_t nRawDataIndex,
-                          int32_t nWidth, int32_t nHeight, TextureType nType, bool nIsPalette)
+void ZTexture::FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
+                          TextureType nType, bool nIsPalette)
 {
 	width = nWidth;
 	height = nHeight;
@@ -746,8 +746,8 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix, const std::string& 
 	std::string incStr =
 		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 
-	return parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
-	                                   auxName, 0);
+	return parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
+	                                          GetSourceTypeName(), auxName, 0);
 }
 
 std::string ZTexture::GetBodySourceCode() const

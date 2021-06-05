@@ -65,11 +65,14 @@ Declaration* ZSymbol::DeclareVar(const std::string& prefix, const std::string& b
 
 	if (isArray)
 	{
-		return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(), GetSourceTypeName(), auxName, count, bodyStr);
+		return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+		                                   GetRawDataSize(), GetSourceTypeName(), auxName, count,
+		                                   bodyStr);
 	}
 	else
 	{
-		return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
+		return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+		                              GetSourceTypeName(), auxName, bodyStr);
 	}
 }
 

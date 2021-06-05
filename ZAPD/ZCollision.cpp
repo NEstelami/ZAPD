@@ -99,8 +99,8 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 	{
 		for (size_t i = 0; i < waterBoxes.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("\t{ %s },",
-			                                     waterBoxes[i].GetBodySourceCode().c_str());
+			declaration +=
+				StringHelper::Sprintf("\t{ %s },", waterBoxes[i].GetBodySourceCode().c_str());
 			if (i + 1 < waterBoxes.size())
 				declaration += "\n";
 		}
@@ -126,8 +126,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			polySegmentOffset, DeclarationAlignment::None, polygons.size() * 16,
-			"CollisionPoly",
+			polySegmentOffset, DeclarationAlignment::None, polygons.size() * 16, "CollisionPoly",
 			StringHelper::Sprintf("%s_polygons_%08X", auxName.c_str(), polySegmentOffset), 0,
 			declaration);
 	}
@@ -146,8 +145,8 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 		parent->AddDeclarationArray(
 			polyTypeDefSegmentOffset, DeclarationAlignment::None, polygonTypes.size() * 8,
 			"SurfaceType",
-			StringHelper::Sprintf("%s_surfaceType_%08X", auxName.c_str(), polyTypeDefSegmentOffset), 0,
-			declaration);
+			StringHelper::Sprintf("%s_surfaceType_%08X", auxName.c_str(), polyTypeDefSegmentOffset),
+			0, declaration);
 
 	declaration = "";
 
@@ -157,7 +156,8 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 		for (size_t i = 0; i < vertices.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("\t{ %s },", vertices[i].GetBodySourceCode().c_str());
+			declaration +=
+				StringHelper::Sprintf("\t{ %s },", vertices[i].GetBodySourceCode().c_str());
 
 			if (i < vertices.size() - 1)
 				declaration += "\n";
@@ -166,7 +166,8 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 		const auto& first = vertices.front();
 		if (vtxAddress != 0)
 			parent->AddDeclarationArray(
-				vtxSegmentOffset, first.GetDeclarationAlignment(), vertices.size() * first.GetRawDataSize(), first.GetSourceTypeName(),
+				vtxSegmentOffset, first.GetDeclarationAlignment(),
+				vertices.size() * first.GetRawDataSize(), first.GetSourceTypeName(),
 				StringHelper::Sprintf("%s_vtx_%08X", auxName.c_str(), vtxSegmentOffset), 0,
 				declaration);
 
@@ -263,9 +264,8 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, uint32_t raw
 
 std::string WaterBoxHeader::GetBodySourceCode() const
 {
-
-	return StringHelper::Sprintf("%i, %i, %i, %i, %i, 0x%08X", xMin, ySurface, zMin,  xLength,
-			                                      zLength, properties);
+	return StringHelper::Sprintf("%i, %i, %i, %i, %i, 0x%08X", xMin, ySurface, zMin, xLength,
+	                             zLength, properties);
 }
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,

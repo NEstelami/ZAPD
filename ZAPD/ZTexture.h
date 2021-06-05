@@ -58,8 +58,8 @@ public:
 
 	bool isPalette = false;
 
-	void FromBinary(uint32_t nRawDataIndex, int32_t nWidth,
-	                int32_t nHeight, TextureType nType, bool nIsPalette);
+	void FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight, TextureType nType,
+	                bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
 	void FromHLTexture(HLTexture* hlTex);
 

@@ -79,8 +79,9 @@ void ZDisplayList::ParseRawData()
 
 Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                                   GetSourceTypeName(), name, 0, bodyStr);
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                GetSourceTypeName(), name, 0, bodyStr);
 	decl->isExternal = true;
 	return decl;
 }
@@ -258,9 +259,9 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
 			        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList* nList =
-				new ZDisplayList(h & 0x00FFFFFF,
-			                     GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType), parent);
+			ZDisplayList* nList = new ZDisplayList(
+				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
+				parent);
 			otherDLists.push_back(nList);
 
 			i++;
@@ -1637,7 +1638,6 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t texOffset = Seg2Filespace(seg, self->parent->baseAddress);
-	//int32_t texSegNum = GETSEGNUM(seg);
 
 	self->lastTexWidth = width;
 	self->lastTexHeight = height;
@@ -1662,7 +1662,6 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t palOffset = Seg2Filespace(seg, self->parent->baseAddress);
-	//int32_t palSegNum = GETSEGNUM(seg);
 
 	self->lastTexWidth = sqrt(count);
 	self->lastTexHeight = sqrt(count);
@@ -1696,7 +1695,8 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	{
 		ZDisplayList* newDList = new ZDisplayList(
 			dListOffset,
-			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType), self->parent);
+			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType),
+			self->parent);
 		self->otherDLists.push_back(newDList);
 		dListName = newDList->GetName();
 	}
@@ -1785,11 +1785,11 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			if (parent != nullptr)
 			{
-				Declaration *decl = parent->AddDeclarationArray(item.first, DeclarationAlignment::Align4,
-				                            item.second.size() * 16, "Vtx",
-				                            StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(),
-				                                                  item.first, item.second.size()),
-				                            item.second.size(), declaration);
+				Declaration* decl = parent->AddDeclarationArray(
+					item.first, DeclarationAlignment::Align4, item.second.size() * 16, "Vtx",
+					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first,
+				                          item.second.size()),
+					item.second.size(), declaration);
 				decl->isExternal = true;
 			}
 		}
@@ -1845,8 +1845,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				if (curAddr != vtxKeys[i])
 					declaration += "\n";
 
-				declaration +=
-					StringHelper::Sprintf("\t%s,", vtx.GetBodySourceCode().c_str());
+				declaration += StringHelper::Sprintf("\t%s,", vtx.GetBodySourceCode().c_str());
 
 				curAddr += 16;
 			}
@@ -1957,8 +1956,8 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 
 void ZDisplayList::TextureGenCheck(std::string prefix)
 {
-	if (TextureGenCheck(lastTexWidth, lastTexHeight, lastTexAddr,
-	                    lastTexSeg, lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette, this))
+	if (TextureGenCheck(lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt,
+	                    lastTexSiz, lastTexLoaded, lastTexIsPalette, this))
 	{
 		lastTexAddr = 0;
 		lastTexLoaded = false;
@@ -2016,8 +2015,8 @@ bool ZDisplayList::TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t
 			else
 			{
 				tex = new ZTexture(auxParent);
-				tex->FromBinary(texAddr, texWidth, texHeight,
-								TexFormatToTexType(texFmt, texSiz), texIsPalette);
+				tex->FromBinary(texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz),
+				                texIsPalette);
 				auxParent->AddTextureResource(texAddr, tex);
 			}
 

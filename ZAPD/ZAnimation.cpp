@@ -103,26 +103,26 @@ void ZNormalAnimation::DeclareReferences(const std::string& prefix)
 			valuesStr += "\n    ";
 	}
 
-	parent->AddDeclarationArray(Seg2Filespace(rotationValuesAddress, parent->baseAddress), DeclarationAlignment::Align16,
-								rotationValues.size() * 2, "static s16",
-								StringHelper::Sprintf("%sFrameData", defaultPrefix.c_str()),
-								rotationValues.size(), valuesStr);
+	parent->AddDeclarationArray(Seg2Filespace(rotationValuesAddress, parent->baseAddress),
+	                            DeclarationAlignment::Align16, rotationValues.size() * 2,
+	                            "static s16",
+	                            StringHelper::Sprintf("%sFrameData", defaultPrefix.c_str()),
+	                            rotationValues.size(), valuesStr);
 
 	for (size_t i = 0; i < rotationIndices.size(); i++)
 	{
-		indicesStr +=
-			StringHelper::Sprintf("    { 0x%04X, 0x%04X, 0x%04X },", rotationIndices[i].x,
-									rotationIndices[i].y, rotationIndices[i].z);
+		indicesStr += StringHelper::Sprintf("    { 0x%04X, 0x%04X, 0x%04X },", rotationIndices[i].x,
+		                                    rotationIndices[i].y, rotationIndices[i].z);
 
 		if (i != (rotationIndices.size() - 1))
 			indicesStr += "\n";
 	}
 
-	parent->AddDeclarationArray(Seg2Filespace(rotationIndicesAddress, parent->baseAddress), DeclarationAlignment::Align16,
-								rotationIndices.size() * 6, "static JointIndex",
-								StringHelper::Sprintf("%sJointIndices", defaultPrefix.c_str()),
-								rotationIndices.size(), indicesStr);
-
+	parent->AddDeclarationArray(Seg2Filespace(rotationIndicesAddress, parent->baseAddress),
+	                            DeclarationAlignment::Align16, rotationIndices.size() * 6,
+	                            "static JointIndex",
+	                            StringHelper::Sprintf("%sJointIndices", defaultPrefix.c_str()),
+	                            rotationIndices.size(), indicesStr);
 }
 
 std::string ZNormalAnimation::GetBodySourceCode() const
@@ -132,7 +132,8 @@ std::string ZNormalAnimation::GetBodySourceCode() const
 	std::string jointIndicesName;
 	Globals::Instance->GetSegmentedPtrName(rotationIndicesAddress, parent, jointIndicesName);
 
-	std::string headerStr = StringHelper::Sprintf("\n\t{ %i }, %s,\n", frameCount, frameDataName.c_str());
+	std::string headerStr =
+		StringHelper::Sprintf("\n\t{ %i }, %s,\n", frameCount, frameDataName.c_str());
 	headerStr += StringHelper::Sprintf("\t%s, %i\n", jointIndicesName.c_str(), limit);
 
 	return headerStr;
@@ -385,7 +386,7 @@ std::string ZCurveAnimation::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(copyValues, parent, copyValuesStr);
 
 	return StringHelper::Sprintf("\n\t%s,\n\t%s,\n\t%s,\n\t%i, %i\n", refIndexStr.c_str(),
-	                          transformDataStr.c_str(), copyValuesStr.c_str(), unk_0C, unk_10);
+	                             transformDataStr.c_str(), copyValuesStr.c_str(), unk_0C, unk_10);
 }
 
 size_t ZCurveAnimation::GetRawDataSize() const

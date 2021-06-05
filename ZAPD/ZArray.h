@@ -23,6 +23,7 @@ public:
 	ZResourceType GetResourceType() const override;
 
 	DeclarationAlignment GetDeclarationAlignment() const override;
+
 protected:
 	size_t arrayCnt;
 	std::string childName;

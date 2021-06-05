@@ -195,8 +195,8 @@ Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string&
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
+	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
+	                              GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
 }
 
 std::string ZResource::GetBodySourceCode() const
@@ -206,7 +206,8 @@ std::string ZResource::GetBodySourceCode() const
 
 std::string ZResource::GetDefaultName(const std::string& prefix) const
 {
-	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), GetSourceTypeName().c_str(), rawDataIndex);
+	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), GetSourceTypeName().c_str(),
+	                             rawDataIndex);
 }
 
 std::string ZResource::GetSourceOutputCode(const std::string& prefix)

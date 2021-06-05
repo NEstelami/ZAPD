@@ -244,7 +244,7 @@ void HLModelIntermediette::FromZSkeleton(HLModelIntermediette* model, ZSkeleton*
 	model->hasSkeleton = true;
 
 	// Start at the root skeleton node, go down...
-	//ProcessZSkeletonLimb(model, zSkeleton, zSkeleton->limbs[0]);
+	// ProcessZSkeletonLimb(model, zSkeleton, zSkeleton->limbs[0]);
 }
 
 void HLModelIntermediette::ProcessZSkeletonLimb(HLModelIntermediette* model, ZSkeleton* zSkeleton,

@@ -25,11 +25,10 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		type = ZSkeletonType::Curve;
 	else if (skelTypeXml != "Normal")
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-		        "ZSkeleton::ParseXML: Error in '%s'.\n"
-		        "\t Invalid Type found: '%s'.\n"
-		        "\t Defaulting to 'Normal'.\n",
-		        name.c_str(), skelTypeXml.c_str()));
+		throw std::runtime_error(StringHelper::Sprintf("ZSkeleton::ParseXML: Error in '%s'.\n"
+		                                               "\t Invalid Type found: '%s'.\n"
+		                                               "\t Defaulting to 'Normal'.\n",
+		                                               name.c_str(), skelTypeXml.c_str()));
 		type = ZSkeletonType::Normal;
 	}
 
@@ -45,11 +44,10 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		limbType = ZLimbType::Curve;
 	else
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-		        "ZSkeleton::ParseXML: Error in '%s'.\n"
-		        "\t Invalid LimbType found: '%s'.\n"
-		        "\t Defaulting to 'Standard'.\n",
-		        name.c_str(), limbTypeXml.c_str()));
+		throw std::runtime_error(StringHelper::Sprintf("ZSkeleton::ParseXML: Error in '%s'.\n"
+		                                               "\t Invalid LimbType found: '%s'.\n"
+		                                               "\t Defaulting to 'Standard'.\n",
+		                                               name.c_str(), limbTypeXml.c_str()));
 		limbType = ZLimbType::Standard;
 	}
 }
@@ -87,7 +85,8 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(limbOffset);
 		if (decl == nullptr)
 		{
-			std::string limbName = StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limbOffset);
+			std::string limbName =
+				StringHelper::Sprintf("%sLimb_%06X", defaultPrefix.c_str(), limbOffset);
 
 			ZLimb* limb = new ZLimb(parent);
 			limb->SetLimbType(limbType);
@@ -126,9 +125,9 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 				tblStr += "\n";
 		}
 
-		parent->AddDeclarationArray(ptr, DeclarationAlignment::Align4, 4 * limbCount, limbArrTypeStr,
-		                            StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()),
-		                            limbCount, tblStr);
+		parent->AddDeclarationArray(
+			ptr, DeclarationAlignment::Align4, 4 * limbCount, limbArrTypeStr,
+			StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()), limbCount, tblStr);
 	}
 }
 
@@ -144,8 +143,8 @@ std::string ZSkeleton::GetBodySourceCode() const
 		return StringHelper::Sprintf("\n\t%s, %i\n", limbArrayName.c_str(), limbCount);
 
 	case ZSkeletonType::Flex:
-		return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbArrayName.c_str(),
-		                                  limbCount, dListCount);
+		return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbArrayName.c_str(), limbCount,
+		                             dListCount);
 	}
 
 	// TODO: Throw exception?
@@ -192,7 +191,7 @@ size_t ZSkeleton::GetRawDataSize() const
 	}
 }
 
-DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const 
+DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const
 {
 	return DeclarationAlignment::Align16;
 }

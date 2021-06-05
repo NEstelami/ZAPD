@@ -113,10 +113,10 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
 	if (reader->Attribute("Segment") == nullptr)
-	    throw std::runtime_error(StringHelper::Sprintf(
-	        "ZFile::ParseXML: Error in '%s'.\n"
-	        "\t Missing 'Segment' attribute in File node. \n",
-	        name.c_str()));
+		throw std::runtime_error(
+			StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n"
+		                          "\t Missing 'Segment' attribute in File node. \n",
+		                          name.c_str()));
 
 	if (reader->Attribute("Segment") != nullptr)
 	{
@@ -437,7 +437,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+		decl =
+			new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -731,8 +732,8 @@ std::string ZFile::GetExternalFileHeaderInclude() const
 
 	for (ZFile* externalFile : Globals::Instance->externalFiles)
 	{
-		externalFilesIncludes += StringHelper::Sprintf("#include \"%s.h\"\n",
-	                             externalFile->GetSourceOutputFolderPath().c_str());
+		externalFilesIncludes += StringHelper::Sprintf(
+			"#include \"%s.h\"\n", externalFile->GetSourceOutputFolderPath().c_str());
 	}
 
 	return externalFilesIncludes;
@@ -816,7 +817,8 @@ std::string ZFile::ProcessDeclarations()
 				if (!curItem.second->declaredInXml && !lastItem.second->declaredInXml)
 				{
 					// TEST: For now just do Vtx declarations...
-					if (lastItem.second->varType == "static Vtx" || lastItem.second->varType == "Vtx")
+					if (lastItem.second->varType == "static Vtx" ||
+					    lastItem.second->varType == "Vtx")
 					{
 						int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
 
@@ -973,7 +975,8 @@ std::string ZFile::ProcessDeclarations()
 			{
 				throw std::runtime_error(StringHelper::Sprintf(
 					"ZFile::ProcessDeclarations(): Fatal error while processing XML '%s'.\n"
-					"\t Offset '0x%X' is outside of the limits of file '%s', which has a size of '0x%X'.\n"
+					"\t Offset '0x%X' is outside of the limits of file '%s', which has a size of "
+				    "'0x%X'.\n"
 					"\t Aborting...",
 					xmlFilePath.c_str(), currentAddress, name.c_str(), rawData.size()));
 			}

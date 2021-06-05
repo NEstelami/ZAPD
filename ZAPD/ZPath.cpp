@@ -61,8 +61,9 @@ Declaration* ZPath::DeclareVar(const std::string& prefix, const std::string& bod
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
-	                            GetSourceTypeName(), name, pathways.size(), bodyStr);
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetSourceTypeName(), name, pathways.size(), bodyStr);
 }
 
 std::string ZPath::GetBodySourceCode() const
@@ -140,7 +141,8 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 		return;
 
 	std::string pointsName = "";
-	bool addressFound = Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, pointsName);
+	bool addressFound =
+		Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, pointsName);
 	if (addressFound)
 		return;
 
@@ -158,12 +160,10 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 	}
 
 	uint32_t pointsOffset = Seg2Filespace(listSegmentAddress, parent->baseAddress);
-	pointsName = StringHelper::Sprintf("%sPathwayList_%06X", prefix.c_str(),
-														pointsOffset);
-	parent->AddDeclarationArray(pointsOffset, DeclarationAlignment::Align4,
-								points.size() * 6,
-								points.at(0).GetSourceTypeName(),
-								pointsName, points.size(), declaration);
+	pointsName = StringHelper::Sprintf("%sPathwayList_%06X", prefix.c_str(), pointsOffset);
+	parent->AddDeclarationArray(pointsOffset, DeclarationAlignment::Align4, points.size() * 6,
+	                            points.at(0).GetSourceTypeName(), pointsName, points.size(),
+	                            declaration);
 }
 
 std::string PathwayEntry::GetBodySourceCode() const

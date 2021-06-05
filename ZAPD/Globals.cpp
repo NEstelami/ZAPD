@@ -94,19 +94,20 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 			const char* xmlPathValue = child->Attribute("XmlPath");
 			if (xmlPathValue == nullptr)
 			{
-				throw std::runtime_error(
-					StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
-										"\t Missing 'XmlPath' attribute in `ExternalFile` element.\n"));
+				throw std::runtime_error(StringHelper::Sprintf(
+					"Parse: Fatal error in configuration file.\n"
+					"\t Missing 'XmlPath' attribute in `ExternalFile` element.\n"));
 			}
 			const char* outPathValue = child->Attribute("OutPath");
 			if (outPathValue == nullptr)
 			{
-				throw std::runtime_error(
-					StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
-										"\t Missing 'OutPath' attribute in `ExternalFile` element.\n"));
+				throw std::runtime_error(StringHelper::Sprintf(
+					"Parse: Fatal error in configuration file.\n"
+					"\t Missing 'OutPath' attribute in `ExternalFile` element.\n"));
 			}
 
-			cfg.externalFiles.push_back(ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
+			cfg.externalFiles.push_back(
+				ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
 		}
 	}
 }
@@ -216,6 +217,6 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 }
 
 ExternalFile::ExternalFile(fs::path nXmlPath, fs::path nOutPath)
-: xmlPath{nXmlPath}, outPath{nOutPath}
+	: xmlPath{nXmlPath}, outPath{nOutPath}
 {
 }

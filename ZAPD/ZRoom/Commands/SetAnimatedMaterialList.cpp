@@ -56,9 +56,8 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 			declSize = texture.params.size() * 4;
 			declTypeName = "AnimatedMatTexScrollParams";
 
-			parent->AddDeclarationArray(texture.segmentOffset, GetDeclarationAlignment(),
-			                            declSize, declTypeName, declName, texture.params.size(),
-			                            declaration);
+			parent->AddDeclarationArray(texture.segmentOffset, GetDeclarationAlignment(), declSize,
+			                            declTypeName, declName, texture.params.size(), declaration);
 			break;
 		case 2:
 		case 3:
@@ -98,7 +97,8 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 		for (size_t i = 0; i < textures.size(); i++)
 		{
 			std::string textureName;
-			Globals::Instance->GetSegmentedPtrName(textures.at(i).segmentAddress, parent, textureName);
+			Globals::Instance->GetSegmentedPtrName(textures.at(i).segmentAddress, parent,
+			                                       textureName);
 
 			declaration += StringHelper::Sprintf("\t{ %2i, %2i, %s },", textures.at(i).segment,
 			                                     textures.at(i).type, textureName.c_str());
@@ -407,8 +407,10 @@ std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t
 
 	std::string segmName;
 	std::string indexesName;
-	Globals::Instance->GetSegmentedPtrName(textureSegmentOffsetsSegmentAddress, zRoom->parent, segmName);
-	Globals::Instance->GetSegmentedPtrName(textureIndicesSegmentAddress, zRoom->parent, indexesName);
+	Globals::Instance->GetSegmentedPtrName(textureSegmentOffsetsSegmentAddress, zRoom->parent,
+	                                       segmName);
+	Globals::Instance->GetSegmentedPtrName(textureIndicesSegmentAddress, zRoom->parent,
+	                                       indexesName);
 
 	return StringHelper::Sprintf("%i, %s, %s", cycleLength, segmName.c_str(), indexesName.c_str());
 }

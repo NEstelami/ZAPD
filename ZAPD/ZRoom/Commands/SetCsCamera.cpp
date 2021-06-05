@@ -56,8 +56,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		size_t index = 0;
 		for (auto& point : points)
 		{
-			declaration +=
-				StringHelper::Sprintf("\t{ %s },", point.GetBodySourceCode().c_str());
+			declaration += StringHelper::Sprintf("\t{ %s },", point.GetBodySourceCode().c_str());
 
 			if (index < points.size() - 1)
 				declaration += "\n";
@@ -77,7 +76,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 	if (!cameras.empty())
 	{
 		std::string camPointsName;
-		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent, camPointsName);
+		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent,
+		                                       camPointsName);
 		std::string declaration = "";
 
 		size_t index = 0;

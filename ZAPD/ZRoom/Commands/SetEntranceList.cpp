@@ -1,8 +1,8 @@
 #include "SetEntranceList.h"
 
 #include "BitConverter.h"
-#include "SetStartPositionList.h"
 #include "Globals.h"
+#include "SetStartPositionList.h"
 #include "StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
