@@ -1,23 +1,25 @@
 #include "SetRoomList.h"
-#include "../../BitConverter.h"
-#include "../../Globals.h"
-#include "../../StringHelper.h"
-#include "../../ZFile.h"
-#include "../ZRoom.h"
 
-SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+#include "BitConverter.h"
+#include "Globals.h"
+#include "StringHelper.h"
+#include "ZFile.h"
+#include "ZRoom/ZRoom.h"
+
+SetRoomList::SetRoomList(ZFile* nParent) : ZRoomCommand(nParent)
 {
-	int32_t numRooms = rawData[rawDataIndex + 1];
-	segmentOffset = BitConverter::ToInt32BE(rawData, rawDataIndex + 4) & 0x00FFFFFF;
+}
 
-	rooms = std::vector<RoomEntry*>();
+void SetRoomList::ParseRawData()
+{
+	ZRoomCommand::ParseRawData();
+	int numRooms = cmdArg1;
 
 	int32_t currentPtr = segmentOffset;
 
 	for (int32_t i = 0; i < numRooms; i++)
 	{
-		RoomEntry* entry = new RoomEntry(rawData, currentPtr);
+		RoomEntry entry(parent->GetRawData(), currentPtr);
 		rooms.push_back(entry);
 
 		currentPtr += 8;
@@ -26,29 +28,17 @@ SetRoomList::SetRoomList(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t r
 	zRoom->roomCount = numRooms;
 }
 
-SetRoomList::~SetRoomList()
+void SetRoomList::DeclareReferences(const std::string& prefix)
 {
-	for (RoomEntry* entry : rooms)
-		delete entry;
+	parent->AddDeclarationArray(
+		segmentOffset, DeclarationAlignment::None, rooms.size() * 8, "RomFile",
+		StringHelper::Sprintf("%sRoomList0x%06X", prefix.c_str(), segmentOffset), 0, "");
 }
 
-std::string SetRoomList::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+std::string SetRoomList::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, (u32)&%sRoomList0x%06X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), rooms.size(),
-		zRoom->GetName().c_str(), segmentOffset);
-}
-
-std::string SetRoomList::GenerateSourceCodePass2(std::string roomName, uint32_t baseAddress)
-{
-	return "";
-}
-
-std::string SetRoomList::GenerateExterns() const
-{
-	return StringHelper::Sprintf("extern RomFile %sRoomList0x%06X[];\n", zRoom->GetName().c_str(),
-	                             segmentOffset);
+	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_LIST(%i, %s)", rooms.size(), listName.c_str());
 }
 
 std::string SetRoomList::GetCommandCName() const
@@ -61,7 +51,7 @@ RoomCommand SetRoomList::GetRoomCommand() const
 	return RoomCommand::SetRoomList;
 }
 
-std::string SetRoomList::PreGenSourceFiles()
+void SetRoomList::PreGenSourceFiles()
 {
 	std::string declaration = "";
 
@@ -72,24 +62,17 @@ std::string SetRoomList::PreGenSourceFiles()
 			if (res->GetResourceType() == ZResourceType::Room && res != zRoom)
 			{
 				std::string roomName = res->GetName();
-				declaration += StringHelper::Sprintf(
-					"    { (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n", roomName.c_str(),
-					roomName.c_str());
+				declaration +=
+					StringHelper::Sprintf("\t{ (u32)_%sSegmentRomStart, (u32)_%sSegmentRomEnd },\n",
+				                          roomName.c_str(), roomName.c_str());
 			}
 		}
 	}
 
-	zRoom->parent->AddDeclarationArray(
+	parent->AddDeclarationArray(
 		segmentOffset, DeclarationAlignment::None, rooms.size() * 8, "RomFile",
 		StringHelper::Sprintf("%sRoomList0x%06X", zRoom->GetName().c_str(), segmentOffset), 0,
 		declaration);
-
-	return std::string();
-}
-
-std::string SetRoomList::Save()
-{
-	return std::string();
 }
 
 RoomEntry::RoomEntry(uint32_t nVAS, uint32_t nVAE)
@@ -98,7 +81,7 @@ RoomEntry::RoomEntry(uint32_t nVAS, uint32_t nVAE)
 	virtualAddressEnd = nVAE;
 }
 
-RoomEntry::RoomEntry(std::vector<uint8_t> rawData, uint32_t rawDataIndex)
+RoomEntry::RoomEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: RoomEntry(BitConverter::ToInt32BE(rawData, rawDataIndex + 0),
                 BitConverter::ToInt32BE(rawData, rawDataIndex + 4))
 {

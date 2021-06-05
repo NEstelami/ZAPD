@@ -14,9 +14,11 @@
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <csignal>
+#include <cstdlib>
 #include <cxxabi.h>  // for __cxa_demangle
 #include <dlfcn.h>   // for dladdr
 #include <execinfo.h>
+#include <time.h>
 #include <unistd.h>
 #endif
 
@@ -35,6 +37,7 @@ void BuildAssetModelIntermediette(const fs::path& outPath);
 void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
+#define ARRAY_COUNT(arr) (sizeof(arr) / sizeof(arr[0]))
 void ErrorHandler(int sig)
 {
 	void* array[4096];
@@ -44,11 +47,16 @@ void ErrorHandler(int sig)
 
 	fprintf(stderr, "\nZAPD crashed. (Signal: %i)\n", sig);
 
-	fprintf(stderr, "\n\t\tYou've met with a terrible fate, haven't you?\n\n");
-	/**
-	 * Other possible options:
-	 * - SEA BEARS FOAM. SLEEP BEARS DREAMS. \n BOTH END IN THE SAME WAY: CRASSSH!
-	 */
+	// Feel free to add more crash messages.
+	const char* crashEasterEgg[] = {
+		"\tYou've met with a terrible fate, haven't you?",
+		"\tSEA BEARS FOAM. SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY: CRASSSH!",
+	};
+
+	srand(time(nullptr));
+	auto easterIndex = rand() % ARRAY_COUNT(crashEasterEgg);
+
+	fprintf(stderr, "\n%s\n\n", crashEasterEgg[easterIndex]);
 
 	fprintf(stderr, "Traceback:\n");
 	for (size_t i = 1; i < size; i++)
@@ -85,12 +93,28 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	// Syntax: ZAPD.exe [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
+	// Syntax: ZAPD.out [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
 
 	if (argc < 2)
 	{
-		printf("ZAPD.exe (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
+		printf("ZAPD.out (%s) [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] ...\n", gBuildHash);
 		return 1;
+	}
+
+	for (int i = 1; i < argc; i++)
+	{
+		if (!strcmp(argv[i], "--version"))
+		{
+			printf("ZAPD.out %s\n", gBuildHash);
+			return 0;
+		}
+		else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h"))
+		{
+			printf("Congratulations!\n");
+			printf("You just found the (unimplemented and undocumented) ZAPD's help message.\n");
+			printf("Feel free to implement it if you want :D\n");
+			return 0;
+		}
 	}
 
 	Globals* g = new Globals();
@@ -156,11 +180,6 @@ int main(int argc, char* argv[])
 			Globals::Instance->genSourceFile = std::string(argv[i + 1]) == "1";
 			i++;
 		}
-		else if (arg == "-ifp")  // Include file prefix in generated symbols
-		{
-			Globals::Instance->includeFilePrefix = std::string(argv[i + 1]) == "1";
-			i++;
-		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
 			Globals::Instance->testMode = std::string(argv[i + 1]) == "1";
@@ -217,7 +236,7 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-v")  // Verbose
 		{
-			Globals::Instance->verbosity = (VerbosityLevel)strtol(argv[++i], NULL, 16);
+			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
 		}
 		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
 		{
@@ -225,7 +244,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if (Globals::Instance->verbosity >= VERBOSITY_INFO)
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)

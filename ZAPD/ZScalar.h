@@ -6,7 +6,7 @@
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-typedef enum ZScalarType
+enum class ZScalarType
 {
 	ZSCALAR_NONE,
 	ZSCALAR_S8,
@@ -19,7 +19,7 @@ typedef enum ZScalarType
 	ZSCALAR_U64,
 	ZSCALAR_F32,
 	ZSCALAR_F64
-} ZScalarType;
+};
 
 typedef union ZScalarData
 {
@@ -40,27 +40,25 @@ class ZScalar : public ZResource
 	friend class ZVector;
 
 public:
-	ZScalarData scalarData;
-	ZScalarType scalarType;
-
 	ZScalar(ZFile* nParent);
 	ZScalar(const ZScalarType scalarType, ZFile* nParent);
 
-	void ParseXML(tinyxml2::XMLElement* reader) override;
-	std::string GetSourceTypeName() const override;
-	std::string GetSourceValue() const;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
-	size_t GetRawDataSize() const override;
-	ZResourceType GetResourceType() const override;
-	bool DoesSupportArray() const override;
 	void ParseRawData() override;
+	void ParseXML(tinyxml2::XMLElement* reader) override;
+	std::string GetBodySourceCode() const override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	bool DoesSupportArray() const override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
+
+	size_t GetRawDataSize() const override;
+
 	static size_t MapTypeToSize(const ZScalarType scalarType);
 	static ZScalarType MapOutputTypeToScalarType(const std::string& type);
 	static std::string MapScalarTypeToOutputType(const ZScalarType scalarType);
 
 protected:
-	void ParseRawData(const std::vector<uint8_t>& data, const uint32_t offset);
+	ZScalarData scalarData;
+	ZScalarType scalarType;
 };

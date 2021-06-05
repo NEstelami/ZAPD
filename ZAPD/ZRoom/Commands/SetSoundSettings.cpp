@@ -1,21 +1,22 @@
 #include "SetSoundSettings.h"
-#include "../../StringHelper.h"
+#include "StringHelper.h"
 
-SetSoundSettings::SetSoundSettings(ZRoom* nZRoom, std::vector<uint8_t> rawData,
-                                   uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+SetSoundSettings::SetSoundSettings(ZFile* nParent) : ZRoomCommand(nParent)
 {
-	reverb = rawData[rawDataIndex + 0x01];
-	nightTimeSFX = rawData[rawDataIndex + 0x06];
-	musicSequence = rawData[rawDataIndex + 0x07];
 }
 
-std::string SetSoundSettings::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+void SetSoundSettings::ParseRawData()
 {
-	return StringHelper::Sprintf(
-		"%s 0x%02X, 0x00, 0x00, 0x00, 0x00, 0x%02X, 0x%02X",
-		ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str(), reverb, nightTimeSFX,
-		musicSequence);
+	ZRoomCommand::ParseRawData();
+	reverb = cmdArg1;
+	nightTimeSFX = parent->GetRawData().at(rawDataIndex + 0x06);
+	musicSequence = parent->GetRawData().at(rawDataIndex + 0x07);
+}
+
+std::string SetSoundSettings::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("SCENE_CMD_SOUND_SETTINGS(%i, %i, %i)", reverb, nightTimeSFX,
+	                             musicSequence);
 }
 
 std::string SetSoundSettings::GetCommandCName() const

@@ -1,15 +1,13 @@
 #include "Unused09.h"
-#include "../../StringHelper.h"
+#include "StringHelper.h"
 
-Unused09::Unused09(ZRoom* nZRoom, std::vector<uint8_t> rawData, uint32_t rawDataIndex)
-	: ZRoomCommand(nZRoom, rawData, rawDataIndex)
+Unused09::Unused09(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-std::string Unused09::GenerateSourceCodePass1(std::string roomName, uint32_t baseAddress)
+std::string Unused09::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf(
-		"%s 0x00, 0x00", ZRoomCommand::GenerateSourceCodePass1(roomName, baseAddress).c_str());
+	return StringHelper::Sprintf("{ %s, 0x00, 0x00 }", GetCommandHex().c_str());
 }
 
 std::string Unused09::GetCommandCName() const
