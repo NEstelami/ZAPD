@@ -20,7 +20,6 @@ endif
 
 ifeq ($(OPTIMIZATION_ON),0)
   CFLAGS += -O0
-  COPYCHECK_ARGS += --devel
 else
   CFLAGS += -O2
 endif
