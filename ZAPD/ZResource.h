@@ -78,7 +78,6 @@ public:
 	virtual void DeclareReferences(const std::string& prefix);
 
 	virtual Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
-	// virtual Declaration* DeclareArrayVar(const std::string& prefix, const std::string& bodyStr);
 	virtual std::string GetBodySourceCode() const;
 	virtual std::string GetDefaultName(const std::string& prefix) const;
 

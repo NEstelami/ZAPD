@@ -330,6 +330,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
                                    std::string varType, std::string varName, std::string body)
 {
 	assert(GETSEGNUM(address) == 0);
+	assert(varName != "");
 	AddDeclarationDebugChecks(address);
 
 	Declaration* decl = GetDeclaration(address);
@@ -354,6 +355,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
                                    std::string varName, std::string body)
 {
 	assert(GETSEGNUM(address) == 0);
+	assert(varName != "");
 	AddDeclarationDebugChecks(address);
 
 	Declaration* decl = GetDeclaration(address);

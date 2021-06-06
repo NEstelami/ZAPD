@@ -55,6 +55,13 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 	decl->declaredInXml = true;
 }
 
+void ZDisplayList::ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize)
+{
+	rawDataIndex = nRawDataIndex;
+	numInstructions = rawDataSize / 8;
+	ParseRawData();
+}
+
 ZDisplayList::ZDisplayList(uint32_t nRawDataIndex, int32_t rawDataSize, ZFile* nParent)
 	: ZDisplayList(nParent)
 {
