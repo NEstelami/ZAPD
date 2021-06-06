@@ -569,6 +569,41 @@ std::string ZFile::GetDeclarationPtrName(segptr_t segAddress) const
 	return decl->varName;
 }
 
+bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSize,
+                                           std::string& declName) const
+{
+	if (segAddress == 0)
+	{
+		declName = "NULL";
+		return true;
+	}
+
+	uint32_t address = Seg2Filespace(segAddress, baseAddress);
+	Declaration* decl = GetDeclarationRanged(address);
+	if (GETSEGNUM(segAddress) != segment || decl == nullptr || !decl->isArray)
+	{
+		declName = StringHelper::Sprintf("0x%08X", segAddress);
+		return false;
+	}
+
+	uint32_t declAddress = GetDeclarationRangedAddress(address);
+	if (declAddress == address)
+	{
+		declName = decl->varName;
+		return true;
+	}
+
+	if ((address - declAddress) % elementSize != 0 || !(address < declAddress + decl->size))
+	{
+		declName = StringHelper::Sprintf("0x%08X", segAddress);
+		return false;
+	}
+
+	uint32_t index = (address - declAddress) / elementSize;
+	declName = StringHelper::Sprintf("&%s[%u]", decl->varName.c_str(), index);
+	return true;
+}
+
 Declaration* ZFile::GetDeclaration(uint32_t address) const
 {
 	if (declarations.find(address) != declarations.end())

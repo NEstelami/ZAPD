@@ -24,40 +24,32 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (limbType == "")
 	{
-		fprintf(stderr,
-		        "ZLimb::ParseXML: Warning in '%s'.\n"
-		        "\t Missing 'LimbType' attribute in xml.\n"
-		        "\t Defaulting to 'Standard'.\n",
-		        name.c_str());
+		throw std::runtime_error(StringHelper::Sprintf("ZLimb::ParseXML: Error in '%s'.\n"
+		                                               "\t Missing 'LimbType' attribute in xml.\n",
+		                                               name.c_str()));
+	}
+
+	if (limbType == "Standard")
+	{
 		type = ZLimbType::Standard;
+	}
+	else if (limbType == "LOD")
+	{
+		type = ZLimbType::LOD;
+	}
+	else if (limbType == "Skin")
+	{
+		type = ZLimbType::Skin;
+	}
+	else if (limbType == "Curve")
+	{
+		type = ZLimbType::Curve;
 	}
 	else
 	{
-		if (limbType == "Standard")
-		{
-			type = ZLimbType::Standard;
-		}
-		else if (limbType == "LOD")
-		{
-			type = ZLimbType::LOD;
-		}
-		else if (limbType == "Skin")
-		{
-			type = ZLimbType::Skin;
-		}
-		else if (limbType == "Curve")
-		{
-			type = ZLimbType::Curve;
-		}
-		else
-		{
-			fprintf(stderr,
-			        "ZLimb::ParseXML: Warning in '%s'.\n"
-			        "\t Invalid LimbType found: '%s'.\n"
-			        "\t Defaulting to 'Standard'.\n",
-			        name.c_str(), limbType.c_str());
-			type = ZLimbType::Standard;
-		}
+		throw std::runtime_error(StringHelper::Sprintf("ZLimb::ParseXML: Error in '%s'.\n"
+		                                               "\t Invalid 'LimbType' found: '%s'.\n",
+		                                               name.c_str(), limbType.c_str()));
 	}
 }
 
@@ -179,8 +171,10 @@ size_t ZLimb::GetRawDataSize() const
 
 std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string dListStr = GetLimbDListSourceOutputCode(dListPtr);
-	std::string dListStr2 = GetLimbDListSourceOutputCode(dList2Ptr);
+	std::string dListStr;
+	std::string dListStr2;
+	Globals::Instance->GetSegmentedArrayIndexedName(dListPtr, 8, parent, dListStr);
+	Globals::Instance->GetSegmentedArrayIndexedName(dList2Ptr, 8, parent, dListStr2);
 
 	std::string entryStr = "\n\t";
 	if (type != ZLimbType::Curve)
@@ -275,6 +269,12 @@ void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 	if (dlistOffset >= parent->rangeEnd || dlistOffset >= parent->GetRawData().size())
 		return;
 
+	std::string dlistName;
+	bool declFound =
+		Globals::Instance->GetSegmentedArrayIndexedName(dListSegmentedPtr, 8, parent, dlistName);
+	if (declFound)
+		return;
+
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dlistOffset,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
@@ -285,36 +285,4 @@ void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 	dlist->SetName(dListStr);
 	dlist->DeclareVar(prefix, "");
 	parent->AddResource(dlist);
-}
-
-// Returns the ptrname of a dlist.
-std::string ZLimb::GetLimbDListSourceOutputCode(segptr_t dListPtr)
-{
-	if (dListPtr == 0)
-		return "NULL";
-
-	uint32_t dListOffset = Seg2Filespace(dListPtr, parent->baseAddress);
-
-	// Check if it is already declared
-	Declaration* decl = parent->GetDeclaration(dListOffset);
-	if (decl != nullptr)
-		return decl->varName;
-
-	// Check if it points to the middle of a DList
-	decl = parent->GetDeclarationRanged(dListOffset);
-	if (decl != nullptr)
-	{
-		// TODO: Figure out a way to not hardcode the "Gfx" type.
-		if (decl->varType == "Gfx")
-		{
-			uint32_t declAddress = parent->GetDeclarationRangedAddress(dListOffset);
-			if (dListOffset < declAddress + decl->size)
-			{
-				uint32_t index = (dListOffset - declAddress) / 8;
-				return StringHelper::Sprintf("&%s[%u]", decl->varName.c_str(), index);
-			}
-		}
-	}
-
-	return StringHelper::Sprintf("0x%08X", dListPtr);
 }

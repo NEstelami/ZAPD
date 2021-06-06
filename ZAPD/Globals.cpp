@@ -216,6 +216,39 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 	return false;
 }
 
+bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSize,
+                                           ZFile* currentFile, std::string& declName)
+{
+	if (segAddress == 0)
+	{
+		declName = "NULL";
+		return true;
+	}
+
+	uint8_t segment = GETSEGNUM(segAddress);
+
+	if (segment == currentFile->segment)
+	{
+		bool addressFound =
+			currentFile->GetDeclarationArrayIndexedName(segAddress, elementSize, declName);
+		if (addressFound)
+			return true;
+	}
+	else if (HasSegment(segment))
+	{
+		for (auto file : segmentRefFiles[segment])
+		{
+			bool addressFound =
+				file->GetDeclarationArrayIndexedName(segAddress, elementSize, declName);
+			if (addressFound)
+				return true;
+		}
+	}
+
+	declName = StringHelper::Sprintf("0x%08X", segAddress);
+	return false;
+}
+
 ExternalFile::ExternalFile(fs::path nXmlPath, fs::path nOutPath)
 	: xmlPath{nXmlPath}, outPath{nOutPath}
 {

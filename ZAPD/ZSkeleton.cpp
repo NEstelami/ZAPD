@@ -28,7 +28,6 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		throw std::runtime_error(StringHelper::Sprintf("ZSkeleton::ParseXML: Error in '%s'.\n"
 		                                               "\t Invalid Type found: '%s'.\n",
 		                                               name.c_str(), skelTypeXml.c_str()));
-		type = ZSkeletonType::Normal;
 	}
 
 	std::string limbTypeXml = registeredAttributes.at("LimbType").value;
@@ -46,7 +45,6 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		throw std::runtime_error(StringHelper::Sprintf("ZSkeleton::ParseXML: Error in '%s'.\n"
 		                                               "\t Invalid LimbType found: '%s'.\n",
 		                                               name.c_str(), limbTypeXml.c_str()));
-		limbType = ZLimbType::Standard;
 	}
 }
 

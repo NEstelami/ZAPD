@@ -50,5 +50,4 @@ protected:
 
 	void DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 	                  const std::string& limbSuffix);
-	std::string GetLimbDListSourceOutputCode(segptr_t dListPtr);
 };

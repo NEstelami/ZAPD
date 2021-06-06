@@ -78,6 +78,8 @@ public:
 	                                        size_t arrayItemCnt);
 
 	std::string GetDeclarationPtrName(segptr_t segAddress) const;
+	bool GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSize,
+	                                    std::string& declName) const;
 	Declaration* GetDeclaration(uint32_t address) const;
 	Declaration* GetDeclarationRanged(uint32_t address) const;
 	uint32_t GetDeclarationRangedAddress(uint32_t address) const;
