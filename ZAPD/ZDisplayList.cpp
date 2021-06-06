@@ -821,29 +821,28 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, char* line)
 		                       StringHelper::Sprintf("0x%08X", segmented), "");
 		return;
 	}
-	references.push_back(vtxAddr);
+	references.push_back(data);
 
 	{
 		uint32_t currentPtr = Seg2Filespace(data, parent->baseAddress);
+		Declaration* decl;
 
 		// Check for vertex intersections from other display lists
 		// TODO: These two could probably be condenced to one...
-		if (parent->GetDeclarationRanged(vtxAddr + (nn * 16)) != nullptr)
+		decl = parent->GetDeclarationRanged(vtxAddr + (nn * 16));
+		if (decl != nullptr)
 		{
-			// Declaration* decl = parent->GetDeclarationRanged(vtxAddr + (nn * 16));
-			uint32_t addr = parent->GetDeclarationRangedAddress(vtxAddr + (nn * 16));
-			int32_t diff = addr - vtxAddr;
+			int32_t diff = decl->address - vtxAddr;
 			if (diff > 0)
 				nn = diff / 16;
 			else
 				nn = 0;
 		}
 
-		if (parent->GetDeclarationRanged(vtxAddr) != nullptr)
+		decl = parent->GetDeclarationRanged(vtxAddr);
+		if (decl != nullptr)
 		{
-			// Declaration* decl = parent->GetDeclarationRanged(vtxAddr);
-			uint32_t addr = parent->GetDeclarationRangedAddress(vtxAddr);
-			int32_t diff = addr - vtxAddr;
+			int32_t diff = decl->address - vtxAddr;
 			if (diff > 0)
 				nn = diff / 16;
 			else
@@ -1591,15 +1590,15 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 	}
 	else
 	{
-		self->references.push_back(vtxOffset);
+		self->references.push_back(seg);
+		Declaration* decl;
 
 		// Check for vertex intersections from other display lists
 		// TODO: These two could probably be condenced to one...
-		if (self->parent->GetDeclarationRanged(vtxOffset + (count * 16)) != nullptr)
+		decl = self->parent->GetDeclarationRanged(vtxOffset + (count * 16));
+		if (decl != nullptr)
 		{
-			// Declaration* decl = self->parent->GetDeclarationRanged(vtxOffset + (count * 16));
-			uint32_t addr = self->parent->GetDeclarationRangedAddress(vtxOffset + (count * 16));
-			int32_t diff = addr - vtxOffset;
+			int32_t diff = decl->address - vtxOffset;
 
 			if (diff > 0)
 				count = diff / 16;
@@ -1607,11 +1606,10 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 				count = 0;
 		}
 
-		if (self->parent->GetDeclarationRanged(vtxOffset) != nullptr)
+		decl = self->parent->GetDeclarationRanged(vtxOffset);
+		if (decl != nullptr)
 		{
-			// Declaration* decl = self->parent->GetDeclarationRanged(vtxOffset);
-			uint32_t addr = self->parent->GetDeclarationRangedAddress(vtxOffset);
-			int32_t diff = addr - vtxOffset;
+			int32_t diff = decl->address - vtxOffset;
 
 			if (diff > 0)
 				count = diff / 16;

@@ -82,7 +82,6 @@ public:
 	                                    std::string& declName) const;
 	Declaration* GetDeclaration(uint32_t address) const;
 	Declaration* GetDeclarationRanged(uint32_t address) const;
-	uint32_t GetDeclarationRangedAddress(uint32_t address) const;
 	bool HasDeclaration(uint32_t address);
 	std::string GetHeaderInclude() const;
 	std::string GetExternalFileHeaderInclude() const;

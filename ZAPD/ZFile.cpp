@@ -336,7 +336,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(alignment, size, varType, varName, false, body);
+		decl = new Declaration(address, alignment, size, varType, varName, false, body);
 		declarations[address] = decl;
 	}
 	else
@@ -361,7 +361,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(alignment, padding, size, varType, varName, false, body);
+		decl = new Declaration(address, alignment, padding, size, varType, varName, false, body);
 		declarations[address] = decl;
 	}
 	else
@@ -386,7 +386,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
+		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -412,7 +412,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
+		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCntStr, body);
 		declarations[address] = decl;
 	}
 	else
@@ -440,7 +440,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	if (decl == nullptr)
 	{
 		decl =
-			new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+			new Declaration(address, alignment, padding, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -465,7 +465,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+		decl = new Declaration(address, DeclarationAlignment::None, 0, "", "", false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -483,7 +483,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varN
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
+		decl = new Declaration(address, DeclarationAlignment::None, 0, "", varName, false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -500,7 +500,7 @@ Declaration* ZFile::AddDeclarationInclude(uint32_t address, std::string includeP
 	AddDeclarationDebugChecks(address);
 
 	if (declarations.find(address) == declarations.end())
-		declarations[address] = new Declaration(includePath, size, varType, varName);
+		declarations[address] = new Declaration(address, includePath, size, varType, varName);
 
 	return declarations[address];
 }
@@ -532,7 +532,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 	}
 	else
 	{
-		Declaration* decl = new Declaration(includePath, size, varType, varName);
+		Declaration* decl = new Declaration(address, includePath, size, varType, varName);
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
@@ -586,20 +586,19 @@ bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSi
 		return false;
 	}
 
-	uint32_t declAddress = GetDeclarationRangedAddress(address);
-	if (declAddress == address)
+	if (decl->address == address)
 	{
 		declName = decl->varName;
 		return true;
 	}
 
-	if ((address - declAddress) % elementSize != 0 || !(address < declAddress + decl->size))
+	if ((address - decl->address) % elementSize != 0 || !(address < decl->address + decl->size))
 	{
 		declName = StringHelper::Sprintf("0x%08X", segAddress);
 		return false;
 	}
 
-	uint32_t index = (address - declAddress) / elementSize;
+	uint32_t index = (address - decl->address) / elementSize;
 	declName = StringHelper::Sprintf("&%s[%u]", decl->varName.c_str(), index);
 	return true;
 }
@@ -621,17 +620,6 @@ Declaration* ZFile::GetDeclarationRanged(uint32_t address) const
 	}
 
 	return nullptr;
-}
-
-uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address) const
-{
-	for (const auto decl : declarations)
-	{
-		if (address >= decl.first && address < decl.first + decl.second->size)
-			return decl.first;
-	}
-
-	return 0xFFFFFFFF;
 }
 
 bool ZFile::HasDeclaration(uint32_t address)
@@ -1221,51 +1209,24 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 {
 	size_t refIndex = 0;
 
-	if (decl->references.size() > 0)
+	if (!(decl->references.size() > 0))
+		return;
+
+	for (size_t i = 0; i < decl->text.size() - 1; i++)
 	{
-		for (size_t i = 0; i < decl->text.size() - 1; i++)
+		char c = decl->text[i];
+		char c2 = decl->text[i + 1];
+
+		if (c == '@' && c2 == 'r')
 		{
-			char c = decl->text[i];
-			char c2 = decl->text[i + 1];
+			std::string vtxName;
+			Globals::Instance->GetSegmentedArrayIndexedName(decl->references[refIndex], 0x10, this, vtxName);
+			decl->text.replace(i, 2, vtxName);
 
-			if (c == '@' && c2 == 'r')
-			{
-				if (refIndex >= decl->references.size())
-					break;
+			refIndex++;
 
-				Declaration* refDecl = GetDeclarationRanged(decl->references[refIndex]);
-				uint32_t refDeclAddr = GetDeclarationRangedAddress(decl->references[refIndex]);
-
-				if (refDecl != nullptr)
-				{
-					if (refDecl->isArray)
-					{
-						if (refDecl->arrayItemCnt != 0)
-						{
-							int32_t itemSize = refDecl->size / refDecl->arrayItemCnt;
-							int32_t itemIndex =
-								(decl->references[refIndex] - refDeclAddr) / itemSize;
-
-							decl->text.replace(i, 2,
-							                   StringHelper::Sprintf(
-												   "&%s[%i]", refDecl->varName.c_str(), itemIndex));
-						}
-						else
-						{
-							decl->text.replace(i, 2,
-							                   StringHelper::Sprintf("ERROR ARRAYITEMCNT = 0"));
-						}
-					}
-					else
-					{
-						decl->text.replace(i, 2, refDecl->varName);
-					}
-				}
-				else
-					decl->text.replace(i, 2, "ERROR");
-
-				refIndex++;
-			}
+			if (refIndex >= decl->references.size())
+				break;
 		}
 	}
 }

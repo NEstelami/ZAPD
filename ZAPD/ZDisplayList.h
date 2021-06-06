@@ -340,7 +340,7 @@ public:
 	ZTexture* lastTexture = nullptr;
 	ZTexture* lastTlut = nullptr;
 
-	std::vector<uint32_t> references;
+	std::vector<segptr_t> references;
 	std::vector<ZMtx> mtxList;
 
 	ZDisplayList(ZFile* nParent);
