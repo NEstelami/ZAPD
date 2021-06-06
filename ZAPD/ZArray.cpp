@@ -95,7 +95,7 @@ std::string ZArray::GetBodySourceCode() const
 		else
 			output += StringHelper::Sprintf("{ %s }", resList.at(i)->GetBodySourceCode().c_str());
 
-		if (i < arrayCnt - 1)
+		if (i < arrayCnt - 1 || res->IsExternalResource())
 			output += ",\n";
 	}
 

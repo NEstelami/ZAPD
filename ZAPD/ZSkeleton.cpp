@@ -26,8 +26,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	else if (skelTypeXml != "Normal")
 	{
 		throw std::runtime_error(StringHelper::Sprintf("ZSkeleton::ParseXML: Error in '%s'.\n"
-		                                               "\t Invalid Type found: '%s'.\n"
-		                                               "\t Defaulting to 'Normal'.\n",
+		                                               "\t Invalid Type found: '%s'.\n",
 		                                               name.c_str(), skelTypeXml.c_str()));
 		type = ZSkeletonType::Normal;
 	}
@@ -45,8 +44,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	else
 	{
 		throw std::runtime_error(StringHelper::Sprintf("ZSkeleton::ParseXML: Error in '%s'.\n"
-		                                               "\t Invalid LimbType found: '%s'.\n"
-		                                               "\t Defaulting to 'Standard'.\n",
+		                                               "\t Invalid LimbType found: '%s'.\n",
 		                                               name.c_str(), limbTypeXml.c_str()));
 		limbType = ZLimbType::Standard;
 	}
