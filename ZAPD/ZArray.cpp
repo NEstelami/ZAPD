@@ -69,6 +69,7 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 		Declaration* decl = parent->AddDeclarationIncludeArray(
 			rawDataIndex, includePath, GetRawDataSize(), GetSourceTypeName(), name, arrayCnt);
 		decl->text = bodyStr;
+		decl->isExternal = true;
 		return decl;
 	}
 	else
