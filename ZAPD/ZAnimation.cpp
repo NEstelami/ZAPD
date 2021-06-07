@@ -511,7 +511,7 @@ void ZBetaAnimation::ParseRawData()
 		}
 
 		ptr = jointKeyOffset;
-		for (size_t i = 0; i < limbCount + 1; i++)
+		for (int32_t i = 0; i < limbCount + 1; i++)
 		{
 			JointKey key(parent);
 			key.ExtractFromFile(ptr);
@@ -635,7 +635,7 @@ void JointKey::ParseRawData()
 
 std::string JointKey::GetBodySourceCode() const 
 {
-	return StringHelper::Sprintf("%i, %i, %i, %i, %i, %i", xMax, x, yMax, y, zMax, z);
+	return StringHelper::Sprintf("%6i, %6i, %6i, %6i, %6i, %6i", xMax, x, yMax, y, zMax, z);
 }
 
 std::string JointKey::GetSourceTypeName() const
