@@ -909,8 +909,22 @@ std::string ZFile::ProcessDeclarations()
 					nonZeroUnaccounted = true;
 				}
 
-				if ((i % 16 == 15) && (i != (diff - 1)))
-					src += "\n    ";
+				if (Globals::Instance->verboseUnaccounted)
+				{
+					if ((i % 4 == 3))
+					{
+						src += StringHelper::Sprintf(" // 0x%06X", unaccountedAddress + i - 3);
+						if (i != (diff - 1))
+						{
+							src += "\n\t";
+						}
+					}
+				}
+				else
+				{
+					if ((i % 16 == 15) && (i != (diff - 1)))
+						src += "\n    ";
+				}
 			}
 
 			if (declarations.find(unaccountedAddress) == declarations.end())
