@@ -10,7 +10,7 @@
 REGISTER_ZFILENODE(Animation, ZNormalAnimation);
 REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
 REGISTER_ZFILENODE(CurveAnimation, ZCurveAnimation);
-REGISTER_ZFILENODE(BetaAnimation, ZBetaAnimation);
+REGISTER_ZFILENODE(LegacyAnimation, ZLegacyAnimation);
 
 ZAnimation::ZAnimation(ZFile* nParent) : ZResource(nParent)
 {
@@ -473,15 +473,15 @@ std::string ZCurveAnimation::GetSourceTypeName() const
 	return "TransformUpdateIndex";
 }
 
-/* ZBetaAnimation */
+/* ZLegacyAnimation */
 
 
-ZBetaAnimation::ZBetaAnimation(ZFile* nParent)
+ZLegacyAnimation::ZLegacyAnimation(ZFile* nParent)
 	: ZAnimation(nParent)
 {
 }
 
-void ZBetaAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+void ZLegacyAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZAnimation::ExtractFromXML(reader, nRawDataIndex);
 
@@ -489,7 +489,7 @@ void ZBetaAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawD
 							GetSourceTypeName(), name, "");
 }
 
-void ZBetaAnimation::ParseRawData()
+void ZLegacyAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
 
@@ -522,7 +522,7 @@ void ZBetaAnimation::ParseRawData()
 	}
 }
 
-void ZBetaAnimation::DeclareReferences(const std::string& prefix)
+void ZLegacyAnimation::DeclareReferences(const std::string& prefix)
 {
 	std::string varPrefix = prefix;
 	if (name != "")
@@ -572,7 +572,7 @@ void ZBetaAnimation::DeclareReferences(const std::string& prefix)
 	}
 }
 
-std::string ZBetaAnimation::GetBodySourceCode() const
+std::string ZLegacyAnimation::GetBodySourceCode() const
 {
     std::string body = "\n";
 
@@ -586,7 +586,7 @@ std::string ZBetaAnimation::GetBodySourceCode() const
     return body;
 }
 
-std::string ZBetaAnimation::GetSourceOutputCode(const std::string& prefix)
+std::string ZLegacyAnimation::GetSourceOutputCode(const std::string& prefix)
 {
 	std::string body = GetBodySourceCode();
 
@@ -600,12 +600,12 @@ std::string ZBetaAnimation::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZBetaAnimation::GetSourceTypeName() const
+std::string ZLegacyAnimation::GetSourceTypeName() const
 {
 	return "AnimationHeader2";
 }
 
-size_t ZBetaAnimation::GetRawDataSize() const
+size_t ZLegacyAnimation::GetRawDataSize() const
 {
 	return 0x0C;
 }

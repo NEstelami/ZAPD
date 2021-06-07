@@ -137,7 +137,7 @@ public:
 // TransformUpdateIndex
 
 
-/* ZBetaAnimation */
+/* ZLegacyAnimation */
 
 class JointKey : public ZResource
 {
@@ -158,10 +158,10 @@ protected:
 	int16_t zMax, z;
 };
 
-class ZBetaAnimation : public ZAnimation
+class ZLegacyAnimation : public ZAnimation
 {
 public:
-	ZBetaAnimation(ZFile* nParent);
+	ZLegacyAnimation(ZFile* nParent);
 
     void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
