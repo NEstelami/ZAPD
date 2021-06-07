@@ -1582,15 +1582,9 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t vtxOffset = Seg2Filespace(seg, self->parent->baseAddress);
-	std::string vtxName = "";
 
-	if (GETSEGNUM(seg) != self->parent->segment)
+	if (GETSEGNUM(seg) == self->parent->segment)
 	{
-		Globals::Instance->GetSegmentedPtrName(seg, self->parent, vtxName);
-	}
-	else
-	{
-		self->references.push_back(seg);
 		Declaration* decl;
 
 		// Check for vertex intersections from other display lists
@@ -1634,11 +1628,10 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 			}
 			self->vertices[vtxOffset] = vtxList;
 		}
-
-		vtxName = "@r";
 	}
 
-	gfxd_puts(vtxName.c_str());
+	self->references.push_back(seg);
+	gfxd_puts("@r");
 
 	return 1;
 }
