@@ -553,6 +553,7 @@ uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address) const
 
 bool ZFile::HasDeclaration(uint32_t address)
 {
+	assert(GETSEGNUM(address) == 0);
 	return declarations.find(address) != declarations.end();
 }
 

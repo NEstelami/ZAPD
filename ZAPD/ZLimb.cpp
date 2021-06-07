@@ -394,27 +394,8 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 	}
 	else
 	{
-		if (limbType == "Standard")
-		{
-			type = ZLimbType::Standard;
-		}
-		else if (limbType == "LOD")
-		{
-			type = ZLimbType::LOD;
-		}
-		else if (limbType == "Skin")
-		{
-			type = ZLimbType::Skin;
-		}
-		else if (limbType == "Curve")
-		{
-			type = ZLimbType::Curve;
-		}
-		else if (limbType == "Legacy")
-		{
-			type = ZLimbType::Legacy;
-		}
-		else
+		type = GetTypeByAttributeName(limbType);
+		if (type == ZLimbType::Invalid)
 		{
 			fprintf(stderr,
 			        "ZLimb::ParseXML: Warning in '%s'.\n"
@@ -494,15 +475,25 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 	switch (type)
 	{
 		case ZLimbType::Legacy:
-		if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment && !parent->HasDeclaration(childPtr))
+		if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment)
 		{
-			ZLimb* child = new ZLimb(ZLimbType::Legacy, prefix, Seg2Filespace(childPtr, parent->baseAddress), parent);
-			parent->AddResource(child);
+			uint32_t childOffset = Seg2Filespace(childPtr, parent->baseAddress);
+			if (!parent->HasDeclaration(childOffset))
+			{
+				ZLimb* child = new ZLimb(ZLimbType::Legacy, prefix, childOffset, parent);
+				child->GetSourceOutputCode(prefix);
+				parent->AddResource(child);
+			}
 		}
-		if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment && !parent->HasDeclaration(siblingPtr))
+		if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment)
 		{
-			ZLimb* sibling = new ZLimb(ZLimbType::Legacy, prefix, Seg2Filespace(siblingPtr, parent->baseAddress), parent);
-			parent->AddResource(sibling);
+			uint32_t siblingdOffset = Seg2Filespace(siblingPtr, parent->baseAddress);
+			if (!parent->HasDeclaration(siblingdOffset))
+			{
+				ZLimb* sibling = new ZLimb(ZLimbType::Legacy, prefix, siblingdOffset, parent);
+				sibling->GetSourceOutputCode(prefix);
+				parent->AddResource(sibling);
+			}
 		}
 		break;
 
@@ -511,6 +502,9 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 		case ZLimbType::LOD:
 		case ZLimbType::Skin:
 		case ZLimbType::Curve:
+			break;
+
+		case ZLimbType::Invalid:
 			break;
 	}
 }
@@ -529,6 +523,9 @@ size_t ZLimb::GetRawDataSize() const
 
 	case ZLimbType::Legacy:
 		return 0x20;
+
+		case ZLimbType::Invalid:
+			break;
 	}
 
 	return 0x0C;
@@ -578,6 +575,9 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 			break;
 
 		case ZLimbType::Legacy:
+			break;
+
+		case ZLimbType::Invalid:
 			break;
 		}
 	}
@@ -635,6 +635,31 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 	default:
 		return "StandardLimb";
 	}
+}
+
+ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
+{
+	if (attrName == "Standard")
+	{
+		return ZLimbType::Standard;
+	}
+	if (attrName == "LOD")
+	{
+		return ZLimbType::LOD;
+	}
+	if (attrName == "Skin")
+	{
+		return ZLimbType::Skin;
+	}
+	if (attrName == "Curve")
+	{
+		return ZLimbType::Curve;
+	}
+	if (attrName == "Legacy")
+	{
+		return ZLimbType::Legacy;
+	}
+	return ZLimbType::Invalid;
 }
 
 uint32_t ZLimb::GetFileAddress()

@@ -4,6 +4,7 @@
 #include "StringHelper.h"
 
 REGISTER_ZFILENODE(Skeleton, ZSkeleton);
+REGISTER_ZFILENODE(LimbTable, ZLimbTable);
 
 ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 {
@@ -71,16 +72,8 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	}
 
 	std::string limbTypeXml = registeredAttributes.at("LimbType").value;
-
-	if (limbTypeXml == "Standard")
-		limbType = ZLimbType::Standard;
-	else if (limbTypeXml == "LOD")
-		limbType = ZLimbType::LOD;
-	else if (limbTypeXml == "Skin")
-		limbType = ZLimbType::Skin;
-	else if (limbTypeXml == "Curve")
-		limbType = ZLimbType::Curve;
-	else
+	limbType = ZLimb::GetTypeByAttributeName(limbTypeXml);
+	if (limbType == ZLimbType::Invalid)
 	{
 		fprintf(stderr,
 		        "ZSkeleton::ParseXML: Warning in '%s'.\n"
@@ -250,4 +243,135 @@ segptr_t ZSkeleton::GetAddress()
 uint8_t ZSkeleton::GetLimbCount()
 {
 	return limbCount;
+}
+
+/* ZLimbTable */
+
+
+ZLimbTable::ZLimbTable(ZFile* nParent)
+	: ZResource(nParent)
+{
+	RegisterRequiredAttribute("LimbType");
+	RegisterRequiredAttribute("Count");
+}
+
+void ZLimbTable::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+{
+    ZResource::ExtractFromXML(reader, nRawDataIndex);
+
+	    parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                            GetSourceTypeName(), name, limbsAddresses.size(), "");
+}
+
+void ZLimbTable::ParseXML(tinyxml2::XMLElement* reader)
+{
+	ZResource::ParseXML(reader);
+
+	std::string limbTypeXml = registeredAttributes.at("LimbType").value;
+	limbType = ZLimb::GetTypeByAttributeName(limbTypeXml);
+	if (limbType == ZLimbType::Invalid)
+	{
+		fprintf(stderr,
+		        "ZLimbTable::ParseXML: Warning in '%s'.\n"
+		        "\t Invalid LimbType found: '%s'.\n"
+		        "\t Defaulting to 'Standard'.\n",
+		        name.c_str(), limbTypeXml.c_str());
+		limbType = ZLimbType::Standard;
+	}
+
+	count = StringHelper::StrToL(registeredAttributes.at("Count").value);
+}
+
+void ZLimbTable::ParseRawData()
+{
+    ZResource::ParseRawData();
+
+    const auto& rawData = parent->GetRawData();
+	uint32_t ptr = rawDataIndex;
+	for (size_t i = 0; i < count; i++)
+	{
+		limbsAddresses.push_back(BitConverter::ToUInt32BE(rawData, ptr));
+		ptr += 4;
+	}
+}
+
+void ZLimbTable::DeclareReferences(const std::string& prefix)
+{
+	std::string varPrefix = prefix;
+	if (name != "")
+		varPrefix = name;
+
+    ZResource::DeclareReferences(varPrefix);
+
+	for (size_t i = 0; i < count; i++)
+	{
+		segptr_t limbAddress = limbsAddresses[i];
+
+		if (limbAddress != 0 && GETSEGNUM(limbAddress) == parent->segment)
+		{
+			uint32_t limbOffset = Seg2Filespace(limbAddress, parent->baseAddress);
+			if (!parent->HasDeclaration(limbOffset))
+			{
+				ZLimb* limb = new ZLimb(limbType, varPrefix, limbOffset, parent);
+				limb->DeclareReferences(varPrefix);
+				limb->GetSourceOutputCode(varPrefix);
+				parent->AddResource(limb);
+			}
+		}
+	}
+}
+
+std::string ZLimbTable::GetBodySourceCode() const
+{
+	std::string body = "";
+
+	for (size_t i = 0; i < count; i++)
+	{
+		std::string limbName = parent->GetDeclarationPtrName(limbsAddresses[i]);
+		body += StringHelper::Sprintf("\t%s,", limbName.c_str());
+
+		if (i + 1 < count)
+			body += "\n";
+	}
+
+	return body;
+}
+
+std::string ZLimbTable::GetSourceOutputCode(const std::string& prefix)
+{
+	std::string body = GetBodySourceCode();
+
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+	if (decl == nullptr || decl->isPlaceholder)
+	    parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                            GetSourceTypeName(), name, limbsAddresses.size(), body);
+	else
+		decl->text = body;
+
+	return "";
+}
+
+std::string ZLimbTable::GetSourceTypeName() const
+{
+	switch (limbType)
+	{
+	case ZLimbType::Standard:
+	case ZLimbType::LOD:
+	case ZLimbType::Skin:
+		return "void*";
+
+	case ZLimbType::Curve:
+	case ZLimbType::Legacy:
+		return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));;
+	}
+}
+
+ZResourceType ZLimbTable::GetResourceType() const
+{
+	return ZResourceType::LimbTable;
+}
+
+size_t ZLimbTable::GetRawDataSize() const
+{
+	return 4 * limbsAddresses.size();
 }
