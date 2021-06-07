@@ -136,6 +136,28 @@ public:
 };
 // TransformUpdateIndex
 
+
+/* ZBetaAnimation */
+
+class JointKey : public ZResource
+{
+public:
+    JointKey(ZFile* nParent);
+
+    void ParseRawData() override;
+    std::string GetBodySourceCode() const override;
+
+    std::string GetSourceTypeName() const override;
+    ZResourceType GetResourceType() const override;
+
+    size_t GetRawDataSize() const override;
+
+protected:
+	int16_t xMax, x;
+	int16_t yMax, y;
+	int16_t zMax, z;
+};
+
 class ZBetaAnimation : public ZAnimation
 {
 public:
@@ -156,5 +178,8 @@ public:
 protected:
 	int16_t limbCount;
 	segptr_t frameData; // s16*
-	segptr_t jointKey; //JointKey*
+	segptr_t jointKey; // JointKey*
+
+	std::vector<uint16_t> frameDataArray;
+	std::vector<JointKey> jointKeyArray;
 };
