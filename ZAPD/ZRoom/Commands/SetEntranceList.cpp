@@ -60,7 +60,7 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 std::string SetEntranceList::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "EntranceEntry", listName);
 	return StringHelper::Sprintf("SCENE_CMD_ENTRANCE_LIST(%s)", listName.c_str());
 }
 

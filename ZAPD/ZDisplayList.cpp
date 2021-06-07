@@ -522,7 +522,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 			lastTexSeg = segmentNumber;
 
 			texStr = "";
-			Globals::Instance->GetSegmentedPtrName(data & 0xFFFFFFFF, parent, texStr);
+			Globals::Instance->GetSegmentedPtrName(data & 0xFFFFFFFF, parent, "", texStr);
 		}
 
 		// gsDPSetTile
@@ -939,7 +939,7 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* lin
 	else
 	{
 		std::string texName;
-		Globals::Instance->GetSegmentedPtrName(data, parent, texName);
+		Globals::Instance->GetSegmentedPtrName(data, parent, "", texName);
 		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt].c_str(),
 		        sizTbl[siz].c_str(), www + 1, texName.c_str());
 	}
@@ -1654,7 +1654,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 	self->TextureGenCheck(self->curPrefix);
 
 	std::string texName = "";
-	Globals::Instance->GetSegmentedPtrName(seg, self->parent, texName);
+	Globals::Instance->GetSegmentedPtrName(seg, self->parent, "", texName);
 
 	gfxd_puts(texName.c_str());
 
@@ -1678,7 +1678,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	self->TextureGenCheck(self->curPrefix);
 
 	std::string palName = "";
-	Globals::Instance->GetSegmentedPtrName(seg, self->parent, palName);
+	Globals::Instance->GetSegmentedPtrName(seg, self->parent, "", palName);
 
 	gfxd_puts(palName.c_str());
 
@@ -1692,7 +1692,7 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	uint32_t dListSegNum = GETSEGNUM(seg);
 
 	std::string dListName = "";
-	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, dListName);
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Gfx", dListName);
 
 	if (!addressFound && self->parent->segment == dListSegNum)
 	{
@@ -1714,7 +1714,7 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	std::string mtxName = "";
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 
-	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, mtxName);
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Mtx", mtxName);
 	if (!addressFound && GETSEGNUM(seg) == self->parent->segment)
 	{
 		Declaration* decl =
