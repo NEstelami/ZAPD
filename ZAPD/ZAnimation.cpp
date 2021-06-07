@@ -528,9 +528,6 @@ void ZBetaAnimation::DeclareReferences(const std::string& prefix)
 	if (name != "")
 		varPrefix = name;
 
-	if (varPrefix.at(0) == 'g')
-		varPrefix.replace(0, 1, "s");
-
 	ZAnimation::DeclareReferences(varPrefix);
 
 	if (!frameDataArray.empty())

@@ -254,7 +254,7 @@ TODO. I'm hoping somebody else will do this.
 
   - `Name`: Required. Suxffixed by `Skel`.
   - `Type`: Required. Valid values: `Normal`, `Flex` and `Curve`.
-  - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
+  - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin`, `Curve` and `Legacy`.
 
 ※ There are no restrictions in the `Type` and `LimbType` attributes besides the valid values, so any skeleton type can be combined with any limb type.
 

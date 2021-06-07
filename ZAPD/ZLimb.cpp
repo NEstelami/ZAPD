@@ -410,6 +410,10 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			type = ZLimbType::Curve;
 		}
+		else if (limbType == "Legacy")
+		{
+			type = ZLimbType::Legacy;
+		}
 		else
 		{
 			fprintf(stderr,
@@ -434,6 +438,19 @@ void ZLimb::ParseRawData()
 
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+		return;
+	}
+	if (type == ZLimbType::Legacy)
+	{
+		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x00);
+		legTransX = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x04);
+		legTransY = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x08);
+		legTransZ = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x0C);
+		rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x10);
+		rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x12);
+		rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x14);
+		childPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
+		siblingPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
 		return;
 	}
 
@@ -469,6 +486,35 @@ void ZLimb::ParseRawData()
 	}
 }
 
+
+void ZLimb::DeclareReferences(const std::string& prefix)
+{
+    ZResource::DeclareReferences(prefix);
+
+	switch (type)
+	{
+		case ZLimbType::Legacy:
+		if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment && !parent->HasDeclaration(childPtr))
+		{
+			ZLimb* child = new ZLimb(ZLimbType::Legacy, prefix, Seg2Filespace(childPtr, parent->baseAddress), parent);
+			parent->AddResource(child);
+		}
+		if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment && !parent->HasDeclaration(siblingPtr))
+		{
+			ZLimb* sibling = new ZLimb(ZLimbType::Legacy, prefix, Seg2Filespace(siblingPtr, parent->baseAddress), parent);
+			parent->AddResource(sibling);
+		}
+		break;
+
+		// TODO
+		case ZLimbType::Standard:
+		case ZLimbType::LOD:
+		case ZLimbType::Skin:
+		case ZLimbType::Curve:
+			break;
+	}
+}
+
 size_t ZLimb::GetRawDataSize() const
 {
 	switch (type)
@@ -476,9 +522,13 @@ size_t ZLimb::GetRawDataSize() const
 	case ZLimbType::Standard:
 	case ZLimbType::Curve:
 		return 0x0C;
+
 	case ZLimbType::LOD:
 	case ZLimbType::Skin:
 		return 0x10;
+
+	case ZLimbType::Legacy:
+		return 0x20;
 	}
 
 	return 0x0C;
@@ -491,26 +541,45 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
 	std::string dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
 
-	std::string entryStr = "";
-	if (type != ZLimbType::Curve)
+	std::string entryStr = "\n";
+	if (type == ZLimbType::Legacy)
 	{
-		entryStr += StringHelper::Sprintf("\n    { %i, %i, %i },", transX, transY, transZ);
+		std::string childName = parent->GetDeclarationPtrName(childPtr);
+		std::string siblingName = parent->GetDeclarationPtrName(siblingPtr);
+
+		entryStr += StringHelper::Sprintf("\t%s,\n", dListStr.c_str());
+		entryStr += StringHelper::Sprintf("\t{ %ff, %ff, %ff },\n", legTransX, legTransY, legTransZ);
+		entryStr += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotX, rotY, rotZ);
+		entryStr += StringHelper::Sprintf("\t%s,\n", childName.c_str());
+		entryStr += StringHelper::Sprintf("\t%s\n", siblingName.c_str());
 	}
-
-	entryStr += StringHelper::Sprintf("\n    0x%02X, 0x%02X,\n", childIndex, siblingIndex);
-
-	switch (type)
+	else
 	{
-	case ZLimbType::Standard:
-		entryStr += StringHelper::Sprintf("    %s\n", dListStr.c_str());
-		break;
-	case ZLimbType::LOD:
-	case ZLimbType::Curve:
-		entryStr += StringHelper::Sprintf("    { %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
-		break;
-	case ZLimbType::Skin:
-		entryStr += GetSourceOutputCodeSkin(prefix);
-		break;
+		if (type != ZLimbType::Curve)
+		{
+			entryStr += StringHelper::Sprintf("    { %i, %i, %i },\n", transX, transY, transZ);
+		}
+
+		entryStr += StringHelper::Sprintf("    0x%02X, 0x%02X,\n", childIndex, siblingIndex);
+
+		switch (type)
+		{
+		case ZLimbType::Standard:
+			entryStr += StringHelper::Sprintf("    %s\n", dListStr.c_str());
+			break;
+
+		case ZLimbType::LOD:
+		case ZLimbType::Curve:
+			entryStr += StringHelper::Sprintf("    { %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
+			break;
+
+		case ZLimbType::Skin:
+			entryStr += GetSourceOutputCodeSkin(prefix);
+			break;
+
+		case ZLimbType::Legacy:
+			break;
+		}
 	}
 
 	Declaration* decl = parent->GetDeclaration(GetFileAddress());
@@ -550,12 +619,19 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 	{
 	case ZLimbType::Standard:
 		return "StandardLimb";
+
 	case ZLimbType::LOD:
 		return "LodLimb";
+
 	case ZLimbType::Skin:
 		return "SkinLimb";
+
 	case ZLimbType::Curve:
 		return "SkelCurveLimb";
+
+	case ZLimbType::Legacy:
+		return "LegacyLimb";
+
 	default:
 		return "StandardLimb";
 	}
