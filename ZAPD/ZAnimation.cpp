@@ -10,6 +10,7 @@
 REGISTER_ZFILENODE(Animation, ZNormalAnimation);
 REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
 REGISTER_ZFILENODE(CurveAnimation, ZCurveAnimation);
+REGISTER_ZFILENODE(BetaAnimation, ZBetaAnimation);
 
 ZAnimation::ZAnimation(ZFile* nParent) : ZResource(nParent)
 {
@@ -471,3 +472,79 @@ std::string ZCurveAnimation::GetSourceTypeName() const
 {
 	return "TransformUpdateIndex";
 }
+
+/* ZBetaAnimation */
+
+
+ZBetaAnimation::ZBetaAnimation(ZFile* nParent)
+	: ZAnimation(nParent)
+{
+}
+
+void ZBetaAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+{
+	ZAnimation::ExtractFromXML(reader, nRawDataIndex);
+
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+							GetSourceTypeName(), name, "");
+}
+
+void ZBetaAnimation::ParseRawData()
+{
+	ZAnimation::ParseRawData();
+
+	const auto& rawData = parent->GetRawData();
+    limbCount = BitConverter::ToInt16BE(rawData, rawDataIndex + 0x02);
+    frameData = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x04);
+    jointKey = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x08);
+}
+
+void ZBetaAnimation::DeclareReferences(const std::string& prefix)
+{
+	std::string varPrefix = prefix;
+	if (name != "")
+		varPrefix = name;
+
+	ZAnimation::DeclareReferences(varPrefix);
+
+	// TODO
+}
+
+std::string ZBetaAnimation::GetBodySourceCode() const
+{
+    std::string body = "\n";
+
+    std::string frameDataName = parent->GetDeclarationPtrName(frameData);
+    std::string jointKeyName = parent->GetDeclarationPtrName(jointKey);
+
+    body += StringHelper::Sprintf("\t%i, %i,\n", frameCount, limbCount);
+    body += StringHelper::Sprintf("\t%s,\n", frameDataName.c_str());
+    body += StringHelper::Sprintf("\t%s\n", jointKeyName.c_str());
+
+    return body;
+}
+
+std::string ZBetaAnimation::GetSourceOutputCode(const std::string& prefix)
+{
+	std::string body = GetBodySourceCode();
+
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+	if (decl == nullptr || decl->isPlaceholder)
+	    parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                            GetSourceTypeName(), name, body);
+	else
+		decl->text = body;
+
+	return "";
+}
+
+std::string ZBetaAnimation::GetSourceTypeName() const
+{
+	return "AnimationHeader2";
+}
+
+size_t ZBetaAnimation::GetRawDataSize() const
+{
+	return 0x0C;
+}
+

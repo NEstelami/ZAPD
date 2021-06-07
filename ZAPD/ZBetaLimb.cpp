@@ -26,7 +26,6 @@ void ZBetaLimb::ParseRawData()
     ZResource::ParseRawData();
 
     const auto& rawData = parent->GetRawData();
-
     dList = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x00);
     transX = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x04);
     transY = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x08);

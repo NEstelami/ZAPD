@@ -135,3 +135,26 @@ public:
 	std::string GetSourceTypeName() const override;
 };
 // TransformUpdateIndex
+
+class ZBetaAnimation : public ZAnimation
+{
+public:
+	ZBetaAnimation(ZFile* nParent);
+
+    void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
+
+    void ParseRawData() override;
+    void DeclareReferences(const std::string& prefix) override;
+    std::string GetBodySourceCode() const override;
+
+    std::string GetSourceOutputCode(const std::string& prefix) override;
+
+    std::string GetSourceTypeName() const override;
+
+    size_t GetRawDataSize() const override;
+
+protected:
+	int16_t limbCount;
+	segptr_t frameData; // s16*
+	segptr_t jointKey; //JointKey*
+};
