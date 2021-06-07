@@ -225,19 +225,19 @@ std::string ZScalar::GetBodySourceCode() const
 	case ZScalarType::ZSCALAR_U16:
 		return StringHelper::Sprintf("%hu", scalarData.u16);
 	case ZScalarType::ZSCALAR_X16:
-		return StringHelper::Sprintf("0x%02X", scalarData.u16);
+		return StringHelper::Sprintf("0x%04X", scalarData.u16);
 	case ZScalarType::ZSCALAR_S32:
 		return StringHelper::Sprintf("%d", scalarData.s32);
 	case ZScalarType::ZSCALAR_U32:
 		return StringHelper::Sprintf("%u", scalarData.u32);
 	case ZScalarType::ZSCALAR_X32:
-		return StringHelper::Sprintf("0x%04X", scalarData.u32);
+		return StringHelper::Sprintf("0x%08X", scalarData.u32);
 	case ZScalarType::ZSCALAR_S64:
 		return StringHelper::Sprintf("%lld", scalarData.s64);
 	case ZScalarType::ZSCALAR_U64:
 		return StringHelper::Sprintf("%llu", scalarData.u64);
 	case ZScalarType::ZSCALAR_X64:
-		return StringHelper::Sprintf("0x%08X", scalarData.u64);
+		return StringHelper::Sprintf("0x%016X", scalarData.u64);
 	case ZScalarType::ZSCALAR_F32:
 		return StringHelper::Sprintf("%f", scalarData.f32);
 	case ZScalarType::ZSCALAR_F64:

@@ -31,9 +31,9 @@ void ZBetaLimb::ParseRawData()
     transX = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x04);
     transY = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x08);
     transZ = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x0C);
-    rotX = BitConverter::ToInt16BE(rawData, rawDataIndex + 0x10);
-    rotY = BitConverter::ToInt16BE(rawData, rawDataIndex + 0x12);
-    rotZ = BitConverter::ToInt16BE(rawData, rawDataIndex + 0x14);
+    rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x10);
+    rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x12);
+    rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x14);
     child = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
     sibling = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
 }
@@ -58,8 +58,8 @@ std::string ZBetaLimb::GetBodySourceCode() const
     std::string siblingName = parent->GetDeclarationPtrName(sibling);
 
     body += StringHelper::Sprintf("\t%s,\n", dListName.c_str());
-    body += StringHelper::Sprintf("\t{ %1.3ff, %1.3ff, %1.3ff },\n", transX, transY, transZ);
-    body += StringHelper::Sprintf("\t{ %6i, %6i, %6i },\n", rotX, rotY, rotZ);
+    body += StringHelper::Sprintf("\t{ %ff, %ff, %ff },\n", transX, transY, transZ);
+    body += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotX, rotY, rotZ);
     body += StringHelper::Sprintf("\t%s,\n", childName.c_str());
     body += StringHelper::Sprintf("\t%s\n", siblingName.c_str());
 

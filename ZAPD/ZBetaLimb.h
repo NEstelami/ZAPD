@@ -24,7 +24,7 @@ public:
 protected:
     segptr_t dList; // Gfx*
     float transX, transY, transZ; // Vec3f
-    int16_t rotX, rotY, rotZ; // Vec3s
+    uint16_t rotX, rotY, rotZ; // Vec3s
     segptr_t child; // BetaLimb*
     segptr_t sibling; // BetaLimb*
 };
