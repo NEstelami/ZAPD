@@ -15,26 +15,25 @@ enum class ZSkeletonType
 	Curve,
 };
 
-
 class ZLimbTable : public ZResource
 {
 public:
-    ZLimbTable(ZFile* nParent);
+	ZLimbTable(ZFile* nParent);
 
-    void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 	void ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
-    void ParseRawData() override;
-    void DeclareReferences(const std::string& prefix) override;
-    std::string GetBodySourceCode() const override;
+	void ParseRawData() override;
+	void DeclareReferences(const std::string& prefix) override;
+	std::string GetBodySourceCode() const override;
 
-    std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
 
-    std::string GetSourceTypeName() const override;
-    ZResourceType GetResourceType() const override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 
-    size_t GetRawDataSize() const override;
+	size_t GetRawDataSize() const override;
 
 protected:
 	ZLimbType limbType = ZLimbType::Standard;
@@ -42,7 +41,6 @@ protected:
 
 	std::vector<segptr_t> limbsAddresses;
 };
-
 
 class ZSkeleton : public ZResource
 {
@@ -76,5 +74,3 @@ public:
 protected:
 	ZLimbTable limbsTable;
 };
-
-

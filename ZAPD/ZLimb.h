@@ -129,10 +129,10 @@ protected:
 	segptr_t dList2Ptr;                                         // LOD and Curve Only
 
 	// Legacy only
-    float legTransX, legTransY, legTransZ; // Vec3f
-    uint16_t rotX, rotY, rotZ; // Vec3s
-    segptr_t childPtr; // LegacyLimb*
-    segptr_t siblingPtr; // LegacyLimb*
+	float legTransX, legTransY, legTransZ;  // Vec3f
+	uint16_t rotX, rotY, rotZ;              // Vec3s
+	segptr_t childPtr;                      // LegacyLimb*
+	segptr_t siblingPtr;                    // LegacyLimb*
 
 	std::string GetLimbDListSourceOutputCode(const std::string& prefix,
 	                                         const std::string& limbPrefix, segptr_t dListPtr);

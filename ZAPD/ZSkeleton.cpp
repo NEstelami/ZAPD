@@ -99,8 +99,8 @@ std::string ZSkeleton::GetBodySourceCode() const
 		headerStr = StringHelper::Sprintf("\n\t%s, %i\n", limbTableName.c_str(), limbCount);
 		break;
 	case ZSkeletonType::Flex:
-		headerStr = StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(),
-		                                  limbCount, dListCount);
+		headerStr = StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(), limbCount,
+		                                  dListCount);
 		break;
 	}
 
@@ -178,9 +178,7 @@ uint8_t ZSkeleton::GetLimbCount()
 
 /* ZLimbTable */
 
-
-ZLimbTable::ZLimbTable(ZFile* nParent)
-	: ZResource(nParent)
+ZLimbTable::ZLimbTable(ZFile* nParent) : ZResource(nParent)
 {
 	RegisterRequiredAttribute("LimbType");
 	RegisterRequiredAttribute("Count");
@@ -188,9 +186,9 @@ ZLimbTable::ZLimbTable(ZFile* nParent)
 
 void ZLimbTable::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
-    ZResource::ExtractFromXML(reader, nRawDataIndex);
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	    parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                            GetSourceTypeName(), name, limbsAddresses.size(), "");
 }
 
@@ -224,9 +222,9 @@ void ZLimbTable::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZLimbTable::ParseRawData()
 {
-    ZResource::ParseRawData();
+	ZResource::ParseRawData();
 
-    const auto& rawData = parent->GetRawData();
+	const auto& rawData = parent->GetRawData();
 	uint32_t ptr = rawDataIndex;
 	for (size_t i = 0; i < count; i++)
 	{
@@ -241,7 +239,7 @@ void ZLimbTable::DeclareReferences(const std::string& prefix)
 	if (name != "")
 		varPrefix = name;
 
-    ZResource::DeclareReferences(varPrefix);
+	ZResource::DeclareReferences(varPrefix);
 
 	for (size_t i = 0; i < count; i++)
 	{
@@ -283,8 +281,8 @@ std::string ZLimbTable::GetSourceOutputCode(const std::string& prefix)
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-	    parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), name, limbsAddresses.size(), body);
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+		                            GetSourceTypeName(), name, limbsAddresses.size(), body);
 	else
 		decl->text = body;
 
@@ -302,7 +300,8 @@ std::string ZLimbTable::GetSourceTypeName() const
 
 	case ZLimbType::Curve:
 	case ZLimbType::Legacy:
-		return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));;
+		return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
+		;
 	}
 }
 

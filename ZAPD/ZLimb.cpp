@@ -467,14 +467,13 @@ void ZLimb::ParseRawData()
 	}
 }
 
-
 void ZLimb::DeclareReferences(const std::string& prefix)
 {
-    ZResource::DeclareReferences(prefix);
+	ZResource::DeclareReferences(prefix);
 
 	switch (type)
 	{
-		case ZLimbType::Legacy:
+	case ZLimbType::Legacy:
 		if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment)
 		{
 			uint32_t childOffset = Seg2Filespace(childPtr, parent->baseAddress);
@@ -497,15 +496,15 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 		}
 		break;
 
-		// TODO
-		case ZLimbType::Standard:
-		case ZLimbType::LOD:
-		case ZLimbType::Skin:
-		case ZLimbType::Curve:
-			break;
+	// TODO
+	case ZLimbType::Standard:
+	case ZLimbType::LOD:
+	case ZLimbType::Skin:
+	case ZLimbType::Curve:
+		break;
 
-		case ZLimbType::Invalid:
-			break;
+	case ZLimbType::Invalid:
+		break;
 	}
 }
 
@@ -524,8 +523,8 @@ size_t ZLimb::GetRawDataSize() const
 	case ZLimbType::Legacy:
 		return 0x20;
 
-		case ZLimbType::Invalid:
-			break;
+	case ZLimbType::Invalid:
+		break;
 	}
 
 	return 0x0C;
@@ -545,7 +544,8 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 		std::string siblingName = parent->GetDeclarationPtrName(siblingPtr);
 
 		entryStr += StringHelper::Sprintf("%s,\n", dListStr.c_str());
-		entryStr += StringHelper::Sprintf("\t{ %ff, %ff, %ff },\n", legTransX, legTransY, legTransZ);
+		entryStr +=
+			StringHelper::Sprintf("\t{ %ff, %ff, %ff },\n", legTransX, legTransY, legTransZ);
 		entryStr += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotX, rotY, rotZ);
 		entryStr += StringHelper::Sprintf("\t%s,\n", childName.c_str());
 		entryStr += StringHelper::Sprintf("\t%s\n", siblingName.c_str());
@@ -567,7 +567,8 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 
 		case ZLimbType::LOD:
 		case ZLimbType::Curve:
-			entryStr += StringHelper::Sprintf("    { %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
+			entryStr +=
+				StringHelper::Sprintf("    { %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
 			break;
 
 		case ZLimbType::Skin:
