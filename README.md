@@ -104,6 +104,9 @@ ZAPD also accepts the following list of extra parameters:
   - `2` (and higher): Debug.
 - `-wu` / `--warn-unaccounted`: Enable warnings for each unaccounted block of data found.
   - Can be used only in `e` or `bsf` modes.
+- `-vu` / `--verbose-unaccounted`: Changes how unaccounteds are outputted. Max 4 bytes per line (a word) and add a comment with the offset of each of those lines.
+  - Could be useful for looking at raw data or testing.
+  - Can be used only in `e` or `bsf` modes.
 - `-tm MODE`: Test Mode (enables certain experimental features). To enable it, set `MODE` to `1`.
 
 Additionally, you can pass the flag `--version` to see the current ZAPD version. If that flag is passed, ZAPD will ignore any other parameter passed.

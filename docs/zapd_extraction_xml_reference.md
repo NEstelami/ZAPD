@@ -17,7 +17,9 @@ This document aims to be a small reference of how to create a compatible xml fil
     - [Animation](#animation)
     - [PlayerAnimation](#playeranimation)
     - [CurveAnimation](#curveanimation)
+    - [LegacyAnimation](#legacyanimation)
     - [Skeleton](#skeleton)
+    - [LimbTable](#limbtable)
     - [Limb](#limb)
     - [Symbol](#symbol)
     - [Collision](#collision)
@@ -242,6 +244,22 @@ TODO. I'm hoping somebody else will do this.
 
 -------------------------
 
+### LegacyAnimation
+
+Useful only for the unused `object_human`'s animation data.
+
+- Example:
+
+```xml
+<LegacyAnimation Name="gHumanAnim_011A9C" Offset="0x11A9C"/>
+```
+
+- Attributes:
+
+  - `Name`: Required. Suxffixed by `Anim`.
+
+-------------------------
+
 ### Skeleton
 
 - Example:
@@ -260,6 +278,22 @@ TODO. I'm hoping somebody else will do this.
 
 -------------------------
 
+### LimbTable
+
+- Example:
+
+```xml
+<LimbTable Name="gHumanLimbTable_011FC8" LimbType="Legacy" Count="41" Offset="0x11FC8"/>
+```
+
+- Attributes:
+
+  - `Name`: Required. Suxffixed by `Skel`.
+  - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin`, `Curve` and `Legacy`.
+  - `Count`: Required. Amount of limbs. Integer.
+
+-------------------------
+
 ### Limb
 
 - Example:
@@ -271,7 +305,7 @@ TODO. I'm hoping somebody else will do this.
 - Attributes:
 
   - `Name`: Required. Suxffixed by `Limb`.
-  - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin` and `Curve`.
+  - `LimbType`: Required. Valid values: `Standard`, `LOD`, `Skin`, `Curve` and `Legacy`.
 
 -------------------------
 
@@ -332,7 +366,7 @@ u64 pad34F8 = { 0 };
 - Attributes:
 
   - `Name`: Required. Suxffixed by ~~`TBD`~~.
-  - `Type`: Required. Valid values: `s8`, `u8`, `s16`, `u16`, `s32`, `u32`, `s64`, `u64`, `f32` and `f64`.
+  - `Type`: Required. Valid values: `s8`, `u8`, `x8`, `s16`, `u16`, `x16`, `s32`, `u32`, `x32`, `s64`, `u64`, `x64`, `f32` and `f64`.
 
 ※ Can be wrapped in an [`Array`](#array) tag.
 
