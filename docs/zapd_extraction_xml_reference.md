@@ -1,10 +1,10 @@
-# ZAPD extraction xml reference
+# ZAPD extraction XML reference
 
 This document aims to be a small reference of how to create a compatible xml file for ZAPD.
 
 ## Table of contents
 
-- [ZAPD extraction xml reference](#zapd-extraction-xml-reference)
+- [ZAPD extraction XML reference](#zapd-extraction-xml-reference)
   - [Table of contents](#table-of-contents)
   - [Basic XML](#basic-xml)
   - [Resources types](#resources-types)
@@ -78,6 +78,7 @@ It's worth noting that every tag expects a `Name="gNameOfTheAsset"`. This is wil
 - Attributes:
 
   - `Name`: Required. The name of the file in `baserom/` which will be extracted.
+  - `OutName`: Optional. The output name of the generated C source file. Defaults to the value passed to `Name`.
   - `Segment`: Required. This is the segment number of the current file. Expects a decimal number, usually 6 if it is an object, or 128 for overlays (It's kinda a whacky hack to get around of the `0x80` addresses).
   - `BaseAddress`: Optional. RAM address of the file. Expects a hex number (with `0x` prefix). Default value: `0`.
   - `RangeStart`: Optional. File offset where the extraction will begin. Hex. Default value: `0x000000000`.

@@ -12,7 +12,9 @@ public:
 	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const;
-	void DeclareVar();
+
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() const;
 	segptr_t GetListAddress() const;
@@ -30,8 +32,7 @@ class ZPath : public ZResource
 public:
 	ZPath(ZFile* nParent);
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
@@ -41,6 +42,7 @@ public:
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() const override;
 	void SetNumPaths(uint32_t nNumPaths);

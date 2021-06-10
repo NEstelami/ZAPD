@@ -36,8 +36,7 @@ public:
 	ZRoom(ZFile* nParent);
 	virtual ~ZRoom();
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet);
 	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);
@@ -46,5 +45,5 @@ public:
 
 	size_t GetRawDataSize() const override;
 	ZResourceType GetResourceType() const override;
-	virtual void PreGenSourceFiles() override;
+	void PreGenSourceFiles() override;
 };

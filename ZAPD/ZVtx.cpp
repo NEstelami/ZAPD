@@ -21,6 +21,9 @@ ZVtx::ZVtx(ZFile* nParent) : ZResource(nParent)
 
 void ZVtx::ParseRawData()
 {
+	ZResource::ParseRawData();
+
+	const auto& rawData = parent->GetRawData();
 	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
 	y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
 	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
@@ -37,11 +40,6 @@ std::string ZVtx::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b,
 	                             a);
-}
-
-std::string ZVtx::GetSourceTypeName() const
-{
-	return "Vtx";
 }
 
 std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
@@ -79,13 +77,12 @@ bool ZVtx::IsExternalResource() const
 	return true;
 }
 
+std::string ZVtx::GetSourceTypeName() const
+{
+	return "Vtx";
+}
+
 std::string ZVtx::GetExternalExtension() const
 {
 	return "vtx";
-}
-
-void ZVtx::ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-                          const uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawData, nRawDataIndex);
 }
