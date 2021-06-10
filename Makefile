@@ -1,6 +1,6 @@
 OPTIMIZATION_ON ?= 1
 ASAN ?= 0
-DEPRECATION_OFF ?= 0
+DEPRECATION_ON ?= 1
 CFLAGS ?= 
 
 CC := g++
@@ -15,8 +15,8 @@ endif
 ifneq ($(ASAN),0)
   CFLAGS += -fsanitize=address
 endif
-ifneq ($(DEPRECATION_OFF),0)
-  CFLAGS += -DDEPRECATION_OFF
+ifneq ($(DEPRECATION_ON),0)
+  CFLAGS += -DDEPRECATION_ON
 endif
 # CFLAGS += -DTEXTURE_DEBUG
 

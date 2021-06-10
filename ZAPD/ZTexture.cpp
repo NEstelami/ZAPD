@@ -836,7 +836,7 @@ TextureType ZTexture::GetTextureTypeFromString(std::string str)
 	else if (str == "rgb5a1")
 	{
 		texType = TextureType::RGBA16bpp;
-#ifndef DEPRECATION_OFF
+#ifdef DEPRECATION_ON
 		fprintf(stderr,
 		        "ZTexture::GetTextureTypeFromString: Deprecation warning.\n"
 		        "\t The texture format 'rgb5a1' is currently deprecated, and will be removed in a future "
