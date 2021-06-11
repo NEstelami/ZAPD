@@ -1042,7 +1042,13 @@ std::string ZFile::ProcessDeclarations()
 					std::string unaccountedPrefix = "unaccounted";
 
 					if (diff < 16 && !nonZeroUnaccounted)
+					{
 						unaccountedPrefix = "possiblePadding";
+
+						// Strip unnecessary padding at the end of the file.
+						if (unaccountedAddress + diff >= rawData.size())
+							break;
+					}
 
 					Declaration* decl = AddDeclarationArray(
 						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",

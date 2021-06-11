@@ -1,6 +1,6 @@
 OPTIMIZATION_ON ?= 1
 ASAN ?= 0
-DEPRECATION_OFF ?= 0
+DEPRECATION_ON ?= 1
 DEBUG ?= 0
 CFLAGS ?= 
 COPYCHECK_ARGS ?= 
@@ -11,6 +11,7 @@ CFLAGS += -fpic -std=c++17 -Wall -fno-omit-frame-pointer
 
 ifneq ($(DEBUG),0)
   OPTIMIZATION_ON = 0
+  DEPRECATION_ON = 0
   DEPRECATION_OFF = 1
   CFLAGS += -g3 -DDEVELOPMENT -D_DEBUG
   COPYCHECK_ARGS += --devel
@@ -26,8 +27,8 @@ endif
 ifneq ($(ASAN),0)
   CFLAGS += -fsanitize=address
 endif
-ifneq ($(DEPRECATION_OFF),0)
-  CFLAGS += -DDEPRECATION_OFF
+ifneq ($(DEPRECATION_ON),0)
+  CFLAGS += -DDEPRECATION_ON
 endif
 # CFLAGS += -DTEXTURE_DEBUG
 
