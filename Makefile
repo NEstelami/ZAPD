@@ -12,7 +12,6 @@ CFLAGS += -fpic -std=c++17 -Wall -fno-omit-frame-pointer
 ifneq ($(DEBUG),0)
   OPTIMIZATION_ON = 0
   DEPRECATION_ON = 0
-  DEPRECATION_OFF = 1
   CFLAGS += -g3 -DDEVELOPMENT -D_DEBUG
   COPYCHECK_ARGS += --devel
 else
