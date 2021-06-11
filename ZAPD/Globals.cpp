@@ -183,8 +183,9 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 	}
 
 	uint8_t segment = GETSEGNUM(segAddress);
+	uint32_t offset = Seg2Filespace(segAddress, currentFile->baseAddress);
 
-	if (segment == currentFile->segment)
+	if (segment == currentFile->segment && currentFile->rangeStart <= offset && offset < currentFile->rangeEnd)
 	{
 		if (currentFile->GetDeclarationPtrName(segAddress, declName))
 			return true;
@@ -193,8 +194,13 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 	{
 		for (auto file : segmentRefFiles[segment])
 		{
-			if (file->GetDeclarationPtrName(segAddress, declName))
-				return true;
+			offset = Seg2Filespace(segAddress, file->baseAddress);
+
+			if (file->rangeStart <= offset && offset < file->rangeEnd)
+			{
+				if (file->GetDeclarationPtrName(segAddress, declName))
+					return true;
+			}
 		}
 	}
 
@@ -219,8 +225,9 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	}
 
 	uint8_t segment = GETSEGNUM(segAddress);
+	uint32_t offset = Seg2Filespace(segAddress, currentFile->baseAddress);
 
-	if (segment == currentFile->segment)
+	if (segment == currentFile->segment && currentFile->rangeStart <= offset && offset < currentFile->rangeEnd)
 	{
 		bool addressFound = currentFile->GetDeclarationArrayIndexedName(segAddress, elementSize,
 		                                                                declName);
@@ -231,10 +238,15 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	{
 		for (auto file : segmentRefFiles[segment])
 		{
-			bool addressFound = file->GetDeclarationArrayIndexedName(segAddress, elementSize,
-			                                                         declName);
-			if (addressFound)
-				return true;
+			offset = Seg2Filespace(segAddress, file->baseAddress);
+
+			if (file->rangeStart <= offset && offset < file->rangeEnd)
+			{
+				bool addressFound = file->GetDeclarationArrayIndexedName(segAddress, elementSize,
+																		declName);
+				if (addressFound)
+					return true;
+			}
 		}
 	}
 

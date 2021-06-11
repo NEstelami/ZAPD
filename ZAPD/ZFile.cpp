@@ -94,8 +94,6 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 	if (outNameXml != nullptr)
 		outName = outNameXml;
 
-	printf("name: %s\noutname: %s\n\n", name.c_str(), outName.c_str());
-
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
