@@ -45,7 +45,7 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 std::string SetLightingSettings::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "LightSettings", listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_ENV_LIGHT_SETTINGS(%i, %s)", settings.size(),
 	                             listName.c_str());
 }

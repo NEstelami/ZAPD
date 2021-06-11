@@ -113,7 +113,7 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 			segptr_t limbAddress = limbsTblAddresses.at(i);
 
 			std::string decl;
-			Globals::Instance->GetSegmentedPtrName(limbAddress, parent, "", decl);
+			Globals::Instance->GetSegmentedPtrName(limbAddress, parent, decl);
 
 			tblStr += StringHelper::Sprintf("\t%s,", decl.c_str());
 
@@ -130,7 +130,7 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 std::string ZSkeleton::GetBodySourceCode() const
 {
 	std::string limbArrayName;
-	Globals::Instance->GetSegmentedPtrName(limbsArrayAddress, parent, "", limbArrayName);
+	Globals::Instance->GetSegmentedPtrName(limbsArrayAddress, parent, limbArrayName);
 
 	switch (type)
 	{

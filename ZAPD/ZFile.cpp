@@ -558,8 +558,7 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #endif
 }
 
-bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expectedType,
-                                  std::string& declName) const
+bool ZFile::GetDeclarationPtrName(segptr_t segAddress, std::string& declName) const
 {
 	if (segAddress == 0)
 	{
@@ -575,24 +574,17 @@ bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expect
 		return false;
 	}
 
-	if (expectedType != "" && expectedType != "void*")
+	if (!decl->isArray)
 	{
-		if (expectedType != decl->varType && "static " + expectedType != decl->varType)
-		{
-			declName = StringHelper::Sprintf("0x%08X", segAddress);
-			return false;
-		}
+		declName = "&" + decl->varName;
+		return true;
 	}
 
-	if (!decl->isArray)
-		declName = "&" + decl->varName;
-	else
-		declName = decl->varName;
+	declName = decl->varName;
 	return true;
 }
 
 bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSize,
-                                           const std::string& expectedType,
                                            std::string& declName) const
 {
 	if (segAddress == 0)
@@ -607,15 +599,6 @@ bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSi
 	{
 		declName = StringHelper::Sprintf("0x%08X", segAddress);
 		return false;
-	}
-
-	if (expectedType != "" && expectedType != "void*")
-	{
-		if (expectedType != decl->varType && "static " + expectedType != decl->varType)
-		{
-			declName = StringHelper::Sprintf("0x%08X", segAddress);
-			return false;
-		}
 	}
 
 	if (decl->address == address)
@@ -1255,8 +1238,7 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 		if (c == '@' && c2 == 'r')
 		{
 			std::string vtxName;
-			Globals::Instance->GetSegmentedArrayIndexedName(decl->references[refIndex], 0x10, this,
-			                                                "Vtx", vtxName);
+			Globals::Instance->GetSegmentedArrayIndexedName(decl->references[refIndex], 0x10, this, vtxName);
 			decl->text.replace(i, 2, vtxName);
 
 			refIndex++;
@@ -1339,8 +1321,8 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 			else
 			{
 				std::string texName;
+				GetDeclarationPtrName(currentOffset, texName);
 				std::string texNextName;
-				GetDeclarationPtrName(currentOffset, "", texName);
 
 				Declaration* nextDecl = GetDeclaration(nextOffset);
 				if (nextDecl == nullptr)

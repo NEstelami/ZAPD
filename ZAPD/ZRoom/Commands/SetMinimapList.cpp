@@ -52,7 +52,7 @@ void SetMinimapList::DeclareReferences(const std::string& prefix)
 
 	{
 		std::string listName;
-		Globals::Instance->GetSegmentedPtrName(listSegmentAddr, parent, "MinimapEntry", listName);
+		Globals::Instance->GetSegmentedPtrName(listSegmentAddr, parent, listName);
 		std::string declaration = StringHelper::Sprintf("\n\t%s, 0x%08X\n", listName.c_str(), unk4);
 
 		parent->AddDeclaration(
@@ -65,7 +65,7 @@ void SetMinimapList::DeclareReferences(const std::string& prefix)
 std::string SetMinimapList::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "MinimapList", listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
 	return StringHelper::Sprintf("SCENE_CMD_MINIMAP_INFO(%s)", listName.c_str());
 }
 

@@ -128,10 +128,9 @@ void ZNormalAnimation::DeclareReferences(const std::string& prefix)
 std::string ZNormalAnimation::GetBodySourceCode() const
 {
 	std::string frameDataName;
-	Globals::Instance->GetSegmentedPtrName(rotationValuesAddress, parent, "s16", frameDataName);
+	Globals::Instance->GetSegmentedPtrName(rotationValuesAddress, parent, frameDataName);
 	std::string jointIndicesName;
-	Globals::Instance->GetSegmentedPtrName(rotationIndicesAddress, parent, "JointIndex",
-	                                       jointIndicesName);
+	Globals::Instance->GetSegmentedPtrName(rotationIndicesAddress, parent, jointIndicesName);
 
 	std::string headerStr =
 		StringHelper::Sprintf("\n\t{ %i }, %s,\n", frameCount, frameDataName.c_str());
@@ -168,7 +167,7 @@ void ZLinkAnimation::ParseRawData()
 std::string ZLinkAnimation::GetBodySourceCode() const
 {
 	std::string segSymbol;
-	Globals::Instance->GetSegmentedPtrName(segmentAddress, parent, "", segSymbol);
+	Globals::Instance->GetSegmentedPtrName(segmentAddress, parent, segSymbol);
 
 	return StringHelper::Sprintf("\n\t{ %i }, %s\n", frameCount, segSymbol.c_str());
 }
@@ -380,12 +379,11 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 std::string ZCurveAnimation::GetBodySourceCode() const
 {
 	std::string refIndexStr;
-	Globals::Instance->GetSegmentedPtrName(refIndex, parent, "u8", refIndexStr);
+	Globals::Instance->GetSegmentedPtrName(refIndex, parent, refIndexStr);
 	std::string transformDataStr;
-	Globals::Instance->GetSegmentedPtrName(transformData, parent, "TransformData",
-	                                       transformDataStr);
+	Globals::Instance->GetSegmentedPtrName(transformData, parent, transformDataStr);
 	std::string copyValuesStr;
-	Globals::Instance->GetSegmentedPtrName(copyValues, parent, "s16", copyValuesStr);
+	Globals::Instance->GetSegmentedPtrName(copyValues, parent, copyValuesStr);
 
 	return StringHelper::Sprintf("\n\t%s,\n\t%s,\n\t%s,\n\t%i, %i\n", refIndexStr.c_str(),
 	                             transformDataStr.c_str(), copyValuesStr.c_str(), unk_0C, unk_10);

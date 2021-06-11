@@ -77,12 +77,9 @@ public:
 	                                        std::string varType, std::string varName,
 	                                        size_t arrayItemCnt);
 
-	bool GetDeclarationPtrName(segptr_t segAddress, const std::string& expectedType,
-	                           std::string& declName) const;
+	bool GetDeclarationPtrName(segptr_t segAddress, std::string& declName) const;
 	bool GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSize,
-	                                    const std::string& expectedType,
 	                                    std::string& declName) const;
-
 	Declaration* GetDeclaration(uint32_t address) const;
 	Declaration* GetDeclarationRanged(uint32_t address) const;
 	bool HasDeclaration(uint32_t address);

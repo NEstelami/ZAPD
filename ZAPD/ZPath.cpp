@@ -142,7 +142,7 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 
 	std::string pointsName = "";
 	bool addressFound =
-		Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, "Vec3s", pointsName);
+		Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, pointsName);
 	if (addressFound)
 		return;
 
@@ -170,7 +170,7 @@ std::string PathwayEntry::GetBodySourceCode() const
 {
 	std::string declaration = "";
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, "Vec3s", listName);
+	Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, listName);
 
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 		declaration +=

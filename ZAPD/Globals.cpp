@@ -174,8 +174,7 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
-                                  const std::string& expectedType, std::string& declName)
+bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::string& declName)
 {
 	if (segAddress == 0)
 	{
@@ -187,14 +186,14 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 
 	if (segment == currentFile->segment)
 	{
-		if (currentFile->GetDeclarationPtrName(segAddress, expectedType, declName))
+		if (currentFile->GetDeclarationPtrName(segAddress, declName))
 			return true;
 	}
 	else if (HasSegment(segment))
 	{
 		for (auto file : segmentRefFiles[segment])
 		{
-			if (file->GetDeclarationPtrName(segAddress, expectedType, declName))
+			if (file->GetDeclarationPtrName(segAddress, declName))
 				return true;
 		}
 	}
@@ -211,8 +210,7 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 }
 
 bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSize,
-                                           ZFile* currentFile, const std::string& expectedType,
-                                           std::string& declName)
+                                           ZFile* currentFile, std::string& declName)
 {
 	if (segAddress == 0)
 	{
@@ -225,7 +223,7 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	if (segment == currentFile->segment)
 	{
 		bool addressFound = currentFile->GetDeclarationArrayIndexedName(segAddress, elementSize,
-		                                                                expectedType, declName);
+		                                                                declName);
 		if (addressFound)
 			return true;
 	}
@@ -234,7 +232,7 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 		for (auto file : segmentRefFiles[segment])
 		{
 			bool addressFound = file->GetDeclarationArrayIndexedName(segAddress, elementSize,
-			                                                         expectedType, declName);
+			                                                         declName);
 			if (addressFound)
 				return true;
 		}
