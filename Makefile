@@ -1,6 +1,6 @@
 OPTIMIZATION_ON ?= 1
 ASAN ?= 0
-DEPRECATION_OFF ?= 0
+DEPRECATION_ON ?= 1
 DEBUG ?= 0
 CFLAGS ?= 
 COPYCHECK_ARGS ?= 
@@ -14,6 +14,7 @@ ifneq ($(DEBUG),0)
   DEPRECATION_OFF = 1
   CFLAGS += -g3 -DDEVELOPMENT
   COPYCHECK_ARGS += --devel
+  DEPRECATION_ON = 0
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
@@ -24,8 +25,8 @@ endif
 ifneq ($(ASAN),0)
   CFLAGS += -fsanitize=address
 endif
-ifneq ($(DEPRECATION_OFF),0)
-  CFLAGS += -DDEPRECATION_OFF
+ifneq ($(DEPRECATION_ON),0)
+  CFLAGS += -DDEPRECATION_ON
 endif
 # CFLAGS += -DTEXTURE_DEBUG
 
