@@ -48,8 +48,8 @@ public:
 	std::string GetName() const;
 	const fs::path& GetXmlFilePath() const;
 	const std::vector<uint8_t>& GetRawData() const;
-	void ExtractResources(fs::path outputDir);
-	void BuildSourceFile(fs::path outputDir);
+	void ExtractResources();
+	void BuildSourceFile();
 	void AddResource(ZResource* res);
 	ZResource* FindResource(uint32_t rawDataIndex);
 	std::vector<ZResource*> GetResourcesOfType(ZResourceType resType);
@@ -99,6 +99,7 @@ public:
 protected:
 	std::vector<uint8_t> rawData;
 	std::string name;
+	fs::path outName = "";
 	fs::path basePath;
 	fs::path outputPath;
 	fs::path xmlFilePath;

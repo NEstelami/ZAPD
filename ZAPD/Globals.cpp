@@ -19,6 +19,7 @@ Globals::Globals()
 	useLegacyZDList = false;
 	useExternalResources = true;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
+	outputPath = Directory::GetCurrentDirectory();
 }
 
 Globals::~Globals()
@@ -185,7 +186,6 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, const
 
 	if (segment == currentFile->segment)
 	{
-		uint32_t address = Seg2Filespace(segAddress, currentFile->baseAddress);
 		if (currentFile->GetDeclarationPtrName(segAddress, expectedType, declName))
 			return true;
 	}
@@ -193,7 +193,6 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, const
 	{
 		for (auto file : segmentRefFiles[segment])
 		{
-			uint32_t address = Seg2Filespace(segAddress, file->baseAddress);
 			if (file->GetDeclarationPtrName(segAddress, expectedType, declName))
 				return true;
 		}

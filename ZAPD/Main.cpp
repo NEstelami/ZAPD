@@ -27,8 +27,7 @@
 
 using namespace tinyxml2;
 
-bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
-           ZFileMode fileMode);
+bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath, ZFileMode fileMode);
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath);
@@ -305,8 +304,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
-           ZFileMode fileMode)
+bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath, ZFileMode fileMode)
 {
 	XMLDocument doc;
 	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());
@@ -375,9 +373,9 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 		for (ZFile* file : Globals::Instance->files)
 		{
 			if (fileMode == ZFileMode::BuildSourceFile)
-				file->BuildSourceFile(outPath);
+				file->BuildSourceFile();
 			else
-				file->ExtractResources(outPath);
+				file->ExtractResources();
 		}
 	}
 
@@ -435,7 +433,7 @@ void BuildAssetModelIntermediette(const fs::path& outPath)
 void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath)
 {
 	std::vector<std::string> split = StringHelper::Split(outPath.string(), "/");
-	ZFile* file = new ZFile("", split[split.size() - 2]);
+	ZFile* file = new ZFile(outPath, split[split.size() - 2]);
 	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath.string());
 	ZAnimation* zAnim = anim->ToZAnimation();
 	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
