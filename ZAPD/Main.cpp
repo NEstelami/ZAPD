@@ -27,7 +27,8 @@
 
 using namespace tinyxml2;
 
-bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath, ZFileMode fileMode);
+bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
+           ZFileMode fileMode);
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath);
@@ -304,7 +305,8 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath, ZFileMode fileMode)
+bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
+           ZFileMode fileMode)
 {
 	XMLDocument doc;
 	XMLError eResult = doc.LoadFile(xmlFilePath.c_str());

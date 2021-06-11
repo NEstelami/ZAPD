@@ -76,8 +76,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 	if (!cameras.empty())
 	{
 		std::string camPointsName;
-		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent, "CsCameraEntry",
-		                                       camPointsName);
+		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent,
+		                                       "CsCameraEntry", camPointsName);
 		std::string declaration = "";
 
 		size_t index = 0;

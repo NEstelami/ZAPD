@@ -174,7 +174,8 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, const std::string& expectedType, std::string& declName)
+bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
+                                  const std::string& expectedType, std::string& declName)
 {
 	if (segAddress == 0)
 	{
@@ -210,7 +211,8 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, const
 }
 
 bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSize,
-                                           ZFile* currentFile, const std::string& expectedType, std::string& declName)
+                                           ZFile* currentFile, const std::string& expectedType,
+                                           std::string& declName)
 {
 	if (segAddress == 0)
 	{
@@ -222,8 +224,8 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 
 	if (segment == currentFile->segment)
 	{
-		bool addressFound =
-			currentFile->GetDeclarationArrayIndexedName(segAddress, elementSize, expectedType, declName);
+		bool addressFound = currentFile->GetDeclarationArrayIndexedName(segAddress, elementSize,
+		                                                                expectedType, declName);
 		if (addressFound)
 			return true;
 	}
@@ -231,8 +233,8 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	{
 		for (auto file : segmentRefFiles[segment])
 		{
-			bool addressFound =
-				file->GetDeclarationArrayIndexedName(segAddress, elementSize, expectedType, declName);
+			bool addressFound = file->GetDeclarationArrayIndexedName(segAddress, elementSize,
+			                                                         expectedType, declName);
 			if (addressFound)
 				return true;
 		}

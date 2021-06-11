@@ -130,7 +130,8 @@ std::string ZNormalAnimation::GetBodySourceCode() const
 	std::string frameDataName;
 	Globals::Instance->GetSegmentedPtrName(rotationValuesAddress, parent, "s16", frameDataName);
 	std::string jointIndicesName;
-	Globals::Instance->GetSegmentedPtrName(rotationIndicesAddress, parent, "JointIndex", jointIndicesName);
+	Globals::Instance->GetSegmentedPtrName(rotationIndicesAddress, parent, "JointIndex",
+	                                       jointIndicesName);
 
 	std::string headerStr =
 		StringHelper::Sprintf("\n\t{ %i }, %s,\n", frameCount, frameDataName.c_str());
@@ -381,7 +382,8 @@ std::string ZCurveAnimation::GetBodySourceCode() const
 	std::string refIndexStr;
 	Globals::Instance->GetSegmentedPtrName(refIndex, parent, "u8", refIndexStr);
 	std::string transformDataStr;
-	Globals::Instance->GetSegmentedPtrName(transformData, parent, "TransformData", transformDataStr);
+	Globals::Instance->GetSegmentedPtrName(transformData, parent, "TransformData",
+	                                       transformDataStr);
 	std::string copyValuesStr;
 	Globals::Instance->GetSegmentedPtrName(copyValues, parent, "s16", copyValuesStr);
 

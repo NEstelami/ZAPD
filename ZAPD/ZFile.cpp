@@ -46,8 +46,8 @@ ZFile::ZFile(const fs::path& nOutPath, std::string nName) : ZFile()
 }
 
 ZFile::ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
-	      const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
-	      bool placeholderMode)
+             const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
+             bool placeholderMode)
 	: ZFile()
 {
 	xmlFilePath = nXmlFilePath;
@@ -389,7 +389,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body);
+		decl =
+			new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -415,7 +416,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCntStr, body);
+		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCntStr,
+		                       body);
 		declarations[address] = decl;
 	}
 	else
@@ -442,8 +444,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl =
-			new Declaration(address, alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+		decl = new Declaration(address, alignment, padding, size, varType, varName, true,
+		                       arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -556,11 +558,12 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #endif
 }
 
-bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expectedType, std::string& declName) const
+bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expectedType,
+                                  std::string& declName) const
 {
 	if (segAddress == 0)
 	{
-		declName =  "NULL";
+		declName = "NULL";
 		return true;
 	}
 
@@ -574,7 +577,7 @@ bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expect
 
 	if (expectedType != "" && expectedType != "void*")
 	{
-		if (expectedType != decl->varType &&  "static " + expectedType !=decl->varType)
+		if (expectedType != decl->varType && "static " + expectedType != decl->varType)
 		{
 			declName = StringHelper::Sprintf("0x%08X", segAddress);
 			return false;
@@ -588,7 +591,8 @@ bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expect
 	return true;
 }
 
-bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSize, const std::string& expectedType,
+bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSize,
+                                           const std::string& expectedType,
                                            std::string& declName) const
 {
 	if (segAddress == 0)
@@ -607,7 +611,7 @@ bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSi
 
 	if (expectedType != "" && expectedType != "void*")
 	{
-		if (expectedType != decl->varType &&  "static " + expectedType != decl->varType)
+		if (expectedType != decl->varType && "static " + expectedType != decl->varType)
 		{
 			declName = StringHelper::Sprintf("0x%08X", segAddress);
 			return false;
@@ -789,7 +793,8 @@ std::string ZFile::GetExternalFileHeaderInclude() const
 	for (ZFile* externalFile : Globals::Instance->externalFiles)
 	{
 		externalFilesIncludes += StringHelper::Sprintf(
-			"#include \"%s.h\"\n", (externalFile->GetSourceOutputFolderPath() / externalFile->outName.stem()).c_str());
+			"#include \"%s.h\"\n",
+			(externalFile->GetSourceOutputFolderPath() / externalFile->outName.stem()).c_str());
 	}
 
 	return externalFilesIncludes;
@@ -1250,7 +1255,8 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 		if (c == '@' && c2 == 'r')
 		{
 			std::string vtxName;
-			Globals::Instance->GetSegmentedArrayIndexedName(decl->references[refIndex], 0x10, this, "Vtx", vtxName);
+			Globals::Instance->GetSegmentedArrayIndexedName(decl->references[refIndex], 0x10, this,
+			                                                "Vtx", vtxName);
 			decl->text.replace(i, 2, vtxName);
 
 			refIndex++;
