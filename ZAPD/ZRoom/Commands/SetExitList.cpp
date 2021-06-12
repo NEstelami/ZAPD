@@ -54,7 +54,7 @@ void SetExitList::DeclareReferencesLate(const std::string& prefix)
 std::string SetExitList::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "u16", listName);
 	return StringHelper::Sprintf("SCENE_CMD_EXIT_LIST(%s)", listName.c_str());
 }
 

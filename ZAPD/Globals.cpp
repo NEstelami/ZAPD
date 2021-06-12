@@ -174,7 +174,8 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::string& declName)
+bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
+                                  const std::string& expectedType, std::string& declName)
 {
 	if (segAddress == 0)
 	{
@@ -189,19 +190,25 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 	sym = currentFile->GetSymbolResource(offset);
 	if (sym != nullptr)
 	{
-		declName = sym->GetName();
-		return true;
+		if (expectedType == sym->GetSourceTypeName())
+		{
+			declName = sym->GetName();
+			return true;
+		}
 	}
 	sym = currentFile->GetSymbolResource(segAddress);
 	if (sym != nullptr)
 	{
-		declName = sym->GetName();
-		return true;
+		if (expectedType == sym->GetSourceTypeName())
+		{
+			declName = sym->GetName();
+			return true;
+		}
 	}
 
 	if (segment == currentFile->segment && currentFile->rangeStart <= offset && offset < currentFile->rangeEnd)
 	{
-		if (currentFile->GetDeclarationPtrName(segAddress, declName))
+		if (currentFile->GetDeclarationPtrName(segAddress, expectedType, declName))
 			return true;
 	}
 	else if (HasSegment(segment))
@@ -213,19 +220,25 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 			sym = file->GetSymbolResource(offset);
 			if (sym != nullptr)
 			{
-				declName = sym->GetName();
-				return true;
+				if (expectedType == sym->GetSourceTypeName())
+				{
+					declName = sym->GetName();
+					return true;
+				}
 			}
 			sym = file->GetSymbolResource(segAddress);
 			if (sym != nullptr)
 			{
-				declName = sym->GetName();
-				return true;
+				if (expectedType == sym->GetSourceTypeName())
+				{
+					declName = sym->GetName();
+					return true;
+				}
 			}
 
 			if (file->rangeStart <= offset && offset < file->rangeEnd)
 			{
-				if (file->GetDeclarationPtrName(segAddress, declName))
+				if (file->GetDeclarationPtrName(segAddress, expectedType, declName))
 					return true;
 			}
 		}
@@ -243,7 +256,8 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 }
 
 bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSize,
-                                           ZFile* currentFile, std::string& declName)
+                                           ZFile* currentFile, const std::string& expectedType,
+                                           std::string& declName)
 {
 	if (segAddress == 0)
 	{
@@ -257,7 +271,7 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	if (segment == currentFile->segment && currentFile->rangeStart <= offset && offset < currentFile->rangeEnd)
 	{
 		bool addressFound = currentFile->GetDeclarationArrayIndexedName(segAddress, elementSize,
-		                                                                declName);
+		                                                                expectedType, declName);
 		if (addressFound)
 			return true;
 	}
@@ -270,7 +284,7 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 			if (file->rangeStart <= offset && offset < file->rangeEnd)
 			{
 				bool addressFound = file->GetDeclarationArrayIndexedName(segAddress, elementSize,
-																		declName);
+																		expectedType, declName);
 				if (addressFound)
 					return true;
 			}

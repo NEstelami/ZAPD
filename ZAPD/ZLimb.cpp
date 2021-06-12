@@ -173,8 +173,8 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 {
 	std::string dListStr;
 	std::string dListStr2;
-	Globals::Instance->GetSegmentedArrayIndexedName(dListPtr, 8, parent, dListStr);
-	Globals::Instance->GetSegmentedArrayIndexedName(dList2Ptr, 8, parent, dListStr2);
+	Globals::Instance->GetSegmentedArrayIndexedName(dListPtr, 8, parent, "Gfx", dListStr);
+	Globals::Instance->GetSegmentedArrayIndexedName(dList2Ptr, 8, parent, "Gfx", dListStr2);
 
 	std::string entryStr = "\n\t";
 	if (type != ZLimbType::Curve)
@@ -196,7 +196,7 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	case ZLimbType::Skin:
 	{
 		std::string skinSegmentStr;
-		Globals::Instance->GetSegmentedPtrName(skinSegment, parent, skinSegmentStr);
+		Globals::Instance->GetSegmentedPtrName(skinSegment, parent, "", skinSegmentStr);
 		entryStr +=
 			StringHelper::Sprintf("\t0x%02X, %s\n", skinSegmentType, skinSegmentStr.c_str());
 	}
@@ -270,8 +270,8 @@ void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 		return;
 
 	std::string dlistName;
-	bool declFound =
-		Globals::Instance->GetSegmentedArrayIndexedName(dListSegmentedPtr, 8, parent, dlistName);
+	bool declFound = Globals::Instance->GetSegmentedArrayIndexedName(dListSegmentedPtr, 8, parent,
+	                                                                 "Gfx", dlistName);
 	if (declFound)
 		return;
 

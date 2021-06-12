@@ -52,7 +52,7 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 std::string SetLightList::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "LightInfo", listName);
 	return StringHelper::Sprintf("SCENE_CMD_LIGHT_LIST(%i, %s)", numLights, listName.c_str());
 }
 
