@@ -57,6 +57,7 @@ public:
 	CameraDataList(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData,
 	               uint32_t rawDataIndex, uint32_t polyTypeDefSegmentOffset,
 	               uint32_t polygonTypesCnt);
+	~CameraDataList();
 };
 
 class ZCollisionHeader : public ZResource

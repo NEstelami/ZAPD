@@ -353,6 +353,15 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	}
 }
 
+CameraDataList::~CameraDataList()
+{
+	for (auto entry: entries)
+		delete entry;
+
+	for (auto camPosData: cameraPositionData)
+		delete camPosData;
+}
+
 CameraPositionData::CameraPositionData(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);

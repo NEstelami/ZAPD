@@ -64,7 +64,8 @@ ZFile::ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBas
 	mode = nMode;
 
 	ParseXML(reader, filename, placeholderMode);
-	DeclareResourceSubReferences();
+	if (mode != ZFileMode::ExternalFile)
+		DeclareResourceSubReferences();
 }
 
 ZFile::~ZFile()
@@ -265,20 +266,14 @@ void ZFile::BuildSourceFile()
 	GenerateSourceFiles(outputPath);
 }
 
-std::string ZFile::GetVarName(uint32_t address)
-{
-	for (std::pair<uint32_t, Declaration*> pair : declarations)
-	{
-		if (pair.first == address)
-			return pair.second->varName;
-	}
-
-	return "";
-}
-
 std::string ZFile::GetName() const
 {
 	return name;
+}
+
+ZFileMode ZFile::GetMode() const
+{
+	return mode;
 }
 
 const fs::path& ZFile::GetXmlFilePath() const

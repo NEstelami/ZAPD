@@ -8,8 +8,6 @@ class ZBlob : public ZResource
 public:
 	ZBlob(ZFile* nParent);
 
-	static ZBlob* BuildFromXML(tinyxml2::XMLElement* reader, const std::string& inFolder,
-	                           bool readFile);
 	static ZBlob* FromFile(const std::string& filePath);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;

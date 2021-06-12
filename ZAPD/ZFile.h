@@ -45,8 +45,8 @@ public:
 	      bool placeholderMode);
 	~ZFile();
 
-	std::string GetVarName(uint32_t address);
 	std::string GetName() const;
+	ZFileMode GetMode() const;
 	const fs::path& GetXmlFilePath() const;
 	const std::vector<uint8_t>& GetRawData() const;
 	void ExtractResources();

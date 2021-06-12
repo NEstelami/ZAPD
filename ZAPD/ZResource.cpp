@@ -28,6 +28,10 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIn
 	if (reader != nullptr)
 		ParseXML(reader);
 
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
+
 	ParseRawData();
 	CalcHash();
 
@@ -42,6 +46,10 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIn
 void ZResource::ExtractFromFile(uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
+
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
 
 	ParseRawData();
 	CalcHash();

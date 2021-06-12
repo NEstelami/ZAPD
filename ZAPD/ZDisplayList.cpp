@@ -45,6 +45,10 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
 
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
+
 	int32_t rawDataSize = ZDisplayList::GetDListLength(
 		parent->GetRawData(), rawDataIndex,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
@@ -59,6 +63,11 @@ void ZDisplayList::ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize
 {
 	rawDataIndex = nRawDataIndex;
 	numInstructions = rawDataSize / 8;
+
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
+
 	ParseRawData();
 }
 
@@ -2015,7 +2024,7 @@ bool ZDisplayList::TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t
 			else
 			{
 				tex = new ZTexture(auxParent);
-				tex->FromBinary(texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz),
+				tex->ExtractFromBinary(texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz),
 				                texIsPalette);
 				auxParent->AddTextureResource(texAddr, tex);
 			}

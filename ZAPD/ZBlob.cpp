@@ -16,19 +16,6 @@ ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Size");
 }
 
-// Build Source File Mode
-ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool readFile)
-{
-	ZBlob* blob = new ZBlob(nullptr);
-
-	blob->ParseXML(reader);
-
-	if (readFile)
-		blob->blobData = File::ReadAllBytes(inFolder + "/" + blob->name + ".bin");
-
-	return blob;
-}
-
 ZBlob* ZBlob::FromFile(const std::string& filePath)
 {
 	ZBlob* blob = new ZBlob(nullptr);
