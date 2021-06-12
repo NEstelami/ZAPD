@@ -44,9 +44,9 @@ An example of an object xml:
         <Skeleton Name="gJabuJabuSkel" Type="Flex" LimbType="Standard" Offset="0xB9A8"/>
             
         <!-- Jabu Jabu eye textures -->
-        <Texture Name="gJabuJabuEyeOpenTex" OutName="jabu_jabu_eye_open" Format="rgb5a1" Width="16" Height="32" Offset="0x7698"/>
-        <Texture Name="gJabuJabuEyeHalfTex" OutName="jabu_jabu_eye_half" Format="rgb5a1" Width="16" Height="32" Offset="0x7A98"/>
-        <Texture Name="gJabuJabuEyeClosedTex" OutName="jabu_jabu_eye_closed" Format="rgb5a1" Width="16" Height="32" Offset="0x7E98"/>
+        <Texture Name="gJabuJabuEyeOpenTex" OutName="jabu_jabu_eye_open" Format="rgba16" Width="16" Height="32" Offset="0x7698"/>
+        <Texture Name="gJabuJabuEyeHalfTex" OutName="jabu_jabu_eye_half" Format="rgba16" Width="16" Height="32" Offset="0x7A98"/>
+        <Texture Name="gJabuJabuEyeClosedTex" OutName="jabu_jabu_eye_closed" Format="rgba16" Width="16" Height="32" Offset="0x7E98"/>
 
 
         <Collision Name="gJabuJabu1Col" Offset="0x0A1C"/>
@@ -111,7 +111,7 @@ u64 gCraterSmokeConeTex[] = {
 
   - `Name`: Required. Suxffixed by `Tex`, unless it is a palette, in that case it is suffixed by `TLUT`.
   - `OutName`: Required. The filename of the extracted `.png` file.
-  - `Format`: Required. The format of the image. Valid values: `rgba32`, `rgb5a1`, `i4`, `i8`, `ia4`, `ia8`, `ia16`, `ci4` and `ci8`.
+  - `Format`: Required. The format of the image. Valid values: `rgba32`, `rgba16`, `i4`, `i8`, `ia4`, `ia8`, `ia16`, `ci4` and `ci8`.
   - `Width`: Required. Width in pixels of the image.
   - `Height`: Required. Height in pixels of the image.
   - `TlutOffset`: Optional. Specifies the tlut's offset used by this texture. This attribute is only valid if `Format` is either `ci4` or `ci8`, otherwise an exception would be thrown.
@@ -126,7 +126,7 @@ The following is a list of the texture formats the Nintendo 64 supports, with th
 | 8-bit I                                         | `G_IM_FMT_I, G_IM_SIZ_8b`        | `i8`            |
 | 8-bit IA (4/4)                                  | `G_IM_FMT_IA, G_IM_SIZ_8b`       | `ia8`           |
 | 8-bit CI                                        | `G_IM_FMT_CI, G_IM_SIZ_8b`       | `ci8`           |
-| 16-bit red, green, blue, alpha (RGBA) (5/5/5/1) | `G_IM_FMT_RGBA, G_IM_SIZ_16b`    | `rgb5a1`        |
+| 16-bit red, green, blue, alpha (RGBA) (5/5/5/1) | `G_IM_FMT_RGBA, G_IM_SIZ_16b`    | `rgba16`        |
 | 16-bit IA (8/8)                                 | `G_IM_FMT_IA, G_IM_SIZ_16b`      | `ia16`          |
 | 16-bit YUV (Luminance, Blue-Y, Red-Y)           | `G_IM_FMT_YUV, G_IM_SIZ_16b`     | (not used)      |
 | 32-bit RGBA (8/8/8/8)                           | `G_IM_FMT_RGBA, G_IM_SIZ_32b`    | `rgba8`         |

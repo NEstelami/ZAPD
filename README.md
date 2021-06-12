@@ -26,7 +26,7 @@ You can configure a bit your ZAPD build with the following options:
 
 - `OPTIMIZATION_ON`: If set to `0` optimizations will be disabled (compile with `-O0`). Any other value compiles with `-O2`. Defaults to `1`.
 - `ASAN`: If it is set to a non-zero then ZAPD will be compiled with Address Sanitizer enabled (`-fsanitize=address`). Defaults to `0`.
-- `DEPRECATION_OFF`: If it is set to a non-zero then deprecation warnings will be disabled. Defaults to `0`.
+- `DEPRECATION_ON`: If it is set to a zero then deprecation warnings will be disabled. Defaults to `1`.
 - `DEBUG`: If non-zero, ZAPD will be compiled in _development mode_. This implies the following:
   - Debugging symbols enabled (`-g3`). They are disabled by default.
   - `OPTIMIZATION_ON=0`: Disables optimizations (`-O0`).
