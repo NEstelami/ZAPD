@@ -15,7 +15,8 @@ void SetEntranceList::DeclareReferences(const std::string& prefix)
 {
 	if (segmentOffset != 0)
 	{
-		std::string varName = StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
+		std::string varName =
+			StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationPlaceholder(segmentOffset, varName);
 	}
 }
@@ -53,11 +54,10 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 			index++;
 		}
 
-		std::string varName = StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
-		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, entrances.size() * 2, "EntranceEntry",
-			varName,
-			entrances.size(), declaration);
+		std::string varName =
+			StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
+		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, entrances.size() * 2,
+		                            "EntranceEntry", varName, entrances.size(), declaration);
 	}
 }
 

@@ -13,7 +13,8 @@ void SetPathways::DeclareReferences(const std::string& prefix)
 {
 	if (segmentOffset != 0)
 	{
-		std::string varName = StringHelper::Sprintf("%sPathway_%06X", prefix.c_str(), segmentOffset);
+		std::string varName =
+			StringHelper::Sprintf("%sPathway_%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationPlaceholder(segmentOffset, varName);
 	}
 }

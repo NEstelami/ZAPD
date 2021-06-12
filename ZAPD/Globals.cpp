@@ -281,7 +281,7 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 			if (file->IsSegmentedInFilespaceRange(segAddress))
 			{
 				bool addressFound = file->GetDeclarationArrayIndexedName(segAddress, elementSize,
-																		expectedType, declName);
+				                                                         expectedType, declName);
 				if (addressFound)
 					return true;
 			}

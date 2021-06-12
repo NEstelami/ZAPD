@@ -14,7 +14,8 @@ void SetExitList::DeclareReferences(const std::string& prefix)
 {
 	if (segmentOffset != 0)
 	{
-		std::string varName = StringHelper::Sprintf("%sExitList_%06X", prefix.c_str(), segmentOffset);
+		std::string varName =
+			StringHelper::Sprintf("%sExitList_%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationPlaceholder(segmentOffset, varName);
 	}
 }
@@ -47,11 +48,10 @@ void SetExitList::DeclareReferencesLate(const std::string& prefix)
 				declaration += "\n";
 		}
 
-		std::string varName = StringHelper::Sprintf("%sExitList_%06X", prefix.c_str(), segmentOffset);
-		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, exits.size() * 2, "u16",
-			varName,
-			exits.size(), declaration);
+		std::string varName =
+			StringHelper::Sprintf("%sExitList_%06X", prefix.c_str(), segmentOffset);
+		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4, exits.size() * 2,
+		                            "u16", varName, exits.size(), declaration);
 	}
 }
 

@@ -66,11 +66,9 @@ std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
 	if (isArray)
 	{
 		if (count == 0)
-			return StringHelper::Sprintf("extern %s %s[];\n", type.c_str(),
-			                             name.c_str());
+			return StringHelper::Sprintf("extern %s %s[];\n", type.c_str(), name.c_str());
 		else
-			return StringHelper::Sprintf("extern %s %s[%i];\n", type.c_str(),
-			                             name.c_str(), count);
+			return StringHelper::Sprintf("extern %s %s[%i];\n", type.c_str(), name.c_str(), count);
 	}
 
 	return StringHelper::Sprintf("extern %s %s;\n", type.c_str(), name.c_str());

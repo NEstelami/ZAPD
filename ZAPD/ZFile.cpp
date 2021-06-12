@@ -149,8 +149,8 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 		 * so uncommenting the following produces wrong behavior.
 		 * If somebody fixes that in OoT repo, uncomment this. I'm too tired of fixing XMLs.
 		 */
-		//if (reader->Attribute("RangeEnd") == nullptr)
-			//rangeEnd = rawData.size();
+		// if (reader->Attribute("RangeEnd") == nullptr)
+		// rangeEnd = rawData.size();
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -213,7 +213,8 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 			if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 				nRes->ExtractFromXML(child, rawDataIndex);
 
-			switch (nRes->GetResourceType()) {
+			switch (nRes->GetResourceType())
+			{
 			case ZResourceType::Texture:
 				AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
 				break;
@@ -349,7 +350,8 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 }
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
-                                   const std::string& varType, const std::string& varName, const std::string& body)
+                                   const std::string& varType, const std::string& varName,
+                                   const std::string& body)
 {
 	bool validOffset = AddDeclarationChecks(address, varName);
 	if (!validOffset)
@@ -373,8 +375,9 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-                                   DeclarationPadding padding, size_t size, const std::string& varType,
-                                   const std::string& varName, const std::string& body)
+                                   DeclarationPadding padding, size_t size,
+                                   const std::string& varType, const std::string& varName,
+                                   const std::string& body)
 {
 	bool validOffset = AddDeclarationChecks(address, varName);
 	if (!validOffset)
@@ -399,8 +402,9 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, const std::string& varType, const std::string& varName,
-                                        size_t arrayItemCnt, const std::string& body)
+                                        size_t size, const std::string& varType,
+                                        const std::string& varName, size_t arrayItemCnt,
+                                        const std::string& body)
 {
 	bool validOffset = AddDeclarationChecks(address, varName);
 	if (!validOffset)
@@ -427,7 +431,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, const std::string& varType, const std::string& varName,
+                                        size_t size, const std::string& varType,
+                                        const std::string& varName,
                                         const std::string& arrayItemCntStr, const std::string& body)
 {
 	bool validOffset = AddDeclarationChecks(address, varName);
@@ -503,8 +508,9 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, const std::strin
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationInclude(uint32_t address, const std::string& includePath, size_t size,
-                                          const std::string& varType, const std::string& varName)
+Declaration* ZFile::AddDeclarationInclude(uint32_t address, const std::string& includePath,
+                                          size_t size, const std::string& varType,
+                                          const std::string& varName)
 {
 	bool validOffset = AddDeclarationChecks(address, varName);
 	if (!validOffset)
@@ -567,10 +573,12 @@ bool ZFile::AddDeclarationChecks(uint32_t address, const std::string& varName)
 
 	if (!IsOffsetInFileRange(address))
 	{
-		fprintf(stderr, "%s: Warning in %s\n"
-						"\t Tried to declare a variable outside of this file's range. Ignoring...\n"
-						"\t\t Variable name: %s\n"
-						"\t\t Variable offset: 0x%06X\n", __PRETTY_FUNCTION__, name.c_str(), varName.c_str(), address);
+		fprintf(stderr,
+		        "%s: Warning in %s\n"
+		        "\t Tried to declare a variable outside of this file's range. Ignoring...\n"
+		        "\t\t Variable name: %s\n"
+		        "\t\t Variable offset: 0x%06X\n",
+		        __PRETTY_FUNCTION__, name.c_str(), varName.c_str(), address);
 		return false;
 	}
 
@@ -1367,17 +1375,17 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 			Declaration* currentDecl = declarations.at(currentAddress);
 
 			fprintf(stderr,
-					"WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
-					"0x%06X (%s)\n",
-					lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
-					currentDecl->varName.c_str());
+			        "WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
+			        "0x%06X (%s)\n",
+			        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
+			        currentDecl->varName.c_str());
 		}
 	}
 
 	uint32_t unaccountedAddress = lastAddr + lastSize;
 
 	if (unaccountedAddress != currentAddress && lastAddr >= rangeStart &&
-		unaccountedAddress < rangeEnd)
+	    unaccountedAddress < rangeEnd)
 	{
 		int diff = currentAddress - unaccountedAddress;
 		bool nonZeroUnaccounted = false;
@@ -1419,14 +1427,12 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 
 					// Strip unnecessary padding at the end of the file.
 					if (unaccountedAddress + diff >= rawData.size())
-						//break;
 						return true;
 				}
 
 				Declaration* decl = AddDeclarationArray(
 					unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
-					StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
-											unaccountedAddress),
+					StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(), unaccountedAddress),
 					diff, src);
 				decl->isUnaccounted = true;
 
@@ -1434,21 +1440,20 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 				{
 					if (nonZeroUnaccounted)
 					{
-						fprintf(
-							stderr,
-							"Warning in file: %s (%s)\n"
-							"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-							"\t Block size: '0x%X'.\n",
-							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+						fprintf(stderr,
+						        "Warning in file: %s (%s)\n"
+						        "\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+						        "\t Block size: '0x%X'.\n",
+						        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 					}
 					else if (diff >= 16)
 					{
 						fprintf(stderr,
-								"Warning in file: %s (%s)\n"
-								"\t A big (size>=0x10) zero-only unaccounted block was found "
-								"at address '0x%06X'.\n"
-								"\t Block size: '0x%X'.\n",
-								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+						        "Warning in file: %s (%s)\n"
+						        "\t A big (size>=0x10) zero-only unaccounted block was found "
+						        "at address '0x%06X'.\n"
+						        "\t Block size: '0x%X'.\n",
+						        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 					}
 				}
 			}
