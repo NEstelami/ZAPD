@@ -138,6 +138,8 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 
 		rawData = File::ReadAllBytes((basePath / name).string());
+		if (reader->Attribute("RangeEnd") == nullptr)
+			rangeEnd = rawData.size();
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -837,7 +839,6 @@ std::string ZFile::ProcessDeclarations()
 
 	// Account for padding/alignment
 	uint32_t lastAddr = 0;
-	uint32_t lastSize = 0;
 
 	// printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
@@ -962,128 +963,7 @@ std::string ZFile::ProcessDeclarations()
 		lastAddr = item.first;
 	}
 
-	// Handle unaccounted data
-	lastAddr = 0;
-	lastSize = 0;
-	std::vector<uint32_t> declsAddresses;
-	for (const auto& item : declarations)
-	{
-		declsAddresses.push_back(item.first);
-	}
-	declsAddresses.push_back(rawData.size());
-
-	for (uint32_t currentAddress : declsAddresses)
-	{
-		if (currentAddress >= rangeEnd)
-		{
-			break;
-		}
-
-		if (currentAddress < rangeStart)
-		{
-			lastAddr = currentAddress;
-			continue;
-		}
-
-		if (currentAddress != lastAddr && declarations.find(lastAddr) != declarations.end())
-		{
-			Declaration* lastDecl = declarations.at(lastAddr);
-			lastSize = lastDecl->size;
-
-			if (lastAddr + lastSize > currentAddress)
-			{
-				Declaration* currentDecl = declarations.at(currentAddress);
-
-				fprintf(stderr,
-				        "WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
-				        "0x%06X (%s)\n",
-				        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
-				        currentDecl->varName.c_str());
-			}
-		}
-
-		uint32_t unaccountedAddress = lastAddr + lastSize;
-
-		if (unaccountedAddress != currentAddress && lastAddr >= rangeStart &&
-		    unaccountedAddress < rangeEnd)
-		{
-			int diff = currentAddress - unaccountedAddress;
-			bool nonZeroUnaccounted = false;
-
-			std::string src = "    ";
-
-			if (currentAddress > rawData.size())
-			{
-				throw std::runtime_error(StringHelper::Sprintf(
-					"ZFile::ProcessDeclarations(): Fatal error while processing XML '%s'.\n"
-					"\t Offset '0x%X' is outside of the limits of file '%s', which has a size of "
-					"'0x%X'.\n"
-					"\t Aborting...",
-					xmlFilePath.c_str(), currentAddress, name.c_str(), rawData.size()));
-			}
-
-			for (int i = 0; i < diff; i++)
-			{
-				uint8_t val = rawData.at(unaccountedAddress + i);
-				src += StringHelper::Sprintf("0x%02X, ", val);
-				if (val != 0x00)
-				{
-					nonZeroUnaccounted = true;
-				}
-
-				if ((i % 16 == 15) && (i != (diff - 1)))
-					src += "\n    ";
-			}
-
-			if (declarations.find(unaccountedAddress) == declarations.end())
-			{
-				if (diff > 0)
-				{
-					std::string unaccountedPrefix = "unaccounted";
-
-					if (diff < 16 && !nonZeroUnaccounted)
-					{
-						unaccountedPrefix = "possiblePadding";
-
-						// Strip unnecessary padding at the end of the file.
-						if (unaccountedAddress + diff >= rawData.size())
-							break;
-					}
-
-					Declaration* decl = AddDeclarationArray(
-						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
-						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
-					                          unaccountedAddress),
-						diff, src);
-					decl->isUnaccounted = true;
-
-					if (Globals::Instance->warnUnaccounted)
-					{
-						if (nonZeroUnaccounted)
-						{
-							fprintf(
-								stderr,
-								"Warning in file: %s (%s)\n"
-								"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-								"\t Block size: '0x%X'.\n",
-								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-						}
-						else if (diff >= 16)
-						{
-							fprintf(stderr,
-							        "Warning in file: %s (%s)\n"
-							        "\t A big (size>=0x10) zero-only unaccounted block was found "
-							        "at address '0x%06X'.\n"
-							        "\t Block size: '0x%X'.\n",
-							        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-						}
-					}
-				}
-			}
-		}
-
-		lastAddr = currentAddress;
-	}
+	HandleUnaccountedData();
 
 	// Go through include declarations
 	// First, handle the prototypes (static only for now)
@@ -1348,4 +1228,143 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 	}
 
 	return defines;
+}
+
+void ZFile::HandleUnaccountedData()
+{
+	uint32_t lastAddr = 0;
+	uint32_t lastSize = 0;
+	std::vector<uint32_t> declsAddresses;
+	for (const auto& item : declarations)
+	{
+		declsAddresses.push_back(item.first);
+	}
+
+	bool breakLoop = false;
+	for (uint32_t currentAddress : declsAddresses)
+	{
+		if (currentAddress >= rangeEnd)
+		{
+			breakLoop = true;
+			break;
+		}
+
+		if (currentAddress < rangeStart)
+		{
+			lastAddr = currentAddress;
+			continue;
+		}
+
+		breakLoop = HandleUnaccountedAddress(currentAddress, lastAddr, lastSize);
+		if (breakLoop)
+			break;
+
+		lastAddr = currentAddress;
+	}
+
+	if (!breakLoop)
+		HandleUnaccountedAddress(rangeEnd, lastAddr, lastSize);
+}
+
+bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr, uint32_t& lastSize)
+{
+	if (currentAddress != lastAddr && declarations.find(lastAddr) != declarations.end())
+	{
+		Declaration* lastDecl = declarations.at(lastAddr);
+		lastSize = lastDecl->size;
+
+		if (lastAddr + lastSize > currentAddress)
+		{
+			Declaration* currentDecl = declarations.at(currentAddress);
+
+			fprintf(stderr,
+					"WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
+					"0x%06X (%s)\n",
+					lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
+					currentDecl->varName.c_str());
+		}
+	}
+
+	uint32_t unaccountedAddress = lastAddr + lastSize;
+
+	if (unaccountedAddress != currentAddress && lastAddr >= rangeStart &&
+		unaccountedAddress < rangeEnd)
+	{
+		int diff = currentAddress - unaccountedAddress;
+		bool nonZeroUnaccounted = false;
+
+		std::string src = "    ";
+
+		if (currentAddress > rawData.size())
+		{
+			throw std::runtime_error(StringHelper::Sprintf(
+				"ZFile::ProcessDeclarations(): Fatal error while processing XML '%s'.\n"
+				"\t Offset '0x%X' is outside of the limits of file '%s', which has a size of "
+				"'0x%X'.\n"
+				"\t Aborting...",
+				xmlFilePath.c_str(), currentAddress, name.c_str(), rawData.size()));
+		}
+
+		for (int i = 0; i < diff; i++)
+		{
+			uint8_t val = rawData.at(unaccountedAddress + i);
+			src += StringHelper::Sprintf("0x%02X, ", val);
+			if (val != 0x00)
+			{
+				nonZeroUnaccounted = true;
+			}
+
+			if ((i % 16 == 15) && (i != (diff - 1)))
+				src += "\n    ";
+		}
+
+		if (declarations.find(unaccountedAddress) == declarations.end())
+		{
+			if (diff > 0)
+			{
+				std::string unaccountedPrefix = "unaccounted";
+
+				if (diff < 16 && !nonZeroUnaccounted)
+				{
+					unaccountedPrefix = "possiblePadding";
+
+					// Strip unnecessary padding at the end of the file.
+					if (unaccountedAddress + diff >= rawData.size())
+						//break;
+						return true;
+				}
+
+				Declaration* decl = AddDeclarationArray(
+					unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
+					StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
+											unaccountedAddress),
+					diff, src);
+				decl->isUnaccounted = true;
+
+				if (Globals::Instance->warnUnaccounted)
+				{
+					if (nonZeroUnaccounted)
+					{
+						fprintf(
+							stderr,
+							"Warning in file: %s (%s)\n"
+							"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+							"\t Block size: '0x%X'.\n",
+							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+					}
+					else if (diff >= 16)
+					{
+						fprintf(stderr,
+								"Warning in file: %s (%s)\n"
+								"\t A big (size>=0x10) zero-only unaccounted block was found "
+								"at address '0x%06X'.\n"
+								"\t Block size: '0x%X'.\n",
+								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+					}
+				}
+			}
+		}
+	}
+
+	return false;
 }
