@@ -24,8 +24,8 @@ void SetObjectList::ParseRawData()
 		currentPtr += 2;
 	}
 
-	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
+	//if (segmentOffset != 0)
+	//	parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 void SetObjectList::DeclareReferences(const std::string& prefix)

@@ -56,26 +56,27 @@ public:
 	std::vector<ZResource*> GetResourcesOfType(ZResourceType resType);
 
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
-	                            std::string varType, std::string varName, std::string body);
+	                            const std::string& varType, const std::string& varName, const std::string& body);
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-	                            DeclarationPadding padding, size_t size, std::string varType,
-	                            std::string varName, std::string body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
-	                                 std::string varType, std::string varName, size_t arrayItemCnt,
-	                                 std::string body);
+	                            DeclarationPadding padding, size_t size, const std::string& varType,
+	                            const std::string& varName, const std::string& body);
 
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
-	                                 std::string varType, std::string varName,
-	                                 std::string arrayItemCntStr, std::string body);
+	                                 const std::string& varType, const std::string& varName, size_t arrayItemCnt,
+	                                 const std::string& body);
+	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
+	                                 const std::string& varType, const std::string& varName,
+	                                 const std::string& arrayItemCntStr, const std::string& body);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	                                 DeclarationPadding padding, size_t size, std::string varType,
-	                                 std::string varName, size_t arrayItemCnt, std::string body);
-	Declaration* AddDeclarationPlaceholder(uint32_t address);
-	Declaration* AddDeclarationPlaceholder(uint32_t address, std::string varName);
-	Declaration* AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,
-	                                   std::string varType, std::string varName);
+	                                 DeclarationPadding padding, size_t size, const std::string& varType,
+	                                 const std::string& varName, size_t arrayItemCnt, const std::string& body);
+
+	Declaration* AddDeclarationPlaceholder(uint32_t address, const std::string& varName);
+
+	Declaration* AddDeclarationInclude(uint32_t address, const std::string& includePath, size_t size,
+	                                   const std::string& varType, const std::string& varName);
 	Declaration* AddDeclarationIncludeArray(uint32_t address, std::string includePath, size_t size,
-	                                        std::string varType, std::string varName,
+	                                        const std::string& varType, const std::string& varName,
 	                                        size_t arrayItemCnt);
 
 	bool GetDeclarationPtrName(segptr_t segAddress, const std::string& expectedType,
@@ -127,7 +128,7 @@ protected:
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();
 	void GenerateHLIntermediette();
-	void AddDeclarationDebugChecks(uint32_t address);
+	bool AddDeclarationChecks(uint32_t address, const std::string& varName);
 	std::string ProcessDeclarations();
 	void ProcessDeclarationText(Declaration* decl);
 	std::string ProcessExterns();

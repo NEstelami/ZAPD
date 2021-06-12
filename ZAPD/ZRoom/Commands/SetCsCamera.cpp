@@ -44,8 +44,8 @@ void SetCsCamera::ParseRawData()
 		}
 	}
 
-	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
+	//if (segmentOffset != 0)
+	//	parent->AddDeclarationPlaceholder(segmentOffset);
 }
 
 void SetCsCamera::DeclareReferences(const std::string& prefix)

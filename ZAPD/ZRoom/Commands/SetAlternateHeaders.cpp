@@ -11,8 +11,11 @@ SetAlternateHeaders::SetAlternateHeaders(ZFile* nParent) : ZRoomCommand(nParent)
 
 void SetAlternateHeaders::DeclareReferences(const std::string& prefix)
 {
-	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
+	if (cmdArg2 != 0)
+	{
+		std::string varName = StringHelper::Sprintf("%sAlternateHeaders0x%06X", prefix.c_str(), segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset, varName);
+	}
 }
 
 void SetAlternateHeaders::ParseRawDataLate()
@@ -47,10 +50,10 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 				declaration += "\n";
 		}
 
+		std::string varName = StringHelper::Sprintf("%sAlternateHeaders0x%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationArray(
 			segmentOffset, GetDeclarationAlignment(), headers.size() * 4, "SCmdBase*",
-			StringHelper::Sprintf("%sAlternateHeaders0x%06X", prefix.c_str(), segmentOffset), 0,
-			declaration);
+			varName, 0, declaration);
 	}
 }
 

@@ -13,7 +13,10 @@ SetExitList::SetExitList(ZFile* nParent) : ZRoomCommand(nParent)
 void SetExitList::DeclareReferences(const std::string& prefix)
 {
 	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
+	{
+		std::string varName = StringHelper::Sprintf("%sExitList_%06X", prefix.c_str(), segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset, varName);
+	}
 }
 
 void SetExitList::ParseRawDataLate()
@@ -44,9 +47,10 @@ void SetExitList::DeclareReferencesLate(const std::string& prefix)
 				declaration += "\n";
 		}
 
+		std::string varName = StringHelper::Sprintf("%sExitList_%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::Align4, exits.size() * 2, "u16",
-			StringHelper::Sprintf("%sExitList_%06X", zRoom->GetName().c_str(), segmentOffset),
+			varName,
 			exits.size(), declaration);
 	}
 }

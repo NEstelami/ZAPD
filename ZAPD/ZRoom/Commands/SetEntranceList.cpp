@@ -14,7 +14,10 @@ SetEntranceList::SetEntranceList(ZFile* nParent) : ZRoomCommand(nParent)
 void SetEntranceList::DeclareReferences(const std::string& prefix)
 {
 	if (segmentOffset != 0)
-		parent->AddDeclarationPlaceholder(segmentOffset);
+	{
+		std::string varName = StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
+		parent->AddDeclarationPlaceholder(segmentOffset, varName);
+	}
 }
 
 void SetEntranceList::ParseRawDataLate()
@@ -50,9 +53,10 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 			index++;
 		}
 
+		std::string varName = StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::None, entrances.size() * 2, "EntranceEntry",
-			StringHelper::Sprintf("%sEntranceList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+			varName,
 			entrances.size(), declaration);
 	}
 }
