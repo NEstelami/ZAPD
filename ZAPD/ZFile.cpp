@@ -78,6 +78,11 @@ ZFile::~ZFile()
 	{
 		delete d.second;
 	}
+
+	for (auto sym : symbolResources)
+	{
+		delete sym.second;
+	}
 }
 
 void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderMode)
@@ -138,8 +143,8 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 
 		rawData = File::ReadAllBytes((basePath / name).string());
-		if (reader->Attribute("RangeEnd") == nullptr)
-			rangeEnd = rawData.size();
+		//if (reader->Attribute("RangeEnd") == nullptr)
+			//rangeEnd = rawData.size();
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -202,11 +207,19 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 			if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 				nRes->ExtractFromXML(child, rawDataIndex);
 
-			auto resType = nRes->GetResourceType();
-			if (resType == ZResourceType::Texture)
+			switch (nRes->GetResourceType()) {
+			case ZResourceType::Texture:
 				AddTextureResource(rawDataIndex, static_cast<ZTexture*>(nRes));
-			else
-				resources.push_back(nRes);
+				break;
+
+			case ZResourceType::Symbol:
+				AddSymbolResource(rawDataIndex, static_cast<ZSymbol*>(nRes));
+				break;
+
+			default:
+				AddResource(nRes);
+				break;
+			}
 
 			rawDataIndex += nRes->GetRawDataSize();
 		}
@@ -566,8 +579,8 @@ bool ZFile::GetDeclarationPtrName(segptr_t segAddress, std::string& declName) co
 		return true;
 	}
 
-	Declaration* decl = GetDeclaration(Seg2Filespace(segAddress, baseAddress));
-
+	uint32_t offset = Seg2Filespace(segAddress, baseAddress);
+	Declaration* decl = GetDeclaration(offset);
 	if (GETSEGNUM(segAddress) != segment || decl == nullptr)
 	{
 		declName = StringHelper::Sprintf("0x%08X", segAddress);
@@ -737,6 +750,11 @@ void ZFile::GenerateSourceHeaderFiles()
 			formatter.Write("\n");
 	}
 
+	for (auto& sym : symbolResources)
+	{
+		formatter.Write(sym.second->GetSourceOutputHeader(""));
+	}
+
 	formatter.Write(ProcessExterns());
 
 	fs::path headerFilename = GetSourceOutputFolderPath() / outName.stem().concat(".h");
@@ -807,6 +825,31 @@ ZTexture* ZFile::GetTextureResource(uint32_t offset) const
 	auto tex = texturesResources.find(offset);
 	if (tex != texturesResources.end())
 		return tex->second;
+
+	return nullptr;
+}
+
+void ZFile::AddSymbolResource(uint32_t offset, ZSymbol* sym)
+{
+	symbolResources[offset] = sym;
+}
+
+ZSymbol* ZFile::GetSymbolResource(uint32_t offset) const
+{
+	auto sym = symbolResources.find(offset);
+	if (sym != symbolResources.end())
+		return sym->second;
+
+	return nullptr;
+}
+
+ZSymbol* ZFile::GetSymbolResourceRanged(uint32_t offset) const
+{
+	for (const auto decl : symbolResources)
+	{
+		if (offset >= decl.first && offset < decl.first + decl.second->GetRawDataSize())
+			return decl.second;
+	}
 
 	return nullptr;
 }
@@ -1263,7 +1306,7 @@ void ZFile::HandleUnaccountedData()
 	}
 
 	if (!breakLoop)
-		HandleUnaccountedAddress(rangeEnd, lastAddr, lastSize);
+		HandleUnaccountedAddress(rawData.size(), lastAddr, lastSize);
 }
 
 bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr, uint32_t& lastSize)

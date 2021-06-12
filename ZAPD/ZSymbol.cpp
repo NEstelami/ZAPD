@@ -58,22 +58,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 
 Declaration* ZSymbol::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
-	std::string auxName = name;
-
-	if (name == "")
-		auxName = GetDefaultName(prefix);
-
-	if (isArray)
-	{
-		return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
-		                                   GetRawDataSize(), GetSourceTypeName(), auxName, count,
-		                                   bodyStr);
-	}
-	else
-	{
-		return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-		                              GetSourceTypeName(), auxName, bodyStr);
-	}
+	return nullptr;
 }
 
 std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
@@ -81,14 +66,14 @@ std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
 	if (isArray)
 	{
 		if (count == 0)
-			return StringHelper::Sprintf("extern %s %s%s[];\n", type.c_str(), prefix.c_str(),
+			return StringHelper::Sprintf("extern %s %s[];\n", type.c_str(),
 			                             name.c_str());
 		else
-			return StringHelper::Sprintf("extern %s %s%s[%i];\n", type.c_str(), prefix.c_str(),
+			return StringHelper::Sprintf("extern %s %s[%i];\n", type.c_str(),
 			                             name.c_str(), count);
 	}
 
-	return StringHelper::Sprintf("extern %s %s%s;\n", type.c_str(), prefix.c_str(), name.c_str());
+	return StringHelper::Sprintf("extern %s %s;\n", type.c_str(), name.c_str());
 }
 
 std::string ZSymbol::GetSourceTypeName() const

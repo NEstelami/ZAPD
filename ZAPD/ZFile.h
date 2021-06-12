@@ -5,6 +5,7 @@
 #include "Directory.h"
 #include "ZResource.h"
 #include "ZTexture.h"
+#include "ZSymbol.h"
 #include "tinyxml2.h"
 
 enum class ZFileMode
@@ -90,6 +91,10 @@ public:
 	void AddTextureResource(uint32_t offset, ZTexture* tex);
 	ZTexture* GetTextureResource(uint32_t offset) const;
 
+	void AddSymbolResource(uint32_t offset, ZSymbol* sym);
+	ZSymbol* GetSymbolResource(uint32_t offset) const;
+	ZSymbol* GetSymbolResourceRanged(uint32_t offset) const;
+
 	fs::path GetSourceOutputFolderPath() const;
 
 	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
@@ -106,6 +111,7 @@ protected:
 	// The pointers declared here are "borrowed" (somebody else is the owner),
 	// so ZFile shouldn't delete/free those textures.
 	std::map<uint32_t, ZTexture*> texturesResources;
+	std::map<uint32_t, ZSymbol*> symbolResources;
 	ZFileMode mode = ZFileMode::Invalid;
 
 	ZFile();

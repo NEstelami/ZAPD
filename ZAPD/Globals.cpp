@@ -184,6 +184,20 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 
 	uint8_t segment = GETSEGNUM(segAddress);
 	uint32_t offset = Seg2Filespace(segAddress, currentFile->baseAddress);
+	ZSymbol* sym;
+
+	sym = currentFile->GetSymbolResource(offset);
+	if (sym != nullptr)
+	{
+		declName = sym->GetName();
+		return true;
+	}
+	sym = currentFile->GetSymbolResource(segAddress);
+	if (sym != nullptr)
+	{
+		declName = sym->GetName();
+		return true;
+	}
 
 	if (segment == currentFile->segment && currentFile->rangeStart <= offset && offset < currentFile->rangeEnd)
 	{
@@ -195,6 +209,19 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile, std::
 		for (auto file : segmentRefFiles[segment])
 		{
 			offset = Seg2Filespace(segAddress, file->baseAddress);
+
+			sym = file->GetSymbolResource(offset);
+			if (sym != nullptr)
+			{
+				declName = sym->GetName();
+				return true;
+			}
+			sym = file->GetSymbolResource(segAddress);
+			if (sym != nullptr)
+			{
+				declName = sym->GetName();
+				return true;
+			}
 
 			if (file->rangeStart <= offset && offset < file->rangeEnd)
 			{

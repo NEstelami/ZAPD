@@ -34,7 +34,8 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIn
 	if (!isInner)
 	{
 		Declaration* decl = DeclareVar(parent->GetName(), "");
-		decl->declaredInXml = true;
+		if (decl != nullptr)
+			decl->declaredInXml = true;
 	}
 }
 
