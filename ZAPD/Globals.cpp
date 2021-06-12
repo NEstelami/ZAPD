@@ -190,7 +190,7 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 	sym = currentFile->GetSymbolResource(offset);
 	if (sym != nullptr)
 	{
-		if (expectedType == sym->GetSourceTypeName())
+		if (expectedType == "" || expectedType == sym->GetSourceTypeName())
 		{
 			declName = sym->GetName();
 			return true;
@@ -199,14 +199,14 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 	sym = currentFile->GetSymbolResource(segAddress);
 	if (sym != nullptr)
 	{
-		if (expectedType == sym->GetSourceTypeName())
+		if (expectedType == "" || expectedType == sym->GetSourceTypeName())
 		{
 			declName = sym->GetName();
 			return true;
 		}
 	}
 
-	if (segment == currentFile->segment && currentFile->rangeStart <= offset && offset < currentFile->rangeEnd)
+	if (currentFile->IsSegmentedInFilespaceRange(segAddress))
 	{
 		if (currentFile->GetDeclarationPtrName(segAddress, expectedType, declName))
 			return true;
@@ -220,7 +220,7 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 			sym = file->GetSymbolResource(offset);
 			if (sym != nullptr)
 			{
-				if (expectedType == sym->GetSourceTypeName())
+				if (expectedType == "" || expectedType == sym->GetSourceTypeName())
 				{
 					declName = sym->GetName();
 					return true;
@@ -229,14 +229,14 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 			sym = file->GetSymbolResource(segAddress);
 			if (sym != nullptr)
 			{
-				if (expectedType == sym->GetSourceTypeName())
+				if (expectedType == "" || expectedType == sym->GetSourceTypeName())
 				{
 					declName = sym->GetName();
 					return true;
 				}
 			}
 
-			if (file->rangeStart <= offset && offset < file->rangeEnd)
+			if (file->IsSegmentedInFilespaceRange(segAddress))
 			{
 				if (file->GetDeclarationPtrName(segAddress, expectedType, declName))
 					return true;
@@ -266,9 +266,8 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	}
 
 	uint8_t segment = GETSEGNUM(segAddress);
-	uint32_t offset = Seg2Filespace(segAddress, currentFile->baseAddress);
 
-	if (segment == currentFile->segment && currentFile->rangeStart <= offset && offset < currentFile->rangeEnd)
+	if (currentFile->IsSegmentedInFilespaceRange(segAddress))
 	{
 		bool addressFound = currentFile->GetDeclarationArrayIndexedName(segAddress, elementSize,
 		                                                                expectedType, declName);
@@ -279,9 +278,7 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	{
 		for (auto file : segmentRefFiles[segment])
 		{
-			offset = Seg2Filespace(segAddress, file->baseAddress);
-
-			if (file->rangeStart <= offset && offset < file->rangeEnd)
+			if (file->IsSegmentedInFilespaceRange(segAddress))
 			{
 				bool addressFound = file->GetDeclarationArrayIndexedName(segAddress, elementSize,
 																		expectedType, declName);

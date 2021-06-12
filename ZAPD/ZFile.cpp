@@ -143,6 +143,12 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 
 		rawData = File::ReadAllBytes((basePath / name).string());
+
+		/*
+		 * TODO: In OoT repo ovl_Boss_Sst has a wrong RangeEnd (0xAD40 instead of 0xAD70),
+		 * so uncommenting the following produces wrong behavior.
+		 * If somebody fixes that in OoT repo, uncomment this. I'm too tired of fixing XMLs.
+		 */
 		//if (reader->Attribute("RangeEnd") == nullptr)
 			//rangeEnd = rawData.size();
 	}
@@ -876,6 +882,21 @@ fs::path ZFile::GetSourceOutputFolderPath() const
 	return outputPath / outName.parent_path();
 }
 
+bool ZFile::IsOffsetInFileRange(uint32_t offset) const
+{
+	return rangeStart <= offset && offset < rangeEnd;
+}
+bool ZFile::IsSegmentedInFilespaceRange(segptr_t segAddress) const
+{
+	uint8_t segnum = GETSEGNUM(segAddress);
+	uint32_t offset = Seg2Filespace(segAddress, baseAddress);
+
+	if (segment != segnum)
+		return false;
+
+	return IsOffsetInFileRange(offset);
+}
+
 std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
 {
 	static std::map<std::string, ZResourceFactoryFunc*> nodeMap;
@@ -1065,9 +1086,9 @@ std::string ZFile::ProcessDeclarations()
 		output += "\n";
 
 	// Next, output the actual declarations
-	for (std::pair<uint32_t, Declaration*> item : declarations)
+	for (const auto& item : declarations)
 	{
-		if (item.first < rangeStart || item.first >= rangeEnd)
+		if (!IsOffsetInFileRange(item.first))
 		{
 			continue;
 		}
@@ -1198,9 +1219,9 @@ std::string ZFile::ProcessExterns()
 {
 	std::string output = "";
 
-	for (std::pair<uint32_t, Declaration*> item : declarations)
+	for (const auto& item : declarations)
 	{
-		if (item.first < rangeStart || item.first >= rangeEnd)
+		if (!IsOffsetInFileRange(item.first))
 		{
 			continue;
 		}
@@ -1324,7 +1345,11 @@ void ZFile::HandleUnaccountedData()
 	}
 
 	if (!breakLoop)
+	{
+		// TODO: change rawData.size() to rangeEnd
+		// HandleUnaccountedAddress(rangeEnd, lastAddr, lastSize);
 		HandleUnaccountedAddress(rawData.size(), lastAddr, lastSize);
+	}
 }
 
 bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr, uint32_t& lastSize)

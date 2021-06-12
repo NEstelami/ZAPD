@@ -2007,7 +2007,7 @@ bool ZDisplayList::TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t
 			return false;
 		}
 
-		if (texAddr < auxParent->rangeEnd)
+		if (auxParent->IsOffsetInFileRange(texAddr))
 		{
 			ZTexture* tex = auxParent->GetTextureResource(texAddr);
 			if (tex != nullptr)

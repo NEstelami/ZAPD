@@ -87,6 +87,7 @@ public:
 	Declaration* GetDeclaration(uint32_t address) const;
 	Declaration* GetDeclarationRanged(uint32_t address) const;
 	bool HasDeclaration(uint32_t address);
+
 	std::string GetHeaderInclude() const;
 	std::string GetExternalFileHeaderInclude() const;
 	void GeneratePlaceholderDeclarations();
@@ -99,6 +100,9 @@ public:
 	ZSymbol* GetSymbolResourceRanged(uint32_t offset) const;
 
 	fs::path GetSourceOutputFolderPath() const;
+
+	bool IsOffsetInFileRange(uint32_t offset) const;
+	bool IsSegmentedInFilespaceRange(segptr_t segAddress) const;
 
 	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
 	static void RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc);

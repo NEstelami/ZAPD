@@ -266,7 +266,7 @@ void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 	if (parent->HasDeclaration(dlistOffset))
 		return;
 
-	if (dlistOffset >= parent->rangeEnd || dlistOffset >= parent->GetRawData().size())
+	if (parent->IsOffsetInFileRange(dlistOffset) || dlistOffset >= parent->GetRawData().size())
 		return;
 
 	std::string dlistName;
