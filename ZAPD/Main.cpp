@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Globals* g = new Globals();
+	Globals g;
 
 	// Parse File Mode
 	std::string buildMode = argv[1];
@@ -287,7 +287,6 @@ int main(int argc, char* argv[])
 			                   overlay->GetSourceOutputCode(""));
 	}
 
-	delete g;
 	return 0;
 }
 

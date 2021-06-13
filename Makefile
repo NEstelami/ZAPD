@@ -20,7 +20,7 @@ endif
 ifeq ($(OPTIMIZATION_ON),0)
   CFLAGS += -O0
 else
-  CFLAGS += -O2
+  CFLAGS += -O2 -march=native -mtune=native
 endif
 ifneq ($(ASAN),0)
   CFLAGS += -fsanitize=address
