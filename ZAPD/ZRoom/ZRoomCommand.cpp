@@ -24,7 +24,7 @@ void ZRoomCommand::ParseRawData()
 
 	cmdArg1 = parentRawData.at(rawDataIndex + 1);
 	cmdArg2 = BitConverter::ToUInt32BE(parentRawData, rawDataIndex + 4);
-	segmentOffset = GETSEGOFFSET(cmdArg2);
+	segmentOffset = Seg2Filespace(cmdArg2, parent->baseAddress);
 }
 
 std::string ZRoomCommand::GetSourceTypeName() const
