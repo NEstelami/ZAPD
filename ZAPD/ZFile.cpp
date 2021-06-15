@@ -817,7 +817,7 @@ std::string ZFile::ProcessDeclarations()
 				{
 					char buffer[2048];
 
-					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
+					sprintf(buffer, "u32 %s_align%02X = 0;\n", name.c_str(), curPtr);
 					item.second->preText = buffer + item.second->preText;
 
 					declarations[lastAddr]->size += 4;
@@ -839,7 +839,7 @@ std::string ZFile::ProcessDeclarations()
 
 			while (curPtr % 16 != 0)
 			{
-				item.second->postText += StringHelper::Sprintf("static u32 pad%02X = 0;\n", curPtr);
+				item.second->postText += StringHelper::Sprintf("u32 %s_pad%02X = 0;\n", name.c_str(), curPtr);
 
 				item.second->size += 4;
 				curPtr += 4;
@@ -928,8 +928,8 @@ std::string ZFile::ProcessDeclarations()
 					}
 
 					Declaration* decl = AddDeclarationArray(
-						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
-						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
+						unaccountedAddress, DeclarationAlignment::None, diff, "u8",
+						StringHelper::Sprintf("%s_%s_%06X", name.c_str(), unaccountedPrefix.c_str(),
 					                          unaccountedAddress),
 						diff, src);
 					decl->isUnaccounted = true;

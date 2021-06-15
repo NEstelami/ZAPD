@@ -91,12 +91,12 @@ std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16,
-		                            rotationValues.size() * 2, "static s16",
+		                            rotationValues.size() * 2, "s16",
 		                            StringHelper::Sprintf("%sFrameData", defaultPrefix.c_str()),
 		                            rotationValues.size(), valuesStr);
 
 		parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16,
-		                            rotationIndices.size() * 6, "static JointIndex",
+		                            rotationIndices.size() * 6, "JointIndex",
 		                            StringHelper::Sprintf("%sJointIndices", defaultPrefix.c_str()),
 		                            rotationIndices.size(), indicesStr);
 	}

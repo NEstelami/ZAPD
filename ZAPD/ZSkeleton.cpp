@@ -168,11 +168,11 @@ std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
 	{
 		// Table
 		std::string tblStr = "";
-		std::string limbArrTypeStr = "static void*";
+		std::string limbArrTypeStr = "void*";
 		if (limbType == ZLimbType::Curve)
 		{
 			limbArrTypeStr =
-				StringHelper::Sprintf("static %s*", ZLimb::GetSourceTypeName(limbType));
+				StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
 		}
 
 		for (size_t i = 0; i < limbs.size(); i++)

@@ -1848,7 +1848,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			if (parent != nullptr)
 			{
 				parent->AddDeclarationArray(item.first, DeclarationAlignment::None,
-				                            item.second.size() * 16, "static Vtx",
+				                            item.second.size() * 16, "Vtx",
 				                            StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(),
 				                                                  item.first, item.second.size()),
 				                            item.second.size(), declaration);
@@ -1940,11 +1940,11 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), "vtx");
 
 				parent->AddDeclarationArray(vtxKeys[i], DeclarationAlignment::None,
-				                            item.size() * 16, "static Vtx", vtxName, item.size(),
+				                            item.size() * 16, "Vtx", vtxName, item.size(),
 				                            declaration);
 
 				Declaration* vtxDecl = parent->AddDeclarationIncludeArray(
-					vtxKeys[i], incStr, item.size() * 16, "static Vtx", vtxName, item.size());
+					vtxKeys[i], incStr, item.size() * 16, "Vtx", vtxName, item.size());
 				vtxDecl->isExternal = true;
 			}
 		}
