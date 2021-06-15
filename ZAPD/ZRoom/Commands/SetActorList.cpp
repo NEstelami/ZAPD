@@ -37,8 +37,7 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 		for (const auto& entry : actors)
 		{
 			declaration +=
-				StringHelper::Sprintf("\t{ %s }, // 0x%06X", entry.GetBodySourceCode().c_str(),
-			                          segmentOffset + (index * 16));
+				StringHelper::Sprintf("\t{ %s },", entry.GetBodySourceCode().c_str());
 
 			if (index < actors.size() - 1)
 				declaration += "\n";

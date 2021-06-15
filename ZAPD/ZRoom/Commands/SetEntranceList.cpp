@@ -46,8 +46,7 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 		for (const auto& entry : entrances)
 		{
 			declaration +=
-				StringHelper::Sprintf("    { %s }, //0x%06X", entry.GetBodySourceCode().c_str(),
-			                          segmentOffset + (index * 2));
+				StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
 			if (index + 1 < entrances.size())
 				declaration += "\n";
 

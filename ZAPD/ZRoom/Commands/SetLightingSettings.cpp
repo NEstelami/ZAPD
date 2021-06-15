@@ -27,9 +27,8 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 
 		for (size_t i = 0; i < settings.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("\t{ %s }, // 0x%06X",
-			                                     settings.at(i).GetBodySourceCode().c_str(),
-			                                     segmentOffset + (i * 22));
+			declaration += StringHelper::Sprintf("\t{ %s },",
+			                                     settings.at(i).GetBodySourceCode().c_str());
 			if (i + 1 < settings.size())
 				declaration += "\n";
 		}

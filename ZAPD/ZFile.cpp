@@ -571,8 +571,8 @@ bool ZFile::AddDeclarationChecks(uint32_t address, const std::string& varName)
 		fprintf(stderr,
 		        "%s: Warning in %s\n"
 		        "\t Tried to declare a variable outside of this file's range. Ignoring...\n"
-		        "\t\t Variable name: %s\n"
-		        "\t\t Variable offset: 0x%06X\n",
+		        "\t\t Variable's name: %s\n"
+		        "\t\t Variable's offset: 0x%06X\n",
 		        __PRETTY_FUNCTION__, name.c_str(), varName.c_str(), address);
 		return false;
 	}
@@ -1437,7 +1437,7 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 					{
 						fprintf(stderr,
 						        "Warning in file: %s (%s)\n"
-						        "\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+						        "\t A non-zero unaccounted block was found at offset '0x%06X'.\n"
 						        "\t Block size: '0x%X'.\n",
 						        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 					}
@@ -1446,7 +1446,7 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 						fprintf(stderr,
 						        "Warning in file: %s (%s)\n"
 						        "\t A big (size>=0x10) zero-only unaccounted block was found "
-						        "at address '0x%06X'.\n"
+						        "at offset '0x%06X'.\n"
 						        "\t Block size: '0x%X'.\n",
 						        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 					}
