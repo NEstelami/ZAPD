@@ -606,7 +606,7 @@ std::string ZLegacyAnimation::GetSourceOutputCode(const std::string& prefix)
 
 std::string ZLegacyAnimation::GetSourceTypeName() const
 {
-	return "AnimationHeader2";
+	return "LegacyAnimationHeader";
 }
 
 size_t ZLegacyAnimation::GetRawDataSize() const
