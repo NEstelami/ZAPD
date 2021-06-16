@@ -425,7 +425,7 @@ void BuildAssetModelIntermediette(const fs::path& outPath)
 	XMLDocument doc;
 
 	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
-	std::string output = mdl->OutputCode();
+	std::string output = mdl->OutputCode(nullptr);
 
 	File::WriteAllText(outPath.string(), output);
 

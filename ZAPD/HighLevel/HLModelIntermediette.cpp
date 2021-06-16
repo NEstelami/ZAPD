@@ -336,13 +336,13 @@ std::string HLModelIntermediette::ToAssimpFile()
 	return "";
 }
 
-std::string HLModelIntermediette::OutputCode()
+std::string HLModelIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	std::string output = "";
 
 	for (HLIntermediette* block : blocks)
 	{
-		std::string code = block->OutputCode();
+		std::string code = block->OutputCode(parent);
 
 		output += code;
 
@@ -413,7 +413,7 @@ void HLIntermediette::InitFromXML(XMLElement* xmlElement)
 	name = xmlElement->Attribute("Name");
 }
 
-std::string HLIntermediette::OutputCode()
+std::string HLIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	return "";
 }
@@ -798,7 +798,7 @@ void HLMaterialIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	clrL = xmlElement->IntAttribute("ClrL");
 }
 
-std::string HLMaterialIntermediette::OutputCode()
+std::string HLMaterialIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	return "";
 }
@@ -826,7 +826,7 @@ HLDisplayListIntermediette::HLDisplayListIntermediette()
 	commands = std::vector<HLDisplayListCommand*>();
 }
 
-std::string HLDisplayListIntermediette::OutputCode()
+std::string HLDisplayListIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	return std::string();
 }
@@ -894,7 +894,7 @@ void HLTextureIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	                       ZTexture::GetTextureTypeFromString(format));
 }
 
-std::string HLTextureIntermediette::OutputCode()
+std::string HLTextureIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	return StringHelper::Sprintf("#include <../%s/%s.inc.c>", Globals::Instance->outputPath.c_str(),
 	                             name.c_str());
@@ -1071,7 +1071,7 @@ void HLLimbIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	}
 }
 
-std::string HLLimbIntermediette::OutputCode()
+std::string HLLimbIntermediette::OutputCode(HLModelIntermediette* parent)
 {
 	std::string output = "";
 

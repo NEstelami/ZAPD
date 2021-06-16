@@ -13,7 +13,7 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 
-	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceOutputHeader(const std::string& prefix) override;

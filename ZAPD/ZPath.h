@@ -11,12 +11,12 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() const;
+	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
 
-	size_t GetRawDataSize() const;
+	size_t GetRawDataSize() const override;
 	segptr_t GetListAddress() const;
 
 protected:
@@ -36,8 +36,8 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
-	std::string GetBodySourceCode() const;
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;

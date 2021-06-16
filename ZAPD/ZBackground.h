@@ -12,22 +12,23 @@ protected:
 public:
 	ZBackground(ZFile* nParent);
 
-	void ParseRawData() override;
 	void ParseBinaryFile(const std::string& inFolder, bool appendOutName);
 
-	void CheckValidJpeg(const std::string& filepath);
+	void ParseRawData() override;
+
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+	std::string GetBodySourceCode() const override;
+	std::string GetDefaultName(const std::string& prefix) const override;
+
+	void Save(const fs::path& outFolder) override;
+
+	bool IsExternalResource() const override;
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
+	std::string GetExternalExtension() const override;
 
 	size_t GetRawDataSize() const override;
 	DeclarationAlignment GetDeclarationAlignment() const override;
 
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
-
-	bool IsExternalResource() const override;
-	std::string GetExternalExtension() const override;
-	void Save(const fs::path& outFolder) override;
-	std::string GetBodySourceCode();
-	std::string GetDefaultName(const std::string& prefix) const override;
-
-	std::string GetSourceTypeName() const override;
-	ZResourceType GetResourceType() const override;
+	void CheckValidJpeg(const std::string& filepath);
 };

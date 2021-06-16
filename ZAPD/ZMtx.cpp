@@ -19,17 +19,6 @@ void ZMtx::ParseRawData()
 			mtx[i][j] = BitConverter::ToInt32BE(rawData, rawDataIndex + (i * 4 + j) * 4);
 }
 
-void ZMtx::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
-{
-	std::string auxName = name;
-
-	if (name == "")
-		auxName = GetDefaultName(prefix);
-
-	parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
-}
-
 std::string ZMtx::GetBodySourceCode() const
 {
 	std::string bodyStr = "\n";

@@ -43,7 +43,7 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() const;
+	std::string GetBodySourceCode() const override;
 
 	size_t GetRawDataSize() const override;
 	std::string GetSourceTypeName() const override;
@@ -128,7 +128,7 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	std::string GetBodySourceCode() const;
+	std::string GetBodySourceCode() const override;
 
 	size_t GetRawDataSize() const override;
 	DeclarationAlignment GetDeclarationAlignment() const override;

@@ -8,22 +8,23 @@
 class PolygonDlist : public ZResource
 {
 public:
-	PolygonDlist() = default;
+	PolygonDlist(ZFile* nParent);
 	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
 	             uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
 
-	void ParseRawData();
-	void DeclareReferences(const std::string& prefix);
+	void ParseRawData() override;
+	void DeclareReferences(const std::string& prefix) override;
 
-	void SetPolyType(uint8_t nPolyType);
+	std::string GetBodySourceCode() const override;
 
-	std::string GetBodySourceCode(bool arrayElement);
-	void DeclareAndGenerateOutputCode();
+	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() const override;
+
+	void SetPolyType(uint8_t nPolyType);
 
 protected:
 	int16_t x, y, z;  // polyType == 2
@@ -68,7 +69,7 @@ public:
 	BgImage(ZFile* nParent);
 	BgImage(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
 
-	std::string GetBodySourceCode(bool arrayElement) const;
+	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
@@ -132,7 +133,7 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawDataSize() const override;
-	DeclarationAlignment GetDeclarationAlignment() const;
+	DeclarationAlignment GetDeclarationAlignment() const override;
 
 protected:
 	uint8_t num;

@@ -98,6 +98,11 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
+PolygonDlist::PolygonDlist(ZFile* nParent)
+	: ZResource(nParent)
+{
+}
+
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 	: ZResource(nParent)
@@ -137,42 +142,7 @@ void PolygonDlist::DeclareReferences(const std::string& prefix)
 	xluDList = MakeDlist(xlu, prefix);
 }
 
-ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
-{
-	if (ptr == 0)
-	{
-		return nullptr;
-	}
-
-	uint32_t dlistAddress = Seg2Filespace(ptr, parent->baseAddress);
-
-	int32_t dlistLength = ZDisplayList::GetDListLength(
-		parent->GetRawData(), dlistAddress,
-		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	ZDisplayList* dlist = new ZDisplayList(dlistAddress, dlistLength, parent);
-	GenDListDeclarations(zRoom, parent, dlist);
-
-	return dlist;
-}
-
-size_t PolygonDlist::GetRawDataSize() const
-{
-	switch (polyType)
-	{
-	case 2:
-		return 0x10;
-
-	default:
-		return 0x08;
-	}
-}
-
-void PolygonDlist::SetPolyType(uint8_t nPolyType)
-{
-	polyType = nPolyType;
-}
-
-std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
+std::string PolygonDlist::GetBodySourceCode() const
 {
 	std::string bodyStr = "";
 	std::string opaStr;
@@ -180,48 +150,31 @@ std::string PolygonDlist::GetBodySourceCode(bool arrayElement)
 	Globals::Instance->GetSegmentedPtrName(opa, parent, "Gfx", opaStr);
 	Globals::Instance->GetSegmentedPtrName(xlu, parent, "Gfx", xluStr);
 
-	if (arrayElement)
-	{
-		bodyStr += "    { ";
-	}
-	else
-	{
-		bodyStr += "\n    ";
-	}
-
 	if (polyType == 2)
 	{
 		bodyStr += StringHelper::Sprintf("{ %6i, %6i, %6i }, %6i, ", x, y, z, unk_06);
 	}
 
-	bodyStr += StringHelper::Sprintf("%s, ", opaStr.c_str());
-	bodyStr += StringHelper::Sprintf("%s", xluStr.c_str());
-
-	if (arrayElement)
-	{
-		bodyStr += " },";
-	}
-	else
-	{
-		bodyStr += "\n";
-	}
+	bodyStr += StringHelper::Sprintf("%s, %s", opaStr.c_str(), xluStr.c_str());
 
 	return bodyStr;
 }
 
-void PolygonDlist::DeclareAndGenerateOutputCode()
+std::string PolygonDlist::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string bodyStr = GetBodySourceCode(false);
+	std::string bodyStr = StringHelper::Sprintf("\n\t%s\n", GetBodySourceCode().c_str());
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr)
 	{
-		DeclareVar("", bodyStr);
+		DeclareVar(prefix, bodyStr);
 	}
 	else
 	{
 		decl->text = bodyStr;
 	}
+
+	return "";
 }
 
 std::string PolygonDlist::GetSourceTypeName() const
@@ -242,6 +195,41 @@ ZResourceType PolygonDlist::GetResourceType() const
 	return ZResourceType::Error;
 }
 
+size_t PolygonDlist::GetRawDataSize() const
+{
+	switch (polyType)
+	{
+	case 2:
+		return 0x10;
+
+	default:
+		return 0x08;
+	}
+}
+
+void PolygonDlist::SetPolyType(uint8_t nPolyType)
+{
+	polyType = nPolyType;
+}
+
+ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
+{
+	if (ptr == 0)
+	{
+		return nullptr;
+	}
+
+	uint32_t dlistAddress = Seg2Filespace(ptr, parent->baseAddress);
+
+	int32_t dlistLength = ZDisplayList::GetDListLength(
+		parent->GetRawData(), dlistAddress,
+		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+	ZDisplayList* dlist = new ZDisplayList(dlistAddress, dlistLength, parent);
+	GenDListDeclarations(zRoom, parent, dlist);
+
+	return dlist;
+}
+
 /* BgImage */
 
 BgImage::BgImage(ZFile* nParent) : ZResource(nParent)
@@ -250,7 +238,7 @@ BgImage::BgImage(ZFile* nParent) : ZResource(nParent)
 
 BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex,
                  ZFile* nParent)
-	: ZResource(nParent)
+	: BgImage(nParent)
 {
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
@@ -311,10 +299,10 @@ size_t BgImage::GetRawDataSize() const
 	return 0x1C;
 }
 
-std::string BgImage::GetBodySourceCode(bool arrayElement) const
+std::string BgImage::GetBodySourceCode() const
 {
 	std::string bodyStr = "    ";
-	if (arrayElement)
+	if (!isSubStruct)
 	{
 		bodyStr += "{ \n        ";
 	}
@@ -324,17 +312,14 @@ std::string BgImage::GetBodySourceCode(bool arrayElement) const
 		bodyStr += StringHelper::Sprintf("0x%04X, ", unk_00);
 		bodyStr += StringHelper::Sprintf("%i, ", id);
 		bodyStr += "\n    ";
-		if (arrayElement)
-		{
-			bodyStr += "    ";
-		}
+		bodyStr += "    ";
 	}
 
 	std::string backgroundName;
 	Globals::Instance->GetSegmentedPtrName(source, parent, "", backgroundName);
 	bodyStr += StringHelper::Sprintf("%s, ", backgroundName.c_str());
 	bodyStr += "\n    ";
-	if (arrayElement)
+	if (!isSubStruct)
 	{
 		bodyStr += "    ";
 	}
@@ -342,7 +327,7 @@ std::string BgImage::GetBodySourceCode(bool arrayElement) const
 	bodyStr += StringHelper::Sprintf("0x%08X, ", unk_0C);
 	bodyStr += StringHelper::Sprintf("0x%08X, ", tlut);
 	bodyStr += "\n    ";
-	if (arrayElement)
+	if (!isSubStruct)
 	{
 		bodyStr += "    ";
 	}
@@ -350,7 +335,7 @@ std::string BgImage::GetBodySourceCode(bool arrayElement) const
 	bodyStr += StringHelper::Sprintf("%i, ", width);
 	bodyStr += StringHelper::Sprintf("%i, ", height);
 	bodyStr += "\n    ";
-	if (arrayElement)
+	if (!isSubStruct)
 	{
 		bodyStr += "    ";
 	}
@@ -358,14 +343,14 @@ std::string BgImage::GetBodySourceCode(bool arrayElement) const
 	bodyStr += StringHelper::Sprintf("%i, ", fmt);
 	bodyStr += StringHelper::Sprintf("%i, ", siz);
 	bodyStr += "\n    ";
-	if (arrayElement)
+	if (!isSubStruct)
 	{
 		bodyStr += "    ";
 	}
 
 	bodyStr += StringHelper::Sprintf("0x%04X, ", mode0);
 	bodyStr += StringHelper::Sprintf("0x%04X, ", tlutCount);
-	if (arrayElement)
+	if (!isSubStruct)
 	{
 		bodyStr += " \n    }, ";
 	}
@@ -464,7 +449,7 @@ void PolygonType1::ParseRawData()
 
 void PolygonType1::DeclareReferences(const std::string& prefix)
 {
-	polyDLists.at(0).DeclareAndGenerateOutputCode();
+	polyDLists.at(0).GetSourceOutputCode(prefix);
 
 	uint32_t listAddress;
 	std::string bgImageArrayBody = "";
@@ -484,7 +469,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 				BgImage bg(false, prefix, auxPtr, parent);
 				multiList.push_back(bg);
 				auxPtr += bg.GetRawDataSize();
-				bgImageArrayBody += bg.GetBodySourceCode(true);
+				bgImageArrayBody += bg.GetBodySourceCode();
 				if (i + 1 < count)
 				{
 					bgImageArrayBody += "\n";
@@ -536,11 +521,10 @@ std::string PolygonType1::GetBodySourceCode() const
 	bodyStr += "}, \n";
 
 	std::string listStr = "NULL";
-	// bodyStr += "    { \n";
 	switch (format)
 	{
 	case 1:
-		bodyStr += single.GetBodySourceCode(false);
+		bodyStr += single.GetBodySourceCode();
 		break;
 	case 2:
 		Globals::Instance->GetSegmentedPtrName(list, parent, "BgImage", listStr);
@@ -550,7 +534,6 @@ std::string PolygonType1::GetBodySourceCode() const
 	default:
 		break;
 	}
-	// bodyStr += "    } \n";
 
 	return bodyStr;
 }
@@ -603,7 +586,7 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 
 		for (size_t i = 0; i < polyDLists.size(); i++)
 		{
-			declaration += polyDLists.at(i).GetBodySourceCode(true);
+			declaration += StringHelper::Sprintf("\t{ %s }," , polyDLists.at(i).GetBodySourceCode().c_str());
 			if (i + 1 < polyDLists.size())
 				declaration += "\n";
 		}
