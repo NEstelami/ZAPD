@@ -645,7 +645,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 				lastTexSiz = (F3DZEXTexSizes)siz;
 				lastTexLoaded = true;
 
-				TextureGenCheck(prefix);
+				TextureGenCheck();
 
 				return -1;
 			}
@@ -663,7 +663,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 		lastTexSiz = (F3DZEXTexSizes)siz;
 		lastTexLoaded = true;
 
-		TextureGenCheck(prefix);
+		TextureGenCheck();
 
 		return (int32_t)sequence.size();
 	}
@@ -910,7 +910,7 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* lin
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_SETTIMG\n");
 
-	TextureGenCheck(prefix);  // HOTSPOT
+	TextureGenCheck();  // HOTSPOT
 
 	lastTexFmt = (F3DZEXTexFormats)fmt;
 	lastTexSiz = (F3DZEXTexSizes)siz;
@@ -1022,7 +1022,7 @@ void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, std::string prefix, char*
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_SETTILESIZE\n");
 
-	TextureGenCheck(prefix);
+	TextureGenCheck();
 
 	sprintf(line, "gsDPSetTileSize(%i, %i, %i, %i, %i),", i, sss, ttt, uuu, vvv);
 }
@@ -1522,7 +1522,7 @@ void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, std::string prefix, char* li
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_LOADTLUT (lastCISiz: %i)\n", (uint32_t)lastCISiz);
 
-	TextureGenCheck(prefix);
+	TextureGenCheck();
 
 	sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
 }
@@ -1534,7 +1534,7 @@ void ZDisplayList::Opcode_G_ENDDL(std::string prefix, char* line)
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("TextureGenCheck G_ENDDL\n");
 
-	TextureGenCheck(prefix);
+	TextureGenCheck();
 }
 
 std::string ZDisplayList::GetSourceOutputHeader(const std::string& prefix)
@@ -1660,7 +1660,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 	self->lastTexLoaded = true;
 	self->lastTexIsPalette = false;
 
-	self->TextureGenCheck(self->curPrefix);
+	self->TextureGenCheck();
 
 	std::string texName = "";
 	Globals::Instance->GetSegmentedPtrName(seg, self->parent, "", texName);
@@ -1684,7 +1684,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 	self->lastTexLoaded = true;
 	self->lastTexIsPalette = true;
 
-	self->TextureGenCheck(self->curPrefix);
+	self->TextureGenCheck();
 
 	std::string palName = "";
 	Globals::Instance->GetSegmentedPtrName(seg, self->parent, "", palName);
@@ -1955,7 +1955,6 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 	else
 		gfxd_target(gfxd_f3dex);
 
-	this->curPrefix = prefix;
 	gfxd_udata_set(this);
 	gfxd_execute();                               // generate display list
 	sourceOutput += outputformatter.GetOutput();  // write formatted display list
@@ -1963,7 +1962,7 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 	return sourceOutput;
 }
 
-void ZDisplayList::TextureGenCheck(std::string prefix)
+void ZDisplayList::TextureGenCheck()
 {
 	if (TextureGenCheck(lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg, lastTexFmt,
 	                    lastTexSiz, lastTexLoaded, lastTexIsPalette, this))

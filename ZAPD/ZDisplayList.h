@@ -324,7 +324,6 @@ protected:
 
 public:
 	std::vector<uint64_t> instructions;
-	std::string curPrefix;
 
 	int32_t lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg;
 	F3DZEXTexFormats lastTexFmt;
@@ -355,7 +354,7 @@ public:
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 	std::string GetDefaultName(const std::string& prefix) const override;
 
-	void TextureGenCheck(std::string prefix);
+	void TextureGenCheck();
 	static bool TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t texAddr,
 	                            uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
 	                            bool texLoaded, bool texIsPalette, ZDisplayList* self);
