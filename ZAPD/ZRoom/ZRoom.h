@@ -45,6 +45,7 @@ protected:
 	std::string hackMode = "";
 
 	ZResourceType zroomType = ZResourceType::Error;
+	ZResourceType parentZroomType = ZResourceType::Error;
 
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;

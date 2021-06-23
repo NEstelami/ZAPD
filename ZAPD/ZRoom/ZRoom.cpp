@@ -46,8 +46,7 @@
 
 REGISTER_ZFILENODE(Room, ZRoom);
 REGISTER_ZFILENODE(Scene, ZRoom);
-REGISTER_ZFILENODE(RoomAltHeader, ZRoom);
-REGISTER_ZFILENODE(SceneAltHeader, ZRoom);
+REGISTER_ZFILENODE(AltHeader, ZRoom);
 
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
@@ -81,16 +80,13 @@ void ZRoom::ExtractFromBinary(uint32_t nRawDataIndex, ZResourceType parentType)
 	rawDataIndex = nRawDataIndex;
 	name = GetDefaultName(parent->GetName());
 
+	zroomType = ZResourceType::AltHeader;
 	switch (parentType)
 	{
 	case ZResourceType::Scene:
-	case ZResourceType::SceneAltHeader:
-		zroomType = ZResourceType::SceneAltHeader;
-		break;
-
 	case ZResourceType::Room:
-	case ZResourceType::RoomAltHeader:
-		zroomType = ZResourceType::RoomAltHeader;
+	case ZResourceType::AltHeader:
+		parentZroomType = parentType;
 		break;
 
 	default:
@@ -121,10 +117,8 @@ void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 	}
 	else if (nodeName == "Room")
 		zroomType = ZResourceType::Room;
-	else if (nodeName == "RoomAltHeader")
-		zroomType = ZResourceType::RoomAltHeader;
-	else if (nodeName == "SceneAltHeader")
-		zroomType = ZResourceType::SceneAltHeader;
+	else if (nodeName == "AltHeader")
+		zroomType = ZResourceType::AltHeader;
 
 	if (reader->Attribute("HackMode") != nullptr)
 	{
@@ -442,6 +436,6 @@ std::string ZRoom::GetSourceTypeName() const
 ZResourceType ZRoom::GetResourceType() const
 {
 	assert(zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room ||
-	       zroomType == ZResourceType::SceneAltHeader || zroomType == ZResourceType::RoomAltHeader);
+	       zroomType == ZResourceType::AltHeader);
 	return zroomType;
 }

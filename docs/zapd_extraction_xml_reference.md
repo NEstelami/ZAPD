@@ -14,7 +14,7 @@ This document aims to be a small reference of how to create a compatible xml fil
     - [Blob](#blob)
     - [DList](#dlist)
     - [Scene and Room](#scene-and-room)
-    - [SceneAltHeader and RoomAltHeader](#scenealtheader-and-roomaltheader)
+    - [AltHeader](#altheader)
     - [Animation](#animation)
     - [PlayerAnimation](#playeranimation)
     - [CurveAnimation](#curveanimation)
@@ -228,9 +228,9 @@ To accomplish this, the scene and each of their rooms must be declared in the sa
 
 -------------------------
 
-### SceneAltHeader and RoomAltHeader
+### AltHeader
 
-Like `Scene`s and `Room`s, `SceneAltHeader`s and `RoomAltHeader` are special too. Those should always be declare in conjunction of a `Scene` or a `Room` respectively.
+Like `Scene`s and `Room`s, `AltHeader`s is special too. It should always be declared in the same `File` as a `Scene` or a `Room`.
 
 - Example:
 
@@ -247,7 +247,7 @@ Like `Scene`s and `Room`s, `SceneAltHeader`s and `RoomAltHeader` are special too
     <Cutscene Name="gKakarikoFirstTimeCs" Offset="0xA540"/>
 
     <Scene Name="spot01_scene" Offset="0x0"/>
-    <SceneAltHeader Name="gKakarikoAltHeader_009980" Offset="0x9980"/>
+    <AltHeader Name="gKakarikoAltHeader_009980" Offset="0x9980"/>
 </File>
 ```
 
