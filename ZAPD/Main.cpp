@@ -290,7 +290,6 @@ int main(int argc, char* argv[])
 			File::WriteAllText(Globals::Instance->outputPath.string(),
 			                   overlay->GetSourceOutputCode(""));
 	}
-
 	delete g;
 	return 0;
 }
