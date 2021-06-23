@@ -241,6 +241,10 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->warnUnaccounted = true;
 		}
+		else if (arg == "-vu" || arg == "--verbose-unaccounted")  // Verbose unaccounted
+		{
+			Globals::Instance->verboseUnaccounted = true;
+		}
 	}
 
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
