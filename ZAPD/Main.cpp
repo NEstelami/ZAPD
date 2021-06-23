@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Globals g;
+	Globals* g = new Globals();
 
 	// Parse File Mode
 	std::string buildMode = argv[1];
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
 			File::WriteAllText(Globals::Instance->outputPath.string(),
 			                   overlay->GetSourceOutputCode(""));
 	}
-
+	delete g;
 	return 0;
 }
 
