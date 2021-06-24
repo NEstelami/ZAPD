@@ -191,29 +191,7 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 	}
 }
 
-size_t ZLimb::GetRawDataSize() const
-{
-	switch (type)
-	{
-	case ZLimbType::Standard:
-	case ZLimbType::Curve:
-		return 0x0C;
-
-	case ZLimbType::LOD:
-	case ZLimbType::Skin:
-		return 0x10;
-
-	case ZLimbType::Legacy:
-		return 0x20;
-
-	case ZLimbType::Invalid:
-		break;
-	}
-
-	return 0x0C;
-}
-
-std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
+std::string ZLimb::GetBodySourceCode() const
 {
 	std::string dListStr;
 	std::string dListStr2;
@@ -270,15 +248,29 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 		}
 	}
 
-	Declaration* decl = parent->GetDeclaration(GetFileAddress());
+	return entryStr;
+}
 
-	if (decl == nullptr)
-		parent->AddDeclaration(GetFileAddress(), GetDeclarationAlignment(), GetRawDataSize(),
-		                       GetSourceTypeName(), name, entryStr);
-	else
-		decl->text = entryStr;
+size_t ZLimb::GetRawDataSize() const
+{
+	switch (type)
+	{
+	case ZLimbType::Standard:
+	case ZLimbType::Curve:
+		return 0x0C;
 
-	return "";
+	case ZLimbType::LOD:
+	case ZLimbType::Skin:
+		return 0x10;
+
+	case ZLimbType::Legacy:
+		return 0x20;
+
+	case ZLimbType::Invalid:
+		break;
+	}
+
+	return 0x0C;
 }
 
 std::string ZLimb::GetSourceTypeName() const
@@ -348,11 +340,6 @@ ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 		return ZLimbType::Legacy;
 	}
 	return ZLimbType::Invalid;
-}
-
-uint32_t ZLimb::GetFileAddress()
-{
-	return Seg2Filespace(rawDataIndex, parent->baseAddress);
 }
 
 void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,

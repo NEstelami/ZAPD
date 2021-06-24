@@ -167,9 +167,8 @@ public:
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
-	std::string GetBodySourceCode() const override;
 
-	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
 

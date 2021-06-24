@@ -514,28 +514,16 @@ std::string ZLegacyAnimation::GetBodySourceCode() const
 {
 	std::string body = "\n";
 
-	std::string frameDataName = parent->GetDeclarationPtrName(frameData);
-	std::string jointKeyName = parent->GetDeclarationPtrName(jointKey);
+	std::string frameDataName;
+	std::string jointKeyName;
+	Globals::Instance->GetSegmentedPtrName(frameData, parent, "s16", frameDataName);
+	Globals::Instance->GetSegmentedPtrName(jointKey, parent, "JointKey", jointKeyName);
 
 	body += StringHelper::Sprintf("\t%i, %i,\n", frameCount, limbCount);
 	body += StringHelper::Sprintf("\t%s,\n", frameDataName.c_str());
 	body += StringHelper::Sprintf("\t%s\n", jointKeyName.c_str());
 
 	return body;
-}
-
-std::string ZLegacyAnimation::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string body = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	if (decl == nullptr || decl->isPlaceholder)
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-		                       GetSourceTypeName(), name, body);
-	else
-		decl->text = body;
-
-	return "";
 }
 
 std::string ZLegacyAnimation::GetSourceTypeName() const

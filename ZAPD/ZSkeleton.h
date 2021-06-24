@@ -26,9 +26,8 @@ public:
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
-	std::string GetBodySourceCode() const override;
 
-	std::string GetSourceOutputCode(const std::string& prefix) override;
+	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;

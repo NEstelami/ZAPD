@@ -1,5 +1,6 @@
 #include "ZSkeleton.h"
 
+#include <cassert>
 #include "BitConverter.h"
 #include "Globals.h"
 #include "HighLevel/HLModelIntermediette.h"
@@ -253,20 +254,6 @@ std::string ZLimbTable::GetBodySourceCode() const
 	return body;
 }
 
-std::string ZLimbTable::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string body = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	if (decl == nullptr || decl->isPlaceholder)
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-		                            GetSourceTypeName(), name, limbsAddresses.size(), body);
-	else
-		decl->text = body;
-
-	return "";
-}
-
 std::string ZLimbTable::GetSourceTypeName() const
 {
 	switch (limbType)
@@ -279,8 +266,12 @@ std::string ZLimbTable::GetSourceTypeName() const
 	case ZLimbType::Curve:
 	case ZLimbType::Legacy:
 		return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
-		;
+
+	case ZLimbType::Invalid:
+		assert("Invalid limb type.\n");
 	}
+
+	return "ERROR";
 }
 
 ZResourceType ZLimbTable::GetResourceType() const
