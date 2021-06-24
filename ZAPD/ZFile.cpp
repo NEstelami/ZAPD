@@ -678,6 +678,7 @@ Declaration* ZFile::GetDeclarationRanged(uint32_t address) const
 
 bool ZFile::HasDeclaration(uint32_t address)
 {
+	assert(GETSEGNUM(address) == 0);
 	return declarations.find(address) != declarations.end();
 }
 
@@ -1406,50 +1407,62 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 				nonZeroUnaccounted = true;
 			}
 
-			if ((i % 16 == 15) && (i != (diff - 1)))
-				src += "\n    ";
+
+			if (Globals::Instance->verboseUnaccounted)
+			{
+				if ((i % 4 == 3))
+				{
+					src += StringHelper::Sprintf(" // 0x%06X", unaccountedAddress + i - 3);
+					if (i != (diff - 1))
+					{
+						src += "\n\t";
+					}
+				}
+			}
+			else
+			{
+				if ((i % 16 == 15) && (i != (diff - 1)))
+					src += "\n    ";
+			}
 		}
 
-		if (declarations.find(unaccountedAddress) == declarations.end())
+		if (declarations.find(unaccountedAddress) == declarations.end() && diff > 0)
 		{
-			if (diff > 0)
+			std::string unaccountedPrefix = "unaccounted";
+
+			if (diff < 16 && !nonZeroUnaccounted)
 			{
-				std::string unaccountedPrefix = "unaccounted";
+				unaccountedPrefix = "possiblePadding";
 
-				if (diff < 16 && !nonZeroUnaccounted)
+				// Strip unnecessary padding at the end of the file.
+				if (unaccountedAddress + diff >= rawData.size())
+					return true;
+			}
+
+			Declaration* decl = AddDeclarationArray(
+				unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
+				StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(), unaccountedAddress),
+				diff, src);
+			decl->isUnaccounted = true;
+
+			if (Globals::Instance->warnUnaccounted)
+			{
+				if (nonZeroUnaccounted)
 				{
-					unaccountedPrefix = "possiblePadding";
-
-					// Strip unnecessary padding at the end of the file.
-					if (unaccountedAddress + diff >= rawData.size())
-						return true;
+					fprintf(stderr,
+							"Warning in file: %s (%s)\n"
+							"\t A non-zero unaccounted block was found at offset '0x%06X'.\n"
+							"\t Block size: '0x%X'.\n",
+							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 				}
-
-				Declaration* decl = AddDeclarationArray(
-					unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
-					StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(), unaccountedAddress),
-					diff, src);
-				decl->isUnaccounted = true;
-
-				if (Globals::Instance->warnUnaccounted)
+				else if (diff >= 16)
 				{
-					if (nonZeroUnaccounted)
-					{
-						fprintf(stderr,
-						        "Warning in file: %s (%s)\n"
-						        "\t A non-zero unaccounted block was found at offset '0x%06X'.\n"
-						        "\t Block size: '0x%X'.\n",
-						        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-					}
-					else if (diff >= 16)
-					{
-						fprintf(stderr,
-						        "Warning in file: %s (%s)\n"
-						        "\t A big (size>=0x10) zero-only unaccounted block was found "
-						        "at offset '0x%06X'.\n"
-						        "\t Block size: '0x%X'.\n",
-						        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-					}
+					fprintf(stderr,
+							"Warning in file: %s (%s)\n"
+							"\t A big (size>=0x10) zero-only unaccounted block was found "
+							"at offset '0x%06X'.\n"
+							"\t Block size: '0x%X'.\n",
+							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 				}
 			}
 		}

@@ -13,6 +13,18 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent), segmentStruct(nParent)
 	RegisterOptionalAttribute("Type");
 }
 
+void ZLimb::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nType)
+{
+	rawDataIndex = nRawDataIndex;
+	type = nType;
+
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
+
+	ParseRawData();
+}
+
 void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
@@ -29,23 +41,8 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 		                                               name.c_str()));
 	}
 
-	if (limbType == "Standard")
-	{
-		type = ZLimbType::Standard;
-	}
-	else if (limbType == "LOD")
-	{
-		type = ZLimbType::LOD;
-	}
-	else if (limbType == "Skin")
-	{
-		type = ZLimbType::Skin;
-	}
-	else if (limbType == "Curve")
-	{
-		type = ZLimbType::Curve;
-	}
-	else
+	type = GetTypeByAttributeName(limbType);
+	if (type == ZLimbType::Invalid)
 	{
 		throw std::runtime_error(StringHelper::Sprintf("ZLimb::ParseXML: Error in '%s'.\n"
 		                                               "\t Invalid 'LimbType' found: '%s'.\n",
@@ -65,6 +62,19 @@ void ZLimb::ParseRawData()
 
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+		return;
+	}
+	if (type == ZLimbType::Legacy)
+	{
+		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x00);
+		legTransX = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x04);
+		legTransY = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x08);
+		legTransZ = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x0C);
+		rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x10);
+		rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x12);
+		rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x14);
+		childPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
+		siblingPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
 		return;
 	}
 
@@ -115,6 +125,33 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 	std::string suffix;
 	switch (type)
 	{
+	case ZLimbType::Legacy:
+		if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment)
+		{
+			uint32_t childOffset = Seg2Filespace(childPtr, parent->baseAddress);
+			if (!parent->HasDeclaration(childOffset))
+			{
+				ZLimb* child = new ZLimb(parent);
+				child->ExtractFromBinary(childOffset, ZLimbType::Legacy);
+				child->DeclareVar(varPrefix, "");
+				child->DeclareReferences(varPrefix);
+				parent->AddResource(child);
+			}
+		}
+		if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment)
+		{
+			uint32_t siblingdOffset = Seg2Filespace(siblingPtr, parent->baseAddress);
+			if (!parent->HasDeclaration(siblingdOffset))
+			{
+				ZLimb* sibling = new ZLimb(parent);
+				sibling->ExtractFromBinary(siblingdOffset, ZLimbType::Legacy);
+				sibling->DeclareVar(varPrefix, "");
+				sibling->DeclareReferences(varPrefix);
+				parent->AddResource(sibling);
+			}
+		}
+		break;
+
 	case ZLimbType::Curve:
 	case ZLimbType::LOD:
 		suffix = "Far";
@@ -149,7 +186,7 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 		}
 		break;
 
-	default:
+	case ZLimbType::Invalid:
 		break;
 	}
 }
@@ -161,9 +198,16 @@ size_t ZLimb::GetRawDataSize() const
 	case ZLimbType::Standard:
 	case ZLimbType::Curve:
 		return 0x0C;
+
 	case ZLimbType::LOD:
 	case ZLimbType::Skin:
 		return 0x10;
+
+	case ZLimbType::Legacy:
+		return 0x20;
+
+	case ZLimbType::Invalid:
+		break;
 	}
 
 	return 0x0C;
@@ -177,30 +221,53 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	Globals::Instance->GetSegmentedArrayIndexedName(dList2Ptr, 8, parent, "Gfx", dListStr2);
 
 	std::string entryStr = "\n\t";
-	if (type != ZLimbType::Curve)
+	if (type == ZLimbType::Legacy)
 	{
-		entryStr += StringHelper::Sprintf("{ %i, %i, %i }, ", transX, transY, transZ);
-	}
+		std::string childName;
+		std::string siblingName;
+		Globals::Instance->GetSegmentedPtrName(childPtr, parent, "Gfx", childName);
+		Globals::Instance->GetSegmentedPtrName(siblingPtr, parent, "Gfx", siblingName);
 
-	entryStr += StringHelper::Sprintf("0x%02X, 0x%02X,\n", childIndex, siblingIndex);
-
-	switch (type)
-	{
-	case ZLimbType::Standard:
-		entryStr += StringHelper::Sprintf("\t%s\n", dListStr.c_str());
-		break;
-	case ZLimbType::LOD:
-	case ZLimbType::Curve:
-		entryStr += StringHelper::Sprintf("\t{ %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
-		break;
-	case ZLimbType::Skin:
-	{
-		std::string skinSegmentStr;
-		Globals::Instance->GetSegmentedPtrName(skinSegment, parent, "", skinSegmentStr);
+		entryStr += StringHelper::Sprintf("%s,\n", dListStr.c_str());
 		entryStr +=
-			StringHelper::Sprintf("\t0x%02X, %s\n", skinSegmentType, skinSegmentStr.c_str());
+			StringHelper::Sprintf("\t{ %ff, %ff, %ff },\n", legTransX, legTransY, legTransZ);
+		entryStr += StringHelper::Sprintf("\t{ 0x%04X, 0x%04X, 0x%04X },\n", rotX, rotY, rotZ);
+		entryStr += StringHelper::Sprintf("\t%s,\n", childName.c_str());
+		entryStr += StringHelper::Sprintf("\t%s\n", siblingName.c_str());
 	}
-	break;
+	else
+	{
+		if (type != ZLimbType::Curve)
+		{
+			entryStr += StringHelper::Sprintf("{ %i, %i, %i }, ", transX, transY, transZ);
+		}
+		entryStr += StringHelper::Sprintf("0x%02X, 0x%02X,\n", childIndex, siblingIndex);
+
+		switch (type)
+		{
+		case ZLimbType::Standard:
+			entryStr += StringHelper::Sprintf("\t%s\n", dListStr.c_str());
+			break;
+
+		case ZLimbType::LOD:
+		case ZLimbType::Curve:
+			entryStr += StringHelper::Sprintf("\t{ %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
+			break;
+
+		case ZLimbType::Skin:
+		{
+			std::string skinSegmentStr;
+			Globals::Instance->GetSegmentedPtrName(skinSegment, parent, "", skinSegmentStr);
+			entryStr += StringHelper::Sprintf("\t0x%02X, %s\n", skinSegmentType, skinSegmentStr.c_str());
+		}
+			break;
+
+		case ZLimbType::Legacy:
+			break;
+
+		case ZLimbType::Invalid:
+			break;
+		}
 	}
 
 	Declaration* decl = parent->GetDeclaration(GetFileAddress());
@@ -240,15 +307,47 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 	{
 	case ZLimbType::Standard:
 		return "StandardLimb";
+
 	case ZLimbType::LOD:
 		return "LodLimb";
+
 	case ZLimbType::Skin:
 		return "SkinLimb";
+
 	case ZLimbType::Curve:
 		return "SkelCurveLimb";
+
+	case ZLimbType::Legacy:
+		return "LegacyLimb";
+
 	default:
 		return "StandardLimb";
 	}
+}
+
+ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
+{
+	if (attrName == "Standard")
+	{
+		return ZLimbType::Standard;
+	}
+	if (attrName == "LOD")
+	{
+		return ZLimbType::LOD;
+	}
+	if (attrName == "Skin")
+	{
+		return ZLimbType::Skin;
+	}
+	if (attrName == "Curve")
+	{
+		return ZLimbType::Curve;
+	}
+	if (attrName == "Legacy")
+	{
+		return ZLimbType::Legacy;
+	}
+	return ZLimbType::Invalid;
 }
 
 uint32_t ZLimb::GetFileAddress()

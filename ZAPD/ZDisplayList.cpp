@@ -526,7 +526,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 			fmt = (__ & 0xE0) >> 5;
 			siz = (__ & 0x18) >> 3;
 			texAddr = Seg2Filespace(data, parent->baseAddress);
-			int32_t segmentNumber = GETSEGNUM(data);
+			uint32_t segmentNumber = GETSEGNUM(data);
 
 			lastTexSeg = segmentNumber;
 
