@@ -227,7 +227,7 @@ void ZFile::DeclareResourceSubReferences()
 void ZFile::BuildSourceFile()
 {
 	if (!Directory::Exists(Globals::Instance->outputPath))
-		Directory::CreateDirectory(Globals::Instance->outputPath);
+		Directory::CreateDirectory(Globals::Instance->outputPath.string());
 
 	GenerateSourceFiles(Globals::Instance->outputPath);
 }
@@ -261,7 +261,7 @@ const std::vector<uint8_t>& ZFile::GetRawData() const
 void ZFile::ExtractResources()
 {
 	if (!Directory::Exists(Globals::Instance->outputPath))
-		Directory::CreateDirectory(Globals::Instance->outputPath);
+		Directory::CreateDirectory(Globals::Instance->outputPath.string());
 
 	if (!Directory::Exists(GetSourceOutputFolderPath().string()))
 		Directory::CreateDirectory(GetSourceOutputFolderPath().string());
@@ -292,7 +292,7 @@ void ZFile::ExtractResources()
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
 
 		if (exporter != nullptr)
-			exporter->Save(res, outputDir, &writer);
+			exporter->Save(res, Globals::Instance->outputPath.string(), &writer);
 	}
 
 	if (memStream->GetLength() > 0)

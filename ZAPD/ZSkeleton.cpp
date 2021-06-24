@@ -106,10 +106,6 @@ std::string ZSkeleton::GetBodySourceCode() const
 	return headerStr;
 }
 
-void ZSkeleton::Save(const fs::path& outFolder)
-{
-}
-
 size_t ZSkeleton::GetRawDataSize() const
 {
 	switch (type)

@@ -260,8 +260,7 @@ int main(int argc, char* argv[])
 			if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 			{
 				bool parseSuccessful =
-					Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-						Globals::Instance->outputPath, fileMode);
+					Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath, fileMode);
 
 				if (!parseSuccessful)
 					return 1;
