@@ -32,7 +32,6 @@ ZFile::ZFile()
 {
 	resources = std::vector<ZResource*>();
 	basePath = "";
-	outputPath = Directory::GetCurrentDirectory();
 	declarations = std::map<uint32_t, Declaration*>();
 	defines = "";
 	baseAddress = 0;
@@ -40,15 +39,13 @@ ZFile::ZFile()
 	rangeEnd = 0xFFFFFFFF;
 }
 
-ZFile::ZFile(const fs::path& nOutPath, std::string nName) : ZFile()
+ZFile::ZFile(std::string nName) : ZFile()
 {
-	outputPath = nOutPath;
 	name = nName;
 }
 
 ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
-             const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
-             bool placeholderMode)
+             std::string filename, const fs::path& nXmlFilePath, bool placeholderMode)
 	: ZFile()
 {
 	xmlFilePath = nXmlFilePath;
@@ -56,11 +53,6 @@ ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBase
 		basePath = Directory::GetCurrentDirectory();
 	else
 		basePath = nBasePath;
-
-	if (nOutPath == "")
-		outputPath = Directory::GetCurrentDirectory();
-	else
-		outputPath = nOutPath;
 
 	ParseXML(mode, reader, filename, placeholderMode);
 	DeclareResourceSubReferences();
@@ -85,6 +77,11 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		name = reader->Attribute("Name");
 	else
 		name = filename;
+
+	outName = name;
+	const char* outNameXml = reader->Attribute("OutName");
+	if (outNameXml != nullptr)
+		outName = outNameXml;
 
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
@@ -126,8 +123,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		Globals::Instance->AddSegment(segment, this);
 	}
 
-	std::string folderName = (basePath / Path::GetFileNameWithoutExtension(name)).string();
-
 	if (mode == ZFileMode::Extract)
 	{
 		if (!File::Exists((basePath / name).string()))
@@ -144,7 +139,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	auto nodeMap = *GetNodeMap();
 	uint32_t rawDataIndex = 0;
 
-	for (XMLElement* child = reader->FirstChildElement(); child != NULL;
+	for (XMLElement* child = reader->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		const char* nameXml = child->Attribute("Name");
@@ -195,7 +190,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			ZResource* nRes = nodeMap[nodeName](this);
 
 			if (mode == ZFileMode::Extract)
-				nRes->ExtractFromXML(child, rawData, rawDataIndex);
+				nRes->ExtractFromXML(child, rawDataIndex);
 
 			auto resType = nRes->GetResourceType();
 			if (resType == ZResourceType::Texture)
@@ -229,14 +224,12 @@ void ZFile::DeclareResourceSubReferences()
 	}
 }
 
-void ZFile::BuildSourceFile(fs::path outputDir)
+void ZFile::BuildSourceFile()
 {
-	std::string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
+	if (!Directory::Exists(Globals::Instance->outputPath))
+		Directory::CreateDirectory(Globals::Instance->outputPath);
 
-	if (!Directory::Exists(outputPath.string()))
-		Directory::CreateDirectory(outputPath.string());
-
-	GenerateSourceFiles(outputDir);
+	GenerateSourceFiles(Globals::Instance->outputPath);
 }
 
 std::string ZFile::GetVarName(uint32_t address)
@@ -265,21 +258,19 @@ const std::vector<uint8_t>& ZFile::GetRawData() const
 	return rawData;
 }
 
-void ZFile::ExtractResources(fs::path outputDir)
+void ZFile::ExtractResources()
 {
-	std::string folderName = Path::GetFileNameWithoutExtension(outputPath.string());
+	if (!Directory::Exists(Globals::Instance->outputPath))
+		Directory::CreateDirectory(Globals::Instance->outputPath);
 
-	if (!Directory::Exists(outputPath.string()))
-		Directory::CreateDirectory(outputPath.string());
-
-	if (!Directory::Exists(Globals::Instance->sourceOutputPath.string()))
-		Directory::CreateDirectory(Globals::Instance->sourceOutputPath.string());
+	if (!Directory::Exists(GetSourceOutputFolderPath().string()))
+		Directory::CreateDirectory(GetSourceOutputFolderPath().string());
 
 	for (ZResource* res : resources)
 		res->PreGenSourceFiles();
 
 	if (Globals::Instance->genSourceFile)
-		GenerateSourceFiles(outputDir);
+		GenerateSourceFiles(Globals::Instance->outputPath);
 
 	MemoryStream* memStream = new MemoryStream();
 	BinaryWriter writer = BinaryWriter(memStream);
@@ -295,7 +286,7 @@ void ZFile::ExtractResources(fs::path outputDir)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
 		res->CalcHash();
-		res->Save(outputPath.string());
+		res->Save(Globals::Instance->outputPath.string());
 
         // Check if we have an exporter "registered" for this resource type
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
@@ -576,6 +567,7 @@ uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address) const
 
 bool ZFile::HasDeclaration(uint32_t address)
 {
+	assert(GETSEGNUM(address) == 0);
 	return declarations.find(address) != declarations.end();
 }
 
@@ -646,9 +638,10 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 	sourceOutput += ProcessDeclarations();
 
-	std::string outPath =
-		(Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".c"))
-			.string();
+	fs::path outPath = GetSourceOutputFolderPath() / outName.stem().concat(".c");
+
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+		printf("Writing C file: %s\n", outPath.c_str());
 
 	OutputFormatter formatter;
 	formatter.Write(sourceOutput);
@@ -673,16 +666,18 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	formatter.Write(ProcessExterns());
 
-	fs::path headerFilename =
-		Globals::Instance->sourceOutputPath / (Path::GetFileNameWithoutExtension(name) + ".h");
+	fs::path headerFilename = GetSourceOutputFolderPath() / outName.stem().concat(".h");
 
-	File::WriteAllText(headerFilename.string(), formatter.GetOutput());
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+		printf("Writing H file: %s\n", headerFilename.c_str());
+
+	File::WriteAllText(headerFilename, formatter.GetOutput());
 }
 
 std::string ZFile::GetHeaderInclude()
 {
 	return StringHelper::Sprintf("#include \"%s\"\n\n",
-	                             (Path::GetFileNameWithoutExtension(name) + ".h").c_str());
+	                             (outName.parent_path() / outName.stem().concat(".h")).c_str());
 }
 
 void ZFile::GeneratePlaceholderDeclarations()
@@ -711,6 +706,11 @@ ZTexture* ZFile::GetTextureResource(uint32_t offset) const
 		return tex->second;
 
 	return nullptr;
+}
+
+fs::path ZFile::GetSourceOutputFolderPath() const
+{
+	return Globals::Instance->sourceOutputPath / outName.parent_path();
 }
 
 std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
@@ -916,8 +916,22 @@ std::string ZFile::ProcessDeclarations()
 					nonZeroUnaccounted = true;
 				}
 
-				if ((i % 16 == 15) && (i != (diff - 1)))
-					src += "\n    ";
+				if (Globals::Instance->verboseUnaccounted)
+				{
+					if ((i % 4 == 3))
+					{
+						src += StringHelper::Sprintf(" // 0x%06X", unaccountedAddress + i - 3);
+						if (i != (diff - 1))
+						{
+							src += "\n\t";
+						}
+					}
+				}
+				else
+				{
+					if ((i % 16 == 15) && (i != (diff - 1)))
+						src += "\n    ";
+				}
 			}
 
 			if (declarations.find(unaccountedAddress) == declarations.end())
@@ -927,7 +941,13 @@ std::string ZFile::ProcessDeclarations()
 					std::string unaccountedPrefix = "unaccounted";
 
 					if (diff < 16 && !nonZeroUnaccounted)
+					{
 						unaccountedPrefix = "possiblePadding";
+
+						// Strip unnecessary padding at the end of the file.
+						if (unaccountedAddress + diff >= rawData.size())
+							break;
+					}
 
 					Declaration* decl = AddDeclarationArray(
 						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",

@@ -423,6 +423,8 @@ public:
 	ZCutscene(ZFile* nParent);
 	~ZCutscene();
 
+	void ParseRawData() override;
+
 	std::string GetBodySourceCode() override;
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
@@ -432,13 +434,10 @@ public:
 
 	ZResourceType GetResourceType() const override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 protected:
 	int32_t numCommands;
 	int32_t endFrame;
 	std::vector<CutsceneCommand*> commands;
-
-	void ParseRawData() override;
 };

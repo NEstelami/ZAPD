@@ -287,7 +287,6 @@ class ZDisplayList : public ZResource
 {
 protected:
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
-	void ParseRawData() override;
 
 	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, std::string prefix, char* line);
 	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string prefix, char* line);
@@ -347,24 +346,24 @@ public:
 	std::vector<uint32_t> references;
 
 	std::string defines;  // Hack for special cases where vertex arrays intersect...
-	std::vector<uint8_t> fileData;
 	std::vector<ZMtx> mtxList;
 
 	ZDisplayList(ZFile* nParent);
-	ZDisplayList(std::vector<uint8_t> nRawData, uint32_t rawDataIndex, int32_t rawDataSize,
-	             ZFile* nParent);
+	ZDisplayList(uint32_t rawDataIndex, int32_t rawDataSize, ZFile* nParent);
 	~ZDisplayList();
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, const std::vector<uint8_t>& nRawData,
-	                    const uint32_t nRawDataIndex) override;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
+
+	void ParseRawData() override;
+
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	void TextureGenCheck(std::string prefix);
-	static bool TextureGenCheck(std::vector<uint8_t> fileData, ZRoom* scene, ZFile* parent,
-	                            std::string prefix, int32_t texWidth, int32_t texHeight,
-	                            uint32_t texAddr, uint32_t texSeg, F3DZEXTexFormats texFmt,
-	                            F3DZEXTexSizes texSiz, bool texLoaded, bool texIsPalette,
-	                            ZDisplayList* self);
-	static int32_t GetDListLength(std::vector<uint8_t> rawData, uint32_t rawDataIndex,
+	static bool TextureGenCheck(ZRoom* scene, ZFile* parent, std::string prefix, int32_t texWidth,
+	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
+	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
+	                            bool texIsPalette, ZDisplayList* self);
+	static int32_t GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 
 	size_t GetRawDataSize() const override;
@@ -378,4 +377,7 @@ public:
 	std::string GetSourceTypeName() const override;
 
 	ZResourceType GetResourceType() const override;
+
+protected:
+	size_t numInstructions;
 };

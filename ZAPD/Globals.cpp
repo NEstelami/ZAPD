@@ -26,6 +26,7 @@ Globals::Globals()
 	lastScene = nullptr;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
 	currentExporter = "";
+	outputPath = Directory::GetCurrentDirectory();
 }
 
 std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
@@ -51,7 +52,7 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 			{
 				if (std::string(child->Name()) == "File")
 				{
-					ZFile* file = new ZFile(fileMode, child, "", "", "", filePath, true);
+					ZFile* file = new ZFile(fileMode, child, "", "", filePath, true);
 					file->GeneratePlaceholderDeclarations();
 					segmentRefFiles[segNumber] = file;
 					break;

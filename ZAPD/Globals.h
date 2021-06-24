@@ -69,6 +69,7 @@ public:
 	ZGame game;
 	GameConfig cfg;
 	bool warnUnaccounted = false;
+	bool verboseUnaccounted = false;
 
 	std::vector<ZFile*> files;
 	std::vector<int32_t> segments;
