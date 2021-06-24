@@ -30,6 +30,7 @@ public:
 	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const override;
+	std::string GetDefaultName(const std::string& prefix) const;
 
 	size_t GetRawDataSize() const override;
 	std::string GetSourceTypeName() const override;

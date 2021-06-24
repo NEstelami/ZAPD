@@ -116,9 +116,9 @@ void ZLimb::ParseRawData()
 
 void ZLimb::DeclareReferences(const std::string& prefix)
 {
-	std::string varPrefix = prefix;
-	if (name != "")
-		varPrefix = name;
+	std::string varPrefix = name;
+	if (varPrefix == "")
+		varPrefix = prefix;
 
 	ZResource::DeclareReferences(varPrefix);
 
@@ -251,6 +251,11 @@ std::string ZLimb::GetBodySourceCode() const
 	return entryStr;
 }
 
+std::string ZLimb::GetDefaultName(const std::string& prefix) const
+{
+	return StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), rawDataIndex);
+}
+
 size_t ZLimb::GetRawDataSize() const
 {
 	switch (type)
@@ -367,7 +372,7 @@ void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 	ZDisplayList* dlist = new ZDisplayList(parent);
 	dlist->ExtractFromBinary(dlistOffset, dlistLength);
 
-	std::string dListStr = StringHelper::Sprintf("%s%sDL", prefix.c_str(), limbSuffix.c_str());
+	std::string dListStr = StringHelper::Sprintf("%s%sDL_%06X", prefix.c_str(), limbSuffix.c_str(), dlistOffset);
 	dlist->SetName(dListStr);
 	dlist->DeclareVar(prefix, "");
 	parent->AddResource(dlist);

@@ -212,9 +212,9 @@ void ZLimbTable::ParseRawData()
 
 void ZLimbTable::DeclareReferences(const std::string& prefix)
 {
-	std::string varPrefix = prefix;
-	if (name != "")
-		varPrefix = name;
+	std::string varPrefix = name;
+	if (varPrefix == "")
+		varPrefix = prefix;
 
 	ZResource::DeclareReferences(varPrefix);
 
@@ -229,6 +229,7 @@ void ZLimbTable::DeclareReferences(const std::string& prefix)
 			{
 				ZLimb* limb = new ZLimb(parent);
 				limb->ExtractFromBinary(limbOffset, limbType);
+				limb->SetName(limb->GetDefaultName(varPrefix));
 				limb->DeclareVar(varPrefix, "");
 				limb->DeclareReferences(varPrefix);
 				parent->AddResource(limb);
