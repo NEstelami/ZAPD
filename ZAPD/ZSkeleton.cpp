@@ -237,6 +237,17 @@ void ZLimbTable::DeclareReferences(const std::string& prefix)
 	}
 }
 
+Declaration* ZLimbTable::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
+	                              GetRawDataSize(), GetSourceTypeName(), auxName, limbsAddresses.size(), bodyStr);
+}
+
 std::string ZLimbTable::GetBodySourceCode() const
 {
 	std::string body = "";
