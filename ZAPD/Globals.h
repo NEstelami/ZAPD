@@ -55,6 +55,7 @@ public:
 	bool warnUnaccounted = false;
 	bool warnNoOffset = false;
 	bool errorNoOffset = false;
+	bool verboseUnaccounted = false;
 
 	std::vector<ZFile*> files;
 	std::vector<int32_t> segments;
