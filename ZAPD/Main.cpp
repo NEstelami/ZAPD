@@ -241,6 +241,11 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->warnUnaccounted = true;
 		}
+		else if ((arg == "-wno" || arg == "--warn-no-offset" ) && (arg == "-eno" || arg == "--error-no-offset"))
+		{
+			fprintf(stderr, "-wno and -eno specified.  Please only use one.");
+			return 1;
+		}
 		else if (arg == "-wno" || arg == "--warn-no-offset")
 		{
 			Globals::Instance->warnNoOffset = true;
