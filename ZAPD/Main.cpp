@@ -241,6 +241,12 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->warnUnaccounted = true;
 		}
+		else if (arg == "-wno" || arg == "--warn-no-offset"){
+			Globals::Instance->warnNoOffset = true;
+		}
+		else if (arg == "-eno" || arg == "--error-no-offset"){
+			Globals::Instance->errorNoOffset = true;
+		}
 	}
 
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
