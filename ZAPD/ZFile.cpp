@@ -125,11 +125,14 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	if (reader->Attribute("Segment") == nullptr)
-		throw std::runtime_error(
-			StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n"
-		                          "\t Missing 'Segment' attribute in File node. \n",
-		                          name.c_str()));
+
+	// Not every XML may have a segment number, so this doesn't make much sense anymore.
+	// if (reader->Attribute("Segment") == nullptr)
+	// 	throw std::runtime_error(
+	// 		StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n"
+	// 	                          "\t Missing 'Segment' attribute in File node. \n",
+	// 	                          name.c_str()));
+
 
 	if (reader->Attribute("Segment") != nullptr)
 	{
