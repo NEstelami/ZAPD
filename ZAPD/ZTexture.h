@@ -32,6 +32,7 @@ protected:
 	uint32_t tlutOffset = static_cast<uint32_t>(-1);
 
 	TextureType format = TextureType::Error;
+	
 	void PrepareBitmapRGBA16();
 	void PrepareBitmapRGBA32();
 	void PrepareBitmapGrayscale8();

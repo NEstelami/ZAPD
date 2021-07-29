@@ -98,13 +98,13 @@ public:
 protected:
 	std::string name;
 	std::vector<uint8_t> rawData;
+	// Keep track of every texture of this ZFile.
+	// The pointers declared here are "borrowed" (somebody else is the owner),
+	// so ZFile shouldn't delete/free those textures.
 	std::map<uint32_t, ZTexture*> texturesResources;
 	fs::path outName = "";
 	fs::path basePath;
 	fs::path xmlFilePath;
-	// Keep track of every texture of this ZFile.
-	// The pointers declared here are "borrowed" (somebody else is the owner),
-	// so ZFile shouldn't delete/free those textures.
 
 	ZFile();
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, const std::string& filename,
