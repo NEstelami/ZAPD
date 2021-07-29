@@ -8,7 +8,7 @@
 #include "ZFile.h"
 #include "ZLimb.h"
 
-enum class ZSkeletonType
+enum class ZSkeletonType : uint8_t
 {
 	Normal,
 	Flex,
@@ -36,10 +36,10 @@ public:
 	size_t GetRawDataSize() const override;
 
 protected:
-	ZLimbType limbType = ZLimbType::Standard;
-	size_t count = 0;
-
 	std::vector<segptr_t> limbsAddresses;
+	size_t count = 0;
+	ZLimbType limbType = ZLimbType::Standard;
+
 };
 
 class ZSkeleton : public ZResource

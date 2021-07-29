@@ -38,8 +38,8 @@ public:
 class Globals
 {
 public:
-	static Globals* Instance;
 
+	static Globals* Instance;
 	GameConfig cfg;
 	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
 

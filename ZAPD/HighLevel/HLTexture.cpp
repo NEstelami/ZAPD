@@ -1,7 +1,7 @@
 #include "HLTexture.h"
 #include "../StringHelper.h"
 
-HLTexture* HLTexture::FromPNG(std::string pngFilePath, HLTextureType texType)
+HLTexture* HLTexture::FromPNG(const std::string& pngFilePath, HLTextureType texType)
 {
 	// int32_t comp;
 	HLTexture* tex = new HLTexture();

@@ -25,7 +25,7 @@ typedef uint32_t segptr_t;
 class ZFile;
 class HLFileIntermediette;
 
-enum class ZResourceType
+enum class ZResourceType :uint8_t
 {
 	Error,
 	Animation,
@@ -108,6 +108,7 @@ protected:
 	std::string name;
 	std::string outName;
 	std::string sourceOutput;
+	std::map<std::string, ResourceAttribute> registeredAttributes;
 	uint32_t rawDataIndex;
 	bool isInner = false;  // Is this resource an inner node of another resource? inside of <Array>
 	bool canHaveInner = false;  // Can this type have an inner node?
@@ -116,7 +117,6 @@ protected:
 	bool declaredInXml = false;
 
 	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
-	std::map<std::string, ResourceAttribute> registeredAttributes;
 
 	// XML attributes registers.
 	// Registering XML attributes should be done in constructors.

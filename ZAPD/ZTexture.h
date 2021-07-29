@@ -7,7 +7,7 @@
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-enum class TextureType
+enum class TextureType : uint8_t
 {
 	Error,
 	RGBA32bpp,

@@ -77,7 +77,7 @@ public:
 	std::string OutputXML();
 
 	template <typename T>
-	T* FindByName(std::string name);
+	T* FindByName(const std::string& name);
 
 	template <typename T>
 	T* FindByType();
@@ -245,7 +245,7 @@ public:
 	HLMeshIntermediette();
 
 	void InitFromXML(tinyxml2::XMLElement* xmlElement);
-	std::string OutputCode(std::string materialName);
+	std::string OutputCode(const std::string& materialName);
 	virtual std::string OutputOBJ();
 	virtual void OutputAssimp(aiScene* scene, std::vector<aiVector3D>* verts);
 	virtual void OutputXML(tinyxml2::XMLDocument* doc, tinyxml2::XMLElement* root);
@@ -292,7 +292,7 @@ public:
 	std::string meshName, materialName;
 
 	HLLimbCommand();
-	HLLimbCommand(std::string nMeshName, std::string nMaterialName);
+	HLLimbCommand(const std::string& nMeshName, const std::string& nMaterialName);
 
 	virtual void InitFromXML(tinyxml2::XMLElement* xmlElement);
 	virtual void OutputXML(tinyxml2::XMLElement* parent);

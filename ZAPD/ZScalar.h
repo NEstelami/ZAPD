@@ -6,7 +6,7 @@
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-enum class ZScalarType
+enum class ZScalarType : uint8_t
 {
 	ZSCALAR_NONE,
 	ZSCALAR_S8,

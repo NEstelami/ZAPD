@@ -101,6 +101,9 @@ public:
 class ZCurveAnimation : public ZAnimation
 {
 protected:
+	std::vector<uint8_t> refIndexArr;
+	std::vector<TransformData> transformDataArr;
+	std::vector<int16_t> copyValuesArr;
 	segptr_t skelOffset = 0;
 
 	///* 0x0000 */ u8* refIndex;
@@ -116,9 +119,6 @@ protected:
 
 	uint8_t limbCount = 0;
 
-	std::vector<uint8_t> refIndexArr;
-	std::vector<TransformData> transformDataArr;
-	std::vector<int16_t> copyValuesArr;
 
 public:
 	ZCurveAnimation();

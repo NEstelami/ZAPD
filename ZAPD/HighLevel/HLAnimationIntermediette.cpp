@@ -15,7 +15,7 @@ HLAnimationIntermediette::~HLAnimationIntermediette()
 {
 }
 
-HLAnimationIntermediette* HLAnimationIntermediette::FromXML(std::string xmlPath)
+HLAnimationIntermediette* HLAnimationIntermediette::FromXML(const std::string& xmlPath)
 {
 	HLAnimationIntermediette* anim = new HLAnimationIntermediette();
 	XMLDocument doc;

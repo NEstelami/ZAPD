@@ -28,6 +28,6 @@ public:
 
 protected:
 	std::vector<ZScalar> scalars;
-	ZScalarType scalarType;
 	uint32_t dimensions;
+	ZScalarType scalarType;
 };

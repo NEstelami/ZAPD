@@ -487,7 +487,7 @@ std::string ZFile::GetDeclarationName(uint32_t address) const
 	                                                                // message is just for testing
 }
 
-std::string ZFile::GetDeclarationName(uint32_t address, std::string defaultResult) const
+std::string ZFile::GetDeclarationName(uint32_t address, const std::string& defaultResult) const
 {
 	Declaration* decl = GetDeclaration(address);
 	if (decl != nullptr)

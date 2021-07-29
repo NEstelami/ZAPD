@@ -7,6 +7,12 @@
 class OutputFormatter
 {
 private:
+	std::string str;
+
+	char word[128];
+	char space[128];
+	char* wordP;
+	char* spaceP;
 	const uint32_t tabSize;
 	const uint32_t defaultIndent;
 	const uint32_t lineLimit;
@@ -17,12 +23,6 @@ private:
 	uint32_t currentIndent;
 	uint32_t wordNests;
 
-	char word[128];
-	char space[128];
-	char* wordP;
-	char* spaceP;
-
-	std::string str;
 
 	void Flush();
 

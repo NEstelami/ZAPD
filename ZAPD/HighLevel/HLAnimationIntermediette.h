@@ -15,11 +15,11 @@
 class HLAnimationIntermediette
 {
 public:
+	std::vector<uint16_t> rotationValues;
+	std::vector<RotationIndex> rotationIndices;
 	int16_t frameCount;
 	int16_t limit;
 	int16_t limbCount;
-	std::vector<uint16_t> rotationValues;
-	std::vector<RotationIndex> rotationIndices;
 
 	HLAnimationIntermediette();
 	~HLAnimationIntermediette();
@@ -27,6 +27,6 @@ public:
 	std::string OutputXML();
 	ZAnimation* ToZAnimation();
 
-	static HLAnimationIntermediette* FromXML(std::string xmlPath);
+	static HLAnimationIntermediette* FromXML(const std::string& xmlPath);
 	static HLAnimationIntermediette* FromZAnimation(ZAnimation* zAnim);
 };

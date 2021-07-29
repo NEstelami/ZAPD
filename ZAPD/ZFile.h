@@ -30,8 +30,8 @@ enum class ZGame
 class ZFile
 {
 public:
-	std::map<uint32_t, Declaration*> declarations;
 	std::string defines;
+	std::map<uint32_t, Declaration*> declarations;
 	std::vector<ZResource*> resources;
 	uint32_t segment;
 	uint32_t baseAddress, rangeStart, rangeEnd;
@@ -78,7 +78,7 @@ public:
 	                                        const std::string& varType, const std::string& varName,
 	                                        size_t arrayItemCnt);
 	std::string GetDeclarationName(uint32_t address) const;
-	std::string GetDeclarationName(uint32_t address, std::string defaultResult) const;
+	std::string GetDeclarationName(uint32_t address, const std::string& defaultResult) const;
 	std::string GetDeclarationPtrName(segptr_t segAddress) const;
 	Declaration* GetDeclaration(uint32_t address) const;
 	Declaration* GetDeclarationRanged(uint32_t address) const;
@@ -96,8 +96,8 @@ public:
 	static void RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc);
 
 protected:
-	std::vector<uint8_t> rawData;
 	std::string name;
+	std::vector<uint8_t> rawData;
 	std::map<uint32_t, ZTexture*> texturesResources;
 	fs::path outName = "";
 	fs::path basePath;

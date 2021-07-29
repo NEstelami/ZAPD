@@ -28,6 +28,4 @@ public:
 	std::string GetExternalExtension() const override;
 
 	size_t GetRawDataSize() const override;
-
-protected:
 };

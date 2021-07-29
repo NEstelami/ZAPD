@@ -8,8 +8,8 @@ class ZSymbol : public ZResource
 protected:
 	std::string type;
 	size_t typeSize;
-	bool isArray = false;
 	uint32_t count = 0;
+	bool isArray = false;
 
 public:
 	ZSymbol(ZFile* nParent);

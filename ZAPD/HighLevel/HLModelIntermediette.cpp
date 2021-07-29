@@ -372,7 +372,7 @@ std::string HLModelIntermediette::OutputXML()
 }
 
 template <typename T>
-inline T* HLModelIntermediette::FindByName(std::string name)
+inline T* HLModelIntermediette::FindByName(const std::string& name)
 {
 	for (HLIntermediette* block : blocks)
 	{
@@ -968,7 +968,7 @@ void HLMeshIntermediette::InitFromXML(tinyxml2::XMLElement* xmlElement)
 	}
 }
 
-std::string HLMeshIntermediette::OutputCode(std::string materialName)
+std::string HLMeshIntermediette::OutputCode(const std::string& materialName)
 {
 	std::string output = "";
 
@@ -1099,7 +1099,7 @@ HLLimbCommand::HLLimbCommand()
 	materialName = "";
 }
 
-HLLimbCommand::HLLimbCommand(std::string nMeshName, std::string nMaterialName)
+HLLimbCommand::HLLimbCommand(const std::string& nMeshName, const std::string& nMaterialName)
 {
 	meshName = nMeshName;
 	materialName = nMaterialName;

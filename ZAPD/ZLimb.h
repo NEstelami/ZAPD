@@ -6,7 +6,7 @@
 #include "ZDisplayList.h"
 #include "ZFile.h"
 
-enum class ZLimbType
+enum class ZLimbType : uint8_t
 {
 	Invalid,
 	Standard,
@@ -17,7 +17,7 @@ enum class ZLimbType
 };
 
 // TODO: check if more types exists
-enum class ZLimbSkinType
+enum class ZLimbSkinType : uint8_t
 {
 	SkinType_0,           // Segment = 0
 	SkinType_4 = 4,       // Segment = segmented address // Struct_800A5E28
@@ -68,6 +68,8 @@ public:
 class Struct_800A598C
 {
 protected:
+	std::vector<Struct_800A57C0> unk_8_arr;
+	std::vector<Struct_800A598C_2> unk_C_arr;
 	ZFile* parent;
 
 	uint16_t unk_0;  // Length of unk_8
@@ -76,8 +78,6 @@ protected:
 	segptr_t unk_8;  // Struct_800A57C0*
 	segptr_t unk_C;  // Struct_800A598C_2*
 
-	std::vector<Struct_800A57C0> unk_8_arr;
-	std::vector<Struct_800A598C_2> unk_C_arr;
 
 public:
 	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
@@ -94,6 +94,7 @@ public:
 class Struct_800A5E28
 {
 protected:
+	std::vector<Struct_800A598C> unk_4_arr;
 	ZFile* parent;
 
 	uint16_t unk_0;  // Vtx count
@@ -101,7 +102,6 @@ protected:
 	segptr_t unk_4;  // Struct_800A598C*
 	segptr_t unk_8;  // Gfx*
 
-	std::vector<Struct_800A598C> unk_4_arr;
 	ZDisplayList* unk_8_dlist = nullptr;
 
 public:
@@ -121,7 +121,6 @@ public:
 class ZLimb : public ZResource
 {
 protected:
-	ZLimbType type = ZLimbType::Standard;
 
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
 	segptr_t skinSegment = 0;                                   // Skin only
@@ -133,6 +132,7 @@ protected:
 	uint16_t rotX, rotY, rotZ;              // Vec3s
 	segptr_t childPtr;                      // LegacyLimb*
 	segptr_t siblingPtr;                    // LegacyLimb*
+	ZLimbType type = ZLimbType::Standard;
 
 	std::string GetLimbDListSourceOutputCode(const std::string& prefix,
 	                                         const std::string& limbPrefix, segptr_t dListPtr);
