@@ -827,7 +827,7 @@ fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 	return defaultValue;
 }
 
-TextureType ZTexture::GetTextureTypeFromString(std::string str)
+TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 {
 	TextureType texType = TextureType::Error;
 

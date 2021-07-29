@@ -38,13 +38,13 @@ ZFile::ZFile()
 	rangeEnd = 0xFFFFFFFF;
 }
 
-ZFile::ZFile(std::string nName) : ZFile()
+ZFile::ZFile(const std::string& nName) : ZFile()
 {
 	name = nName;
 }
 
 ZFile::ZFile(ZFileMode mode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
-             std::string filename, const fs::path& nXmlFilePath, bool placeholderMode)
+             const std::string& filename, const fs::path& nXmlFilePath, bool placeholderMode)
 	: ZFile()
 {
 	xmlFilePath = nXmlFilePath;
@@ -70,7 +70,7 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, bool placeholderMode)
+void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, const std::string& filename, bool placeholderMode)
 {
 	if (filename == "")
 		name = reader->Attribute("Name");
@@ -160,15 +160,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 					name.c_str(), offsetXml));
 			}
 			offsetSet.insert(offsetXml);
-		}
-		else if (Globals::Instance->warnNoOffset)
-		{
-			fprintf(stderr, "Warning No offset specified for: %s", nameXml);
-		}
-		else if (Globals::Instance->errorNoOffset)
-		{
-			throw std::runtime_error(
-				StringHelper::Sprintf("Error no offset specified for %s", nameXml));
 		}
 		if (outNameXml != nullptr)
 		{
@@ -322,7 +313,7 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 }
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
-                                   std::string varType, std::string varName, std::string body)
+                                   const std::string& varType, const std::string& varName, const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -333,8 +324,8 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-                                   DeclarationPadding padding, size_t size, std::string varType,
-                                   std::string varName, std::string body)
+                                   DeclarationPadding padding, size_t size, const std::string& varType,
+                                   const std::string& varName, const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -345,8 +336,8 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body)
+                                        size_t size, const std::string& varType, const std::string& varName,
+                                        size_t arrayItemCnt, const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -357,8 +348,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, std::string varType, std::string varName,
-                                        std::string arrayItemCntStr, std::string body)
+                                        size_t size, const std::string& varType, const std::string& varName,
+                                        const std::string& arrayItemCntStr, const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -369,8 +360,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body, bool isExternal)
+                                        size_t size, const std::string& varType, const std::string& varName,
+                                        size_t arrayItemCnt, const std::string& body, bool isExternal)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -382,8 +373,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         DeclarationPadding padding, size_t size,
-                                        std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body)
+                                        const std::string& varType, const std::string& varName,
+                                        size_t arrayItemCnt, const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -411,7 +402,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varName)
+Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, const std::string& varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -430,7 +421,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varN
 }
 
 Declaration* ZFile::AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,
-                                          std::string varType, std::string varName)
+                                          const std::string& varType, const std::string& varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -442,8 +433,8 @@ Declaration* ZFile::AddDeclarationInclude(uint32_t address, std::string includeP
 }
 
 Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath,
-                                               size_t size, std::string varType,
-                                               std::string varName, size_t arrayItemCnt)
+                                               size_t size, const std::string& varType,
+                                               const std::string& varName, size_t arrayItemCnt)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -598,7 +589,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 					    Globals::Instance->cfg.texturePool.end())
 					{
 						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-						         res->GetExternalExtension() + ".inc";
+								 res->GetExternalExtension() + ".inc";
 					}
 				}
 
@@ -734,7 +725,7 @@ std::string ZFile::ProcessDeclarations()
 	if (declarations.size() == 0)
 		return output;
 
-	defines += ProcessTextureIntersections(name);
+	defines += ProcessTextureIntersections();
 
 	// Account for padding/alignment
 	uint32_t lastAddr = 0;
@@ -1219,7 +1210,7 @@ std::string ZFile::ProcessExterns()
 	return output;
 }
 
-std::string ZFile::ProcessTextureIntersections(std::string prefix)
+std::string ZFile::ProcessTextureIntersections()
 {
 	if (texturesResources.empty())
 		return "";

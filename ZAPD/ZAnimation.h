@@ -175,10 +175,10 @@ public:
 	size_t GetRawDataSize() const override;
 
 protected:
-	int16_t limbCount;
-	segptr_t frameData;  // s16*
-	segptr_t jointKey;   // JointKey*
-
 	std::vector<uint16_t> frameDataArray;
 	std::vector<JointKey> jointKeyArray;
+	segptr_t frameData;  // s16*
+	segptr_t jointKey;   // JointKey*
+	int16_t limbCount;
+
 };

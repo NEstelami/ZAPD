@@ -85,7 +85,7 @@ Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::stri
 	                                   GetSourceTypeName(), name, 0, bodyStr, true);
 }
 
-void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, std::string prefix,
+void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix,
                                char* line)
 {
 	switch (opcode)
@@ -277,7 +277,7 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 	}
 }
 
-void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string prefix, char* line)
+void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, const std::string& prefix, char* line)
 {
 	switch (opcode)
 	{
@@ -461,7 +461,7 @@ bool ZDisplayList::SequenceCheck(std::vector<F3DZEXOpcode> sequence, int32_t sta
 }
 
 int32_t ZDisplayList::OptimizationChecks(int32_t startIndex, std::string& output,
-                                         std::string prefix)
+                                         const std::string& prefix)
 {
 	int32_t result = -1;
 
@@ -474,7 +474,7 @@ int32_t ZDisplayList::OptimizationChecks(int32_t startIndex, std::string& output
 }
 
 int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std::string& output,
-                                                         std::string prefix)
+                                                         const std::string& prefix)
 {
 	if (scene == nullptr)
 	{
@@ -664,7 +664,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 	return -1;
 }
 
-void ZDisplayList::Opcode_G_DL(uint64_t data, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_DL(uint64_t data, const std::string& prefix, char* line)
 {
 	int32_t pp = (data & 0x00FF000000000000) >> 56;
 	int32_t segNum = GETSEGNUM(data);
@@ -899,7 +899,7 @@ void ZDisplayList::Opcode_G_TEXTURE(uint64_t data, char* line)
 	        nnnnnnn == 1 ? "G_ON" : "G_OFF");
 }
 
-void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, const std::string& prefix, char* line)
 {
 	int32_t __ = (data & 0x00FF000000000000) >> 48;
 	int32_t www = (data & 0x00000FFF00000000) >> 32;
@@ -989,7 +989,7 @@ void ZDisplayList::Opcode_G_SETTILE(uint64_t data, char* line)
 	        ssss, dd, bbbb, uuuu);
 }
 
-void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, const std::string& prefix, char* line)
 {
 	int32_t sss = (data & 0x00FFF00000000000) >> 44;
 	int32_t ttt = (data & 0x00000FFF00000000) >> 32;
@@ -1509,7 +1509,7 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_H(uint64_t data, char* line)
 		sprintf(line, "gsSPSetOtherMode(0xE3, %i, %i, 0x%08X),", sft, nn + 1, dd);
 }
 
-void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, const std::string& prefix, char* line)
 {
 	int32_t t = (data & 0x0000000007000000) >> 24;
 	int32_t ccc = (data & 0x00000000003FF000) >> 14;
@@ -1528,7 +1528,7 @@ void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, std::string prefix, char* li
 	sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
 }
 
-void ZDisplayList::Opcode_G_ENDDL(std::string prefix, char* line)
+void ZDisplayList::Opcode_G_ENDDL(const std::string& prefix, char* line)
 {
 	sprintf(line, "gsSPEndDisplayList(),");
 
@@ -2034,7 +2034,7 @@ std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 	return sourceOutput;
 }
 
-void ZDisplayList::TextureGenCheck(std::string prefix)
+void ZDisplayList::TextureGenCheck(const std::string& prefix)
 {
 	if (TextureGenCheck(scene, parent, prefix, lastTexWidth, lastTexHeight, lastTexAddr, lastTexSeg,
 	                    lastTexFmt, lastTexSiz, lastTexLoaded, lastTexIsPalette, this))
@@ -2045,7 +2045,7 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string prefix,
+bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, const std::string& prefix,
                                    int32_t texWidth, int32_t texHeight, uint32_t texAddr,
                                    uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
                                    bool texLoaded, bool texIsPalette, ZDisplayList* self)

@@ -63,8 +63,8 @@ class ZResource
 {
 public:
 	ZFile* parent;
-	bool outputDeclaration = true;
 	uint32_t hash = 0;
+	bool outputDeclaration = true;
 
 	ZResource(ZFile* nParent);
 	virtual ~ZResource() = default;
@@ -107,8 +107,8 @@ public:
 protected:
 	std::string name;
 	std::string outName;
-	uint32_t rawDataIndex;
 	std::string sourceOutput;
+	uint32_t rawDataIndex;
 	bool isInner = false;  // Is this resource an inner node of another resource? inside of <Array>
 	bool canHaveInner = false;  // Can this type have an inner node?
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't

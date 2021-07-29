@@ -66,26 +66,23 @@ public:
 class ZCollisionHeader : public ZResource
 {
 public:
-	int16_t absMinX, absMinY, absMinZ;
-	int16_t absMaxX, absMaxY, absMaxZ;
-	uint16_t numVerts;
-	segptr_t vtxAddress;
-	uint16_t numPolygons;
-	segptr_t polyAddress;
-	segptr_t polyTypeDefAddress;
-	segptr_t camDataAddress;
-
-	int32_t numWaterBoxes;
-	segptr_t waterBoxAddress;
-
-	uint32_t vtxSegmentOffset, polySegmentOffset, polyTypeDefSegmentOffset, camDataSegmentOffset,
-		waterBoxSegmentOffset;
-
 	std::vector<VertexEntry> vertices;
 	std::vector<PolygonEntry> polygons;
 	std::vector<uint64_t> polygonTypes;
 	std::vector<WaterBoxHeader*> waterBoxes;
+	segptr_t polyAddress;
+	segptr_t polyTypeDefAddress;
+	segptr_t camDataAddress;
+	segptr_t vtxAddress;
+	int32_t numWaterBoxes;
+	segptr_t waterBoxAddress;
+	uint32_t vtxSegmentOffset, polySegmentOffset, polyTypeDefSegmentOffset, camDataSegmentOffset,
+		waterBoxSegmentOffset;
 	CameraDataList* camData;
+	int16_t absMinX, absMinY, absMinZ;
+	int16_t absMaxX, absMaxY, absMaxZ;
+	uint16_t numVerts;
+	uint16_t numPolygons;
 
 	ZCollisionHeader(ZFile* nParent);
 	~ZCollisionHeader();

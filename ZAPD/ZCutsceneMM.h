@@ -27,9 +27,8 @@ public:
 	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 protected:
+	std::vector<CutsceneCommand*> commands;
+	std::vector<uint32_t> data;
 	int32_t numCommands;
 	int32_t endFrame;
-	std::vector<CutsceneCommand*> commands;
-
-	std::vector<uint32_t> data;
 };

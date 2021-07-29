@@ -24,14 +24,14 @@ enum class TextureType
 class ZTexture : public ZResource
 {
 protected:
-	TextureType format = TextureType::Error;
-	uint32_t width, height;
-
 	ImageBackend textureData;
 	std::vector<uint8_t> textureDataRaw;  // When reading from a PNG file.
-	uint32_t tlutOffset = static_cast<uint32_t>(-1);
 	ZTexture* tlut = nullptr;
 
+	uint32_t width, height;
+	uint32_t tlutOffset = static_cast<uint32_t>(-1);
+
+	TextureType format = TextureType::Error;
 	void PrepareBitmapRGBA16();
 	void PrepareBitmapRGBA32();
 	void PrepareBitmapGrayscale8();
@@ -64,7 +64,7 @@ public:
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
 	void FromHLTexture(HLTexture* hlTex);
 
-	static TextureType GetTextureTypeFromString(std::string str);
+	static TextureType GetTextureTypeFromString(const std::string& str);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;

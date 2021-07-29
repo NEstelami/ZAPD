@@ -7,7 +7,7 @@
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
 
-enum class VerbosityLevel
+enum class VerbosityLevel :uint8_t
 {
 	VERBOSITY_SILENT,
 	VERBOSITY_INFO,
@@ -40,30 +40,31 @@ class Globals
 public:
 	static Globals* Instance;
 
+	GameConfig cfg;
+	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
+
+	std::vector<ZFile*> files;
+	std::vector<int32_t> segments;
+	std::map<int32_t, std::string> segmentRefs;
+	std::map<int32_t, ZFile*> segmentRefFiles;
+	std::map<uint32_t, std::string> symbolMap;
+	ZRoom* lastScene;
+	TextureType texType;
+	ZGame game;
+
+	ZFileMode fileMode;
 	bool genSourceFile;  // Used for extraction
 	bool useExternalResources;
 	bool testMode;  // Enables certain experimental features
 	bool outputCrc = false;
 	bool profile;  // Measure performance of certain operations
 	bool useLegacyZDList;
-	VerbosityLevel verbosity;  // ZAPD outputs additional information
-	ZFileMode fileMode;
-	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
-	TextureType texType;
-	ZGame game;
-	GameConfig cfg;
 	bool warnUnaccounted = false;
 	bool warnNoOffset = false;
 	bool errorNoOffset = false;
 	bool verboseUnaccounted = false;
-
-	std::vector<ZFile*> files;
-	std::vector<int32_t> segments;
-	std::map<int32_t, std::string> segmentRefs;
-	std::map<int32_t, ZFile*> segmentRefFiles;
-	ZRoom* lastScene;
-	std::map<uint32_t, std::string> symbolMap;
-
+	VerbosityLevel verbosity;  // ZAPD outputs additional information
+	
 	Globals();
 	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
 	void ReadConfigFile(const std::string& configFilePath);

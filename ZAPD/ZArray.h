@@ -20,7 +20,7 @@ public:
 	ZResourceType GetResourceType() const override;
 
 protected:
-	size_t arrayCnt;
-	std::string childName;
 	std::vector<ZResource*> resList;
+	std::string childName;
+	size_t arrayCnt;
 };

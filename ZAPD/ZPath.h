@@ -20,11 +20,11 @@ public:
 	segptr_t GetListAddress() const;
 
 protected:
-	int32_t numPoints;
-	int8_t unk1;   // (MM Only)
-	int16_t unk2;  // (MM Only)
-	segptr_t listSegmentAddress;
 	std::vector<ZVector> points;
+	int32_t numPoints;
+	segptr_t listSegmentAddress;
+	int16_t unk2;  // (MM Only)
+	int8_t unk1;   // (MM Only)
 };
 
 class ZPath : public ZResource
@@ -48,6 +48,6 @@ public:
 	void SetNumPaths(uint32_t nNumPaths);
 
 protected:
-	uint32_t numPaths;
 	std::vector<PathwayEntry> pathways;
+	uint32_t numPaths;
 };

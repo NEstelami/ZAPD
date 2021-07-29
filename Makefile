@@ -20,7 +20,7 @@ endif
 ifeq ($(OPTIMIZATION_ON),0)
   CXXFLAGS += -O0
 else
-CXXFLAGS += -O2 -march=native -mtune=native
+  CXXFLAGS += -O2 -mtune=native -march=native
 endif
 
 ifneq ($(ASAN),0)
