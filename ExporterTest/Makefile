@@ -1,4 +1,4 @@
-CFLAGS = -Wall -O2 -g
+CFLAGS = -Wall -O2 -g -std=c++17
 OBJ = Main.o TextureExporter.o RoomExporter.o CollisionExporter.o
 LIB = ExporterTest.a
 
