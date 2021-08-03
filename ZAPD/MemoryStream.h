@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Stream.h"
 #include <memory>
 #include <vector>
+#include "Stream.h"
 
 class MemoryStream : public Stream
 {

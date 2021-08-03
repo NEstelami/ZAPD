@@ -1,5 +1,6 @@
 #pragma once
 
+#include <BinaryWriter.h>
 #include <map>
 #include <stdexcept>
 #include <stdint.h>
@@ -7,15 +8,6 @@
 #include <vector>
 #include "Declaration.h"
 #include "tinyxml2.h"
-#include <BinaryWriter.h>
-
-//#if __has_include(<filesystem>)
-//#include <filesystem>
-//namespace fs = std::filesystem;
-//#else
-//#include <experimental/filesystem>
-//namespace fs = std::experimental::filesystem;
-//#endif
 
 #include "Directory.h"
 
@@ -136,8 +128,6 @@ protected:
 	void RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue = "");
 };
 
-
-
 class ZResourceExporter
 {
 public:
@@ -166,13 +156,10 @@ typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
 	};                                                                                             \
 	static ZRes_##nodeName inst_ZRes_##nodeName
 
-#define REGISTER_EXPORTER(expFunc)																		\
-	class ZResExp_##expFunc																				\
-	{																									\
-	public:																								\
-		ZResExp_##expFunc()																				\
-		{																								\
-			expFunc();																					\
-		}																								\
-	};																									\
+#define REGISTER_EXPORTER(expFunc)                                                                 \
+	class ZResExp_##expFunc                                                                        \
+	{                                                                                              \
+	public:                                                                                        \
+		ZResExp_##expFunc() { expFunc(); }                                                         \
+	};                                                                                             \
 	static ZResExp_##expFunc inst_ZResExp_##expFunc;

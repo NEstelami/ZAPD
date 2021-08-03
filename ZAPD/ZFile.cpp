@@ -1,4 +1,6 @@
 #include "ZFile.h"
+#include <BinaryWriter.h>
+#include <MemoryStream.h>
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
@@ -23,8 +25,6 @@
 #include "ZTexture.h"
 #include "ZVector.h"
 #include "ZVtx.h"
-#include <MemoryStream.h>
-#include <BinaryWriter.h>
 
 using namespace tinyxml2;
 
@@ -297,7 +297,7 @@ void ZFile::ExtractResources()
 		res->CalcHash();
 		res->Save(Globals::Instance->outputPath.string());
 
-        // Check if we have an exporter "registered" for this resource type
+		// Check if we have an exporter "registered" for this resource type
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
 
 		if (exporter != nullptr)
@@ -306,7 +306,8 @@ void ZFile::ExtractResources()
 
 	if (memStream->GetLength() > 0)
 	{
-		File::WriteAllBytes(StringHelper::Sprintf("%s.bin", GetName().c_str()), memStream->ToVector());
+		File::WriteAllBytes(StringHelper::Sprintf("%s.bin", GetName().c_str()),
+		                    memStream->ToVector());
 	}
 
 	writer.Close();
@@ -621,7 +622,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 					    Globals::Instance->cfg.texturePool.end())
 					{
 						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-						         res->GetExternalExtension() + ".inc";
+								 res->GetExternalExtension() + ".inc";
 					}
 				}
 

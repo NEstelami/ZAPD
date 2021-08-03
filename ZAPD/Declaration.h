@@ -43,23 +43,23 @@ public:
 	bool isPlaceholder = false;
 
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-		std::string nVarName, bool nIsArray, std::string nText);
+	            std::string nVarName, bool nIsArray, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-		std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
+	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-		std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
+	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-		std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
-		std::string nText);
+	            std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
+	            std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-		std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-		bool nIsExternal);
+	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
+	            bool nIsExternal);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-		std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
-		std::string nText);
+	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            std::string nText);
 	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
 
 protected:
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-		std::string nText);
+	            std::string nText);
 };

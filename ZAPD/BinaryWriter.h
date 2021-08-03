@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Stream.h"
-#include <memory>
 #include <array>
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
+#include "Stream.h"
 
 class BinaryWriter
 {
@@ -29,7 +29,6 @@ public:
 	void Write(float value);
 	void Write(double value);
 	void Write(std::string str);
-
 
 protected:
 	std::shared_ptr<Stream> stream;

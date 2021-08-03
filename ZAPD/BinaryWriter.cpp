@@ -25,7 +25,6 @@ uint64_t BinaryWriter::GetBaseAddress()
 	return stream->GetBaseAddress();
 }
 
-
 uint64_t BinaryWriter::GetLength()
 {
 	return stream->GetLength();
@@ -90,7 +89,7 @@ void BinaryWriter::Write(std::string str)
 {
 	int strLen = str.size();
 	stream->Write((char*)&strLen, sizeof(int));
-	
+
 	for (char c : str)
 		stream->WriteByte(c);
 }

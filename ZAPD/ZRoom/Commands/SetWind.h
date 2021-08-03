@@ -9,7 +9,7 @@ public:
 	uint8_t windVertical;
 	uint8_t windSouth;
 	uint8_t clothFlappingStrength;
-    
+
 	SetWind(ZFile* nParent);
 
 	void ParseRawData() override;

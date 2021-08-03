@@ -203,7 +203,8 @@ ZResourceExporter* Globals::GetExporter(ZResourceType resType)
 {
 	auto exporters = *GetExporterMap();
 
-	if (currentExporter != "" && exporters[currentExporter]->exporters.find(resType) != exporters[currentExporter]->exporters.end())
+	if (currentExporter != "" && exporters[currentExporter]->exporters.find(resType) !=
+	                                 exporters[currentExporter]->exporters.end())
 		return exporters[currentExporter]->exporters[resType];
 	else
 		return nullptr;

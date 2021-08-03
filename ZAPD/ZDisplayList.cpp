@@ -2166,7 +2166,6 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 	return TextureType::RGBA16bpp;
 }
 
-
 bool ZDisplayList::IsExternalResource() const
 {
 	return false;

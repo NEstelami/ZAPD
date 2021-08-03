@@ -28,5 +28,4 @@ public:
 	std::string GetCommandCName() const override;
 
 protected:
-
 };

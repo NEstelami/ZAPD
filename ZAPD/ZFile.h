@@ -15,7 +15,7 @@ enum class ZFileMode
 	BuildBackground,
 	Extract,
 	Invalid,
-	Custom = 1000 // Used for exporter file modes
+	Custom = 1000  // Used for exporter file modes
 };
 
 enum class ZGame

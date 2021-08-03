@@ -9,7 +9,7 @@ public:
 	ZCollisionHeader* collisionHeader;
 
 	SetCollisionHeader(ZFile* nParent);
-    ~SetCollisionHeader();
+	~SetCollisionHeader();
 
 	void ParseRawData() override;
 

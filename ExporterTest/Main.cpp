@@ -61,7 +61,7 @@ static void ExporterFileEnd(ZFile* file)
 static void ImportExporters()
 {
 	// In this example we set up a new exporter called "EXAMPLE".
-	// By running ZAPD with the argument -sexp EXAMPLE, we tell it that we want to use this exporter for our resources.
+	// By running ZAPD with the argument -se EXAMPLE, we tell it that we want to use this exporter for our resources.
 	ExporterSet* exporterSet = new ExporterSet();
 	exporterSet->processFileModeFunc = ExporterProcessFileMode;
 	exporterSet->parseFileModeFunc = ExporterParseFileMode;

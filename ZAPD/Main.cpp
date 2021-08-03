@@ -56,7 +56,7 @@ void ErrorHandler(int sig)
 	fprintf(stderr, "Traceback:\n");
 	for (size_t i = 1; i < size; i++)
 	{
-		Dl_info info;	
+		Dl_info info;
 		uint32_t gotAddress = dladdr(array[i], &info);
 		std::string functionName(symbols[i]);
 
@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->verboseUnaccounted = true;
 		}
-		else if (arg == "-sexp" || arg == "--set-exporter")  // Set Current Exporter
+		else if (arg == "-se" || arg == "--set-exporter")  // Set Current Exporter
 		{
 			Globals::Instance->currentExporter = argv[++i];
 		}
@@ -241,7 +241,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	// We've parsed through our commands once. If an exporter exists, it's been set by now. 
+	// We've parsed through our commands once. If an exporter exists, it's been set by now.
 	// Now we'll parse through them again but pass them on to our exporter if one is available.
 
 	if (exporterSet != nullptr && exporterSet->parseArgsFunc != nullptr)
@@ -249,8 +249,6 @@ int main(int argc, char* argv[])
 		for (int32_t i = 2; i < argc; i++)
 			exporterSet->parseArgsFunc(argc, argv, i);
 	}
-
-
 
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
@@ -276,7 +274,8 @@ int main(int argc, char* argv[])
 			{
 				TextureType texType = Globals::Instance->texType;
 
-				BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
+				BuildAssetTexture(Globals::Instance->inputPath, texType,
+				                  Globals::Instance->outputPath);
 			}
 			else if (fileMode == ZFileMode::BuildBackground)
 			{
@@ -288,12 +287,13 @@ int main(int argc, char* argv[])
 			}
 			else if (fileMode == ZFileMode::BuildOverlay)
 			{
-				ZOverlay* overlay =
-					ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath.string()),
-						Path::GetDirectoryName(Globals::Instance->cfgPath.string()));
+				ZOverlay* overlay = ZOverlay::FromBuild(
+					Path::GetDirectoryName(Globals::Instance->inputPath.string()),
+					Path::GetDirectoryName(Globals::Instance->cfgPath.string()));
 
 				if (overlay)
-					File::WriteAllText(Globals::Instance->outputPath.string(), overlay->GetSourceOutputCode(""));
+					File::WriteAllText(Globals::Instance->outputPath.string(),
+					                   overlay->GetSourceOutputCode(""));
 			}
 		}
 	}
