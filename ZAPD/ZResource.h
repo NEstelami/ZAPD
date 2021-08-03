@@ -170,9 +170,9 @@ typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
 	class ZResExp_##expFunc																				\
 	{																									\
 	public:																								\
-		ZResExp_##expFunc()																			\
+		ZResExp_##expFunc()																				\
 		{																								\
-			##expFunc();																				\
+			expFunc();																					\
 		}																								\
 	};																									\
 	static ZResExp_##expFunc inst_ZResExp_##expFunc;

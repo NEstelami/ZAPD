@@ -354,7 +354,7 @@ void ExporterExample_Room::Save(ZResource* res, fs::path outPath, BinaryWriter* 
 		}
 		break;
 		default:
-			printf("UNIMPLEMENTED COMMAND: %i\n", cmd->cmdID);
+			printf("UNIMPLEMENTED COMMAND: %i\n", (int)cmd->cmdID);
 
 			writer->Write((uint8_t)0); // 0x01
 			writer->Write((uint8_t)0); // 0x02

@@ -22,7 +22,6 @@
 
 #include <string>
 #include "tinyxml2.h"
-//#include <HighLevel/HLExporterTest.h>
 
 using namespace tinyxml2;
 

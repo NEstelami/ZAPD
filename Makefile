@@ -74,5 +74,8 @@ ZAPD/Main.o: genbuildinfo ZAPD/Main.cpp
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd
 
-ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
-	$(CXX) $(CXXFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)
+ExporterTest/ExporterTest.a:
+	$(MAKE) -C ExporterTest
+
+ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest/ExporterTest.a
+	$(CXX) $(CXXFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(FS_INC) $(LDFLAGS)

@@ -1,0 +1,23 @@
+CFLAGS = -Wall -O2 -g
+OBJ = Main.o TextureExporter.o RoomExporter.o CollisionExporter.o
+LIB = ExporterTest.a
+
+CPPFLAGS-$(MT) += -DCONFIG_MT
+CPPFLAGS += $(CPPFLAGS-y)
+
+.PHONY: all
+all: $(LIB)
+
+.PHONY: clean
+clean:
+	rm -f $(OBJ) $(LIB)
+
+.INTERMEDIATE: $(OBJ)
+
+$(OBJ): Main.cpp TextureExporter.cpp RoomExporter.cpp CollisionExporter.cpp
+
+$(LIB): $(OBJ)
+	$(AR) rcs $@ $^
+
+%.o: %.cpp
+	$(COMPILE.c) $(OUTPUT_OPTION) $< -I ./ -I ../ZAPD -I ../lib/tinyxml2
