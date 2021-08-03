@@ -1,8 +1,8 @@
 #include "ZBlob.h"
-#include "BitConverter.h"
-#include "File.h"
-#include "Path.h"
-#include "StringHelper.h"
+#include "Utils/BitConverter.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
+#include "Utils/StringHelper.h"
 #include "ZFile.h"
 
 using namespace tinyxml2;

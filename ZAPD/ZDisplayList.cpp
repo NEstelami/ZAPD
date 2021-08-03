@@ -1,15 +1,15 @@
 #include "ZDisplayList.h"
 
-#include <File.h>
-#include <Path.h>
+#include <Utils/File.h>
+#include <Utils/Path.h>
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <math.h>
-#include "BitConverter.h"
+#include "Utils/BitConverter.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 #include "gfxd.h"
 
 using namespace tinyxml2;

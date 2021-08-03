@@ -1,8 +1,8 @@
 #include "SetMesh.h"
 #include <Globals.h>
-#include <Path.h>
-#include "BitConverter.h"
-#include "StringHelper.h"
+#include <Utils/Path.h>
+#include "Utils/BitConverter.h"
+#include "Utils/StringHelper.h"
 #include "ZBackground.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"

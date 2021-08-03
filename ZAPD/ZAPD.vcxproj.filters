@@ -49,6 +49,12 @@
     <Filter Include="Header Files\Libraries\libgfxd">
       <UniqueIdentifier>{85600275-99fe-491d-8189-bcc3dc1a8903}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{a5084513-6b48-4c46-9baa-a07aaaca941e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{118073fe-284f-4eb2-804c-2f37b3b8df27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -243,17 +249,8 @@
     <ClCompile Include="ZBackground.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
-    <ClCompile Include="BinaryWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryStream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ZRoom\Commands\SetAnimatedMaterialList.cpp">
       <Filter>Source Files\Z64\ZRoom\Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageBackend.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZPath.cpp">
       <Filter>Source Files\Z64</Filter>
@@ -261,17 +258,20 @@
     <ClCompile Include="Declaration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ImageBackend.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\BinaryWriter.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\MemoryStream.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ZString.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Path.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="File.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Directory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZRoom\ZRoom.h">
       <Filter>Header Files\Z64\ZRoom</Filter>
     </ClInclude>
@@ -289,9 +289,6 @@
     </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetTimeSettings.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="BitConverter.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetSpecialObjects.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
@@ -352,9 +349,6 @@
     </ClInclude>
     <ClInclude Include="..\lib\elfio\elfio\elfio_utils.hpp">
       <Filter>Header Files\Libraries\elfio</Filter>
-    </ClInclude>
-    <ClInclude Include="StringHelper.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
@@ -515,15 +509,6 @@
     <ClInclude Include="ZBackground.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
-    <ClInclude Include="BinaryWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Stream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetAnimatedMaterialList.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
@@ -535,6 +520,33 @@
     </ClInclude>
     <ClInclude Include="Declaration.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\BinaryWriter.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Directory.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\File.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Path.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Stream.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\StringHelper.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\MemoryStream.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\BitConverter.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ZString.h">
+      <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

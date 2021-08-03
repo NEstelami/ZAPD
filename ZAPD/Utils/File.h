@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include "Directory.h"
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 
 class File
 {

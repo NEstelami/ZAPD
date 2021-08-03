@@ -1,7 +1,7 @@
 #include "Globals.h"
 #include <algorithm>
-#include "File.h"
-#include "Path.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
 #include "tinyxml2.h"
 
 using namespace tinyxml2;

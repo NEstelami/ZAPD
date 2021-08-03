@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <regex>
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 #include "ZFile.h"
 
 ZResource::ZResource(ZFile* nParent)
