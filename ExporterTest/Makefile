@@ -1,4 +1,4 @@
-CFLAGS = -Wall -O2 -g -std=c++17
+CXXFLAGS = -Wall -O2 -g -std=c++17
 OBJ = Main.o TextureExporter.o RoomExporter.o CollisionExporter.o
 LIB = ExporterTest.a
 
@@ -20,4 +20,4 @@ $(LIB): $(OBJ)
 	$(AR) rcs $@ $^
 
 %.o: %.cpp
-	$(COMPILE.c) $(OUTPUT_OPTION) $< -I ./ -I ../ZAPD -I ../lib/tinyxml2
+	$(COMPILE.c) $(OUTPUT_OPTION) $(CXXFLAGS) $< -I ./ -I ../ZAPD -I ../lib/tinyxml2

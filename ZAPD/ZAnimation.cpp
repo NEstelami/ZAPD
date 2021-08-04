@@ -23,10 +23,6 @@ void ZAnimation::ParseRawData()
 	frameCount = BitConverter::ToInt16BE(parent->GetRawData(), rawDataIndex + 0);
 }
 
-void ZAnimation::Save(const fs::path& outFolder)
-{
-}
-
 std::string ZAnimation::GetSourceOutputCode(const std::string& prefix)
 {
 	return "";

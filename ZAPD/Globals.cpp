@@ -195,7 +195,7 @@ std::map<std::string, ExporterSet*>& Globals::GetExporterMap()
 
 void Globals::AddExporter(std::string exporterName, ExporterSet* exporterSet)
 {
-	std::map<std::string, ExporterSet*>& exporters = GetExporterMap();
+	auto exporters = GetExporterMap();
 	exporters[exporterName] = exporterSet;
 }
 
