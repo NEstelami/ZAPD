@@ -108,6 +108,9 @@ protected:
 	std::string name;
 	std::string outName;
 	std::string sourceOutput;
+	// XML attributes registers.
+	// Registering XML attributes should be done in constructors.
+	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
 	std::map<std::string, ResourceAttribute> registeredAttributes;
 	uint32_t rawDataIndex;
 	bool isInner = false;  // Is this resource an inner node of another resource? inside of <Array>
@@ -115,11 +118,6 @@ protected:
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
 	bool declaredInXml = false;
-
-	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
-
-	// XML attributes registers.
-	// Registering XML attributes should be done in constructors.
 
 	// The resource needs this attribute. If it is not provided, then the program will throw an
 	// exception.
