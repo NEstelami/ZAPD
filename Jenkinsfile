@@ -52,19 +52,19 @@ pipeline {
                     sh 'cp /usr/local/etc/roms/mm.us.rev1.z64 baserom.mm.us.rev1.z64'
 
                     // Identical to `make setup` except for copying our newer ZAPD.out into mm
-                    sh 'git submodule update --init --recursive'
                     sh 'make -C tools'
                     sh 'cp ../ZAPD.out tools/ZAPD/'
-                    sh 'python3 tools/extract_rom.py baserom.mm.us.rev1.z64'
-                    sh 'python3 extract_assets.py'
+                    sh 'python3 tools/fixbaserom.py'
+                    sh 'python3 tools/extract_baserom.py'
+                    sh 'python3 extract_assets.py -t 4'
                 }
             }
         }
         stage('Build mm') {
             steps {
                 dir('mm') {
-                    sh 'make assembly -j'
-                    sh 'make -j'
+                    sh 'make -j disasm'
+                    sh 'make -j all'
                 }
             }
         }
