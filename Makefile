@@ -12,7 +12,7 @@ CXXFLAGS += -fpic -std=c++17 -Wall -fno-omit-frame-pointer
 ifneq ($(DEBUG),0)
   OPTIMIZATION_ON = 0
   DEPRECATION_ON = 0
-  CFLAGS += -g3 -DDEVELOPMENT -D_DEBUG
+  CXXFLAGS += -g3 -DDEVELOPMENT -D_DEBUG
   COPYCHECK_ARGS += --devel
 else
   CFLAGS += -Werror
@@ -21,8 +21,9 @@ endif
 ifeq ($(OPTIMIZATION_ON),0)
   CXXFLAGS += -O0
 else
-  CXXFLAGS += -O2
+CXXFLAGS += -O2 -march=native -mtune=native
 endif
+
 ifneq ($(ASAN),0)
   CXXFLAGS += -fsanitize=address
 endif

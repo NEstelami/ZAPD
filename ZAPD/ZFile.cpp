@@ -187,6 +187,15 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 			}
 			offsetSet.insert(offsetXml);
 		}
+		else if (Globals::Instance->warnNoOffset)
+		{
+			fprintf(stderr, "Warning No offset specified for: %s", nameXml);
+		}
+		else if (Globals::Instance->errorNoOffset)
+		{
+			throw std::runtime_error(
+				StringHelper::Sprintf("Error no offset specified for %s", nameXml));
+		}
 		if (outNameXml != nullptr)
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
@@ -728,7 +737,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 					    Globals::Instance->cfg.texturePool.end())
 					{
 						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-								 res->GetExternalExtension() + ".inc";
+						         res->GetExternalExtension() + ".inc";
 					}
 				}
 
