@@ -307,9 +307,10 @@ std::string ZLimbTable::GetSourceTypeName() const
 
 	case ZLimbType::Invalid:
 		// TODO: Proper error message or something.
-		assert("Invalid limb type\n");
+		assert("Invalid limb type.\n");
 	}
-	return "";
+
+	return "ERROR";
 }
 
 ZResourceType ZLimbTable::GetResourceType() const
