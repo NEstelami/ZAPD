@@ -14,7 +14,7 @@ clean:
 
 .INTERMEDIATE: $(OBJ)
 
-$(OBJ): Utils/BinaryWriter.cpp Utils/MemoryStream.cpp
+$(OBJ): Utils/BinaryReader.cpp Utils/BinaryWriter.cpp Utils/MemoryStream.cpp
 
 $(LIB): $(OBJ)
 	$(AR) rcs $@ $^
