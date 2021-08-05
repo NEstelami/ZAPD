@@ -81,7 +81,7 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 
 	std::string currentExporter;
-	static std::map<std::string, ExporterSet*>& GetExporterMap();
+	static std::map<std::string, ExporterSet*>* GetExporterMap();
 	static void AddExporter(std::string exporterName, ExporterSet* exporterSet);
 
 	Globals();
