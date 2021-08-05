@@ -72,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\assimp-built;$(SolutionDir)x64\Debug;$(SolutionDir)packages\libpng.1.6.28.1\build\native\lib\x64\v140\dynamic\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)ZAPDUtils;$(SolutionDir)lib\tinyxml2;$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\elfio;$(SolutionDir)lib\assimp\include;$(SolutionDir)lib\stb;$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(IncludePath)</IncludePath>
@@ -159,8 +160,6 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OutputFormatter.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
-    <ClCompile Include="Utils\BinaryWriter.cpp" />
-    <ClCompile Include="Utils\MemoryStream.cpp" />
     <ClCompile Include="ZArray.cpp" />
     <ClCompile Include="ZBackground.cpp" />
     <ClCompile Include="ZCutsceneMM.cpp" />

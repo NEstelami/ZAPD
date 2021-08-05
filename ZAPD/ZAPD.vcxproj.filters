@@ -49,12 +49,6 @@
     <Filter Include="Header Files\Libraries\libgfxd">
       <UniqueIdentifier>{85600275-99fe-491d-8189-bcc3dc1a8903}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utils">
-      <UniqueIdentifier>{a5084513-6b48-4c46-9baa-a07aaaca941e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Utils">
-      <UniqueIdentifier>{118073fe-284f-4eb2-804c-2f37b3b8df27}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
