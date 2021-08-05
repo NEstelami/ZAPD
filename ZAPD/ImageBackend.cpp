@@ -216,8 +216,7 @@ void ImageBackend::WritePng(const char* filename)
 
 void ImageBackend::WritePng(const fs::path& filename)
 {
-	// The char* cast is necessary for MSVC to prevent this function from going recursive and causing a stack overflow...
-	WritePng((char*)filename.c_str());
+	WritePng(filename.string().c_str());
 }
 
 void ImageBackend::SetTextureData(const std::vector<std::vector<RGBAPixel>>& texData,
