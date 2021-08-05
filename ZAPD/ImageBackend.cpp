@@ -216,6 +216,7 @@ void ImageBackend::WritePng(const char* filename)
 
 void ImageBackend::WritePng(const fs::path& filename)
 {
+	// Note: The .string() is necessary for MSVC, due to the implementation of std::filesystem differing from GCC. Do not remove!
 	WritePng(filename.string().c_str());
 }
 
