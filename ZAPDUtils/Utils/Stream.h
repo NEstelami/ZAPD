@@ -19,6 +19,7 @@ public:
 	virtual void Seek(int32_t offset, SeekOffsetType seekType) = 0;
 
 	virtual std::unique_ptr<char[]> Read(size_t length) = 0;
+	virtual void Read(const char* dest, size_t length) = 0;
 	virtual int8_t ReadByte() = 0;
 
 	virtual void Write(char* destBuffer, size_t length) = 0;

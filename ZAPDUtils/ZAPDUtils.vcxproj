@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Color3b.h" />
+    <ClInclude Include="StrHash.h" />
+    <ClInclude Include="Utils\BinaryReader.h" />
     <ClInclude Include="Utils\BinaryWriter.h" />
     <ClInclude Include="Utils\BitConverter.h" />
     <ClInclude Include="Utils\Directory.h" />
@@ -147,9 +150,12 @@
     <ClInclude Include="Utils\Path.h" />
     <ClInclude Include="Utils\Stream.h" />
     <ClInclude Include="Utils\StringHelper.h" />
+    <ClInclude Include="Vec2f.h" />
+    <ClInclude Include="Vec3f.h" />
     <ClInclude Include="Vec3s.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Utils\BinaryReader.cpp" />
     <ClCompile Include="Utils\BinaryWriter.cpp" />
     <ClCompile Include="Utils\MemoryStream.cpp" />
   </ItemGroup>
