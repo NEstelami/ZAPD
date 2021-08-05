@@ -261,12 +261,6 @@
     <ClCompile Include="ImageBackend.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\BinaryWriter.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\MemoryStream.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="ZString.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
@@ -395,9 +389,6 @@
     <ClInclude Include="ZRoom\Commands\SetCutscenes.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="Vec3s.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\lib\json\include\nlohmann\json.hpp">
       <Filter>Header Files\Libraries</Filter>
     </ClInclude>
@@ -520,30 +511,6 @@
     </ClInclude>
     <ClInclude Include="Declaration.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\BinaryWriter.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Directory.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\File.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Path.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Stream.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\StringHelper.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\MemoryStream.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\BitConverter.h">
-      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="ZString.h">
       <Filter>Header Files\Z64</Filter>
