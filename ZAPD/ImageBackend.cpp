@@ -5,7 +5,7 @@
 #include <png.h>
 #include <stdexcept>
 
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 
 /* ImageBackend */
 

@@ -12,7 +12,7 @@ namespace fs = std::filesystem;
 namespace fs = std::experimental::filesystem;
 #endif
 
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 
 class Directory
 {
