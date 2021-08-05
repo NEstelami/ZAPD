@@ -11,7 +11,7 @@ enum class SeekOffsetType
 };
 
 // TODO: Eventually account for endianess in binaryreader and binarywriter
-enum Endianess
+enum class Endianess
 {
 	Little = 0,
 	Big = 1,
