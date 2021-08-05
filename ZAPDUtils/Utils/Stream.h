@@ -10,6 +10,13 @@ enum class SeekOffsetType
 	End
 };
 
+// TODO: Eventually account for endianess in binaryreader and binarywriter
+enum Endianess
+{
+	Little = 0,
+	Big = 1,
+};
+
 class Stream
 {
 public:
