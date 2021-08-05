@@ -8,6 +8,17 @@
 class PolygonDlist
 {
 public:
+	uint8_t polyType;
+
+	int16_t x, y, z;  // polyType == 2
+	int16_t unk_06;   // polyType == 2
+
+	segptr_t opa = 0;  // Gfx*
+	segptr_t xlu = 0;  // Gfx*
+
+	ZDisplayList* opaDList = nullptr;  // Gfx*
+	ZDisplayList* xluDList = nullptr;  // Gfx*
+
 	PolygonDlist() = default;
 	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
 	             uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
@@ -28,17 +39,6 @@ public:
 	std::string GetName();
 
 protected:
-	int16_t x, y, z;  // polyType == 2
-	int16_t unk_06;   // polyType == 2
-
-	segptr_t opa = 0;  // Gfx*
-	segptr_t xlu = 0;  // Gfx*
-
-	uint8_t polyType;
-
-	ZDisplayList* opaDList = nullptr;  // Gfx*
-	ZDisplayList* xluDList = nullptr;  // Gfx*
-
 	uint32_t rawDataIndex;
 	ZFile* parent;
 	ZRoom* zRoom;
@@ -89,6 +89,9 @@ public:
 class PolygonTypeBase
 {
 public:
+	uint8_t type;
+	std::vector<PolygonDlist> polyDLists;
+
 	PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	                ZRoom* nRoom);
 
@@ -108,9 +111,6 @@ public:
 	std::string GetDefaultName(const std::string& prefix) const;
 
 protected:
-	uint8_t type;
-
-	std::vector<PolygonDlist> polyDLists;
 
 	uint32_t rawDataIndex;
 	ZFile* parent;
@@ -149,6 +149,10 @@ public:
 class PolygonType2 : public PolygonTypeBase
 {
 public:
+	uint8_t num;
+	segptr_t start;
+	segptr_t end;
+
 	PolygonType2(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             ZRoom* nRoom);
 
@@ -160,9 +164,6 @@ public:
 	size_t GetRawDataSize() const override;
 
 protected:
-	uint8_t num;
-	segptr_t start;
-	segptr_t end;
 };
 
 class SetMesh : public ZRoomCommand
