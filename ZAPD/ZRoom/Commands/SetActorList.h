@@ -27,6 +27,9 @@ public:
 class SetActorList : public ZRoomCommand
 {
 public:
+	uint8_t numActors;
+	std::vector<ActorSpawnEntry> actors;
+
 	SetActorList(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -40,7 +43,4 @@ public:
 
 protected:
 	size_t GetActorListArraySize() const;
-
-	uint8_t numActors;
-	std::vector<ActorSpawnEntry> actors;
 };

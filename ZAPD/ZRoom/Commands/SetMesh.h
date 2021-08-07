@@ -49,7 +49,7 @@ protected:
 
 class BgImage
 {
-protected:
+public:
 	uint16_t unk_00;
 	uint8_t id;
 	segptr_t source;
@@ -69,6 +69,7 @@ protected:
 	std::string name;
 	bool isSubStruct;
 
+protected:
 	void ParseRawData();
 	ZBackground* MakeBackground(segptr_t ptr, const std::string& prefix);
 
@@ -120,7 +121,7 @@ protected:
 
 class PolygonType1 : public PolygonTypeBase
 {
-protected:
+public:
 	uint8_t format;
 	segptr_t dlist;
 
@@ -132,7 +133,6 @@ protected:
 	segptr_t list;  // BgImage*
 	std::vector<BgImage> multiList;
 
-public:
 	PolygonType1(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	             ZRoom* nRoom);
 
@@ -171,6 +171,7 @@ class SetMesh : public ZRoomCommand
 public:
 	uint8_t data;
 	uint8_t meshHeaderType;
+	std::shared_ptr<PolygonTypeBase> polyType;
 
 	SetMesh(ZFile* nParent);
 
@@ -184,7 +185,5 @@ public:
 	std::string GetCommandCName() const override;
 
 private:
-	std::shared_ptr<PolygonTypeBase> polyType;
-
 	std::string GenDListExterns(ZDisplayList* dList);
 };

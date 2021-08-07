@@ -365,12 +365,6 @@
     <ClInclude Include="ZRoom\Commands\Unused09.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="ZRoom\ObjectList.h">
-      <Filter>Header Files\Z64\ZRoom</Filter>
-    </ClInclude>
-    <ClInclude Include="ZRoom\ActorList.h">
-      <Filter>Header Files\Z64\ZRoom</Filter>
-    </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetLightingSettings.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
