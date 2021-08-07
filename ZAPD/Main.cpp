@@ -360,6 +360,11 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 		}
 	}
 
+	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
+
+	if (exporterSet != nullptr && exporterSet->beginXMLFunc != nullptr)
+		exporterSet->beginXMLFunc();
+
 	for (ZFile* file : Globals::Instance->files)
 	{
 		if (fileMode == ZFileMode::BuildSourceFile)
@@ -367,6 +372,9 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 		else
 			file->ExtractResources();
 	}
+
+	if (exporterSet != nullptr && exporterSet->endXMLFunc != nullptr)
+		exporterSet->endXMLFunc();
 
 	// All done, free files
 	for (ZFile* file : Globals::Instance->files)
