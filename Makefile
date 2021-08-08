@@ -6,7 +6,7 @@ CXXFLAGS ?=
 COPYCHECK_ARGS ?= 
 
 CXX := g++
-INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
+INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
 CXXFLAGS += -fpic -std=c++17 -Wall -fno-omit-frame-pointer
 
 ifneq ($(DEBUG),0)
@@ -77,5 +77,8 @@ lib/libgfxd/libgfxd.a:
 ExporterTest/ExporterTest.a:
 	$(MAKE) -C ExporterTest
 
-ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest/ExporterTest.a
-	$(CXX) $(CXXFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(FS_INC) $(LDFLAGS)
+ZAPDUtils/ZAPDUtils.a:
+	$(MAKE) -C ZAPDUtils
+
+ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest/ExporterTest.a ZAPDUtils/ZAPDUtils.a
+	$(CXX) $(CXXFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(FS_INC) $(LDFLAGS)

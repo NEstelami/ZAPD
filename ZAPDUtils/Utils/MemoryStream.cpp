@@ -48,6 +48,12 @@ std::unique_ptr<char[]> MemoryStream::Read(size_t length)
 	return result;
 }
 
+void MemoryStream::Read(const char* dest, size_t length)
+{
+	memcpy_s((void*)dest, length, &buffer[baseAddress], length);
+	baseAddress += length;
+}
+
 int8_t MemoryStream::ReadByte()
 {
 	return buffer[baseAddress++];

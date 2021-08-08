@@ -39,6 +39,7 @@ typedef void (*ExporterSetFunc)(ZFile*);
 typedef bool (*ExporterSetFuncBool)(ZFileMode fileMode);
 typedef void (*ExporterSetFuncVoid)(int argc, char* argv[], int& i);
 typedef void (*ExporterSetFuncVoid2)(std::string buildMode, ZFileMode& fileMode);
+typedef void (*ExporterSetFuncVoid3)();
 
 class ExporterSet
 {
@@ -49,6 +50,8 @@ public:
 	ExporterSetFuncBool processFileModeFunc = nullptr;
 	ExporterSetFunc beginFileFunc = nullptr;
 	ExporterSetFunc endFileFunc = nullptr;
+	ExporterSetFuncVoid3 beginXMLFunc = nullptr;
+	ExporterSetFuncVoid3 endXMLFunc = nullptr;
 };
 
 class Globals
@@ -81,7 +84,7 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 
 	std::string currentExporter;
-	static std::map<std::string, ExporterSet*>& GetExporterMap();
+	static std::map<std::string, ExporterSet*>* GetExporterMap();
 	static void AddExporter(std::string exporterName, ExporterSet* exporterSet);
 
 	Globals();
