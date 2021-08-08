@@ -23,8 +23,10 @@ pipeline {
                 }
 
                 stage('Checkout mm') {
-                    dir('mm') {
-                        git url: 'https://github.com/zeldaret/mm.git'
+                    steps{
+                        dir('mm') {
+                            git url: 'https://github.com/zeldaret/mm.git'
+                        }
                     }
                 }
             }
