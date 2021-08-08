@@ -306,8 +306,8 @@ void ZFile::ExtractResources()
 
 	if (memStream->GetLength() > 0)
 	{
-		File::WriteAllBytes(StringHelper::Sprintf("%s.bin", GetName().c_str()),
-		                    memStream->ToVector());
+		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin", Globals::Instance->outputPath.string().c_str(), GetName().c_str()),
+			memStream->ToVector());
 	}
 
 	writer.Close();

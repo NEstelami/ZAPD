@@ -49,12 +49,6 @@
     <Filter Include="Header Files\Libraries\libgfxd">
       <UniqueIdentifier>{85600275-99fe-491d-8189-bcc3dc1a8903}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utils">
-      <UniqueIdentifier>{a5084513-6b48-4c46-9baa-a07aaaca941e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Utils">
-      <UniqueIdentifier>{118073fe-284f-4eb2-804c-2f37b3b8df27}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -261,12 +255,6 @@
     <ClCompile Include="ImageBackend.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\BinaryWriter.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\MemoryStream.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="ZString.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
@@ -377,12 +365,6 @@
     <ClInclude Include="ZRoom\Commands\Unused09.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="ZRoom\ObjectList.h">
-      <Filter>Header Files\Z64\ZRoom</Filter>
-    </ClInclude>
-    <ClInclude Include="ZRoom\ActorList.h">
-      <Filter>Header Files\Z64\ZRoom</Filter>
-    </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetLightingSettings.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
@@ -394,9 +376,6 @@
     </ClInclude>
     <ClInclude Include="ZRoom\Commands\SetCutscenes.h">
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec3s.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\lib\json\include\nlohmann\json.hpp">
       <Filter>Header Files\Libraries</Filter>
@@ -520,30 +499,6 @@
     </ClInclude>
     <ClInclude Include="Declaration.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\BinaryWriter.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Directory.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\File.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Path.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\Stream.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\StringHelper.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\MemoryStream.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\BitConverter.h">
-      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="ZString.h">
       <Filter>Header Files\Z64</Filter>
