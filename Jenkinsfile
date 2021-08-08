@@ -1,8 +1,8 @@
 pipeline {
     agent {
-        label "ZAPD"
+        label 'ZAPD'
     }
-    
+
     stages {
         // Non-parallel ZAPD stage
         stage('Build ZAPD') {
@@ -15,7 +15,7 @@ pipeline {
         stage('Checkout Repos') {
             parallel {
                 stage('Checkout oot') {
-                    steps{
+                    steps {
                         dir('oot') {
                             git url: 'https://github.com/zeldaret/oot.git'
                         }
@@ -29,13 +29,13 @@ pipeline {
                 }
             }
         }
-        
+
         // SETUP THE REPOS
         stage('Set up repos') {
-            parallel{
-                stage('Setup OOT'){
+            parallel {
+                stage('Setup OOT') {
                     steps {
-                        dir('oot'){
+                        dir('oot') {
                             sh 'cp /usr/local/etc/roms/baserom_oot.z64 baserom_original.z64'
 
                             // Identical to `make setup` except for copying our newer ZAPD.out into oot
@@ -68,7 +68,7 @@ pipeline {
 
         // BUILD THE REPOS
         stage('Build repos') {
-            parallel{
+            parallel {
                 stage('Build oot') {
                     steps {
                         dir('oot') {
@@ -87,9 +87,10 @@ pipeline {
             }
         }
 
-    post {
-        always {
-            cleanWs()
+        post {
+            always {
+                cleanWs()
+            }
         }
     }
 }
