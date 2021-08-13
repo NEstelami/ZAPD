@@ -93,6 +93,7 @@ std::string ZVector::GetBodySourceCode() const
 
 std::string ZVector::GetSourceOutputCode(const std::string& prefix)
 {
+	(void)prefix;
 	if (parent != nullptr)
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 		                       GetSourceTypeName(), GetName(), GetBodySourceCode());

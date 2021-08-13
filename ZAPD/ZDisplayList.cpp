@@ -80,6 +80,7 @@ void ZDisplayList::ParseRawData()
 
 Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
+	(void)prefix;
 	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                                   GetSourceTypeName(), name, 0, bodyStr, true);
 }
@@ -1539,6 +1540,7 @@ void ZDisplayList::Opcode_G_ENDDL(std::string prefix, char* line)
 
 std::string ZDisplayList::GetSourceOutputHeader(const std::string& prefix)
 {
+	(void)prefix;
 	return "";
 }
 
@@ -1657,6 +1659,7 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int32_t width,
                                     int32_t height, int32_t pal)
 {
+	(void)pal;
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t texOffset = Seg2Filespace(seg, self->parent->baseAddress);
 	uint32_t texSegNum = GETSEGNUM(seg);
@@ -1693,6 +1696,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 
 static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 {
+	(void)idx;
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t palOffset = Seg2Filespace(seg, self->parent->baseAddress);
 	uint32_t palSegNum = GETSEGNUM(seg);
@@ -2049,6 +2053,7 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
                                    uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
                                    bool texLoaded, bool texIsPalette, ZDisplayList* self)
 {
+	(void)prefix;
 	int32_t segmentNumber = GETSEGNUM(texSeg);
 
 	if (!texIsPalette)

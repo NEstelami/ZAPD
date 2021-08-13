@@ -51,6 +51,7 @@ void ZBlob::ParseRawData()
 
 std::string ZBlob::GetSourceOutputCode(const std::string& prefix)
 {
+	(void)prefix;
 	sourceOutput = "";
 
 	for (size_t i = 0; i < blobData.size(); i += 1)
@@ -74,6 +75,7 @@ std::string ZBlob::GetSourceOutputCode(const std::string& prefix)
 
 std::string ZBlob::GetSourceOutputHeader(const std::string& prefix)
 {
+	(void)prefix;
 	return StringHelper::Sprintf("extern u8 %s[];\n", name.c_str());
 }
 

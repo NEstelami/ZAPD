@@ -33,6 +33,7 @@ void ZRoomCommand::ParseRawDataLate()
 
 void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
 {
+	(void)prefix;
 }
 
 std::string ZRoomCommand::GetCommandCName() const

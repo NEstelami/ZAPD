@@ -11,6 +11,7 @@ SetPathways::SetPathways(ZFile* nParent) : ZRoomCommand(nParent), pathwayList(nP
 
 void SetPathways::DeclareReferences(const std::string& prefix)
 {
+	(void)prefix;
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }

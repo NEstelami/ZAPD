@@ -44,6 +44,7 @@ std::string ZVtx::GetBodySourceCode() const
 
 std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
 {
+	(void)prefix;
 	std::string output = GetBodySourceCode();
 
 	if (parent != nullptr)

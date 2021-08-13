@@ -73,6 +73,7 @@ ZFile::~ZFile()
 
 void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, bool placeholderMode)
 {
+	(void)placeholderMode;
 	if (filename == "")
 		name = reader->Attribute("Name");
 	else
@@ -1227,6 +1228,7 @@ std::string ZFile::ProcessExterns()
 
 std::string ZFile::ProcessTextureIntersections(std::string prefix)
 {
+	(void)prefix;
 	if (texturesResources.empty())
 		return "";
 

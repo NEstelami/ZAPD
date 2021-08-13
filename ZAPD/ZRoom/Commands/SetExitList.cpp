@@ -11,6 +11,7 @@ SetExitList::SetExitList(ZFile* nParent) : ZRoomCommand(nParent)
 
 void SetExitList::DeclareReferences(const std::string& prefix)
 {
+	(void)prefix;
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }
@@ -32,6 +33,7 @@ void SetExitList::ParseRawDataLate()
 
 void SetExitList::DeclareReferencesLate(const std::string& prefix)
 {
+	(void)prefix;
 	if (!exits.empty())
 	{
 		std::string declaration = "";

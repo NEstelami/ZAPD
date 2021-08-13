@@ -116,6 +116,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZResource::Save(const fs::path& outFolder)
 {
+	(void)outFolder;
 }
 
 void ZResource::PreGenSourceFiles()
@@ -179,11 +180,13 @@ std::string ZResource::GetBodySourceCode() const
 
 std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 {
+	(void)prefix;
 	return "";
 }
 
 std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
 {
+	(void)prefix;
 	return "";
 }
 
@@ -193,6 +196,7 @@ void ZResource::ParseRawData()
 
 void ZResource::DeclareReferences(const std::string& prefix)
 {
+	(void)prefix;
 }
 
 std::string ZResource::GetSourceTypeName() const

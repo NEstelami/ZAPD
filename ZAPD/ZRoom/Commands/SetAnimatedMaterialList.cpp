@@ -178,6 +178,8 @@ ScrollingTexture::ScrollingTexture(const std::vector<uint8_t>& rawData, uint32_t
 
 std::string ScrollingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
+	(void)zRoom;
+	(void)baseAddress;
 	return StringHelper::Sprintf("    { %i, %i, 0x%02X, 0x%02X },", xStep, yStep, width, height);
 }
 
@@ -239,6 +241,7 @@ FlashingTexture::FlashingTexture(const std::vector<uint8_t>& rawData, uint32_t r
 
 std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
+	(void)baseAddress;
 	if (primColorSegmentOffset != 0)
 	{
 		std::string declaration = "";
@@ -354,6 +357,7 @@ AnimatedMatTexCycleParams::AnimatedMatTexCycleParams(const std::vector<uint8_t>&
 
 std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress)
 {
+	(void)baseAddress;
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{
 		std::string declaration = "";

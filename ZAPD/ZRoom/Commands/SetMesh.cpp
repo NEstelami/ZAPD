@@ -116,6 +116,7 @@ RoomCommand SetMesh::GetRoomCommand() const
 PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
+	(void)nRawData;
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	zRoom = nRoom;
@@ -153,6 +154,7 @@ void PolygonDlist::DeclareReferences(const std::string& prefix)
 
 ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 {
+	(void)prefix;
 	if (ptr == 0)
 	{
 		return nullptr;
@@ -271,6 +273,7 @@ std::string PolygonDlist::GetName()
 BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
                  uint32_t nRawDataIndex, ZFile* nParent)
 {
+	(void)nRawData;
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	isSubStruct = nIsSubStruct;
@@ -408,6 +411,7 @@ PolygonTypeBase::PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRa
                                  uint32_t nRawDataIndex, ZRoom* nRoom)
 	: rawDataIndex{nRawDataIndex}, parent{nParent}, zRoom{nRoom}
 {
+	(void)nRawData;
 	type = BitConverter::ToUInt8BE(parent->GetRawData(), rawDataIndex);
 }
 

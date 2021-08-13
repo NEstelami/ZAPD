@@ -82,6 +82,7 @@ std::string ZPath::GetBodySourceCode() const
 
 std::string ZPath::GetSourceOutputCode(const std::string& prefix)
 {
+	(void)prefix;
 	std::string declaration = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
