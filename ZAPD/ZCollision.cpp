@@ -53,10 +53,7 @@ void ZCollisionHeader::ParseRawData()
 	for (uint16_t i = 0; i < numVerts; i++)
 	{
 		ZVector vec(parent);
-		vec.SetRawDataIndex(currentPtr);
-		vec.SetScalarType(ZScalarType::ZSCALAR_S16);
-		vec.SetDimensions(3);
-		vec.ParseRawData();
+		vec.ExtractFromBinary(currentPtr, ZScalarType::ZSCALAR_S16, 3);
 
 		currentPtr += vec.GetRawDataSize();
 		vertices.push_back(vec);

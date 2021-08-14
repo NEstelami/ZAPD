@@ -124,10 +124,7 @@ void PathwayEntry::ParseRawData()
 	for (int32_t i = 0; i < numPoints; i++)
 	{
 		ZVector vec(parent);
-		vec.SetRawDataIndex(currentPtr);
-		vec.SetScalarType(ZScalarType::ZSCALAR_S16);
-		vec.SetDimensions(3);
-		vec.ParseRawData();
+		vec.ExtractFromBinary(currentPtr, ZScalarType::ZSCALAR_S16, 3);
 
 		currentPtr += vec.GetRawDataSize();
 		points.push_back(vec);

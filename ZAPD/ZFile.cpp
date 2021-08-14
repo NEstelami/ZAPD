@@ -1114,7 +1114,6 @@ std::string ZFile::ProcessDeclarations()
 	for (const auto& item : declarations)
 	{
 		if (!IsOffsetInFileRange(item.first))
-		{
 			continue;
 
 		if (item.second->includePath != "")

@@ -44,6 +44,9 @@ class ZScalar : public ZResource
 	friend class ZVector;
 
 public:
+	ZScalarData scalarData;
+	ZScalarType scalarType;
+
 	ZScalar(ZFile* nParent);
 
 	void ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType);
@@ -62,8 +65,4 @@ public:
 	static size_t MapTypeToSize(const ZScalarType scalarType);
 	static ZScalarType MapOutputTypeToScalarType(const std::string& type);
 	static std::string MapScalarTypeToOutputType(const ZScalarType scalarType);
-
-protected:
-	ZScalarData scalarData;
-	ZScalarType scalarType;
 };

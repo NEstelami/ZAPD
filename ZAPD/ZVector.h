@@ -10,7 +10,13 @@
 class ZVector : public ZResource
 {
 public:
+	std::vector<ZScalar> scalars;
+	ZScalarType scalarType;
+	uint32_t dimensions;
+
 	ZVector(ZFile* nParent);
+
+	void ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType, uint32_t nDimensions);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
@@ -22,12 +28,4 @@ public:
 	ZResourceType GetResourceType() const override;
 	size_t GetRawDataSize() const override;
 	DeclarationAlignment GetDeclarationAlignment() const override;
-
-	void SetScalarType(ZScalarType type);
-	void SetDimensions(uint32_t dim);
-
-protected:
-	std::vector<ZScalar> scalars;
-	ZScalarType scalarType;
-	uint32_t dimensions;
 };

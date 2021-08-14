@@ -4,7 +4,7 @@
 #include <vector>
 #include <Utils/Directory.h>
 //#include "ZResource.h"
-//#include "ZSymbol.h"
+#include "ZSymbol.h"
 #include "ZTexture.h"
 #include "tinyxml2.h"
 

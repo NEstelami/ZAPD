@@ -16,6 +16,19 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Dimensions");
 }
 
+void ZVector::ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType, uint32_t nDimensions)
+{
+	rawDataIndex = nRawDataIndex;
+	scalarType = nScalarType;
+	dimensions = nDimensions;
+
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
+
+	ParseRawData();
+}
+
 void ZVector::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
@@ -103,14 +116,4 @@ ZResourceType ZVector::GetResourceType() const
 DeclarationAlignment ZVector::GetDeclarationAlignment() const
 {
 	return scalars.at(0).GetDeclarationAlignment();
-}
-
-void ZVector::SetScalarType(ZScalarType type)
-{
-	scalarType = type;
-}
-
-void ZVector::SetDimensions(uint32_t dim)
-{
-	dimensions = dim;
 }
