@@ -4,7 +4,6 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
-
 REGISTER_ZFILENODE(Skeleton, ZSkeleton);
 REGISTER_ZFILENODE(LimbTable, ZLimbTable);
 

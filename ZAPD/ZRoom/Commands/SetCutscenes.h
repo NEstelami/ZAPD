@@ -21,7 +21,7 @@ public:
 	std::vector<ZCutsceneBase*> cutscenes;
 	std::vector<CutsceneEntry> cutsceneEntries;  // (MM Only)
 	uint8_t numCutscenes;                        // (MM Only)
-	
+
 	SetCutscenes(ZFile* nParent);
 	~SetCutscenes();
 
