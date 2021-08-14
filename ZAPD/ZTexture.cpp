@@ -1,12 +1,12 @@
 #include "ZTexture.h"
 
 #include <cassert>
-#include "BitConverter.h"
+#include "Utils/BitConverter.h"
 #include "CRC32.h"
-#include "Directory.h"
-#include "File.h"
+#include "Utils/Directory.h"
+#include "Utils/File.h"
 #include "Globals.h"
-#include "Path.h"
+#include "Utils/Path.h"
 
 REGISTER_ZFILENODE(Texture, ZTexture);
 
@@ -43,15 +43,8 @@ void ZTexture::ExtractFromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t
 void ZTexture::FromPNG(const fs::path& pngFilePath, TextureType texType)
 {
 	format = texType;
-	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath), ".")[0];
+	name = StringHelper::Split(Path::GetFileNameWithoutExtension(pngFilePath.string()), ".")[0];
 	PrepareRawDataFromFile(pngFilePath);
-}
-
-void ZTexture::FromHLTexture(HLTexture* hlTex)
-{
-	width = hlTex->width;
-	height = hlTex->height;
-	format = static_cast<TextureType>(hlTex->type);
 }
 
 void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
@@ -713,14 +706,14 @@ void ZTexture::Save(const fs::path& outFolder)
 	// process for generating the Texture Pool XML.
 	if (Globals::Instance->outputCrc)
 	{
-		File::WriteAllText(Globals::Instance->outputPath / (outName + ".txt"),
+		File::WriteAllText((Globals::Instance->outputPath / (outName + ".txt")).string(),
 		                   StringHelper::Sprintf("%08lX", hash));
 	}
 
 	auto outPath = GetPoolOutPath(outFolder);
 
-	if (!Directory::Exists(outPath))
-		Directory::CreateDirectory(outPath);
+	if (!Directory::Exists(outPath.string()))
+		Directory::CreateDirectory(outPath.string());
 
 	auto outFileName = outPath / (outName + "." + GetExternalExtension() + ".png");
 

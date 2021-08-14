@@ -2,9 +2,9 @@
 
 #include <string>
 #include <vector>
-#include "Directory.h"
-#include "ZResource.h"
-#include "ZSymbol.h"
+#include <Utils/Directory.h>
+//#include "ZResource.h"
+//#include "ZSymbol.h"
 #include "ZTexture.h"
 #include "tinyxml2.h"
 
@@ -12,14 +12,13 @@ enum class ZFileMode
 {
 	BuildTexture,
 	BuildOverlay,
-	BuildModelIntermediette,
-	BuildAnimationIntermediette,
 	BuildBlob,
 	BuildSourceFile,
 	BuildBackground,
 	Extract,
 	ExternalFile,
-	Invalid
+	Invalid,
+	Custom = 1000,  // Used for exporter file modes
 };
 
 enum class ZGame
@@ -118,6 +117,7 @@ protected:
 	fs::path basePath;
 	fs::path outputPath;
 	fs::path xmlFilePath;
+
 	// Keep track of every texture of this ZFile.
 	// The pointers declared here are "borrowed" (somebody else is the owner),
 	// so ZFile shouldn't delete/free those textures.
@@ -130,7 +130,6 @@ protected:
 	void DeclareResourceSubReferences();
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();
-	void GenerateHLIntermediette();
 	bool AddDeclarationChecks(uint32_t address, const std::string& varName);
 	std::string ProcessDeclarations();
 	void ProcessDeclarationText(Declaration* decl);

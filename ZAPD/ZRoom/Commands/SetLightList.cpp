@@ -1,8 +1,8 @@
 #include "SetLightList.h"
 
-#include "BitConverter.h"
+#include "Utils/BitConverter.h"
+#include "Utils/StringHelper.h"
 #include "Globals.h"
-#include "StringHelper.h"
 
 SetLightList::SetLightList(ZFile* nParent) : ZRoomCommand(nParent)
 {

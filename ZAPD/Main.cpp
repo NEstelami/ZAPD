@@ -1,11 +1,9 @@
 #include "BuildInfo.h"
-#include "Directory.h"
-#include "File.h"
+#include <Utils/Directory.h>
+#include <Utils/File.h>
+#include <Utils/Path.h>
 #include "Globals.h"
-#include "HighLevel/HLAnimationIntermediette.h"
-#include "HighLevel/HLModelIntermediette.h"
 #include "Overlays/ZOverlay.h"
-#include "Path.h"
 #include "ZAnimation.h"
 #include "ZBackground.h"
 #include "ZBlob.h"
@@ -33,8 +31,6 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath);
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
-void BuildAssetModelIntermediette(const fs::path& outPath);
-void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #define ARRAY_COUNT(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -119,33 +115,6 @@ int main(int argc, char* argv[])
 
 	Globals* g = new Globals();
 
-	// Parse File Mode
-	std::string buildMode = argv[1];
-	ZFileMode fileMode = ZFileMode::Invalid;
-
-	if (buildMode == "btex")
-		fileMode = ZFileMode::BuildTexture;
-	else if (buildMode == "bren")
-		fileMode = ZFileMode::BuildBackground;
-	else if (buildMode == "bovl")
-		fileMode = ZFileMode::BuildOverlay;
-	else if (buildMode == "bsf")
-		fileMode = ZFileMode::BuildSourceFile;
-	else if (buildMode == "bblb")
-		fileMode = ZFileMode::BuildBlob;
-	else if (buildMode == "bmdlintr")
-		fileMode = ZFileMode::BuildModelIntermediette;
-	else if (buildMode == "bamnintr")
-		fileMode = ZFileMode::BuildAnimationIntermediette;
-	else if (buildMode == "e")
-		fileMode = ZFileMode::Extract;
-
-	if (fileMode == ZFileMode::Invalid)
-	{
-		printf("Error: Invalid file mode '%s'\n", buildMode.c_str());
-		return 1;
-	}
-
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
 	{
@@ -153,76 +122,63 @@ int main(int argc, char* argv[])
 
 		if (arg == "-o" || arg == "--outputpath")  // Set output path
 		{
-			Globals::Instance->outputPath = argv[i + 1];
+			Globals::Instance->outputPath = argv[++i];
 
 			if (Globals::Instance->sourceOutputPath == "")
 				Globals::Instance->sourceOutputPath = Globals::Instance->outputPath;
-
-			i++;
 		}
 		else if (arg == "-i" || arg == "--inputpath")  // Set input path
 		{
-			Globals::Instance->inputPath = argv[i + 1];
-			i++;
+			Globals::Instance->inputPath = argv[++i];
 		}
 		else if (arg == "-b" || arg == "--baserompath")  // Set baserom path
 		{
-			Globals::Instance->baseRomPath = argv[i + 1];
-			i++;
+			Globals::Instance->baseRomPath = argv[++i];
 		}
 		else if (arg == "-osf")  // Set source output path
 		{
-			Globals::Instance->sourceOutputPath = argv[i + 1];
-			i++;
+			Globals::Instance->sourceOutputPath = argv[++i];
 		}
 		else if (arg == "-gsf")  // Generate source file during extraction
 		{
-			Globals::Instance->genSourceFile = std::string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->genSourceFile = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
-			Globals::Instance->testMode = std::string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->testMode = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-crc" ||
 		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
 		{
-			Globals::Instance->outputCrc = true;
+			Globals::Instance->testMode = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
-			Globals::Instance->useLegacyZDList = std::string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->useLegacyZDList = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-profile")  // Enable profiling
 		{
-			Globals::Instance->profile = std::string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->profile = std::string(argv[++i]) == "1";
 		}
 		else if (arg ==
 		         "-uer")  // Split resources into their individual components (enabled by default)
 		                  // TODO: We may wish to make this a part of the config file...
 		{
-			Globals::Instance->useExternalResources = std::string(argv[i + 1]) == "1";
-			i++;
+			Globals::Instance->useExternalResources = std::string(argv[++i]) == "1";
 		}
 		else if (arg == "-tt")  // Set texture type
 		{
-			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[i + 1]);
-			i++;
+			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[++i]);
 		}
 		else if (arg == "-cfg")  // Set cfg path (for overlays)
 		                         // TODO: Change the name of this to something else so it doesn't
 		                         // get confused with XML config files.
 		{
-			Globals::Instance->cfgPath = argv[i + 1];
-			i++;
+			Globals::Instance->cfgPath = argv[++i];
 		}
 		else if (arg == "-rconf")  // Read Config File
 		{
-			Globals::Instance->ReadConfigFile(argv[i + 1]);
-			i++;
+			Globals::Instance->ReadConfigFile(argv[++i]);
 		}
 		else if (arg == "-eh")  // Enable Error Handler
 		{
@@ -254,31 +210,78 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->verboseUnaccounted = true;
 		}
+		else if (arg == "-se" || arg == "--set-exporter")  // Set Current Exporter
+		{
+			Globals::Instance->currentExporter = argv[++i];
+		}
+	}
+
+	// Parse File Mode
+	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
+	std::string buildMode = argv[1];
+	ZFileMode fileMode = ZFileMode::Invalid;
+
+	if (buildMode == "btex")
+		fileMode = ZFileMode::BuildTexture;
+	else if (buildMode == "bren")
+		fileMode = ZFileMode::BuildBackground;
+	else if (buildMode == "bovl")
+		fileMode = ZFileMode::BuildOverlay;
+	else if (buildMode == "bsf")
+		fileMode = ZFileMode::BuildSourceFile;
+	else if (buildMode == "bblb")
+		fileMode = ZFileMode::BuildBlob;
+	else if (buildMode == "e")
+		fileMode = ZFileMode::Extract;
+	else if (exporterSet != nullptr && exporterSet->parseFileModeFunc != nullptr)
+		exporterSet->parseFileModeFunc(buildMode, fileMode);
+
+	if (fileMode == ZFileMode::Invalid)
+	{
+		printf("Error: Invalid file mode '%s'\n", buildMode.c_str());
+		return 1;
+	}
+
+	// We've parsed through our commands once. If an exporter exists, it's been set by now.
+	// Now we'll parse through them again but pass them on to our exporter if one is available.
+
+	if (exporterSet != nullptr && exporterSet->parseArgsFunc != nullptr)
+	{
+		for (int32_t i = 2; i < argc; i++)
+			exporterSet->parseArgsFunc(argc, argv, i);
 	}
 
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
+	// TODO: switch
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
-		bool parseSuccessful;
+		bool procFileModeSuccess = false;
 
-		for (auto& extFile : Globals::Instance->cfg.externalFiles)
+		if (exporterSet != nullptr && exporterSet->processFileModeFunc != nullptr)
+			procFileModeSuccess = exporterSet->processFileModeFunc(fileMode);
+
+		if (!procFileModeSuccess)
 		{
-			fs::path externalXmlFilePath =
-				Globals::Instance->cfg.externalXmlFolder / extFile.xmlPath;
-			parseSuccessful = Parse(externalXmlFilePath, Globals::Instance->baseRomPath,
-			                        extFile.outPath, ZFileMode::ExternalFile);
+			bool parseSuccessful;
 
-			if (!parseSuccessful)
-				return 1;
+			for (auto& extFile : Globals::Instance->cfg.externalFiles)
+			{
+				fs::path externalXmlFilePath =
+					Globals::Instance->cfg.externalXmlFolder / extFile.xmlPath;
+				parseSuccessful = Parse(externalXmlFilePath, Globals::Instance->baseRomPath,
+										extFile.outPath, ZFileMode::ExternalFile);
+
+				if (!parseSuccessful)
+					return 1;
+			}
+
+			parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
+									Globals::Instance->outputPath, fileMode);
+				if (!parseSuccessful)
+					return 1;
 		}
-
-		parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-		                        Globals::Instance->outputPath, fileMode);
-
-		if (!parseSuccessful)
-			return 1;
 	}
 	else if (fileMode == ZFileMode::BuildTexture)
 	{
@@ -293,25 +296,17 @@ int main(int argc, char* argv[])
 	{
 		BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
 	}
-	else if (fileMode == ZFileMode::BuildModelIntermediette)
-	{
-		BuildAssetModelIntermediette(Globals::Instance->outputPath);
-	}
-	else if (fileMode == ZFileMode::BuildAnimationIntermediette)
-	{
-		BuildAssetAnimationIntermediette(Globals::Instance->inputPath,
-		                                 Globals::Instance->outputPath);
-	}
 	else if (fileMode == ZFileMode::BuildOverlay)
 	{
 		ZOverlay* overlay =
 			ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath),
 		                        Path::GetDirectoryName(Globals::Instance->cfgPath));
 
-		if (overlay)
+		if (overlay != nullptr)
 			File::WriteAllText(Globals::Instance->outputPath.string(),
 			                   overlay->GetSourceOutputCode(""));
 	}
+
 	delete g;
 	return 0;
 }
@@ -383,6 +378,11 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 
 	if (fileMode != ZFileMode::ExternalFile)
 	{
+		ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
+
+		if (exporterSet != nullptr && exporterSet->beginXMLFunc != nullptr)
+			exporterSet->beginXMLFunc();
+
 		for (ZFile* file : Globals::Instance->files)
 		{
 			if (fileMode == ZFileMode::BuildSourceFile)
@@ -390,6 +390,9 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 			else
 				file->ExtractResources();
 		}
+
+		if (exporterSet != nullptr && exporterSet->endXMLFunc != nullptr)
+			exporterSet->endXMLFunc();
 	}
 
 	return true;
@@ -400,7 +403,7 @@ void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const f
 	std::string name = outPath.stem().string();
 
 	ZTexture tex(nullptr);
-	tex.FromPNG(pngFilePath, texType);
+	tex.FromPNG(pngFilePath.string(), texType);
 	std::string cfgPath = StringHelper::Split(pngFilePath.string(), ".")[0] + ".cfg";
 
 	if (File::Exists(cfgPath))
@@ -429,38 +432,4 @@ void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath)
 	File::WriteAllText(outPath.string(), src);
 
 	delete blob;
-}
-
-void BuildAssetModelIntermediette(const fs::path& outPath)
-{
-	XMLDocument doc;
-
-	HLModelIntermediette* mdl = HLModelIntermediette::FromXML(doc.RootElement());
-	std::string output = mdl->OutputCode(nullptr);
-
-	File::WriteAllText(outPath.string(), output);
-
-	delete mdl;
-}
-
-void BuildAssetAnimationIntermediette(const fs::path& animPath, const fs::path& outPath)
-{
-	std::vector<std::string> split = StringHelper::Split(outPath.string(), "/");
-	ZFile* file = new ZFile(outPath, split[split.size() - 2]);
-	HLAnimationIntermediette* anim = HLAnimationIntermediette::FromXML(animPath.string());
-	ZAnimation* zAnim = anim->ToZAnimation();
-	zAnim->SetName(Path::GetFileNameWithoutExtension(split[split.size() - 1]));
-	zAnim->parent = file;
-
-	zAnim->GetSourceOutputCode(split[split.size() - 2]);
-	std::string output = "";
-
-	output += file->declarations[2]->text + "\n";
-	output += file->declarations[1]->text + "\n";
-	output += file->declarations[0]->text + "\n";
-
-	File::WriteAllText(outPath.string(), output);
-
-	delete zAnim;
-	delete file;
 }

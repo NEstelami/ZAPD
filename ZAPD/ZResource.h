@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Utils/BinaryWriter.h>
 #include <map>
 #include <stdexcept>
 #include <stdint.h>
@@ -8,7 +9,7 @@
 #include "Declaration.h"
 #include "tinyxml2.h"
 
-#include "Directory.h"
+#include <Utils/Directory.h>
 
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3
@@ -21,7 +22,6 @@
 #define GETSEGNUM(x) ((x >> 24) & 0xFF)
 
 class ZFile;
-class HLFileIntermediette;
 
 enum class ZResourceType
 {
@@ -83,7 +83,6 @@ public:
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void PreGenSourceFiles();
-	virtual void GenerateHLIntermediette(HLFileIntermediette& hlFile);
 	virtual void CalcHash();
 	virtual void Save(const fs::path& outFolder);
 
@@ -132,6 +131,14 @@ protected:
 	void RegisterOptionalAttribute(const std::string& attr, const std::string& defaultValue = "");
 };
 
+class ZResourceExporter
+{
+public:
+	ZResourceExporter() = default;
+
+	virtual void Save(ZResource* res, fs::path outPath, BinaryWriter* writer) = 0;
+};
+
 uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
 
 typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
@@ -151,3 +158,11 @@ typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
 		}                                                                                          \
 	};                                                                                             \
 	static ZRes_##nodeName inst_ZRes_##nodeName
+
+#define REGISTER_EXPORTER(expFunc)                                                                 \
+	class ZResExp_##expFunc                                                                        \
+	{                                                                                              \
+	public:                                                                                        \
+		ZResExp_##expFunc() { expFunc(); }                                                         \
+	};                                                                                             \
+	static ZResExp_##expFunc inst_ZResExp_##expFunc;

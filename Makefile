@@ -6,7 +6,7 @@ CXXFLAGS ?=
 COPYCHECK_ARGS ?= 
 
 CXX := g++
-INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2
+INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
 CXXFLAGS += -fpic -std=c++17 -Wall -fno-omit-frame-pointer
 
 ifneq ($(DEBUG),0)
@@ -39,7 +39,7 @@ ifneq ($(UNAME), Darwin)
     LDFLAGS += -Wl,-export-dynamic -lstdc++fs
 endif
 
-SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel ZAPD/OtherStructs
+SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel ZAPD/Utils ZAPD/OtherStructs
 
 ZAPD_CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 ZAPD_H_FILES   := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
@@ -75,5 +75,11 @@ ZAPD/Main.o: genbuildinfo ZAPD/Main.cpp
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd
 
-ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a
-	$(CXX) $(CXXFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a -o $@ $(FS_INC) $(LDFLAGS)
+ExporterTest/ExporterTest.a:
+	$(MAKE) -C ExporterTest
+
+ZAPDUtils/ZAPDUtils.a:
+	$(MAKE) -C ZAPDUtils
+
+ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest/ExporterTest.a ZAPDUtils/ZAPDUtils.a
+	$(CXX) $(CXXFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(FS_INC) $(LDFLAGS)

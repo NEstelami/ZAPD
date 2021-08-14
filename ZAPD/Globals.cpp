@@ -1,10 +1,8 @@
 #include "Globals.h"
 #include <algorithm>
-#include "File.h"
-#include "Path.h"
+#include <Utils/File.h>
+#include <Utils/Path.h>
 #include "tinyxml2.h"
-
-using namespace tinyxml2;
 
 Globals* Globals::Instance;
 
@@ -19,6 +17,7 @@ Globals::Globals()
 	useLegacyZDList = false;
 	useExternalResources = true;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
+	currentExporter = "";
 	outputPath = Directory::GetCurrentDirectory();
 }
 
@@ -35,8 +34,8 @@ Globals::~Globals()
 
 void Globals::ReadConfigFile(const std::string& configFilePath)
 {
-	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(configFilePath.c_str());
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError eResult = doc.LoadFile(configFilePath.c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
@@ -44,12 +43,12 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		return;
 	}
 
-	XMLNode* root = doc.FirstChild();
+	tinyxml2::XMLNode* root = doc.FirstChild();
 
 	if (root == nullptr)
 		return;
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
 		if (std::string(child->Name()) == "SymbolMap")
@@ -115,8 +114,8 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 
 void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 {
-	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
@@ -124,12 +123,12 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 		return;
 	}
 
-	XMLNode* root = doc.FirstChild();
+	tinyxml2::XMLNode* root = doc.FirstChild();
 
 	if (root == nullptr)
 		return;
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
 		if (std::string(child->Name()) == "Texture")
@@ -172,6 +171,40 @@ void Globals::AddSegment(int32_t segment, ZFile* file)
 bool Globals::HasSegment(int32_t segment)
 {
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
+}
+
+
+std::map<std::string, ExporterSet*>* Globals::GetExporterMap()
+{
+	static std::map<std::string, ExporterSet*> exporters;
+	return &exporters;
+}
+
+void Globals::AddExporter(std::string exporterName, ExporterSet* exporterSet)
+{
+	auto exporters = GetExporterMap();
+	(*exporters)[exporterName] = exporterSet;
+}
+
+ZResourceExporter* Globals::GetExporter(ZResourceType resType)
+{
+	auto exporters = *GetExporterMap();
+
+	if (currentExporter != "" && exporters[currentExporter]->exporters.find(resType) !=
+		exporters[currentExporter]->exporters.end())
+		return exporters[currentExporter]->exporters[resType];
+	else
+		return nullptr;
+}
+
+ExporterSet* Globals::GetExporterSet()
+{
+	auto exporters = *GetExporterMap();
+
+	if (currentExporter != "")
+		return exporters[currentExporter];
+	else
+		return nullptr;
 }
 
 bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,

@@ -1,9 +1,9 @@
 #include "ZLimb.h"
 
 #include <cassert>
-#include "BitConverter.h"
+#include "Utils/BitConverter.h"
 #include "Globals.h"
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Limb, ZLimb);
 

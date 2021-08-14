@@ -19,14 +19,13 @@ struct CommandSet
 class ZRoom : public ZResource
 {
 protected:
-	std::vector<ZRoomCommand*> commands;
-
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void ProcessCommandSets();
 	void SyotesRoomHack();
 
 public:
 	std::vector<CommandSet> commandSets;
+	std::vector<ZRoomCommand*> commands;
 	int32_t roomCount;  // Only valid for scenes
 
 	ZRoom(ZFile* nParent);

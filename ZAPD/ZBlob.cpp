@@ -1,13 +1,11 @@
 #include "ZBlob.h"
 
-#include "BitConverter.h"
-#include "File.h"
+#include "Utils/BitConverter.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
+#include "Utils/StringHelper.h"
 #include "Globals.h"
-#include "Path.h"
-#include "StringHelper.h"
 #include "ZFile.h"
-
-using namespace tinyxml2;
 
 REGISTER_ZFILENODE(Blob, ZBlob);
 
@@ -87,7 +85,7 @@ std::string ZBlob::GetSourceOutputHeader(const std::string& prefix)
 
 void ZBlob::Save(const fs::path& outFolder)
 {
-	File::WriteAllBytes(outFolder / (name + ".bin"), blobData);
+	File::WriteAllBytes((outFolder / (name + ".bin")).string(), blobData);
 }
 
 bool ZBlob::IsExternalResource() const

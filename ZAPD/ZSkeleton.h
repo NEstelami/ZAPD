@@ -60,8 +60,6 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
-
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
 

@@ -1,10 +1,9 @@
 #include "ZSkeleton.h"
 
 #include <cassert>
-#include "BitConverter.h"
+#include "Utils/BitConverter.h"
+#include "Utils/StringHelper.h"
 #include "Globals.h"
-#include "HighLevel/HLModelIntermediette.h"
-#include "StringHelper.h"
 
 REGISTER_ZFILENODE(Skeleton, ZSkeleton);
 REGISTER_ZFILENODE(LimbTable, ZLimbTable);
@@ -96,13 +95,6 @@ std::string ZSkeleton::GetBodySourceCode() const
 
 	// TODO: Throw exception?
 	return "ERROR";
-}
-
-void ZSkeleton::GenerateHLIntermediette(HLFileIntermediette& hlFile)
-{
-	HLModelIntermediette* mdl = (HLModelIntermediette*)&hlFile;
-	HLModelIntermediette::FromZSkeleton(mdl, this);
-	mdl->blocks.push_back(new HLTerminator());
 }
 
 std::string ZSkeleton::GetSourceTypeName() const

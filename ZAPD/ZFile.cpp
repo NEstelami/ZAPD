@@ -1,13 +1,14 @@
 #include "ZFile.h"
+#include <Utils/BinaryWriter.h>
+#include <Utils/MemoryStream.h>
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
-#include "Directory.h"
-#include "File.h"
+#include "Utils/Directory.h"
+#include "Utils/File.h"
 #include "Globals.h"
-#include "HighLevel/HLModelIntermediette.h"
 #include "OutputFormatter.h"
-#include "Path.h"
+#include "Utils/Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
 #include "ZBackground.h"
@@ -315,16 +316,37 @@ void ZFile::ExtractResources()
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles(outputPath);
 
+	MemoryStream* memStream = new MemoryStream();
+	BinaryWriter writer = BinaryWriter(memStream);
+
+	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
+
+	if (exporterSet != nullptr && exporterSet->beginFileFunc != nullptr)
+		exporterSet->beginFileFunc(this);
+
 	for (ZResource* res : resources)
 	{
 		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
 		res->Save(outputPath);
+
+		// Check if we have an exporter "registered" for this resource type
+		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
+		if (exporter != nullptr)
+			exporter->Save(res, Globals::Instance->outputPath.string(), &writer);
 	}
 
-	if (Globals::Instance->testMode)
-		GenerateHLIntermediette();
+	if (memStream->GetLength() > 0)
+	{
+		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin", Globals::Instance->outputPath.string().c_str(), GetName().c_str()),
+			memStream->ToVector());
+	}
+
+	writer.Close();
+
+	if (exporterSet != nullptr && exporterSet->endFileFunc != nullptr)
+		exporterSet->endFileFunc(this);
 }
 
 void ZFile::AddResource(ZResource* res)
@@ -737,7 +759,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 					    Globals::Instance->cfg.texturePool.end())
 					{
 						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-						         res->GetExternalExtension() + ".inc";
+								 res->GetExternalExtension() + ".inc";
 					}
 				}
 
@@ -802,22 +824,6 @@ void ZFile::GenerateSourceHeaderFiles()
 		printf("Writing H file: %s\n", headerFilename.c_str());
 
 	File::WriteAllText(headerFilename, formatter.GetOutput());
-}
-
-void ZFile::GenerateHLIntermediette()
-{
-	// This is kinda hacky but it gets the job done for now...
-	HLModelIntermediette* mdl = new HLModelIntermediette();
-
-	for (ZResource* res : resources)
-	{
-		if (res->GetResourceType() == ZResourceType::DisplayList ||
-		    res->GetResourceType() == ZResourceType::Skeleton)
-			res->GenerateHLIntermediette(*mdl);
-	}
-
-	// std::string test = mdl->ToOBJFile();
-	// std::string test2 = mdl->ToAssimpFile();
 }
 
 std::string ZFile::GetHeaderInclude() const
@@ -1110,7 +1116,6 @@ std::string ZFile::ProcessDeclarations()
 		if (!IsOffsetInFileRange(item.first))
 		{
 			continue;
-		}
 
 		if (item.second->includePath != "")
 		{
