@@ -26,6 +26,8 @@ public:
 class SetActorCutsceneList : public ZRoomCommand
 {
 public:
+	std::vector<ActorCutsceneEntry> cutscenes;
+
 	SetActorCutsceneList(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -37,5 +39,4 @@ public:
 	RoomCommand GetRoomCommand() const override;
 
 private:
-	std::vector<ActorCutsceneEntry> cutscenes;
 };

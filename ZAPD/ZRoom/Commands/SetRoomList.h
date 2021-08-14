@@ -5,14 +5,13 @@
 class RoomEntry
 {
 public:
+	int32_t virtualAddressStart;
+	int32_t virtualAddressEnd;
+
 	RoomEntry(uint32_t nVAS, uint32_t nVAE);
 	RoomEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	size_t GetRawDataSize() const;
-
-protected:
-	int32_t virtualAddressStart;
-	int32_t virtualAddressEnd;
 };
 
 class RomFile : public ZResource
@@ -39,6 +38,10 @@ public:
 class SetRoomList : public ZRoomCommand
 {
 public:
+	std::vector<RoomEntry> rooms;
+	// Borrowed reference. Don't delete.
+	RomFile* romfile = nullptr;
+
 	SetRoomList(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -48,8 +51,4 @@ public:
 
 	RoomCommand GetRoomCommand() const override;
 	std::string GetCommandCName() const override;
-
-protected:
-	// Borrowed reference. Don't delete.
-	RomFile* romfile = nullptr;
 };

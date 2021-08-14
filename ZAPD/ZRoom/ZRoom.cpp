@@ -1,9 +1,10 @@
 #include "ZRoom.h"
 
-#include <Path.h>
+#include <Utils/Path.h>
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
@@ -37,9 +38,9 @@
 #include "Commands/Unused09.h"
 #include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
-#include "File.h"
 #include "Globals.h"
-#include "StringHelper.h"
+#include <Utils/File.h>
+#include <Utils/StringHelper.h>
 #include "ZBlob.h"
 #include "ZCutscene.h"
 #include "ZFile.h"

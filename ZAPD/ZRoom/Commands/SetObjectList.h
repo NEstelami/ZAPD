@@ -5,6 +5,8 @@
 class SetObjectList : public ZRoomCommand
 {
 public:
+	std::vector<uint16_t> objects;
+
 	SetObjectList(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -14,7 +16,4 @@ public:
 
 	std::string GetCommandCName() const override;
 	RoomCommand GetRoomCommand() const override;
-
-private:
-	std::vector<uint16_t> objects;
 };

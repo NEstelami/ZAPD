@@ -5,17 +5,6 @@
 class ActorSpawnEntry
 {
 public:
-	ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const;
-
-	std::string GetSourceTypeName() const;
-	int32_t GetRawDataSize() const;
-
-	uint16_t GetActorId() const;
-	void SetLargestActorName(size_t nameSize);
-
-protected:
 	uint16_t actorNum;
 	int16_t posX;
 	int16_t posY;
@@ -25,11 +14,24 @@ protected:
 	uint16_t rotZ;
 	uint16_t initVar;
 	size_t largestActorName = 30;
+
+	ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const;
+
+	std::string GetSourceTypeName() const;
+	int32_t GetRawDataSize() const;
+
+	uint16_t GetActorId() const;
+	void SetLargestActorName(size_t nameSize);
 };
 
 class SetActorList : public ZRoomCommand
 {
 public:
+	uint8_t numActors;
+	std::vector<ActorSpawnEntry> actors;
+
 	SetActorList(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -45,7 +47,4 @@ public:
 
 protected:
 	size_t GetActorListArraySize() const;
-
-	uint8_t numActors;
-	std::vector<ActorSpawnEntry> actors;
 };

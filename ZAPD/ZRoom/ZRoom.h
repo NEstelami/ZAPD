@@ -11,6 +11,7 @@
 class ZRoom : public ZResource
 {
 public:
+	std::vector<ZRoomCommand*> commands;
 	int32_t roomCount;  // Only valid for scenes
 
 	std::string extDefines;

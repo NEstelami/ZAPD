@@ -25,6 +25,9 @@ public:
 class SetCsCamera : public ZRoomCommand
 {
 public:
+	std::vector<CsCameraEntry> cameras;
+	std::vector<ZVector> points;
+
 	SetCsCamera(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -34,8 +37,4 @@ public:
 
 	RoomCommand GetRoomCommand() const override;
 	std::string GetCommandCName() const override;
-
-private:
-	std::vector<CsCameraEntry> cameras;
-	std::vector<ZVector> points;
 };

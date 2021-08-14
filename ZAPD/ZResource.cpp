@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <regex>
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 #include "ZFile.h"
 
 ZResource::ZResource(ZFile* nParent)
@@ -197,10 +197,6 @@ std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
 {
 	return "";
-}
-
-void ZResource::GenerateHLIntermediette(HLFileIntermediette& hlFile)
-{
 }
 
 ZResourceType ZResource::GetResourceType() const
