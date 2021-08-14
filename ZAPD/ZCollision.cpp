@@ -1,8 +1,8 @@
 #include "ZCollision.h"
 #include <stdint.h>
 #include <string>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Collision, ZCollisionHeader);
@@ -352,10 +352,10 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 CameraDataList::~CameraDataList()
 {
-	for (auto entry: entries)
+	for (auto entry : entries)
 		delete entry;
 
-	for (auto camPosData: cameraPositionData)
+	for (auto camPosData : cameraPositionData)
 		delete camPosData;
 }
 

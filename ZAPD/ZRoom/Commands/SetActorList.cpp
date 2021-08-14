@@ -1,7 +1,7 @@
 #include "SetActorList.h"
 
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZNames.h"
@@ -36,8 +36,7 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 		size_t index = 0;
 		for (const auto& entry : actors)
 		{
-			declaration +=
-				StringHelper::Sprintf("\t{ %s },", entry.GetBodySourceCode().c_str());
+			declaration += StringHelper::Sprintf("\t{ %s },", entry.GetBodySourceCode().c_str());
 
 			if (index < actors.size() - 1)
 				declaration += "\n";

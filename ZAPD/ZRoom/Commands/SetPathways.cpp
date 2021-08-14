@@ -1,6 +1,6 @@
 #include "SetPathways.h"
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"

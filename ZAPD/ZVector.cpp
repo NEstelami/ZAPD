@@ -1,8 +1,8 @@
 #include "ZVector.h"
 #include <assert.h>
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 
@@ -16,7 +16,8 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Dimensions");
 }
 
-void ZVector::ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType, uint32_t nDimensions)
+void ZVector::ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType,
+                                uint32_t nDimensions)
 {
 	rawDataIndex = nRawDataIndex;
 	scalarType = nScalarType;

@@ -1,7 +1,7 @@
 #include "ZBackground.h"
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/Path.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
@@ -58,8 +58,8 @@ Declaration* ZBackground::DeclareVar(const std::string& prefix, const std::strin
 		auxName = GetDefaultName(prefix);
 
 	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, "SCREEN_WIDTH * SCREEN_HEIGHT / 4",
-	                            bodyStr);
+	                                   GetSourceTypeName(), auxName,
+	                                   "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
 }
 
 std::string ZBackground::GetBodySourceCode() const

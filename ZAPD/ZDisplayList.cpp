@@ -6,9 +6,9 @@
 #include <cassert>
 #include <chrono>
 #include <math.h>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 
@@ -2022,8 +2022,8 @@ bool ZDisplayList::TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t
 			else
 			{
 				tex = new ZTexture(auxParent);
-				tex->ExtractFromBinary(texAddr, texWidth, texHeight, TexFormatToTexType(texFmt, texSiz),
-				                texIsPalette);
+				tex->ExtractFromBinary(texAddr, texWidth, texHeight,
+				                       TexFormatToTexType(texFmt, texSiz), texIsPalette);
 				auxParent->AddTextureResource(texAddr, tex);
 			}
 

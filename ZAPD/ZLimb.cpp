@@ -1,8 +1,8 @@
 #include "ZLimb.h"
 
 #include <cassert>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Limb, ZLimb);
@@ -229,16 +229,18 @@ std::string ZLimb::GetBodySourceCode() const
 
 		case ZLimbType::LOD:
 		case ZLimbType::Curve:
-			entryStr += StringHelper::Sprintf("\t{ %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
+			entryStr +=
+				StringHelper::Sprintf("\t{ %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
 			break;
 
 		case ZLimbType::Skin:
 		{
 			std::string skinSegmentStr;
 			Globals::Instance->GetSegmentedPtrName(skinSegment, parent, "", skinSegmentStr);
-			entryStr += StringHelper::Sprintf("\t0x%02X, %s\n", skinSegmentType, skinSegmentStr.c_str());
+			entryStr +=
+				StringHelper::Sprintf("\t0x%02X, %s\n", skinSegmentType, skinSegmentStr.c_str());
 		}
-			break;
+		break;
 
 		case ZLimbType::Legacy:
 			break;
@@ -372,7 +374,8 @@ void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 	ZDisplayList* dlist = new ZDisplayList(parent);
 	dlist->ExtractFromBinary(dlistOffset, dlistLength);
 
-	std::string dListStr = StringHelper::Sprintf("%s%sDL_%06X", prefix.c_str(), limbSuffix.c_str(), dlistOffset);
+	std::string dListStr =
+		StringHelper::Sprintf("%s%sDL_%06X", prefix.c_str(), limbSuffix.c_str(), dlistOffset);
 	dlist->SetName(dListStr);
 	dlist->DeclareVar(prefix, "");
 	parent->AddResource(dlist);

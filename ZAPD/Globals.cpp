@@ -1,7 +1,7 @@
 #include "Globals.h"
-#include <algorithm>
 #include <Utils/File.h>
 #include <Utils/Path.h>
+#include <algorithm>
 #include "tinyxml2.h"
 
 Globals* Globals::Instance;
@@ -173,7 +173,6 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-
 std::map<std::string, ExporterSet*>* Globals::GetExporterMap()
 {
 	static std::map<std::string, ExporterSet*> exporters;
@@ -191,7 +190,7 @@ ZResourceExporter* Globals::GetExporter(ZResourceType resType)
 	auto exporters = *GetExporterMap();
 
 	if (currentExporter != "" && exporters[currentExporter]->exporters.find(resType) !=
-		exporters[currentExporter]->exporters.end())
+	                                 exporters[currentExporter]->exporters.end())
 		return exporters[currentExporter]->exporters[resType];
 	else
 		return nullptr;

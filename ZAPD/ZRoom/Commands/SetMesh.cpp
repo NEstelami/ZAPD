@@ -98,8 +98,7 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
-PolygonDlist::PolygonDlist(ZFile* nParent)
-	: ZResource(nParent)
+PolygonDlist::PolygonDlist(ZFile* nParent) : ZResource(nParent)
 {
 }
 
@@ -584,7 +583,8 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 
 		for (size_t i = 0; i < polyDLists.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("\t{ %s }," , polyDLists.at(i).GetBodySourceCode().c_str());
+			declaration +=
+				StringHelper::Sprintf("\t{ %s },", polyDLists.at(i).GetBodySourceCode().c_str());
 			if (i + 1 < polyDLists.size())
 				declaration += "\n";
 		}

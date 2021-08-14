@@ -1,9 +1,9 @@
 #include "SetEntranceList.h"
 
-#include "Utils/BitConverter.h"
-#include "Utils/StringHelper.h"
 #include "Globals.h"
 #include "SetStartPositionList.h"
+#include "Utils/BitConverter.h"
+#include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
@@ -45,8 +45,7 @@ void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
 		size_t index = 0;
 		for (const auto& entry : entrances)
 		{
-			declaration +=
-				StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
+			declaration += StringHelper::Sprintf("    { %s },", entry.GetBodySourceCode().c_str());
 			if (index + 1 < entrances.size())
 				declaration += "\n";
 

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Utils/Directory.h>
 #include <string>
 #include <vector>
-#include <Utils/Directory.h>
 //#include "ZResource.h"
 #include "ZSymbol.h"
 #include "ZTexture.h"

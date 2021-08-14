@@ -1,10 +1,10 @@
 #include "ZBlob.h"
 
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
 #include "Utils/StringHelper.h"
-#include "Globals.h"
 #include "ZFile.h"
 
 REGISTER_ZFILENODE(Blob, ZBlob);

@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
-#include "Utils/Directory.h"
-#include "Utils/File.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/Directory.h"
+#include "Utils/File.h"
 #include "Utils/Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
@@ -126,14 +126,12 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderM
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-
 	// Not every XML may have a segment number, so this doesn't make much sense anymore.
 	// if (reader->Attribute("Segment") == nullptr)
 	// 	throw std::runtime_error(
 	// 		StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n"
 	// 	                          "\t Missing 'Segment' attribute in File node. \n",
 	// 	                          name.c_str()));
-
 
 	if (reader->Attribute("Segment") != nullptr)
 	{
@@ -339,8 +337,10 @@ void ZFile::ExtractResources()
 
 	if (memStream->GetLength() > 0)
 	{
-		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin", Globals::Instance->outputPath.string().c_str(), GetName().c_str()),
-			memStream->ToVector());
+		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin",
+		                                          Globals::Instance->outputPath.string().c_str(),
+		                                          GetName().c_str()),
+		                    memStream->ToVector());
 	}
 
 	writer.Close();
@@ -1423,7 +1423,6 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 				nonZeroUnaccounted = true;
 			}
 
-
 			if (Globals::Instance->verboseUnaccounted)
 			{
 				if ((i % 4 == 3))
@@ -1466,19 +1465,19 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 				if (nonZeroUnaccounted)
 				{
 					fprintf(stderr,
-							"Warning in file: %s (%s)\n"
-							"\t A non-zero unaccounted block was found at offset '0x%06X'.\n"
-							"\t Block size: '0x%X'.\n",
-							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+					        "Warning in file: %s (%s)\n"
+					        "\t A non-zero unaccounted block was found at offset '0x%06X'.\n"
+					        "\t Block size: '0x%X'.\n",
+					        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 				}
 				else if (diff >= 16)
 				{
 					fprintf(stderr,
-							"Warning in file: %s (%s)\n"
-							"\t A big (size>=0x10) zero-only unaccounted block was found "
-							"at offset '0x%06X'.\n"
-							"\t Block size: '0x%X'.\n",
-							xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+					        "Warning in file: %s (%s)\n"
+					        "\t A big (size>=0x10) zero-only unaccounted block was found "
+					        "at offset '0x%06X'.\n"
+					        "\t Block size: '0x%X'.\n",
+					        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 				}
 			}
 		}

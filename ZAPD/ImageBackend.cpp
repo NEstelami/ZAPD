@@ -216,7 +216,8 @@ void ImageBackend::WritePng(const char* filename)
 
 void ImageBackend::WritePng(const fs::path& filename)
 {
-	// Note: The .string() is necessary for MSVC, due to the implementation of std::filesystem differing from GCC. Do not remove!
+	// Note: The .string() is necessary for MSVC, due to the implementation of std::filesystem
+	// differing from GCC. Do not remove!
 	WritePng(filename.string().c_str());
 }
 
@@ -387,10 +388,11 @@ void ImageBackend::SetPalette(const ImageBackend& pal)
 		for (size_t x = 0; x < pal.width; x++)
 		{
 			size_t index = y * pal.width + x;
-			if (index >= paletteSize) {
+			if (index >= paletteSize)
+			{
 				/*
 				 * Some TLUTs are bigger than 256 colors.
-				 * For those cases, we will only take the first 256 
+				 * For those cases, we will only take the first 256
 				 * to colorize this CI texture.
 				 */
 				return;

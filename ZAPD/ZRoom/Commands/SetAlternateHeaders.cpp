@@ -1,8 +1,8 @@
 #include "SetAlternateHeaders.h"
 
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
-#include "Globals.h"
 #include "ZFile.h"
 
 SetAlternateHeaders::SetAlternateHeaders(ZFile* nParent) : ZRoomCommand(nParent)

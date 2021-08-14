@@ -1,8 +1,8 @@
 #include "SetCsCamera.h"
 
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
-#include "Globals.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
@@ -70,8 +70,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 	if (!cameras.empty())
 	{
 		std::string camPointsName;
-		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent,
-		                                       "Vec3s", camPointsName);
+		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent, "Vec3s",
+		                                       camPointsName);
 		std::string declaration = "";
 
 		size_t index = 0;
