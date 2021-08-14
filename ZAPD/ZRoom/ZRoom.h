@@ -16,6 +16,11 @@ public:
 
 	std::string extDefines;
 
+	std::string hackMode = "";
+
+	ZResourceType zroomType = ZResourceType::Error;
+	ZResourceType parentZroomType = ZResourceType::Error;
+
 	ZRoom(ZFile* nParent);
 	virtual ~ZRoom();
 
@@ -42,12 +47,6 @@ public:
 	ZResourceType GetResourceType() const override;
 
 protected:
-	std::vector<ZRoomCommand*> commands;
-	std::string hackMode = "";
-
-	ZResourceType zroomType = ZResourceType::Error;
-	ZResourceType parentZroomType = ZResourceType::Error;
-
 	std::string GetSourceOutputHeader(const std::string& prefix) override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void SyotesRoomHack();
