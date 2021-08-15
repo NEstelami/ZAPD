@@ -23,7 +23,6 @@ private:
 	uint32_t currentIndent;
 	uint32_t wordNests;
 
-
 	void Flush();
 
 	static OutputFormatter* Instance;

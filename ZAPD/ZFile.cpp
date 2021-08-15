@@ -605,7 +605,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 					    Globals::Instance->cfg.texturePool.end())
 					{
 						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-						         res->GetExternalExtension() + ".inc";
+								 res->GetExternalExtension() + ".inc";
 					}
 				}
 

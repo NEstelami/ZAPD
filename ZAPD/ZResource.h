@@ -25,7 +25,7 @@ typedef uint32_t segptr_t;
 class ZFile;
 class HLFileIntermediette;
 
-enum class ZResourceType :uint8_t
+enum class ZResourceType : uint8_t
 {
 	Error,
 	Animation,

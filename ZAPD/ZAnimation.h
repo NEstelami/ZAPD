@@ -119,7 +119,6 @@ protected:
 
 	uint8_t limbCount = 0;
 
-
 public:
 	ZCurveAnimation();
 	ZCurveAnimation(ZFile* nParent);
@@ -180,5 +179,4 @@ protected:
 	segptr_t frameData;  // s16*
 	segptr_t jointKey;   // JointKey*
 	int16_t limbCount;
-
 };

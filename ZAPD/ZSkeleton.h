@@ -39,7 +39,6 @@ protected:
 	std::vector<segptr_t> limbsAddresses;
 	size_t count = 0;
 	ZLimbType limbType = ZLimbType::Standard;
-
 };
 
 class ZSkeleton : public ZResource

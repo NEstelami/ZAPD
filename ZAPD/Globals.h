@@ -7,7 +7,7 @@
 #include "ZRoom/ZRoom.h"
 #include "ZTexture.h"
 
-enum class VerbosityLevel :uint8_t
+enum class VerbosityLevel : uint8_t
 {
 	VERBOSITY_SILENT,
 	VERBOSITY_INFO,
@@ -38,7 +38,6 @@ public:
 class Globals
 {
 public:
-
 	static Globals* Instance;
 	GameConfig cfg;
 	fs::path baseRomPath, inputPath, outputPath, sourceOutputPath, cfgPath;
@@ -64,7 +63,7 @@ public:
 	bool errorNoOffset = false;
 	bool verboseUnaccounted = false;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
-	
+
 	Globals();
 	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
 	void ReadConfigFile(const std::string& configFilePath);

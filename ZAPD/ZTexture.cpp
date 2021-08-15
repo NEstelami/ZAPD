@@ -839,11 +839,11 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 	{
 		texType = TextureType::RGBA16bpp;
 #ifdef DEPRECATION_ON
-		fprintf(stderr,
-		        "ZTexture::GetTextureTypeFromString: Deprecation warning.\n"
-		        "\t The texture format 'rgb5a1' is currently deprecated, and will be removed in a future "
-		        "version.\n"
-		        "\t Use the format 'rgba16' instead.\n");
+		fprintf(stderr, "ZTexture::GetTextureTypeFromString: Deprecation warning.\n"
+		                "\t The texture format 'rgb5a1' is currently deprecated, and will be "
+		                "removed in a future "
+		                "version.\n"
+		                "\t Use the format 'rgba16' instead.\n");
 #endif
 	}
 	else if (str == "i4")

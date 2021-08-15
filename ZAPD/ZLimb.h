@@ -78,7 +78,6 @@ protected:
 	segptr_t unk_8;  // Struct_800A57C0*
 	segptr_t unk_C;  // Struct_800A598C_2*
 
-
 public:
 	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
 	Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset,
@@ -121,7 +120,6 @@ public:
 class ZLimb : public ZResource
 {
 protected:
-
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
 	segptr_t skinSegment = 0;                                   // Skin only
 	Struct_800A5E28 segmentStruct;                              // Skin only

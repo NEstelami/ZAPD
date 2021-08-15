@@ -42,24 +42,27 @@ public:
 	DeclarationAlignment alignment;
 	DeclarationPadding padding;
 
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string&  nVarType,
-	            const std::string&  nVarName, bool nIsArray, const std::string&  nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, const std::string& nText);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            const std::string&  nVarType, const std::string&  nVarName, bool nIsArray, const std::string&  nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string&  nVarType,
-	            const std::string&  nVarName, bool nIsArray, size_t nArrayItemCnt, const std::string&  nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string&  nVarType,
-	            const std::string&  nVarName, bool nIsArray, const std::string&  nArrayItemCntStr,
-	            const std::string&  nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string&  nVarType,
-	            const std::string&  nVarName, bool nIsArray, size_t nArrayItemCnt, const std::string&  nText,
-	            bool nIsExternal);
+	            const std::string& nVarType, const std::string& nVarName, bool nIsArray,
+	            const std::string& nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            const std::string& nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, const std::string& nArrayItemCntStr,
+	            const std::string& nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            const std::string& nText, bool nIsExternal);
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            const std::string&  nVarType, const std::string&  nVarName, bool nIsArray, size_t nArrayItemCnt,
-	            const std::string&  nText);
-	Declaration(const std::string&  nIncludePath, size_t nSize, const std::string&  nVarType, const std::string&  nVarName);
+	            const std::string& nVarType, const std::string& nVarName, bool nIsArray,
+	            size_t nArrayItemCnt, const std::string& nText);
+	Declaration(const std::string& nIncludePath, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName);
 
 protected:
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            const std::string&  nText);
+	            const std::string& nText);
 };

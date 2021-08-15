@@ -288,7 +288,8 @@ class ZDisplayList : public ZResource
 protected:
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
 
-	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix, char* line);
+	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix,
+	                 char* line);
 	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, const std::string& prefix, char* line);
 
 	// Various Instruction Optimizations
@@ -342,7 +343,7 @@ public:
 	F3DZEXTexSizes lastTexSiz, lastTexSizTest, lastCISiz;
 
 	DListType dListType;
-	
+
 	bool lastTexLoaded;
 	bool lastTexIsPalette;
 
@@ -357,10 +358,10 @@ public:
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	void TextureGenCheck(const std::string& prefix);
-	static bool TextureGenCheck(ZRoom* scene, ZFile* parent, const std::string& prefix, int32_t texWidth,
-	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
-	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
-	                            bool texIsPalette, ZDisplayList* self);
+	static bool TextureGenCheck(ZRoom* scene, ZFile* parent, const std::string& prefix,
+	                            int32_t texWidth, int32_t texHeight, uint32_t texAddr,
+	                            uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
+	                            bool texLoaded, bool texIsPalette, ZDisplayList* self);
 	static int32_t GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 

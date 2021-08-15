@@ -85,8 +85,8 @@ Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::stri
 	                                   GetSourceTypeName(), name, 0, bodyStr, true);
 }
 
-void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix,
-                               char* line)
+void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i,
+                               const std::string& prefix, char* line)
 {
 	switch (opcode)
 	{
@@ -277,7 +277,8 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, co
 	}
 }
 
-void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, const std::string& prefix, char* line)
+void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, const std::string& prefix,
+                              char* line)
 {
 	switch (opcode)
 	{
