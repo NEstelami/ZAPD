@@ -13,7 +13,7 @@ public:
 	uint16_t rotY;
 	uint16_t rotZ;
 	uint16_t initVar;
-	size_t largestActorName = 30;
+	size_t largestActorName = 16;
 
 	ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 

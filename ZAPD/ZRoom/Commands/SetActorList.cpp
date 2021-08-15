@@ -148,9 +148,9 @@ std::string ActorSpawnEntry::GetBodySourceCode() const
 
 	body += StringHelper::Sprintf("{ %6i, %6i, %6i }, ", posX, posY, posZ);
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
-		body += StringHelper::Sprintf("{ SPAWN_ROT_FLAGS(%#6hX, 0x%04X)"
-		                              ", SPAWN_ROT_FLAGS(%#6hX, 0x%04X)"
-		                              ", SPAWN_ROT_FLAGS(%#6hX, 0x%04X) }, ",
+		body += StringHelper::Sprintf("{ SPAWN_ROT_FLAGS(%#5hX, 0x%04X)"
+		                              ", SPAWN_ROT_FLAGS(%#5hX, 0x%04X)"
+		                              ", SPAWN_ROT_FLAGS(%#5hX, 0x%04X) }, ",
 		                              (rotX >> 7) & 0b111111111, rotX & 0b1111111,
 		                              (rotY >> 7) & 0b111111111, rotY & 0b1111111,
 		                              (rotZ >> 7) & 0b111111111, rotZ & 0b1111111);
