@@ -30,12 +30,19 @@ uint64_t MemoryStream::GetLength()
 
 void MemoryStream::Seek(int32_t offset, SeekOffsetType seekType)
 {
-	if (seekType == SeekOffsetType::Start)
-		baseAddress = offset;
-	else if (seekType == SeekOffsetType::Current)
-		baseAddress += offset;
-	else if (seekType == SeekOffsetType::End)
-		baseAddress = bufferSize - 1 - offset;
+	switch (seekType) {
+		case SeekOffsetType::Start:
+			baseAddress = offset;
+			break;
+
+		case SeekOffsetType::Current:
+			baseAddress += offset;
+			break;
+
+		case SeekOffsetType::End:
+			baseAddress = bufferSize - offset - 1;
+			break;
+	}
 }
 
 std::unique_ptr<char[]> MemoryStream::Read(size_t length)

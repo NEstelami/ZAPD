@@ -62,23 +62,29 @@ bool ZVector::DoesSupportArray() const
 
 std::string ZVector::GetSourceTypeName() const
 {
-	if (dimensions == 3 && scalarType == ZScalarType::ZSCALAR_F32)
-		return "Vec3f";
-	else if (dimensions == 3 && scalarType == ZScalarType::ZSCALAR_S16)
-		return "Vec3s";
-	else if (dimensions == 3 && scalarType == ZScalarType::ZSCALAR_S32)
-		return "Vec3i";
-	else
+	if (dimensions == 3)
 	{
-		std::string output = StringHelper::Sprintf(
-			"Encountered unsupported vector type: %d dimensions, %s type", dimensions,
-			ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
+		switch (scalarType)
+		{
+		case ZScalarType::ZSCALAR_F32:
+			return "Vec3f";
 
-		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-			printf("%s\n", output.c_str());
-
-		throw std::runtime_error(output);
+		case ZScalarType::ZSCALAR_S16:
+			return "Vec3s";
+		
+		case ZScalarType::ZSCALAR_S32:
+			return "Vec3i";
+		}
 	}
+	
+	std::string output = StringHelper::Sprintf(
+		"Encountered unsupported vector type: %d dimensions, %s type", dimensions,
+		ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
+
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+		printf("%s\n", output.c_str());
+
+	throw std::runtime_error(output);
 }
 
 std::string ZVector::GetBodySourceCode() const
