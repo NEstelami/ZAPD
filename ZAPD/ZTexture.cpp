@@ -822,16 +822,17 @@ fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 	return defaultValue;
 }
 
-std::map<std::string, TextureType> ZTextureTypeDictionary = {
-	{"rgba32", TextureType::RGBA32bpp},         {"rgba16", TextureType::RGBA16bpp},
-	{"i4", TextureType::Grayscale4bpp},         {"i8", TextureType::Grayscale8bpp},
-	{"ia4", TextureType::GrayscaleAlpha4bpp},   {"ia8", TextureType::GrayscaleAlpha8bpp},
-	{"ia16", TextureType::GrayscaleAlpha16bpp}, {"ci4", TextureType::Palette4bpp},
-	{"ci8", TextureType::Palette8bpp},
-};
 
 TextureType ZTexture::GetTextureTypeFromString(std::string type)
 {
+	static std::map<std::string, TextureType> ZTextureTypeDictionary = {
+		{"rgba32", TextureType::RGBA32bpp},         {"rgba16", TextureType::RGBA16bpp},
+		{"i4", TextureType::Grayscale4bpp},         {"i8", TextureType::Grayscale8bpp},
+		{"ia4", TextureType::GrayscaleAlpha4bpp},   {"ia8", TextureType::GrayscaleAlpha8bpp},
+		{"ia16", TextureType::GrayscaleAlpha16bpp}, {"ci4", TextureType::Palette4bpp},
+		{"ci8", TextureType::Palette8bpp},
+	};
+	
 	auto it = ZTextureTypeDictionary.find(type);
 	if (it != ZTextureTypeDictionary.end())
 	{
