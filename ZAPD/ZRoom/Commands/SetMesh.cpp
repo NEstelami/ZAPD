@@ -21,22 +21,22 @@ void SetMesh::ParseRawData()
 
 	switch (meshHeaderType)
 	{
-	case 0:
-		polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
-		break;
+		case 0:
+			polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
+			break;
 
-	case 1:
-		polyType = std::make_shared<PolygonType1>(parent, parentRawData, segmentOffset, zRoom);
-		break;
+		case 1:
+			polyType = std::make_shared<PolygonType1>(parent, parentRawData, segmentOffset, zRoom);
+			break;
 
-	case 2:
-		polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
-		break;
+		case 2:
+			polyType = std::make_shared<PolygonType2>(parent, parentRawData, segmentOffset, zRoom);
+			break;
 
-	default:
-		throw std::runtime_error(StringHelper::Sprintf("Error in SetMesh::ParseRawData\n"
-		                                               "\t Unknown meshHeaderType: %i\n",
-		                                               meshHeaderType));
+		default:
+			throw std::runtime_error(StringHelper::Sprintf("Error in SetMesh::ParseRawData\n"
+			                                               "\t Unknown meshHeaderType: %i\n",
+			                                               meshHeaderType));
 	}
 
 	polyType->ParseRawData();
@@ -128,20 +128,20 @@ void PolygonDlist::ParseRawData()
 	const auto& rawData = parent->GetRawData();
 	switch (polyType)
 	{
-	case 2:
-		x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-		y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-		z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-		unk_06 = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
+		case 2:
+			x = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
+			y = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+			z = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
+			unk_06 = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
 
-		opa = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-		xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		break;
+			opa = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+			xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+			break;
 
-	default:
-		opa = BitConverter::ToUInt32BE(rawData, rawDataIndex);
-		xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
-		break;
+		default:
+			opa = BitConverter::ToUInt32BE(rawData, rawDataIndex);
+			xlu = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+			break;
 	}
 }
 
@@ -173,11 +173,11 @@ size_t PolygonDlist::GetRawDataSize() const
 {
 	switch (polyType)
 	{
-	case 2:
-		return 0x10;
+		case 2:
+			return 0x10;
 
-	default:
-		return 0x08;
+		default:
+			return 0x08;
 	}
 }
 
@@ -255,11 +255,11 @@ std::string PolygonDlist::GetSourceTypeName()
 {
 	switch (polyType)
 	{
-	case 2:
-		return "PolygonDlist2";
+		case 2:
+			return "PolygonDlist2";
 
-	default:
-		return "PolygonDlist";
+		default:
+			return "PolygonDlist";
 	}
 }
 
@@ -440,14 +440,14 @@ std::string PolygonTypeBase::GetSourceTypeName() const
 {
 	switch (type)
 	{
-	case 2:
-		return "PolygonType2";
+		case 2:
+			return "PolygonType2";
 
-	case 1:
-		return "PolygonType1";
+		case 1:
+			return "PolygonType1";
 
-	default:
-		return "PolygonType0";
+		default:
+			return "PolygonType0";
 	}
 }
 
@@ -505,41 +505,41 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 	std::string bgImageArrayBody = "";
 	switch (format)
 	{
-	case 1:
-		single = BgImage(true, prefix, parent->GetRawData(), rawDataIndex + 0x08, parent);
-		break;
+		case 1:
+			single = BgImage(true, prefix, parent->GetRawData(), rawDataIndex + 0x08, parent);
+			break;
 
-	case 2:
-		if (list != 0)
-		{
-			listAddress = Seg2Filespace(list, parent->baseAddress);
-			for (size_t i = 0; i < count; ++i)
+		case 2:
+			if (list != 0)
 			{
-				BgImage bg(false, prefix, parent->GetRawData(),
-				           listAddress + i * BgImage::GetRawDataSize(), parent);
-				multiList.push_back(bg);
-				bgImageArrayBody += bg.GetBodySourceCode(true);
-				if (i + 1 < count)
+				listAddress = Seg2Filespace(list, parent->baseAddress);
+				for (size_t i = 0; i < count; ++i)
 				{
-					bgImageArrayBody += "\n";
+					BgImage bg(false, prefix, parent->GetRawData(),
+					           listAddress + i * BgImage::GetRawDataSize(), parent);
+					multiList.push_back(bg);
+					bgImageArrayBody += bg.GetBodySourceCode(true);
+					if (i + 1 < count)
+					{
+						bgImageArrayBody += "\n";
+					}
+				}
+
+				Declaration* decl = parent->GetDeclaration(listAddress);
+				if (decl == nullptr)
+				{
+					parent->AddDeclarationArray(
+						listAddress, DeclarationAlignment::Align4,
+						count * BgImage::GetRawDataSize(), BgImage::GetSourceTypeName(),
+						multiList.at(0).GetName().c_str(), count, bgImageArrayBody);
 				}
 			}
+			break;
 
-			Declaration* decl = parent->GetDeclaration(listAddress);
-			if (decl == nullptr)
-			{
-				parent->AddDeclarationArray(
-					listAddress, DeclarationAlignment::Align4, count * BgImage::GetRawDataSize(),
-					BgImage::GetSourceTypeName(), multiList.at(0).GetName().c_str(), count,
-					bgImageArrayBody);
-			}
-		}
-		break;
-
-	default:
-		throw std::runtime_error(StringHelper::Sprintf(
-			"Error in PolygonType1::PolygonType1\n\t Unknown format: %i\n", format));
-		break;
+		default:
+			throw std::runtime_error(StringHelper::Sprintf(
+				"Error in PolygonType1::PolygonType1\n\t Unknown format: %i\n", format));
+			break;
 	}
 }
 
@@ -547,11 +547,11 @@ size_t PolygonType1::GetRawDataSize() const
 {
 	switch (format)
 	{
-	case 1:
-		return 0x20;
+		case 1:
+			return 0x20;
 
-	case 2:
-		return 0x10;
+		case 2:
+			return 0x10;
 	}
 	return 0x20;
 }
@@ -571,16 +571,16 @@ std::string PolygonType1::GetBodySourceCode() const
 	// bodyStr += "    { \n";
 	switch (format)
 	{
-	case 1:
-		bodyStr += single.GetBodySourceCode(false);
-		break;
-	case 2:
-		listStr = parent->GetDeclarationPtrName(list);
-		bodyStr += StringHelper::Sprintf("    %i, %s, \n", count, listStr.c_str());
-		break;
+		case 1:
+			bodyStr += single.GetBodySourceCode(false);
+			break;
+		case 2:
+			listStr = parent->GetDeclarationPtrName(list);
+			bodyStr += StringHelper::Sprintf("    %i, %s, \n", count, listStr.c_str());
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
 	// bodyStr += "    } \n";
 
@@ -591,11 +591,11 @@ std::string PolygonType1::GetSourceTypeName() const
 {
 	switch (format)
 	{
-	case 1:
-		return "MeshHeader1Single";
+		case 1:
+			return "MeshHeader1Single";
 
-	case 2:
-		return "MeshHeader1Multi";
+		case 2:
+			return "MeshHeader1Multi";
 	}
 	return "ERROR";
 	// return "PolygonType1";

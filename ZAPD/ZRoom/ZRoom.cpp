@@ -1,9 +1,9 @@
 #include "ZRoom.h"
+#include <Utils/File.h>
 #include <Utils/Path.h>
+#include <Utils/StringHelper.h>
 #include <algorithm>
 #include <chrono>
-#include <Utils/File.h>
-#include <Utils/StringHelper.h>
 #include "../Globals.h"
 #include "../ZBlob.h"
 #include "Commands/EndMarker.h"
@@ -187,104 +187,104 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 
 		switch (opcode)
 		{
-		case RoomCommand::SetStartPositionList:
-			cmd = new SetStartPositionList(parent);
-			break;  // 0x00
-		case RoomCommand::SetActorList:
-			cmd = new SetActorList(parent);
-			break;  // 0x01
-		case RoomCommand::SetCsCamera:
-			cmd = new SetCsCamera(parent);
-			break;  // 0x02 (MM-ONLY)
-		case RoomCommand::SetCollisionHeader:
-			cmd = new SetCollisionHeader(parent);
-			break;  // 0x03
-		case RoomCommand::SetRoomList:
-			cmd = new SetRoomList(parent);
-			break;  // 0x04
-		case RoomCommand::SetWind:
-			cmd = new SetWind(parent);
-			break;  // 0x05
-		case RoomCommand::SetEntranceList:
-			cmd = new SetEntranceList(parent);
-			break;  // 0x06
-		case RoomCommand::SetSpecialObjects:
-			cmd = new SetSpecialObjects(parent);
-			break;  // 0x07
-		case RoomCommand::SetRoomBehavior:
-			cmd = new SetRoomBehavior(parent);
-			break;  // 0x08
-		case RoomCommand::Unused09:
-			cmd = new Unused09(parent);
-			break;  // 0x09
-		case RoomCommand::SetMesh:
-			cmd = new SetMesh(parent);
-			break;  // 0x0A
-		case RoomCommand::SetObjectList:
-			cmd = new SetObjectList(parent);
-			break;  // 0x0B
-		case RoomCommand::SetLightList:
-			cmd = new SetLightList(parent);
-			break;  // 0x0C (MM-ONLY)
-		case RoomCommand::SetPathways:
-			cmd = new SetPathways(parent);
-			break;  // 0x0D
-		case RoomCommand::SetTransitionActorList:
-			cmd = new SetTransitionActorList(parent);
-			break;  // 0x0E
-		case RoomCommand::SetLightingSettings:
-			cmd = new SetLightingSettings(parent);
-			break;  // 0x0F
-		case RoomCommand::SetTimeSettings:
-			cmd = new SetTimeSettings(parent);
-			break;  // 0x10
-		case RoomCommand::SetSkyboxSettings:
-			cmd = new SetSkyboxSettings(parent);
-			break;  // 0x11
-		case RoomCommand::SetSkyboxModifier:
-			cmd = new SetSkyboxModifier(parent);
-			break;  // 0x12
-		case RoomCommand::SetExitList:
-			cmd = new SetExitList(parent);
-			break;  // 0x13
-		case RoomCommand::EndMarker:
-			cmd = new EndMarker(parent);
-			break;  // 0x14
-		case RoomCommand::SetSoundSettings:
-			cmd = new SetSoundSettings(parent);
-			break;  // 0x15
-		case RoomCommand::SetEchoSettings:
-			cmd = new SetEchoSettings(parent);
-			break;  // 0x16
-		case RoomCommand::SetCutscenes:
-			cmd = new SetCutscenes(parent);
-			break;  // 0x17
-		case RoomCommand::SetAlternateHeaders:
-			cmd = new SetAlternateHeaders(parent);
-			break;  // 0x18
-		case RoomCommand::SetCameraSettings:
-			if (Globals::Instance->game == ZGame::MM_RETAIL)
-				cmd = new SetWorldMapVisited(parent);
-			else
-				cmd = new SetCameraSettings(parent);
-			break;  // 0x19
-		case RoomCommand::SetAnimatedMaterialList:
-			cmd = new SetAnimatedMaterialList(parent);
-			break;  // 0x1A (MM-ONLY)
-		case RoomCommand::SetActorCutsceneList:
-			cmd = new SetActorCutsceneList(parent);
-			break;  // 0x1B (MM-ONLY)
-		case RoomCommand::SetMinimapList:
-			cmd = new SetMinimapList(parent);
-			break;  // 0x1C (MM-ONLY)
-		case RoomCommand::Unused1D:
-			cmd = new Unused1D(parent);
-			break;  // 0x1D
-		case RoomCommand::SetMinimapChests:
-			cmd = new SetMinimapChests(parent);
-			break;  // 0x1E (MM-ONLY)
-		default:
-			cmd = new ZRoomCommandUnk(parent);
+			case RoomCommand::SetStartPositionList:
+				cmd = new SetStartPositionList(parent);
+				break;  // 0x00
+			case RoomCommand::SetActorList:
+				cmd = new SetActorList(parent);
+				break;  // 0x01
+			case RoomCommand::SetCsCamera:
+				cmd = new SetCsCamera(parent);
+				break;  // 0x02 (MM-ONLY)
+			case RoomCommand::SetCollisionHeader:
+				cmd = new SetCollisionHeader(parent);
+				break;  // 0x03
+			case RoomCommand::SetRoomList:
+				cmd = new SetRoomList(parent);
+				break;  // 0x04
+			case RoomCommand::SetWind:
+				cmd = new SetWind(parent);
+				break;  // 0x05
+			case RoomCommand::SetEntranceList:
+				cmd = new SetEntranceList(parent);
+				break;  // 0x06
+			case RoomCommand::SetSpecialObjects:
+				cmd = new SetSpecialObjects(parent);
+				break;  // 0x07
+			case RoomCommand::SetRoomBehavior:
+				cmd = new SetRoomBehavior(parent);
+				break;  // 0x08
+			case RoomCommand::Unused09:
+				cmd = new Unused09(parent);
+				break;  // 0x09
+			case RoomCommand::SetMesh:
+				cmd = new SetMesh(parent);
+				break;  // 0x0A
+			case RoomCommand::SetObjectList:
+				cmd = new SetObjectList(parent);
+				break;  // 0x0B
+			case RoomCommand::SetLightList:
+				cmd = new SetLightList(parent);
+				break;  // 0x0C (MM-ONLY)
+			case RoomCommand::SetPathways:
+				cmd = new SetPathways(parent);
+				break;  // 0x0D
+			case RoomCommand::SetTransitionActorList:
+				cmd = new SetTransitionActorList(parent);
+				break;  // 0x0E
+			case RoomCommand::SetLightingSettings:
+				cmd = new SetLightingSettings(parent);
+				break;  // 0x0F
+			case RoomCommand::SetTimeSettings:
+				cmd = new SetTimeSettings(parent);
+				break;  // 0x10
+			case RoomCommand::SetSkyboxSettings:
+				cmd = new SetSkyboxSettings(parent);
+				break;  // 0x11
+			case RoomCommand::SetSkyboxModifier:
+				cmd = new SetSkyboxModifier(parent);
+				break;  // 0x12
+			case RoomCommand::SetExitList:
+				cmd = new SetExitList(parent);
+				break;  // 0x13
+			case RoomCommand::EndMarker:
+				cmd = new EndMarker(parent);
+				break;  // 0x14
+			case RoomCommand::SetSoundSettings:
+				cmd = new SetSoundSettings(parent);
+				break;  // 0x15
+			case RoomCommand::SetEchoSettings:
+				cmd = new SetEchoSettings(parent);
+				break;  // 0x16
+			case RoomCommand::SetCutscenes:
+				cmd = new SetCutscenes(parent);
+				break;  // 0x17
+			case RoomCommand::SetAlternateHeaders:
+				cmd = new SetAlternateHeaders(parent);
+				break;  // 0x18
+			case RoomCommand::SetCameraSettings:
+				if (Globals::Instance->game == ZGame::MM_RETAIL)
+					cmd = new SetWorldMapVisited(parent);
+				else
+					cmd = new SetCameraSettings(parent);
+				break;  // 0x19
+			case RoomCommand::SetAnimatedMaterialList:
+				cmd = new SetAnimatedMaterialList(parent);
+				break;  // 0x1A (MM-ONLY)
+			case RoomCommand::SetActorCutsceneList:
+				cmd = new SetActorCutsceneList(parent);
+				break;  // 0x1B (MM-ONLY)
+			case RoomCommand::SetMinimapList:
+				cmd = new SetMinimapList(parent);
+				break;  // 0x1C (MM-ONLY)
+			case RoomCommand::Unused1D:
+				cmd = new Unused1D(parent);
+				break;  // 0x1D
+			case RoomCommand::SetMinimapChests:
+				cmd = new SetMinimapChests(parent);
+				break;  // 0x1E (MM-ONLY)
+			default:
+				cmd = new ZRoomCommandUnk(parent);
 		}
 
 		cmd->ExtractCommandFromRoom(this, rawDataIndex);

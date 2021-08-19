@@ -1,7 +1,7 @@
 #include "ZLimb.h"
 #include <cassert>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Limb, ZLimb);
@@ -444,26 +444,26 @@ void ZLimb::ParseRawData()
 
 	switch (type)
 	{
-	case ZLimbType::LOD:
-		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		// Intended fallthrough
-	case ZLimbType::Standard:
-		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-		break;
+		case ZLimbType::LOD:
+			dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+			// Intended fallthrough
+		case ZLimbType::Standard:
+			dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+			break;
 
-	case ZLimbType::Skin:
-		skinSegmentType =
-			static_cast<ZLimbSkinType>(BitConverter::ToInt32BE(rawData, rawDataIndex + 8));
-		skinSegment = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		if (skinSegmentType == ZLimbSkinType::SkinType_4 && skinSegment != 0)
-		{
-			uint32_t skinSegmentOffset = Seg2Filespace(skinSegment, parent->baseAddress);
-			segmentStruct = Struct_800A5E28(parent, rawData, skinSegmentOffset);
-		}
-		break;
-	default:
-		throw std::runtime_error("Invalid ZLimb type");
-		break;
+		case ZLimbType::Skin:
+			skinSegmentType =
+				static_cast<ZLimbSkinType>(BitConverter::ToInt32BE(rawData, rawDataIndex + 8));
+			skinSegment = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+			if (skinSegmentType == ZLimbSkinType::SkinType_4 && skinSegment != 0)
+			{
+				uint32_t skinSegmentOffset = Seg2Filespace(skinSegment, parent->baseAddress);
+				segmentStruct = Struct_800A5E28(parent, rawData, skinSegmentOffset);
+			}
+			break;
+		default:
+			throw std::runtime_error("Invalid ZLimb type");
+			break;
 	}
 }
 
@@ -473,38 +473,38 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 
 	switch (type)
 	{
-	case ZLimbType::Legacy:
-		if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment)
-		{
-			uint32_t childOffset = Seg2Filespace(childPtr, parent->baseAddress);
-			if (!parent->HasDeclaration(childOffset))
+		case ZLimbType::Legacy:
+			if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment)
 			{
-				ZLimb* child = new ZLimb(ZLimbType::Legacy, prefix, childOffset, parent);
-				child->GetSourceOutputCode(prefix);
-				parent->AddResource(child);
+				uint32_t childOffset = Seg2Filespace(childPtr, parent->baseAddress);
+				if (!parent->HasDeclaration(childOffset))
+				{
+					ZLimb* child = new ZLimb(ZLimbType::Legacy, prefix, childOffset, parent);
+					child->GetSourceOutputCode(prefix);
+					parent->AddResource(child);
+				}
 			}
-		}
-		if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment)
-		{
-			uint32_t siblingdOffset = Seg2Filespace(siblingPtr, parent->baseAddress);
-			if (!parent->HasDeclaration(siblingdOffset))
+			if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment)
 			{
-				ZLimb* sibling = new ZLimb(ZLimbType::Legacy, prefix, siblingdOffset, parent);
-				sibling->GetSourceOutputCode(prefix);
-				parent->AddResource(sibling);
+				uint32_t siblingdOffset = Seg2Filespace(siblingPtr, parent->baseAddress);
+				if (!parent->HasDeclaration(siblingdOffset))
+				{
+					ZLimb* sibling = new ZLimb(ZLimbType::Legacy, prefix, siblingdOffset, parent);
+					sibling->GetSourceOutputCode(prefix);
+					parent->AddResource(sibling);
+				}
 			}
-		}
-		break;
+			break;
 
-	// TODO
-	case ZLimbType::Standard:
-	case ZLimbType::LOD:
-	case ZLimbType::Skin:
-	case ZLimbType::Curve:
-		break;
+		// TODO
+		case ZLimbType::Standard:
+		case ZLimbType::LOD:
+		case ZLimbType::Skin:
+		case ZLimbType::Curve:
+			break;
 
-	case ZLimbType::Invalid:
-		break;
+		case ZLimbType::Invalid:
+			break;
 	}
 }
 
@@ -512,19 +512,19 @@ size_t ZLimb::GetRawDataSize() const
 {
 	switch (type)
 	{
-	case ZLimbType::Standard:
-	case ZLimbType::Curve:
-		return 0x0C;
+		case ZLimbType::Standard:
+		case ZLimbType::Curve:
+			return 0x0C;
 
-	case ZLimbType::LOD:
-	case ZLimbType::Skin:
-		return 0x10;
+		case ZLimbType::LOD:
+		case ZLimbType::Skin:
+			return 0x10;
 
-	case ZLimbType::Legacy:
-		return 0x20;
+		case ZLimbType::Legacy:
+			return 0x20;
 
-	case ZLimbType::Invalid:
-		break;
+		case ZLimbType::Invalid:
+			break;
 	}
 
 	return 0x0C;
@@ -561,25 +561,25 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 
 		switch (type)
 		{
-		case ZLimbType::Standard:
-			entryStr += StringHelper::Sprintf("    %s\n", dListStr.c_str());
-			break;
+			case ZLimbType::Standard:
+				entryStr += StringHelper::Sprintf("    %s\n", dListStr.c_str());
+				break;
 
-		case ZLimbType::LOD:
-		case ZLimbType::Curve:
-			entryStr +=
-				StringHelper::Sprintf("    { %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
-			break;
+			case ZLimbType::LOD:
+			case ZLimbType::Curve:
+				entryStr +=
+					StringHelper::Sprintf("    { %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
+				break;
 
-		case ZLimbType::Skin:
-			entryStr += GetSourceOutputCodeSkin(prefix);
-			break;
+			case ZLimbType::Skin:
+				entryStr += GetSourceOutputCodeSkin(prefix);
+				break;
 
-		case ZLimbType::Legacy:
-			break;
+			case ZLimbType::Legacy:
+				break;
 
-		case ZLimbType::Invalid:
-			break;
+			case ZLimbType::Invalid:
+				break;
 		}
 	}
 
@@ -618,23 +618,23 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 {
 	switch (limbType)
 	{
-	case ZLimbType::Standard:
-		return "StandardLimb";
+		case ZLimbType::Standard:
+			return "StandardLimb";
 
-	case ZLimbType::LOD:
-		return "LodLimb";
+		case ZLimbType::LOD:
+			return "LodLimb";
 
-	case ZLimbType::Skin:
-		return "SkinLimb";
+		case ZLimbType::Skin:
+			return "SkinLimb";
 
-	case ZLimbType::Curve:
-		return "SkelCurveLimb";
+		case ZLimbType::Curve:
+			return "SkelCurveLimb";
 
-	case ZLimbType::Legacy:
-		return "LegacyLimb";
+		case ZLimbType::Legacy:
+			return "LegacyLimb";
 
-	default:
-		return "StandardLimb";
+		default:
+			return "StandardLimb";
 	}
 }
 
@@ -758,26 +758,27 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 	{
 		switch (skinSegmentType)
 		{
-		case ZLimbSkinType::SkinType_4:
-			skinSegmentStr = "&" + GetSourceOutputCodeSkin_Type_4(prefix);
-			break;
-		case ZLimbSkinType::SkinType_DList:
-			skinSegmentStr = GetLimbDListSourceOutputCode(prefix, "Skin", skinSegment);
-			break;
-		default:
-			fprintf(stderr,
-			        "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type "
-			        "for SkinLimb: '%i'. \n\tPlease report this.\n",
-			        name.c_str(), static_cast<int32_t>(skinSegmentType));
-			break;
-		case ZLimbSkinType::SkinType_0:
-		case ZLimbSkinType::SkinType_5:
-			fprintf(stderr,
-			        "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Segment type for "
-			        "SkinLimb not implemented: '%i'.\n",
-			        name.c_str(), static_cast<int32_t>(skinSegmentType));
-			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
-			break;
+			case ZLimbSkinType::SkinType_4:
+				skinSegmentStr = "&" + GetSourceOutputCodeSkin_Type_4(prefix);
+				break;
+			case ZLimbSkinType::SkinType_DList:
+				skinSegmentStr = GetLimbDListSourceOutputCode(prefix, "Skin", skinSegment);
+				break;
+			default:
+				fprintf(
+					stderr,
+					"ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type "
+					"for SkinLimb: '%i'. \n\tPlease report this.\n",
+					name.c_str(), static_cast<int32_t>(skinSegmentType));
+				break;
+			case ZLimbSkinType::SkinType_0:
+			case ZLimbSkinType::SkinType_5:
+				fprintf(stderr,
+				        "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Segment type for "
+				        "SkinLimb not implemented: '%i'.\n",
+				        name.c_str(), static_cast<int32_t>(skinSegmentType));
+				skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
+				break;
 		}
 	}
 

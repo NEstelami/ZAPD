@@ -1,8 +1,8 @@
 #include "ZCollision.h"
 #include <stdint.h>
 #include <string>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Collision, ZCollisionHeader);

@@ -1,7 +1,7 @@
-#include "BuildInfo.h"
 #include <Utils/Directory.h>
 #include <Utils/File.h>
 #include <Utils/Path.h>
+#include "BuildInfo.h"
 #include "Globals.h"
 #include "Overlays/ZOverlay.h"
 #include "ZAnimation.h"
@@ -52,8 +52,8 @@ void ErrorHandler(int sig)
 		"\tTHE WIND FISH SLUMBERS LONG... \n\tTHE HERO'S LIFE GONE... "
 		"\tSEA BEARS FOAM, SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY CRASSSH!"
 		"\tYou've met with a terrible fate, haven't you?",
-		"\t?Master, I calculate a 100% probability that ZAPD has crashed. \n\tAdditionally, the batteries in your Wii Remote are nearly depleted."
-	};
+		"\t?Master, I calculate a 100% probability that ZAPD has crashed. \n\tAdditionally, the "
+		"batteries in your Wii Remote are nearly depleted."};
 
 	srand(time(nullptr));
 	auto easterIndex = rand() % ARRAY_COUNT(crashEasterEgg);
@@ -95,7 +95,8 @@ void ErrorHandler(int sig)
 
 int main(int argc, char* argv[])
 {
-	// Syntax: ZAPD.out [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] (Arbritrary Number of Arguments)
+	// Syntax: ZAPD.out [mode (btex/bovl/bsf/bblb/bmdlintr/bamnintr/e)] (Arbritrary Number of
+	// Arguments)
 
 	if (argc < 2)
 	{
@@ -244,7 +245,7 @@ int main(int argc, char* argv[])
 
 	if (fileMode == ZFileMode::Invalid)
 	{
-		printf("Error: Invalid file mode '%s'\n", buildMode.c_str());
+		fprintf(stderr, "Error: Invalid file mode '%s'\n", buildMode.c_str());
 		return 1;
 	}
 
@@ -264,6 +265,7 @@ int main(int argc, char* argv[])
 	{
 		case ZFileMode::Extract:
 		case ZFileMode::BuildSourceFile:
+		{
 			bool procFileModeSuccess = false;
 
 			if (exporterSet != nullptr && exporterSet->processFileModeFunc != nullptr)
@@ -277,11 +279,12 @@ int main(int argc, char* argv[])
 				if (!parseSuccessful)
 					return 1;
 			}
-			break;
+		}
+		break;
 
 		case ZFileMode::BuildTexture:
-			TextureType texType = Globals::Instance->texType;
-			BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
+			BuildAssetTexture(Globals::Instance->inputPath, Globals::Instance->texType,
+			                  Globals::Instance->outputPath);
 			break;
 
 		case ZFileMode::BuildBackground:
@@ -293,13 +296,18 @@ int main(int argc, char* argv[])
 			break;
 
 		case ZFileMode::BuildOverlay:
+		{
 			ZOverlay* overlay =
 				ZOverlay::FromBuild(Path::GetDirectoryName(Globals::Instance->inputPath),
-									Path::GetDirectoryName(Globals::Instance->cfgPath));
+			                        Path::GetDirectoryName(Globals::Instance->cfgPath));
 
-			if (overlay)
+			if (overlay != nullptr)
 				File::WriteAllText(Globals::Instance->outputPath.string(),
-								overlay->GetSourceOutputCode(""));
+				                   overlay->GetSourceOutputCode(""));
+		}
+		break;
+
+		default:
 			break;
 	}
 
@@ -326,7 +334,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 		return false;
 	}
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (XMLElement* child = root->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		if (std::string(child->Name()) == "File")

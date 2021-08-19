@@ -95,14 +95,14 @@ std::string ZSkeleton::GetBodySourceCode() const
 	std::string headerStr;
 	switch (type)
 	{
-	case ZSkeletonType::Normal:
-	case ZSkeletonType::Curve:
-		headerStr = StringHelper::Sprintf("\n\t%s, %i\n", limbTableName.c_str(), limbCount);
-		break;
-	case ZSkeletonType::Flex:
-		headerStr = StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(), limbCount,
-		                                  dListCount);
-		break;
+		case ZSkeletonType::Normal:
+		case ZSkeletonType::Curve:
+			headerStr = StringHelper::Sprintf("\n\t%s, %i\n", limbTableName.c_str(), limbCount);
+			break;
+		case ZSkeletonType::Flex:
+			headerStr = StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(),
+			                                  limbCount, dListCount);
+			break;
 	}
 
 	return headerStr;
@@ -112,12 +112,12 @@ size_t ZSkeleton::GetRawDataSize() const
 {
 	switch (type)
 	{
-	case ZSkeletonType::Flex:
-		return 0xC;
-	case ZSkeletonType::Normal:
-	case ZSkeletonType::Curve:
-	default:
-		return 0x8;
+		case ZSkeletonType::Flex:
+			return 0xC;
+		case ZSkeletonType::Normal:
+		case ZSkeletonType::Curve:
+		default:
+			return 0x8;
 	}
 }
 
@@ -144,12 +144,12 @@ std::string ZSkeleton::GetSourceTypeName() const
 {
 	switch (type)
 	{
-	case ZSkeletonType::Normal:
-		return "SkeletonHeader";
-	case ZSkeletonType::Flex:
-		return "FlexSkeletonHeader";
-	case ZSkeletonType::Curve:
-		return "SkelCurveLimbList";
+		case ZSkeletonType::Normal:
+			return "SkeletonHeader";
+		case ZSkeletonType::Flex:
+			return "FlexSkeletonHeader";
+		case ZSkeletonType::Curve:
+			return "SkelCurveLimbList";
 	}
 
 	return "SkeletonHeader";
@@ -287,17 +287,17 @@ std::string ZLimbTable::GetSourceTypeName() const
 {
 	switch (limbType)
 	{
-	case ZLimbType::Standard:
-	case ZLimbType::LOD:
-	case ZLimbType::Skin:
-		return "void*";
+		case ZLimbType::Standard:
+		case ZLimbType::LOD:
+		case ZLimbType::Skin:
+			return "void*";
 
-	case ZLimbType::Curve:
-	case ZLimbType::Legacy:
-		return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
+		case ZLimbType::Curve:
+		case ZLimbType::Legacy:
+			return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
 
-	case ZLimbType::Invalid:
-		assert("Invalid limb type.\n");
+		case ZLimbType::Invalid:
+			assert("Invalid limb type.\n");
 	}
 
 	return "ERROR";

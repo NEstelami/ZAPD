@@ -1,8 +1,8 @@
 #include "ZVector.h"
 #include <assert.h>
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 
@@ -66,20 +66,22 @@ std::string ZVector::GetSourceTypeName() const
 	{
 		switch (scalarType)
 		{
-		case ZScalarType::ZSCALAR_F32:
-			return "Vec3f";
+			case ZScalarType::ZSCALAR_F32:
+				return "Vec3f";
 
-		case ZScalarType::ZSCALAR_S16:
-			return "Vec3s";
-		
-		case ZScalarType::ZSCALAR_S32:
-			return "Vec3i";
+			case ZScalarType::ZSCALAR_S16:
+				return "Vec3s";
+
+			case ZScalarType::ZSCALAR_S32:
+				return "Vec3i";
+			default:
+				break;
 		}
 	}
-	
-	std::string output = StringHelper::Sprintf(
-		"Encountered unsupported vector type: %d dimensions, %s type", dimensions,
-		ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
+
+	std::string output =
+		StringHelper::Sprintf("Encountered unsupported vector type: %d dimensions, %s type",
+	                          dimensions, ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
 
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		printf("%s\n", output.c_str());

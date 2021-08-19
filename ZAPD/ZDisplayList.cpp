@@ -6,9 +6,9 @@
 #include <cassert>
 #include <chrono>
 #include <math.h>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 
@@ -89,190 +89,190 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 {
 	switch (opcode)
 	{
-	case F3DZEXOpcode::G_NOOP:
-		sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
-		break;
-	case F3DZEXOpcode::G_DL:
-		Opcode_G_DL(data, prefix, line);
-		break;
-	case F3DZEXOpcode::G_MODIFYVTX:
-		Opcode_G_MODIFYVTX(data, line);
-		break;
-	case F3DZEXOpcode::G_CULLDL:
-		Opcode_G_CULLDL(data, line);
-		break;
-	case F3DZEXOpcode::G_TRI1:
-		Opcode_G_TRI1(data, line);
-		break;
-	case F3DZEXOpcode::G_TRI2:
-		Opcode_G_TRI2(data, line);
-		break;
-	case F3DZEXOpcode::G_QUAD:
-	{
-		int32_t aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
-		int32_t bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
-		int32_t cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
-		int32_t dd = ((data & 0x000000000000FFULL)) / 2;
-		sprintf(line, "gsSP1Quadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
-	}
-	break;
-	case F3DZEXOpcode::G_VTX:
-		Opcode_G_VTX(data, line);
-		break;
-	case F3DZEXOpcode::G_SETTIMG:  // HOTSPOT
-		Opcode_G_SETTIMG(data, prefix, line);
-		break;
-	case F3DZEXOpcode::G_GEOMETRYMODE:
-	{
-		int32_t cccccc = (data & 0x00FFFFFF00000000) >> 32;
-		int32_t ssssssss = (data & 0xFFFFFFFF);
-		std::string geoModeStr = "G_TEXTURE_ENABLE";
-
-		int32_t geoModeParam = ~cccccc;
-
-		if (ssssssss != 0)
-			geoModeParam = ssssssss;
-
-		if (geoModeParam & 0x00000001)
-			geoModeStr += " | G_ZBUFFER";
-
-		if (geoModeParam & 0x00000004)
-			geoModeStr += " | G_SHADE";
-
-		if (geoModeParam & 0x00000200)
-			geoModeStr += " | G_CULL_FRONT";
-
-		if (geoModeParam & 0x00000400)
-			geoModeStr += " | G_CULL_BACK";
-
-		if (geoModeParam & 0x00010000)
-			geoModeStr += " | G_FOG";
-
-		if (geoModeParam & 0x00020000)
-			geoModeStr += " | G_LIGHTING";
-
-		if (geoModeParam & 0x00040000)
-			geoModeStr += " | G_TEXTURE_GEN";
-
-		if (geoModeParam & 0x00080000)
-			geoModeStr += " | G_TEXTURE_GEN_LINEAR";
-
-		if (geoModeParam & 0x00200000)
-			geoModeStr += " | G_SHADING_SMOOTH";
-
-		if (geoModeParam & 0x00800000)
-			geoModeStr += " | G_CLIPPING";
-
-		if (ssssssss != 0)
+		case F3DZEXOpcode::G_NOOP:
+			sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
+			break;
+		case F3DZEXOpcode::G_DL:
+			Opcode_G_DL(data, prefix, line);
+			break;
+		case F3DZEXOpcode::G_MODIFYVTX:
+			Opcode_G_MODIFYVTX(data, line);
+			break;
+		case F3DZEXOpcode::G_CULLDL:
+			Opcode_G_CULLDL(data, line);
+			break;
+		case F3DZEXOpcode::G_TRI1:
+			Opcode_G_TRI1(data, line);
+			break;
+		case F3DZEXOpcode::G_TRI2:
+			Opcode_G_TRI2(data, line);
+			break;
+		case F3DZEXOpcode::G_QUAD:
 		{
-			if ((~cccccc & 0xFF000000) != 0)
-				sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
+			int32_t aa = ((data & 0x00FF000000000000ULL) >> 48) / 2;
+			int32_t bb = ((data & 0x0000FF0000000000ULL) >> 40) / 2;
+			int32_t cc = ((data & 0x000000FF00000000ULL) >> 32) / 2;
+			int32_t dd = ((data & 0x000000000000FFULL)) / 2;
+			sprintf(line, "gsSP1Quadrangle(%i, %i, %i, %i, 0),", aa, bb, cc, dd);
+		}
+		break;
+		case F3DZEXOpcode::G_VTX:
+			Opcode_G_VTX(data, line);
+			break;
+		case F3DZEXOpcode::G_SETTIMG:  // HOTSPOT
+			Opcode_G_SETTIMG(data, prefix, line);
+			break;
+		case F3DZEXOpcode::G_GEOMETRYMODE:
+		{
+			int32_t cccccc = (data & 0x00FFFFFF00000000) >> 32;
+			int32_t ssssssss = (data & 0xFFFFFFFF);
+			std::string geoModeStr = "G_TEXTURE_ENABLE";
+
+			int32_t geoModeParam = ~cccccc;
+
+			if (ssssssss != 0)
+				geoModeParam = ssssssss;
+
+			if (geoModeParam & 0x00000001)
+				geoModeStr += " | G_ZBUFFER";
+
+			if (geoModeParam & 0x00000004)
+				geoModeStr += " | G_SHADE";
+
+			if (geoModeParam & 0x00000200)
+				geoModeStr += " | G_CULL_FRONT";
+
+			if (geoModeParam & 0x00000400)
+				geoModeStr += " | G_CULL_BACK";
+
+			if (geoModeParam & 0x00010000)
+				geoModeStr += " | G_FOG";
+
+			if (geoModeParam & 0x00020000)
+				geoModeStr += " | G_LIGHTING";
+
+			if (geoModeParam & 0x00040000)
+				geoModeStr += " | G_TEXTURE_GEN";
+
+			if (geoModeParam & 0x00080000)
+				geoModeStr += " | G_TEXTURE_GEN_LINEAR";
+
+			if (geoModeParam & 0x00200000)
+				geoModeStr += " | G_SHADING_SMOOTH";
+
+			if (geoModeParam & 0x00800000)
+				geoModeStr += " | G_CLIPPING";
+
+			if (ssssssss != 0)
+			{
+				if ((~cccccc & 0xFF000000) != 0)
+					sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
+				else
+					sprintf(line, "gsSPLoadGeometryMode(%s),", geoModeStr.c_str());
+			}
 			else
-				sprintf(line, "gsSPLoadGeometryMode(%s),", geoModeStr.c_str());
+				sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
 		}
-		else
-			sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
-	}
-	break;
-	case F3DZEXOpcode::G_SETPRIMCOLOR:
-		Opcode_G_SETPRIMCOLOR(data, line);
 		break;
-	case F3DZEXOpcode::G_SETOTHERMODE_L:
-		Opcode_G_SETOTHERMODE_L(data, line);
-		break;
-	case F3DZEXOpcode::G_SETOTHERMODE_H:
-		Opcode_G_SETOTHERMODE_H(data, line);
-		break;
-	case F3DZEXOpcode::G_SETTILE:
-		Opcode_G_SETTILE(data, line);
-		break;
-	case F3DZEXOpcode::G_SETTILESIZE:
-		Opcode_G_SETTILESIZE(data, prefix, line);
-		break;
-	case F3DZEXOpcode::G_LOADBLOCK:
-		Opcode_G_LOADBLOCK(data, line);
-		break;
-	case F3DZEXOpcode::G_TEXTURE:
-		Opcode_G_TEXTURE(data, line);
-		break;
-	case F3DZEXOpcode::G_RDPSETOTHERMODE:
-	{
-		int32_t hhhhhh = (data & 0x00FFFFFF00000000) >> 32;
-		int32_t llllllll = (data & 0x00000000FFFFFFFF);
-
-		sprintf(line, "gsDPSetOtherMode(%i, %i),", hhhhhh, llllllll);
-	}
-	break;
-	case F3DZEXOpcode::G_POPMTX:
-	{
-		sprintf(line, "gsSPPopMatrix(%li),", data);
-	}
-	break;
-	case F3DZEXOpcode::G_LOADTLUT:
-		Opcode_G_LOADTLUT(data, prefix, line);
-		break;
-	case F3DZEXOpcode::G_SETENVCOLOR:
-	{
-		uint8_t r = (uint8_t)((data & 0xFF000000) >> 24);
-		uint8_t g = (uint8_t)((data & 0x00FF0000) >> 16);
-		uint8_t b = (uint8_t)((data & 0xFF00FF00) >> 8);
-		uint8_t a = (uint8_t)((data & 0x000000FF) >> 0);
-
-		sprintf(line, "gsDPSetEnvColor(%i, %i, %i, %i),", r, g, b, a);
-	}
-	break;
-	case F3DZEXOpcode::G_SETCOMBINE:
-	{
-		Opcode_G_SETCOMBINE(data, line);
-	}
-	break;
-	case F3DZEXOpcode::G_RDPLOADSYNC:
-		sprintf(line, "gsDPLoadSync(),");
-		break;
-	case F3DZEXOpcode::G_RDPPIPESYNC:
-		sprintf(line, "gsDPPipeSync(),");
-		break;
-	case F3DZEXOpcode::G_RDPTILESYNC:
-		sprintf(line, "gsDPTileSync(),");
-		break;
-	case F3DZEXOpcode::G_RDPFULLSYNC:
-		sprintf(line, "gsDPFullSync(),");
-		break;
-	case F3DZEXOpcode::G_ENDDL:
-		Opcode_G_ENDDL(prefix, line);
-		break;
-	case F3DZEXOpcode::G_RDPHALF_1:
-	{
-		uint64_t data2 = instructions[i + 1];
-		uint32_t h = (data & 0xFFFFFFFF);
-		F3DZEXOpcode opcode2 = (F3DZEXOpcode)(instructions[i + 1] >> 56);
-
-		if (opcode2 == F3DZEXOpcode::G_BRANCH_Z)
+		case F3DZEXOpcode::G_SETPRIMCOLOR:
+			Opcode_G_SETPRIMCOLOR(data, line);
+			break;
+		case F3DZEXOpcode::G_SETOTHERMODE_L:
+			Opcode_G_SETOTHERMODE_L(data, line);
+			break;
+		case F3DZEXOpcode::G_SETOTHERMODE_H:
+			Opcode_G_SETOTHERMODE_H(data, line);
+			break;
+		case F3DZEXOpcode::G_SETTILE:
+			Opcode_G_SETTILE(data, line);
+			break;
+		case F3DZEXOpcode::G_SETTILESIZE:
+			Opcode_G_SETTILESIZE(data, prefix, line);
+			break;
+		case F3DZEXOpcode::G_LOADBLOCK:
+			Opcode_G_LOADBLOCK(data, line);
+			break;
+		case F3DZEXOpcode::G_TEXTURE:
+			Opcode_G_TEXTURE(data, line);
+			break;
+		case F3DZEXOpcode::G_RDPSETOTHERMODE:
 		{
-			uint32_t a = (data2 & 0x00FFF00000000000) >> 44;
-			uint32_t b = (data2 & 0x00000FFF00000000) >> 32;
-			uint32_t z = (data2 & 0x00000000FFFFFFFF) >> 0;
+			int32_t hhhhhh = (data & 0x00FFFFFF00000000) >> 32;
+			int32_t llllllll = (data & 0x00000000FFFFFFFF);
 
-			// sprintf(line, "gsDPWord(%i, 0),", h);
-			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
-			        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
-
-			ZDisplayList* nList = new ZDisplayList(
-				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
-				parent);
-			nList->scene = scene;
-			otherDLists.push_back(nList);
-
-			i++;
+			sprintf(line, "gsDPSetOtherMode(%i, %i),", hhhhhh, llllllll);
 		}
-	}
-	break;
-	case F3DZEXOpcode::G_MTX:
-		Opcode_G_MTX(data, line);
 		break;
-	default:
-		sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
+		case F3DZEXOpcode::G_POPMTX:
+		{
+			sprintf(line, "gsSPPopMatrix(%li),", data);
+		}
 		break;
+		case F3DZEXOpcode::G_LOADTLUT:
+			Opcode_G_LOADTLUT(data, prefix, line);
+			break;
+		case F3DZEXOpcode::G_SETENVCOLOR:
+		{
+			uint8_t r = (uint8_t)((data & 0xFF000000) >> 24);
+			uint8_t g = (uint8_t)((data & 0x00FF0000) >> 16);
+			uint8_t b = (uint8_t)((data & 0xFF00FF00) >> 8);
+			uint8_t a = (uint8_t)((data & 0x000000FF) >> 0);
+
+			sprintf(line, "gsDPSetEnvColor(%i, %i, %i, %i),", r, g, b, a);
+		}
+		break;
+		case F3DZEXOpcode::G_SETCOMBINE:
+		{
+			Opcode_G_SETCOMBINE(data, line);
+		}
+		break;
+		case F3DZEXOpcode::G_RDPLOADSYNC:
+			sprintf(line, "gsDPLoadSync(),");
+			break;
+		case F3DZEXOpcode::G_RDPPIPESYNC:
+			sprintf(line, "gsDPPipeSync(),");
+			break;
+		case F3DZEXOpcode::G_RDPTILESYNC:
+			sprintf(line, "gsDPTileSync(),");
+			break;
+		case F3DZEXOpcode::G_RDPFULLSYNC:
+			sprintf(line, "gsDPFullSync(),");
+			break;
+		case F3DZEXOpcode::G_ENDDL:
+			Opcode_G_ENDDL(prefix, line);
+			break;
+		case F3DZEXOpcode::G_RDPHALF_1:
+		{
+			uint64_t data2 = instructions[i + 1];
+			uint32_t h = (data & 0xFFFFFFFF);
+			F3DZEXOpcode opcode2 = (F3DZEXOpcode)(instructions[i + 1] >> 56);
+
+			if (opcode2 == F3DZEXOpcode::G_BRANCH_Z)
+			{
+				uint32_t a = (data2 & 0x00FFF00000000000) >> 44;
+				uint32_t b = (data2 & 0x00000FFF00000000) >> 32;
+				uint32_t z = (data2 & 0x00000000FFFFFFFF) >> 0;
+
+				// sprintf(line, "gsDPWord(%i, 0),", h);
+				sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
+				        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
+
+				ZDisplayList* nList = new ZDisplayList(
+					h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
+					parent);
+				nList->scene = scene;
+				otherDLists.push_back(nList);
+
+				i++;
+			}
+		}
+		break;
+		case F3DZEXOpcode::G_MTX:
+			Opcode_G_MTX(data, line);
+			break;
+		default:
+			sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
+			break;
 	}
 }
 
@@ -280,129 +280,129 @@ void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, std::string pre
 {
 	switch (opcode)
 	{
-	case F3DEXOpcode::G_NOOP:
-		sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
-		break;
-	case F3DEXOpcode::G_VTX:
-		Opcode_G_VTX(data, line);
-		break;
-	case F3DEXOpcode::G_DL:
-		Opcode_G_DL(data, prefix, line);
-		break;
-	case F3DEXOpcode::G_CULLDL:
-		Opcode_G_CULLDL(data, line);
-		break;
-	case F3DEXOpcode::G_MODIFYVTX:
-		Opcode_G_MODIFYVTX(data, line);
-		break;
-	case F3DEXOpcode::G_MTX:
-		Opcode_G_MTX(data, line);
-		break;
-	case F3DEXOpcode::G_TRI1:
-		Opcode_G_TRI1(data, line);
-		break;
-	case F3DEXOpcode::G_TRI2:
-		Opcode_G_TRI2(data, line);
-		break;
-	case F3DEXOpcode::G_ENDDL:
-		Opcode_G_ENDDL(prefix, line);
-		break;
-	case F3DEXOpcode::G_RDPLOADSYNC:
-		sprintf(line, "gsDPLoadSync(),");
-		break;
-	case F3DEXOpcode::G_RDPPIPESYNC:
-		sprintf(line, "gsDPPipeSync(),");
-		break;
-	case F3DEXOpcode::G_RDPTILESYNC:
-		sprintf(line, "gsDPTileSync(),");
-		break;
-	case F3DEXOpcode::G_RDPFULLSYNC:
-		sprintf(line, "gsDPFullSync(),");
-		break;
-	case F3DEXOpcode::G_TEXTURE:
-		Opcode_G_TEXTURE(data, line);
-		break;
-	case F3DEXOpcode::G_SETTIMG:
-		Opcode_G_SETTIMG(data, prefix, line);
-		break;
-	case F3DEXOpcode::G_SETTILE:
-		Opcode_G_SETTILE(data, line);
-		break;
-	case F3DEXOpcode::G_SETTILESIZE:
-		Opcode_G_SETTILESIZE(data, prefix, line);
-		break;
-	case F3DEXOpcode::G_LOADBLOCK:
-		Opcode_G_LOADBLOCK(data, line);
-		break;
-	case F3DEXOpcode::G_SETCOMBINE:
-		Opcode_G_SETCOMBINE(data, line);
-		break;
-	case F3DEXOpcode::G_SETPRIMCOLOR:
-		Opcode_G_SETPRIMCOLOR(data, line);
-		break;
-	case F3DEXOpcode::G_SETOTHERMODE_L:
-		Opcode_G_SETOTHERMODE_L(data, line);
-		break;
-	case F3DEXOpcode::G_SETOTHERMODE_H:
-		Opcode_G_SETOTHERMODE_H(data, line);
-		break;
-	case F3DEXOpcode::G_LOADTLUT:
-		Opcode_G_LOADTLUT(data, prefix, line);
-		break;
-	case F3DEXOpcode::G_CLEARGEOMETRYMODE:
-	case F3DEXOpcode::G_SETGEOMETRYMODE:
-	{
-		int32_t cccccc = (data & 0x00FFFFFF00000000) >> 32;
-		int32_t ssssssss = (data & 0xFFFFFFFF);
-		std::string geoModeStr = "G_TEXTURE_ENABLE";
+		case F3DEXOpcode::G_NOOP:
+			sprintf(line, "gsDPNoOpTag(0x%08lX),", data & 0xFFFFFFFF);
+			break;
+		case F3DEXOpcode::G_VTX:
+			Opcode_G_VTX(data, line);
+			break;
+		case F3DEXOpcode::G_DL:
+			Opcode_G_DL(data, prefix, line);
+			break;
+		case F3DEXOpcode::G_CULLDL:
+			Opcode_G_CULLDL(data, line);
+			break;
+		case F3DEXOpcode::G_MODIFYVTX:
+			Opcode_G_MODIFYVTX(data, line);
+			break;
+		case F3DEXOpcode::G_MTX:
+			Opcode_G_MTX(data, line);
+			break;
+		case F3DEXOpcode::G_TRI1:
+			Opcode_G_TRI1(data, line);
+			break;
+		case F3DEXOpcode::G_TRI2:
+			Opcode_G_TRI2(data, line);
+			break;
+		case F3DEXOpcode::G_ENDDL:
+			Opcode_G_ENDDL(prefix, line);
+			break;
+		case F3DEXOpcode::G_RDPLOADSYNC:
+			sprintf(line, "gsDPLoadSync(),");
+			break;
+		case F3DEXOpcode::G_RDPPIPESYNC:
+			sprintf(line, "gsDPPipeSync(),");
+			break;
+		case F3DEXOpcode::G_RDPTILESYNC:
+			sprintf(line, "gsDPTileSync(),");
+			break;
+		case F3DEXOpcode::G_RDPFULLSYNC:
+			sprintf(line, "gsDPFullSync(),");
+			break;
+		case F3DEXOpcode::G_TEXTURE:
+			Opcode_G_TEXTURE(data, line);
+			break;
+		case F3DEXOpcode::G_SETTIMG:
+			Opcode_G_SETTIMG(data, prefix, line);
+			break;
+		case F3DEXOpcode::G_SETTILE:
+			Opcode_G_SETTILE(data, line);
+			break;
+		case F3DEXOpcode::G_SETTILESIZE:
+			Opcode_G_SETTILESIZE(data, prefix, line);
+			break;
+		case F3DEXOpcode::G_LOADBLOCK:
+			Opcode_G_LOADBLOCK(data, line);
+			break;
+		case F3DEXOpcode::G_SETCOMBINE:
+			Opcode_G_SETCOMBINE(data, line);
+			break;
+		case F3DEXOpcode::G_SETPRIMCOLOR:
+			Opcode_G_SETPRIMCOLOR(data, line);
+			break;
+		case F3DEXOpcode::G_SETOTHERMODE_L:
+			Opcode_G_SETOTHERMODE_L(data, line);
+			break;
+		case F3DEXOpcode::G_SETOTHERMODE_H:
+			Opcode_G_SETOTHERMODE_H(data, line);
+			break;
+		case F3DEXOpcode::G_LOADTLUT:
+			Opcode_G_LOADTLUT(data, prefix, line);
+			break;
+		case F3DEXOpcode::G_CLEARGEOMETRYMODE:
+		case F3DEXOpcode::G_SETGEOMETRYMODE:
+		{
+			int32_t cccccc = (data & 0x00FFFFFF00000000) >> 32;
+			int32_t ssssssss = (data & 0xFFFFFFFF);
+			std::string geoModeStr = "G_TEXTURE_ENABLE";
 
-		int32_t geoModeParam = ~cccccc;
+			int32_t geoModeParam = ~cccccc;
 
-		if (ssssssss != 0)
-			geoModeParam = ssssssss;
+			if (ssssssss != 0)
+				geoModeParam = ssssssss;
 
-		if (geoModeParam & 0x00000002)
-			geoModeStr += " | G_TEXTURE_ENABLE";
+			if (geoModeParam & 0x00000002)
+				geoModeStr += " | G_TEXTURE_ENABLE";
 
-		if (geoModeParam & 0x00000200)
-			geoModeStr += " | G_SHADING_SMOOTH";
+			if (geoModeParam & 0x00000200)
+				geoModeStr += " | G_SHADING_SMOOTH";
 
-		if (geoModeParam & 0x00001000)
-			geoModeStr += " | G_CULL_FRONT";
+			if (geoModeParam & 0x00001000)
+				geoModeStr += " | G_CULL_FRONT";
 
-		if (geoModeParam & 0x00002000)
-			geoModeStr += " | G_CULL_BACK";
+			if (geoModeParam & 0x00002000)
+				geoModeStr += " | G_CULL_BACK";
 
-		if (geoModeParam & 0x00000001)
-			geoModeStr += " | G_ZBUFFER";
+			if (geoModeParam & 0x00000001)
+				geoModeStr += " | G_ZBUFFER";
 
-		if (geoModeParam & 0x00000004)
-			geoModeStr += " | G_SHADE";
+			if (geoModeParam & 0x00000004)
+				geoModeStr += " | G_SHADE";
 
-		if (geoModeParam & 0x00010000)
-			geoModeStr += " | G_FOG";
+			if (geoModeParam & 0x00010000)
+				geoModeStr += " | G_FOG";
 
-		if (geoModeParam & 0x00020000)
-			geoModeStr += " | G_LIGHTING";
+			if (geoModeParam & 0x00020000)
+				geoModeStr += " | G_LIGHTING";
 
-		if (geoModeParam & 0x00040000)
-			geoModeStr += " | G_TEXTURE_GEN";
+			if (geoModeParam & 0x00040000)
+				geoModeStr += " | G_TEXTURE_GEN";
 
-		if (geoModeParam & 0x00080000)
-			geoModeStr += " | G_TEXTURE_GEN_LINEAR";
+			if (geoModeParam & 0x00080000)
+				geoModeStr += " | G_TEXTURE_GEN_LINEAR";
 
-		if (geoModeParam & 0x00800000)
-			geoModeStr += " | G_CLIPPING";
+			if (geoModeParam & 0x00800000)
+				geoModeStr += " | G_CLIPPING";
 
-		if (opcode == F3DEXOpcode::G_SETGEOMETRYMODE)
-			sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
-		else
-			sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
-	}
-	break;
-	default:
-		sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
+			if (opcode == F3DEXOpcode::G_SETGEOMETRYMODE)
+				sprintf(line, "gsSPSetGeometryMode(%s),", geoModeStr.c_str());
+			else
+				sprintf(line, "gsSPClearGeometryMode(%s),", geoModeStr.c_str());
+		}
 		break;
+		default:
+			sprintf(line, "// Opcode 0x%02X unimplemented!", (uint32_t)opcode);
+			break;
 	}
 }
 
@@ -1553,29 +1553,29 @@ static int32_t GfxdCallback_FormatSingleEntry(void)
 
 	switch (macroId)
 	{
-	case gfxd_SP1Triangle:
-	case gfxd_SP2Triangles:
-		if (self->lastTexture != nullptr && self->lastTexture->IsColorIndexed() &&
-		    !self->lastTexture->HasTlut())
-		{
-			auto tex = self->lastTexture;
-			auto tlut = self->lastTlut;
-
-			if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+		case gfxd_SP1Triangle:
+		case gfxd_SP2Triangles:
+			if (self->lastTexture != nullptr && self->lastTexture->IsColorIndexed() &&
+			    !self->lastTexture->HasTlut())
 			{
-				if (tlut != nullptr)
-					printf("CI texture '%s' (0x%X), TLUT: '%s' (0x%X)\n", tex->GetName().c_str(),
-					       tex->GetRawDataIndex(), tlut->GetName().c_str(),
-					       tlut->GetRawDataIndex());
-				else
-					printf("CI texture '%s' (0x%X), TLUT: null\n", tex->GetName().c_str(),
-					       tex->GetRawDataIndex());
-			}
+				auto tex = self->lastTexture;
+				auto tlut = self->lastTlut;
 
-			if (tlut != nullptr && !tex->HasTlut())
-				tex->SetTlut(tlut);
-		}
-		break;
+				if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+				{
+					if (tlut != nullptr)
+						printf("CI texture '%s' (0x%X), TLUT: '%s' (0x%X)\n",
+						       tex->GetName().c_str(), tex->GetRawDataIndex(),
+						       tlut->GetName().c_str(), tlut->GetRawDataIndex());
+					else
+						printf("CI texture '%s' (0x%X), TLUT: null\n", tex->GetName().c_str(),
+						       tex->GetRawDataIndex());
+				}
+
+				if (tlut != nullptr && !tex->HasTlut())
+					tex->SetTlut(tlut);
+			}
+			break;
 	}
 
 	// dont print a new line after the last command

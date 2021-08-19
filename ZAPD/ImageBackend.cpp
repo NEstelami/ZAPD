@@ -49,21 +49,21 @@ void ImageBackend::ReadPng(const char* filename)
 	printf("ColorType: ");
 	switch (colorType)
 	{
-	case PNG_COLOR_TYPE_RGBA:
-		printf("PNG_COLOR_TYPE_RGBA\n");
-		break;
+		case PNG_COLOR_TYPE_RGBA:
+			printf("PNG_COLOR_TYPE_RGBA\n");
+			break;
 
-	case PNG_COLOR_TYPE_RGB:
-		printf("PNG_COLOR_TYPE_RGB\n");
-		break;
+		case PNG_COLOR_TYPE_RGB:
+			printf("PNG_COLOR_TYPE_RGB\n");
+			break;
 
-	case PNG_COLOR_TYPE_PALETTE:
-		printf("PNG_COLOR_TYPE_PALETTE\n");
-		break;
+		case PNG_COLOR_TYPE_PALETTE:
+			printf("PNG_COLOR_TYPE_PALETTE\n");
+			break;
 
-	default:
-		printf("%u\n", colorType);
-		break;
+		default:
+			printf("%u\n", colorType);
+			break;
 	}
 	printf("BitDepth: %u\n", bitDepth);
 	printf("\n");
@@ -216,7 +216,8 @@ void ImageBackend::WritePng(const char* filename)
 
 void ImageBackend::WritePng(const fs::path& filename)
 {
-	// Note: The .string() is necessary for MSVC, due to the implementation of std::filesystem differing from GCC. Do not remove!
+	// Note: The .string() is necessary for MSVC, due to the implementation of std::filesystem
+	// differing from GCC. Do not remove!
 	WritePng(filename.string().c_str());
 }
 
@@ -419,17 +420,18 @@ double ImageBackend::GetBytesPerPixel() const
 {
 	switch (colorType)
 	{
-	case PNG_COLOR_TYPE_RGBA:
-		return 4 * bitDepth / 8;
+		case PNG_COLOR_TYPE_RGBA:
+			return 4 * bitDepth / 8;
 
-	case PNG_COLOR_TYPE_RGB:
-		return 3 * bitDepth / 8;
+		case PNG_COLOR_TYPE_RGB:
+			return 3 * bitDepth / 8;
 
-	case PNG_COLOR_TYPE_PALETTE:
-		return 1 * bitDepth / 8;
+		case PNG_COLOR_TYPE_PALETTE:
+			return 1 * bitDepth / 8;
 
-	default:
-		throw std::invalid_argument("ImageBackend::GetBytesPerPixel():\n\t Invalid color type.");
+		default:
+			throw std::invalid_argument(
+				"ImageBackend::GetBytesPerPixel():\n\t Invalid color type.");
 	}
 }
 

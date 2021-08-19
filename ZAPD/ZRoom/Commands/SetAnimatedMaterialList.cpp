@@ -1,7 +1,7 @@
 #include "SetAnimatedMaterialList.h"
 
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
@@ -41,53 +41,55 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 
 		switch (texture.type)
 		{
-		case 0:
-		case 1:
-			for (const auto& param : texture.params)
-			{
-				declaration += param->GenerateSourceCode(zRoom, texture.segmentOffset);
+			case 0:
+			case 1:
+				for (const auto& param : texture.params)
+				{
+					declaration += param->GenerateSourceCode(zRoom, texture.segmentOffset);
 
-				if (index < texture.params.size() - 1)
-					declaration += "\n";
+					if (index < texture.params.size() - 1)
+						declaration += "\n";
 
-				index++;
-			}
+					index++;
+				}
 
-			declSize = texture.params.size() * 4;
-			declTypeName = "AnimatedMatTexScrollParams";
+				declSize = texture.params.size() * 4;
+				declTypeName = "AnimatedMatTexScrollParams";
 
-			parent->AddDeclarationArray(texture.segmentOffset, DeclarationAlignment::Align4,
-			                            declSize, declTypeName, declName, texture.params.size(),
-			                            declaration);
-			break;
-		case 2:
-		case 3:
-		case 4:
-			declSize = texture.params.at(0)->GetParamsSize();
-			declTypeName = "AnimatedMatColorParams";
-			declaration = texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
+				parent->AddDeclarationArray(texture.segmentOffset, DeclarationAlignment::Align4,
+				                            declSize, declTypeName, declName, texture.params.size(),
+				                            declaration);
+				break;
+			case 2:
+			case 3:
+			case 4:
+				declSize = texture.params.at(0)->GetParamsSize();
+				declTypeName = "AnimatedMatColorParams";
+				declaration =
+					texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
 
-			parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4, declSize,
-			                       declTypeName, declName,
-			                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
-			break;
-		case 5:
-			declSize = texture.params.at(0)->GetParamsSize();
-			declTypeName = "AnimatedMatTexCycleParams";
-			declaration = texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
+				parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4,
+				                       declSize, declTypeName, declName,
+				                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
+				break;
+			case 5:
+				declSize = texture.params.at(0)->GetParamsSize();
+				declTypeName = "AnimatedMatTexCycleParams";
+				declaration =
+					texture.params.at(0)->GenerateSourceCode(zRoom, texture.segmentOffset);
 
-			parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4, declSize,
-			                       declTypeName, declName,
-			                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
-			break;
-		case 6:
-			continue;
+				parent->AddDeclaration(texture.segmentOffset, DeclarationAlignment::Align4,
+				                       declSize, declTypeName, declName,
+				                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
+				break;
+			case 6:
+				continue;
 
-		default:
-			throw std::runtime_error(
-				StringHelper::Sprintf("Error in SetAnimatedMaterialList::DeclareReferences (%s)\n"
-			                          "\t Unknown texture.type: %i\n",
-			                          nameStr.c_str(), texture.type));
+			default:
+				throw std::runtime_error(StringHelper::Sprintf(
+					"Error in SetAnimatedMaterialList::DeclareReferences (%s)\n"
+					"\t Unknown texture.type: %i\n",
+					nameStr.c_str(), texture.type));
 		}
 	}
 
@@ -150,23 +152,23 @@ AnimatedMaterial::AnimatedMaterial(const std::vector<uint8_t>& rawData, uint32_t
 
 	switch (type)
 	{
-	case 0:
-		params.push_back(std::make_shared<ScrollingTexture>(rawData, segmentOffset));
-		break;
-	case 1:
-		params.push_back(std::make_shared<ScrollingTexture>(rawData, segmentOffset));
-		params.push_back(std::make_shared<ScrollingTexture>(rawData, segmentOffset + 4));
-		break;
-	case 2:
-	case 3:
-	case 4:
-		params.push_back(std::make_shared<FlashingTexture>(rawData, segmentOffset, type));
-		break;
-	case 5:
-		params.push_back(std::make_shared<AnimatedMatTexCycleParams>(rawData, segmentOffset));
-		break;
-	case 6:  // Some terminator when there are no animated textures?
-		break;
+		case 0:
+			params.push_back(std::make_shared<ScrollingTexture>(rawData, segmentOffset));
+			break;
+		case 1:
+			params.push_back(std::make_shared<ScrollingTexture>(rawData, segmentOffset));
+			params.push_back(std::make_shared<ScrollingTexture>(rawData, segmentOffset + 4));
+			break;
+		case 2:
+		case 3:
+		case 4:
+			params.push_back(std::make_shared<FlashingTexture>(rawData, segmentOffset, type));
+			break;
+		case 5:
+			params.push_back(std::make_shared<AnimatedMatTexCycleParams>(rawData, segmentOffset));
+			break;
+		case 6:  // Some terminator when there are no animated textures?
+			break;
 	}
 }
 

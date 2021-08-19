@@ -33,7 +33,5 @@ public:
 			if (!Exists(curPath))
 				fs::create_directory(curPath);
 		}
-
-		// fs::create_directory(path);
 	}
 };
