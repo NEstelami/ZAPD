@@ -152,7 +152,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		// Check for repeated attributes.
 		if (offsetXml != nullptr)
 		{
-			rawDataIndex = strtol(StringHelper::Split(offsetXml, "0x")[1].c_str(), NULL, 16);
+			rawDataIndex = strtol(StringHelper::Split(offsetXml, "0x")[1].c_str(), nullptr, 16);
 
 			if (offsetSet.find(offsetXml) != offsetSet.end())
 			{

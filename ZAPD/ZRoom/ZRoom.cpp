@@ -84,8 +84,8 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 	     child = child->NextSiblingElement())
 	{
 		std::string childName =
-			child->Attribute("Name") == NULL ? "" : std::string(child->Attribute("Name"));
-		std::string childComment = child->Attribute("Comment") == NULL ?
+			child->Attribute("Name") == nullptr ? "" : std::string(child->Attribute("Name"));
+		std::string childComment = child->Attribute("Comment") == nullptr ?
                                        "" :
                                        "// " + std::string(child->Attribute("Comment")) + "\n";
 
@@ -93,7 +93,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 		if (std::string(child->Name()) == "DListHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), nullptr, 16);
 
 			ZDisplayList* dList = new ZDisplayList(
 				address,
@@ -110,7 +110,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 		else if (std::string(child->Name()) == "CutsceneHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), nullptr, 16);
 
 			ZCutscene* cutscene = new ZCutscene(parent);
 			cutscene->SetInnerNode(true);
@@ -123,14 +123,14 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 		else if (std::string(child->Name()) == "AltHeaderHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), nullptr, 16);
 
 			uint32_t commandsCount = UINT32_MAX;
 
-			if (child->FindAttribute("Count") != NULL)
+			if (child->FindAttribute("Count") != nullptr)
 			{
 				std::string commandCountStr = child->Attribute("Count");
-				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
+				commandsCount = strtol(commandCountStr.c_str(), nullptr, 10);
 			}
 
 			commandSets.push_back(CommandSet(address, commandsCount));
@@ -138,7 +138,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 		else if (std::string(child->Name()) == "PathHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
+			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), nullptr, 16);
 
 			// TODO: add this to command set
 			ZPath* pathway = new ZPath(parent);

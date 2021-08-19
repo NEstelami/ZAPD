@@ -47,7 +47,7 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 			if (root == nullptr)
 				return "ERROR";
 
-			for (XMLElement* child = root->FirstChildElement(); child != NULL;
+			for (XMLElement* child = root->FirstChildElement(); child != nullptr;
 			     child = child->NextSiblingElement())
 			{
 				if (std::string(child->Name()) == "File")
@@ -82,7 +82,7 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 	if (root == nullptr)
 		return;
 
-	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		if (std::string(child->Name()) == "SymbolMap")
@@ -143,7 +143,7 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 	if (root == nullptr)
 		return;
 
-	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		if (std::string(child->Name()) == "Texture")
@@ -152,7 +152,7 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 			fs::path texPath = std::string(child->Attribute("Path"));
 			std::string texName = "";
 
-			uint32_t crc = strtoul(crcStr.c_str(), NULL, 16);
+			uint32_t crc = strtoul(crcStr.c_str(), nullptr, 16);
 
 			cfg.texturePool[crc].path = texPath;
 		}
@@ -166,7 +166,7 @@ void Globals::GenSymbolMap(const std::string& symbolMapPath)
 	for (std::string symbolLine : symbolLines)
 	{
 		auto split = StringHelper::Split(symbolLine, " ");
-		uint32_t addr = strtoul(split[0].c_str(), NULL, 16);
+		uint32_t addr = strtoul(split[0].c_str(), nullptr, 16);
 		std::string symbolName = split[1];
 
 		symbolMap[addr] = symbolName;

@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-v")  // Verbose
 		{
-			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
+			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], nullptr, 16));
 		}
 		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
 		{
