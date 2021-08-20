@@ -1,7 +1,7 @@
 #include "SetAnimatedMaterialList.h"
 
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
@@ -176,7 +176,8 @@ ScrollingTexture::ScrollingTexture(const std::vector<uint8_t>& rawData, uint32_t
 {
 }
 
-std::string ScrollingTexture::GenerateSourceCode([[maybe_unused]] ZRoom* zRoom, [[maybe_unused]] uint32_t baseAddress)
+std::string ScrollingTexture::GenerateSourceCode([[maybe_unused]] ZRoom* zRoom,
+                                                 [[maybe_unused]] uint32_t baseAddress)
 {
 	return StringHelper::Sprintf("    { %i, %i, 0x%02X, 0x%02X },", xStep, yStep, width, height);
 }
@@ -352,7 +353,8 @@ AnimatedMatTexCycleParams::AnimatedMatTexCycleParams(const std::vector<uint8_t>&
 	}
 }
 
-std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, [[maybe_unused]] uint32_t baseAddress)
+std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom,
+                                                          [[maybe_unused]] uint32_t baseAddress)
 {
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{

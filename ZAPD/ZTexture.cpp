@@ -1,11 +1,11 @@
 #include "ZTexture.h"
 
 #include <cassert>
-#include "Utils/BitConverter.h"
 #include "CRC32.h"
+#include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/Directory.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/Path.h"
 
 REGISTER_ZFILENODE(Texture, ZTexture);

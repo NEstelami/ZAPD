@@ -113,7 +113,8 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
-PolygonDlist::PolygonDlist(const std::string& prefix, [[maybe_unused]] const std::vector<uint8_t>& nRawData,
+PolygonDlist::PolygonDlist(const std::string& prefix,
+                           [[maybe_unused]] const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
 	rawDataIndex = nRawDataIndex;
@@ -268,8 +269,9 @@ std::string PolygonDlist::GetName()
 	return name;
 }
 
-BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, [[maybe_unused]] const std::vector<uint8_t>& nRawData,
-                 uint32_t nRawDataIndex, ZFile* nParent)
+BgImage::BgImage(bool nIsSubStruct, const std::string& prefix,
+                 [[maybe_unused]] const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+                 ZFile* nParent)
 {
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
@@ -404,7 +406,8 @@ std::string BgImage::GetName()
 
 /* PolygonType section */
 
-PolygonTypeBase::PolygonTypeBase(ZFile* nParent, [[maybe_unused]] const std::vector<uint8_t>& nRawData,
+PolygonTypeBase::PolygonTypeBase(ZFile* nParent,
+                                 [[maybe_unused]] const std::vector<uint8_t>& nRawData,
                                  uint32_t nRawDataIndex, ZRoom* nRoom)
 	: rawDataIndex{nRawDataIndex}, parent{nParent}, zRoom{nRoom}
 {

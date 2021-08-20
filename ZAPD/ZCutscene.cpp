@@ -447,7 +447,8 @@ ZResourceType ZCutscene::GetResourceType() const
 	return ZResourceType::Cutscene;
 }
 
-CutsceneCommand::CutsceneCommand([[maybe_unused]] const std::vector<uint8_t>& rawData, [[maybe_unused]] uint32_t rawDataIndex)
+CutsceneCommand::CutsceneCommand([[maybe_unused]] const std::vector<uint8_t>& rawData,
+                                 [[maybe_unused]] uint32_t rawDataIndex)
 {
 }
 

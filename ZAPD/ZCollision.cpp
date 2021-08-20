@@ -1,8 +1,8 @@
 #include "ZCollision.h"
 #include <stdint.h>
 #include <string>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Collision, ZCollisionHeader);
@@ -240,7 +240,8 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, uint32_t raw
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
                                const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
-                               uint32_t polyTypeDefSegmentOffset, [[maybe_unused]] uint32_t polygonTypesCnt)
+                               uint32_t polyTypeDefSegmentOffset,
+                               [[maybe_unused]] uint32_t polygonTypesCnt)
 {
 	std::string declaration = "";
 

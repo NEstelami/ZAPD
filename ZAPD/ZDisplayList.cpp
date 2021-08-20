@@ -6,9 +6,9 @@
 #include <cassert>
 #include <chrono>
 #include <math.h>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 
@@ -78,7 +78,8 @@ void ZDisplayList::ParseRawData()
 	}
 }
 
-Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix, const std::string& bodyStr)
+Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix,
+                                      const std::string& bodyStr)
 {
 	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                                   GetSourceTypeName(), name, 0, bodyStr, true);
