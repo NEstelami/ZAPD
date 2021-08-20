@@ -60,7 +60,6 @@ public:
 	void FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight, TextureType nType,
 	                bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
-	void FromHLTexture(HLTexture* hlTex);
 
 	static TextureType GetTextureTypeFromString(const std::string& str);
 

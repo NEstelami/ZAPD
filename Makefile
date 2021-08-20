@@ -18,9 +18,9 @@ ifneq ($(DEBUG),0)
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
-  CXXFLAGS += -O0
+  CXXFLAGS += -Og
 else
-  CXXFLAGS += -O2 -g0
+  CXXFLAGS += -O2 -g0 -march=native -mtune=native
 endif
 
 ifneq ($(ASAN),0)
@@ -38,7 +38,7 @@ ifneq ($(UNAME), Darwin)
     LDFLAGS += -Wl,-export-dynamic -lstdc++fs
 endif
 
-SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/HighLevel ZAPD/Utils
+SRC_DIRS := ZAPD ZAPD/ZRoom ZAPD/ZRoom/Commands ZAPD/Overlays ZAPD/Utils
 
 ZAPD_CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 ZAPD_H_FILES   := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
