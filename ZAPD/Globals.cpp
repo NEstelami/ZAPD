@@ -2,6 +2,7 @@
 #include "Utils/File.h"
 #include "Utils/Path.h"
 #include <algorithm>
+#include <map>
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -76,7 +77,7 @@ enum class ConfigType
 	BG_CONFIG
 };
 
-const static std::map<std::string, ConfigType> ConfigTypeDictionary = {
+static const std::map<std::string, ConfigType> ConfigTypeDictionary = {
 	{"SymbolMap", ConfigType::SYMBOL_MAP},     {"Segment", ConfigType::SEGMENT},
 	{"ActorList", ConfigType::ACTOR_LIST},     {"ObjectList", ConfigType::OBJECT_LIST},
 	{"TexturePool", ConfigType::TEXTURE_POOL}, {"BGConfig", ConfigType::BG_CONFIG},
@@ -158,7 +159,7 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		}
 		else
 		{
-			fprintf(stderr, "Unsupported configuration variable: %s", child->Name());
+			fprintf(stderr, "Unsupported configuration variable: %s\n", child->Name());
 		}
 	}
 }

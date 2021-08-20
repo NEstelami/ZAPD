@@ -1,4 +1,5 @@
 #include "ZScalar.h"
+#include <map>
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
@@ -28,7 +29,7 @@ void ZScalar::ParseXML(tinyxml2::XMLElement* reader)
 
 ZScalarType ZScalar::MapOutputTypeToScalarType(const std::string& type)
 {
-	const static std::map<std::string, ZScalarType> ZScalarTypeDictionary = {
+	static const std::map<std::string, ZScalarType> ZScalarTypeDictionary = {
 		{"s8", ZScalarType::ZSCALAR_S8},   {"u8", ZScalarType::ZSCALAR_U8},
 		{"x8", ZScalarType::ZSCALAR_X8},   {"s16", ZScalarType::ZSCALAR_S16},
 		{"u16", ZScalarType::ZSCALAR_U16}, {"x16", ZScalarType::ZSCALAR_X16},

@@ -1,5 +1,6 @@
 #include "ZSkeleton.h"
 
+#include <map>
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
@@ -159,7 +160,7 @@ ZResourceType ZSkeleton::GetResourceType() const
 
 ZSkeletonType ZSkeleton::GetTypeByAttributeName(const std::string& attrName)
 {
-	const static std::map<std::string, ZSkeletonType> ZSkeletonTypeDictionary = {
+	static const std::map<std::string, ZSkeletonType> ZSkeletonTypeDictionary = {
 		{"Normal", ZSkeletonType::Normal},
 		{"Flex", ZSkeletonType::Flex},
 		{"Curve", ZSkeletonType::Curve},

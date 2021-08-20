@@ -32,11 +32,10 @@ void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-#define ARRAY_COUNT(arr) (sizeof(arr) / sizeof(arr[0]))
 void ErrorHandler(int sig)
 {
 	void* array[0x1000];
-	const size_t nMaxFrames = ARRAY_COUNT(array);
+	const size_t nMaxFrames = std::size(array);
 	size_t size = backtrace(array, nMaxFrames);
 	char** symbols = backtrace_symbols(array, nMaxFrames);
 
@@ -60,7 +59,7 @@ void ErrorHandler(int sig)
 		"\t You are great debugger!"};
 
 	srand(time(nullptr));
-	auto easterIndex = rand() % ARRAY_COUNT(crashEasterEgg);
+	auto easterIndex = rand() % std::size(crashEasterEgg);
 
 	fprintf(stderr, "\n%s\n\n", crashEasterEgg[easterIndex]);
 

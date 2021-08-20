@@ -1,4 +1,5 @@
 #include "ZOverlay.h"
+#include <map>
 #include "Utils/Directory.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
@@ -222,7 +223,7 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 
 SectionType ZOverlay::GetSectionTypeFromStr(std::string sectionName)
 {
-	const static std::map<std::string, SectionType> SectionTypeDictionary = {
+	static const std::map<std::string, SectionType> SectionTypeDictionary = {
 		{".text", SectionType::Text},
 		{".rel.text", SectionType::Text},
 		{".data", SectionType::Data},

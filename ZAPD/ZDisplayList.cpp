@@ -5,7 +5,9 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <map>
 #include <math.h>
+#include <tuple>
 #include "Globals.h"
 #include "OutputFormatter.h"
 #include "Utils/BitConverter.h"
@@ -2125,7 +2127,7 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 
 TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz)
 {
-	const static std::map<std::tuple<F3DZEXTexFormats, F3DZEXTexSizes>, TextureType>
+	static const std::map<std::tuple<F3DZEXTexFormats, F3DZEXTexSizes>, TextureType>
 		ZDisplayListTextureDictionary = {
 			{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_16b},
 	         TextureType::RGBA16bpp},

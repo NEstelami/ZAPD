@@ -1,6 +1,7 @@
 #include "ZTexture.h"
 
 #include <cassert>
+#include <map>
 #include "CRC32.h"
 #include "Globals.h"
 #include "Utils/BitConverter.h"
@@ -824,7 +825,7 @@ fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 
 TextureType ZTexture::GetTextureTypeFromString(std::string type)
 {
-	const static std::map<std::string, TextureType> ZTextureTypeDictionary = {
+	static const std::map<std::string, TextureType> ZTextureTypeDictionary = {
 		{"rgba32", TextureType::RGBA32bpp},         {"rgba16", TextureType::RGBA16bpp},
 		{"i4", TextureType::Grayscale4bpp},         {"i8", TextureType::Grayscale8bpp},
 		{"ia4", TextureType::GrayscaleAlpha4bpp},   {"ia8", TextureType::GrayscaleAlpha8bpp},

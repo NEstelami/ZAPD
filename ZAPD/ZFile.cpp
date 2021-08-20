@@ -1,13 +1,14 @@
 #include "ZFile.h"
-#include "Utils/BinaryWriter.h"
-#include "Utils/MemoryStream.h"
 #include <algorithm>
 #include <cassert>
+#include <map>
 #include <unordered_set>
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BinaryWriter.h"
 #include "Utils/Directory.h"
 #include "Utils/File.h"
+#include "Utils/MemoryStream.h"
 #include "Utils/Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
@@ -71,7 +72,7 @@ ZFile::~ZFile()
 	}
 }
 
-const static std::map<std::string, ZGame> ZGameDictionary = {
+static const std::map<std::string, ZGame> ZGameDictionary = {
 	{"OOT", ZGame::OOT_RETAIL},
 	{"MM", ZGame::MM_RETAIL},
 	{"SW97", ZGame::OOT_SW97},
@@ -93,7 +94,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
-	if (gameStr != nullptr) {
+	if (gameStr != nullptr)
+	{
 		auto it = ZGameDictionary.find(gameStr);
 		if (it != ZGameDictionary.end())
 		{
