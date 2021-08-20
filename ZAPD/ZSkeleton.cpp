@@ -1,6 +1,5 @@
 #include "ZSkeleton.h"
 
-#include <cassert>
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
@@ -88,20 +87,21 @@ std::string ZSkeleton::GetBodySourceCode() const
 {
 	std::string limbTableName = parent->GetDeclarationPtrName(limbsArrayAddress);
 
-	std::string headerStr;
 	switch (type)
 	{
 		case ZSkeletonType::Normal:
 		case ZSkeletonType::Curve:
-			headerStr = StringHelper::Sprintf("\n\t%s, %i\n", limbTableName.c_str(), limbCount);
-			break;
+			return StringHelper::Sprintf("\n\t%s, %i\n", limbTableName.c_str(), limbCount);
+
 		case ZSkeletonType::Flex:
-			headerStr = StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(),
+			return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(),
 			                                  limbCount, dListCount);
-			break;
+			
+		case ZSkeletonType::Invalid:
+			throw std::runtime_error("Invalid skeleton type.\n");
 	}
 
-	return headerStr;
+	return "ERROR";
 }
 
 size_t ZSkeleton::GetRawDataSize() const
@@ -146,10 +146,10 @@ std::string ZSkeleton::GetSourceTypeName() const
 			return "FlexSkeletonHeader";
 		case ZSkeletonType::Curve:
 			return "SkelCurveLimbList";
-		default:
-			return "SkeletonHeader";
+		case ZSkeletonType::Invalid:
+			throw std::runtime_error("Invalid skeleton type.\n");
 	}
-
+	return "SkeletonHeader";
 }
 
 ZResourceType ZSkeleton::GetResourceType() const
@@ -310,7 +310,7 @@ std::string ZLimbTable::GetSourceTypeName() const
 			return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
 
 		case ZLimbType::Invalid:
-			assert("Invalid limb type.\n");
+			throw std::runtime_error("Invalid limb type.\n");
 	}
 
 	return "ERROR";
