@@ -30,7 +30,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 	std::string cfgText = File::ReadAllText(cfgFolderPath + "/overlay.cfg");
 	std::vector<std::string> cfgLines = StringHelper::Split(cfgText, "\n");
 
-	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
+	ZOverlay* ovl = new ZOverlay(cfgLines[0]);
 
 	std::vector<std::string> relSections = {".rel.text", ".rel.data", ".rel.rodata"};
 	std::vector<std::string> sections = {".text", ".data", ".rodata"};
@@ -222,7 +222,7 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 
 SectionType ZOverlay::GetSectionTypeFromStr(std::string sectionName)
 {
-	static std::map<std::string, SectionType> SectionTypeDictionary = {
+	const static std::map<std::string, SectionType> SectionTypeDictionary = {
 		{ ".text", SectionType::Text },
 		{ ".rel.text", SectionType::Text },
 		{ ".data", SectionType::Data },

@@ -159,7 +159,7 @@ ZResourceType ZSkeleton::GetResourceType() const
 
 ZSkeletonType ZSkeleton::GetTypeByAttributeName(const std::string& attrName)
 {
-	static std::map<std::string, ZSkeletonType> ZSkeletonTypeDictionary = {
+	const static std::map<std::string, ZSkeletonType> ZSkeletonTypeDictionary = {
 		{ "Normal", ZSkeletonType::Normal },
 		{ "Flex", ZSkeletonType::Flex },
 		{ "Curve", ZSkeletonType::Curve },

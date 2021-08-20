@@ -2126,7 +2126,7 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 
 TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz)
 {
-	std::map<std::tuple<F3DZEXTexFormats, F3DZEXTexSizes>, TextureType> ZDisplayListTextureDictionary = {
+	const static std::map<std::tuple<F3DZEXTexFormats, F3DZEXTexSizes>, TextureType> ZDisplayListTextureDictionary = {
 		{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_16b}, TextureType::RGBA16bpp},
 		{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_32b}, TextureType::RGBA32bpp},
 		{{F3DZEXTexFormats::G_IM_FMT_CI, F3DZEXTexSizes::G_IM_SIZ_4b}, TextureType::Palette4bpp},

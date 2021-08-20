@@ -71,7 +71,7 @@ ZFile::~ZFile()
 	}
 }
 
-static std::map<const char*, ZGame> ZGameDictionary = {
+const static std::map<const char*, ZGame> ZGameDictionary = {
 	{"OOT", ZGame::OOT_RETAIL},
 	{"MM", ZGame::MM_RETAIL},
 	{"SW97", ZGame::OOT_SW97},
@@ -97,11 +97,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	if (it != ZGameDictionary.end())
 	{
 		Globals::Instance->game = it->second;
-	}
-	else
-	{
-		throw std::runtime_error(
-			StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
 	}
 
 	if (reader->Attribute("BaseAddress") != nullptr)
