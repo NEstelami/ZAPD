@@ -2,7 +2,7 @@
 
 #include "ZResource.h"
 #include "ZTexture.h"
-#include <Utils/BinaryWriter.h>
+#include "Utils/BinaryWriter.h"
 
 class ExporterExample_Texture : public ZResourceExporter
 {

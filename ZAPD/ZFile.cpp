@@ -1,6 +1,6 @@
 #include "ZFile.h"
-#include <Utils/BinaryWriter.h>
-#include <Utils/MemoryStream.h>
+#include "Utils/BinaryWriter.h"
+#include "Utils/MemoryStream.h"
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
@@ -100,7 +100,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			Globals::Instance->game = it->second;
 		}
 	}
-	
+
 	if (reader->Attribute("BaseAddress") != nullptr)
 		baseAddress = strtol(reader->Attribute("BaseAddress"), nullptr, 16);
 
