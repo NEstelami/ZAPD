@@ -15,7 +15,7 @@ ifneq ($(DEBUG),0)
   CXXFLAGS += -g3 -DDEVELOPMENT -D_DEBUG
   COPYCHECK_ARGS += --devel
 else
-  CFLAGS += -Werror
+  CXXFLAGS +=
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
