@@ -84,7 +84,7 @@ CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
 {
 }
 
-std::string ZCutscene::GetBodySourceCode()
+std::string ZCutscene::GetBodySourceCode() const
 {
 	std::string output = "";
 	size_t size = 0;
