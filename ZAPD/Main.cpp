@@ -53,7 +53,11 @@ void ErrorHandler(int sig)
 		"\tSEA BEARS FOAM, SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY CRASSSH!",
 		"\tYou've met with a terrible fate, haven't you?",
 		"\tMaster, I calculate a 100% probability that ZAPD has crashed. \n\tAdditionally, the "
-		"batteries in your Wii Remote are nearly depleted."};
+		"batteries in your Wii Remote are nearly depleted.",
+		"\t    CONGRATURATIONS!    \n"
+		"\tAll Pages are displayed.\n"
+		"\t       THANK YOU!       \n"
+		"\t You are great debugger!"};
 
 	srand(time(nullptr));
 	auto easterIndex = rand() % ARRAY_COUNT(crashEasterEgg);
