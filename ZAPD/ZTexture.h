@@ -1,8 +1,5 @@
 #pragma once
 
-#include <vector>
-
-#include "HighLevel/HLTexture.h"
 #include "ImageBackend.h"
 #include "ZResource.h"
 #include "tinyxml2.h"

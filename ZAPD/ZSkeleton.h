@@ -60,7 +60,6 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-	void GenerateHLIntermediette(HLFileIntermediette& hlFile) override;
 
 	size_t GetRawDataSize() const override;
 

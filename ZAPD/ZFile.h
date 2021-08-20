@@ -2,8 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "Directory.h"
-#include "ZResource.h"
+#include <Utils/Directory.h>
 #include "ZTexture.h"
 #include "tinyxml2.h"
 
@@ -11,13 +10,12 @@ enum class ZFileMode
 {
 	BuildTexture,
 	BuildOverlay,
-	BuildModelIntermediette,
-	BuildAnimationIntermediette,
 	BuildBlob,
 	BuildSourceFile,
 	BuildBackground,
 	Extract,
-	Invalid
+	Invalid,
+	Custom = 1000  // Used for exporter file modes
 };
 
 enum class ZGame
@@ -112,7 +110,6 @@ protected:
 	void DeclareResourceSubReferences();
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();
-	void GenerateHLIntermediette();
 	void AddDeclarationDebugChecks(uint32_t address);
 	std::string ProcessDeclarations();
 	void ProcessDeclarationText(Declaration* decl);
