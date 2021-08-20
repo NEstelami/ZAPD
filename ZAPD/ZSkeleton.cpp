@@ -26,12 +26,8 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	std::string skelTypeXml = registeredAttributes.at("Type").value;
-
-	if (skelTypeXml == "Flex")
-		type = ZSkeletonType::Flex;
-	else if (skelTypeXml == "Curve")
-		type = ZSkeletonType::Curve;
-	else if (skelTypeXml != "Normal")
+	type = ZSkeleton::GetTypeByAttributeName(skelTypeXml);
+	if (type == ZSkeletonType::Invalid)
 	{
 		fprintf(stderr,
 		        "ZSkeleton::ParseXML: Warning in '%s'.\n"
@@ -150,14 +146,31 @@ std::string ZSkeleton::GetSourceTypeName() const
 			return "FlexSkeletonHeader";
 		case ZSkeletonType::Curve:
 			return "SkelCurveLimbList";
+		default:
+			return "SkeletonHeader";
 	}
 
-	return "SkeletonHeader";
 }
 
 ZResourceType ZSkeleton::GetResourceType() const
 {
 	return ZResourceType::Skeleton;
+}
+
+ZSkeletonType ZSkeleton::GetTypeByAttributeName(const std::string& attrName)
+{
+	static std::map<std::string, ZSkeletonType> ZSkeletonTypeDictionary = {
+		{ "Normal", ZSkeletonType::Normal },
+		{ "Flex", ZSkeletonType::Flex },
+		{ "Curve", ZSkeletonType::Curve },
+	};
+
+	auto it = ZSkeletonTypeDictionary.find(attrName);
+	if (it != ZSkeletonTypeDictionary.end())
+	{
+		return it->second;
+	}
+	return ZSkeletonType::Invalid;
 }
 
 segptr_t ZSkeleton::GetAddress()

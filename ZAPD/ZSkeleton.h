@@ -13,6 +13,7 @@ enum class ZSkeletonType
 	Normal,
 	Flex,
 	Curve,
+	Invalid,
 };
 
 class ZLimbTable : public ZResource
@@ -66,6 +67,8 @@ public:
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
+	
+	static ZSkeletonType GetTypeByAttributeName(const std::string& attrName);
 
 	segptr_t GetAddress();
 	uint8_t GetLimbCount();

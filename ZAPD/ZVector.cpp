@@ -74,6 +74,7 @@ std::string ZVector::GetSourceTypeName() const
 
 			case ZScalarType::ZSCALAR_S32:
 				return "Vec3i";
+				
 			default:
 				break;
 		}
