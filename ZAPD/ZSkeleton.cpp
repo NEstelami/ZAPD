@@ -121,9 +121,8 @@ size_t ZSkeleton::GetRawDataSize() const
 	}
 }
 
-std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
+std::string ZSkeleton::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	std::string headerStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(GetAddress());
@@ -270,9 +269,8 @@ std::string ZLimbTable::GetBodySourceCode() const
 	return body;
 }
 
-std::string ZLimbTable::GetSourceOutputCode(const std::string& prefix)
+std::string ZLimbTable::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	std::string body = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);

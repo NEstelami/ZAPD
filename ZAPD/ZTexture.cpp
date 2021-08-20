@@ -322,9 +322,8 @@ void ZTexture::PrepareBitmapPalette8()
 	}
 }
 
-void ZTexture::DeclareReferences(const std::string& prefix)
+void ZTexture::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	if (tlutOffset != static_cast<uint32_t>(-1))
 	{
 		tlut = parent->GetTextureResource(tlutOffset);

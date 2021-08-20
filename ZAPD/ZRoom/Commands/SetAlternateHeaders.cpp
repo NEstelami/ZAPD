@@ -8,9 +8,8 @@ SetAlternateHeaders::SetAlternateHeaders(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-void SetAlternateHeaders::DeclareReferences(const std::string& prefix)
+void SetAlternateHeaders::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
 }

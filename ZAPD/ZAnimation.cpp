@@ -23,9 +23,8 @@ void ZAnimation::ParseRawData()
 	frameCount = BitConverter::ToInt16BE(parent->GetRawData(), rawDataIndex + 0);
 }
 
-std::string ZAnimation::GetSourceOutputCode(const std::string& prefix)
+std::string ZAnimation::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	return "";
 }
 
@@ -41,9 +40,8 @@ ZNormalAnimation::ZNormalAnimation(ZFile* nParent) : ZAnimation(nParent)
 	limit = 0;
 }
 
-std::string ZNormalAnimation::GetSourceOutputCode(const std::string& prefix)
+std::string ZNormalAnimation::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	if (parent != nullptr)
 	{
 		std::string defaultPrefix = name.c_str();
@@ -140,9 +138,8 @@ ZLinkAnimation::ZLinkAnimation(ZFile* nParent) : ZAnimation(nParent)
 	segmentAddress = 0;
 }
 
-std::string ZLinkAnimation::GetSourceOutputCode(const std::string& prefix)
+std::string ZLinkAnimation::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	if (parent != nullptr)
 	{
 		std::string segSymbol =
@@ -198,9 +195,8 @@ TransformData::TransformData(ZFile* parent, const std::vector<uint8_t>& rawData,
 {
 }
 
-std::string TransformData::GetBody(const std::string& prefix) const
+std::string TransformData::GetBody([[maybe_unused]] const std::string& prefix) const
 {
-	(void)prefix;
 	return StringHelper::Sprintf("0x%04X, 0x%04X, %i, %i, %ff", unk_00, unk_02, unk_04, unk_06,
 	                             unk_08);
 }
@@ -581,9 +577,8 @@ std::string ZLegacyAnimation::GetBodySourceCode() const
 	return body;
 }
 
-std::string ZLegacyAnimation::GetSourceOutputCode(const std::string& prefix)
+std::string ZLegacyAnimation::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	std::string body = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);

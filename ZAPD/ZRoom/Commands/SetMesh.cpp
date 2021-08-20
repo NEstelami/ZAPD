@@ -113,10 +113,9 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
-PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+PolygonDlist::PolygonDlist(const std::string& prefix, [[maybe_unused]] const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
-	(void)nRawData;
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	zRoom = nRoom;
@@ -152,9 +151,8 @@ void PolygonDlist::DeclareReferences(const std::string& prefix)
 	xluDList = MakeDlist(xlu, prefix);
 }
 
-ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
+ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	if (ptr == 0)
 	{
 		return nullptr;
@@ -270,10 +268,9 @@ std::string PolygonDlist::GetName()
 	return name;
 }
 
-BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
+BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, [[maybe_unused]] const std::vector<uint8_t>& nRawData,
                  uint32_t nRawDataIndex, ZFile* nParent)
 {
-	(void)nRawData;
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
 	isSubStruct = nIsSubStruct;
@@ -407,11 +404,10 @@ std::string BgImage::GetName()
 
 /* PolygonType section */
 
-PolygonTypeBase::PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData,
+PolygonTypeBase::PolygonTypeBase(ZFile* nParent, [[maybe_unused]] const std::vector<uint8_t>& nRawData,
                                  uint32_t nRawDataIndex, ZRoom* nRoom)
 	: rawDataIndex{nRawDataIndex}, parent{nParent}, zRoom{nRoom}
 {
-	(void)nRawData;
 	type = BitConverter::ToUInt8BE(parent->GetRawData(), rawDataIndex);
 }
 

@@ -53,9 +53,8 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-std::string ZArray::GetSourceOutputCode(const std::string& prefix)
+std::string ZArray::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	std::string output = "";
 
 	for (size_t i = 0; i < arrayCnt; i++)

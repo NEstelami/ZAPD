@@ -34,18 +34,16 @@ std::string ZString::GetBodySourceCode() const
 	return StringHelper::Sprintf("\t\"%s\"", strData.data());
 }
 
-std::string ZString::GetSourceOutputCode(const std::string& prefix)
+std::string ZString::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 	                            GetSourceTypeName(), name, 0, GetBodySourceCode());
 
 	return "";
 }
 
-std::string ZString::GetSourceOutputHeader(const std::string& prefix)
+std::string ZString::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	return StringHelper::Sprintf("#define %s_macro \"%s\"", name.c_str(), strData.data());
 }
 

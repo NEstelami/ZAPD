@@ -189,9 +189,8 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 	return ovl;
 }
 
-std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
+std::string ZOverlay::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	(void)prefix;
 	std::string output = "";
 
 	output += ".section .ovl\n";
