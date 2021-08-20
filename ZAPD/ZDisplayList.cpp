@@ -2123,47 +2123,31 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 	return false;
 }
 
+
 TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz)
 {
-	if (fmt == F3DZEXTexFormats::G_IM_FMT_RGBA)
+	std::map<std::tuple<F3DZEXTexFormats, F3DZEXTexSizes>, TextureType> ZDisplayListTextureDictionary = {
+		{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_16b}, TextureType::RGBA16bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_32b}, TextureType::RGBA32bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_CI, F3DZEXTexSizes::G_IM_SIZ_4b}, TextureType::Palette4bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_CI, F3DZEXTexSizes::G_IM_SIZ_8b}, TextureType::Palette8bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_4b}, TextureType::GrayscaleAlpha4bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_8b}, TextureType::GrayscaleAlpha8bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_16b},
+		TextureType::GrayscaleAlpha16bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_4b}, TextureType::Grayscale4bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_8b}, TextureType::Grayscale8bpp},
+		{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_16b},
+		TextureType::Grayscale8bpp},  // Required for 1 texture in OoT
+};
+
+	auto it = ZDisplayListTextureDictionary.find({ fmt, siz });
+	if (it != ZDisplayListTextureDictionary.end())
 	{
-		if (siz == F3DZEXTexSizes::G_IM_SIZ_16b)
-			return TextureType::RGBA16bpp;
-		else if (siz == F3DZEXTexSizes::G_IM_SIZ_32b)
-			return TextureType::RGBA32bpp;
-	}
-	else if (fmt == F3DZEXTexFormats::G_IM_FMT_CI)
-	{
-		if (Globals::Instance->useLegacyZDList)
-			return TextureType::Palette8bpp;
-		else
-		{
-			if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
-				return TextureType::Palette4bpp;
-			else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
-				return TextureType::Palette8bpp;
-		}
-	}
-	else if (fmt == F3DZEXTexFormats::G_IM_FMT_IA)
-	{
-		if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
-			return TextureType::GrayscaleAlpha4bpp;
-		else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
-			return TextureType::GrayscaleAlpha8bpp;
-		else if (siz == F3DZEXTexSizes::G_IM_SIZ_16b)
-			return TextureType::GrayscaleAlpha16bpp;
-	}
-	else if (fmt == F3DZEXTexFormats::G_IM_FMT_I)
-	{
-		if (siz == F3DZEXTexSizes::G_IM_SIZ_4b)
-			return TextureType::Grayscale4bpp;
-		else if (siz == F3DZEXTexSizes::G_IM_SIZ_8b)
-			return TextureType::Grayscale8bpp;
-		else if (siz == F3DZEXTexSizes::G_IM_SIZ_16b)
-			return TextureType::Grayscale8bpp;
+		return it->second;
 	}
 
-	return TextureType::RGBA16bpp;
+	return TextureType::Error;
 }
 
 bool ZDisplayList::IsExternalResource() const
