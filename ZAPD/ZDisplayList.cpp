@@ -2123,25 +2123,33 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 	return false;
 }
 
-
 TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz)
 {
-	const static std::map<std::tuple<F3DZEXTexFormats, F3DZEXTexSizes>, TextureType> ZDisplayListTextureDictionary = {
-		{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_16b}, TextureType::RGBA16bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_32b}, TextureType::RGBA32bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_CI, F3DZEXTexSizes::G_IM_SIZ_4b}, TextureType::Palette4bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_CI, F3DZEXTexSizes::G_IM_SIZ_8b}, TextureType::Palette8bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_4b}, TextureType::GrayscaleAlpha4bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_8b}, TextureType::GrayscaleAlpha8bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_16b},
-		TextureType::GrayscaleAlpha16bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_4b}, TextureType::Grayscale4bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_8b}, TextureType::Grayscale8bpp},
-		{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_16b},
-		TextureType::Grayscale8bpp},  // Required for 1 texture in OoT
-};
+	const static std::map<std::tuple<F3DZEXTexFormats, F3DZEXTexSizes>, TextureType>
+		ZDisplayListTextureDictionary = {
+			{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_16b},
+	         TextureType::RGBA16bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_RGBA, F3DZEXTexSizes::G_IM_SIZ_32b},
+	         TextureType::RGBA32bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_CI, F3DZEXTexSizes::G_IM_SIZ_4b},
+	         TextureType::Palette4bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_CI, F3DZEXTexSizes::G_IM_SIZ_8b},
+	         TextureType::Palette8bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_4b},
+	         TextureType::GrayscaleAlpha4bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_8b},
+	         TextureType::GrayscaleAlpha8bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_IA, F3DZEXTexSizes::G_IM_SIZ_16b},
+	         TextureType::GrayscaleAlpha16bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_4b},
+	         TextureType::Grayscale4bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_8b},
+	         TextureType::Grayscale8bpp},
+			{{F3DZEXTexFormats::G_IM_FMT_I, F3DZEXTexSizes::G_IM_SIZ_16b},
+	         TextureType::Grayscale8bpp},  // Required for 1 texture in OoT
+		};
 
-	auto it = ZDisplayListTextureDictionary.find({ fmt, siz });
+	auto it = ZDisplayListTextureDictionary.find({fmt, siz});
 	if (it != ZDisplayListTextureDictionary.end())
 	{
 		return it->second;

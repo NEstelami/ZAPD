@@ -641,11 +641,8 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 {
 	const static std::map<std::string, ZLimbType> ZLimbTypeDictionary = {
-		{ "Standard", ZLimbType::Standard },
-		{ "LOD", ZLimbType::LOD },
-		{ "Skin", ZLimbType::Skin },
-		{ "Curve", ZLimbType::Curve },
-		{ "Legacy", ZLimbType::Legacy },
+		{"Standard", ZLimbType::Standard}, {"LOD", ZLimbType::LOD},       {"Skin", ZLimbType::Skin},
+		{"Curve", ZLimbType::Curve},       {"Legacy", ZLimbType::Legacy},
 	};
 
 	auto it = ZLimbTypeDictionary.find(attrName);

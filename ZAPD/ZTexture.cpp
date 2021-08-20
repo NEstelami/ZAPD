@@ -822,7 +822,6 @@ fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 	return defaultValue;
 }
 
-
 TextureType ZTexture::GetTextureTypeFromString(std::string type)
 {
 	const static std::map<std::string, TextureType> ZTextureTypeDictionary = {
@@ -832,7 +831,7 @@ TextureType ZTexture::GetTextureTypeFromString(std::string type)
 		{"ia16", TextureType::GrayscaleAlpha16bpp}, {"ci4", TextureType::Palette4bpp},
 		{"ci8", TextureType::Palette8bpp},
 	};
-	
+
 	auto it = ZTextureTypeDictionary.find(type);
 	if (it != ZTextureTypeDictionary.end())
 	{

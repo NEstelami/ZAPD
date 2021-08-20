@@ -155,8 +155,8 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 					cfg.bgScreenHeight = child->IntAttribute("ScreenHeight", 240);
 					break;
 			}
-		} 
-		else 
+		}
+		else
 		{
 			fprintf(stderr, "Unsupported configuration variable: %s", child->Name());
 		}

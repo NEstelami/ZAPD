@@ -67,7 +67,7 @@ public:
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
-	
+
 	static ZSkeletonType GetTypeByAttributeName(const std::string& attrName);
 
 	segptr_t GetAddress();

@@ -116,17 +116,17 @@ size_t ZScalar::MapTypeToSize(const ZScalarType scalarType)
 
 		case ZScalarType::ZSCALAR_S64:
 			return sizeof(scalarData.s64);
-		
+
 		case ZScalarType::ZSCALAR_U64:
 		case ZScalarType::ZSCALAR_X64:
 			return sizeof(scalarData.u64);
-		
+
 		case ZScalarType::ZSCALAR_F32:
 			return sizeof(scalarData.f32);
-		
+
 		case ZScalarType::ZSCALAR_F64:
 			return sizeof(scalarData.f64);
-		
+
 		default:
 			return 0;
 	}
@@ -163,29 +163,29 @@ void ZScalar::ParseRawData()
 		case ZScalarType::ZSCALAR_S32:
 			scalarData.s32 = BitConverter::ToInt32BE(rawData, rawDataIndex);
 			break;
-		
+
 		case ZScalarType::ZSCALAR_U32:
 		case ZScalarType::ZSCALAR_X32:
 			scalarData.u32 = BitConverter::ToUInt32BE(rawData, rawDataIndex);
 			break;
-		
+
 		case ZScalarType::ZSCALAR_S64:
 			scalarData.s64 = BitConverter::ToInt64BE(rawData, rawDataIndex);
 			break;
-		
+
 		case ZScalarType::ZSCALAR_U64:
 		case ZScalarType::ZSCALAR_X64:
 			scalarData.u64 = BitConverter::ToUInt64BE(rawData, rawDataIndex);
 			break;
-		
+
 		case ZScalarType::ZSCALAR_F32:
 			scalarData.f32 = BitConverter::ToFloatBE(rawData, rawDataIndex);
 			break;
-		
+
 		case ZScalarType::ZSCALAR_F64:
 			scalarData.f64 = BitConverter::ToDoubleBE(rawData, rawDataIndex);
 			break;
-		
+
 		case ZScalarType::ZSCALAR_NONE:
 			fprintf(stderr, "Warning in ZScalar: Invalid type. %d %s %d\n", (int32_t)scalarType,
 			        __FILE__, __LINE__);

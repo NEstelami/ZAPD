@@ -94,9 +94,9 @@ std::string ZSkeleton::GetBodySourceCode() const
 			return StringHelper::Sprintf("\n\t%s, %i\n", limbTableName.c_str(), limbCount);
 
 		case ZSkeletonType::Flex:
-			return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(),
-			                                  limbCount, dListCount);
-			
+			return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(), limbCount,
+			                             dListCount);
+
 		case ZSkeletonType::Invalid:
 			throw std::runtime_error("Invalid skeleton type.\n");
 	}
@@ -160,9 +160,9 @@ ZResourceType ZSkeleton::GetResourceType() const
 ZSkeletonType ZSkeleton::GetTypeByAttributeName(const std::string& attrName)
 {
 	const static std::map<std::string, ZSkeletonType> ZSkeletonTypeDictionary = {
-		{ "Normal", ZSkeletonType::Normal },
-		{ "Flex", ZSkeletonType::Flex },
-		{ "Curve", ZSkeletonType::Curve },
+		{"Normal", ZSkeletonType::Normal},
+		{"Flex", ZSkeletonType::Flex},
+		{"Curve", ZSkeletonType::Curve},
 	};
 
 	auto it = ZSkeletonTypeDictionary.find(attrName);

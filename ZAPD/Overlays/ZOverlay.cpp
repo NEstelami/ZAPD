@@ -223,18 +223,18 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 SectionType ZOverlay::GetSectionTypeFromStr(std::string sectionName)
 {
 	const static std::map<std::string, SectionType> SectionTypeDictionary = {
-		{ ".text", SectionType::Text },
-		{ ".rel.text", SectionType::Text },
-		{ ".data", SectionType::Data },
-		{ ".rel.data", SectionType::Data },
-		{ ".rodata", SectionType::RoData },
-		{ ".rel.rodata", SectionType::RoData },
-		{ ".rodata.str1.4", SectionType::RoData },
-		{ ".rodata.cst4", SectionType::RoData },
-		{ ".bss", SectionType::Bss },
-		{ ".rel.bss", SectionType::Bss },
+		{".text", SectionType::Text},
+		{".rel.text", SectionType::Text},
+		{".data", SectionType::Data},
+		{".rel.data", SectionType::Data},
+		{".rodata", SectionType::RoData},
+		{".rel.rodata", SectionType::RoData},
+		{".rodata.str1.4", SectionType::RoData},
+		{".rodata.cst4", SectionType::RoData},
+		{".bss", SectionType::Bss},
+		{".rel.bss", SectionType::Bss},
 	};
-	
+
 	auto it = SectionTypeDictionary.find(sectionName);
 	if (it != SectionTypeDictionary.end())
 	{
