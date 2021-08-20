@@ -71,7 +71,7 @@ ZFile::~ZFile()
 	}
 }
 
-const static std::map<const char*, ZGame> ZGameDictionary = {
+const static std::map<std::string, ZGame> ZGameDictionary = {
 	{"OOT", ZGame::OOT_RETAIL},
 	{"MM", ZGame::MM_RETAIL},
 	{"SW97", ZGame::OOT_SW97},
@@ -93,12 +93,14 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
-	auto it = ZGameDictionary.find(gameStr);
-	if (it != ZGameDictionary.end())
-	{
-		Globals::Instance->game = it->second;
+	if (gameStr != nullptr) {
+		auto it = ZGameDictionary.find(gameStr);
+		if (it != ZGameDictionary.end())
+		{
+			Globals::Instance->game = it->second;
+		}
 	}
-
+	
 	if (reader->Attribute("BaseAddress") != nullptr)
 		baseAddress = strtol(reader->Attribute("BaseAddress"), nullptr, 16);
 

@@ -48,9 +48,9 @@ void ErrorHandler(int sig)
 		"\tI AM ERROR.",
 		"\tGRUMBLE,GRUMBLE...",
 		"\tDODONGO DISLIKES SMOKE \n\tAnd ZAPD dislikes whatever you fed it.",
-		"\tMay the way of the Hero lead \n\tto the debugger."
-		"\tTHE WIND FISH SLUMBERS LONG... \n\tTHE HERO'S LIFE GONE... "
-		"\tSEA BEARS FOAM, SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY CRASSSH!"
+		"\tMay the way of the Hero lead \n\tto the debugger.",
+		"\tTHE WIND FISH SLUMBERS LONG... \n\tTHE HERO'S LIFE GONE... ",
+		"\tSEA BEARS FOAM, SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY CRASSSH!",
 		"\tYou've met with a terrible fate, haven't you?",
 		"\tMaster, I calculate a 100% probability that ZAPD has crashed. \n\tAdditionally, the "
 		"batteries in your Wii Remote are nearly depleted."};
