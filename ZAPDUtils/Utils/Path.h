@@ -15,10 +15,10 @@ namespace fs = std::experimental::filesystem;
 class Path
 {
 public:
-	static std::string GetFileName(const std::string& input)
+	static std::string GetFileName(const fs::path& input)
 	{
-		std::vector<std::string> split = StringHelper::Split(input, "/");
-		return split[split.size() - 1];
+		// https://en.cppreference.com/w/cpp/filesystem/path/filename
+		return input.filename();
 	};
 
 	static std::string GetFileNameWithoutExtension(const fs::path& input)
@@ -32,22 +32,22 @@ public:
 		return input.substr(input.find_last_of("."), input.length());
 	};
 
-	static std::string GetPath(const std::string& input)
+	static fs::path GetPath(const std::string& input)
 	{
 		std::vector<std::string> split = StringHelper::Split(input, "/");
-		std::string output = "";
+		fs::path output = "";
 
 		for (std::string str : split)
 		{
 			if (str.find_last_of(".") == std::string::npos)
-				output += str + "/";
+				output /= str;
 		}
 
 		return output;
 	};
 
-	static std::string GetDirectoryName(const fs::path& path)
+	static fs::path GetDirectoryName(const fs::path& path)
 	{
-		return path.parent_path().u8string();
+		return path.parent_path();
 	};
 };

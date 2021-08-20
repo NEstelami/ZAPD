@@ -54,13 +54,13 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		if (std::string(child->Name()) == "SymbolMap")
 		{
 			std::string fileName = std::string(child->Attribute("File"));
-			GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+			GenSymbolMap(Path::GetDirectoryName(configFilePath) / fileName);
 		}
 		else if (std::string(child->Name()) == "ActorList")
 		{
 			std::string fileName = std::string(child->Attribute("File"));
 			std::vector<std::string> lines =
-				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+				File::ReadAllLines(Path::GetDirectoryName(configFilePath) / fileName);
 
 			for (std::string line : lines)
 				cfg.actorList.push_back(StringHelper::Strip(line, "\r"));
@@ -69,7 +69,7 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		{
 			std::string fileName = std::string(child->Attribute("File"));
 			std::vector<std::string> lines =
-				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+				File::ReadAllLines(Path::GetDirectoryName(configFilePath) / fileName);
 
 			for (std::string line : lines)
 				cfg.objectList.push_back(StringHelper::Strip(line, "\r"));
@@ -77,7 +77,7 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 		else if (std::string(child->Name()) == "TexturePool")
 		{
 			std::string fileName = std::string(child->Attribute("File"));
-			ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+			ReadTexturePool(Path::GetDirectoryName(configFilePath) / fileName);
 		}
 		else if (std::string(child->Name()) == "BGConfig")
 		{
