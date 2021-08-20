@@ -71,6 +71,13 @@ ZFile::~ZFile()
 	}
 }
 
+static std::map<const char*, ZGame> ZGameDictionary = {
+	{"OOT", ZGame::OOT_RETAIL},
+	{"MM", ZGame::MM_RETAIL},
+	{"SW97", ZGame::OOT_SW97},
+	{"OOTSW97", ZGame::OOT_SW97},
+};
+
 void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, bool placeholderMode)
 {
 	if (filename == "")
@@ -86,27 +93,25 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
-	if (reader->Attribute("Game") != nullptr)
+	auto it = ZGameDictionary.find(gameStr);
+	if (it != ZGameDictionary.end())
 	{
-		if (std::string(gameStr) == "MM")
-			Globals::Instance->game = ZGame::MM_RETAIL;
-		else if (std::string(gameStr) == "SW97" || std::string(gameStr) == "OOTSW97")
-			Globals::Instance->game = ZGame::OOT_SW97;
-		else if (std::string(gameStr) == "OOT")
-			Globals::Instance->game = ZGame::OOT_RETAIL;
-		else
-			throw std::runtime_error(
-				StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
+		Globals::Instance->game = it->second;
+	}
+	else
+	{
+		throw std::runtime_error(
+			StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
 	}
 
 	if (reader->Attribute("BaseAddress") != nullptr)
-		baseAddress = StringHelper::StrToL(reader->Attribute("BaseAddress"), 16);
+		baseAddress = strtol(reader->Attribute("BaseAddress"), nullptr, 16);
 
 	if (reader->Attribute("RangeStart") != nullptr)
-		rangeStart = StringHelper::StrToL(reader->Attribute("RangeStart"), 16);
+		rangeStart = strtol(reader->Attribute("RangeStart"), nullptr, 16);
 
 	if (reader->Attribute("RangeEnd") != nullptr)
-		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
+		rangeEnd = strtol(reader->Attribute("RangeEnd"), nullptr, 16);
 
 	// Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
 	/*
@@ -119,7 +124,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 	if (reader->Attribute("Segment") != nullptr)
 	{
-		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
+		segment = strtol(reader->Attribute("Segment"), nullptr, 10);
 		Globals::Instance->AddSegment(segment, this);
 	}
 
@@ -171,6 +176,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			throw std::runtime_error(
 				StringHelper::Sprintf("Error no offset specified for %s", nameXml));
 		}
+
 		if (outNameXml != nullptr)
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
@@ -181,6 +187,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			outNameSet.insert(outNameXml);
 		}
+
 		if (nameXml != nullptr)
 		{
 			if (nameSet.find(nameXml) != nameSet.end())
@@ -192,7 +199,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			nameSet.insert(nameXml);
 		}
 
-		std::string nodeName = std::string(child->Name());
+		std::string nodeName = child->Name();
 
 		if (nodeMap.find(nodeName) != nodeMap.end())
 		{
@@ -209,7 +216,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 
 			rawDataIndex += nRes->GetRawDataSize();
 		}
-		else if (std::string(child->Name()) == "File")
+		else if (nodeName == "File")
 		{
 			throw std::runtime_error(StringHelper::Sprintf(
 				"ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n",
