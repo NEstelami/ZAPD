@@ -46,20 +46,20 @@ void GameConfig::GenSymbolMap(const std::string& symbolMapPath)
 	}
 }
 
-void GameConfig::ConfigFunc_SymbolMap(const tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_SymbolMap(const tinyxml2::XMLElement& element)
 {
 	std::string fileName = element.Attribute("File");
 	GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 }
 
-void GameConfig::ConfigFunc_Segment(const tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_Segment(const tinyxml2::XMLElement& element)
 {
 	std::string fileName = element.Attribute("File");
 	int32_t segNumber = element.IntAttribute("Number");
 	segmentRefs[segNumber] = fileName;
 }
 
-void GameConfig::ConfigFunc_ActorList(const tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_ActorList(const tinyxml2::XMLElement& element)
 {
 	std::string fileName = element.Attribute("File");
 	std::vector<std::string> lines =
@@ -69,7 +69,7 @@ void GameConfig::ConfigFunc_ActorList(const tinyxml2::XMLElement& element, const
 		actorList.emplace_back(std::move(line));
 }
 
-void GameConfig::ConfigFunc_ObjectList(const tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_ObjectList(const tinyxml2::XMLElement& element)
 {
 	std::string fileName = element.Attribute("File");
 	std::vector<std::string> lines =
@@ -79,31 +79,30 @@ void GameConfig::ConfigFunc_ObjectList(const tinyxml2::XMLElement& element, cons
 		objectList.emplace_back(std::move(line));
 }
 
-void GameConfig::ConfigFunc_TexturePool(const tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_TexturePool(const tinyxml2::XMLElement& element)
 {
 	std::string fileName = element.Attribute("File");
 	ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 }
 
-void GameConfig::ConfigFunc_BGConfig(const tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_BGConfig(const tinyxml2::XMLElement& element)
 {
 	bgScreenWidth =  element.IntAttribute("ScreenWidth", 320);
 	bgScreenHeight = element.IntAttribute("ScreenHeight", 240);
 }
 
-
-static const std::map<std::string, ConfigFunc> ConfigFuncDictionary = {
-	{"SymbolMap", &GameConfig::ConfigFunc_SymbolMap},
-	{"Segment", &GameConfig::ConfigFunc_Segment},
-	{"ActorList", &GameConfig::ConfigFunc_ActorList},
-	{"ObjectList", &GameConfig::ConfigFunc_ObjectList},
-	{"TexturePool", &GameConfig::ConfigFunc_TexturePool},
-	{"BGConfig", &GameConfig::ConfigFunc_BGConfig},
-};
-
-
-void GameConfig::ReadConfigFile(const std::string& configFilePath)
+void GameConfig::ReadConfigFile(const std::string& argConfigFilePath)
 {
+	static const std::map<std::string, ConfigFunc> ConfigFuncDictionary = {
+		{"SymbolMap", &GameConfig::ConfigFunc_SymbolMap},
+		{"Segment", &GameConfig::ConfigFunc_Segment},
+		{"ActorList", &GameConfig::ConfigFunc_ActorList},
+		{"ObjectList", &GameConfig::ConfigFunc_ObjectList},
+		{"TexturePool", &GameConfig::ConfigFunc_TexturePool},
+		{"BGConfig", &GameConfig::ConfigFunc_BGConfig},
+	};
+
+	configFilePath = argConfigFilePath;
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLError eResult = doc.LoadFile(configFilePath.c_str());
 
@@ -128,6 +127,6 @@ void GameConfig::ReadConfigFile(const std::string& configFilePath)
 			continue;
 		}
 		
-		std::invoke(it->second, *this, *child, configFilePath);
+		std::invoke(it->second, *this, *child);
 	}
 }

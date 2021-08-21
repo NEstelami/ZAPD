@@ -13,13 +13,10 @@ struct TexturePoolEntry
 	fs::path path = "";  // Path to Shared Texture
 };
 
-class GameConfig;
-
-typedef void (GameConfig::*ConfigFunc)(const tinyxml2::XMLElement&, const std::string&);
-
 class GameConfig
 {
 public:
+	std::string configFilePath;
 	std::map<int32_t, std::string> segmentRefs;
 	std::map<int32_t, ZFile*> segmentRefFiles;
 	std::map<uint32_t, std::string> symbolMap;
@@ -35,12 +32,14 @@ public:
 	void ReadTexturePool(const std::string& texturePoolXmlPath);
 	void GenSymbolMap(const std::string& symbolMapPath);
 
-    void ConfigFunc_SymbolMap(const tinyxml2::XMLElement& element, const std::string& configFilePath);
-    void ConfigFunc_Segment(const tinyxml2::XMLElement& element, const std::string& configFilePath);
-    void ConfigFunc_ActorList(const tinyxml2::XMLElement& element, const std::string& configFilePath);
-    void ConfigFunc_ObjectList(const tinyxml2::XMLElement& element, const std::string& configFilePath);
-    void ConfigFunc_TexturePool(const tinyxml2::XMLElement& element, const std::string& configFilePath);
-    void ConfigFunc_BGConfig(const tinyxml2::XMLElement& element, const std::string& configFilePath);
+    void ConfigFunc_SymbolMap(const tinyxml2::XMLElement& element);
+    void ConfigFunc_Segment(const tinyxml2::XMLElement& element);
+    void ConfigFunc_ActorList(const tinyxml2::XMLElement& element);
+    void ConfigFunc_ObjectList(const tinyxml2::XMLElement& element);
+    void ConfigFunc_TexturePool(const tinyxml2::XMLElement& element);
+    void ConfigFunc_BGConfig(const tinyxml2::XMLElement& element);
 
     void ReadConfigFile(const std::string& configFilePath);
 };
+
+typedef void (GameConfig::*ConfigFunc)(const tinyxml2::XMLElement&);
