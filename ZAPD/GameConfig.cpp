@@ -1,15 +1,5 @@
 #include "GameConfig.h"
 
-
-GameConfig::GameConfig()
-{
-	symbolMap = std::map<uint32_t, std::string>();
-	segmentRefs = std::map<int32_t, std::string>();
-	segmentRefFiles = std::map<int32_t, ZFile*>();
-
-
-}
-
 void GameConfig::ReadTexturePool(const std::string& texturePoolXmlPath)
 {
 	tinyxml2::XMLDocument doc;
@@ -138,6 +128,6 @@ void GameConfig::ReadConfigFile(const std::string& configFilePath)
 			continue;
 		}
 		
-		((*this).*it->second)(*child, configFilePath);
+		std::invoke(it->second, *this, *child, configFilePath);
 	}
 }

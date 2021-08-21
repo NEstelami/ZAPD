@@ -30,7 +30,7 @@ public:
 	// ZBackground
 	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
 
-	GameConfig();// = default;
+	GameConfig() = default;
 
 	void ReadTexturePool(const std::string& texturePoolXmlPath);
 	void GenSymbolMap(const std::string& symbolMapPath);
