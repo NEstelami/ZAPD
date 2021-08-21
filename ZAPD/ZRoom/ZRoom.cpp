@@ -4,6 +4,7 @@
 #include <Utils/StringHelper.h>
 #include <algorithm>
 #include <chrono>
+#include <string_view>
 #include "../Globals.h"
 #include "../ZBlob.h"
 #include "Commands/EndMarker.h"
@@ -66,7 +67,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 
 	scene = Globals::Instance->lastScene;
 
-	if (std::string(reader->Name()) == "Scene")
+	if (std::string_view(reader->Name()) == "Scene")
 	{
 		scene = this;
 		Globals::Instance->lastScene = this;
@@ -90,7 +91,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
                                        "// " + std::string(child->Attribute("Comment")) + "\n";
 
 		// TODO: Bunch of repeated code between all of these that needs to be combined.
-		if (std::string(child->Name()) == "DListHint")
+		if (std::string_view(child->Name()) == "DListHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
@@ -107,7 +108,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 			dList->GetSourceOutputCode(name);
 			delete dList;
 		}
-		else if (std::string(child->Name()) == "CutsceneHint")
+		else if (std::string_view(child->Name()) == "CutsceneHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
@@ -120,7 +121,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 
 			delete cutscene;
 		}
-		else if (std::string(child->Name()) == "AltHeaderHint")
+		else if (std::string_view(child->Name()) == "AltHeaderHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
@@ -135,7 +136,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 
 			commandSets.push_back(CommandSet(address, commandsCount));
 		}
-		else if (std::string(child->Name()) == "PathHint")
+		else if (std::string_view(child->Name()) == "PathHint")
 		{
 			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);

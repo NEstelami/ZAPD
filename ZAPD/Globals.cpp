@@ -2,6 +2,7 @@
 #include <Utils/File.h>
 #include <Utils/Path.h>
 #include <algorithm>
+#include <string_view>
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -47,7 +48,7 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 			for (XMLElement* child = root->FirstChildElement(); child != NULL;
 			     child = child->NextSiblingElement())
 			{
-				if (std::string(child->Name()) == "File")
+				if (std::string_view(child->Name()) == "File")
 				{
 					ZFile* file = new ZFile(fileMode, child, "", "", filePath, true);
 					file->GeneratePlaceholderDeclarations();

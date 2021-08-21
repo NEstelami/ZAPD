@@ -21,6 +21,7 @@
 #endif
 
 #include <string>
+#include <string_view>
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -140,30 +141,30 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-gsf")  // Generate source file during extraction
 		{
-			Globals::Instance->genSourceFile = std::string(argv[++i]) == "1";
+			Globals::Instance->genSourceFile = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
-			Globals::Instance->testMode = std::string(argv[++i]) == "1";
+			Globals::Instance->testMode = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-crc" ||
 		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
 		{
-			Globals::Instance->testMode = std::string(argv[++i]) == "1";
+			Globals::Instance->testMode = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
-			Globals::Instance->useLegacyZDList = std::string(argv[++i]) == "1";
+			Globals::Instance->useLegacyZDList = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-profile")  // Enable profiling
 		{
-			Globals::Instance->profile = std::string(argv[++i]) == "1";
+			Globals::Instance->profile = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg ==
 		         "-uer")  // Split resources into their individual components (enabled by default)
 		                  // TODO: We may wish to make this a part of the config file...
 		{
-			Globals::Instance->useExternalResources = std::string(argv[++i]) == "1";
+			Globals::Instance->useExternalResources = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-tt")  // Set texture type
 		{
@@ -346,7 +347,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 	for (XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		if (std::string(child->Name()) == "File")
+		if (std::string_view(child->Name()) == "File")
 		{
 			ZFile* file = new ZFile(fileMode, child, basePath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);

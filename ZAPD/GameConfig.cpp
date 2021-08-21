@@ -1,6 +1,7 @@
 #include "GameConfig.h"
 
 #include <functional>
+#include <string_view>
 #include "Utils/Directory.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
@@ -25,7 +26,7 @@ void GameConfig::ReadTexturePool(const std::string& texturePoolXmlPath)
 	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
-		if (std::string(child->Name()) == "Texture")
+		if (std::string_view(child->Name()) == "Texture")
 		{
 			std::string crcStr = std::string(child->Attribute("CRC"));
 			fs::path texPath = std::string(child->Attribute("Path"));
