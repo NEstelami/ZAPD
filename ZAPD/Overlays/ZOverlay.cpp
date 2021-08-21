@@ -237,9 +237,8 @@ SectionType ZOverlay::GetSectionTypeFromStr(std::string sectionName)
 	};
 
 	auto it = SectionTypeDictionary.find(sectionName);
-	if (it != SectionTypeDictionary.end())
-	{
-		return it->second;
-	}
-	return SectionType::ERROR;
+	if (it == SectionTypeDictionary.end())
+		return SectionType::ERROR;
+	
+	return it->second;
 }

@@ -17,7 +17,7 @@ void SetPathways::DeclareReferences(const std::string& prefix)
 
 void SetPathways::ParseRawDataLate()
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
+	if (Globals::Instance->game == ZGame::MM)
 	{
 		auto numPaths = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 8;
 		pathwayList.SetNumPaths(numPaths);

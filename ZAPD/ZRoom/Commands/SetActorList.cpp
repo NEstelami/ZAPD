@@ -49,7 +49,7 @@ void SetActorList::DeclareReferences(const std::string& prefix)
 		const auto& entry = actors.front();
 
 		DeclarationPadding padding = DeclarationPadding::Pad16;
-		if (Globals::Instance->game == ZGame::MM_RETAIL)
+		if (Globals::Instance->game == ZGame::MM)
 			padding = DeclarationPadding::None;
 
 		parent->AddDeclarationArray(
@@ -78,7 +78,7 @@ size_t SetActorList::GetActorListArraySize() const
 	// Doing an else-if here so we only do the loop when the game is SW97.
 	// Actor 0x22 is removed from SW97, so we need to ensure that we don't increment the actor count
 	// for it.
-	if (Globals::Instance->game == ZGame::OOT_SW97)
+	if (Globals::Instance->game == ZGame::OoTSW97)
 	{
 		actorCount = 0;
 
@@ -122,7 +122,7 @@ std::string ActorSpawnEntry::GetBodySourceCode() const
 
 	body += "\t\t" + ZNames::GetActorName(actorNum) + ",\n";
 	body += StringHelper::Sprintf("\t\t{ %6i, %6i, %6i },\n", posX, posY, posZ);
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
+	if (Globals::Instance->game == ZGame::MM)
 		body += StringHelper::Sprintf("\t\t{ SPAWN_ROT_FLAGS(%i, 0x%04X), SPAWN_ROT_FLAGS(%i, "
 		                              "0x%04X), SPAWN_ROT_FLAGS(%i, 0x%04X)},\n",
 		                              (rotX >> 7) & 0b111111111, rotX & 0b1111111,

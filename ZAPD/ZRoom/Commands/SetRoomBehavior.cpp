@@ -25,7 +25,7 @@ void SetRoomBehavior::ParseRawData()
 
 std::string SetRoomBehavior::GetBodySourceCode() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
+	if (Globals::Instance->game == ZGame::MM)
 	{
 		std::string enableLights = StringHelper::BoolStr(enablePosLights);
 		return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i, %s, %i)",

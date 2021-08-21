@@ -68,7 +68,7 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 	for (const auto& vtxEntry : dList->vtxDeclarations)
 	{
 		DeclarationAlignment alignment = DeclarationAlignment::Align4;
-		if (Globals::Instance->game == ZGame::MM_RETAIL)
+		if (Globals::Instance->game == ZGame::MM)
 			alignment = DeclarationAlignment::None;
 		parent->AddDeclarationArray(
 			vtxEntry.first, alignment, dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
@@ -162,7 +162,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
 
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dlistAddress,
-		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
 	ZDisplayList* dlist = new ZDisplayList(dlistAddress, dlistLength, parent);
 	GenDListDeclarations(zRoom, parent, dlist);
 

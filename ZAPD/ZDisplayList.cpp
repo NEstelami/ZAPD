@@ -32,7 +32,7 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 	lastTexIsPalette = false;
 	name = "";
 	scene = nullptr;
-	dListType = Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX;
+	dListType = Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX;
 }
 
 ZDisplayList::~ZDisplayList()
@@ -51,7 +51,7 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 
 	int32_t rawDataSize = ZDisplayList::GetDListLength(
 		parent->GetRawData(), rawDataIndex,
-		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
 	numInstructions = rawDataSize / 8;
 	ParseRawData();
 
@@ -2152,12 +2152,16 @@ TextureType ZDisplayList::TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSize
 		};
 
 	auto it = ZDisplayListTextureDictionary.find({fmt, siz});
-	if (it != ZDisplayListTextureDictionary.end())
+	if (it == ZDisplayListTextureDictionary.end())
+		return TextureType::Error;
+
+	if (it->second == TextureType::Palette4bpp)
 	{
-		return it->second;
+		if (Globals::Instance->useLegacyZDList)
+			return TextureType::Palette8bpp;
 	}
 
-	return TextureType::Error;
+	return it->second;
 }
 
 bool ZDisplayList::IsExternalResource() const

@@ -834,12 +834,10 @@ TextureType ZTexture::GetTextureTypeFromString(std::string type)
 	};
 
 	auto it = ZTextureTypeDictionary.find(type);
-	if (it != ZTextureTypeDictionary.end())
-	{
-		return it->second;
-	}
-
-	return TextureType::Error;
+	if (it == ZTextureTypeDictionary.end())
+		return TextureType::Error;
+	
+	return it->second;
 }
 
 bool ZTexture::IsColorIndexed() const

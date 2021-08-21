@@ -19,13 +19,13 @@ public:
 	{
 		switch (Globals::Instance->game)
 		{
-			case ZGame::OOT_RETAIL:
-			case ZGame::OOT_SW97:
+			case ZGame::OoT:
+			case ZGame::OoTSW97:
 				if (id < ZNames::GetNumActors())
 					return Globals::Instance->cfg.actorList.at(id);
 				else
 					return StringHelper::Sprintf("0x%04X", id);
-			case ZGame::MM_RETAIL:
+			case ZGame::MM:
 			{
 				int32_t flags = id & 0xF000;
 				id &= 0xFFF;

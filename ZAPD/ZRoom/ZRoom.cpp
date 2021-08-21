@@ -98,7 +98,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 			ZDisplayList* dList = new ZDisplayList(
 				address,
 				ZDisplayList::GetDListLength(parent->GetRawData(), address,
-			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
+			                                 Globals::Instance->game == ZGame::OoTSW97 ?
                                                  DListType::F3DEX :
                                                  DListType::F3DZEX),
 				parent);
@@ -263,7 +263,7 @@ void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet co
 				cmd = new SetAlternateHeaders(parent);
 				break;  // 0x18
 			case RoomCommand::SetCameraSettings:
-				if (Globals::Instance->game == ZGame::MM_RETAIL)
+				if (Globals::Instance->game == ZGame::MM)
 					cmd = new SetWorldMapVisited(parent);
 				else
 					cmd = new SetCameraSettings(parent);

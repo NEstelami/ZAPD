@@ -76,7 +76,7 @@ void ZCollisionHeader::ParseRawData()
 	for (uint16_t i = 0; i < numWaterBoxes; i++)
 		waterBoxes.push_back(new WaterBoxHeader(
 			rawData,
-			waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16))));
+			waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OoTSW97 ? 12 : 16))));
 
 	std::string declaration = "";
 
@@ -232,7 +232,7 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, uint32_t raw
 	xLength = BitConverter::ToInt16BE(data, rawDataIndex + 6);
 	zLength = BitConverter::ToInt16BE(data, rawDataIndex + 8);
 
-	if (Globals::Instance->game == ZGame::OOT_SW97)
+	if (Globals::Instance->game == ZGame::OoTSW97)
 		properties = BitConverter::ToInt16BE(data, rawDataIndex + 10);
 	else
 		properties = BitConverter::ToInt32BE(data, rawDataIndex + 12);

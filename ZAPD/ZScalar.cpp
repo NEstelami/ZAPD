@@ -40,11 +40,11 @@ ZScalarType ZScalar::MapOutputTypeToScalarType(const std::string& type)
 	};
 
 	auto it = ZScalarTypeDictionary.find(type);
-	if (it != ZScalarTypeDictionary.end())
-	{
-		return it->second;
-	}
-	return ZScalarType::ZSCALAR_NONE;
+	if (it == ZScalarTypeDictionary.end())
+		return ZScalarType::ZSCALAR_NONE;
+	
+	return it->second;
+	
 }
 
 std::string ZScalar::MapScalarTypeToOutputType(const ZScalarType scalarType)

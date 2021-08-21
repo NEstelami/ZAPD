@@ -20,9 +20,9 @@ enum class ZFileMode
 
 enum class ZGame
 {
-	OOT_RETAIL,
-	OOT_SW97,
-	MM_RETAIL
+	OoT,
+	OoTSW97,
+	MM
 };
 
 class ZFile

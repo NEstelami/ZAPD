@@ -284,7 +284,7 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 
 		int32_t dlistLength = ZDisplayList::GetDListLength(
 			parent->GetRawData(), unk_8_Offset,
-			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+			Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
 		unk_8_dlist = new ZDisplayList(unk_8_Offset, dlistLength, parent);
 
 		std::string dListStr =
@@ -647,11 +647,10 @@ ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 	};
 
 	auto it = ZLimbTypeDictionary.find(attrName);
-	if (it != ZLimbTypeDictionary.end())
-	{
-		return it->second;
-	}
-	return ZLimbType::Invalid;
+	if (it == ZLimbTypeDictionary.end())
+		return ZLimbType::Invalid;
+
+	return it->second;
 }
 
 uint32_t ZLimb::GetFileAddress()
@@ -699,7 +698,7 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dListOffset,
-		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
 	auto dList = new ZDisplayList(dListOffset, dlistLength, parent);
 	dList->SetName(dListStr);
 	dList->GetSourceOutputCode(prefix);

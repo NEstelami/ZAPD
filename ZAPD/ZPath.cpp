@@ -182,7 +182,7 @@ std::string PathwayEntry::GetBodySourceCode() const
 	std::string declaration = "";
 	std::string listName = parent->GetDeclarationPtrName(listSegmentAddress);
 
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
+	if (Globals::Instance->game == ZGame::MM)
 		declaration +=
 			StringHelper::Sprintf("%i, %i, %i, %s", numPoints, unk1, unk2, listName.c_str());
 	else

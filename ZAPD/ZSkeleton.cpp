@@ -167,11 +167,10 @@ ZSkeletonType ZSkeleton::GetTypeByAttributeName(const std::string& attrName)
 	};
 
 	auto it = ZSkeletonTypeDictionary.find(attrName);
-	if (it != ZSkeletonTypeDictionary.end())
-	{
-		return it->second;
-	}
-	return ZSkeletonType::Invalid;
+	if (it == ZSkeletonTypeDictionary.end())
+		return ZSkeletonType::Invalid;
+	
+	return it->second;
 }
 
 segptr_t ZSkeleton::GetAddress()
