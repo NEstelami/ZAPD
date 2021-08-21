@@ -1,16 +1,15 @@
 #pragma once
 
-#include <algorithm>
 #include <map>
-#include "Utils/File.h"
-#include "Utils/Path.h"
-#include "ZFile.h"
+#include "Utils/Directory.h"
 #include "tinyxml2.h"
 
 struct TexturePoolEntry
 {
 	fs::path path = "";  // Path to Shared Texture
 };
+
+class ZFile;
 
 class GameConfig
 {

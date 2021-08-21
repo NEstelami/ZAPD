@@ -1,5 +1,11 @@
 #include "GameConfig.h"
 
+#include <functional>
+#include "Utils/Directory.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
+#include "tinyxml2.h"
+
 void GameConfig::ReadTexturePool(const std::string& texturePoolXmlPath)
 {
 	tinyxml2::XMLDocument doc;
