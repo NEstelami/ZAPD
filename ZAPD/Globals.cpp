@@ -66,55 +66,6 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 	return "ERROR";
 }
 
-// static const std::map<std::string, ConfigFunc> ConfigFuncDictionary = {
-// 	{"SymbolMap", GameConfig::ConfigFunc_SymbolMap},
-// 	{"Segment", GameConfig::ConfigFunc_Segment},
-// 	{"ActorList", GameConfig::ConfigFunc_ActorList},
-// 	{"ObjectList", GameConfig::ConfigFunc_ObjectList},
-// 	{"TexturePool", GameConfig::ConfigFunc_TexturePool},
-// 	{"BGConfig", GameConfig::ConfigFunc_BGConfig},
-// };
-
-static const std::map<std::string, ConfigFunc> ConfigFuncDictionary = {
-	{"SymbolMap", ConfigFunc_SymbolMap},
-	{"Segment", ConfigFunc_Segment},
-	{"ActorList", ConfigFunc_ActorList},
-	{"ObjectList", ConfigFunc_ObjectList},
-	{"TexturePool", ConfigFunc_TexturePool},
-	{"BGConfig", ConfigFunc_BGConfig},
-};
-
-
-void Globals::ReadConfigFile(const std::string& configFilePath)
-{
-	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLError eResult = doc.LoadFile(configFilePath.c_str());
-
-	if (eResult != tinyxml2::XML_SUCCESS)
-	{
-		throw std::runtime_error("Error: Unable to read config file.");
-		return;
-	}
-
-	tinyxml2::XMLNode* root = doc.FirstChild();
-
-	if (root == nullptr)
-		return;
-
-	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
-	     child = child->NextSiblingElement())
-	{
-		auto it = ConfigFuncDictionary.find(child->Name());
-		if (it == ConfigFuncDictionary.end())
-		{
-			fprintf(stderr, "Unsupported configuration variable: %s\n", child->Name());
-			continue;
-		}
-		
-		it->second(cfg, *child, configFilePath);
-	}
-}
-
 void Globals::AddSegment(int32_t segment, ZFile* file)
 {
 	if (std::find(segments.begin(), segments.end(), segment) == segments.end())

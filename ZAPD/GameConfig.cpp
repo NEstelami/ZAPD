@@ -10,7 +10,7 @@ GameConfig::GameConfig()
 
 }
 
-void ReadTexturePool(GameConfig& cfg, const std::string& texturePoolXmlPath)
+void GameConfig::ReadTexturePool(const std::string& texturePoolXmlPath)
 {
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
@@ -37,12 +37,12 @@ void ReadTexturePool(GameConfig& cfg, const std::string& texturePoolXmlPath)
 
 			uint32_t crc = strtoul(crcStr.c_str(), nullptr, 16);
 
-			cfg.texturePool[crc].path = texPath;
+			texturePool[crc].path = texPath;
 		}
 	}
 }
 
-void GenSymbolMap(GameConfig& cfg, const std::string& symbolMapPath)
+void GameConfig::GenSymbolMap(const std::string& symbolMapPath)
 {
 	auto symbolLines = File::ReadAllLines(symbolMapPath);
 
@@ -52,51 +52,92 @@ void GenSymbolMap(GameConfig& cfg, const std::string& symbolMapPath)
 		uint32_t addr = strtoul(split[0].c_str(), nullptr, 16);
 		std::string symbolName = split[1];
 
-		cfg.symbolMap[addr] = symbolName;
+		symbolMap[addr] = symbolName;
 	}
 }
 
-void ConfigFunc_SymbolMap(GameConfig& cfg, tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_SymbolMap(const tinyxml2::XMLElement& element, const std::string& configFilePath)
 {
 	std::string fileName = element.Attribute("File");
-	GenSymbolMap(cfg, Path::GetDirectoryName(configFilePath) + "/" + fileName);
+	GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 }
 
-void ConfigFunc_Segment(GameConfig& cfg, tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_Segment(const tinyxml2::XMLElement& element, const std::string& configFilePath)
 {
 	std::string fileName = element.Attribute("File");
 	int32_t segNumber = element.IntAttribute("Number");
-	cfg.segmentRefs[segNumber] = fileName;
+	segmentRefs[segNumber] = fileName;
 }
 
-void ConfigFunc_ActorList(GameConfig& cfg, tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_ActorList(const tinyxml2::XMLElement& element, const std::string& configFilePath)
 {
 	std::string fileName = element.Attribute("File");
 	std::vector<std::string> lines =
 		File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
 	for (auto& line : lines)
-		cfg.actorList.emplace_back(std::move(line));
+		actorList.emplace_back(std::move(line));
 }
 
-void ConfigFunc_ObjectList(GameConfig& cfg, tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_ObjectList(const tinyxml2::XMLElement& element, const std::string& configFilePath)
 {
 	std::string fileName = element.Attribute("File");
 	std::vector<std::string> lines =
 		File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
 	for (auto& line : lines)
-		cfg.objectList.emplace_back(std::move(line));
+		objectList.emplace_back(std::move(line));
 }
 
-void ConfigFunc_TexturePool(GameConfig& cfg, tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_TexturePool(const tinyxml2::XMLElement& element, const std::string& configFilePath)
 {
 	std::string fileName = element.Attribute("File");
-	ReadTexturePool(cfg, Path::GetDirectoryName(configFilePath) + "/" + fileName);
+	ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 }
 
-void ConfigFunc_BGConfig(GameConfig& cfg, tinyxml2::XMLElement& element, const std::string& configFilePath)
+void GameConfig::ConfigFunc_BGConfig(const tinyxml2::XMLElement& element, const std::string& configFilePath)
 {
-	cfg.bgScreenWidth =  element.IntAttribute("ScreenWidth", 320);
-	cfg.bgScreenHeight = element.IntAttribute("ScreenHeight", 240);
+	bgScreenWidth =  element.IntAttribute("ScreenWidth", 320);
+	bgScreenHeight = element.IntAttribute("ScreenHeight", 240);
+}
+
+
+static const std::map<std::string, ConfigFunc> ConfigFuncDictionary = {
+	{"SymbolMap", &GameConfig::ConfigFunc_SymbolMap},
+	{"Segment", &GameConfig::ConfigFunc_Segment},
+	{"ActorList", &GameConfig::ConfigFunc_ActorList},
+	{"ObjectList", &GameConfig::ConfigFunc_ObjectList},
+	{"TexturePool", &GameConfig::ConfigFunc_TexturePool},
+	{"BGConfig", &GameConfig::ConfigFunc_BGConfig},
+};
+
+
+void GameConfig::ReadConfigFile(const std::string& configFilePath)
+{
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError eResult = doc.LoadFile(configFilePath.c_str());
+
+	if (eResult != tinyxml2::XML_SUCCESS)
+	{
+		throw std::runtime_error("Error: Unable to read config file.");
+		return;
+	}
+
+	tinyxml2::XMLNode* root = doc.FirstChild();
+
+	if (root == nullptr)
+		return;
+
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
+	     child = child->NextSiblingElement())
+	{
+		auto it = ConfigFuncDictionary.find(child->Name());
+		if (it == ConfigFuncDictionary.end())
+		{
+			fprintf(stderr, "Unsupported configuration variable: %s\n", child->Name());
+			continue;
+		}
+		
+		((*this).*it->second)(*child, configFilePath);
+	}
 }

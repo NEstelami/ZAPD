@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-rconf")  // Read Config File
 		{
-			Globals::Instance->ReadConfigFile(argv[++i]);
+			Globals::Instance->cfg.ReadConfigFile(argv[++i]);
 		}
 		else if (arg == "-eh")  // Enable Error Handler
 		{

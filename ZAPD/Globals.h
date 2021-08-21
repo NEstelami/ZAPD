@@ -72,7 +72,7 @@ public:
 
 	Globals();
 	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
-	void ReadConfigFile(const std::string& configFilePath);
+	// void ReadConfigFile(const std::string& configFilePath);
 	void AddSegment(int32_t segment, ZFile* file);
 	bool HasSegment(int32_t segment);
 	ZResourceExporter* GetExporter(ZResourceType resType);
