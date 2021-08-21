@@ -6,9 +6,9 @@
 #include <cassert>
 #include <chrono>
 #include <math.h>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 

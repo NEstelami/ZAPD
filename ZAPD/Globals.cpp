@@ -1,7 +1,7 @@
 #include "Globals.h"
-#include <algorithm>
 #include <Utils/File.h>
 #include <Utils/Path.h>
+#include <algorithm>
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -14,9 +14,6 @@ Globals::Globals()
 
 	files = std::vector<ZFile*>();
 	segments = std::vector<int32_t>();
-	// symbolMap = std::map<uint32_t, std::string>();
-	// segmentRefs = std::map<int32_t, std::string>();
-	// segmentRefFiles = std::map<int32_t, ZFile*>();
 	game = ZGame::OOT_RETAIL;
 	genSourceFile = true;
 	testMode = false;
@@ -97,7 +94,7 @@ ZResourceExporter* Globals::GetExporter(ZResourceType resType)
 	auto exporters = *GetExporterMap();
 
 	if (currentExporter != "" && exporters[currentExporter]->exporters.find(resType) !=
-		exporters[currentExporter]->exporters.end())
+	                                 exporters[currentExporter]->exporters.end())
 		return exporters[currentExporter]->exporters[resType];
 	else
 		return nullptr;

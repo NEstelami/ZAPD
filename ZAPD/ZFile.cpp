@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
-#include "Utils/Directory.h"
-#include "Utils/File.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/Directory.h"
+#include "Utils/File.h"
 #include "Utils/Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
@@ -306,8 +306,10 @@ void ZFile::ExtractResources()
 
 	if (memStream->GetLength() > 0)
 	{
-		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin", Globals::Instance->outputPath.string().c_str(), GetName().c_str()),
-			memStream->ToVector());
+		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin",
+		                                          Globals::Instance->outputPath.string().c_str(),
+		                                          GetName().c_str()),
+		                    memStream->ToVector());
 	}
 
 	writer.Close();

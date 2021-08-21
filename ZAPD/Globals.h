@@ -34,9 +34,6 @@ public:
 	ExporterSetFuncVoid3 endXMLFunc = nullptr;
 };
 
-
-
-
 class Globals
 {
 public:
@@ -61,10 +58,7 @@ public:
 
 	std::vector<ZFile*> files;
 	std::vector<int32_t> segments;
-	// std::map<int32_t, std::string> segmentRefs;
-	// std::map<int32_t, ZFile*> segmentRefFiles;
 	ZRoom* lastScene;
-	// std::map<uint32_t, std::string> symbolMap;
 
 	std::string currentExporter;
 	static std::map<std::string, ExporterSet*>* GetExporterMap();
@@ -72,7 +66,6 @@ public:
 
 	Globals();
 	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
-	// void ReadConfigFile(const std::string& configFilePath);
 	void AddSegment(int32_t segment, ZFile* file);
 	bool HasSegment(int32_t segment);
 	ZResourceExporter* GetExporter(ZResourceType resType);

@@ -87,7 +87,7 @@ void GameConfig::ConfigFunc_TexturePool(const tinyxml2::XMLElement& element)
 
 void GameConfig::ConfigFunc_BGConfig(const tinyxml2::XMLElement& element)
 {
-	bgScreenWidth =  element.IntAttribute("ScreenWidth", 320);
+	bgScreenWidth = element.IntAttribute("ScreenWidth", 320);
 	bgScreenHeight = element.IntAttribute("ScreenHeight", 240);
 }
 
@@ -126,7 +126,7 @@ void GameConfig::ReadConfigFile(const std::string& argConfigFilePath)
 			fprintf(stderr, "Unsupported configuration variable: %s\n", child->Name());
 			continue;
 		}
-		
+
 		std::invoke(it->second, *this, *child);
 	}
 }
