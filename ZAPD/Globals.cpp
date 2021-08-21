@@ -14,9 +14,9 @@ Globals::Globals()
 
 	files = std::vector<ZFile*>();
 	segments = std::vector<int32_t>();
-	symbolMap = std::map<uint32_t, std::string>();
-	segmentRefs = std::map<int32_t, std::string>();
-	segmentRefFiles = std::map<int32_t, ZFile*>();
+	// symbolMap = std::map<uint32_t, std::string>();
+	// segmentRefs = std::map<int32_t, std::string>();
+	// segmentRefFiles = std::map<int32_t, ZFile*>();
 	game = ZGame::OOT_RETAIL;
 	genSourceFile = true;
 	testMode = false;
@@ -31,12 +31,12 @@ Globals::Globals()
 
 std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 {
-	if (segmentRefs.find(segNumber) != segmentRefs.end())
+	if (cfg.segmentRefs.find(segNumber) != cfg.segmentRefs.end())
 	{
-		if (segmentRefFiles.find(segNumber) == segmentRefFiles.end())
+		if (cfg.segmentRefFiles.find(segNumber) == cfg.segmentRefFiles.end())
 		{
 			XMLDocument doc;
-			std::string filePath = segmentRefs[segNumber];
+			std::string filePath = cfg.segmentRefs[segNumber];
 			XMLError eResult = doc.LoadFile(filePath.c_str());
 
 			if (eResult != tinyxml2::XML_SUCCESS)
@@ -54,17 +54,36 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 				{
 					ZFile* file = new ZFile(fileMode, child, "", "", filePath, true);
 					file->GeneratePlaceholderDeclarations();
-					segmentRefFiles[segNumber] = file;
+					cfg.segmentRefFiles[segNumber] = file;
 					break;
 				}
 			}
 		}
 
-		return segmentRefFiles[segNumber]->GetDeclarationName(symbolAddress, "ERROR");
+		return cfg.segmentRefFiles[segNumber]->GetDeclarationName(symbolAddress, "ERROR");
 	}
 
 	return "ERROR";
 }
+
+// static const std::map<std::string, ConfigFunc> ConfigFuncDictionary = {
+// 	{"SymbolMap", GameConfig::ConfigFunc_SymbolMap},
+// 	{"Segment", GameConfig::ConfigFunc_Segment},
+// 	{"ActorList", GameConfig::ConfigFunc_ActorList},
+// 	{"ObjectList", GameConfig::ConfigFunc_ObjectList},
+// 	{"TexturePool", GameConfig::ConfigFunc_TexturePool},
+// 	{"BGConfig", GameConfig::ConfigFunc_BGConfig},
+// };
+
+static const std::map<std::string, ConfigFunc> ConfigFuncDictionary = {
+	{"SymbolMap", ConfigFunc_SymbolMap},
+	{"Segment", ConfigFunc_Segment},
+	{"ActorList", ConfigFunc_ActorList},
+	{"ObjectList", ConfigFunc_ObjectList},
+	{"TexturePool", ConfigFunc_TexturePool},
+	{"BGConfig", ConfigFunc_BGConfig},
+};
+
 
 void Globals::ReadConfigFile(const std::string& configFilePath)
 {
@@ -82,94 +101,17 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 	if (root == nullptr)
 		return;
 
-	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
-		if (std::string(child->Name()) == "SymbolMap")
+		auto it = ConfigFuncDictionary.find(child->Name());
+		if (it == ConfigFuncDictionary.end())
 		{
-			std::string fileName = std::string(child->Attribute("File"));
-			GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+			fprintf(stderr, "Unsupported configuration variable: %s\n", child->Name());
+			continue;
 		}
-		else if (std::string(child->Name()) == "Segment")
-		{
-			std::string fileName = std::string(child->Attribute("File"));
-			int32_t segNumber = child->IntAttribute("Number");
-			segmentRefs[segNumber] = fileName;
-		}
-		else if (std::string(child->Name()) == "ActorList")
-		{
-			std::string fileName = std::string(child->Attribute("File"));
-			std::vector<std::string> lines =
-				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-
-			for (std::string line : lines)
-				cfg.actorList.push_back(StringHelper::Strip(line, "\r"));
-		}
-		else if (std::string(child->Name()) == "ObjectList")
-		{
-			std::string fileName = std::string(child->Attribute("File"));
-			std::vector<std::string> lines =
-				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-
-			for (std::string line : lines)
-				cfg.objectList.push_back(StringHelper::Strip(line, "\r"));
-		}
-		else if (std::string(child->Name()) == "TexturePool")
-		{
-			std::string fileName = std::string(child->Attribute("File"));
-			ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-		}
-		else if (std::string(child->Name()) == "BGConfig")
-		{
-			cfg.bgScreenWidth = child->IntAttribute("ScreenWidth", 320);
-			cfg.bgScreenHeight = child->IntAttribute("ScreenHeight", 240);
-		}
-	}
-}
-
-void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
-{
-	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLError eResult = doc.LoadFile(texturePoolXmlPath.c_str());
-
-	if (eResult != tinyxml2::XML_SUCCESS)
-	{
-		fprintf(stderr, "Warning: Unable to read texture pool XML with error code %i\n", eResult);
-		return;
-	}
-
-	tinyxml2::XMLNode* root = doc.FirstChild();
-
-	if (root == nullptr)
-		return;
-
-	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
-	     child = child->NextSiblingElement())
-	{
-		if (std::string(child->Name()) == "Texture")
-		{
-			std::string crcStr = std::string(child->Attribute("CRC"));
-			fs::path texPath = std::string(child->Attribute("Path"));
-			std::string texName = "";
-
-			uint32_t crc = strtoul(crcStr.c_str(), NULL, 16);
-
-			cfg.texturePool[crc].path = texPath;
-		}
-	}
-}
-
-void Globals::GenSymbolMap(const std::string& symbolMapPath)
-{
-	auto symbolLines = File::ReadAllLines(symbolMapPath);
-
-	for (std::string symbolLine : symbolLines)
-	{
-		auto split = StringHelper::Split(symbolLine, " ");
-		uint32_t addr = strtoul(split[0].c_str(), NULL, 16);
-		std::string symbolName = split[1];
-
-		symbolMap[addr] = symbolName;
+		
+		it->second(cfg, *child, configFilePath);
 	}
 }
 
@@ -178,8 +120,8 @@ void Globals::AddSegment(int32_t segment, ZFile* file)
 	if (std::find(segments.begin(), segments.end(), segment) == segments.end())
 		segments.push_back(segment);
 
-	segmentRefs[segment] = file->GetXmlFilePath().string();
-	segmentRefFiles[segment] = file;
+	cfg.segmentRefs[segment] = file->GetXmlFilePath().string();
+	cfg.segmentRefFiles[segment] = file;
 }
 
 bool Globals::HasSegment(int32_t segment)

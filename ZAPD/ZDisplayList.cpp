@@ -515,7 +515,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 
 			ZFile* auxParent = parent;
 			if (parent->segment != segmentNumber && Globals::Instance->HasSegment(segmentNumber))
-				auxParent = Globals::Instance->segmentRefFiles.at(segmentNumber);
+				auxParent = Globals::Instance->cfg.segmentRefFiles.at(segmentNumber);
 
 			Declaration* decl = auxParent->GetDeclaration(texAddr);
 			if (Globals::Instance->HasSegment(segmentNumber) && decl != nullptr)
@@ -781,8 +781,8 @@ void ZDisplayList::Opcode_G_MTX(uint64_t data, char* line)
 
 	std::string matrixRef = "";
 
-	if (Globals::Instance->symbolMap.find(mm) != Globals::Instance->symbolMap.end())
-		matrixRef = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[mm].c_str());
+	if (Globals::Instance->cfg.symbolMap.find(mm) != Globals::Instance->cfg.symbolMap.end())
+		matrixRef = StringHelper::Sprintf("&%s", Globals::Instance->cfg.symbolMap[mm].c_str());
 	else
 		matrixRef = StringHelper::Sprintf("0x%08X", mm);
 
@@ -1676,7 +1676,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 
 	ZFile* auxParent = self->parent;
 	if (self->parent->segment != texSegNum && Globals::Instance->HasSegment(texSegNum))
-		auxParent = Globals::Instance->segmentRefFiles.at(texSegNum);
+		auxParent = Globals::Instance->cfg.segmentRefFiles.at(texSegNum);
 
 	Declaration* decl = auxParent->GetDeclaration(texOffset);
 	if (Globals::Instance->HasSegment(texSegNum) && decl != nullptr)
@@ -1712,7 +1712,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
 
 	ZFile* auxParent = self->parent;
 	if (self->parent->segment != palSegNum && Globals::Instance->HasSegment(palSegNum))
-		auxParent = Globals::Instance->segmentRefFiles.at(palSegNum);
+		auxParent = Globals::Instance->cfg.segmentRefFiles.at(palSegNum);
 
 	Declaration* decl = auxParent->GetDeclaration(palOffset);
 	if (Globals::Instance->HasSegment(palSegNum) && decl != nullptr)
@@ -1746,7 +1746,7 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 
 	ZFile* auxParent = self->parent;
 	if (self->parent->segment != dListSegNum && Globals::Instance->HasSegment(dListSegNum))
-		auxParent = Globals::Instance->segmentRefFiles.at(dListSegNum);
+		auxParent = Globals::Instance->cfg.segmentRefFiles.at(dListSegNum);
 
 	std::string dListName = auxParent->GetDeclarationPtrName(seg);
 
@@ -1760,8 +1760,8 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	std::string mtxName = "";
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 
-	if (Globals::Instance->symbolMap.find(seg) != Globals::Instance->symbolMap.end())
-		mtxName = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[seg].c_str());
+	if (Globals::Instance->cfg.symbolMap.find(seg) != Globals::Instance->cfg.symbolMap.end())
+		mtxName = StringHelper::Sprintf("&%s", Globals::Instance->cfg.symbolMap[seg].c_str());
 	else if (Globals::Instance->HasSegment(GETSEGNUM(seg)))
 	{
 		Declaration* decl =
