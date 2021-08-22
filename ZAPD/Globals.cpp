@@ -67,22 +67,6 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 	return "ERROR";
 }
 
-enum class ConfigType
-{
-	SymbolMap,
-	Segment,
-	ActorList,
-	ObjectList,
-	TexturePool,
-	BGConfig
-};
-
-static const std::map<std::string, ConfigType> ConfigTypeDictionary = {
-	{"SymbolMap", ConfigType::SymbolMap},     {"Segment", ConfigType::Segment},
-	{"ActorList", ConfigType::ActorList},     {"ObjectList", ConfigType::ObjectList},
-	{"TexturePool", ConfigType::TexturePool}, {"BGConfig", ConfigType::BGConfig},
-};
-
 void Globals::ReadConfigFile(const std::string& configFilePath)
 {
 	tinyxml2::XMLDocument doc;
@@ -102,63 +86,44 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
-		auto it = ConfigTypeDictionary.find(child->Name());
-		if (it == ConfigTypeDictionary.end())
+		if (std::string(child->Name()) == "SymbolMap")
 		{
-			fprintf(stderr, "Unsupported configuration variable: %s\n", child->Name());
-			continue;
+			std::string fileName = std::string(child->Attribute("File"));
+			GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 		}
-
-		switch (it->second)
+		else if (std::string(child->Name()) == "Segment")
 		{
-			case ConfigType::SymbolMap:
-			{
-				std::string fileName = child->Attribute("File");
-				GenSymbolMap(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-			}
-			break;
+			std::string fileName = std::string(child->Attribute("File"));
+			int32_t segNumber = child->IntAttribute("Number");
+			segmentRefs[segNumber] = fileName;
+		}
+		else if (std::string(child->Name()) == "ActorList")
+		{
+			std::string fileName = std::string(child->Attribute("File"));
+			std::vector<std::string> lines =
+				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
-			case ConfigType::Segment:
-			{
-				std::string fileName = child->Attribute("File");
-				int32_t segNumber = child->IntAttribute("Number");
-				segmentRefs[segNumber] = fileName;
-			}
-			break;
+			for (std::string line : lines)
+				cfg.actorList.push_back(StringHelper::Strip(line, "\r"));
+		}
+		else if (std::string(child->Name()) == "ObjectList")
+		{
+			std::string fileName = std::string(child->Attribute("File"));
+			std::vector<std::string> lines =
+				File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
 
-			case ConfigType::ActorList:
-			{
-				std::string fileName = child->Attribute("File");
-				std::vector<std::string> lines =
-					File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-
-				for (auto& line : lines)
-					cfg.actorList.emplace_back(std::move(line));
-			}
-			break;
-
-			case ConfigType::ObjectList:
-			{
-				std::string fileName = child->Attribute("File");
-				std::vector<std::string> lines =
-					File::ReadAllLines(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-
-				for (auto& line : lines)
-					cfg.objectList.emplace_back(std::move(line));
-			}
-			break;
-
-			case ConfigType::TexturePool:
-			{
-				std::string fileName = child->Attribute("File");
-				ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
-			}
-			break;
-
-			case ConfigType::BGConfig:
-				cfg.bgScreenWidth = child->IntAttribute("ScreenWidth", 320);
-				cfg.bgScreenHeight = child->IntAttribute("ScreenHeight", 240);
-				break;
+			for (std::string line : lines)
+				cfg.objectList.push_back(StringHelper::Strip(line, "\r"));
+		}
+		else if (std::string(child->Name()) == "TexturePool")
+		{
+			std::string fileName = std::string(child->Attribute("File"));
+			ReadTexturePool(Path::GetDirectoryName(configFilePath) + "/" + fileName);
+		}
+		else if (std::string(child->Name()) == "BGConfig")
+		{
+			cfg.bgScreenWidth = child->IntAttribute("ScreenWidth", 320);
+			cfg.bgScreenHeight = child->IntAttribute("ScreenHeight", 240);
 		}
 	}
 }
