@@ -55,7 +55,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 
 std::string ZArray::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string output = "";
+	std::string output;
 
 	for (size_t i = 0; i < arrayCnt; i++)
 	{

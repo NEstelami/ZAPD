@@ -34,7 +34,7 @@ void SetExitList::DeclareReferencesLate(const std::string& prefix)
 {
 	if (!exits.empty())
 	{
-		std::string declaration = "";
+		std::string declaration;
 
 		for (size_t i = 0; i < exits.size(); i++)
 		{

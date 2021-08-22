@@ -33,10 +33,10 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 	for (auto& texture : textures)
 	{
 		size_t declSize = 0;
-		std::string declTypeName = "";
+		std::string declTypeName;
 		std::string declName = StringHelper::Sprintf("%sAnimatedMaterialParams0x%06X",
 		                                             prefix.c_str(), texture.segmentOffset);
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 
 		switch (texture.type)
@@ -93,7 +93,7 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 
 	if (!textures.empty())
 	{
-		std::string declaration = "";
+		std::string declaration;
 
 		for (size_t i = 0; i < textures.size(); i++)
 		{
@@ -241,7 +241,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 {
 	if (primColorSegmentOffset != 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 
 		for (F3DPrimColor& color : primColors)
@@ -265,7 +265,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 
 	if (envColorSegmentOffset != 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 
 		for (FlashingTextureEnvColor& color : envColors)
@@ -289,7 +289,7 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddre
 
 	if (keyFrameSegmentOffset != 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 
 		for (uint16_t keyFrame : keyFrames)
@@ -356,7 +356,7 @@ std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t
 {
 	if (textureSegmentOffsetsSegmentOffset != 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 
 		for (uint32_t offset : textureSegmentOffsets)
@@ -380,7 +380,7 @@ std::string AnimatedMatTexCycleParams::GenerateSourceCode(ZRoom* zRoom, uint32_t
 
 	if (textureIndicesSegmentOffset != 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 
 		for (uint8_t textureIndex : textureIndices)

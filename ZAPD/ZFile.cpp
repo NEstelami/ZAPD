@@ -586,7 +586,7 @@ bool ZFile::HasDeclaration(uint32_t address)
 
 void ZFile::GenerateSourceFiles(fs::path outputDir)
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	sourceOutput += "#include \"ultra64.h\"\n";
 	sourceOutput += "#include \"z64.h\"\n";
@@ -740,7 +740,7 @@ void ZFile::RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc)
 
 std::string ZFile::ProcessDeclarations()
 {
-	std::string output = "";
+	std::string output;
 
 	if (declarations.size() == 0)
 		return output;
@@ -1047,7 +1047,7 @@ std::string ZFile::ProcessDeclarations()
 			if (item.second->isExternal)
 			{
 				// HACK
-				std::string extType = "";
+				std::string extType;
 
 				if (item.second->varType == "Gfx")
 					extType = "dlist";
@@ -1192,7 +1192,7 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 
 std::string ZFile::ProcessExterns()
 {
-	std::string output = "";
+	std::string output;
 
 	for (std::pair<uint32_t, Declaration*> item : declarations)
 	{
@@ -1233,7 +1233,7 @@ std::string ZFile::ProcessTextureIntersections(std::string prefix)
 	if (texturesResources.empty())
 		return "";
 
-	std::string defines = "";
+	std::string defines;
 	std::vector<std::pair<uint32_t, ZTexture*>> texturesSorted(texturesResources.begin(),
 	                                                           texturesResources.end());
 

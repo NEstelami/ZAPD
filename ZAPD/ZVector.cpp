@@ -83,7 +83,7 @@ std::string ZVector::GetSourceTypeName() const
 
 std::string ZVector::GetBodySourceCode() const
 {
-	std::string body = "";
+	std::string body;
 
 	for (size_t i = 0; i < this->scalars.size(); i++)
 		body += StringHelper::Sprintf("%6s, ", scalars[i].GetBodySourceCode().c_str());

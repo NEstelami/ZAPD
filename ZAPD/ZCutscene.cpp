@@ -86,7 +86,7 @@ CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
 
 std::string ZCutscene::GetBodySourceCode()
 {
-	std::string output = "";
+	std::string output;
 	size_t size = 0;
 	uint32_t curPtr = 0;
 
@@ -524,10 +524,10 @@ std::string CutsceneCommandSetCameraPos::GetCName()
 
 std::string CutsceneCommandSetCameraPos::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
-	std::string listStr = "";
-	std::string posStr = "";
+	std::string listStr;
+	std::string posStr;
 
 	if (commandID == (int32_t)CutsceneCommands::SetCameraFocus)
 	{
@@ -612,7 +612,7 @@ std::string CutsceneCommandFadeBGM::GetCName()
 
 std::string CutsceneCommandFadeBGM::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_FADE_BGM_LIST(%i),\n", entries.size());
 
@@ -665,7 +665,7 @@ CutsceneCommandPlayBGM::CutsceneCommandPlayBGM(const std::vector<uint8_t>& rawDa
 
 std::string CutsceneCommandPlayBGM::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_PLAY_BGM_LIST(%i),\n", entries.size());
 
@@ -708,7 +708,7 @@ CutsceneCommandStopBGM::CutsceneCommandStopBGM(const std::vector<uint8_t>& rawDa
 
 std::string CutsceneCommandStopBGM::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_STOP_BGM_LIST(%i),\n", entries.size());
 
@@ -766,7 +766,7 @@ CutsceneCommandEnvLighting::CutsceneCommandEnvLighting(const std::vector<uint8_t
 
 std::string CutsceneCommandEnvLighting::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_LIGHTING_LIST(%i),\n", entries.size());
 
@@ -822,7 +822,7 @@ CutsceneCommandUnknown9::CutsceneCommandUnknown9(const std::vector<uint8_t>& raw
 
 std::string CutsceneCommandUnknown9::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_CMD_09_LIST(%i),\n", entries.size());
 
@@ -880,7 +880,7 @@ CutsceneCommandUnknown::CutsceneCommandUnknown(const std::vector<uint8_t>& rawDa
 
 std::string CutsceneCommandUnknown::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%02X, %i),\n", commandID, entries.size());
 
@@ -938,7 +938,7 @@ std::string CutsceneCommandDayTime::GetCName()
 
 std::string CutsceneCommandDayTime::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_TIME_LIST(%i),\n", entries.size());
 
@@ -989,7 +989,7 @@ std::string CutsceneCommandTextbox::GetCName()
 
 std::string CutsceneCommandTextbox::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_TEXT_LIST(%i),\n", entries.size());
 
@@ -1055,8 +1055,8 @@ CutsceneCommandActorAction::CutsceneCommandActorAction(const std::vector<uint8_t
 
 std::string CutsceneCommandActorAction::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
-	std::string subCommand = "";
+	std::string result;
+	std::string subCommand;
 
 	if (commandID == 10)
 	{
@@ -1113,7 +1113,7 @@ std::string CutsceneCommandTerminator::GetCName()
 
 std::string CutsceneCommandTerminator::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_TERMINATOR(0x%04X, %i, %i),\n", base, startFrame, endFrame);
 
@@ -1135,7 +1135,7 @@ CutsceneCommandEnd::CutsceneCommandEnd(const std::vector<uint8_t>& rawData, uint
 
 std::string CutsceneCommandEnd::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_END(),\n");
 
@@ -1189,7 +1189,7 @@ CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(const std::vector<uin
 
 std::string CutsceneCommandSpecialAction::GenerateSourceCode(uint32_t baseAddress)
 {
-	std::string result = "";
+	std::string result;
 
 	result += StringHelper::Sprintf("CS_MISC_LIST(%i),\n", entries.size());
 

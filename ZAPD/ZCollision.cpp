@@ -78,7 +78,7 @@ void ZCollisionHeader::ParseRawData()
 			rawData,
 			waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16))));
 
-	std::string declaration = "";
+	std::string declaration;
 
 	if (waterBoxes.size() > 0)
 	{
@@ -242,7 +242,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
                                const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
                                uint32_t polyTypeDefSegmentOffset, uint32_t polygonTypesCnt)
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	// Parse CameraDataEntries
 	int32_t numElements = (polyTypeDefSegmentOffset - rawDataIndex) / 8;

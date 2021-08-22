@@ -53,7 +53,7 @@ RoomCommand SetRoomList::GetRoomCommand() const
 
 void SetRoomList::PreGenSourceFiles()
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	for (ZFile* file : Globals::Instance->files)
 	{

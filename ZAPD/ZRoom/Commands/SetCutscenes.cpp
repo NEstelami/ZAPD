@@ -13,7 +13,7 @@ SetCutscenes::SetCutscenes(ZFile* nParent) : ZRoomCommand(nParent)
 void SetCutscenes::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
-	std::string output = "";
+	std::string output;
 
 	numCutscenes = cmdArg1;
 	if (Globals::Instance->game == ZGame::OOT_RETAIL || Globals::Instance->game == ZGame::OOT_SW97)
@@ -32,7 +32,7 @@ void SetCutscenes::ParseRawData()
 	else
 	{
 		int32_t currentPtr = segmentOffset;
-		std::string declaration = "";
+		std::string declaration;
 
 		for (uint8_t i = 0; i < numCutscenes; i++)
 		{

@@ -28,9 +28,9 @@ void GameConfig::ReadTexturePool(const std::string& texturePoolXmlPath)
 	{
 		if (std::string_view(child->Name()) == "Texture")
 		{
-			std::string crcStr = std::string(child->Attribute("CRC"));
+			std::string crcStr = child->Attribute("CRC");
 			fs::path texPath = std::string(child->Attribute("Path"));
-			std::string texName = "";
+			std::string texName;
 
 			uint32_t crc = strtoul(crcStr.c_str(), nullptr, 16);
 
@@ -116,7 +116,6 @@ void GameConfig::ReadConfigFile(const std::string& argConfigFilePath)
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
 		throw std::runtime_error("Error: Unable to read config file.");
-		return;
 	}
 
 	tinyxml2::XMLNode* root = doc.FirstChild();
