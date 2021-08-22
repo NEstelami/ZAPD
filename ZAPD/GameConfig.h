@@ -1,6 +1,9 @@
 #pragma once
 
 #include <map>
+#include <string>
+#include <vector>
+#include <cstdint>
 #include "Utils/Directory.h"
 #include "tinyxml2.h"
 
@@ -39,5 +42,3 @@ public:
 
 	void ReadConfigFile(const std::string& configFilePath);
 };
-
-typedef void (GameConfig::*ConfigFunc)(const tinyxml2::XMLElement&);

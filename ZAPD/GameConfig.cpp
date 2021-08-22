@@ -7,6 +7,8 @@
 #include "Utils/Path.h"
 #include "tinyxml2.h"
 
+using ConfigFunc = void (GameConfig::*)(const tinyxml2::XMLElement&);
+
 void GameConfig::ReadTexturePool(const std::string& texturePoolXmlPath)
 {
 	tinyxml2::XMLDocument doc;
@@ -29,7 +31,7 @@ void GameConfig::ReadTexturePool(const std::string& texturePoolXmlPath)
 		if (std::string_view(child->Name()) == "Texture")
 		{
 			std::string crcStr = child->Attribute("CRC");
-			fs::path texPath = std::string(child->Attribute("Path"));
+			fs::path texPath = child->Attribute("Path");
 			std::string texName;
 
 			uint32_t crc = strtoul(crcStr.c_str(), nullptr, 16);
@@ -43,13 +45,13 @@ void GameConfig::GenSymbolMap(const std::string& symbolMapPath)
 {
 	auto symbolLines = File::ReadAllLines(symbolMapPath);
 
-	for (std::string symbolLine : symbolLines)
+	for (std::string& symbolLine : symbolLines)
 	{
 		auto split = StringHelper::Split(symbolLine, " ");
 		uint32_t addr = strtoul(split[0].c_str(), nullptr, 16);
 		std::string symbolName = split[1];
 
-		symbolMap[addr] = symbolName;
+		symbolMap[addr] = std::move(symbolName);
 	}
 }
 
@@ -63,7 +65,7 @@ void GameConfig::ConfigFunc_Segment(const tinyxml2::XMLElement& element)
 {
 	std::string fileName = element.Attribute("File");
 	int32_t segNumber = element.IntAttribute("Number");
-	segmentRefs[segNumber] = fileName;
+	segmentRefs[segNumber] = std::move(fileName);
 }
 
 void GameConfig::ConfigFunc_ActorList(const tinyxml2::XMLElement& element)
