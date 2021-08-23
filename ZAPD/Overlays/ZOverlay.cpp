@@ -139,22 +139,6 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 						printf(".word 0x%08X  # %s %s 0x%04X\n", reloc.CalcRelocationWord(), reloc.GetSectionName(), reloc.GetRelocTypeName(), reloc.offset);
 					}
 
-					if(offset == 0x0874) {
-						int bp = 0;
-					}
-					if(offset == 0x089C) {
-						int bp = 0;
-					}
-					if(offset == 0x08A0) {
-						int bp = 0;
-					}
-					if(offset == 0x0990) {
-						int bp = 0;
-					}
-					if(offset == 0x0994) {
-						int bp = 0;
-					}
-
 					std::string curSymName;
 					Elf_Half curSymShndx = SHN_UNDEF;
 					{
@@ -179,9 +163,6 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 
 							if (reader == curReader)
 								continue;
-
-							//Elf_Half sectionIdx = pSec->get_link();
-							//auto sectionData = reader->sections[sectionIdx];
 
 							Elf_Half sec_num = reader->sections.size();
 							for (int32_t j = 0; j < sec_num; j++)
@@ -225,19 +206,6 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 					{
 						RelocationType typeConverted = (RelocationType)type;
 						offset += sectionOffs[static_cast<size_t>(sectionType)];
-
-					if(offset == 0x089C) {
-						int bp = 0;
-					}
-					if(offset == 0x08A0) {
-						int bp = 0;
-					}
-					if(offset == 0x0990) {
-						int bp = 0;
-					}
-					if(offset == 0x0994) {
-						int bp = 0;
-					}
 
 						RelocationEntry* reloc =
 							new RelocationEntry(sectionType, typeConverted, offset);
@@ -287,12 +255,15 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 
 	output += ".section .ovl\n";
 
+	output += StringHelper::Sprintf("# %sOverlayInfo\n", name.c_str());
 	output += StringHelper::Sprintf(".word _%sSegmentTextSize\n", name.c_str());
 	output += StringHelper::Sprintf(".word _%sSegmentDataSize\n", name.c_str());
 	output += StringHelper::Sprintf(".word _%sSegmentRoDataSize\n", name.c_str());
 	output += StringHelper::Sprintf(".word _%sSegmentBssSize\n", name.c_str());
 
+	output += "\n";
 	output += StringHelper::Sprintf(".word %i # reloc_count\n", entries.size());
+	output += "\n";
 
 	for (size_t i = 0; i < entries.size(); i++)
 	{
@@ -308,7 +279,8 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 		offset += 4;
 	}
 
-	output += StringHelper::Sprintf(".word 0x%08X\n", offset + 4);
+	output += "\n";
+	output += StringHelper::Sprintf(".word 0x%08X # %sOverlayInfoOffset\n", offset + 4);
 	return output;
 }
 
