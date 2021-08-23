@@ -69,9 +69,9 @@ ZOverlay::~ZOverlay()
 static const std::unordered_set<std::string> sRelSections = {".rel.text", ".rel.data", ".rel.rodata"};
 static const std::unordered_set<std::string> sSections = { ".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
 
-ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
+ZOverlay* ZOverlay::FromBuild(fs::path buildPath, fs::path cfgFolderPath)
 {
-	std::string cfgText = File::ReadAllText(cfgFolderPath + "/overlay.cfg");
+	std::string cfgText = File::ReadAllText(cfgFolderPath / "overlay.cfg");
 	std::vector<std::string> cfgLines = StringHelper::Split(cfgText, "\n");
 
 	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
@@ -87,7 +87,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 	for (size_t i = 1; i < cfgLines.size(); i++)
 	{
 		std::string elfPath =
-			buildPath + "/" + cfgLines[i].substr(0, cfgLines[i].size() - 2) + ".o";
+			buildPath / (cfgLines[i].substr(0, cfgLines[i].size() - 2) + ".o");
 		elfio* reader = new elfio();
 
 		if (!reader->load(elfPath))
@@ -107,6 +107,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 	for (size_t curReaderId = 0; curReaderId < readers.size(); curReaderId++)
 	{
 		auto& curReader = readers[curReaderId];
+
 		Elf_Half sec_num = curReader->sections.size();
 		for (int32_t i = 0; i < sec_num; i++)
 		{
@@ -116,6 +117,8 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 			{
 				continue;
 			}
+
+			symbol_section_accessor currentSymbols( *curReader, curReader->sections[(Elf_Half)pSec->get_link()]);
 
 			SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
 
@@ -136,14 +139,12 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 				std::string curSymName;
 				Elf_Half curSymShndx = SHN_UNDEF;
 				{
-					symbol_section_accessor symbols(
-						*curReader, curReader->sections[(Elf_Half)pSec->get_link()]);
 					Elf64_Addr value;
 					Elf_Xword size;
 					unsigned char bind;
 					unsigned char type;
 					unsigned char other;
-					symbols.get_symbol(symbol, curSymName, value, size, bind, type, curSymShndx,
+					currentSymbols.get_symbol(symbol, curSymName, value, size, bind, type, curSymShndx,
 										other);
 				}
 
@@ -222,12 +223,10 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 		}
 	}
 
-	for (auto reloc : textRelocs)
-		ovl->entries.push_back(reloc);
-	for (auto reloc : dataRelocs)
-		ovl->entries.push_back(reloc);
-	for (auto reloc : rodataRelocs)
-		ovl->entries.push_back(reloc);
+	ovl->entries.reserve(textRelocs.size() + dataRelocs.size() + rodataRelocs.size());
+	ovl->entries.insert(ovl->entries.end(), textRelocs.begin(), textRelocs.end());
+	ovl->entries.insert(ovl->entries.end(), dataRelocs.begin(), dataRelocs.end());
+	ovl->entries.insert(ovl->entries.end(), rodataRelocs.begin(), rodataRelocs.end());
 
 	for (auto r : readers)
 		delete r;

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <elfio/elfio.hpp>
-#include "../ZResource.h"
+#include "elfio/elfio.hpp"
+#include "ZResource.h"
+#include "Utils/Directory.h"
 #include "tinyxml2.h"
 
 enum class SectionType
@@ -57,7 +58,7 @@ public:
 
 	ZOverlay(std::string nName);
 	~ZOverlay();
-	static ZOverlay* FromBuild(std::string buildPath, std::string cfgFolderPath);
+	static ZOverlay* FromBuild(fs::path buildPath, fs::path cfgFolderPath);
 	std::string GetSourceOutputCode(const std::string& prefix);
 
 private:
