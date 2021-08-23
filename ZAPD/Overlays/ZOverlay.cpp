@@ -103,17 +103,13 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 		readers.push_back(reader);
 	}
 
-	for (auto curReader : readers)
+	for (size_t curReaderId = 0; curReaderId < readers.size(); curReaderId++)
 	{
+		auto& curReader = readers[curReaderId];
 		Elf_Half sec_num = curReader->sections.size();
 		for (int32_t i = 0; i < sec_num; i++)
 		{
 			section* pSec = curReader->sections[i];
-
-			if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-			{
-				printf("Section: %s \n", pSec->get_name().c_str());
-			}
 
 			if (pSec->get_type() != SHT_REL || std::find(relSections.begin(), relSections.end(),
 			                                             pSec->get_name()) == relSections.end())
@@ -137,12 +133,6 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 					relocs.get_entry(j, offset, symbol, type, addend);
 				}
 
-				if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-				{
-					RelocationEntry reloc(sectionType, (RelocationType)type, offset);
-					printf(".word 0x%08X  # %s %s 0x%04X\n", reloc.CalcRelocationWord(), reloc.GetSectionName(), reloc.GetRelocTypeName(), reloc.offset);
-				}
-
 				std::string curSymName;
 				Elf_Half curSymShndx = SHN_UNDEF;
 				{
@@ -162,7 +152,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 				{
 					if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 					{
-						printf("Symbol '%s' doesn't exist in the current .o file. Searching...\n", curSymName.c_str());
+						printf("Symbol '%s' doesn't exist in current .o file (%s). Searching...\n", curSymName.c_str(), cfgLines[curReaderId+1].c_str());
 					}
 
 					for (size_t readerId = 0; readerId < readers.size(); readerId++)
@@ -192,10 +182,12 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 							if (std::find(sections.begin(), sections.end(),sectionDataName ) == sections.end())
 								continue;
 
+							#ifdef DEVELOPMENT
 							if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 							{
 								printf("\t File '%s' section: %s \n", cfgLines[readerId+1].c_str(), sectionDataName.c_str());
 							}
+							#endif
 
 							symbol_section_accessor symbols(*reader, sectionData);
 
@@ -215,6 +207,10 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 
 								if (name == curSymName)
 								{
+									if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+									{
+										printf("\t Symbol '%s' found in '%s' '%s' \n", curSymName.c_str(), cfgLines[readerId+1].c_str(), sectionDataName.c_str());
+									}
 									curSymShndx = shndx;
 									break;
 								}
@@ -230,6 +226,11 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 
 					RelocationEntry* reloc =
 						new RelocationEntry(sectionType, typeConverted, offset);
+
+					if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+					{
+						printf(".word 0x%08X  # %s %s 0x%04X\n", reloc->CalcRelocationWord(), reloc->GetSectionName(), reloc->GetRelocTypeName(), reloc->offset);
+					}
 
 					// this is to keep the correct reloc entry order
 					if (sectionType == SectionType::Text)
