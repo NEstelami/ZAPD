@@ -25,9 +25,8 @@ const char* RelocationEntry::GetSectionName() const
 		return ".bss";
 	case SectionType::ERROR:
 		return ".ERROR";
-	default:
-		assert(!"Oh no :c");
 	}
+	assert(!"Oh no :c");
 }
 
 const char* RelocationEntry::GetRelocTypeName() const
@@ -43,6 +42,7 @@ const char* RelocationEntry::GetRelocTypeName() const
 	case RelocationType::R_MIPS_LO16:
 		return "R_MIPS_LO16";
 	}
+	assert(!"Oh no :c");
 }
 
 
@@ -73,7 +73,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
 
 	std::vector<std::string> relSections = {".rel.text", ".rel.data", ".rel.rodata"};
-	std::vector<std::string> sections = { ".text", ".data", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
+	std::vector<std::string> sections = { ".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
 
 	int32_t sectionOffs[5] = {0};
 	std::vector<RelocationEntry*> textRelocs;
@@ -153,11 +153,23 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 						                   other);
 					}
 
+					if (offset == 0x0874) {
+						int bp = 0;
+						(void)bp;
+					}
+
 					// check symbols outside the elf but within the overlay
 					if (curSymShndx == SHN_UNDEF)
 					{
-						for (auto reader : readers)
+						if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 						{
+							printf("Symbol '%s' doesn't exist in the current .o file. Searching...\n", curSymName.c_str());
+						}
+
+						for (size_t readerId = 0; readerId < readers.size(); readerId++)
+						{
+							auto& reader = readers[readerId];
+
 							if (curSymShndx != SHN_UNDEF)
 								break;
 
@@ -165,21 +177,31 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 								continue;
 
 							Elf_Half sec_num = reader->sections.size();
-							for (int32_t j = 0; j < sec_num; j++)
+							for (int32_t otherSectionIdx = 0; otherSectionIdx < sec_num; otherSectionIdx++)
 							{
 								if (curSymShndx != SHN_UNDEF)
 								{
 									break;
 								}
 
-								auto sectionData = reader->sections[j];
+								auto sectionData = reader->sections[otherSectionIdx];
 
 								if (sectionData == nullptr)
 									continue;
 
+								auto sectionDataName = sectionData->get_name();
+								if (std::find(sections.begin(), sections.end(),sectionDataName ) == sections.end())
+									continue;
+
+								if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+								{
+									printf("\t File '%s' section: %s \n", cfgLines[readerId+1].c_str(), sectionDataName.c_str());
+								}
+
 								symbol_section_accessor symbols(*reader, sectionData);
 
-								for (Elf_Xword symIdx = 0; symIdx < symbols.get_symbols_num(); symIdx++)
+								Elf_Xword symbolNum = symbols.get_symbols_num();
+								for (Elf_Xword symIdx = 0; symIdx < symbolNum; symIdx++)
 								{
 									Elf_Half shndx = SHN_UNDEF;
 									Elf64_Addr value;
@@ -260,10 +282,9 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 	output += StringHelper::Sprintf(".word _%sSegmentDataSize\n", name.c_str());
 	output += StringHelper::Sprintf(".word _%sSegmentRoDataSize\n", name.c_str());
 	output += StringHelper::Sprintf(".word _%sSegmentBssSize\n", name.c_str());
+	output += "\n";
 
-	output += "\n";
 	output += StringHelper::Sprintf(".word %i # reloc_count\n", entries.size());
-	output += "\n";
 
 	for (size_t i = 0; i < entries.size(); i++)
 	{
@@ -280,7 +301,7 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 	}
 
 	output += "\n";
-	output += StringHelper::Sprintf(".word 0x%08X # %sOverlayInfoOffset\n", offset + 4);
+	output += StringHelper::Sprintf(".word 0x%08X # %sOverlayInfoOffset\n", offset + 4, name.c_str());
 	return output;
 }
 
