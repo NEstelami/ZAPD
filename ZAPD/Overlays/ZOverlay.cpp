@@ -66,15 +66,16 @@ ZOverlay::~ZOverlay()
 	entries.clear();
 }
 
+static const std::unordered_set<std::string> sRelSections = {".rel.text", ".rel.data", ".rel.rodata"};
+static const std::unordered_set<std::string> sSections = { ".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
+
 ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 {
 	std::string cfgText = File::ReadAllText(cfgFolderPath + "/overlay.cfg");
 	std::vector<std::string> cfgLines = StringHelper::Split(cfgText, "\n");
 
 	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
-
-	std::unordered_set<std::string> relSections = {".rel.text", ".rel.data", ".rel.rodata"};
-	std::unordered_set<std::string> sections = { ".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
+	ovl->cfgLines = cfgLines;
 
 	int32_t sectionOffs[5] = {0};
 	std::vector<RelocationEntry*> textRelocs;
@@ -111,8 +112,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 		{
 			section* pSec = curReader->sections[i];
 
-			if (pSec->get_type() != SHT_REL || std::find(relSections.begin(), relSections.end(),
-			                                             pSec->get_name()) == relSections.end())
+			if (pSec->get_type() != SHT_REL || sRelSections.find(pSec->get_name()) == sRelSections.end())
 			{
 				continue;
 			}
@@ -165,6 +165,12 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 						if (reader == curReader)
 							continue;
 
+						auto sectionData = reader->sections[(Elf_Half)pSec->get_link()];
+						curSymShndx = ovl->FindSymbolInSection(curSymName, sectionData, *reader, readerId);
+						if (curSymShndx != SHN_UNDEF)
+							break;
+
+						// Symbol wasn't found, try checking every section
 						Elf_Half sec_num = reader->sections.size();
 						for (int32_t otherSectionIdx = 0; otherSectionIdx < sec_num; otherSectionIdx++)
 						{
@@ -173,48 +179,9 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 								break;
 							}
 
-							auto sectionData = reader->sections[otherSectionIdx];
+							auto sectionDataIter = reader->sections[otherSectionIdx];
 
-							if (sectionData == nullptr)
-								continue;
-
-							auto sectionDataName = sectionData->get_name();
-							if (std::find(sections.begin(), sections.end(),sectionDataName ) == sections.end())
-								continue;
-
-							#ifdef DEVELOPMENT
-							if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-							{
-								printf("\t File '%s' section: %s \n", cfgLines[readerId+1].c_str(), sectionDataName.c_str());
-							}
-							#endif
-
-							symbol_section_accessor symbols(*reader, sectionData);
-
-							Elf_Xword symbolNum = symbols.get_symbols_num();
-							for (Elf_Xword symIdx = 0; symIdx < symbolNum; symIdx++)
-							{
-								Elf_Half shndx = SHN_UNDEF;
-								Elf64_Addr value;
-								std::string name;
-								Elf_Xword size;
-								unsigned char bind;
-								unsigned char type;
-								unsigned char other;
-
-								symbols.get_symbol(symIdx, name, value, size, bind, type, shndx,
-												other);
-
-								if (name == curSymName)
-								{
-									if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-									{
-										printf("\t Symbol '%s' found in '%s' '%s' \n", curSymName.c_str(), cfgLines[readerId+1].c_str(), sectionDataName.c_str());
-									}
-									curSymShndx = shndx;
-									break;
-								}
-							}
+							curSymShndx = ovl->FindSymbolInSection(curSymName, sectionDataIter, *reader, readerId);
 						}
 					}
 				}
@@ -247,8 +214,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 		for (int32_t i = 0; i < sec_num; i++)
 		{
 			section* pSec = curReader->sections[i];
-			if (pSec->get_type() == SHT_PROGBITS &&
-			    std::find(sections.begin(), sections.end(), pSec->get_name()) != sections.end())
+			if (pSec->get_type() == SHT_PROGBITS && sSections.find(pSec->get_name()) != sSections.end())
 			{
 				SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
 				sectionOffs[static_cast<size_t>(sectionType)] += pSec->get_size();
@@ -317,4 +283,48 @@ SectionType ZOverlay::GetSectionTypeFromStr(std::string sectionName)
 		return SectionType::Bss;
 
 	return SectionType::ERROR;
+}
+
+ELFIO::Elf_Half ZOverlay::FindSymbolInSection(const std::string& curSymName, ELFIO::section* sectionData, ELFIO::elfio& reader, size_t readerId)
+{
+	if (sectionData == nullptr)
+		return SHN_UNDEF;
+
+	auto sectionDataName = sectionData->get_name();
+	if (sSections.find(sectionDataName) == sSections.end())
+		return SHN_UNDEF;
+
+	#ifdef DEVELOPMENT
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+	{
+		printf("\t File '%s' section: %s \n", cfgLines[readerId+1].c_str(), sectionDataName.c_str());
+	}
+	#endif
+
+	symbol_section_accessor symbols(reader, sectionData);
+
+	Elf_Xword symbolNum = symbols.get_symbols_num();
+	for (Elf_Xword symIdx = 0; symIdx < symbolNum; symIdx++)
+	{
+		Elf_Half shndx = SHN_UNDEF;
+		Elf64_Addr value;
+		std::string name;
+		Elf_Xword size;
+		unsigned char bind;
+		unsigned char type;
+		unsigned char other;
+
+		symbols.get_symbol(symIdx, name, value, size, bind, type, shndx,
+						other);
+
+		if (name == curSymName)
+		{
+			if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+			{
+				printf("\t Symbol '%s' found in '%s' '%s' \n", curSymName.c_str(), cfgLines[readerId+1].c_str(), sectionDataName.c_str());
+			}
+			return shndx;
+		}
+	}
+	return SHN_UNDEF;
 }

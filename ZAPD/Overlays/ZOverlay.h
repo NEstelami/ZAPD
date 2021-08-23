@@ -62,9 +62,12 @@ public:
 
 private:
 	std::vector<RelocationEntry*> entries;
+	std::vector<std::string> cfgLines;
 
 	ZOverlay();
 
 	static SectionType GetSectionTypeFromStr(std::string sectionName);
 	// static std::string GetOverlayNameFromElf(ELFIO::elfio& reader);
+
+	ELFIO::Elf_Half FindSymbolInSection(const std::string& curSymName, ELFIO::section* sectionData, ELFIO::elfio& reader, size_t readerId);
 };
