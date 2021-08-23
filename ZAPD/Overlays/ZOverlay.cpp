@@ -73,7 +73,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
 
 	std::vector<std::string> relSections = {".rel.text", ".rel.data", ".rel.rodata"};
-	std::vector<std::string> sections = {".text", ".data", ".rodata"};
+	std::vector<std::string> sections = { ".text", ".data", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
 
 	int32_t sectionOffs[5] = {0};
 	std::vector<RelocationEntry*> textRelocs;
