@@ -1,8 +1,8 @@
 #pragma once
 
-#include "elfio/elfio.hpp"
-#include "ZResource.h"
 #include "Utils/Directory.h"
+#include "ZResource.h"
+#include "elfio/elfio.hpp"
 #include "tinyxml2.h"
 
 enum class SectionType
@@ -70,5 +70,6 @@ private:
 	static SectionType GetSectionTypeFromStr(std::string sectionName);
 	// static std::string GetOverlayNameFromElf(ELFIO::elfio& reader);
 
-	ELFIO::Elf_Half FindSymbolInSection(const std::string& curSymName, ELFIO::section* sectionData, ELFIO::elfio& reader, size_t readerId);
+	ELFIO::Elf_Half FindSymbolInSection(const std::string& curSymName, ELFIO::section* sectionData,
+	                                    ELFIO::elfio& reader, size_t readerId);
 };
