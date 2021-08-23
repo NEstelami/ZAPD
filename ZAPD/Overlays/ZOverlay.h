@@ -4,7 +4,7 @@
 #include "../ZResource.h"
 #include "tinyxml2.h"
 
-enum SectionType
+enum class SectionType
 {
 	Text = 1,
 	Data = 2,
@@ -13,7 +13,7 @@ enum SectionType
 	ERROR = 255
 };
 
-enum RelocationType
+enum class RelocationType
 {
 	R_MIPS_32 = 2,
 	R_MIPS_26 = 4,
@@ -39,12 +39,15 @@ public:
 	{
 		uint32_t relocationWord = 0;
 
-		relocationWord |= sectionType << 30;
-		relocationWord |= relocationType << 24;
+		relocationWord |= static_cast<uint32_t>(sectionType) << 30;
+		relocationWord |= static_cast<uint32_t>(relocationType) << 24;
 		relocationWord |= offset;
 
 		return relocationWord;
 	}
+
+	const char* GetSectionName() const;
+	const char* GetRelocTypeName() const;
 };
 
 class ZOverlay

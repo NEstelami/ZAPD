@@ -1,10 +1,50 @@
 #include "ZOverlay.h"
+
+#include <assert.h>
+
 #include <Utils/Directory.h>
 #include <Utils/File.h>
 #include <Utils/Path.h>
 #include <Utils/StringHelper.h>
+#include "Globals.h"
 
 using namespace ELFIO;
+
+
+const char* RelocationEntry::GetSectionName() const
+{
+	switch (sectionType)
+	{
+	case SectionType::Text:
+		return ".text";
+	case SectionType::Data:
+		return ".data";
+	case SectionType::RoData:
+		return ".rodata";
+	case SectionType::Bss:
+		return ".bss";
+	case SectionType::ERROR:
+		return ".ERROR";
+	default:
+		assert(!"Oh no :c");
+	}
+}
+
+const char* RelocationEntry::GetRelocTypeName() const
+{
+	switch (relocationType)
+	{
+	case RelocationType::R_MIPS_32:
+		return "R_MIPS_32";
+	case RelocationType::R_MIPS_26:
+		return "R_MIPS_26";
+	case RelocationType::R_MIPS_HI16:
+		return "R_MIPS_HI16";
+	case RelocationType::R_MIPS_LO16:
+		return "R_MIPS_LO16";
+	}
+}
+
 
 ZOverlay::ZOverlay()
 {
@@ -69,6 +109,11 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 		{
 			section* pSec = curReader->sections[i];
 
+			if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+			{
+				printf("Section: %s \n", pSec->get_name().c_str());
+			}
+
 			if (pSec->get_type() == SHT_REL && std::find(relSections.begin(), relSections.end(),
 			                                             pSec->get_name()) != relSections.end())
 			{
@@ -86,6 +131,28 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 					{
 						Elf_Sxword addend = 0;
 						relocs.get_entry(j, offset, symbol, type, addend);
+					}
+
+					if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+					{
+						RelocationEntry reloc(sectionType, (RelocationType)type, offset);
+						printf(".word 0x%08X  # %s %s 0x%04X\n", reloc.CalcRelocationWord(), reloc.GetSectionName(), reloc.GetRelocTypeName(), reloc.offset);
+					}
+
+					if(offset == 0x0874) {
+						int bp = 0;
+					}
+					if(offset == 0x089C) {
+						int bp = 0;
+					}
+					if(offset == 0x08A0) {
+						int bp = 0;
+					}
+					if(offset == 0x0990) {
+						int bp = 0;
+					}
+					if(offset == 0x0994) {
+						int bp = 0;
 					}
 
 					std::string curSymName;
@@ -113,30 +180,42 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 							if (reader == curReader)
 								continue;
 
-							auto sectionData = reader->sections[(Elf_Half)pSec->get_link()];
+							//Elf_Half sectionIdx = pSec->get_link();
+							//auto sectionData = reader->sections[sectionIdx];
 
-							if (sectionData == nullptr)
-								continue;
-
-							symbol_section_accessor symbols(*reader, sectionData);
-
-							for (Elf_Xword symIdx = 0; symIdx < symbols.get_symbols_num(); symIdx++)
+							Elf_Half sec_num = reader->sections.size();
+							for (int32_t j = 0; j < sec_num; j++)
 							{
-								Elf_Half shndx = SHN_UNDEF;
-								Elf64_Addr value;
-								std::string name;
-								Elf_Xword size;
-								unsigned char bind;
-								unsigned char type;
-								unsigned char other;
-
-								symbols.get_symbol(symIdx, name, value, size, bind, type, shndx,
-								                   other);
-
-								if (name == curSymName)
+								if (curSymShndx != SHN_UNDEF)
 								{
-									curSymShndx = shndx;
 									break;
+								}
+
+								auto sectionData = reader->sections[j];
+
+								if (sectionData == nullptr)
+									continue;
+
+								symbol_section_accessor symbols(*reader, sectionData);
+
+								for (Elf_Xword symIdx = 0; symIdx < symbols.get_symbols_num(); symIdx++)
+								{
+									Elf_Half shndx = SHN_UNDEF;
+									Elf64_Addr value;
+									std::string name;
+									Elf_Xword size;
+									unsigned char bind;
+									unsigned char type;
+									unsigned char other;
+
+									symbols.get_symbol(symIdx, name, value, size, bind, type, shndx,
+													other);
+
+									if (name == curSymName)
+									{
+										curSymShndx = shndx;
+										break;
+									}
 								}
 							}
 						}
@@ -145,7 +224,20 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 					if (curSymShndx != SHN_UNDEF)
 					{
 						RelocationType typeConverted = (RelocationType)type;
-						offset += sectionOffs[sectionType];
+						offset += sectionOffs[static_cast<size_t>(sectionType)];
+
+					if(offset == 0x089C) {
+						int bp = 0;
+					}
+					if(offset == 0x08A0) {
+						int bp = 0;
+					}
+					if(offset == 0x0990) {
+						int bp = 0;
+					}
+					if(offset == 0x0994) {
+						int bp = 0;
+					}
 
 						RelocationEntry* reloc =
 							new RelocationEntry(sectionType, typeConverted, offset);
@@ -170,7 +262,7 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 			    std::find(sections.begin(), sections.end(), pSec->get_name()) != sections.end())
 			{
 				SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
-				sectionOffs[sectionType] += pSec->get_size();
+				sectionOffs[static_cast<size_t>(sectionType)] += pSec->get_size();
 			}
 		}
 	}
@@ -200,12 +292,12 @@ std::string ZOverlay::GetSourceOutputCode(const std::string& prefix)
 	output += StringHelper::Sprintf(".word _%sSegmentRoDataSize\n", name.c_str());
 	output += StringHelper::Sprintf(".word _%sSegmentBssSize\n", name.c_str());
 
-	output += StringHelper::Sprintf(".word %i\n", entries.size());
+	output += StringHelper::Sprintf(".word %i # reloc_count\n", entries.size());
 
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		RelocationEntry* reloc = entries[i];
-		output += StringHelper::Sprintf(".word 0x%08X\n", reloc->CalcRelocationWord());
+		output += StringHelper::Sprintf(".word 0x%08X  # %s %s 0x%04X\n", reloc->CalcRelocationWord(), reloc->GetSectionName(), reloc->GetRelocTypeName(), reloc->offset);
 	}
 
 	size_t offset = (entries.size() * 4) + 20;
