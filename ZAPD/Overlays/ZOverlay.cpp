@@ -171,18 +171,21 @@ ZOverlay* ZOverlay::FromBuild(fs::path buildPath, fs::path cfgFolderPath)
 						if (curSymShndx != SHN_UNDEF)
 							break;
 
-						// Symbol wasn't found, try checking every section
-						Elf_Half sec_num = reader->sections.size();
-						for (int32_t otherSectionIdx = 0; otherSectionIdx < sec_num; otherSectionIdx++)
-						{
-							if (curSymShndx != SHN_UNDEF)
+						if (Globals::Instance->gccCompat) {
+							// Symbol wasn't found, try checking every section
+							Elf_Half sec_num = reader->sections.size();
+							for (int32_t otherSectionIdx = 0; otherSectionIdx < sec_num; otherSectionIdx++)
 							{
-								break;
+								if (curSymShndx != SHN_UNDEF)
+								{
+									break;
+									
+								}
+
+								auto sectionDataIter = reader->sections[otherSectionIdx];
+
+								curSymShndx = ovl->FindSymbolInSection(curSymName, sectionDataIter, *reader, readerId);
 							}
-
-							auto sectionDataIter = reader->sections[otherSectionIdx];
-
-							curSymShndx = ovl->FindSymbolInSection(curSymName, sectionDataIter, *reader, readerId);
 						}
 					}
 				}
