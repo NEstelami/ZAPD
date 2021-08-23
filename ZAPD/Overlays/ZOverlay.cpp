@@ -114,132 +114,129 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 				printf("Section: %s \n", pSec->get_name().c_str());
 			}
 
-			if (pSec->get_type() == SHT_REL && std::find(relSections.begin(), relSections.end(),
-			                                             pSec->get_name()) != relSections.end())
+			if (pSec->get_type() != SHT_REL || std::find(relSections.begin(), relSections.end(),
+			                                             pSec->get_name()) == relSections.end())
 			{
-				SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
+				continue;
+			}
 
-				if (sectionType == SectionType::ERROR)
-					fprintf(stderr, "WARNING: One of the section types returned ERROR\n");
+			SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
 
-				relocation_section_accessor relocs(*curReader, pSec);
-				for (Elf_Xword j = 0; j < relocs.get_entries_num(); j++)
+			if (sectionType == SectionType::ERROR)
+				fprintf(stderr, "WARNING: One of the section types returned ERROR\n");
+
+			relocation_section_accessor relocs(*curReader, pSec);
+			for (Elf_Xword j = 0; j < relocs.get_entries_num(); j++)
+			{
+				Elf64_Addr offset = 0;
+				Elf_Word symbol = 0;
+				Elf_Word type = 0;
 				{
-					Elf64_Addr offset = 0;
-					Elf_Word symbol = 0;
-					Elf_Word type = 0;
-					{
-						Elf_Sxword addend = 0;
-						relocs.get_entry(j, offset, symbol, type, addend);
-					}
+					Elf_Sxword addend = 0;
+					relocs.get_entry(j, offset, symbol, type, addend);
+				}
 
+				if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+				{
+					RelocationEntry reloc(sectionType, (RelocationType)type, offset);
+					printf(".word 0x%08X  # %s %s 0x%04X\n", reloc.CalcRelocationWord(), reloc.GetSectionName(), reloc.GetRelocTypeName(), reloc.offset);
+				}
+
+				std::string curSymName;
+				Elf_Half curSymShndx = SHN_UNDEF;
+				{
+					symbol_section_accessor symbols(
+						*curReader, curReader->sections[(Elf_Half)pSec->get_link()]);
+					Elf64_Addr value;
+					Elf_Xword size;
+					unsigned char bind;
+					unsigned char type;
+					unsigned char other;
+					symbols.get_symbol(symbol, curSymName, value, size, bind, type, curSymShndx,
+										other);
+				}
+
+				// check symbols outside the elf but within the overlay
+				if (curSymShndx == SHN_UNDEF)
+				{
 					if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 					{
-						RelocationEntry reloc(sectionType, (RelocationType)type, offset);
-						printf(".word 0x%08X  # %s %s 0x%04X\n", reloc.CalcRelocationWord(), reloc.GetSectionName(), reloc.GetRelocTypeName(), reloc.offset);
+						printf("Symbol '%s' doesn't exist in the current .o file. Searching...\n", curSymName.c_str());
 					}
 
-					std::string curSymName;
-					Elf_Half curSymShndx = SHN_UNDEF;
+					for (size_t readerId = 0; readerId < readers.size(); readerId++)
 					{
-						symbol_section_accessor symbols(
-							*curReader, curReader->sections[(Elf_Half)pSec->get_link()]);
-						Elf64_Addr value;
-						Elf_Xword size;
-						unsigned char bind;
-						unsigned char type;
-						unsigned char other;
-						symbols.get_symbol(symbol, curSymName, value, size, bind, type, curSymShndx,
-						                   other);
-					}
+						auto& reader = readers[readerId];
 
-					if (offset == 0x0874) {
-						int bp = 0;
-						(void)bp;
-					}
+						if (curSymShndx != SHN_UNDEF)
+							break;
 
-					// check symbols outside the elf but within the overlay
-					if (curSymShndx == SHN_UNDEF)
-					{
-						if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+						if (reader == curReader)
+							continue;
+
+						Elf_Half sec_num = reader->sections.size();
+						for (int32_t otherSectionIdx = 0; otherSectionIdx < sec_num; otherSectionIdx++)
 						{
-							printf("Symbol '%s' doesn't exist in the current .o file. Searching...\n", curSymName.c_str());
-						}
-
-						for (size_t readerId = 0; readerId < readers.size(); readerId++)
-						{
-							auto& reader = readers[readerId];
-
 							if (curSymShndx != SHN_UNDEF)
+							{
 								break;
+							}
 
-							if (reader == curReader)
+							auto sectionData = reader->sections[otherSectionIdx];
+
+							if (sectionData == nullptr)
 								continue;
 
-							Elf_Half sec_num = reader->sections.size();
-							for (int32_t otherSectionIdx = 0; otherSectionIdx < sec_num; otherSectionIdx++)
+							auto sectionDataName = sectionData->get_name();
+							if (std::find(sections.begin(), sections.end(),sectionDataName ) == sections.end())
+								continue;
+
+							if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 							{
-								if (curSymShndx != SHN_UNDEF)
+								printf("\t File '%s' section: %s \n", cfgLines[readerId+1].c_str(), sectionDataName.c_str());
+							}
+
+							symbol_section_accessor symbols(*reader, sectionData);
+
+							Elf_Xword symbolNum = symbols.get_symbols_num();
+							for (Elf_Xword symIdx = 0; symIdx < symbolNum; symIdx++)
+							{
+								Elf_Half shndx = SHN_UNDEF;
+								Elf64_Addr value;
+								std::string name;
+								Elf_Xword size;
+								unsigned char bind;
+								unsigned char type;
+								unsigned char other;
+
+								symbols.get_symbol(symIdx, name, value, size, bind, type, shndx,
+												other);
+
+								if (name == curSymName)
 								{
+									curSymShndx = shndx;
 									break;
-								}
-
-								auto sectionData = reader->sections[otherSectionIdx];
-
-								if (sectionData == nullptr)
-									continue;
-
-								auto sectionDataName = sectionData->get_name();
-								if (std::find(sections.begin(), sections.end(),sectionDataName ) == sections.end())
-									continue;
-
-								if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-								{
-									printf("\t File '%s' section: %s \n", cfgLines[readerId+1].c_str(), sectionDataName.c_str());
-								}
-
-								symbol_section_accessor symbols(*reader, sectionData);
-
-								Elf_Xword symbolNum = symbols.get_symbols_num();
-								for (Elf_Xword symIdx = 0; symIdx < symbolNum; symIdx++)
-								{
-									Elf_Half shndx = SHN_UNDEF;
-									Elf64_Addr value;
-									std::string name;
-									Elf_Xword size;
-									unsigned char bind;
-									unsigned char type;
-									unsigned char other;
-
-									symbols.get_symbol(symIdx, name, value, size, bind, type, shndx,
-													other);
-
-									if (name == curSymName)
-									{
-										curSymShndx = shndx;
-										break;
-									}
 								}
 							}
 						}
 					}
+				}
 
-					if (curSymShndx != SHN_UNDEF)
-					{
-						RelocationType typeConverted = (RelocationType)type;
-						offset += sectionOffs[static_cast<size_t>(sectionType)];
+				if (curSymShndx != SHN_UNDEF)
+				{
+					RelocationType typeConverted = (RelocationType)type;
+					offset += sectionOffs[static_cast<size_t>(sectionType)];
 
-						RelocationEntry* reloc =
-							new RelocationEntry(sectionType, typeConverted, offset);
+					RelocationEntry* reloc =
+						new RelocationEntry(sectionType, typeConverted, offset);
 
-						// this is to keep the correct reloc entry order
-						if (sectionType == SectionType::Text)
-							textRelocs.push_back(reloc);
-						if (sectionType == SectionType::Data)
-							dataRelocs.push_back(reloc);
-						if (sectionType == SectionType::RoData)
-							rodataRelocs.push_back(reloc);
-					}
+					// this is to keep the correct reloc entry order
+					if (sectionType == SectionType::Text)
+						textRelocs.push_back(reloc);
+					if (sectionType == SectionType::Data)
+						dataRelocs.push_back(reloc);
+					if (sectionType == SectionType::RoData)
+						rodataRelocs.push_back(reloc);
 				}
 			}
 		}
