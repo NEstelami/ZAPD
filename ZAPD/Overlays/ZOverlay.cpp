@@ -1,6 +1,7 @@
 #include "ZOverlay.h"
 
 #include <assert.h>
+#include <unordered_set>
 
 #include <Utils/Directory.h>
 #include <Utils/File.h>
@@ -72,8 +73,8 @@ ZOverlay* ZOverlay::FromBuild(std::string buildPath, std::string cfgFolderPath)
 
 	ZOverlay* ovl = new ZOverlay(StringHelper::Strip(cfgLines[0], "\r"));
 
-	std::vector<std::string> relSections = {".rel.text", ".rel.data", ".rel.rodata"};
-	std::vector<std::string> sections = { ".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
+	std::unordered_set<std::string> relSections = {".rel.text", ".rel.data", ".rel.rodata"};
+	std::unordered_set<std::string> sections = { ".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4" };
 
 	int32_t sectionOffs[5] = {0};
 	std::vector<RelocationEntry*> textRelocs;
