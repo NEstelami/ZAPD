@@ -57,7 +57,7 @@ void ErrorHandler(int sig)
 		"\tAll Pages are displayed.\n"
 		"\t       THANK YOU!       \n"
 		"\t You are great debugger!",
-		"\tRCP is HUNG UP!!"
+		"\tRCP is HUNG UP!!\n"
 		"\tOh! MY GOD!!",
 	};
 
