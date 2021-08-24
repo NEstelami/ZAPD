@@ -56,7 +56,10 @@ void ErrorHandler(int sig)
 		"\t    CONGRATURATIONS!    \n"
 		"\tAll Pages are displayed.\n"
 		"\t       THANK YOU!       \n"
-		"\t You are great debugger!"};
+		"\t You are great debugger!",
+		"\tRCP is HUNG UP!!"
+		"\tOh! MY GOD!!",
+	};
 
 	srand(time(nullptr));
 	auto easterIndex = rand() % std::size(crashEasterEgg);
