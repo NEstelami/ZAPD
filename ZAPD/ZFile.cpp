@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include <map>
+#include <unordered_map>
 #include <unordered_set>
 #include "Globals.h"
 #include "OutputFormatter.h"
@@ -72,7 +73,7 @@ ZFile::~ZFile()
 	}
 }
 
-static const std::map<std::string, ZGame> ZGameDictionary = {
+static const std::unordered_map<std::string, ZGame> ZGameDictionary = {
 	{"OOT", ZGame::OoT},
 	{"MM", ZGame::MM},
 	{"SW97", ZGame::OoTSW97},
@@ -101,7 +102,9 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		auto it = ZGameDictionary.find(gameStr);
 		if (it == ZGameDictionary.end())
 		{
-			fprintf(stderr, "Warning: unknown Game attribute %s in XML, defaulting to OoT retail.\n", gameStr);
+			fprintf(stderr,
+			        "Warning: unknown Game attribute %s in XML, defaulting to OoT retail.\n",
+			        gameStr);
 			Globals::Instance->game = ZGame::OoT;
 		}
 		else
@@ -736,15 +739,15 @@ fs::path ZFile::GetSourceOutputFolderPath() const
 	return Globals::Instance->sourceOutputPath / outName.parent_path();
 }
 
-std::map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
+std::unordered_map<std::string, ZResourceFactoryFunc*>* ZFile::GetNodeMap()
 {
-	static std::map<std::string, ZResourceFactoryFunc*> nodeMap;
+	static std::unordered_map<std::string, ZResourceFactoryFunc*> nodeMap;
 	return &nodeMap;
 }
 
 void ZFile::RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc)
 {
-	std::map<std::string, ZResourceFactoryFunc*>* nodeMap = GetNodeMap();
+	std::unordered_map<std::string, ZResourceFactoryFunc*>* nodeMap = GetNodeMap();
 	(*nodeMap)[nodeName] = nodeFunc;
 }
 

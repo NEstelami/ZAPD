@@ -1,6 +1,6 @@
 #include "ZLimb.h"
 #include <cassert>
-#include <map>
+#include <unordered_map>
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
@@ -641,7 +641,7 @@ const char* ZLimb::GetSourceTypeName(ZLimbType limbType)
 
 ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 {
-	static const std::map<std::string, ZLimbType> ZLimbTypeDictionary = {
+	static const std::unordered_map<std::string, ZLimbType> ZLimbTypeDictionary = {
 		{"Standard", ZLimbType::Standard}, {"LOD", ZLimbType::LOD},       {"Skin", ZLimbType::Skin},
 		{"Curve", ZLimbType::Curve},       {"Legacy", ZLimbType::Legacy},
 	};

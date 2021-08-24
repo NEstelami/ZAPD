@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Utils/Directory.h"
 #include <string>
+#include <unordered_map>
 #include <vector>
+#include "Utils/Directory.h"
 #include "ZTexture.h"
 #include "tinyxml2.h"
 
@@ -88,7 +89,7 @@ public:
 
 	fs::path GetSourceOutputFolderPath() const;
 
-	static std::map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
+	static std::unordered_map<std::string, ZResourceFactoryFunc*>* GetNodeMap();
 	static void RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc);
 
 protected:

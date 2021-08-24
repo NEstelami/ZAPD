@@ -188,9 +188,9 @@ bool Globals::HasSegment(int32_t segment)
 	return std::find(segments.begin(), segments.end(), segment) != segments.end();
 }
 
-std::map<std::string, ExporterSet*>* Globals::GetExporterMap()
+std::unordered_map<std::string, ExporterSet*>* Globals::GetExporterMap()
 {
-	static std::map<std::string, ExporterSet*> exporters;
+	static std::unordered_map<std::string, ExporterSet*> exporters;
 	return &exporters;
 }
 

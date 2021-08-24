@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Utils/BinaryWriter.h"
 #include <map>
 #include <stdexcept>
 #include <stdint.h>
 #include <string>
 #include <vector>
 #include "Declaration.h"
+#include "Utils/BinaryWriter.h"
 #include "tinyxml2.h"
 
 #include "Utils/Directory.h"

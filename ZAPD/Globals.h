@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include "ZFile.h"
 
@@ -44,7 +45,7 @@ typedef void (*ExporterSetFuncVoid3)();
 class ExporterSet
 {
 public:
-	std::map<ZResourceType, ZResourceExporter*> exporters;
+	std::unordered_map<ZResourceType, ZResourceExporter*> exporters;
 	ExporterSetFuncVoid parseArgsFunc = nullptr;
 	ExporterSetFuncVoid2 parseFileModeFunc = nullptr;
 	ExporterSetFuncBool processFileModeFunc = nullptr;
@@ -84,7 +85,7 @@ public:
 	std::map<uint32_t, std::string> symbolMap;
 
 	std::string currentExporter;
-	static std::map<std::string, ExporterSet*>* GetExporterMap();
+	static std::unordered_map<std::string, ExporterSet*>* GetExporterMap();
 	static void AddExporter(std::string exporterName, ExporterSet* exporterSet);
 
 	Globals();

@@ -1,16 +1,17 @@
 #include "ZDisplayList.h"
 
-#include "Utils/File.h"
-#include "Utils/Path.h"
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <map>
 #include <math.h>
 #include <tuple>
+#include <unordered_map>
 #include "Globals.h"
 #include "OutputFormatter.h"
 #include "Utils/BitConverter.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 
@@ -1258,7 +1259,7 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, char* line)
 		                   G_RM_VISCVG2,
 		                   G_RM_OPA_CI2};
 
-		std::map<uint32_t, std::string> str = {
+		std::unordered_map<uint32_t, std::string> str = {
 			{G_RM_FOG_SHADE_A, "G_RM_FOG_SHADE_A"},
 			{G_RM_FOG_PRIM_A, "G_RM_FOG_PRIM_A"},
 			{G_RM_PASS, "G_RM_PASS"},

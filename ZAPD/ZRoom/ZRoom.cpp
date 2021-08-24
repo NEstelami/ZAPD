@@ -1,7 +1,4 @@
 #include "ZRoom.h"
-#include "Utils/File.h"
-#include "Utils/Path.h"
-#include "Utils/StringHelper.h"
 #include <algorithm>
 #include <chrono>
 #include "../Globals.h"
@@ -39,6 +36,9 @@
 #include "Commands/Unused09.h"
 #include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
+#include "Utils/StringHelper.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
 
@@ -95,13 +95,13 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), nullptr, 16);
 
-			ZDisplayList* dList = new ZDisplayList(
-				address,
-				ZDisplayList::GetDListLength(parent->GetRawData(), address,
-			                                 Globals::Instance->game == ZGame::OoTSW97 ?
-                                                 DListType::F3DEX :
-                                                 DListType::F3DZEX),
-				parent);
+			ZDisplayList* dList =
+				new ZDisplayList(address,
+			                     ZDisplayList::GetDListLength(
+									 parent->GetRawData(), address,
+									 Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX :
+                                                                                 DListType::F3DZEX),
+			                     parent);
 			dList->SetInnerNode(true);
 
 			dList->GetSourceOutputCode(name);
