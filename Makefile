@@ -6,7 +6,7 @@ CXXFLAGS ?=
 COPYCHECK_ARGS ?= 
 
 CXX := g++
-INC := -I ZAPD -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
+INC := -I ZAPD -I lib/elfio -I lib/stb -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
 CXXFLAGS += -fpic -std=c++17 -Wall -fno-omit-frame-pointer
 
 ifneq ($(DEBUG),0)
