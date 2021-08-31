@@ -64,10 +64,14 @@ ZOverlay::~ZOverlay()
 	entries.clear();
 }
 
-static const std::unordered_set<std::string> sRelSections = {".rel.text", ".rel.data",
-                                                             ".rel.rodata"};
+static const std::unordered_set<std::string> sRelSections = {
+	".rel.text",
+	".rel.data",
+	".rel.rodata",
+};
 static const std::unordered_set<std::string> sSections = {
-	".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4"};
+	".text", ".data", ".symtab", ".rodata", ".rodata.str1.4", ".rodata.cst4", ".rodata.cst8",
+};
 
 ZOverlay* ZOverlay::FromBuild(fs::path buildPath, fs::path cfgFolderPath)
 {
