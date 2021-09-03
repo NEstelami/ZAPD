@@ -1,8 +1,10 @@
 #include "ZVector.h"
-#include <assert.h>
+
+#include <cassert>
+
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 
@@ -14,6 +16,16 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 	dimensions = 0;
 	RegisterRequiredAttribute("Type");
 	RegisterRequiredAttribute("Dimensions");
+}
+
+void ZVector::ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType,
+                                uint32_t nDimensions)
+{
+	rawDataIndex = nRawDataIndex;
+	scalarType = nScalarType;
+	dimensions = nDimensions;
+
+	ParseRawData();
 }
 
 void ZVector::ParseXML(tinyxml2::XMLElement* reader)
@@ -33,9 +45,8 @@ void ZVector::ParseRawData()
 
 	for (uint32_t i = 0; i < dimensions; i++)
 	{
-		ZScalar scalar(scalarType, parent);
-		scalar.rawDataIndex = currentRawDataIndex;
-		scalar.ParseRawData();
+		ZScalar scalar(parent);
+		scalar.ExtractFromBinary(currentRawDataIndex, scalarType);
 		currentRawDataIndex += scalar.GetRawDataSize();
 
 		scalars.push_back(scalar);
@@ -85,19 +96,15 @@ std::string ZVector::GetBodySourceCode() const
 {
 	std::string body = "";
 
-	for (size_t i = 0; i < this->scalars.size(); i++)
-		body += StringHelper::Sprintf("%6s, ", scalars[i].GetBodySourceCode().c_str());
+	for (size_t i = 0; i < scalars.size(); i++)
+	{
+		body += StringHelper::Sprintf("%6s", scalars[i].GetBodySourceCode().c_str());
 
-	return "{ " + body + "}";
-}
+		if (i + 1 < scalars.size())
+			body += ", ";
+	}
 
-std::string ZVector::GetSourceOutputCode(const std::string& prefix)
-{
-	if (parent != nullptr)
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
-
-	return "";
+	return body;
 }
 
 ZResourceType ZVector::GetResourceType() const
@@ -105,12 +112,7 @@ ZResourceType ZVector::GetResourceType() const
 	return ZResourceType::Vector;
 }
 
-void ZVector::SetScalarType(ZScalarType type)
+DeclarationAlignment ZVector::GetDeclarationAlignment() const
 {
-	scalarType = type;
-}
-
-void ZVector::SetDimensions(uint32_t dim)
-{
-	dimensions = dim;
+	return scalars.at(0).GetDeclarationAlignment();
 }
