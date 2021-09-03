@@ -140,6 +140,7 @@ public:
 
 	std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex);
 	std::string GetBodySourceCode() const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 

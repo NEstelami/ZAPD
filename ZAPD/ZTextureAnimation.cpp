@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include "Globals.h"
+#include "tinyxml2.h"
 #include "Utils/BitConverter.h"
 #include "ZFile.h"
 #include "ZResource.h"
@@ -147,7 +148,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 			case TextureAnimationParamsType::SingleScroll:
 			case TextureAnimationParamsType::DualScroll:
 				printf("Declaring references to scrolling texture\n");
-				GetBodySourceCode();
+				// entry.GetBodySourceCode();
 				// entry.DeclareReferences();
 				break;
 			case TextureAnimationParamsType::ColorChange:
@@ -285,12 +286,18 @@ size_t ZTextureAnimation::GetRawDataSize() const
 	return entries.size() * 8;
 }
 
+/**
+ * Name to use if not in the XML with a name
+ */
 std::string ZTextureAnimation::GetDefaultName(const std::string& prefix, uint32_t address) const
 {
 	printf("ZTextureAnimation::GetDefaultName\n");
 	return StringHelper::Sprintf("%sTextureAnimation_%06X", prefix.c_str(), address);
 }
 
+/**
+ * Constructs the output's ???
+ */
 void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	printf("ZTextureAnimation::DeclareVar\n");
@@ -299,24 +306,46 @@ void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string&
 	if (name == "")
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	                       GetSourceTypeName(), auxName, entries.size(), bodyStr);
 }
 
+/**
+ * ??? and creates a placeholder for the actual declaration to slot into later
+ */
+void ZTextureAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+{
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
+	DeclareVar("", "");
+}
+
+/**
+ * Sets the body of the definition (i.e. the content of the struct between the outer `{}`s)
+ */
 std::string ZTextureAnimation::GetBodySourceCode() const
 {
 	printf("ZTextureAnimation::GetBodySourceCode\n");
 
-	std::string bodyStr = "\n";
+	std::string bodyStr = "";
 
 	for (const TextureAnimationEntry& entry : entries)
 	{
 		bodyStr += StringHelper::Sprintf("    { %d, %X, 0x%08X },\n", entry.segment, entry.type, entry.paramsPtr);
+
+		if (&entry == &entries.back())
+		{
+			bodyStr.pop_back();
+		}
+
 	}
-	printf("%s", bodyStr.c_str());
+
+	printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
 }
 
+/**
+ * Final setup of whole definition
+ */
 std::string ZTextureAnimation::GetSourceOutputCode(const std::string& prefix)
 {
 	printf("ZTextureAnimation::GetSourceOutputCode\n");
