@@ -345,18 +345,18 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 	return resList;
 }
 
-Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
+Declaration* ZFile::AddDeclaration(offset_t address, DeclarationAlignment alignment, size_t size,
                                    std::string varType, std::string varName, std::string body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
-	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
+	Declaration* decl = new Declaration(address, alignment, size, varType, varName, false, body);
 	declarations[address] = decl;
 	return decl;
 }
 
-Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment,
+Declaration* ZFile::AddDeclaration(offset_t address, DeclarationAlignment alignment,
                                    DeclarationPadding padding, size_t size, std::string varType,
                                    std::string varName, std::string body)
 {
@@ -364,11 +364,11 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
-		new Declaration(alignment, padding, size, varType, varName, false, body);
+		new Declaration(address, alignment, padding, size, varType, varName, false, body);
 	return declarations[address];
 }
 
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
                                         size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
 {
@@ -376,11 +376,11 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
-		new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
+		new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body);
 	return declarations[address];
 }
 
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
                                         size_t size, std::string varType, std::string varName,
                                         std::string arrayItemCntStr, std::string body)
 {
@@ -388,11 +388,11 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
-		new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
+		new Declaration(address, alignment, size, varType, varName, true, arrayItemCntStr, body);
 	return declarations[address];
 }
 
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
                                         size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body, bool isExternal)
 {
@@ -400,11 +400,11 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
-		new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body, isExternal);
+		new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body, isExternal);
 	return declarations[address];
 }
 
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
                                         DeclarationPadding padding, size_t size,
                                         std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
@@ -413,7 +413,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	AddDeclarationDebugChecks(address);
 
 	declarations[address] =
-		new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+		new Declaration(address, alignment, padding, size, varType, varName, true, arrayItemCnt, body);
 	return declarations[address];
 }
 
@@ -425,7 +425,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+		decl = new Declaration(address, DeclarationAlignment::None, 0, "", "", false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -435,7 +435,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varName)
+Declaration* ZFile::AddDeclarationPlaceholder(offset_t address, std::string varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -443,7 +443,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varN
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
+		decl = new Declaration(address, DeclarationAlignment::None, 0, "", varName, false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -453,19 +453,19 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varN
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,
+Declaration* ZFile::AddDeclarationInclude(offset_t address, std::string includePath, size_t size,
                                           std::string varType, std::string varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
 	if (declarations.find(address) == declarations.end())
-		declarations[address] = new Declaration(includePath, size, varType, varName);
+		declarations[address] = new Declaration(address, includePath, size, varType, varName);
 
 	return declarations[address];
 }
 
-Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath,
+Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string includePath,
                                                size_t size, std::string varType,
                                                std::string varName, size_t arrayItemCnt)
 {
@@ -492,7 +492,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 	}
 	else
 	{
-		Declaration* decl = new Declaration(includePath, size, varType, varName);
+		Declaration* decl = new Declaration(address, includePath, size, varType, varName);
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;

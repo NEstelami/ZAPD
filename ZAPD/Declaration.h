@@ -3,6 +3,10 @@
 #include <string>
 #include <vector>
 
+// TODO: should we drop the `_t` suffix because of UNIX compliance?
+typedef uint32_t segptr_t;
+typedef uint32_t offset_t;
+
 enum class DeclarationAlignment
 {
 	None,
@@ -22,6 +26,7 @@ enum class DeclarationPadding
 class Declaration
 {
 public:
+	offset_t address;
 	DeclarationAlignment alignment;
 	DeclarationPadding padding;
 	size_t size;
@@ -38,28 +43,32 @@ public:
 	bool isArray = false;
 	size_t arrayItemCnt = 0;
 	std::string arrayItemCntStr = "";
-	std::vector<uint32_t> references;
+	std::vector<segptr_t> references;
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
+	bool declaredInXml = false;
 
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
 	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, DeclarationPadding nPadding,
+	            size_t nSize, std::string nVarType, std::string nVarName, bool nIsArray,
 	            std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-	            bool nIsExternal);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
 	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
 	            std::string nText);
-	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray,
+	            std::string nArrayItemCntStr, std::string nText);
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            std::string nText, bool nIsExternal);
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, DeclarationPadding nPadding,
+	            size_t nSize, std::string nVarType, std::string nVarName, bool nIsArray,
+	            size_t nArrayItemCnt, std::string nText);
+	Declaration(offset_t nAddress, std::string nIncludePath, size_t nSize, std::string nVarType,
+	            std::string nVarName);
 
 protected:
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nText);
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, DeclarationPadding nPadding,
+	            size_t nSize, std::string nText);
 };

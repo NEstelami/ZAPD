@@ -24,12 +24,20 @@ ZResource::ZResource(ZFile* nParent)
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
+	declaredInXml = true;
 
 	if (reader != nullptr)
 		ParseXML(reader);
 
 	ParseRawData();
 	CalcHash();
+
+	if (!isInner)
+	{
+		Declaration* decl = DeclareVar(parent->GetName(), "");
+		assert(decl != nullptr);
+		decl->declaredInXml = true;
+	}
 }
 
 void ZResource::ExtractFromFile(uint32_t nRawDataIndex)
@@ -42,7 +50,7 @@ void ZResource::ExtractFromFile(uint32_t nRawDataIndex)
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 {
-	if (reader != nullptr)
+	if (reader == nullptr)
 	{
 		// If it is an inner node, then 'Name' isn't required
 		if (isInner)
@@ -157,6 +165,16 @@ std::string ZResource::GetExternalExtension() const
 	return "";
 }
 
+DeclarationAlignment ZResource::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align4;
+}
+
+DeclarationPadding ZResource::GetDeclarationPadding() const
+{
+	return DeclarationPadding::None;
+}
+
 bool ZResource::WasDeclaredInXml() const
 {
 	return declaredInXml;
@@ -177,8 +195,22 @@ std::string ZResource::GetBodySourceCode() const
 	return "ERROR";
 }
 
+std::string ZResource::GetDefaultName(const std::string& prefix) const
+{
+	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), GetSourceTypeName().c_str(),
+	                             rawDataIndex);
+}
+
 std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 {
+	std::string declaration = GetBodySourceCode();
+
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+	if (decl == nullptr || decl->isPlaceholder)
+		DeclareVar(prefix, declaration);
+	else
+		decl->text = declaration;
+
 	return "";
 }
 
@@ -193,6 +225,17 @@ void ZResource::ParseRawData()
 
 void ZResource::DeclareReferences(const std::string& prefix)
 {
+}
+
+Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
+	                              GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
 }
 
 std::string ZResource::GetSourceTypeName() const
