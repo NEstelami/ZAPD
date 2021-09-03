@@ -50,7 +50,7 @@ void ZResource::ExtractFromFile(uint32_t nRawDataIndex)
 
 void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 {
-	if (reader == nullptr)
+	if (reader != nullptr)
 	{
 		// If it is an inner node, then 'Name' isn't required
 		if (isInner)

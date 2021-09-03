@@ -2073,7 +2073,7 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 				else
 				{
 					tex = new ZTexture(parent);
-					tex->FromBinary(texAddr, texWidth, texHeight,
+					tex->ExtractFromBinary(texAddr, texWidth, texHeight,
 					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
 					parent->AddTextureResource(texAddr, tex);
 				}
@@ -2097,7 +2097,7 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 				else
 				{
 					tex = new ZTexture(scene->parent);
-					tex->FromBinary(texAddr, texWidth, texHeight,
+					tex->ExtractFromBinary(texAddr, texWidth, texHeight,
 					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
 
 					scene->parent->AddTextureResource(texAddr, tex);
