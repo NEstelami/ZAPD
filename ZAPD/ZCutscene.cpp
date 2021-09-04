@@ -139,12 +139,6 @@ size_t ZCutscene::GetRawDataSize() const
 	return size;
 }
 
-void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-	DeclareVar(parent->GetName(), "");
-}
-
 void ZCutscene::ParseRawData()
 {
 	ZResource::ParseRawData();

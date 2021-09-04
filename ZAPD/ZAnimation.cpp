@@ -280,14 +280,6 @@ void ZCurveAnimation::ParseRawData()
 	}
 }
 
-void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
-}
-
 void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 {
 	if (refIndex != 0)
@@ -464,14 +456,6 @@ std::string ZCurveAnimation::GetSourceTypeName() const
 
 ZLegacyAnimation::ZLegacyAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
-}
-
-void ZLegacyAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZAnimation::ExtractFromXML(reader, nRawDataIndex);
-
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
 }
 
 void ZLegacyAnimation::ParseRawData()

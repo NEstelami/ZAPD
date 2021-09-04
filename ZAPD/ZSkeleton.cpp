@@ -157,14 +157,6 @@ ZLimbTable::ZLimbTable(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Count");
 }
 
-void ZLimbTable::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), name, limbsAddresses.size(), "");
-}
-
 void ZLimbTable::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount)
 {
 	rawDataIndex = nRawDataIndex;

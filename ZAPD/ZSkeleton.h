@@ -20,7 +20,6 @@ class ZLimbTable : public ZResource
 public:
 	ZLimbTable(ZFile* nParent);
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 	void ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;

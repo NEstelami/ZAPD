@@ -20,8 +20,6 @@ public:
 	void ParseRawData() override;
 	ZResourceType GetResourceType() const override;
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
-
 protected:
 	int32_t numCommands;
 	int32_t endFrame;
