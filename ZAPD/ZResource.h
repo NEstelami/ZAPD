@@ -117,7 +117,8 @@ public:
 
 	// Properties
 	/**
-	 * Returns true if the resource will be externalized, and included back to the C file using `#include`s
+	 * Returns true if the resource will be externalized, and included back to the C file using
+	 * `#include`s
 	 */
 	virtual bool IsExternalResource() const;
 	/**
@@ -179,7 +180,6 @@ protected:
 	/**
 	 * If set to true, create a reference for the asset in the file, but don't
 	 * actually try to extract it from the file
-	 * 
 	 */
 	bool isCustomAsset;
 	bool declaredInXml = false;

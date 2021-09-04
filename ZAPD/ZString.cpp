@@ -36,8 +36,9 @@ Declaration* ZString::DeclareVar(const std::string& prefix, const std::string& b
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, 0, bodyStr);
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetSourceTypeName(), auxName, 0, bodyStr);
 }
 
 std::string ZString::GetBodySourceCode() const
