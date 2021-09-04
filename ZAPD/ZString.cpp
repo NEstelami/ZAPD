@@ -29,17 +29,20 @@ void ZString::ParseRawData()
 	strData.assign(dataStart, dataStart + size);
 }
 
+Declaration* ZString::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
+	                            GetSourceTypeName(), auxName, 0, bodyStr);
+}
+
 std::string ZString::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("\t\"%s\"", strData.data());
-}
-
-std::string ZString::GetSourceOutputCode(const std::string& prefix)
-{
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-	                            GetSourceTypeName(), name, 0, GetBodySourceCode());
-
-	return "";
 }
 
 std::string ZString::GetSourceOutputHeader(const std::string& prefix)

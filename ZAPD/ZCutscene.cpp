@@ -106,20 +106,6 @@ std::string ZCutscene::GetBodySourceCode() const
 	return output;
 }
 
-std::string ZCutscene::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
-}
-
 size_t ZCutscene::GetRawDataSize() const
 {
 	size_t size = 0;

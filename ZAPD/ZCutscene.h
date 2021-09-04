@@ -427,7 +427,6 @@ public:
 	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
 	CutsceneCommands GetCommandFromID(int32_t id);
 

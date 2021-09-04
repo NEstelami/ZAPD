@@ -199,13 +199,13 @@ std::string ZResource::GetDefaultName(const std::string& prefix) const
 
 std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string declaration = GetBodySourceCode();
+	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-		DeclareVar(prefix, declaration);
+		DeclareVar(prefix, bodyStr);
 	else
-		decl->text = declaration;
+		decl->text = bodyStr;
 
 	return "";
 }

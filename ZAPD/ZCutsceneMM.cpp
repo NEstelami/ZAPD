@@ -29,20 +29,6 @@ std::string ZCutsceneMM::GetBodySourceCode() const
 	return output;
 }
 
-std::string ZCutsceneMM::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
-}
-
 size_t ZCutsceneMM::GetRawDataSize() const
 {
 	return 8 + data.size() * 4;
