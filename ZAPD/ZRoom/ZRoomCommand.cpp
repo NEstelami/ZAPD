@@ -49,7 +49,7 @@ ZResourceType ZRoomCommand::GetResourceType() const
 
 std::string ZRoomCommand::GetCommandCName() const
 {
-	return "SCmdBase";
+	return "SceneCmd";
 }
 
 std::string ZRoomCommand::GetCommandHex() const

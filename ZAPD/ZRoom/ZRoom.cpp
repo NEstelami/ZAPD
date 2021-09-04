@@ -431,7 +431,7 @@ size_t ZRoom::GetRawDataSize() const
 
 std::string ZRoom::GetSourceTypeName() const
 {
-	return "SCmdBase";
+	return "SceneCmd";
 }
 
 ZResourceType ZRoom::GetResourceType() const
