@@ -139,7 +139,7 @@ public:
 	virtual void Save(ZResource* res, fs::path outPath, BinaryWriter* writer) = 0;
 };
 
-uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
+offset_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress);
 
 typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
 

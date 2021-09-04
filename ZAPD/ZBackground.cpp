@@ -1,4 +1,5 @@
 #include "ZBackground.h"
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
@@ -13,20 +14,6 @@ REGISTER_ZFILENODE(Background, ZBackground);
 
 ZBackground::ZBackground(ZFile* nParent) : ZResource(nParent)
 {
-}
-
-void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutName)
-{
-	fs::path filepath(inFolder);
-
-	if (appendOutName)
-		filepath = filepath / (outName + "." + GetExternalExtension());
-
-	data = File::ReadAllBytes(filepath.string());
-
-	// Add padding.
-	data.insert(data.end(), GetRawDataSize() - data.size(), 0x00);
-	CheckValidJpeg(filepath.generic_string());
 }
 
 void ZBackground::ParseRawData()
@@ -50,75 +37,18 @@ void ZBackground::ParseRawData()
 	}
 }
 
-Declaration* ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutName)
 {
-	std::string auxName = name;
+	fs::path filepath(inFolder);
 
-	if (name == "")
-		auxName = GetDefaultName(prefix);
+	if (appendOutName)
+		filepath = filepath / (outName + "." + GetExternalExtension());
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                                   GetSourceTypeName(), auxName,
-	                                   "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
-}
+	data = File::ReadAllBytes(filepath.string());
 
-std::string ZBackground::GetBodySourceCode() const
-{
-	std::string bodyStr = "    ";
-
-	for (size_t i = 0; i < data.size() / 8; ++i)
-	{
-		bodyStr += StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(data, i * 8));
-
-		if (i % 8 == 7)
-			bodyStr += "\n    ";
-	}
-
-	bodyStr += "\n";
-
-	return bodyStr;
-}
-
-std::string ZBackground::GetDefaultName(const std::string& prefix) const
-{
-	return StringHelper::Sprintf("%sBackground_%06X", prefix.c_str(), rawDataIndex);
-}
-
-void ZBackground::Save(const fs::path& outFolder)
-{
-	fs::path filepath = outFolder / (outName + "." + GetExternalExtension());
-	File::WriteAllBytes(filepath.string(), data);
-}
-
-bool ZBackground::IsExternalResource() const
-{
-	return true;
-}
-
-std::string ZBackground::GetSourceTypeName() const
-{
-	return "u64";
-}
-
-ZResourceType ZBackground::GetResourceType() const
-{
-	return ZResourceType::Background;
-}
-
-std::string ZBackground::GetExternalExtension() const
-{
-	return "jpg";
-}
-
-size_t ZBackground::GetRawDataSize() const
-{
-	// Jpgs use the whole sceen buffer, which is a u16 matrix.
-	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
-}
-
-DeclarationAlignment ZBackground::GetDeclarationAlignment() const
-{
-	return DeclarationAlignment::Align8;
+	// Add padding.
+	data.insert(data.end(), GetRawDataSize() - data.size(), 0x00);
+	CheckValidJpeg(filepath.generic_string());
 }
 
 void ZBackground::CheckValidJpeg(const std::string& filepath)
@@ -179,4 +109,75 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		        "\t Screen buffer size: %zu bytes.\n",
 		        filename.c_str(), data.size(), GetRawDataSize());
 	}
+}
+
+size_t ZBackground::GetRawDataSize() const
+{
+	// Jpgs use the whole sceen buffer, which is a u16 matrix.
+	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
+}
+
+Declaration* ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                   GetSourceTypeName(), auxName,
+	                                   "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
+}
+
+bool ZBackground::IsExternalResource() const
+{
+	return true;
+}
+
+std::string ZBackground::GetExternalExtension() const
+{
+	return "jpg";
+}
+
+void ZBackground::Save(const fs::path& outFolder)
+{
+	fs::path filepath = outFolder / (outName + "." + GetExternalExtension());
+	File::WriteAllBytes(filepath.string(), data);
+}
+
+std::string ZBackground::GetBodySourceCode() const
+{
+	std::string bodyStr = "    ";
+
+	for (size_t i = 0; i < data.size() / 8; ++i)
+	{
+		bodyStr += StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(data, i * 8));
+
+		if (i % 8 == 7)
+			bodyStr += "\n    ";
+	}
+
+	bodyStr += "\n";
+
+	return bodyStr;
+}
+
+std::string ZBackground::GetDefaultName(const std::string& prefix) const
+{
+	return StringHelper::Sprintf("%sBackground_%06X", prefix.c_str(), rawDataIndex);
+}
+
+std::string ZBackground::GetSourceTypeName() const
+{
+	return "u64";
+}
+
+ZResourceType ZBackground::GetResourceType() const
+{
+	return ZResourceType::Background;
+}
+
+DeclarationAlignment ZBackground::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align8;
 }

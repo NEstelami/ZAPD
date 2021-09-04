@@ -101,6 +101,19 @@ std::string ZSkeleton::GetBodySourceCode() const
 	return headerStr;
 }
 
+size_t ZSkeleton::GetRawDataSize() const
+{
+	switch (type)
+	{
+	case ZSkeletonType::Flex:
+		return 0xC;
+	case ZSkeletonType::Normal:
+	case ZSkeletonType::Curve:
+	default:
+		return 0x8;
+	}
+}
+
 std::string ZSkeleton::GetSourceTypeName() const
 {
 	switch (type)
@@ -121,27 +134,9 @@ ZResourceType ZSkeleton::GetResourceType() const
 	return ZResourceType::Skeleton;
 }
 
-size_t ZSkeleton::GetRawDataSize() const
-{
-	switch (type)
-	{
-	case ZSkeletonType::Flex:
-		return 0xC;
-	case ZSkeletonType::Normal:
-	case ZSkeletonType::Curve:
-	default:
-		return 0x8;
-	}
-}
-
 DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const
 {
 	return DeclarationAlignment::Align16;
-}
-
-segptr_t ZSkeleton::GetAddress()
-{
-	return rawDataIndex;
 }
 
 uint8_t ZSkeleton::GetLimbCount()

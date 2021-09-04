@@ -269,9 +269,9 @@ void ZResource::RegisterOptionalAttribute(const std::string& attr, const std::st
 	registeredAttributes[attr] = resAtrr;
 }
 
-uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
+offset_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 {
-	uint32_t currentPtr = GETSEGOFFSET(segmentedAddress);
+	offset_t currentPtr = GETSEGOFFSET(segmentedAddress);
 
 	if (GETSEGNUM(segmentedAddress) == 0x80)  // Is defined in code?
 		currentPtr -= GETSEGOFFSET(parentBaseAddress);

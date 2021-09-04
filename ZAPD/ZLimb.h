@@ -165,7 +165,4 @@ public:
 	void SetLimbType(ZLimbType value);
 	static const char* GetSourceTypeName(ZLimbType limbType);
 	static ZLimbType GetTypeByAttributeName(const std::string& attrName);
-
-	uint32_t GetFileAddress();
-	void SetFileAddress(uint32_t nAddress);
 };

@@ -65,7 +65,6 @@ public:
 	size_t GetRawDataSize() const override;
 	DeclarationAlignment GetDeclarationAlignment() const override;
 
-	segptr_t GetAddress();
 	uint8_t GetLimbCount();
 
 protected:
