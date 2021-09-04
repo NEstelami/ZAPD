@@ -18,13 +18,25 @@ ZResourceType ZTextureAnimationParams::GetResourceType() const
 
 /* TextureScrollingParams */
 
+void TextureScrollingParams::ParseRawData()
+{
+	const auto& rawData = parent->GetRawData();
+
+	for (int i = 0; i < count; i++)
+	{
+		rows[i].xStep = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4 * i);
+		rows[i].yStep = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4 * i + 1);
+		rows[i].width = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4 * i + 2);
+		rows[i].height = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4 * i + 3);
+	}
+}
 
 void TextureScrollingParams::ExtractFromBinary(uint32_t nRawDataIndex, int nCount)
 {
 	rawDataIndex = nRawDataIndex;
 	count = nCount;
 
-	ParseRawData()
+	ParseRawData();
 }
 
 std::string TextureScrollingParams::GetDefaultName(const std::string& prefix, uint32_t address)
@@ -37,29 +49,29 @@ size_t TextureScrollingParams::GetRawDataSize() const
 	return 4 * count;
 }
 
-TextureScrollingParamsEntry::TextureScrollingParamsEntry(const std::vector<uint8_t>& rawData,
-                                                         uint32_t rawDataIndex)
-	: xStep(rawData.at(rawDataIndex + 0)), yStep(rawData.at(rawDataIndex + 1)),
-	  width(rawData.at(rawDataIndex + 2)), height(rawData.at(rawDataIndex + 3))
-{
-	printf("Asinine TextureScrollingParams constructor\n");
-	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
-}
+// TextureScrollingParamsEntry::TextureScrollingParamsEntry(const std::vector<uint8_t>& rawData,
+//                                                          uint32_t rawDataIndex)
+// 	: xStep(rawData.at(rawDataIndex + 0)), yStep(rawData.at(rawDataIndex + 1)),
+// 	  width(rawData.at(rawDataIndex + 2)), height(rawData.at(rawDataIndex + 3))
+// {
+// 	printf("Asinine TextureScrollingParams constructor\n");
+// 	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
+// }
 
-std::string TextureScrollingParamsEntry::GetSourceOutputCode()
-{
-	printf("TextureScrollingParams::GetSourceOutputCode\n");
-	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
-	// 	return StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },", xStep, yStep, width,
-	// height);
-	return "FrankerZ,\n";
-}
+// std::string TextureScrollingParamsEntry::GetSourceOutputCode()
+// {
+// 	printf("TextureScrollingParams::GetSourceOutputCode\n");
+// 	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
+// 	// 	return StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },", xStep, yStep, width,
+// 	// height);
+// 	return "FrankerZ,\n";
+// }
 
-size_t TextureScrollingParamsEntry::GetEntrySize()
-{
-	printf("TextureScrollingParamsEntry::GetEntrySize\n");
-	return 4;
-}
+// size_t TextureScrollingParamsEntry::GetEntrySize()
+// {
+// 	printf("TextureScrollingParamsEntry::GetEntrySize\n");
+// 	return 4;
+// }
 
 
 /* TextureAnimationEntry */

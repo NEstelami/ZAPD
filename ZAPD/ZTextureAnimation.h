@@ -41,6 +41,7 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 {
 	TextureScrollingParams(ZFile* parent);
 
+	void ParseRawData() override;
 	void ExtractFromBinary(uint32_t nRawDataIndex, int count);
 	std::string GetDefaultName(const std::string& prefix, uint32_t address) override;
 	size_t GetRawDataSize() const;
