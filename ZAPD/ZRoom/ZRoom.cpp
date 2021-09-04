@@ -1,11 +1,13 @@
 #include "ZRoom.h"
-#include <Utils/Path.h>
+
 #include <algorithm>
 #include <chrono>
+
+#include <Utils/Path.h>
 #include <Utils/File.h>
 #include <Utils/StringHelper.h>
-#include "../Globals.h"
-#include "../ZBlob.h"
+#include "Globals.h"
+#include "ZBlob.h"
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
@@ -41,8 +43,6 @@
 #include "Commands/ZRoomCommandUnk.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
-
-using namespace tinyxml2;
 
 REGISTER_ZFILENODE(Room, ZRoom);
 REGISTER_ZFILENODE(Scene, ZRoom);
@@ -80,7 +80,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 		cmdCount = 0;
 	}
 
-	for (XMLElement* child = reader->FirstChildElement(); child != nullptr;
+	for (tinyxml2::XMLElement* child = reader->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		std::string childName =

@@ -1,11 +1,10 @@
 #include "ZBlob.h"
+
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
-
-using namespace tinyxml2;
 
 REGISTER_ZFILENODE(Blob, ZBlob);
 
@@ -15,7 +14,7 @@ ZBlob::ZBlob(ZFile* nParent) : ZResource(nParent)
 }
 
 // Build Source File Mode
-ZBlob* ZBlob::BuildFromXML(XMLElement* reader, const std::string& inFolder, bool readFile)
+ZBlob* ZBlob::BuildFromXML(tinyxml2::XMLElement* reader, const std::string& inFolder, bool readFile)
 {
 	ZBlob* blob = new ZBlob(nullptr);
 

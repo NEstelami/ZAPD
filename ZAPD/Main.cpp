@@ -23,8 +23,6 @@
 #include <string>
 #include "tinyxml2.h"
 
-using namespace tinyxml2;
-
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode fileMode);
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
@@ -326,8 +324,8 @@ int main(int argc, char* argv[])
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode fileMode)
 {
-	XMLDocument doc;
-	XMLError eResult = doc.LoadFile(xmlFilePath.string().c_str());
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError eResult = doc.LoadFile(xmlFilePath.string().c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
@@ -335,7 +333,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 		return false;
 	}
 
-	XMLNode* root = doc.FirstChild();
+	tinyxml2::XMLNode* root = doc.FirstChild();
 
 	if (root == nullptr)
 	{
@@ -343,7 +341,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 		return false;
 	}
 
-	for (XMLElement* child = root->FirstChildElement(); child != NULL;
+	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
 		if (std::string(child->Name()) == "File")

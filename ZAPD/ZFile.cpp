@@ -1,9 +1,11 @@
 #include "ZFile.h"
-#include <Utils/BinaryWriter.h>
-#include <Utils/MemoryStream.h>
+
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
+
+#include <Utils/BinaryWriter.h>
+#include <Utils/MemoryStream.h>
 #include "Utils/Directory.h"
 #include "Utils/File.h"
 #include "Globals.h"
@@ -25,8 +27,6 @@
 #include "ZTexture.h"
 #include "ZVector.h"
 #include "ZVtx.h"
-
-using namespace tinyxml2;
 
 ZFile::ZFile()
 {
@@ -71,7 +71,7 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, bool placeholderMode)
+void ZFile::ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename, bool placeholderMode)
 {
 	if (filename == "")
 		name = reader->Attribute("Name");
@@ -139,7 +139,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 	auto nodeMap = *GetNodeMap();
 	uint32_t rawDataIndex = 0;
 
-	for (XMLElement* child = reader->FirstChildElement(); child != nullptr;
+	for (tinyxml2::XMLElement* child = reader->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		const char* nameXml = child->Attribute("Name");
