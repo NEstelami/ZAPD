@@ -35,8 +35,7 @@ void ZPath::ParseRawData()
 	for (size_t pathIndex = 0; pathIndex < numPaths; pathIndex++)
 	{
 		PathwayEntry path(parent);
-		path.SetRawDataIndex(currentPtr);
-		path.ParseRawData();
+		path.ExtractFromFile(currentPtr);
 
 		if (path.GetListAddress() == 0)
 			break;

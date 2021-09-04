@@ -24,8 +24,7 @@ void SetPathways::ParseRawDataLate()
 		pathwayList.SetNumPaths(numPaths);
 	}
 
-	pathwayList.SetRawDataIndex(segmentOffset);
-	pathwayList.ParseRawData();
+	pathwayList.ExtractFromFile(segmentOffset);
 }
 
 void SetPathways::DeclareReferencesLate(const std::string& prefix)

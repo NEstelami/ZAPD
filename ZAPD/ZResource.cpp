@@ -22,7 +22,7 @@ ZResource::ZResource(ZFile* nParent)
 	RegisterOptionalAttribute("Custom");
 }
 
-void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, offset_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 	declaredInXml = true;
@@ -41,7 +41,7 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIn
 	}
 }
 
-void ZResource::ExtractFromFile(uint32_t nRawDataIndex)
+void ZResource::ExtractFromFile(offset_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 
@@ -181,14 +181,9 @@ bool ZResource::WasDeclaredInXml() const
 	return declaredInXml;
 }
 
-uint32_t ZResource::GetRawDataIndex() const
+offset_t ZResource::GetRawDataIndex() const
 {
 	return rawDataIndex;
-}
-
-void ZResource::SetRawDataIndex(uint32_t value)
-{
-	rawDataIndex = value;
 }
 
 std::string ZResource::GetBodySourceCode() const

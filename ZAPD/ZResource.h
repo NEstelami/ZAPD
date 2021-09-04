@@ -68,8 +68,8 @@ public:
 	virtual ~ZResource() = default;
 
 	// Parsing from File
-	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex);
-	virtual void ExtractFromFile(uint32_t nRawDataIndex);
+	virtual void ExtractFromXML(tinyxml2::XMLElement* reader, offset_t nRawDataIndex);
+	virtual void ExtractFromFile(offset_t nRawDataIndex);
 
 	// Misc
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
@@ -88,8 +88,17 @@ public:
 
 	// Properties
 	virtual bool IsExternalResource() const;
-	virtual bool DoesSupportArray() const;  // Can this type be wrapped in an <Array> node?
+	/**
+	 * Can this type be wrapped in an <Array> node?
+	 */
+	virtual bool DoesSupportArray() const;
+	/**
+	 * The type of the resource as a C struct
+	 */
 	virtual std::string GetSourceTypeName() const = 0;
+	/**
+	 * The type in the ZResource enum
+	 */
 	virtual ZResourceType GetResourceType() const = 0;
 	virtual std::string GetExternalExtension() const;
 
@@ -98,18 +107,30 @@ public:
 	void SetName(const std::string& nName);
 	const std::string& GetOutName() const;
 	void SetOutName(const std::string& nName);
-	uint32_t GetRawDataIndex() const;
-	void SetRawDataIndex(uint32_t value);
+	offset_t GetRawDataIndex() const;
+	/**
+	 * The size of the current struct being extracted, not counting data referenced by it
+	 */
 	virtual size_t GetRawDataSize() const = 0;
+	/**
+	 * The alignment of the extracted struct.
+	 */
 	virtual DeclarationAlignment GetDeclarationAlignment() const;
+	/**
+	 * The padding of the extracted struct.
+	 */
 	virtual DeclarationPadding GetDeclarationPadding() const;
 	void SetInnerNode(bool inner);
+	/**
+	 * Returns `true` if this ZResource was declared using an XML node, 
+	 * `false` otherwise (for example, a Vtx extracted indirectly by a Gfx)
+	 */
 	bool WasDeclaredInXml() const;
 
 protected:
 	std::string name;
 	std::string outName;
-	uint32_t rawDataIndex;
+	offset_t rawDataIndex;
 	std::string sourceOutput;
 	bool isInner = false;  // Is this resource an inner node of another resource? inside of <Array>
 	bool canHaveInner = false;  // Can this type have an inner node?

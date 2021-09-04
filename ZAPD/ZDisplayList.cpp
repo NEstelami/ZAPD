@@ -868,8 +868,7 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, char* line)
 			for (int32_t i = 0; i < nn; i++)
 			{
 				ZVtx vtx(parent);
-				vtx.SetRawDataIndex(currentPtr);
-				vtx.ParseRawData();
+				vtx.ExtractFromFile(currentPtr);
 				vtxList.push_back(vtx);
 
 				currentPtr += 16;
@@ -1637,8 +1636,7 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 			for (int32_t i = 0; i < count; i++)
 			{
 				ZVtx vtx(self->parent);
-				vtx.SetRawDataIndex(currentPtr);
-				vtx.ParseRawData();
+				vtx.ExtractFromFile(currentPtr);
 
 				vtxList.push_back(vtx);
 				currentPtr += 16;

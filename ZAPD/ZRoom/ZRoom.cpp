@@ -143,8 +143,7 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 			// TODO: add this to command set
 			ZPath* pathway = new ZPath(parent);
 			pathway->SetInnerNode(true);
-			pathway->SetRawDataIndex(address);
-			pathway->ParseRawData();
+			pathway->ExtractFromFile(address);
 			pathway->DeclareReferences(name);
 			pathway->GetSourceOutputCode(name);
 
