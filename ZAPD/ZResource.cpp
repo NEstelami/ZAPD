@@ -238,11 +238,6 @@ Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string&
 	                              GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
 }
 
-std::string ZResource::GetSourceTypeName() const
-{
-	return "u8";
-}
-
 ZResourceType ZResource::GetResourceType() const
 {
 	return ZResourceType::Error;

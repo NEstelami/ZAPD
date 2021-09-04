@@ -453,6 +453,11 @@ size_t ZRoom::GetRawDataSize() const
 	return size;
 }
 
+std::string ZRoom::GetSourceTypeName() const
+{
+	return "ERRUR";
+}
+
 ZResourceType ZRoom::GetResourceType() const
 {
 	return ZResourceType::Room;

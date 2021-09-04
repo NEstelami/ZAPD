@@ -89,7 +89,7 @@ public:
 	// Properties
 	virtual bool IsExternalResource() const;
 	virtual bool DoesSupportArray() const;  // Can this type be wrapped in an <Array> node?
-	virtual std::string GetSourceTypeName() const;
+	virtual std::string GetSourceTypeName() const = 0;
 	virtual ZResourceType GetResourceType() const = 0;
 	virtual std::string GetExternalExtension() const;
 
@@ -98,8 +98,8 @@ public:
 	void SetName(const std::string& nName);
 	const std::string& GetOutName() const;
 	void SetOutName(const std::string& nName);
-	virtual uint32_t GetRawDataIndex() const;
-	virtual void SetRawDataIndex(uint32_t value);
+	uint32_t GetRawDataIndex() const;
+	void SetRawDataIndex(uint32_t value);
 	virtual size_t GetRawDataSize() const = 0;
 	virtual DeclarationAlignment GetDeclarationAlignment() const;
 	virtual DeclarationPadding GetDeclarationPadding() const;

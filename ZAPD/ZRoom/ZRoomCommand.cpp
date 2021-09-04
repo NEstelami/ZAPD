@@ -40,6 +40,11 @@ std::string ZRoomCommand::GetCommandCName() const
 	return "SCmdBase";
 }
 
+std::string ZRoomCommand::GetSourceTypeName() const
+{
+	return GetCommandCName();
+}
+
 ZResourceType ZRoomCommand::GetResourceType() const
 {
 	return ZResourceType::RoomCommand;
