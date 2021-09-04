@@ -3,11 +3,9 @@
 #include <algorithm>
 #include <chrono>
 
-#include <Utils/Path.h>
 #include <Utils/File.h>
+#include <Utils/Path.h>
 #include <Utils/StringHelper.h>
-#include "Globals.h"
-#include "ZBlob.h"
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
@@ -41,6 +39,8 @@
 #include "Commands/Unused09.h"
 #include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
+#include "Globals.h"
+#include "ZBlob.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
 
@@ -96,10 +96,11 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
 			ZDisplayList* dList = new ZDisplayList(parent);
-			dList->ExtractFromBinary(address, ZDisplayList::GetDListLength(parent->GetRawData(), address,
-			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
-                                                 DListType::F3DEX :
-                                                 DListType::F3DZEX));
+			dList->ExtractFromBinary(
+				address, ZDisplayList::GetDListLength(parent->GetRawData(), address,
+			                                          Globals::Instance->game == ZGame::OOT_SW97 ?
+                                                          DListType::F3DEX :
+                                                          DListType::F3DZEX));
 			dList->SetName(dList->GetDefaultName(parent->GetName()));
 			dList->SetInnerNode(true);
 

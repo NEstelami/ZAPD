@@ -1,4 +1,5 @@
 #include "ZCutscene.h"
+
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZResource.h"
@@ -1254,8 +1255,9 @@ Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::str
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
-	                                   GetRawDataSize(), GetSourceTypeName(), auxName, 0, bodyStr);
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetSourceTypeName(), auxName, 0, bodyStr);
 }
 
 std::string ZCutsceneBase::GetSourceTypeName() const

@@ -7,9 +7,9 @@
 
 #include <Utils/File.h>
 #include <Utils/Path.h>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 
@@ -62,17 +62,6 @@ void ZDisplayList::ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize
 
 	ParseRawData();
 }
-
-/*
-ZDisplayList::ZDisplayList(uint32_t nRawDataIndex, int32_t rawDataSize, ZFile* nParent)
-	: ZDisplayList(nParent)
-{
-	rawDataIndex = nRawDataIndex;
-	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
-	numInstructions = rawDataSize / 8;
-	ParseRawData();
-}
-*/
 
 void ZDisplayList::ParseRawData()
 {
@@ -267,7 +256,8 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 			        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
 			ZDisplayList* nList = new ZDisplayList(parent);
-			nList->ExtractFromBinary(h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType));
+			nList->ExtractFromBinary(
+				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType));
 			nList->SetName(nList->GetDefaultName(prefix));
 			nList->scene = scene;
 			otherDLists.push_back(nList);
@@ -713,7 +703,8 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, std::string prefix, char* line)
 	else
 	{
 		ZDisplayList* nList = new ZDisplayList(parent);
-		nList->ExtractFromBinary(GETSEGOFFSET(data), GetDListLength(parent->GetRawData(), GETSEGOFFSET(data), dListType));
+		nList->ExtractFromBinary(GETSEGOFFSET(data), GetDListLength(parent->GetRawData(),
+		                                                            GETSEGOFFSET(data), dListType));
 		nList->SetName(nList->GetDefaultName(prefix));
 
 		// if (scene != nullptr)
@@ -1745,7 +1736,9 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	if ((dListSegNum <= 6) && Globals::Instance->HasSegment(dListSegNum))
 	{
 		ZDisplayList* newDList = new ZDisplayList(self->parent);
-		newDList->ExtractFromBinary(dListOffset,self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
+		newDList->ExtractFromBinary(
+			dListOffset,
+			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
 		newDList->SetName(newDList->GetDefaultName(self->parent->GetName()));
 		newDList->scene = self->scene;
 		self->otherDLists.push_back(newDList);
@@ -2084,7 +2077,7 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 				{
 					tex = new ZTexture(parent);
 					tex->ExtractFromBinary(texAddr, texWidth, texHeight,
-					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
+					                       TexFormatToTexType(texFmt, texSiz), texIsPalette);
 					parent->AddTextureResource(texAddr, tex);
 				}
 
@@ -2108,7 +2101,7 @@ bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string pref
 				{
 					tex = new ZTexture(scene->parent);
 					tex->ExtractFromBinary(texAddr, texWidth, texHeight,
-					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
+					                       TexFormatToTexType(texFmt, texSiz), texIsPalette);
 
 					scene->parent->AddTextureResource(texAddr, tex);
 				}
