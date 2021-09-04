@@ -64,6 +64,10 @@ public:
 	bool outputDeclaration = true;
 	uint32_t hash = 0;
 
+	/**
+	 * Constructor.
+	 * Child classes should not declare any other constructor besides this one
+	 */
 	ZResource(ZFile* nParent);
 	virtual ~ZResource() = default;
 
@@ -74,18 +78,18 @@ public:
 	// Misc
 	/**
 	 * Parses additional attributes of the XML node.
-	 * Extra attritbutes has to be registered using `RegisterRequiredAttribute` or
-	 * `RegisterOptionalAttribute` in the constructor of the ZResource.
+	 * Extra attritbutes have to be registered using `RegisterRequiredAttribute` or
+	 * `RegisterOptionalAttribute` in the constructor of the ZResource
 	 */
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
 	/**
-	 * Extracts data from the binary file.
+	 * Extracts data from the binary file
 	 */
 	virtual void ParseRawData();
 	/**
 	 * Declares any data pointed by this resource that has not been declared already.
-	 * For example, a Vtx referenced by a Dlist should be declared here if it wasn't 
-	 * declared before by something else.
+	 * For example, a Vtx referenced by a Dlist should be declared here if it wasn't
+	 * declared previously by something else
 	 */
 	virtual void DeclareReferences(const std::string& prefix);
 
@@ -98,7 +102,7 @@ public:
 	 */
 	virtual std::string GetBodySourceCode() const;
 	/**
-	 * Creates an automatically generated variable name for the current resource.
+	 * Creates an automatically generated variable name for the current resource
 	 */
 	virtual std::string GetDefaultName(const std::string& prefix) const;
 
@@ -112,6 +116,9 @@ public:
 	virtual void Save(const fs::path& outFolder);
 
 	// Properties
+	/**
+	 * Returns true if the resource will be externalized, and included back to the C file using `#include`s
+	 */
 	virtual bool IsExternalResource() const;
 	/**
 	 * Can this type be wrapped in an <Array> node?
@@ -138,17 +145,17 @@ public:
 	 */
 	virtual size_t GetRawDataSize() const = 0;
 	/**
-	 * The alignment of the extracted struct.
+	 * The alignment of the extracted struct
 	 */
 	virtual DeclarationAlignment GetDeclarationAlignment() const;
 	/**
-	 * The padding of the extracted struct.
+	 * The padding of the extracted struct
 	 */
 	virtual DeclarationPadding GetDeclarationPadding() const;
 	void SetInnerNode(bool inner);
 	/**
-	 * Returns `true` if this ZResource was declared using an XML node, 
-	 * `false` otherwise (for example, a Vtx extracted indirectly by a Gfx)
+	 * Returns `true` if this ZResource was declared using an XML node,
+	 * `false` otherwise (for example, a Vtx extracted indirectly by a DList)
 	 */
 	bool WasDeclaredInXml() const;
 
@@ -157,10 +164,24 @@ protected:
 	std::string outName;
 	offset_t rawDataIndex;
 	std::string sourceOutput;
-	bool isInner = false;  // Is this resource an inner node of another resource? inside of <Array>
-	bool canHaveInner = false;  // Can this type have an inner node?
-	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
-	                     // actually try to extract it from the file
+
+	// Inner is used mostly for <Array> nodes
+	/**
+	 * Is this resource an inner node of another resource?
+	 * (namely inside an <Array>)
+	 */
+	bool isInner = false;
+	/**
+	 * Can this type have an inner node?
+	 */
+	bool canHaveInner = false;
+
+	/**
+	 * If set to true, create a reference for the asset in the file, but don't
+	 * actually try to extract it from the file
+	 * 
+	 */
+	bool isCustomAsset;
 	bool declaredInXml = false;
 
 	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
