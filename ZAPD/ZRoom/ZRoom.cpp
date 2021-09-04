@@ -95,13 +95,12 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 			std::string addressStr = child->Attribute("Offset");
 			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
 
-			ZDisplayList* dList = new ZDisplayList(
-				address,
-				ZDisplayList::GetDListLength(parent->GetRawData(), address,
+			ZDisplayList* dList = new ZDisplayList(parent);
+			dList->ExtractFromBinary(address, ZDisplayList::GetDListLength(parent->GetRawData(), address,
 			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
                                                  DListType::F3DEX :
-                                                 DListType::F3DZEX),
-				parent);
+                                                 DListType::F3DZEX));
+			dList->SetName(dList->GetDefaultName(parent->GetName()));
 			dList->SetInnerNode(true);
 
 			dList->GetSourceOutputCode(name);

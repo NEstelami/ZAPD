@@ -1,18 +1,17 @@
 #include "ZDisplayList.h"
 
-#include <Utils/File.h>
-#include <Utils/Path.h>
 #include <algorithm>
 #include <cassert>
 #include <chrono>
-#include <math.h>
+#include <cmath>
+
+#include <Utils/File.h>
+#include <Utils/Path.h>
 #include "Utils/BitConverter.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
-
-using namespace tinyxml2;
 
 REGISTER_ZFILENODE(DList, ZDisplayList);
 
@@ -56,6 +55,15 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 	DeclareVar("", "");
 }
 
+void ZDisplayList::ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize)
+{
+	rawDataIndex = nRawDataIndex;
+	numInstructions = rawDataSize / 8;
+
+	ParseRawData();
+}
+
+/*
 ZDisplayList::ZDisplayList(uint32_t nRawDataIndex, int32_t rawDataSize, ZFile* nParent)
 	: ZDisplayList(nParent)
 {
@@ -64,6 +72,7 @@ ZDisplayList::ZDisplayList(uint32_t nRawDataIndex, int32_t rawDataSize, ZFile* n
 	numInstructions = rawDataSize / 8;
 	ParseRawData();
 }
+*/
 
 void ZDisplayList::ParseRawData()
 {
@@ -257,9 +266,9 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
 			        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList* nList = new ZDisplayList(
-				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
-				parent);
+			ZDisplayList* nList = new ZDisplayList(parent);
+			nList->ExtractFromBinary(h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType));
+			nList->SetName(nList->GetDefaultName(prefix));
 			nList->scene = scene;
 			otherDLists.push_back(nList);
 
@@ -703,9 +712,9 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, std::string prefix, char* line)
 	}
 	else
 	{
-		ZDisplayList* nList = new ZDisplayList(
-			GETSEGOFFSET(data), GetDListLength(parent->GetRawData(), GETSEGOFFSET(data), dListType),
-			parent);
+		ZDisplayList* nList = new ZDisplayList(parent);
+		nList->ExtractFromBinary(GETSEGOFFSET(data), GetDListLength(parent->GetRawData(), GETSEGOFFSET(data), dListType));
+		nList->SetName(nList->GetDefaultName(prefix));
 
 		// if (scene != nullptr)
 		{
@@ -1735,12 +1744,10 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 
 	if ((dListSegNum <= 6) && Globals::Instance->HasSegment(dListSegNum))
 	{
-		ZDisplayList* newDList = new ZDisplayList(
-			dListOffset,
-			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType),
-			self->parent);
+		ZDisplayList* newDList = new ZDisplayList(self->parent);
+		newDList->ExtractFromBinary(dListOffset,self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
+		newDList->SetName(newDList->GetDefaultName(self->parent->GetName()));
 		newDList->scene = self->scene;
-		newDList->parent = self->parent;
 		self->otherDLists.push_back(newDList);
 	}
 

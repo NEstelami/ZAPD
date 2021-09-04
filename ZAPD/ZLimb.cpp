@@ -284,7 +284,8 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 		int32_t dlistLength = ZDisplayList::GetDListLength(
 			parent->GetRawData(), unk_8_Offset,
 			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-		unk_8_dlist = new ZDisplayList(unk_8_Offset, dlistLength, parent);
+		unk_8_dlist = new ZDisplayList(parent);
+		unk_8_dlist->ExtractFromBinary(unk_8_Offset, dlistLength);
 
 		std::string dListStr =
 			StringHelper::Sprintf("%sSkinLimbDL_%06X", prefix.c_str(), unk_8_Offset);
@@ -694,7 +695,8 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dListOffset,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	auto dList = new ZDisplayList(dListOffset, dlistLength, parent);
+	auto dList = new ZDisplayList(parent);
+	dList->ExtractFromBinary(dListOffset, dlistLength);
 	dList->SetName(dListStr);
 	dList->GetSourceOutputCode(prefix);
 	return dListStr;
