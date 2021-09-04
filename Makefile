@@ -57,6 +57,8 @@ copycheck: ZAPD.out
 clean:
 	rm -f $(O_FILES) ZAPD.out
 	$(MAKE) -C lib/libgfxd clean
+	$(MAKE) -C ExporterTest clean
+	$(MAKE) -C ZAPDUtils clean
 
 rebuild: clean all
 
