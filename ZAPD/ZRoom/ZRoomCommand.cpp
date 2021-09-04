@@ -37,7 +37,7 @@ void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
 
 std::string ZRoomCommand::GetCommandCName() const
 {
-	return "SCmdBase";
+	return "SceneCmd";
 }
 
 std::string ZRoomCommand::GetSourceTypeName() const
