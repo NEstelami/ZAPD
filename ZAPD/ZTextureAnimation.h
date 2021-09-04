@@ -24,7 +24,10 @@ struct ZTextureAnimationParams : public ZResource
 
 	virtual void ExtractFromBinary(uint32_t paramsOffset);
 	virtual void ExtractFromBinary(uint32_t paramsOffset, int count);
-	virtual std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	
+	std::string GetSourceOutputCode(const std::string& prefix);
+
+	virtual std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	ZResourceType GetResourceType() const;
 };
@@ -43,10 +46,16 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 
 	void ParseRawData() override;
 	void ExtractFromBinary(uint32_t nRawDataIndex, int count);
-	std::string GetDefaultName(const std::string& prefix, uint32_t address) override;
+
+	std::string GetSourceTypeName() const override;
+	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
 	size_t GetRawDataSize() const;
 
-	int count;
+	void DeclareVar(const std::string& prefix,
+                                         const std::string& bodyStr) const;
+	std::string GetBodySourceCode() const;
+
+	int count; // 1 for Single, 2 for Dual
 	TextureScrollingParamsEntry rows[2];
 };
 

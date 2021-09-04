@@ -9,11 +9,46 @@
 
 REGISTER_ZFILENODE(TextureAnimation, ZTextureAnimation);
 
+/* Constructors */
+ZTextureAnimationParams::ZTextureAnimationParams(ZFile* parent) : ZResource::ZResource(parent) {}
+TextureScrollingParams::TextureScrollingParams(ZFile* parent) : ZTextureAnimationParams::ZTextureAnimationParams(parent) {}
+
+void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset) {}
+void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset, int count) {}
+std::string ZTextureAnimationParams::GetDefaultName(const std::string& prefix, uint32_t address) const {}
+
 /* TextureAnimationParams */
 
 ZResourceType ZTextureAnimationParams::GetResourceType() const
 {
 	return ZResourceType::TextureAnimationParams;
+}
+
+std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& prefix)
+{
+	printf("TextureAnimationParams::GetSourceOutputCode\n");
+	std::string bodyStr = GetBodySourceCode();
+
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+
+	if (decl == nullptr)
+		DeclareVar(prefix, bodyStr);
+	else
+		decl->text = bodyStr;
+
+	return "";
+}
+
+void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
+                                         const std::string& bodyStr) const
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix, rawDataIndex);
+
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                       GetSourceTypeName(), auxName, bodyStr);
 }
 
 /* TextureScrollingParams */
@@ -39,7 +74,14 @@ void TextureScrollingParams::ExtractFromBinary(uint32_t nRawDataIndex, int nCoun
 	ParseRawData();
 }
 
-std::string TextureScrollingParams::GetDefaultName(const std::string& prefix, uint32_t address)
+std::string TextureScrollingParams::GetSourceTypeName() const
+{
+	printf("TextureScrollingParams::GetSourceTypeName\n");
+	return "AnimatedMatTexScrollParams";  // TODO: Better name
+}
+
+std::string TextureScrollingParams::GetDefaultName(const std::string& prefix,
+                                                   uint32_t address) const
 {
 	return StringHelper::Sprintf("%sTexScrollParams_%06X", prefix.c_str(), address);
 }
@@ -47,6 +89,34 @@ std::string TextureScrollingParams::GetDefaultName(const std::string& prefix, ui
 size_t TextureScrollingParams::GetRawDataSize() const
 {
 	return 4 * count;
+}
+
+void TextureScrollingParams::DeclareVar(const std::string& prefix,
+                                         const std::string& bodyStr) const
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix, rawDataIndex);
+
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                            GetSourceTypeName(), auxName, count, bodyStr);
+}
+
+std::string TextureScrollingParams::GetBodySourceCode() const
+{
+	printf("TextureScrollingParams::GetBodySourceCode\n");
+
+	std::string bodyStr = "\n";
+
+	for (int i = 0; i < count; i++)
+	{
+		bodyStr += StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },\n", rows[i].xStep, rows[i].yStep, rows[i].width, rows[i].height);
+
+	}
+
+	printf("bodyStr = %s", bodyStr.c_str());
+	return bodyStr;
 }
 
 // TextureScrollingParamsEntry::TextureScrollingParamsEntry(const std::vector<uint8_t>& rawData,
@@ -73,7 +143,6 @@ size_t TextureScrollingParams::GetRawDataSize() const
 // 	return 4;
 // }
 
-
 /* TextureAnimationEntry */
 
 /**
@@ -88,24 +157,24 @@ TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData
 	printf("Dumb TextureAnimationEntry constructor\n");
 	uint32_t paramsOffset = GETSEGOFFSET(paramsPtr);
 
-	switch (type)
-	{
-	case TextureAnimationParamsType::SingleScroll:
-		paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
-	case TextureAnimationParamsType::DualScroll:
-		paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
-		paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset + 4));
-		break;
-	case TextureAnimationParamsType::ColorChange:
-	case TextureAnimationParamsType::ColorChangeLERP:
-	case TextureAnimationParamsType::ColorChangeLagrange:
-		break;
-	case TextureAnimationParamsType::TextureCycle:
-		break;
-	case TextureAnimationParamsType::Unknown:
-		printf("Warning: unknown params type in TextureAnimationEntry");
-		break;
-	}
+	// switch (type)
+	// {
+	// case TextureAnimationParamsType::SingleScroll:
+	// 	paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
+	// case TextureAnimationParamsType::DualScroll:
+	// 	paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
+	// 	paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset + 4));
+	// 	break;
+	// case TextureAnimationParamsType::ColorChange:
+	// case TextureAnimationParamsType::ColorChangeLERP:
+	// case TextureAnimationParamsType::ColorChangeLagrange:
+	// 	break;
+	// case TextureAnimationParamsType::TextureCycle:
+	// 	break;
+	// case TextureAnimationParamsType::Unknown:
+	// 	printf("Warning: unknown params type in TextureAnimationEntry");
+	// 	break;
+	// }
 	// TODO: paramsVec initialisation
 }
 
@@ -337,18 +406,6 @@ ZResourceType ZTextureAnimation::GetResourceType() const
 size_t ZTextureAnimation::GetRawDataSize() const
 {
 	printf("ZTextureAnimation::GetRawDataSize\n");
-	// size_t paramsSize = 0;
-	// for (const auto& entry : entries)
-	// {
-	// 	for (const auto& param : entry.params)
-	// 	{
-	// 		paramsSize += param->GetParamsSize();
-	// 	}
-	// }
-
-	// printf("%d", paramsSize);
-	// return /* ZResource::GetRawDataSize() + */ paramsSize;
-
 	return entries.size() * 8;
 }
 
@@ -387,14 +444,11 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 
 	for (const TextureAnimationEntry& entry : entries)
 	{
-		bodyStr += StringHelper::Sprintf("    { %d, %X, 0x%08X },\n", entry.segment, entry.type,
+		bodyStr += StringHelper::Sprintf("    { %d, %d, 0x%08X },\n", entry.segment, entry.type,
 		                                 entry.paramsPtr);
-
-		if (&entry == &entries.back())
-		{
-			bodyStr.pop_back();
-		}
 	}
+
+	bodyStr.pop_back();
 
 	printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
