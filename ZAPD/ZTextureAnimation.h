@@ -18,28 +18,53 @@ typedef enum class TextureAnimationParamsType
 	Unknown
 } TextureAnimationParamsType;
 
-class TextureAnimationParams
+struct ZTextureAnimationParams : public ZResource
 {
-public:
-	virtual std::string GetSourceOutputCode() = 0;
-	virtual size_t GetParamsSize() = 0;
+	ZTextureAnimationParams(ZFile* parent);
+
+	virtual void ExtractFromBinary(uint32_t paramsOffset);
+	virtual void ExtractFromBinary(uint32_t paramsOffset, int count);
+	virtual std::string GetDefaultName(const std::string& prefix, uint32_t address);
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
+	ZResourceType GetResourceType() const;
 };
 
-class TextureScrollingParams : public TextureAnimationParams
+struct TextureScrollingParamsEntry
 {
-public:
-	TextureScrollingParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-
-	std::string GetSourceOutputCode() override;
-	size_t GetParamsSize() override;
-
 	int8_t xStep;
 	int8_t yStep;
 	uint8_t width;
 	uint8_t height;
 };
 
+struct TextureScrollingParams : public ZTextureAnimationParams
+{
+	TextureScrollingParams(ZFile* parent);
+
+	void ExtractFromBinary(uint32_t nRawDataIndex, int count);
+	std::string GetDefaultName(const std::string& prefix, uint32_t address) override;
+	size_t GetRawDataSize() const;
+
+	int count;
+	TextureScrollingParamsEntry rows[2];
+};
+
+
+
+// class TextureScrollingParamsEntry
+// {
+// public:
+// 	TextureScrollingParamsEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+
+// 	std::string GetSourceOutputCode();
+// 	size_t GetEntrySize();
+
+// 	int8_t xStep;
+// 	int8_t yStep;
+// 	uint8_t width;
+// 	uint8_t height;
+// };
 
 
 
@@ -120,7 +145,7 @@ public:
 	int8_t segment;
 	TextureAnimationParamsType type;
 	segptr_t paramsPtr;
-	std::vector<std::shared_ptr<TextureAnimationParams>> paramsVec;
+	std::vector<std::shared_ptr<ZTextureAnimationParams>> paramsVec; // Not convinced we want this now
 };
 
 class ZTextureAnimation : public ZResource
@@ -128,21 +153,21 @@ class ZTextureAnimation : public ZResource
 public:
 	ZTextureAnimation(ZFile* nParent);
 
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex);
 	void ParseRawData() override;
-
-
-	std::string GetSourceTypeName() const override;
-	ZResourceType GetResourceType() const override;
-
-	size_t GetRawDataSize() const override;
 
 	void DeclareReferences(const std::string& prefix) override;
 
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
+	size_t GetRawDataSize() const override;
 	std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
+
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex);
 	std::string GetBodySourceCode() const;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
+
+
 
 private:
 	std::vector<TextureAnimationEntry> entries;

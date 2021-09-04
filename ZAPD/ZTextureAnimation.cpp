@@ -2,67 +2,97 @@
 #include <memory>
 #include <vector>
 #include "Globals.h"
-#include "tinyxml2.h"
 #include "Utils/BitConverter.h"
 #include "ZFile.h"
 #include "ZResource.h"
+#include "tinyxml2.h"
 
 REGISTER_ZFILENODE(TextureAnimation, ZTextureAnimation);
 
+/* TextureAnimationParams */
+
+ZResourceType ZTextureAnimationParams::GetResourceType() const
+{
+	return ZResourceType::TextureAnimationParams;
+}
+
 /* TextureScrollingParams */
 
-TextureScrollingParams::TextureScrollingParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+
+void TextureScrollingParams::ExtractFromBinary(uint32_t nRawDataIndex, int nCount)
+{
+	rawDataIndex = nRawDataIndex;
+	count = nCount;
+
+	ParseRawData()
+}
+
+std::string TextureScrollingParams::GetDefaultName(const std::string& prefix, uint32_t address)
+{
+	return StringHelper::Sprintf("%sTexScrollParams_%06X", prefix.c_str(), address);
+}
+
+size_t TextureScrollingParams::GetRawDataSize() const
+{
+	return 4 * count;
+}
+
+TextureScrollingParamsEntry::TextureScrollingParamsEntry(const std::vector<uint8_t>& rawData,
+                                                         uint32_t rawDataIndex)
 	: xStep(rawData.at(rawDataIndex + 0)), yStep(rawData.at(rawDataIndex + 1)),
 	  width(rawData.at(rawDataIndex + 2)), height(rawData.at(rawDataIndex + 3))
 {
 	printf("Asinine TextureScrollingParams constructor\n");
-	printf("    { %i, %i, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
+	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
 }
 
-std::string TextureScrollingParams::GetSourceOutputCode()
+std::string TextureScrollingParamsEntry::GetSourceOutputCode()
 {
 	printf("TextureScrollingParams::GetSourceOutputCode\n");
-	printf("    { %i, %i, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
-// 	return StringHelper::Sprintf("    { %i, %i, 0x%02X, 0x%02X },", xStep, yStep, width, height);
-	return "FrankerZ";
+	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
+	// 	return StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },", xStep, yStep, width,
+	// height);
+	return "FrankerZ,\n";
 }
 
-size_t TextureScrollingParams::GetParamsSize()
+size_t TextureScrollingParamsEntry::GetEntrySize()
 {
-	printf("TextureScrollingParams::GetParamsSize\n");
+	printf("TextureScrollingParamsEntry::GetEntrySize\n");
 	return 4;
 }
+
 
 /* TextureAnimationEntry */
 
 /**
  * TextureAnimationEntry constructor
  */
-TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex) : 
-segment(rawData.at(rawDataIndex)), 
-type((TextureAnimationParamsType)BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
-paramsPtr(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4))
+TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData,
+                                             uint32_t rawDataIndex)
+	: segment(rawData.at(rawDataIndex)),
+	  type((TextureAnimationParamsType)BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
+	  paramsPtr(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4))
 {
 	printf("Dumb TextureAnimationEntry constructor\n");
 	uint32_t paramsOffset = GETSEGOFFSET(paramsPtr);
 
 	switch (type)
 	{
-		case TextureAnimationParamsType::SingleScroll:
-			paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
-		case TextureAnimationParamsType::DualScroll:
-			paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
-			paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset + 4));
-			break;
-		case TextureAnimationParamsType::ColorChange:
-		case TextureAnimationParamsType::ColorChangeLERP:
-		case TextureAnimationParamsType::ColorChangeLagrange:
-			break;
-		case TextureAnimationParamsType::TextureCycle:
-			break;
-		case TextureAnimationParamsType::Unknown:
-			printf("Warning: unknown params type in TextureAnimationEntry");
-			break;
+	case TextureAnimationParamsType::SingleScroll:
+		paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
+	case TextureAnimationParamsType::DualScroll:
+		paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
+		paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset + 4));
+		break;
+	case TextureAnimationParamsType::ColorChange:
+	case TextureAnimationParamsType::ColorChangeLERP:
+	case TextureAnimationParamsType::ColorChangeLagrange:
+		break;
+	case TextureAnimationParamsType::TextureCycle:
+		break;
+	case TextureAnimationParamsType::Unknown:
+		printf("Warning: unknown params type in TextureAnimationEntry");
+		break;
 	}
 	// TODO: paramsVec initialisation
 }
@@ -107,28 +137,34 @@ paramsPtr(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4))
 ZTextureAnimation::ZTextureAnimation(ZFile* nParent) : ZResource(nParent)
 {
 	printf("Stupid ZTextureAnimation constructor\n");
-	printf("%s\n", __func__);
-	printf("%s\n", __FUNCTION__);
 	printf("%s\n", __PRETTY_FUNCTION__);
+}
 
+/**
+ * ??? and creates a placeholder for the actual declaration to slot into later
+ */
+void ZTextureAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+{
+	ZResource::ExtractFromXML(reader, nRawDataIndex);
+	DeclareVar("", "");
 }
 
 void ZTextureAnimation::ParseRawData()
 {
 	printf("ZTextureAnimation::ParseRawData\n");
-	printf("%s\n", __func__);
-	printf("%s\n", __FUNCTION__);
 	printf("%s\n", __PRETTY_FUNCTION__);
 	ZResource::ParseRawData();
 
-	for (uint32_t curPtr = rawDataIndex;; curPtr += 8) 
+	for (uint32_t curPtr = rawDataIndex;; curPtr += 8)
 	{
 		printf("Parsing TextureAnimationEntry raw data\n");
-		TextureAnimationEntry curEntry(parent->GetRawData(), curPtr); // TODO: stop this allocating a whole new one every time: get it out of the loop somehow
+		TextureAnimationEntry curEntry(parent->GetRawData(),
+		                               curPtr);  // TODO: stop this allocating a whole new one every
+		                                         // time: get it out of the loop somehow
 		entries.push_back(curEntry);
 
 		printf("    { %d, %X, 0x%08X },\n", curEntry.segment, curEntry.type, curEntry.paramsPtr);
-		
+
 		if (curEntry.segment < 0)
 			break;
 	}
@@ -137,31 +173,49 @@ void ZTextureAnimation::ParseRawData()
 void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 {
 	printf("ZTextureAnimation::DeclareReferences\n");
-	printf("%s\n", __func__);
-	printf("%s\n", __FUNCTION__);
 	printf("%s\n", __PRETTY_FUNCTION__);
+
+	std::string varPrefix = name;
+	if (varPrefix == "")
+		varPrefix = prefix;
+
+	ZResource::DeclareReferences(varPrefix);
 
 	for (TextureAnimationEntry& entry : entries)
 	{
-		switch (entry.type)
+		if (entry.paramsPtr != 0 && GETSEGNUM(entry.paramsPtr) == parent->segment)
 		{
-			case TextureAnimationParamsType::SingleScroll:
-			case TextureAnimationParamsType::DualScroll:
-				printf("Declaring references to scrolling texture\n");
-				// entry.GetBodySourceCode();
-				// entry.DeclareReferences();
-				break;
-			case TextureAnimationParamsType::ColorChange:
-			case TextureAnimationParamsType::ColorChangeLERP:
-			case TextureAnimationParamsType::ColorChangeLagrange:
-				break;
-			case TextureAnimationParamsType::TextureCycle:
-				break;
+			uint32_t paramsOffset = Seg2Filespace(entry.paramsPtr, parent->baseAddress);
+			if (!parent->HasDeclaration(paramsOffset))
+			{
+				ZTextureAnimationParams* params;
+				int count = 2;
+				switch (entry.type)
+				{
+				case TextureAnimationParamsType::SingleScroll:
+					count = 1;
+				case TextureAnimationParamsType::DualScroll:
+					printf("Declaring references to scrolling texture\n");
+
+					params = new TextureScrollingParams(parent);
+					params->ExtractFromBinary(paramsOffset, count);
+					break;
+				case TextureAnimationParamsType::ColorChange:
+				case TextureAnimationParamsType::ColorChangeLERP:
+				case TextureAnimationParamsType::ColorChangeLagrange:
+					break;
+				case TextureAnimationParamsType::TextureCycle:
+					break;
+				}
+
+				params->SetName(params->GetDefaultName(varPrefix, paramsOffset));
+				params->DeclareVar(varPrefix, "");
+				params->DeclareReferences(varPrefix);
+				parent->AddResource(params);
+			}
 		}
 	}
 }
-
-
 
 // void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 // {
@@ -253,7 +307,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 std::string ZTextureAnimation::GetSourceTypeName() const
 {
 	printf("ZTextureAnimation::GetSourceTypeName\n");
-	return "AnimatedMaterial"; // TODO: Better name
+	return "AnimatedMaterial";  // TODO: Better name
 }
 
 /**
@@ -307,16 +361,7 @@ void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string&
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, entries.size(), bodyStr);
-}
-
-/**
- * ??? and creates a placeholder for the actual declaration to slot into later
- */
-void ZTextureAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-	DeclareVar("", "");
+	                            GetSourceTypeName(), auxName, entries.size(), bodyStr);
 }
 
 /**
@@ -330,13 +375,13 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 
 	for (const TextureAnimationEntry& entry : entries)
 	{
-		bodyStr += StringHelper::Sprintf("    { %d, %X, 0x%08X },\n", entry.segment, entry.type, entry.paramsPtr);
+		bodyStr += StringHelper::Sprintf("    { %d, %X, 0x%08X },\n", entry.segment, entry.type,
+		                                 entry.paramsPtr);
 
 		if (&entry == &entries.back())
 		{
 			bodyStr.pop_back();
 		}
-
 	}
 
 	printf("bodyStr = %s", bodyStr.c_str());

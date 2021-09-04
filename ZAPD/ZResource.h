@@ -47,6 +47,7 @@ enum class ZResourceType
 	Symbol,
 	Texture,
 	TextureAnimation,
+	TextureAnimationParams,
 	Vector,
 	Vertex,
 };
