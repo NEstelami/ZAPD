@@ -72,18 +72,43 @@ public:
 	virtual void ExtractFromFile(offset_t nRawDataIndex);
 
 	// Misc
+	/**
+	 * Parses additional attributes of the XML node.
+	 * Extra attritbutes has to be registered using `RegisterRequiredAttribute` or
+	 * `RegisterOptionalAttribute` in the constructor of the ZResource.
+	 */
 	virtual void ParseXML(tinyxml2::XMLElement* reader);
+	/**
+	 * Extracts data from the binary file.
+	 */
 	virtual void ParseRawData();
+	/**
+	 * Declares any data pointed by this resource that has not been declared already.
+	 * For example, a Vtx referenced by a Dlist should be declared here if it wasn't 
+	 * declared before by something else.
+	 */
 	virtual void DeclareReferences(const std::string& prefix);
 
+	/**
+	 * Adds this resource as a Declaration of its parent ZFile
+	 */
 	virtual Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	/**
+	 * Returns the body of the variable of the extracted resource, without any side-effect
+	 */
 	virtual std::string GetBodySourceCode() const;
+	/**
+	 * Creates an automatically generated variable name for the current resource.
+	 */
 	virtual std::string GetDefaultName(const std::string& prefix) const;
 
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void PreGenSourceFiles();
 	virtual void CalcHash();
+	/**
+	 * Exports the resource to binary format
+	 */
 	virtual void Save(const fs::path& outFolder);
 
 	// Properties
