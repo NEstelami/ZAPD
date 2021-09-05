@@ -24,6 +24,18 @@ ZResourceType ZTextureAnimationParams::GetResourceType() const
 	return ZResourceType::TextureAnimationParams;
 }
 
+void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
+                                         const std::string& bodyStr) const
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix, rawDataIndex);
+
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                       GetSourceTypeName(), auxName, bodyStr);
+}
+
 std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& prefix)
 {
 	printf("TextureAnimationParams::GetSourceOutputCode\n");
@@ -39,17 +51,6 @@ std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& pref
 	return "";
 }
 
-void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
-                                         const std::string& bodyStr) const
-{
-	std::string auxName = name;
-
-	if (name == "")
-		auxName = GetDefaultName(prefix, rawDataIndex);
-
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
-}
 
 /* TextureScrollingParams */
 
@@ -83,17 +84,20 @@ std::string TextureScrollingParams::GetSourceTypeName() const
 std::string TextureScrollingParams::GetDefaultName(const std::string& prefix,
                                                    uint32_t address) const
 {
+	printf("TextureScrollingParams::GetDefaultName");
 	return StringHelper::Sprintf("%sTexScrollParams_%06X", prefix.c_str(), address);
 }
 
 size_t TextureScrollingParams::GetRawDataSize() const
 {
+	printf("TextureScrollingParams::GetRawDataSize");
 	return 4 * count;
 }
 
 void TextureScrollingParams::DeclareVar(const std::string& prefix,
                                          const std::string& bodyStr) const
 {
+	printf("TextureScrollingParams::DeclareVar");
 	std::string auxName = name;
 
 	if (name == "")
@@ -107,13 +111,15 @@ std::string TextureScrollingParams::GetBodySourceCode() const
 {
 	printf("TextureScrollingParams::GetBodySourceCode\n");
 
-	std::string bodyStr = "\n";
+	std::string bodyStr = "";
 
 	for (int i = 0; i < count; i++)
 	{
 		bodyStr += StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },\n", rows[i].xStep, rows[i].yStep, rows[i].width, rows[i].height);
 
 	}
+
+	bodyStr.pop_back();
 
 	printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
@@ -155,7 +161,7 @@ TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData
 	  paramsPtr(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4))
 {
 	printf("Dumb TextureAnimationEntry constructor\n");
-	uint32_t paramsOffset = GETSEGOFFSET(paramsPtr);
+	// uint32_t paramsOffset = GETSEGOFFSET(paramsPtr);
 
 	// switch (type)
 	// {
@@ -246,7 +252,7 @@ void ZTextureAnimation::ParseRawData()
 
 		printf("    { %d, %X, 0x%08X },\n", curEntry.segment, curEntry.type, curEntry.paramsPtr);
 
-		if (curEntry.segment < 0)
+		if (curEntry.segment <= 0)
 			break;
 	}
 }
@@ -444,8 +450,8 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 
 	for (const TextureAnimationEntry& entry : entries)
 	{
-		bodyStr += StringHelper::Sprintf("    { %d, %d, 0x%08X },\n", entry.segment, entry.type,
-		                                 entry.paramsPtr);
+		bodyStr += StringHelper::Sprintf("    { %d, %d, %s },\n", entry.segment, entry.type,
+		                                 parent->GetDeclarationPtrName(entry.paramsPtr).c_str());
 	}
 
 	bodyStr.pop_back();

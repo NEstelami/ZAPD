@@ -28,7 +28,7 @@ struct ZTextureAnimationParams : public ZResource
 	std::string GetSourceOutputCode(const std::string& prefix);
 
 	virtual std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
-	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
+	virtual void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	ZResourceType GetResourceType() const;
 };
 
@@ -45,15 +45,15 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 	TextureScrollingParams(ZFile* parent);
 
 	void ParseRawData() override;
-	void ExtractFromBinary(uint32_t nRawDataIndex, int count);
+	void ExtractFromBinary(uint32_t nRawDataIndex, int count) override;
 
 	std::string GetSourceTypeName() const override;
 	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
-	size_t GetRawDataSize() const;
+	size_t GetRawDataSize() const override;
 
 	void DeclareVar(const std::string& prefix,
                                          const std::string& bodyStr) const;
-	std::string GetBodySourceCode() const;
+	std::string GetBodySourceCode() const override;
 
 	int count; // 1 for Single, 2 for Dual
 	TextureScrollingParamsEntry rows[2];
@@ -163,7 +163,7 @@ class ZTextureAnimation : public ZResource
 public:
 	ZTextureAnimation(ZFile* nParent);
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex);
+	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 	void ParseRawData() override;
 
 	void DeclareReferences(const std::string& prefix) override;
@@ -174,7 +174,7 @@ public:
 	std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
-	std::string GetBodySourceCode() const;
+	std::string GetBodySourceCode() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 
 
