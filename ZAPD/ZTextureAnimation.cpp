@@ -257,13 +257,13 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 	for (auto color : envColorList)
 	{
 		envColorBodyStr +=
-			StringHelper::Sprintf("    { %d, %d, %d, %d, %d },\n", color.r, color.g, color.b, color.a);
+			StringHelper::Sprintf("    { %d, %d, %d, %d },\n", color.r, color.g, color.b, color.a);
 	}
 
 	envColorBodyStr.pop_back();
 
 	parent->AddDeclarationArray(GETSEGOFFSET(envColorListAddress), DeclarationAlignment::None,
-	                            envColorList.size() * 4, "F3DPrimColor",
+	                            envColorList.size() * 4, "F3DEnvColor",
 	                            StringHelper::Sprintf("%s_TexColorChangingEnvColors_%06X",
 	                                                  parent->GetName().c_str(),
 	                                                  GETSEGOFFSET(envColorListAddress)),
