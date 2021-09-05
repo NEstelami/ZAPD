@@ -17,6 +17,10 @@ TextureScrollingParams::TextureScrollingParams(ZFile* parent)
 	: ZTextureAnimationParams::ZTextureAnimationParams(parent)
 {
 }
+TextureColorChangingParams::TextureColorChangingParams(ZFile* parent)
+	: ZTextureAnimationParams::ZTextureAnimationParams(parent)
+{
+}
 TextureCyclingParams::TextureCyclingParams(ZFile* parent)
 	: ZTextureAnimationParams::ZTextureAnimationParams(parent)
 {
@@ -139,96 +143,162 @@ std::string TextureScrollingParams::GetBodySourceCode() const
 	return bodyStr;
 }
 
-// TextureScrollingParamsEntry::TextureScrollingParamsEntry(const std::vector<uint8_t>& rawData,
-//                                                          uint32_t rawDataIndex)
-// 	: xStep(rawData.at(rawDataIndex + 0)), yStep(rawData.at(rawDataIndex + 1)),
-// 	  width(rawData.at(rawDataIndex + 2)), height(rawData.at(rawDataIndex + 3))
-// {
-// 	printf("Asinine TextureScrollingParams constructor\n");
-// 	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
-// }
+/* TextureColorChangingParams */
 
-// std::string TextureScrollingParamsEntry::GetSourceOutputCode()
-// {
-// 	printf("TextureScrollingParams::GetSourceOutputCode\n");
-// 	printf("    { %d, %d, 0x%02X, 0x%02X },\n", xStep, yStep, width, height);
-// 	// 	return StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },", xStep, yStep, width,
-// 	// height);
-// 	return "FrankerZ,\n";
-// }
-
-// size_t TextureScrollingParamsEntry::GetEntrySize()
-// {
-// 	printf("TextureScrollingParamsEntry::GetEntrySize\n");
-// 	return 4;
-// }
-
-/* TextureAnimationEntry */
-
-/**
- * TextureAnimationEntry constructor
- */
-TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData,
-                                             uint32_t rawDataIndex)
-	: segment(rawData.at(rawDataIndex)),
-	  type((TextureAnimationParamsType)BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
-	  paramsPtr(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4))
+void TextureColorChangingParams::ParseRawData()
 {
-	printf("Dumb TextureAnimationEntry constructor\n");
-	// uint32_t paramsOffset = GETSEGOFFSET(paramsPtr);
+	const auto& rawData = parent->GetRawData();
 
-	// switch (type)
-	// {
-	// case TextureAnimationParamsType::SingleScroll:
-	// 	paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
-	// case TextureAnimationParamsType::DualScroll:
-	// 	paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset));
-	// 	paramsVec.push_back(std::make_shared<TextureScrollingParams>(rawData, paramsOffset + 4));
-	// 	break;
-	// case TextureAnimationParamsType::ColorChange:
-	// case TextureAnimationParamsType::ColorChangeLERP:
-	// case TextureAnimationParamsType::ColorChangeLagrange:
-	// 	break;
-	// case TextureAnimationParamsType::TextureCycle:
-	// 	break;
-	// case TextureAnimationParamsType::Unknown:
-	// 	printf("Warning: unknown params type in TextureAnimationEntry");
-	// 	break;
-	// }
-	// TODO: paramsVec initialisation
+	count1 = BitConverter::ToUInt16BE(rawData, rawDataIndex);
+	count2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+	uint16_t listLength = ((type == TextureAnimationParamsType::ColorChange) ? count1 : count2);
+
+	if (listLength == 0)
+		throw std::runtime_error(
+			"TextureColorChangingParams::ParseRawData: error: color list length cannot be 0");
+
+	primColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+	envColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+	frameDataListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
+
+	uint32_t primColorListOffset = GETSEGOFFSET(primColorListAddress);
+	uint32_t envColorListOffset = GETSEGOFFSET(envColorListAddress);
+	uint32_t frameDataListOffset = GETSEGOFFSET(frameDataListAddress);
+
+	uint32_t currentPtr;
+
+	printf("cycleLength: %d\n", listLength);
+
+	F3DPrimColor currentPrimColor;
+
+	for (currentPtr = primColorListOffset; currentPtr < primColorListOffset + 5 * listLength;
+	     currentPtr += 5)
+	{
+		currentPrimColor = {BitConverter::ToUInt8BE(rawData, currentPtr),
+		                    BitConverter::ToUInt8BE(rawData, currentPtr + 1),
+		                    BitConverter::ToUInt8BE(rawData, currentPtr + 2),
+		                    BitConverter::ToUInt8BE(rawData, currentPtr + 3),
+		                    BitConverter::ToUInt8BE(rawData, currentPtr + 4)};
+		primColorList.push_back(currentPrimColor);
+	}
+
+	F3DEnvColor currentEnvColor;
+
+	for (currentPtr = envColorListOffset; currentPtr < primColorListOffset + 4 * listLength;
+	     currentPtr += 4)
+	{
+		currentEnvColor = {BitConverter::ToUInt8BE(rawData, currentPtr),
+		                   BitConverter::ToUInt8BE(rawData, currentPtr + 1),
+		                   BitConverter::ToUInt8BE(rawData, currentPtr + 2),
+		                   BitConverter::ToUInt8BE(rawData, currentPtr + 3)};
+		envColorList.push_back(currentEnvColor);
+	}
+
+	uint16_t currentFrameData;
+
+	for (currentPtr = frameDataListOffset; currentPtr < frameDataListOffset + 2 * listLength;
+	     currentPtr += 2)
+	{
+		currentFrameData = BitConverter::ToUInt16BE(rawData, currentPtr);
+		frameDataList.push_back(currentFrameData);
+	}
 }
 
-// TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData,
-//                                              uint32_t rawDataIndex)
-// 	: segment(rawData.at(rawDataIndex)),
-// 	  type((TextureAnimationParamsType)BitConverter::ToInt16BE(rawData, rawDataIndex + 2))
-// {
-// 	printf("%s\n", "Constructors are stupid.");
-// 	segmentAddress = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
-// 	segmentOffset = GETSEGOFFSET(segmentAddress);
+// TODO: Consider putting this in the parent class, since it's not doing anything specific here
+void TextureColorChangingParams::ExtractFromBinary(uint32_t nRawDataIndex)
+{
+	rawDataIndex = nRawDataIndex;
 
-// 	switch (type)
-// 	{
-// 	case TextureAnimationParamsType::SingleScroll:
-// 		params.push_back(std::make_shared<TextureScrollingParams>(rawData, segmentOffset));
-// 		break;
-// 	case TextureAnimationParamsType::DualScroll:
-// 		params.push_back(std::make_shared<TextureScrollingParams>(rawData, segmentOffset));
-// 		params.push_back(std::make_shared<TextureScrollingParams>(rawData, segmentOffset + 4));
-// 		break;
-// 	// case TextureAnimationParamsType::ColorChange:
-// 	// case TextureAnimationParamsType::ColorChangeLERP:
-// 	// case TextureAnimationParamsType::ColerChangeLagrange:
-// 	// 	params = std::make_shared<TextureColorChangingParams>(rawData, segmentOffset, type);
-// 	// 	break;
-// 	// case TextureAnimationParamsType::TextureCycle:
-// 	// 	params = std::make_shared<TextureCyclingParams>(rawData, segmentOffset);
-// 	// 	break;
-// 	// case TextureAnimationParamsType::Unknown:  // Some terminator when there are no animated
-// 	//                                            // textures?
-// 	// 	break;
-// 	}
-// }
+	ParseRawData();
+}
+
+std::string TextureColorChangingParams::GetSourceTypeName() const
+{
+	printf("TextureColorChangingParams::GetSourceTypeName\n");
+	return "AnimatedMatColorParams";  // TODO: Better name
+}
+
+std::string TextureColorChangingParams::GetDefaultName(const std::string& prefix,
+                                                       uint32_t address) const
+{
+	printf("TextureColorChangingParams::GetDefaultName\n");
+	return StringHelper::Sprintf("%sColorParams_%06X", prefix.c_str(), address);
+}
+
+size_t TextureColorChangingParams::GetRawDataSize() const
+{
+	printf("TextureColorChangingParams::GetRawDataSize\n");
+	return 0x10;
+}
+
+void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
+{
+	printf("TextureColorChangingParams::DeclareReferences\n");
+
+	std::string primColorBodyStr = "";
+
+	for (auto color : primColorList)
+	{
+		primColorBodyStr += StringHelper::Sprintf("    { %d, %d, %d, %d, %d },\n", color.r, color.g,
+		                                          color.b, color.a, color.lodFrac);
+	}
+
+	primColorBodyStr.pop_back();
+
+	parent->AddDeclarationArray(GETSEGOFFSET(primColorListAddress), DeclarationAlignment::None,
+	                            primColorList.size() * 5, "F3DPrimColor",
+	                            StringHelper::Sprintf("%s_TexColorChangingPrimColors_%06X",
+	                                                  parent->GetName().c_str(),
+	                                                  GETSEGOFFSET(primColorListAddress)),
+	                            primColorList.size(), primColorBodyStr);
+
+	std::string envColorBodyStr = "";
+
+	for (auto color : envColorList)
+	{
+		envColorBodyStr +=
+			StringHelper::Sprintf("    { %d, %d, %d, %d, %d },\n", color.r, color.g, color.b, color.a);
+	}
+
+	envColorBodyStr.pop_back();
+
+	parent->AddDeclarationArray(GETSEGOFFSET(envColorListAddress), DeclarationAlignment::None,
+	                            envColorList.size() * 4, "F3DPrimColor",
+	                            StringHelper::Sprintf("%s_TexColorChangingEnvColors_%06X",
+	                                                  parent->GetName().c_str(),
+	                                                  GETSEGOFFSET(envColorListAddress)),
+	                            envColorList.size(), envColorBodyStr);
+
+	std::string frameDataBodyStr = "    ";
+
+	for (auto frame : frameDataList)
+	{
+		frameDataBodyStr += StringHelper::Sprintf("%d, ", frame);
+	}
+
+	frameDataBodyStr.pop_back();
+
+	parent->AddDeclarationArray(GETSEGOFFSET(frameDataListAddress), DeclarationAlignment::None,
+	                            frameDataList.size() * 2, "u16",
+	                            StringHelper::Sprintf("%s_TexColorChangingFrameData_%06X",
+	                                                  parent->GetName().c_str(),
+	                                                  GETSEGOFFSET(frameDataListAddress)),
+	                            frameDataList.size(), frameDataBodyStr);
+}
+
+std::string TextureColorChangingParams::GetBodySourceCode() const
+{
+	printf("TextureColorChangingParams::GetBodySourceCode\n");
+
+	std::string bodyStr =
+		StringHelper::Sprintf("\n    %d, %d, %s, %s, %s,\n", count1, count2,
+	                          parent->GetDeclarationPtrName(primColorListAddress).c_str(),
+	                          parent->GetDeclarationPtrName(envColorListAddress).c_str(),
+	                          parent->GetDeclarationPtrName(frameDataListAddress).c_str());
+
+	printf("bodyStr = %s", bodyStr.c_str());
+	return bodyStr;
+}
 
 /* TextureCyclingParams */
 
@@ -248,13 +318,15 @@ void TextureCyclingParams::ParseRawData()
 	uint32_t textureIndexListOffset = GETSEGOFFSET(textureIndexListAddress);
 
 	uint32_t currentPtr = textureIndexListOffset;
+
+	uint8_t currentIndex;
 	uint8_t maxIndex = 0;
 
 	printf("cycleLength: %d\n", cycleLength);
 
 	for (; currentPtr < textureIndexListOffset + cycleLength; currentPtr++)
 	{
-		uint8_t currentIndex = BitConverter::ToUInt8BE(rawData, currentPtr);
+		currentIndex = BitConverter::ToUInt8BE(rawData, currentPtr);
 		printf("currentPtr: 0x%X\n", currentPtr);
 		printf("currentIndex: %d\n", currentIndex);
 		textureIndexList.push_back(currentIndex);
@@ -262,9 +334,8 @@ void TextureCyclingParams::ParseRawData()
 			maxIndex = currentIndex;
 	}
 
-	currentPtr = textureListOffset;
-
-	for (; currentPtr <= textureListOffset + 4 * maxIndex; currentPtr += 4)
+	for (currentPtr = textureListOffset; currentPtr <= textureListOffset + 4 * maxIndex;
+	     currentPtr += 4)
 	{
 		textureList.push_back(BitConverter::ToUInt32BE(rawData, currentPtr));
 	}
@@ -340,7 +411,8 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 }
 
 // Should be unnecessary since the same as the inherited version
-// void TextureCyclingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
+// void TextureCyclingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+// const
 // {
 // 	printf("TextureCyclingParams::DeclareVar");
 // 	std::string auxName = name;
@@ -363,6 +435,21 @@ std::string TextureCyclingParams::GetBodySourceCode() const
 
 	printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
+}
+
+/* TextureAnimationEntry */
+
+// TODO: turn this into an ordinary struct: no need for a constructor
+/**
+ * TextureAnimationEntry constructor
+ */
+TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData,
+                                             uint32_t rawDataIndex)
+	: segment(rawData.at(rawDataIndex)),
+	  type((TextureAnimationParamsType)BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
+	  paramsPtr(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4))
+{
+	printf("Dumb TextureAnimationEntry constructor\n");
 }
 
 /* ZTextureAnimation */
@@ -436,15 +523,20 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					params = new TextureScrollingParams(parent);
 					params->ExtractFromBinary(paramsOffset, count);
 					break;
+
 				case TextureAnimationParamsType::ColorChange:
 				case TextureAnimationParamsType::ColorChangeLERP:
 				case TextureAnimationParamsType::ColorChangeLagrange:
+					printf("Declaring references to texture color changing\n");
+					params = new TextureColorChangingParams(parent);
+					params->type = entry.type;
+					params->ExtractFromBinary(paramsOffset);
 					break;
+
 				case TextureAnimationParamsType::TextureCycle:
 					printf("Declaring references to texture cycling\n");
 					params = new TextureCyclingParams(parent);
 					params->ExtractFromBinary(paramsOffset);
-
 					break;
 				}
 

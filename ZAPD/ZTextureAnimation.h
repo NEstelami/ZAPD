@@ -30,6 +30,8 @@ struct ZTextureAnimationParams : public ZResource
 	virtual std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
 	virtual void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	ZResourceType GetResourceType() const;
+
+	TextureAnimationParamsType type;
 };
 
 struct TextureScrollingParamsEntry
@@ -62,6 +64,48 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 
 
 
+
+struct F3DPrimColor
+{
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
+	uint8_t a;
+	uint8_t lodFrac;
+};
+
+struct F3DEnvColor
+{
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
+	uint8_t a;
+};
+
+struct TextureColorChangingParams : public ZTextureAnimationParams
+{
+	TextureColorChangingParams(ZFile* parent);
+
+	void ParseRawData() override;
+	void ExtractFromBinary(uint32_t nRawDataIndex) override;
+
+	std::string GetSourceTypeName() const override;
+	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
+	size_t GetRawDataSize() const override;
+
+	void DeclareReferences(const std::string& prefix) override;
+
+	std::string GetBodySourceCode() const override;
+
+	uint16_t count1;
+	uint16_t count2;
+	segptr_t primColorListAddress;
+	segptr_t envColorListAddress;
+	segptr_t frameDataListAddress;
+	std::vector<F3DPrimColor> primColorList;
+	std::vector<F3DEnvColor> envColorList;
+	std::vector<uint16_t> frameDataList;
+};
 
 // class F3DPrimColor
 // {
@@ -109,23 +153,6 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 // 	std::vector<uint16_t> keyFrames;
 // };
 
-// class TextureCyclingParams : public TextureAnimationParams
-// {
-// public:
-// 	TextureCyclingParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-// 	std::string GetSourceOutputCode() override;
-// 	size_t GetParamsSize() override;
-
-// 	uint16_t cycleLength;
-
-// 	segptr_t textureSegmentOffsetsSegmentAddress;
-// 	segptr_t textureIndicesSegmentAddress;
-// 	uint32_t textureSegmentOffsetsSegmentOffset;
-// 	uint32_t textureIndicesSegmentOffset;
-
-// 	std::vector<uint32_t> textureSegmentOffsets;
-// 	std::vector<uint8_t> textureIndices;
-// };
 
 
 struct TextureCyclingParams : public ZTextureAnimationParams
@@ -142,8 +169,6 @@ struct TextureCyclingParams : public ZTextureAnimationParams
 
 	void DeclareReferences(const std::string& prefix) override;
 
-	// void DeclareVar(const std::string& prefix,
-    //                                      const std::string& bodyStr) const override;
 	std::string GetBodySourceCode() const override;
 
 	uint16_t cycleLength;
@@ -159,13 +184,9 @@ class TextureAnimationEntry
 public:
 	/* void */ TextureAnimationEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	// segptr_t segmentAddress;
-	// uint32_t segmentOffset;
-
 	int8_t segment;
 	TextureAnimationParamsType type;
 	segptr_t paramsPtr;
-	std::vector<std::shared_ptr<ZTextureAnimationParams>> paramsVec; // Not convinced we want this now
 };
 
 class ZTextureAnimation : public ZResource
