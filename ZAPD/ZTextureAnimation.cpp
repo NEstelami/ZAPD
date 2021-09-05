@@ -184,7 +184,7 @@ void TextureColorChangingParams::ParseRawData()
 
 	F3DEnvColor currentEnvColor;
 
-	for (currentPtr = envColorListOffset; currentPtr < primColorListOffset + 4 * listLength;
+	for (currentPtr = envColorListOffset; currentPtr < envColorListOffset + 4 * listLength;
 	     currentPtr += 4)
 	{
 		currentEnvColor = {BitConverter::ToUInt8BE(rawData, currentPtr),
