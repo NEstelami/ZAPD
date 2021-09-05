@@ -52,29 +52,12 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 	size_t GetRawDataSize() const override;
 
 	void DeclareVar(const std::string& prefix,
-                                         const std::string& bodyStr) const;
+                                         const std::string& bodyStr) const override;
 	std::string GetBodySourceCode() const override;
 
 	int count; // 1 for Single, 2 for Dual
 	TextureScrollingParamsEntry rows[2];
 };
-
-
-
-// class TextureScrollingParamsEntry
-// {
-// public:
-// 	TextureScrollingParamsEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-
-// 	std::string GetSourceOutputCode();
-// 	size_t GetEntrySize();
-
-// 	int8_t xStep;
-// 	int8_t yStep;
-// 	uint8_t width;
-// 	uint8_t height;
-// };
 
 
 
@@ -143,6 +126,33 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 // 	std::vector<uint32_t> textureSegmentOffsets;
 // 	std::vector<uint8_t> textureIndices;
 // };
+
+
+struct TextureCyclingParams : public ZTextureAnimationParams
+{
+
+	TextureCyclingParams(ZFile* parent);
+
+	void ParseRawData() override;
+	void ExtractFromBinary(uint32_t nRawDataIndex) override;
+
+	std::string GetSourceTypeName() const override;
+	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
+	size_t GetRawDataSize() const override;
+
+	void DeclareReferences(const std::string& prefix) override;
+
+	// void DeclareVar(const std::string& prefix,
+    //                                      const std::string& bodyStr) const override;
+	std::string GetBodySourceCode() const override;
+
+	uint16_t cycleLength;
+	segptr_t textureListAddress;
+	segptr_t textureIndexListAddress;
+	std::vector<segptr_t> textureList;
+	std::vector<uint8_t> textureIndexList;
+};
+
 
 class TextureAnimationEntry
 {

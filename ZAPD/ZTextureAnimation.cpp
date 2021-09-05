@@ -10,12 +10,28 @@
 REGISTER_ZFILENODE(TextureAnimation, ZTextureAnimation);
 
 /* Constructors */
-ZTextureAnimationParams::ZTextureAnimationParams(ZFile* parent) : ZResource::ZResource(parent) {}
-TextureScrollingParams::TextureScrollingParams(ZFile* parent) : ZTextureAnimationParams::ZTextureAnimationParams(parent) {}
+ZTextureAnimationParams::ZTextureAnimationParams(ZFile* parent) : ZResource::ZResource(parent)
+{
+}
+TextureScrollingParams::TextureScrollingParams(ZFile* parent)
+	: ZTextureAnimationParams::ZTextureAnimationParams(parent)
+{
+}
+TextureCyclingParams::TextureCyclingParams(ZFile* parent)
+	: ZTextureAnimationParams::ZTextureAnimationParams(parent)
+{
+}
 
-void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset) {}
-void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset, int count) {}
-std::string ZTextureAnimationParams::GetDefaultName(const std::string& prefix, uint32_t address) const {}
+void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset)
+{
+}
+void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset, int count)
+{
+}
+std::string ZTextureAnimationParams::GetDefaultName(const std::string& prefix,
+                                                    uint32_t address) const
+{
+}
 
 /* TextureAnimationParams */
 
@@ -50,7 +66,6 @@ std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& pref
 
 	return "";
 }
-
 
 /* TextureScrollingParams */
 
@@ -94,8 +109,7 @@ size_t TextureScrollingParams::GetRawDataSize() const
 	return 4 * count;
 }
 
-void TextureScrollingParams::DeclareVar(const std::string& prefix,
-                                         const std::string& bodyStr) const
+void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
 	printf("TextureScrollingParams::DeclareVar");
 	std::string auxName = name;
@@ -115,8 +129,8 @@ std::string TextureScrollingParams::GetBodySourceCode() const
 
 	for (int i = 0; i < count; i++)
 	{
-		bodyStr += StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },\n", rows[i].xStep, rows[i].yStep, rows[i].width, rows[i].height);
-
+		bodyStr += StringHelper::Sprintf("    { %d, %d, 0x%02X, 0x%02X },\n", rows[i].xStep,
+		                                 rows[i].yStep, rows[i].width, rows[i].height);
 	}
 
 	bodyStr.pop_back();
@@ -216,6 +230,141 @@ TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData
 // 	}
 // }
 
+/* TextureCyclingParams */
+
+void TextureCyclingParams::ParseRawData()
+{
+	const auto& rawData = parent->GetRawData();
+
+	cycleLength = BitConverter::ToUInt16BE(rawData, rawDataIndex);
+	if (cycleLength == 0)
+		throw std::runtime_error(
+			"TextureCyclingParams::ParseRawData: error: cycleLength cannot be 0");
+
+	textureListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+	textureIndexListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+
+	uint32_t textureListOffset = GETSEGOFFSET(textureListAddress);
+	uint32_t textureIndexListOffset = GETSEGOFFSET(textureIndexListAddress);
+
+	uint32_t currentPtr = textureIndexListOffset;
+	uint8_t maxIndex = 0;
+
+	printf("cycleLength: %d\n", cycleLength);
+
+	for (; currentPtr < textureIndexListOffset + cycleLength; currentPtr++)
+	{
+		uint8_t currentIndex = BitConverter::ToUInt8BE(rawData, currentPtr);
+		printf("currentPtr: 0x%X\n", currentPtr);
+		printf("currentIndex: %d\n", currentIndex);
+		textureIndexList.push_back(currentIndex);
+		if (currentIndex > maxIndex)
+			maxIndex = currentIndex;
+	}
+
+	currentPtr = textureListOffset;
+
+	for (; currentPtr <= textureListOffset + 4 * maxIndex; currentPtr += 4)
+	{
+		textureList.push_back(BitConverter::ToUInt32BE(rawData, currentPtr));
+	}
+}
+
+void TextureCyclingParams::ExtractFromBinary(uint32_t nRawDataIndex)
+{
+	rawDataIndex = nRawDataIndex;
+
+	ParseRawData();
+}
+
+std::string TextureCyclingParams::GetSourceTypeName() const
+{
+	printf("TextureCyclingParams::GetSourceTypeName\n");
+	return "AnimatedMatTexCycleParams";  // TODO: Better name
+}
+
+std::string TextureCyclingParams::GetDefaultName(const std::string& prefix, uint32_t address) const
+{
+	printf("TextureCyclingParams::GetDefaultName\n");
+	return StringHelper::Sprintf("%sTexCycleParams_%06X", prefix.c_str(), address);
+}
+
+size_t TextureCyclingParams::GetRawDataSize() const
+{
+	printf("TextureCyclingParams::GetRawDataSize\n");
+	return 0xC;
+}
+
+void TextureCyclingParams::DeclareReferences(const std::string& prefix)
+{
+	printf("TextureCyclingParams::DeclareReferences\n");
+
+	std::string texturesbodyStr = "";
+
+	for (auto tex : textureList)
+	{
+		texturesbodyStr +=
+			StringHelper::Sprintf("    %s,\n", parent->GetDeclarationPtrName(tex).c_str());
+	}
+
+	texturesbodyStr.pop_back();
+
+	printf("Declaring texture pointer array\n");
+
+	// N.B. currently need these textures to be declared separately to get the proper pointers (will
+	// print segmented addresses without). Can we search the segments in DLists to find the formats
+	// and declare the textures automatically?
+	parent->AddDeclarationArray(GETSEGOFFSET(textureListAddress), DeclarationAlignment::Align4,
+	                            textureList.size() * 4, "TexturePtr",
+	                            StringHelper::Sprintf("%s_TexCycleTexPtrs_%06X",
+	                                                  parent->GetName().c_str(),
+	                                                  GETSEGOFFSET(textureListAddress)),
+	                            textureList.size(), texturesbodyStr);
+
+	std::string indicesbodyStr = "    ";
+
+	for (uint8_t index : textureIndexList)
+	{
+		indicesbodyStr += StringHelper::Sprintf("%d, ", index);
+	}
+
+	indicesbodyStr.pop_back();
+
+	printf("Declaring texture index array\n");
+	parent->AddDeclarationArray(GETSEGOFFSET(textureIndexListAddress), DeclarationAlignment::None,
+	                            textureIndexList.size(), "u8",
+	                            StringHelper::Sprintf("%s_TexCycleTexIndices_%06X",
+	                                                  parent->GetName().c_str(),
+	                                                  GETSEGOFFSET(textureIndexListAddress)),
+	                            textureIndexList.size(), indicesbodyStr);
+}
+
+// Should be unnecessary since the same as the inherited version
+// void TextureCyclingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
+// {
+// 	printf("TextureCyclingParams::DeclareVar");
+// 	std::string auxName = name;
+
+// 	if (name == "")
+// 		auxName = GetDefaultName(prefix, rawDataIndex);
+
+// 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+// 	                       GetSourceTypeName(), auxName, bodyStr);
+// }
+
+std::string TextureCyclingParams::GetBodySourceCode() const
+{
+	printf("TextureCyclingParams::GetBodySourceCode\n");
+
+	std::string bodyStr =
+		StringHelper::Sprintf("\n    %d, %s, %s,\n", cycleLength,
+	                          parent->GetDeclarationPtrName(textureListAddress).c_str(),
+	                          parent->GetDeclarationPtrName(textureIndexListAddress).c_str());
+
+	printf("bodyStr = %s", bodyStr.c_str());
+	return bodyStr;
+}
+
 /* ZTextureAnimation */
 
 /**
@@ -282,7 +431,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				case TextureAnimationParamsType::SingleScroll:
 					count = 1;
 				case TextureAnimationParamsType::DualScroll:
-					printf("Declaring references to scrolling texture\n");
+					printf("Declaring references to texture scrolling\n");
 
 					params = new TextureScrollingParams(parent);
 					params->ExtractFromBinary(paramsOffset, count);
@@ -292,6 +441,10 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				case TextureAnimationParamsType::ColorChangeLagrange:
 					break;
 				case TextureAnimationParamsType::TextureCycle:
+					printf("Declaring references to texture cycling\n");
+					params = new TextureCyclingParams(parent);
+					params->ExtractFromBinary(paramsOffset);
+
 					break;
 				}
 
