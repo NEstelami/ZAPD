@@ -14,8 +14,7 @@ enum class TextureAnimationParamsType
 	/* 2 */ ColorChange,
 	/* 3 */ ColorChangeLERP,
 	/* 4 */ ColorChangeLagrange,
-	/* 5 */ TextureCycle,
-	/* 6 */ Unknown // Not actually
+	/* 5 */ TextureCycle
 };
 
 struct ZTextureAnimationParams : public ZResource
