@@ -6,10 +6,18 @@
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 
-SetAnimatedMaterialList::SetAnimatedMaterialList(ZFile* nParent) : ZRoomCommand(nParent)
+SetAnimatedMaterialList::SetAnimatedMaterialList(ZFile* nParent) : ZRoomCommand(nParent), textureAnimation(nParent)
 {
 }
 
+
+void SetAnimatedMaterialList::ParseRawData()
+{
+	textureAnimation.SetRawDataIndex(segmentOffset);
+	textureAnimation.ParseRawData();
+}
+
+#if 0
 void SetAnimatedMaterialList::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
@@ -24,7 +32,18 @@ void SetAnimatedMaterialList::ParseRawData()
 		textures.push_back(lastTexture);
 	} while (keepGoing);
 }
+#endif
 
+
+
+void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
+{
+	textureAnimation.SetName(StringHelper::Sprintf("%sTexAnim_%06X", prefix.c_str(), segmentOffset));
+	textureAnimation.DeclareReferences(prefix);
+	textureAnimation.GetSourceOutputCode(prefix);
+}
+
+#if 0
 void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 {
 	std::string nameStr =
@@ -111,6 +130,7 @@ void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 		                            "AnimatedMaterial", nameStr, textures.size(), declaration);
 	}
 }
+#endif
 
 std::string SetAnimatedMaterialList::GetBodySourceCode() const
 {
@@ -118,6 +138,7 @@ std::string SetAnimatedMaterialList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_ANIMATED_MATERIAL_LIST(%s)", listName.c_str());
 }
 
+#if 0
 size_t SetAnimatedMaterialList::GetRawDataSize() const
 {
 	size_t paramsSize = 0;
@@ -131,6 +152,16 @@ size_t SetAnimatedMaterialList::GetRawDataSize() const
 
 	return ZRoomCommand::GetRawDataSize() + paramsSize;
 }
+#endif
+
+
+size_t SetAnimatedMaterialList::GetRawDataSize() const
+{
+	int32_t size = textureAnimation.GetRawDataSize();
+
+	return ZRoomCommand::GetRawDataSize() + size;
+}
+
 
 std::string SetAnimatedMaterialList::GetCommandCName() const
 {
@@ -141,6 +172,8 @@ RoomCommand SetAnimatedMaterialList::GetRoomCommand() const
 {
 	return RoomCommand::SetAnimatedMaterialList;
 }
+
+#if 0
 
 AnimatedMaterial::AnimatedMaterial(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: segment(rawData.at(rawDataIndex)), type(BitConverter::ToInt16BE(rawData, rawDataIndex + 2))
@@ -411,3 +444,5 @@ size_t AnimatedMatTexCycleParams::GetParamsSize()
 {
 	return 12;
 }
+
+#endif

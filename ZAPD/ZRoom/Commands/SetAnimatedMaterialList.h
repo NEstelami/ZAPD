@@ -2,7 +2,9 @@
 
 #include <memory>
 #include "ZRoom/ZRoomCommand.h"
+#include "ZTextureAnimation.h"
 
+#if 0
 // TODO move into header and add all types
 class AnimatedTextureParams
 {
@@ -99,11 +101,14 @@ public:
 	uint32_t segmentOffset;
 	std::vector<std::shared_ptr<AnimatedTextureParams>> params;
 };
+#endif
 
 class SetAnimatedMaterialList : public ZRoomCommand
 {
 public:
 	SetAnimatedMaterialList(ZFile* nParent);
+
+	
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -115,5 +120,6 @@ public:
 	std::string GetCommandCName() const override;
 
 private:
-	std::vector<AnimatedMaterial> textures;
+	ZTextureAnimation textureAnimation;
+	// std::vector<AnimatedMaterial> textures;
 };
