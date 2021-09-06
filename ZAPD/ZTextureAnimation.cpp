@@ -161,9 +161,9 @@ void TextureColorChangingParams::ParseRawData()
 	envColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 	frameDataListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
 
-	uint32_t primColorListOffset = GETSEGOFFSET(primColorListAddress);
-	uint32_t envColorListOffset = GETSEGOFFSET(envColorListAddress);
-	uint32_t frameDataListOffset = GETSEGOFFSET(frameDataListAddress);
+	uint32_t primColorListOffset = Seg2Filespace(primColorListAddress, 0);
+	uint32_t envColorListOffset = Seg2Filespace(envColorListAddress, 0);
+	uint32_t frameDataListOffset = Seg2Filespace(frameDataListAddress, 0);
 
 	uint32_t currentPtr;
 
@@ -247,12 +247,12 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 
 		primColorBodyStr.pop_back();
 
-		parent->AddDeclarationArray(GETSEGOFFSET(primColorListAddress), DeclarationAlignment::None,
-		                            primColorList.size() * 5, "F3DPrimColor",
-		                            StringHelper::Sprintf("%s_TexColorChangingPrimColors_%06X",
-		                                                  parent->GetName().c_str(),
-		                                                  GETSEGOFFSET(primColorListAddress)),
-		                            primColorList.size(), primColorBodyStr);
+		parent->AddDeclarationArray(
+			Seg2Filespace(primColorListAddress, 0), DeclarationAlignment::None,
+			primColorList.size() * 5, "F3DPrimColor",
+			StringHelper::Sprintf("%s_TexColorChangingPrimColors_%06X", parent->GetName().c_str(),
+		                          Seg2Filespace(primColorListAddress, 0)),
+			primColorList.size(), primColorBodyStr);
 	}
 
 	if (envColorListAddress != 0)  // NULL
@@ -267,12 +267,12 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 
 		envColorBodyStr.pop_back();
 
-		parent->AddDeclarationArray(GETSEGOFFSET(envColorListAddress), DeclarationAlignment::None,
-		                            envColorList.size() * 4, "F3DEnvColor",
-		                            StringHelper::Sprintf("%s_TexColorChangingEnvColors_%06X",
-		                                                  parent->GetName().c_str(),
-		                                                  GETSEGOFFSET(envColorListAddress)),
-		                            envColorList.size(), envColorBodyStr);
+		parent->AddDeclarationArray(
+			Seg2Filespace(envColorListAddress, 0), DeclarationAlignment::None,
+			envColorList.size() * 4, "F3DEnvColor",
+			StringHelper::Sprintf("%s_TexColorChangingEnvColors_%06X", parent->GetName().c_str(),
+		                          Seg2Filespace(envColorListAddress, 0)),
+			envColorList.size(), envColorBodyStr);
 	}
 
 	if (frameDataListAddress != 0)  // NULL
@@ -286,11 +286,11 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 
 		frameDataBodyStr.pop_back();
 
-		parent->AddDeclarationArray(GETSEGOFFSET(frameDataListAddress), DeclarationAlignment::None,
-		                            frameDataList.size() * 2, "u16",
+		parent->AddDeclarationArray(Seg2Filespace(frameDataListAddress, 0),
+		                            DeclarationAlignment::None, frameDataList.size() * 2, "u16",
 		                            StringHelper::Sprintf("%s_TexColorChangingFrameData_%06X",
 		                                                  parent->GetName().c_str(),
-		                                                  GETSEGOFFSET(frameDataListAddress)),
+		                                                  Seg2Filespace(frameDataListAddress, 0)),
 		                            frameDataList.size(), frameDataBodyStr);
 	}
 }
@@ -323,8 +323,8 @@ void TextureCyclingParams::ParseRawData()
 	textureListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	textureIndexListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 
-	uint32_t textureListOffset = GETSEGOFFSET(textureListAddress);
-	uint32_t textureIndexListOffset = GETSEGOFFSET(textureIndexListAddress);
+	uint32_t textureListOffset = Seg2Filespace(textureListAddress, 0);
+	uint32_t textureIndexListOffset = Seg2Filespace(textureIndexListAddress, 0);
 
 	uint32_t currentPtr = textureIndexListOffset;
 
@@ -396,12 +396,12 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 		// N.B. currently need these textures to be declared separately to get the proper pointers
 		// (will print segmented addresses without). Can we search the segments in DLists to find
 		// the formats and declare the textures automatically?
-		parent->AddDeclarationArray(GETSEGOFFSET(textureListAddress), DeclarationAlignment::Align4,
-		                            textureList.size() * 4, "TexturePtr",
-		                            StringHelper::Sprintf("%s_TexCycleTexPtrs_%06X",
-		                                                  parent->GetName().c_str(),
-		                                                  GETSEGOFFSET(textureListAddress)),
-		                            textureList.size(), texturesbodyStr);
+		parent->AddDeclarationArray(
+			Seg2Filespace(textureListAddress, 0), DeclarationAlignment::Align4,
+			textureList.size() * 4, "TexturePtr",
+			StringHelper::Sprintf("%s_TexCycleTexPtrs_%06X", parent->GetName().c_str(),
+		                          Seg2Filespace(textureListAddress, 0)),
+			textureList.size(), texturesbodyStr);
 	}
 
 	if (textureIndexListAddress != 0)  // NULL
@@ -416,28 +416,14 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 		indicesbodyStr.pop_back();
 
 		printf("Declaring texture index array\n");
-		parent->AddDeclarationArray(GETSEGOFFSET(textureIndexListAddress),
-		                            DeclarationAlignment::None, textureIndexList.size(), "u8",
-		                            StringHelper::Sprintf("%s_TexCycleTexIndices_%06X",
-		                                                  parent->GetName().c_str(),
-		                                                  GETSEGOFFSET(textureIndexListAddress)),
-		                            textureIndexList.size(), indicesbodyStr);
+		parent->AddDeclarationArray(
+			Seg2Filespace(textureIndexListAddress, 0), DeclarationAlignment::None,
+			textureIndexList.size(), "u8",
+			StringHelper::Sprintf("%s_TexCycleTexIndices_%06X", parent->GetName().c_str(),
+		                          Seg2Filespace(textureIndexListAddress, 0)),
+			textureIndexList.size(), indicesbodyStr);
 	}
 }
-
-// Should be unnecessary since the same as the inherited version
-// void TextureCyclingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr)
-// const
-// {
-// 	printf("TextureCyclingParams::DeclareVar");
-// 	std::string auxName = name;
-
-// 	if (name == "")
-// 		auxName = GetDefaultName(prefix, rawDataIndex);
-
-// 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-// 	                       GetSourceTypeName(), auxName, bodyStr);
-// }
 
 std::string TextureCyclingParams::GetBodySourceCode() const
 {
@@ -450,21 +436,6 @@ std::string TextureCyclingParams::GetBodySourceCode() const
 
 	printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
-}
-
-/* TextureAnimationEntry */
-
-// TODO: turn this into an ordinary struct: no need for a constructor
-/**
- * TextureAnimationEntry constructor
- */
-TextureAnimationEntry::TextureAnimationEntry(const std::vector<uint8_t>& rawData,
-                                             uint32_t rawDataIndex)
-	: segment(rawData.at(rawDataIndex)),
-	  type((TextureAnimationParamsType)BitConverter::ToInt16BE(rawData, rawDataIndex + 2)),
-	  paramsPtr(BitConverter::ToUInt32BE(rawData, rawDataIndex + 4))
-{
-	printf("Dumb TextureAnimationEntry constructor\n");
 }
 
 /* ZTextureAnimation */
@@ -493,17 +464,26 @@ void ZTextureAnimation::ParseRawData()
 	printf("%s\n", __PRETTY_FUNCTION__);
 	ZResource::ParseRawData();
 
+	TextureAnimationEntry currentEntry;
+	auto rawData = parent->GetRawData();
+	int16_t type;
+
 	for (uint32_t curPtr = rawDataIndex;; curPtr += 8)
 	{
 		printf("Parsing TextureAnimationEntry raw data\n");
-		TextureAnimationEntry curEntry(parent->GetRawData(),
-		                               curPtr);  // TODO: stop this allocating a whole new one every
-		                                         // time: get it out of the loop somehow
-		entries.push_back(curEntry);
+		type = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+		if ((type < 0) || (type > 5))
+			throw std::runtime_error("error: unknown TextureAnimationParams type");
 
-		printf("    { %d, %X, 0x%08X },\n", curEntry.segment, curEntry.type, curEntry.paramsPtr);
+		currentEntry.segment = BitConverter::ToInt8BE(rawData, rawDataIndex);
+		currentEntry.type = (TextureAnimationParamsType)type;
+		currentEntry.paramsPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+		entries.push_back(currentEntry);
 
-		if (curEntry.segment <= 0)
+		printf("    { %d, %X, 0x%08X },\n", currentEntry.segment, currentEntry.type,
+		       currentEntry.paramsPtr);
+
+		if (currentEntry.segment <= 0)
 			break;
 	}
 }
@@ -563,90 +543,6 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 		}
 	}
 }
-
-// void ZTextureAnimation::DeclareReferences(const std::string& prefix)
-// {
-// 	std::string nameStr =
-// 		StringHelper::Sprintf("%sAnimatedMaterialList0x%06X", prefix.c_str(), rawDataIndex);
-
-// 	for (auto& entry : entries)
-// 	{
-// 		size_t declSize = 0;
-// 		std::string declTypeName = "";
-// 		std::string declName = StringHelper::Sprintf("%sTextureAnimationParams0x%06X",
-// 		                                             prefix.c_str(), entry.segmentOffset);
-// 		std::string declaration = "";
-// 		size_t index = 0;
-
-// 		switch (entry.type)
-// 		{
-// 		case TextureAnimationParamsType::SingleScroll:
-// 		case TextureAnimationParamsType::DualScroll:
-// 			declaration += entry.params.at(0)->GetSourceOutputCode();
-
-// 			if (index < entry.params.size() - 1)
-// 				declaration += "\n";
-
-// 			index++;
-
-// 			declSize = 4;
-// 			declTypeName = "AnimatedMatTexScrollParams";
-
-// 			printf("entry.params.size() = %d \n", entry.params.size());
-// 			parent->AddDeclarationArray(entry.segmentOffset, DeclarationAlignment::Align4, declSize,
-// 			                            declTypeName, declName, entry.params.size(), declaration);
-// 			break;
-// 		// case TextureAnimationParamsType::ColorChange:
-// 		// case TextureAnimationParamsType::ColorChangeLERP:
-// 		// case TextureAnimationParamsType::ColerChangeLagrange:
-// 		// 	declSize = entry.params->GetParamsSize();
-// 		// 	declTypeName = "AnimatedMatColorParams";
-// 		// 	declaration = entry.params->GetSourceOutputCode();
-
-// 		// 	parent->AddDeclaration(entry.segmentOffset, DeclarationAlignment::Align4, declSize,
-// 		// 	                       declTypeName, declName,
-// 		// 	                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
-// 		// 	break;
-// 		// case TextureAnimationParamsType::TextureCycle:
-// 		// 	declSize = entry.params->GetParamsSize();
-// 		// 	declTypeName = "AnimatedMatTexCycleParams";
-// 		// 	declaration = entry.params->GetSourceOutputCode();
-
-// 		// 	parent->AddDeclaration(entry.segmentOffset, DeclarationAlignment::Align4, declSize,
-// 		// 	                       declTypeName, declName,
-// 		// 	                       StringHelper::Sprintf("\n\t%s\n", declaration.c_str()));
-// 		// 	break;
-// 		// case TextureAnimationParamsType::Unknown:
-// 		// 	continue;
-
-// 		default:
-// 			throw std::runtime_error(
-// 				StringHelper::Sprintf("Error in ZTextureAnimation::DeclareReferences (%s)\n"
-// 			                          "\t Unknown entry.type: %i\n",
-// 			                          nameStr.c_str(), entry.type));
-// 		}
-// 	}
-
-// 	if (!entries.empty())
-// 	{
-// 		std::string declaration = "";
-
-// 		for (size_t i = 0; i < entries.size(); i++)
-// 		{
-// 			std::string textureName = parent->GetDeclarationPtrName(entries.at(i).segmentAddress);
-
-// 			declaration += StringHelper::Sprintf("\t{ %2i, %2i, %s },", entries.at(i).segment,
-// 			                                     entries.at(i).type, textureName.c_str());
-
-// 			if (i + 1 < entries.size())
-// 				declaration += "\n";
-// 		}
-
-// 		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4,
-// 		                            DeclarationPadding::Pad16, entries.size() * 8,
-// 		                            "AnimatedMaterial", nameStr, entries.size(), declaration);
-// 	}
-// }
 
 /**
  * The type of the resource as a C struct

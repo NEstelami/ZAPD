@@ -7,16 +7,16 @@
 #include "ZResource.h"
 #include "tinyxml2.h"
 
-typedef enum class TextureAnimationParamsType
+enum class TextureAnimationParamsType
 {
-	SingleScroll,
-	DualScroll,
-	ColorChange,
-	ColorChangeLERP,
-	ColorChangeLagrange,
-	TextureCycle,
-	Unknown
-} TextureAnimationParamsType;
+	/* 0 */ SingleScroll,
+	/* 1 */ DualScroll,
+	/* 2 */ ColorChange,
+	/* 3 */ ColorChangeLERP,
+	/* 4 */ ColorChangeLagrange,
+	/* 5 */ TextureCycle,
+	/* 6 */ Unknown // Not actually
+};
 
 struct ZTextureAnimationParams : public ZResource
 {
@@ -24,7 +24,7 @@ struct ZTextureAnimationParams : public ZResource
 
 	virtual void ExtractFromBinary(uint32_t paramsOffset);
 	virtual void ExtractFromBinary(uint32_t paramsOffset, int count);
-	
+
 	std::string GetSourceOutputCode(const std::string& prefix);
 
 	virtual std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
@@ -53,17 +53,12 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
 	size_t GetRawDataSize() const override;
 
-	void DeclareVar(const std::string& prefix,
-                                         const std::string& bodyStr) const override;
+	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const override;
 	std::string GetBodySourceCode() const override;
 
-	int count; // 1 for Single, 2 for Dual
+	int count;  // 1 for Single, 2 for Dual
 	TextureScrollingParamsEntry rows[2];
 };
-
-
-
-
 
 struct F3DPrimColor
 {
@@ -107,57 +102,8 @@ struct TextureColorChangingParams : public ZTextureAnimationParams
 	std::vector<uint16_t> frameDataList;
 };
 
-// class F3DPrimColor
-// {
-// public:
-// 	F3DPrimColor(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-// 	uint8_t r;
-// 	uint8_t g;
-// 	uint8_t b;
-// 	uint8_t a;
-// 	uint8_t lodFrac;
-// };
-
-// class F3DEnvColor
-// {
-// public:
-// 	F3DEnvColor(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-// 	uint8_t r;
-// 	uint8_t g;
-// 	uint8_t b;
-// 	uint8_t a;
-// };
-
-// class TextureColorChangingParams : public TextureAnimationParams
-// {
-// public:
-// 	TextureColorChangingParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex, int32_t type);
-// 	std::string GetSourceOutputCode() override;
-// 	size_t GetParamsSize() override;
-
-// 	uint16_t cycleLength;
-// 	uint16_t numKeyFrames;
-
-// 	segptr_t primColorSegmentAddr;
-// 	segptr_t envColorSegmentAddr;
-// 	segptr_t keyFrameSegmentAddr;
-
-// 	uint32_t primColorSegmentOffset;
-// 	uint32_t envColorSegmentOffset;
-// 	uint32_t keyFrameSegmentOffset;
-
-// 	std::vector<F3DPrimColor> primColors;
-// 	std::vector<F3DEnvColor> envColors;
-// 	std::vector<uint16_t> keyFrames;
-// };
-
-
-
 struct TextureCyclingParams : public ZTextureAnimationParams
 {
-
 	TextureCyclingParams(ZFile* parent);
 
 	void ParseRawData() override;
@@ -178,12 +124,8 @@ struct TextureCyclingParams : public ZTextureAnimationParams
 	std::vector<uint8_t> textureIndexList;
 };
 
-
-class TextureAnimationEntry
+struct TextureAnimationEntry
 {
-public:
-	/* void */ TextureAnimationEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
 	int8_t segment;
 	TextureAnimationParamsType type;
 	segptr_t paramsPtr;
@@ -207,8 +149,6 @@ public:
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	std::string GetBodySourceCode() const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
-
-
 
 private:
 	std::vector<TextureAnimationEntry> entries;
