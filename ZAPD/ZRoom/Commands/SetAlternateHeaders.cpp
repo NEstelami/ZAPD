@@ -54,14 +54,14 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 		std::string varName =
 			StringHelper::Sprintf("%sAlternateHeaders0x%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationArray(segmentOffset, GetDeclarationAlignment(), headers.size() * 4,
-		                            "SCmdBase*", varName, 0, declaration);
+		                            "SceneCmd*", varName, 0, declaration);
 	}
 }
 
 std::string SetAlternateHeaders::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "SCmdBase*", listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "SceneCmd*", listName);
 	return StringHelper::Sprintf("SCENE_CMD_ALTERNATE_HEADER_LIST(%s)", listName.c_str());
 }
 
