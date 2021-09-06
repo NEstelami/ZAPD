@@ -577,7 +577,7 @@ size_t ZTextureAnimation::GetRawDataSize() const
 std::string ZTextureAnimation::GetDefaultName(const std::string& prefix, uint32_t address) const
 {
 	printf("ZTextureAnimation::GetDefaultName\n");
-	return StringHelper::Sprintf("%sTextureAnimation_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%sTexAnim_%06X", prefix.c_str(), address);
 }
 
 /**
