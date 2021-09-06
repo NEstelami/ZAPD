@@ -39,11 +39,6 @@ std::string ZTextureAnimationParams::GetDefaultName(const std::string& prefix,
 
 /* TextureAnimationParams */
 
-ZResourceType ZTextureAnimationParams::GetResourceType() const
-{
-	return ZResourceType::TextureAnimationParams;
-}
-
 void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
                                          const std::string& bodyStr) const
 {
@@ -69,6 +64,11 @@ std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& pref
 		decl->text = bodyStr;
 
 	return "";
+}
+
+ZResourceType ZTextureAnimationParams::GetResourceType() const
+{
+	return ZResourceType::TextureAnimationParams;
 }
 
 /* TextureScrollingParams */
