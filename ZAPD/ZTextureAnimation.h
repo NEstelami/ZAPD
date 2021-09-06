@@ -14,7 +14,8 @@ enum class TextureAnimationParamsType
 	/* 2 */ ColorChange,
 	/* 3 */ ColorChangeLERP,
 	/* 4 */ ColorChangeLagrange,
-	/* 5 */ TextureCycle
+	/* 5 */ TextureCycle,
+	/* 6 */ Empty  // An empty TextureAnimation has the form 00 00 00 06 00000000
 };
 
 struct ZTextureAnimationParams : public ZResource

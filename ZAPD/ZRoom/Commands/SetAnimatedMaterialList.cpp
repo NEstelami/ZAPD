@@ -13,6 +13,7 @@ SetAnimatedMaterialList::SetAnimatedMaterialList(ZFile* nParent) : ZRoomCommand(
 
 void SetAnimatedMaterialList::ParseRawData()
 {
+	ZRoomCommand::ParseRawData();
 	textureAnimation.SetRawDataIndex(segmentOffset);
 	textureAnimation.ParseRawData();
 }

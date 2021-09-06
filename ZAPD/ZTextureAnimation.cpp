@@ -472,16 +472,17 @@ void ZTextureAnimation::ParseRawData()
 	{
 		printf("Parsing TextureAnimationEntry raw data\n");
 		type = BitConverter::ToInt16BE(rawData, currentPtr + 2);
-		if ((type < 0) || (type > 5))
-			throw std::runtime_error("error: unknown TextureAnimationParams type");
 
 		currentEntry.segment = BitConverter::ToInt8BE(rawData, currentPtr);
 		currentEntry.type = (TextureAnimationParamsType)type;
 		currentEntry.paramsPtr = BitConverter::ToUInt32BE(rawData, currentPtr + 4);
 		entries.push_back(currentEntry);
 
-		printf("    { %d, %X, 0x%08X },\n", currentEntry.segment, currentEntry.type,
-		       currentEntry.paramsPtr);
+		if ((type < 0) || (type > 6))
+		{
+			throw std::runtime_error(StringHelper::Sprintf("error: unknown TextureAnimationParams type 0x%02X in TextureAnimation starting at offset 0x%06X: entry reads\n\t{ 0x%02X, 0x%02X, 0x%08X }\n(type should be between 0x00 and 0x06)\n", type, rawDataIndex, currentEntry.segment, type,
+			       currentEntry.paramsPtr));
+		}
 
 		if (currentEntry.segment <= 0)
 			break;
@@ -533,6 +534,10 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					params = new TextureCyclingParams(parent);
 					params->ExtractFromBinary(paramsOffset);
 					break;
+
+				case TextureAnimationParamsType::Empty:
+					fprintf(stderr, "warning: entry has empty type (6), but params pointer is not NULL");
+					return;
 				}
 
 				params->SetName(params->GetDefaultName(varPrefix, paramsOffset));
