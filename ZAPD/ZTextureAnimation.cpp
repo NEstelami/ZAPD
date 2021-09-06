@@ -104,7 +104,7 @@ std::string TextureScrollingParams::GetDefaultName(const std::string& prefix,
                                                    uint32_t address) const
 {
 	printf("TextureScrollingParams::GetDefaultName");
-	return StringHelper::Sprintf("%sTexScrollParams_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%s_TexScrollParams_%06X", prefix.c_str(), address);
 }
 
 size_t TextureScrollingParams::GetRawDataSize() const
@@ -235,55 +235,64 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 {
 	printf("TextureColorChangingParams::DeclareReferences\n");
 
-	std::string primColorBodyStr = "";
-
-	for (auto color : primColorList)
+	if (primColorListAddress != 0)  // NULL
 	{
-		primColorBodyStr += StringHelper::Sprintf("    { %d, %d, %d, %d, %d },\n", color.r, color.g,
-		                                          color.b, color.a, color.lodFrac);
+		std::string primColorBodyStr = "";
+
+		for (auto color : primColorList)
+		{
+			primColorBodyStr += StringHelper::Sprintf("    { %d, %d, %d, %d, %d },\n", color.r,
+			                                          color.g, color.b, color.a, color.lodFrac);
+		}
+
+		primColorBodyStr.pop_back();
+
+		parent->AddDeclarationArray(GETSEGOFFSET(primColorListAddress), DeclarationAlignment::None,
+		                            primColorList.size() * 5, "F3DPrimColor",
+		                            StringHelper::Sprintf("%s_TexColorChangingPrimColors_%06X",
+		                                                  parent->GetName().c_str(),
+		                                                  GETSEGOFFSET(primColorListAddress)),
+		                            primColorList.size(), primColorBodyStr);
 	}
 
-	primColorBodyStr.pop_back();
-
-	parent->AddDeclarationArray(GETSEGOFFSET(primColorListAddress), DeclarationAlignment::None,
-	                            primColorList.size() * 5, "F3DPrimColor",
-	                            StringHelper::Sprintf("%s_TexColorChangingPrimColors_%06X",
-	                                                  parent->GetName().c_str(),
-	                                                  GETSEGOFFSET(primColorListAddress)),
-	                            primColorList.size(), primColorBodyStr);
-
-	std::string envColorBodyStr = "";
-
-	for (auto color : envColorList)
+	if (envColorListAddress != 0)  // NULL
 	{
-		envColorBodyStr +=
-			StringHelper::Sprintf("    { %d, %d, %d, %d },\n", color.r, color.g, color.b, color.a);
+		std::string envColorBodyStr = "";
+
+		for (auto color : envColorList)
+		{
+			envColorBodyStr += StringHelper::Sprintf("    { %d, %d, %d, %d },\n", color.r, color.g,
+			                                         color.b, color.a);
+		}
+
+		envColorBodyStr.pop_back();
+
+		parent->AddDeclarationArray(GETSEGOFFSET(envColorListAddress), DeclarationAlignment::None,
+		                            envColorList.size() * 4, "F3DEnvColor",
+		                            StringHelper::Sprintf("%s_TexColorChangingEnvColors_%06X",
+		                                                  parent->GetName().c_str(),
+		                                                  GETSEGOFFSET(envColorListAddress)),
+		                            envColorList.size(), envColorBodyStr);
 	}
 
-	envColorBodyStr.pop_back();
-
-	parent->AddDeclarationArray(GETSEGOFFSET(envColorListAddress), DeclarationAlignment::None,
-	                            envColorList.size() * 4, "F3DEnvColor",
-	                            StringHelper::Sprintf("%s_TexColorChangingEnvColors_%06X",
-	                                                  parent->GetName().c_str(),
-	                                                  GETSEGOFFSET(envColorListAddress)),
-	                            envColorList.size(), envColorBodyStr);
-
-	std::string frameDataBodyStr = "    ";
-
-	for (auto frame : frameDataList)
+	if (frameDataListAddress != 0)  // NULL
 	{
-		frameDataBodyStr += StringHelper::Sprintf("%d, ", frame);
+		std::string frameDataBodyStr = "    ";
+
+		for (auto frame : frameDataList)
+		{
+			frameDataBodyStr += StringHelper::Sprintf("%d, ", frame);
+		}
+
+		frameDataBodyStr.pop_back();
+
+		parent->AddDeclarationArray(GETSEGOFFSET(frameDataListAddress), DeclarationAlignment::None,
+		                            frameDataList.size() * 2, "u16",
+		                            StringHelper::Sprintf("%s_TexColorChangingFrameData_%06X",
+		                                                  parent->GetName().c_str(),
+		                                                  GETSEGOFFSET(frameDataListAddress)),
+		                            frameDataList.size(), frameDataBodyStr);
 	}
-
-	frameDataBodyStr.pop_back();
-
-	parent->AddDeclarationArray(GETSEGOFFSET(frameDataListAddress), DeclarationAlignment::None,
-	                            frameDataList.size() * 2, "u16",
-	                            StringHelper::Sprintf("%s_TexColorChangingFrameData_%06X",
-	                                                  parent->GetName().c_str(),
-	                                                  GETSEGOFFSET(frameDataListAddress)),
-	                            frameDataList.size(), frameDataBodyStr);
 }
 
 std::string TextureColorChangingParams::GetBodySourceCode() const
@@ -370,44 +379,50 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 {
 	printf("TextureCyclingParams::DeclareReferences\n");
 
-	std::string texturesbodyStr = "";
-
-	for (auto tex : textureList)
+	if (textureListAddress != 0)  // NULL
 	{
-		texturesbodyStr +=
-			StringHelper::Sprintf("    %s,\n", parent->GetDeclarationPtrName(tex).c_str());
+		std::string texturesbodyStr = "";
+
+		for (auto tex : textureList)
+		{
+			texturesbodyStr +=
+				StringHelper::Sprintf("    %s,\n", parent->GetDeclarationPtrName(tex).c_str());
+		}
+
+		texturesbodyStr.pop_back();
+
+		printf("Declaring texture pointer array\n");
+
+		// N.B. currently need these textures to be declared separately to get the proper pointers
+		// (will print segmented addresses without). Can we search the segments in DLists to find
+		// the formats and declare the textures automatically?
+		parent->AddDeclarationArray(GETSEGOFFSET(textureListAddress), DeclarationAlignment::Align4,
+		                            textureList.size() * 4, "TexturePtr",
+		                            StringHelper::Sprintf("%s_TexCycleTexPtrs_%06X",
+		                                                  parent->GetName().c_str(),
+		                                                  GETSEGOFFSET(textureListAddress)),
+		                            textureList.size(), texturesbodyStr);
 	}
 
-	texturesbodyStr.pop_back();
-
-	printf("Declaring texture pointer array\n");
-
-	// N.B. currently need these textures to be declared separately to get the proper pointers (will
-	// print segmented addresses without). Can we search the segments in DLists to find the formats
-	// and declare the textures automatically?
-	parent->AddDeclarationArray(GETSEGOFFSET(textureListAddress), DeclarationAlignment::Align4,
-	                            textureList.size() * 4, "TexturePtr",
-	                            StringHelper::Sprintf("%s_TexCycleTexPtrs_%06X",
-	                                                  parent->GetName().c_str(),
-	                                                  GETSEGOFFSET(textureListAddress)),
-	                            textureList.size(), texturesbodyStr);
-
-	std::string indicesbodyStr = "    ";
-
-	for (uint8_t index : textureIndexList)
+	if (textureIndexListAddress != 0)  // NULL
 	{
-		indicesbodyStr += StringHelper::Sprintf("%d, ", index);
+		std::string indicesbodyStr = "    ";
+
+		for (uint8_t index : textureIndexList)
+		{
+			indicesbodyStr += StringHelper::Sprintf("%d, ", index);
+		}
+
+		indicesbodyStr.pop_back();
+
+		printf("Declaring texture index array\n");
+		parent->AddDeclarationArray(GETSEGOFFSET(textureIndexListAddress),
+		                            DeclarationAlignment::None, textureIndexList.size(), "u8",
+		                            StringHelper::Sprintf("%s_TexCycleTexIndices_%06X",
+		                                                  parent->GetName().c_str(),
+		                                                  GETSEGOFFSET(textureIndexListAddress)),
+		                            textureIndexList.size(), indicesbodyStr);
 	}
-
-	indicesbodyStr.pop_back();
-
-	printf("Declaring texture index array\n");
-	parent->AddDeclarationArray(GETSEGOFFSET(textureIndexListAddress), DeclarationAlignment::None,
-	                            textureIndexList.size(), "u8",
-	                            StringHelper::Sprintf("%s_TexCycleTexIndices_%06X",
-	                                                  parent->GetName().c_str(),
-	                                                  GETSEGOFFSET(textureIndexListAddress)),
-	                            textureIndexList.size(), indicesbodyStr);
 }
 
 // Should be unnecessary since the same as the inherited version
