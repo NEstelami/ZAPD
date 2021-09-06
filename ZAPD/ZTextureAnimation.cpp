@@ -121,7 +121,7 @@ void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::st
 	if (name == "")
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, count, bodyStr);
 }
 
@@ -468,16 +468,16 @@ void ZTextureAnimation::ParseRawData()
 	auto rawData = parent->GetRawData();
 	int16_t type;
 
-	for (uint32_t curPtr = rawDataIndex;; curPtr += 8)
+	for (uint32_t currentPtr = rawDataIndex;; currentPtr += 8)
 	{
 		printf("Parsing TextureAnimationEntry raw data\n");
-		type = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
+		type = BitConverter::ToInt16BE(rawData, currentPtr + 2);
 		if ((type < 0) || (type > 5))
 			throw std::runtime_error("error: unknown TextureAnimationParams type");
 
-		currentEntry.segment = BitConverter::ToInt8BE(rawData, rawDataIndex);
+		currentEntry.segment = BitConverter::ToInt8BE(rawData, currentPtr);
 		currentEntry.type = (TextureAnimationParamsType)type;
-		currentEntry.paramsPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+		currentEntry.paramsPtr = BitConverter::ToUInt32BE(rawData, currentPtr + 4);
 		entries.push_back(currentEntry);
 
 		printf("    { %d, %X, 0x%08X },\n", currentEntry.segment, currentEntry.type,
@@ -591,7 +591,7 @@ void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string&
 	if (name == "")
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, entries.size(), bodyStr);
 }
 
