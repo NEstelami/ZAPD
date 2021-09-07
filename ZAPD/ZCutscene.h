@@ -352,7 +352,7 @@ public:
 	int16_t rotX, rotY, rotZ;
 	int32_t startPosX, startPosY, startPosZ;
 	int32_t endPosX, endPosY, endPosZ;
-	int32_t normalX, normalY, normalZ;
+	float normalX, normalY, normalZ;
 
 	ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 };
