@@ -53,7 +53,7 @@ void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
 
 std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& prefix)
 {
-	printf("TextureAnimationParams::GetSourceOutputCode\n");
+	// printf("TextureAnimationParams::GetSourceOutputCode\n");
 	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
@@ -96,26 +96,26 @@ void TextureScrollingParams::ExtractFromBinary(uint32_t nRawDataIndex, int nCoun
 
 std::string TextureScrollingParams::GetSourceTypeName() const
 {
-	printf("TextureScrollingParams::GetSourceTypeName\n");
+	// printf("TextureScrollingParams::GetSourceTypeName\n");
 	return "AnimatedMatTexScrollParams";  // TODO: Better name
 }
 
 std::string TextureScrollingParams::GetDefaultName(const std::string& prefix,
                                                    uint32_t address) const
 {
-	printf("TextureScrollingParams::GetDefaultName");
-	return StringHelper::Sprintf("%s_TexScrollParams_%06X", prefix.c_str(), address);
+	// printf("TextureScrollingParams::GetDefaultName");
+	return StringHelper::Sprintf("%sTexScrollParams_%06X", prefix.c_str(), address);
 }
 
 size_t TextureScrollingParams::GetRawDataSize() const
 {
-	printf("TextureScrollingParams::GetRawDataSize");
+	// printf("TextureScrollingParams::GetRawDataSize");
 	return 4 * count;
 }
 
 void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
-	printf("TextureScrollingParams::DeclareVar");
+	// printf("TextureScrollingParams::DeclareVar");
 	std::string auxName = name;
 
 	if (name == "")
@@ -127,7 +127,7 @@ void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::st
 
 std::string TextureScrollingParams::GetBodySourceCode() const
 {
-	printf("TextureScrollingParams::GetBodySourceCode\n");
+	// printf("TextureScrollingParams::GetBodySourceCode\n");
 
 	std::string bodyStr = "";
 
@@ -139,7 +139,7 @@ std::string TextureScrollingParams::GetBodySourceCode() const
 
 	bodyStr.pop_back();
 
-	printf("bodyStr = %s", bodyStr.c_str());
+	// printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -167,7 +167,7 @@ void TextureColorChangingParams::ParseRawData()
 
 	uint32_t currentPtr;
 
-	printf("cycleLength: %d\n", listLength);
+	// printf("cycleLength: %d\n", listLength);
 
 	F3DPrimColor currentPrimColor;
 
@@ -214,26 +214,26 @@ void TextureColorChangingParams::ExtractFromBinary(uint32_t nRawDataIndex)
 
 std::string TextureColorChangingParams::GetSourceTypeName() const
 {
-	printf("TextureColorChangingParams::GetSourceTypeName\n");
+	// printf("TextureColorChangingParams::GetSourceTypeName\n");
 	return "AnimatedMatColorParams";  // TODO: Better name
 }
 
 std::string TextureColorChangingParams::GetDefaultName(const std::string& prefix,
                                                        uint32_t address) const
 {
-	printf("TextureColorChangingParams::GetDefaultName\n");
+	// printf("TextureColorChangingParams::GetDefaultName\n");
 	return StringHelper::Sprintf("%sColorParams_%06X", prefix.c_str(), address);
 }
 
 size_t TextureColorChangingParams::GetRawDataSize() const
 {
-	printf("TextureColorChangingParams::GetRawDataSize\n");
+	// printf("TextureColorChangingParams::GetRawDataSize\n");
 	return 0x10;
 }
 
 void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 {
-	printf("TextureColorChangingParams::DeclareReferences\n");
+	// printf("TextureColorChangingParams::DeclareReferences\n");
 
 	if (primColorListAddress != 0)  // NULL
 	{
@@ -250,7 +250,7 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 		parent->AddDeclarationArray(
 			Seg2Filespace(primColorListAddress, 0), DeclarationAlignment::None,
 			primColorList.size() * 5, "F3DPrimColor",
-			StringHelper::Sprintf("%s_TexColorChangingPrimColors_%06X", parent->GetName().c_str(),
+			StringHelper::Sprintf("%sTexColorChangingPrimColors_%06X", parent->GetName().c_str(),
 		                          Seg2Filespace(primColorListAddress, 0)),
 			primColorList.size(), primColorBodyStr);
 	}
@@ -270,7 +270,7 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 		parent->AddDeclarationArray(
 			Seg2Filespace(envColorListAddress, 0), DeclarationAlignment::None,
 			envColorList.size() * 4, "F3DEnvColor",
-			StringHelper::Sprintf("%s_TexColorChangingEnvColors_%06X", parent->GetName().c_str(),
+			StringHelper::Sprintf("%sTexColorChangingEnvColors_%06X", parent->GetName().c_str(),
 		                          Seg2Filespace(envColorListAddress, 0)),
 			envColorList.size(), envColorBodyStr);
 	}
@@ -288,7 +288,7 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(Seg2Filespace(frameDataListAddress, 0),
 		                            DeclarationAlignment::None, frameDataList.size() * 2, "u16",
-		                            StringHelper::Sprintf("%s_TexColorChangingFrameData_%06X",
+		                            StringHelper::Sprintf("%sTexColorChangingFrameData_%06X",
 		                                                  parent->GetName().c_str(),
 		                                                  Seg2Filespace(frameDataListAddress, 0)),
 		                            frameDataList.size(), frameDataBodyStr);
@@ -297,7 +297,7 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 
 std::string TextureColorChangingParams::GetBodySourceCode() const
 {
-	printf("TextureColorChangingParams::GetBodySourceCode\n");
+	// printf("TextureColorChangingParams::GetBodySourceCode\n");
 
 	std::string bodyStr =
 		StringHelper::Sprintf("\n    %d, %d, %s, %s, %s,\n", count1, count2,
@@ -305,7 +305,7 @@ std::string TextureColorChangingParams::GetBodySourceCode() const
 	                          parent->GetDeclarationPtrName(envColorListAddress).c_str(),
 	                          parent->GetDeclarationPtrName(frameDataListAddress).c_str());
 
-	printf("bodyStr = %s", bodyStr.c_str());
+	// printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -331,13 +331,13 @@ void TextureCyclingParams::ParseRawData()
 	uint8_t currentIndex;
 	uint8_t maxIndex = 0;
 
-	printf("cycleLength: %d\n", cycleLength);
+	// printf("cycleLength: %d\n", cycleLength);
 
 	for (; currentPtr < textureIndexListOffset + cycleLength; currentPtr++)
 	{
 		currentIndex = BitConverter::ToUInt8BE(rawData, currentPtr);
-		printf("currentPtr: 0x%X\n", currentPtr);
-		printf("currentIndex: %d\n", currentIndex);
+		// printf("currentPtr: 0x%X\n", currentPtr);
+		// printf("currentIndex: %d\n", currentIndex);
 		textureIndexList.push_back(currentIndex);
 		if (currentIndex > maxIndex)
 			maxIndex = currentIndex;
@@ -359,19 +359,19 @@ void TextureCyclingParams::ExtractFromBinary(uint32_t nRawDataIndex)
 
 std::string TextureCyclingParams::GetSourceTypeName() const
 {
-	printf("TextureCyclingParams::GetSourceTypeName\n");
+	// printf("TextureCyclingParams::GetSourceTypeName\n");
 	return "AnimatedMatTexCycleParams";  // TODO: Better name
 }
 
 std::string TextureCyclingParams::GetDefaultName(const std::string& prefix, uint32_t address) const
 {
-	printf("TextureCyclingParams::GetDefaultName\n");
+	// printf("TextureCyclingParams::GetDefaultName\n");
 	return StringHelper::Sprintf("%sTexCycleParams_%06X", prefix.c_str(), address);
 }
 
 size_t TextureCyclingParams::GetRawDataSize() const
 {
-	printf("TextureCyclingParams::GetRawDataSize\n");
+	// printf("TextureCyclingParams::GetRawDataSize\n");
 	return 0xC;
 }
 
@@ -381,60 +381,71 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 
 	if (textureListAddress != 0)  // NULL
 	{
-		std::string texturesbodyStr = "";
+		std::string texturesBodyStr = "";
+		std::string texName;
+		std::string comment = "";
 
 		for (auto tex : textureList)
 		{
-			texturesbodyStr +=
-				StringHelper::Sprintf("    %s,\n", parent->GetDeclarationPtrName(tex).c_str());
+			texName = parent->GetDeclarationPtrName(tex);
+
+			// texName is a raw segmented pointer. This occurs if the texture is not declared
+			// separately since we cannot read the format. In theory we could scan DLists for the
+			// format on the appropriate segments.
+			if (texName.length() == 10 && texName.substr(0, 2) == "0x")
+			{
+				comment = " // Raw pointer, declare texture to use proper symbol";
+				fprintf(stderr,
+				        "warning: TexCycle at 0x%08X points to unknown texture at address %s. "
+				        "Please declare it in the XML to use the proper symbol.\n",
+				        textureListAddress, texName.c_str());
+			}
+			texturesBodyStr += StringHelper::Sprintf("    %s,%s\n", texName.c_str(), comment.c_str());
 		}
 
-		texturesbodyStr.pop_back();
+		texturesBodyStr.pop_back();
 
 		printf("Declaring texture pointer array\n");
 
-		// N.B. currently need these textures to be declared separately to get the proper pointers
-		// (will print segmented addresses without). Can we search the segments in DLists to find
-		// the formats and declare the textures automatically?
 		parent->AddDeclarationArray(
 			Seg2Filespace(textureListAddress, 0), DeclarationAlignment::Align4,
 			textureList.size() * 4, "TexturePtr",
-			StringHelper::Sprintf("%s_TexCycleTexPtrs_%06X", parent->GetName().c_str(),
+			StringHelper::Sprintf("%sTexCycleTexPtrs_%06X", parent->GetName().c_str(),
 		                          Seg2Filespace(textureListAddress, 0)),
-			textureList.size(), texturesbodyStr);
+			textureList.size(), texturesBodyStr);
 	}
 
 	if (textureIndexListAddress != 0)  // NULL
 	{
-		std::string indicesbodyStr = "    ";
+		std::string indicesBodyStr = "    ";
 
 		for (uint8_t index : textureIndexList)
 		{
-			indicesbodyStr += StringHelper::Sprintf("%d, ", index);
+			indicesBodyStr += StringHelper::Sprintf("%d, ", index);
 		}
 
-		indicesbodyStr.pop_back();
+		indicesBodyStr.pop_back();
 
-		printf("Declaring texture index array\n");
+		// printf("Declaring texture index array\n");
 		parent->AddDeclarationArray(
 			Seg2Filespace(textureIndexListAddress, 0), DeclarationAlignment::None,
 			textureIndexList.size(), "u8",
-			StringHelper::Sprintf("%s_TexCycleTexIndices_%06X", parent->GetName().c_str(),
+			StringHelper::Sprintf("%sTexCycleTexIndices_%06X", parent->GetName().c_str(),
 		                          Seg2Filespace(textureIndexListAddress, 0)),
-			textureIndexList.size(), indicesbodyStr);
+			textureIndexList.size(), indicesBodyStr);
 	}
 }
 
 std::string TextureCyclingParams::GetBodySourceCode() const
 {
-	printf("TextureCyclingParams::GetBodySourceCode\n");
+	// printf("TextureCyclingParams::GetBodySourceCode\n");
 
 	std::string bodyStr =
 		StringHelper::Sprintf("\n    %d, %s, %s,\n", cycleLength,
 	                          parent->GetDeclarationPtrName(textureListAddress).c_str(),
 	                          parent->GetDeclarationPtrName(textureIndexListAddress).c_str());
 
-	printf("bodyStr = %s", bodyStr.c_str());
+	// printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -445,8 +456,8 @@ std::string TextureCyclingParams::GetBodySourceCode() const
  */
 ZTextureAnimation::ZTextureAnimation(ZFile* nParent) : ZResource(nParent)
 {
-	printf("Stupid ZTextureAnimation constructor\n");
-	printf("%s\n", __PRETTY_FUNCTION__);
+	// printf("Stupid ZTextureAnimation constructor\n");
+	// printf("%s\n", __PRETTY_FUNCTION__);
 }
 
 /**
@@ -460,8 +471,8 @@ void ZTextureAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nR
 
 void ZTextureAnimation::ParseRawData()
 {
-	printf("ZTextureAnimation::ParseRawData\n");
-	printf("%s\n", __PRETTY_FUNCTION__);
+	// printf("ZTextureAnimation::ParseRawData\n");
+	// printf("%s\n", __PRETTY_FUNCTION__);
 	ZResource::ParseRawData();
 
 	TextureAnimationEntry currentEntry;
@@ -470,7 +481,7 @@ void ZTextureAnimation::ParseRawData()
 
 	for (uint32_t currentPtr = rawDataIndex;; currentPtr += 8)
 	{
-		printf("Parsing TextureAnimationEntry raw data\n");
+		// printf("Parsing TextureAnimationEntry raw data\n");
 		type = BitConverter::ToInt16BE(rawData, currentPtr + 2);
 
 		currentEntry.segment = BitConverter::ToInt8BE(rawData, currentPtr);
@@ -480,8 +491,11 @@ void ZTextureAnimation::ParseRawData()
 
 		if ((type < 0) || (type > 6))
 		{
-			throw std::runtime_error(StringHelper::Sprintf("error: unknown TextureAnimationParams type 0x%02X in TextureAnimation starting at offset 0x%06X: entry reads\n\t{ 0x%02X, 0x%02X, 0x%08X }\n(type should be between 0x00 and 0x06)\n", type, rawDataIndex, currentEntry.segment, type,
-			       currentEntry.paramsPtr));
+			throw std::runtime_error(StringHelper::Sprintf(
+				"error: unknown TextureAnimationParams type 0x%02X in TextureAnimation starting at "
+				"offset 0x%06X: entry reads\n\t{ 0x%02X, 0x%02X, 0x%08X }\n(type should be between "
+				"0x00 and 0x06)\n",
+				type, rawDataIndex, currentEntry.segment, type, currentEntry.paramsPtr));
 		}
 
 		if (currentEntry.segment <= 0)
@@ -491,8 +505,8 @@ void ZTextureAnimation::ParseRawData()
 
 void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 {
-	printf("ZTextureAnimation::DeclareReferences\n");
-	printf("%s\n", __PRETTY_FUNCTION__);
+	// printf("ZTextureAnimation::DeclareReferences\n");
+	// printf("%s\n", __PRETTY_FUNCTION__);
 
 	std::string varPrefix = name;
 	if (varPrefix == "")
@@ -514,7 +528,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				case TextureAnimationParamsType::SingleScroll:
 					count = 1;
 				case TextureAnimationParamsType::DualScroll:
-					printf("Declaring references to texture scrolling\n");
+					// printf("Declaring references to texture scrolling\n");
 
 					params = new TextureScrollingParams(parent);
 					params->ExtractFromBinary(paramsOffset, count);
@@ -523,20 +537,21 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				case TextureAnimationParamsType::ColorChange:
 				case TextureAnimationParamsType::ColorChangeLERP:
 				case TextureAnimationParamsType::ColorChangeLagrange:
-					printf("Declaring references to texture color changing\n");
+					// printf("Declaring references to texture color changing\n");
 					params = new TextureColorChangingParams(parent);
 					params->type = entry.type;
 					params->ExtractFromBinary(paramsOffset);
 					break;
 
 				case TextureAnimationParamsType::TextureCycle:
-					printf("Declaring references to texture cycling\n");
+					// printf("Declaring references to texture cycling\n");
 					params = new TextureCyclingParams(parent);
 					params->ExtractFromBinary(paramsOffset);
 					break;
 
 				case TextureAnimationParamsType::Empty:
-					fprintf(stderr, "warning: entry has empty type (6), but params pointer is not NULL");
+					fprintf(stderr,
+					        "warning: entry has empty type (6), but params pointer is not NULL");
 					return;
 				}
 
@@ -554,7 +569,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
  */
 std::string ZTextureAnimation::GetSourceTypeName() const
 {
-	printf("ZTextureAnimation::GetSourceTypeName\n");
+	// printf("ZTextureAnimation::GetSourceTypeName\n");
 	return "AnimatedMaterial";  // TODO: Better name
 }
 
@@ -563,7 +578,7 @@ std::string ZTextureAnimation::GetSourceTypeName() const
  */
 ZResourceType ZTextureAnimation::GetResourceType() const
 {
-	printf("ZTextureAnimation::GetResourceType\n");
+	// printf("ZTextureAnimation::GetResourceType\n");
 	return ZResourceType::TextureAnimation;
 }
 
@@ -572,7 +587,7 @@ ZResourceType ZTextureAnimation::GetResourceType() const
  */
 size_t ZTextureAnimation::GetRawDataSize() const
 {
-	printf("ZTextureAnimation::GetRawDataSize\n");
+	// printf("ZTextureAnimation::GetRawDataSize\n");
 	return entries.size() * 8;
 }
 
@@ -581,7 +596,7 @@ size_t ZTextureAnimation::GetRawDataSize() const
  */
 std::string ZTextureAnimation::GetDefaultName(const std::string& prefix, uint32_t address) const
 {
-	printf("ZTextureAnimation::GetDefaultName\n");
+	// printf("ZTextureAnimation::GetDefaultName\n");
 	return StringHelper::Sprintf("%sTexAnim_%06X", prefix.c_str(), address);
 }
 
@@ -590,7 +605,7 @@ std::string ZTextureAnimation::GetDefaultName(const std::string& prefix, uint32_
  */
 void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
-	printf("ZTextureAnimation::DeclareVar\n");
+	// printf("ZTextureAnimation::DeclareVar\n");
 	std::string auxName = name;
 
 	if (name == "")
@@ -605,7 +620,7 @@ void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string&
  */
 std::string ZTextureAnimation::GetBodySourceCode() const
 {
-	printf("ZTextureAnimation::GetBodySourceCode\n");
+	// printf("ZTextureAnimation::GetBodySourceCode\n");
 
 	std::string bodyStr = "";
 
@@ -617,7 +632,7 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 
 	bodyStr.pop_back();
 
-	printf("bodyStr = %s", bodyStr.c_str());
+	// printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -626,7 +641,7 @@ std::string ZTextureAnimation::GetBodySourceCode() const
  */
 std::string ZTextureAnimation::GetSourceOutputCode(const std::string& prefix)
 {
-	printf("ZTextureAnimation::GetSourceOutputCode\n");
+	// printf("ZTextureAnimation::GetSourceOutputCode\n");
 	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
