@@ -1,5 +1,5 @@
 #include "Unused09.h"
-#include "StringHelper.h"
+#include "Utils/StringHelper.h"
 
 Unused09::Unused09(ZFile* nParent) : ZRoomCommand(nParent)
 {
@@ -12,7 +12,7 @@ std::string Unused09::GetBodySourceCode() const
 
 std::string Unused09::GetCommandCName() const
 {
-	return "SCmdBase";
+	return "SceneCmd";
 }
 
 RoomCommand Unused09::GetRoomCommand() const

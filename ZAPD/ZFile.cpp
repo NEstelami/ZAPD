@@ -1,13 +1,14 @@
 #include "ZFile.h"
+#include <Utils/BinaryWriter.h>
+#include <Utils/MemoryStream.h>
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
-#include "Directory.h"
-#include "File.h"
+#include "Utils/Directory.h"
+#include "Utils/File.h"
 #include "Globals.h"
-#include "HighLevel/HLModelIntermediette.h"
 #include "OutputFormatter.h"
-#include "Path.h"
+#include "Utils/Path.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
 #include "ZBackground.h"
@@ -161,6 +162,15 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			offsetSet.insert(offsetXml);
 		}
+		else if (Globals::Instance->warnNoOffset)
+		{
+			fprintf(stderr, "Warning No offset specified for: %s", nameXml);
+		}
+		else if (Globals::Instance->errorNoOffset)
+		{
+			throw std::runtime_error(
+				StringHelper::Sprintf("Error no offset specified for %s", nameXml));
+		}
 		if (outNameXml != nullptr)
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
@@ -226,7 +236,7 @@ void ZFile::DeclareResourceSubReferences()
 void ZFile::BuildSourceFile()
 {
 	if (!Directory::Exists(Globals::Instance->outputPath))
-		Directory::CreateDirectory(Globals::Instance->outputPath);
+		Directory::CreateDirectory(Globals::Instance->outputPath.string());
 
 	GenerateSourceFiles(Globals::Instance->outputPath);
 }
@@ -260,7 +270,7 @@ const std::vector<uint8_t>& ZFile::GetRawData() const
 void ZFile::ExtractResources()
 {
 	if (!Directory::Exists(Globals::Instance->outputPath))
-		Directory::CreateDirectory(Globals::Instance->outputPath);
+		Directory::CreateDirectory(Globals::Instance->outputPath.string());
 
 	if (!Directory::Exists(GetSourceOutputFolderPath().string()))
 		Directory::CreateDirectory(GetSourceOutputFolderPath().string());
@@ -271,16 +281,39 @@ void ZFile::ExtractResources()
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles(Globals::Instance->outputPath);
 
+	MemoryStream* memStream = new MemoryStream();
+	BinaryWriter writer = BinaryWriter(memStream);
+
+	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
+
+	if (exporterSet != nullptr && exporterSet->beginFileFunc != nullptr)
+		exporterSet->beginFileFunc(this);
+
 	for (ZResource* res : resources)
 	{
 		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
-		res->Save(Globals::Instance->outputPath);
+		res->CalcHash();
+		res->Save(Globals::Instance->outputPath.string());
+
+		// Check if we have an exporter "registered" for this resource type
+		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
+
+		if (exporter != nullptr)
+			exporter->Save(res, Globals::Instance->outputPath.string(), &writer);
 	}
 
-	if (Globals::Instance->testMode)
-		GenerateHLIntermediette();
+	if (memStream->GetLength() > 0)
+	{
+		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin", Globals::Instance->outputPath.string().c_str(), GetName().c_str()),
+			memStream->ToVector());
+	}
+
+	writer.Close();
+
+	if (exporterSet != nullptr && exporterSet->endFileFunc != nullptr)
+		exporterSet->endFileFunc(this);
 }
 
 void ZFile::AddResource(ZResource* res)
@@ -544,6 +577,7 @@ uint32_t ZFile::GetDeclarationRangedAddress(uint32_t address) const
 
 bool ZFile::HasDeclaration(uint32_t address)
 {
+	assert(GETSEGNUM(address) == 0);
 	return declarations.find(address) != declarations.end();
 }
 
@@ -648,22 +682,6 @@ void ZFile::GenerateSourceHeaderFiles()
 		printf("Writing H file: %s\n", headerFilename.c_str());
 
 	File::WriteAllText(headerFilename, formatter.GetOutput());
-}
-
-void ZFile::GenerateHLIntermediette()
-{
-	// This is kinda hacky but it gets the job done for now...
-	HLModelIntermediette* mdl = new HLModelIntermediette();
-
-	for (ZResource* res : resources)
-	{
-		if (res->GetResourceType() == ZResourceType::DisplayList ||
-		    res->GetResourceType() == ZResourceType::Skeleton)
-			res->GenerateHLIntermediette(*mdl);
-	}
-
-	// std::string test = mdl->ToOBJFile();
-	// std::string test2 = mdl->ToAssimpFile();
 }
 
 std::string ZFile::GetHeaderInclude()
@@ -908,8 +926,22 @@ std::string ZFile::ProcessDeclarations()
 					nonZeroUnaccounted = true;
 				}
 
-				if ((i % 16 == 15) && (i != (diff - 1)))
-					src += "\n    ";
+				if (Globals::Instance->verboseUnaccounted)
+				{
+					if ((i % 4 == 3))
+					{
+						src += StringHelper::Sprintf(" // 0x%06X", unaccountedAddress + i - 3);
+						if (i != (diff - 1))
+						{
+							src += "\n\t";
+						}
+					}
+				}
+				else
+				{
+					if ((i % 16 == 15) && (i != (diff - 1)))
+						src += "\n    ";
+				}
 			}
 
 			if (declarations.find(unaccountedAddress) == declarations.end())
@@ -1005,9 +1037,7 @@ std::string ZFile::ProcessDeclarations()
 	for (std::pair<uint32_t, Declaration*> item : declarations)
 	{
 		if (item.first < rangeStart || item.first >= rangeEnd)
-		{
 			continue;
-		}
 
 		if (item.second->includePath != "")
 		{

@@ -1,7 +1,7 @@
 #include "ZRoomCommand.h"
 
-#include "BitConverter.h"
-#include "StringHelper.h"
+#include "Utils/BitConverter.h"
+#include "Utils/StringHelper.h"
 #include "ZRoom.h"
 
 ZRoomCommand::ZRoomCommand(ZFile* nParent) : ZResource(nParent)
@@ -37,7 +37,7 @@ void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
 
 std::string ZRoomCommand::GetCommandCName() const
 {
-	return "SCmdBase";
+	return "SceneCmd";
 }
 
 ZResourceType ZRoomCommand::GetResourceType() const

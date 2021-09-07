@@ -1,10 +1,10 @@
 #include "ZRoom.h"
-#include <Path.h>
+#include <Utils/Path.h>
 #include <algorithm>
 #include <chrono>
-#include "../File.h"
+#include <Utils/File.h>
+#include <Utils/StringHelper.h>
 #include "../Globals.h"
-#include "../StringHelper.h"
 #include "../ZBlob.h"
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
@@ -344,7 +344,7 @@ void ZRoom::ProcessCommandSets()
 
 			parent->AddDeclarationArray(
 				GETSEGOFFSET(commandSet), DeclarationAlignment::Align16, 8 * setCommands.size(),
-				"SCmdBase",
+				"SceneCmd",
 				StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),
 				setCommands.size(), declaration);
 
