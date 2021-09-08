@@ -20,7 +20,7 @@ void SetAnimatedMaterialList::ParseRawData()
 
 void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)
 {
-	textureAnimation.SetName(textureAnimation.GetDefaultName(prefix.c_str(), segmentOffset));
+	textureAnimation.SetName(textureAnimation.GetDefaultName(prefix.c_str()));
 	textureAnimation.DeclareReferences(prefix);
 	textureAnimation.GetSourceOutputCode(prefix);
 }

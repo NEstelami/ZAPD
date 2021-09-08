@@ -22,12 +22,12 @@ struct ZTextureAnimationParams : public ZResource
 {
 	ZTextureAnimationParams(ZFile* parent);
 
-	virtual void ExtractFromBinary(uint32_t paramsOffset);
-	virtual void ExtractFromBinary(uint32_t paramsOffset, int count);
+	void ExtractFromBinary(uint32_t nRawDataIndex);
+	virtual void ExtractFromBinary(uint32_t nRawDataIndex, int count);
 
 	std::string GetSourceOutputCode(const std::string& prefix);
 
-	virtual std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
+	virtual std::string GetDefaultName(const std::string& prefix) const;
 	virtual void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	ZResourceType GetResourceType() const;
 
@@ -50,14 +50,14 @@ struct TextureScrollingParams : public ZTextureAnimationParams
 	void ExtractFromBinary(uint32_t nRawDataIndex, int count) override;
 
 	std::string GetSourceTypeName() const override;
-	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
+	std::string GetDefaultName(const std::string& prefix) const override;
 	size_t GetRawDataSize() const override;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const override;
 	std::string GetBodySourceCode() const override;
 
-	int count;  // 1 for Single, 2 for Dual
-	TextureScrollingParamsEntry rows[2];
+	int count;                            // 1 for Single, 2 for Dual
+	TextureScrollingParamsEntry rows[2];  // Too small to make a vector worth it
 };
 
 struct F3DPrimColor
@@ -82,18 +82,17 @@ struct TextureColorChangingParams : public ZTextureAnimationParams
 	TextureColorChangingParams(ZFile* parent);
 
 	void ParseRawData() override;
-	void ExtractFromBinary(uint32_t nRawDataIndex) override;
 
 	std::string GetSourceTypeName() const override;
-	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
+	std::string GetDefaultName(const std::string& prefix) const override;
 	size_t GetRawDataSize() const override;
 
 	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const override;
 
-	uint16_t count1;
-	uint16_t count2;
+	uint16_t animLength; // size of list for type 2
+	uint16_t colorListCount;
 	segptr_t primColorListAddress;
 	segptr_t envColorListAddress;
 	segptr_t frameDataListAddress;
@@ -107,10 +106,9 @@ struct TextureCyclingParams : public ZTextureAnimationParams
 	TextureCyclingParams(ZFile* parent);
 
 	void ParseRawData() override;
-	void ExtractFromBinary(uint32_t nRawDataIndex) override;
 
 	std::string GetSourceTypeName() const override;
-	std::string GetDefaultName(const std::string& prefix, uint32_t address) const override;
+	std::string GetDefaultName(const std::string& prefix) const override;
 	size_t GetRawDataSize() const override;
 
 	void DeclareReferences(const std::string& prefix) override;
@@ -144,7 +142,7 @@ public:
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
 	size_t GetRawDataSize() const override;
-	std::string GetDefaultName(const std::string& prefix, uint32_t address) const;
+	std::string GetDefaultName(const std::string& prefix) const;
 
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const;
 	std::string GetBodySourceCode() const override;

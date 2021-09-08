@@ -1,3 +1,72 @@
+/**
+ * File: ZTextureAnimation.cpp
+ * ZResources defined: ZTextureAnimation, ZTextureAnimationParams (XML declaration not supported for
+ * the latter) Purpose: extracting texture animating structures from asset files Note: data type is
+ * exclusive to Majora's Mask
+ *
+ * Structure of data:
+ * A texture animation consists of a main array of data of the form
+ *     `SS 00 00 0T PPPPPPPP`,
+ * where `S` is the segment that the functionality is sent to (and read by DLists), `T` is the
+ * "type" (see below), and `P` is a pointer to the type's subsidiary information, which is
+ * invariably just above this main array. Details of this subsidiary data are given below.
+ *
+ * Segment
+ * ===
+ * The segment starts at 1 and is incremented in each entry; the final one is negated, which is used
+ * as the indication to stop reading. The actual segment the game will use to draw is S + 7.
+ *
+ * Types
+ * ===
+ * There are 7 values that `T` can take:
+ *     `0`: A single texture scroll (Implemented by Gfx_TexScroll): subsidiary params are given as
+ * an array with one entry, a struct `XX YY WW HH` containing xStep, yStep, width, height (all u8).
+ *     `1`: A dual texture scroll (Implementated by Gfx_TwoTexScroll): same as type `0`, but with
+ * two entries in the params array.
+ *     `2`: Color changing: Changes the primColor (with a LOD factor) and envColor
+ * `KKKK LLLL PPPPPPPP QQQQQQQQ RRRRRRRR`
+ *         - `K` (u16) is the total length of the animation (and in this case, the total number of
+ * colors)
+ *         - `L` (u16) is seemingly always 0 for this type, and not used in the code
+ *         - `P` segmented pointer to array of augmented primColors
+ *         - `Q` segmented pointer to array of envColors, and can be NULL
+ *         - `R` segmented pointer to array of frameData (u8), which is also seemingly always NULL
+ * for this type
+ * envColors take the form `RR GG BB AA` as usual, while primColors have an extra LODFrac
+ * element: RR GG BB AA LL
+ *     `3`: Color changing (LERP): similar to type `2`, but uses linear interpolation. The structure
+ * is similar to `2`, but
+ *         - `K` is now just the animation length, while
+ *         - `L` is the total number of colors, and
+ *         - the frameData is used to determine which colors to interpolate.
+ *     `4`: Color changing (Lagrange interpolation): For extraction purposes identical to type 3.
+ * Uses a nonlinear interpolation formula to change the colours more smoothly.
+ *     `5`: Texture cycle: functions like a gif. Subsidiary params:
+ * `FFFF 0000 PPPPPPPP QQQQQQQQ`
+ * where
+ *         - `F` (u16) time between changes in frames
+ *         - `P` pointer to array of segmented pointers to textures to cycle through
+ *         - `Q` array of indices, indicating which texture to use next when a change frame is
+ * reached. The maximum indicates the number of textures in the texture array.
+ *     `6`: This is used to
+ * indicate an empty/unimplemented params set. It is ignored by the game's function provided that
+the
+ * segment is 0. A generic empty one takes the form
+ * `00 00 00 06 00000000`,
+ * and has no extra data.
+ *
+ * Implementation
+ * ===
+ * - ZTextureAnimation requires a declaration in the XML to extract anything. It handles the main
+ * array. It uses a POD struct for each entry, and declares references to the params structs.
+ *
+ * - ZTextureAnimationParams is not (currently) declarable in an XML. It is a parent class for the
+ * three classes that handle the various cases:
+ *     - TextureScrollingParams for types `0` and `1`
+ *     - TextureColorChangingParams for types `2`,`3`,`4`
+ *     - TextureCyclingParams for type `5`
+ * Each of these will declare all its subsidiary arrays, using POD structs.
+ */
 #include "ZTextureAnimation.h"
 #include <memory>
 #include <vector>
@@ -26,18 +95,25 @@ TextureCyclingParams::TextureCyclingParams(ZFile* parent)
 {
 }
 
-void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset)
+/* TextureAnimationParams */
+/* This class only implements the functions common to all or most its inheritors */
+
+void ZTextureAnimationParams::ExtractFromBinary(uint32_t nRawDataIndex)
 {
+	rawDataIndex = nRawDataIndex;
+
+	ParseRawData();
 }
-void ZTextureAnimationParams::ExtractFromBinary(uint32_t paramsOffset, int count)
-{
-}
-std::string ZTextureAnimationParams::GetDefaultName(const std::string& prefix,
-                                                    uint32_t address) const
+
+// Implemented by TextureScrollingParams only
+void ZTextureAnimationParams::ExtractFromBinary(uint32_t nRawDataIndex, int count)
 {
 }
 
-/* TextureAnimationParams */
+std::string ZTextureAnimationParams::GetDefaultName(const std::string& prefix) const
+{
+	return "ShouldNotBeVIsible";
+}
 
 void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
                                          const std::string& bodyStr) const
@@ -45,7 +121,7 @@ void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
 	std::string auxName = name;
 
 	if (name == "")
-		auxName = GetDefaultName(prefix, rawDataIndex);
+		auxName = GetDefaultName(prefix);
 
 	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                       GetSourceTypeName(), auxName, bodyStr);
@@ -53,7 +129,6 @@ void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
 
 std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& prefix)
 {
-	// printf("TextureAnimationParams::GetSourceOutputCode\n");
 	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
@@ -96,30 +171,28 @@ void TextureScrollingParams::ExtractFromBinary(uint32_t nRawDataIndex, int nCoun
 
 std::string TextureScrollingParams::GetSourceTypeName() const
 {
-	// printf("TextureScrollingParams::GetSourceTypeName\n");
 	return "AnimatedMatTexScrollParams";  // TODO: Better name
 }
 
-std::string TextureScrollingParams::GetDefaultName(const std::string& prefix,
-                                                   uint32_t address) const
+std::string TextureScrollingParams::GetDefaultName(const std::string& prefix) const
 {
-	// printf("TextureScrollingParams::GetDefaultName");
-	return StringHelper::Sprintf("%sTexScrollParams_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%sTexScrollParams_%06X", prefix.c_str(), rawDataIndex);
 }
 
 size_t TextureScrollingParams::GetRawDataSize() const
 {
-	// printf("TextureScrollingParams::GetRawDataSize");
 	return 4 * count;
 }
 
+/**
+ * Overrides the parent version to declare an array of the params rather than just one entry.
+ */
 void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
-	// printf("TextureScrollingParams::DeclareVar");
 	std::string auxName = name;
 
 	if (name == "")
-		auxName = GetDefaultName(prefix, rawDataIndex);
+		auxName = GetDefaultName(prefix);
 
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, count, bodyStr);
@@ -127,8 +200,6 @@ void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::st
 
 std::string TextureScrollingParams::GetBodySourceCode() const
 {
-	// printf("TextureScrollingParams::GetBodySourceCode\n");
-
 	std::string bodyStr = "";
 
 	for (int i = 0; i < count; i++)
@@ -139,23 +210,39 @@ std::string TextureScrollingParams::GetBodySourceCode() const
 
 	bodyStr.pop_back();
 
-	// printf("bodyStr = %s", bodyStr.c_str());
+	// printf("bodyStr = %s\n", bodyStr.c_str());
 	return bodyStr;
 }
 
 /* TextureColorChangingParams */
 
+/**
+ * Also parses the color and frameData arrays
+ */
 void TextureColorChangingParams::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 
-	count1 = BitConverter::ToUInt16BE(rawData, rawDataIndex);
-	count2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
-	uint16_t listLength = ((type == TextureAnimationParamsType::ColorChange) ? count1 : count2);
+	animLength = BitConverter::ToUInt16BE(rawData, rawDataIndex);
+	colorListCount = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+
+	// Handle type 2 separately
+	uint16_t listLength =
+		((type == TextureAnimationParamsType::ColorChange) ? animLength : colorListCount);
 
 	if (listLength == 0)
-		throw std::runtime_error(
-			"TextureColorChangingParams::ParseRawData: error: color list length cannot be 0");
+		throw std::runtime_error(StringHelper::Sprintf(
+			"\033[97m"
+			"When processing XML file %s: in input binary file %s: offset 0x%06X:"
+			"\033[0m"
+			"\n\t"
+			"TextureColorChangingParams::ParseRawData: "
+			"\033[91m"
+			"error:"
+			"\033[0m"
+			"color list length cannot be 0\n",
+			Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+			Seg2Filespace(rawDataIndex, 0)));
 
 	primColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	envColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
@@ -204,37 +291,23 @@ void TextureColorChangingParams::ParseRawData()
 	}
 }
 
-// TODO: Consider putting this in the parent class, since it's not doing anything specific here
-void TextureColorChangingParams::ExtractFromBinary(uint32_t nRawDataIndex)
-{
-	rawDataIndex = nRawDataIndex;
-
-	ParseRawData();
-}
-
 std::string TextureColorChangingParams::GetSourceTypeName() const
 {
-	// printf("TextureColorChangingParams::GetSourceTypeName\n");
 	return "AnimatedMatColorParams";  // TODO: Better name
 }
 
-std::string TextureColorChangingParams::GetDefaultName(const std::string& prefix,
-                                                       uint32_t address) const
+std::string TextureColorChangingParams::GetDefaultName(const std::string& prefix) const
 {
-	// printf("TextureColorChangingParams::GetDefaultName\n");
-	return StringHelper::Sprintf("%sColorParams_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%sColorParams_%06X", prefix.c_str(), rawDataIndex);
 }
 
 size_t TextureColorChangingParams::GetRawDataSize() const
 {
-	// printf("TextureColorChangingParams::GetRawDataSize\n");
 	return 0x10;
 }
 
 void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 {
-	// printf("TextureColorChangingParams::DeclareReferences\n");
-
 	if (primColorListAddress != 0)  // NULL
 	{
 		std::string primColorBodyStr = "";
@@ -297,15 +370,13 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 
 std::string TextureColorChangingParams::GetBodySourceCode() const
 {
-	// printf("TextureColorChangingParams::GetBodySourceCode\n");
-
 	std::string bodyStr =
-		StringHelper::Sprintf("\n    %d, %d, %s, %s, %s,\n", count1, count2,
+		StringHelper::Sprintf("\n    %d, %d, %s, %s, %s,\n", animLength, colorListCount,
 	                          parent->GetDeclarationPtrName(primColorListAddress).c_str(),
 	                          parent->GetDeclarationPtrName(envColorListAddress).c_str(),
 	                          parent->GetDeclarationPtrName(frameDataListAddress).c_str());
 
-	// printf("bodyStr = %s", bodyStr.c_str());
+	// printf("bodyStr = %s\n", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -317,8 +388,19 @@ void TextureCyclingParams::ParseRawData()
 
 	cycleLength = BitConverter::ToUInt16BE(rawData, rawDataIndex);
 	if (cycleLength == 0)
-		throw std::runtime_error(
-			"TextureCyclingParams::ParseRawData: error: cycleLength cannot be 0");
+		throw std::runtime_error(StringHelper::Sprintf(
+			"\033[97m"
+			"When processing XML file %s: in input binary file %s: offset 0x%06X:"
+			"\033[0m"
+			"\n\t"
+			"TextureCyclingParams::ParseRawData: "
+			"\033[91m"
+			"error:"
+			"\033[0m"
+			" "
+			"cycleLength cannot be 0\n",
+			Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+			Seg2Filespace(rawDataIndex, 0)));
 
 	textureListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	textureIndexListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
@@ -329,7 +411,7 @@ void TextureCyclingParams::ParseRawData()
 	uint32_t currentPtr = textureIndexListOffset;
 
 	uint8_t currentIndex;
-	uint8_t maxIndex = 0;
+	uint8_t maxIndex = 0;  // To find the length of the texture list
 
 	// printf("cycleLength: %d\n", cycleLength);
 
@@ -350,35 +432,23 @@ void TextureCyclingParams::ParseRawData()
 	}
 }
 
-void TextureCyclingParams::ExtractFromBinary(uint32_t nRawDataIndex)
-{
-	rawDataIndex = nRawDataIndex;
-
-	ParseRawData();
-}
-
 std::string TextureCyclingParams::GetSourceTypeName() const
 {
-	// printf("TextureCyclingParams::GetSourceTypeName\n");
 	return "AnimatedMatTexCycleParams";  // TODO: Better name
 }
 
-std::string TextureCyclingParams::GetDefaultName(const std::string& prefix, uint32_t address) const
+std::string TextureCyclingParams::GetDefaultName(const std::string& prefix) const
 {
-	// printf("TextureCyclingParams::GetDefaultName\n");
-	return StringHelper::Sprintf("%sTexCycleParams_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%sTexCycleParams_%06X", prefix.c_str(), rawDataIndex);
 }
 
 size_t TextureCyclingParams::GetRawDataSize() const
 {
-	// printf("TextureCyclingParams::GetRawDataSize\n");
 	return 0xC;
 }
 
 void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 {
-	printf("TextureCyclingParams::DeclareReferences\n");
-
 	if (textureListAddress != 0)  // NULL
 	{
 		std::string texturesBodyStr = "";
@@ -395,17 +465,29 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 			if (texName.length() == 10 && texName.substr(0, 2) == "0x")
 			{
 				comment = " // Raw pointer, declare texture to use proper symbol";
+
 				fprintf(stderr,
-				        "warning: TexCycle at 0x%08X points to unknown texture at address %s. "
-				        "Please declare it in the XML to use the proper symbol.\n",
-				        textureListAddress, texName.c_str());
+				        "\033[97m"
+				        "When processing XML file %s: in input binary file %s: offset 0x%06X:"
+				        "\033[0m"
+				        "\n\t"
+				        "TextureCyclingParams::DeclareReferences: "
+				        "\033[95m"
+				        "warning:"
+				        "\033[0m"
+				        " "
+				        "TexCycle declared here points to unknown texture at address %s. "
+				        "Please declare the texture in the XML to use the proper symbol.\n",
+				        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+				        Seg2Filespace(textureListAddress, 0), texName.c_str());
 			}
-			texturesBodyStr += StringHelper::Sprintf("    %s,%s\n", texName.c_str(), comment.c_str());
+			texturesBodyStr +=
+				StringHelper::Sprintf("    %s,%s\n", texName.c_str(), comment.c_str());
 		}
 
 		texturesBodyStr.pop_back();
 
-		printf("Declaring texture pointer array\n");
+		// printf("Declaring texture pointer array\n");
 
 		parent->AddDeclarationArray(
 			Seg2Filespace(textureListAddress, 0), DeclarationAlignment::Align4,
@@ -438,41 +520,32 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 
 std::string TextureCyclingParams::GetBodySourceCode() const
 {
-	// printf("TextureCyclingParams::GetBodySourceCode\n");
-
 	std::string bodyStr =
 		StringHelper::Sprintf("\n    %d, %s, %s,\n", cycleLength,
 	                          parent->GetDeclarationPtrName(textureListAddress).c_str(),
 	                          parent->GetDeclarationPtrName(textureIndexListAddress).c_str());
 
-	// printf("bodyStr = %s", bodyStr.c_str());
+	// printf("bodyStr = %s\n", bodyStr.c_str());
 	return bodyStr;
 }
 
 /* ZTextureAnimation */
 
-/**
- * ZTextureAnimation constructor, probably doesn't need to do anything extra
- */
 ZTextureAnimation::ZTextureAnimation(ZFile* nParent) : ZResource(nParent)
 {
-	// printf("Stupid ZTextureAnimation constructor\n");
-	// printf("%s\n", __PRETTY_FUNCTION__);
 }
 
-/**
- * ??? and creates a placeholder for the actual declaration to slot into later
- */
 void ZTextureAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 	DeclareVar("", "");
 }
 
+/**
+ * Builds the array of params
+ */
 void ZTextureAnimation::ParseRawData()
 {
-	// printf("ZTextureAnimation::ParseRawData\n");
-	// printf("%s\n", __PRETTY_FUNCTION__);
 	ZResource::ParseRawData();
 
 	TextureAnimationEntry currentEntry;
@@ -492,10 +565,21 @@ void ZTextureAnimation::ParseRawData()
 		if ((type < 0) || (type > 6))
 		{
 			throw std::runtime_error(StringHelper::Sprintf(
-				"error: unknown TextureAnimationParams type 0x%02X in TextureAnimation starting at "
-				"offset 0x%06X: entry reads\n\t{ 0x%02X, 0x%02X, 0x%08X }\n(type should be between "
+				"\033[97m"
+				"When processing XML file %s: in input binary file %s: offset 0x%06X:"
+				"\033[0m"
+				"\n\t"
+				"ZTextureAnimation::ParseRawData: "
+				"\033[91m"
+				"error:"
+				"\033[0m"
+				" "
+				"unknown TextureAnimationParams type 0x%02X in TextureAnimation: entry reads\n\t{ "
+				"0x%02X, 0x%02X, 0x%08X }\n(type should be between "
 				"0x00 and 0x06)\n",
-				type, rawDataIndex, currentEntry.segment, type, currentEntry.paramsPtr));
+				Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+				Seg2Filespace(rawDataIndex, 0), type, currentEntry.segment, type,
+				currentEntry.paramsPtr));
 		}
 
 		if (currentEntry.segment <= 0)
@@ -503,11 +587,11 @@ void ZTextureAnimation::ParseRawData()
 	}
 }
 
+/**
+ * For each params entry,
+ */
 void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 {
-	// printf("ZTextureAnimation::DeclareReferences\n");
-	// printf("%s\n", __PRETTY_FUNCTION__);
-
 	std::string varPrefix = name;
 	if (varPrefix == "")
 		varPrefix = prefix;
@@ -551,77 +635,68 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 
 				case TextureAnimationParamsType::Empty:
 					fprintf(stderr,
-					        "warning: entry has empty type (6), but params pointer is not NULL");
+					        "\033[97m"
+					        "When processing XML file %s: in input binary file %s: offset 0x%06X:"
+					        "\033[0m"
+					        "\n\t"
+					        "ZTextureAnimation::DeclareReferences: "
+					        "\033[95m"
+					        "warning:"
+					        "\033[0m"
+					        " "
+					        "TextureAnimationParams entry has empty type (6), but params pointer "
+					        "is not NULL. Params read\n\t\t"
+					        "{ 0x%02X, 0x%02X, 0x%08X }\n",
+					        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+					        Seg2Filespace(rawDataIndex, 0), entry.segment, entry.type,
+					        entry.paramsPtr);
 					return;
 				}
 
-				params->SetName(params->GetDefaultName(varPrefix, paramsOffset));
+				params->SetName(params->GetDefaultName(varPrefix));
 				params->DeclareVar(varPrefix, "");
-				params->DeclareReferences(varPrefix);
 				parent->AddResource(params);
 			}
 		}
 	}
 }
 
-/**
- * The type of the resource as a C struct
- */
 std::string ZTextureAnimation::GetSourceTypeName() const
 {
-	// printf("ZTextureAnimation::GetSourceTypeName\n");
 	return "AnimatedMaterial";  // TODO: Better name
 }
 
-/**
- * The type in the ZResource enum
- */
 ZResourceType ZTextureAnimation::GetResourceType() const
 {
-	// printf("ZTextureAnimation::GetResourceType\n");
 	return ZResourceType::TextureAnimation;
 }
 
 /**
- * The size of the whole data structure we're extracting? Or is it just the main array?
+ * The size of the main array
  */
 size_t ZTextureAnimation::GetRawDataSize() const
 {
-	// printf("ZTextureAnimation::GetRawDataSize\n");
 	return entries.size() * 8;
 }
 
-/**
- * Name to use if not in the XML with a name
- */
-std::string ZTextureAnimation::GetDefaultName(const std::string& prefix, uint32_t address) const
+std::string ZTextureAnimation::GetDefaultName(const std::string& prefix) const
 {
-	// printf("ZTextureAnimation::GetDefaultName\n");
-	return StringHelper::Sprintf("%sTexAnim_%06X", prefix.c_str(), address);
+	return StringHelper::Sprintf("%sTexAnim_%06X", prefix.c_str(), rawDataIndex);
 }
 
-/**
- * Constructs the output's ???
- */
 void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
 {
-	// printf("ZTextureAnimation::DeclareVar\n");
 	std::string auxName = name;
 
 	if (name == "")
-		auxName = GetDefaultName(prefix, rawDataIndex);
+		auxName = GetDefaultName(prefix);
 
 	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, entries.size(), bodyStr);
 }
 
-/**
- * Sets the body of the definition (i.e. the content of the struct between the outer `{}`s)
- */
 std::string ZTextureAnimation::GetBodySourceCode() const
 {
-	// printf("ZTextureAnimation::GetBodySourceCode\n");
-
 	std::string bodyStr = "";
 
 	for (const TextureAnimationEntry& entry : entries)
@@ -636,12 +711,8 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 	return bodyStr;
 }
 
-/**
- * Final setup of whole definition
- */
 std::string ZTextureAnimation::GetSourceOutputCode(const std::string& prefix)
 {
-	// printf("ZTextureAnimation::GetSourceOutputCode\n");
 	std::string bodyStr = GetBodySourceCode();
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
