@@ -1,8 +1,9 @@
 /**
  * File: ZTextureAnimation.cpp
  * ZResources defined: ZTextureAnimation, ZTextureAnimationParams (XML declaration not supported for
- * the latter) Purpose: extracting texture animating structures from asset files Note: data type is
- * exclusive to Majora's Mask
+ * the latter)
+ * Purpose: extracting texture animating structures from asset files Note: data type is exclusive to
+ * Majora's Mask
  *
  * Structure of data:
  * A texture animation consists of a main array of data of the form
@@ -20,38 +21,46 @@
  * ===
  * There are 7 values that `T` can take:
  *     `0`: A single texture scroll (Implemented by Gfx_TexScroll): subsidiary params are given as
- * an array with one entry, a struct `XX YY WW HH` containing xStep, yStep, width, height (all u8).
+ *         an array with one entry, a struct `XX YY WW HH` containing xStep, yStep, width, height
+ *         (all u8).
+ *
  *     `1`: A dual texture scroll (Implementated by Gfx_TwoTexScroll): same as type `0`, but with
- * two entries in the params array.
+ *         two entries in the params array.
+ *
  *     `2`: Color changing: Changes the primColor (with a LOD factor) and envColor
- * `KKKK LLLL PPPPPPPP QQQQQQQQ RRRRRRRR`
+ *         `KKKK LLLL PPPPPPPP QQQQQQQQ RRRRRRRR`
  *         - `K` (u16) is the total length of the animation (and in this case, the total number of
- * colors)
+ *             colors)
  *         - `L` (u16) is seemingly always 0 for this type, and not used in the code
  *         - `P` segmented pointer to array of augmented primColors
  *         - `Q` segmented pointer to array of envColors, and can be NULL
  *         - `R` segmented pointer to array of frameData (u8), which is also seemingly always NULL
- * for this type
- * envColors take the form `RR GG BB AA` as usual, while primColors have an extra LODFrac
- * element: RR GG BB AA LL
+ *             for this type.
+ *
+ *         envColors take the form `RR GG BB AA` as usual, while primColors have an extra LODFrac
+ *         element: RR GG BB AA LL
+ *
  *     `3`: Color changing (LERP): similar to type `2`, but uses linear interpolation. The structure
- * is similar to `2`, but
+ *         is similar to `2`, but
  *         - `K` is now just the animation length, while
  *         - `L` is the total number of colors, and
  *         - the frameData is used to determine which colors to interpolate.
+ *
  *     `4`: Color changing (Lagrange interpolation): For extraction purposes identical to type 3.
- * Uses a nonlinear interpolation formula to change the colours more smoothly.
+ *         Uses a nonlinear interpolation formula to change the colours more smoothly.
+ *
  *     `5`: Texture cycle: functions like a gif. Subsidiary params:
- * `FFFF 0000 PPPPPPPP QQQQQQQQ`
- * where
+ *         `FFFF 0000 PPPPPPPP QQQQQQQQ`
+ *         where
  *         - `F` (u16) time between changes in frames
  *         - `P` pointer to array of segmented pointers to textures to cycle through
  *         - `Q` array of indices, indicating which texture to use next when a change frame is
- * reached. The maximum indicates the number of textures in the texture array.
- *     `6`: This is used to
- * indicate an empty/unimplemented params set. It is ignored by the game's function provided that
- * the segment is 0. A generic empty one takes the form `00 00 00 06 00000000`, and has no extra
- * data.
+ *             reached. The maximum indicates the number of textures in the texture array.
+ *
+ *     `6`: This is used to indicate an empty/unimplemented params set. It is ignored by the game's
+ *         function provided that the segment is 0. A generic empty one takes the form
+ *         `00 00 00 06 00000000`,
+ *         and has no extra data.
  *
  * Implementation
  * ===
