@@ -50,10 +50,8 @@
  * reached. The maximum indicates the number of textures in the texture array.
  *     `6`: This is used to
  * indicate an empty/unimplemented params set. It is ignored by the game's function provided that
-the
- * segment is 0. A generic empty one takes the form
- * `00 00 00 06 00000000`,
- * and has no extra data.
+ * the segment is 0. A generic empty one takes the form `00 00 00 06 00000000`, and has no extra
+ * data.
  *
  * Implementation
  * ===
