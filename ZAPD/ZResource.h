@@ -100,10 +100,12 @@ public:
 	/**
 	 * Returns the body of the variable of the extracted resource, without any side-effect
 	 */
+	[[nodiscard]]
 	virtual std::string GetBodySourceCode() const;
 	/**
 	 * Creates an automatically generated variable name for the current resource
 	 */
+	[[nodiscard]]
 	virtual std::string GetDefaultName(const std::string& prefix) const;
 
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
@@ -128,36 +130,46 @@ public:
 	/**
 	 * The type of the resource as a C struct
 	 */
+	[[nodiscard]]
 	virtual std::string GetSourceTypeName() const = 0;
 	/**
 	 * The type in the ZResource enum
 	 */
+	[[nodiscard]]
 	virtual ZResourceType GetResourceType() const = 0;
+	[[nodiscard]]
 	virtual std::string GetExternalExtension() const;
 
 	// Getters/Setters
+	[[nodiscard]]
 	const std::string& GetName() const;
 	void SetName(const std::string& nName);
+	[[nodiscard]]
 	const std::string& GetOutName() const;
 	void SetOutName(const std::string& nName);
+	[[nodiscard]]
 	offset_t GetRawDataIndex() const;
 	/**
 	 * The size of the current struct being extracted, not counting data referenced by it
 	 */
+	[[nodiscard]]
 	virtual size_t GetRawDataSize() const = 0;
 	/**
 	 * The alignment of the extracted struct
 	 */
+	[[nodiscard]]
 	virtual DeclarationAlignment GetDeclarationAlignment() const;
 	/**
 	 * The padding of the extracted struct
 	 */
+	[[nodiscard]]
 	virtual DeclarationPadding GetDeclarationPadding() const;
 	void SetInnerNode(bool inner);
 	/**
 	 * Returns `true` if this ZResource was declared using an XML node,
 	 * `false` otherwise (for example, a Vtx extracted indirectly by a DList)
 	 */
+	[[nodiscard]]
 	bool WasDeclaredInXml() const;
 
 protected:

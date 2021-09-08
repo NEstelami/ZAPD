@@ -356,7 +356,7 @@ public:
 
 	void ParseRawData() override;
 
-	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(ZRoom* scene, ZFile* parent, std::string prefix, int32_t texWidth,
