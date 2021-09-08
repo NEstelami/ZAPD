@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Utils/vt.h"
+
 #ifdef _MSC_VER
 #define __PRETTY_FUNCTION__ __FUNCSIG__
 #elif not defined(__GNUC__)
