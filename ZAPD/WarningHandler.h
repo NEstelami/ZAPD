@@ -14,8 +14,8 @@
 #endif
 
 // TODO: better names
-#define HANDLE_ERROR(msg) ErrorHandler::Error(__FILE__, __LINE__, __PRETTY_FUNCTION__, msg)
-#define HANDLE_WARNING(warningType, msg) ErrorHandler::Warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, msg)
+#define HANDLE_ERROR(msg) WarningHandler::Error(__FILE__, __LINE__, __PRETTY_FUNCTION__, msg)
+#define HANDLE_WARNING(warningType, msg) WarningHandler::Warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, msg)
 
 enum class WarningType {
     Everything,
@@ -25,7 +25,7 @@ enum class WarningType {
     Max,
 };
 
-class ErrorHandler {
+class WarningHandler {
 public:
     static std::array<bool, static_cast<size_t>(WarningType::Max)> enabledWarnings;
 

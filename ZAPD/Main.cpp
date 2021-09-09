@@ -9,7 +9,7 @@
 #include "ZBlob.h"
 #include "ZFile.h"
 #include "ZTexture.h"
-#include "ErrorHandler.h"
+#include "WarningHandler.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <csignal>
@@ -34,7 +34,7 @@ void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #define ARRAY_COUNT(arr) (sizeof(arr) / sizeof(arr[0]))
-void ErrorHandler(int sig)
+void WarningHandler(int sig)
 {
 	void* array[4096];
 	const size_t nMaxFrames = sizeof(array) / sizeof(array[0]);
@@ -183,8 +183,8 @@ int main(int argc, char* argv[])
 		else if (arg == "-eh")  // Enable Error Handler
 		{
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-			signal(SIGSEGV, ErrorHandler);
-			signal(SIGABRT, ErrorHandler);
+			signal(SIGSEGV, WarningHandler);
+			signal(SIGABRT, WarningHandler);
 #else
 			fprintf(stderr,
 			        "Warning: Tried to set error handler, but this build lacks support for one.\n");
@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	ErrorHandler::Init(argc, argv);
+	WarningHandler::Init(argc, argv);
 
 	// Parse File Mode
 	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();

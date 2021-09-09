@@ -1,4 +1,4 @@
-#include "ErrorHandler.h"
+#include "WarningHandler.h"
 
 #include <cassert>
 #include <unordered_map>
@@ -13,11 +13,11 @@ static std::unordered_map<WarningType, std::string> sWarningsTypeToStringMap = {
     {WarningType::Deprecated, "deprecated"},
 };
 
-std::array<bool, static_cast<size_t>(WarningType::Max)> ErrorHandler::enabledWarnings = {false};
+std::array<bool, static_cast<size_t>(WarningType::Max)> WarningHandler::enabledWarnings = {false};
 
-bool ErrorHandler::Werror = false;
+bool WarningHandler::Werror = false;
 
-void ErrorHandler::Init(int argc, char* argv[]) {
+void WarningHandler::Init(int argc, char* argv[]) {
     // Werror = false;
     // for (size_t i = 0; i < enabledWarnings.size(); i++) {
     //     enabledWarnings[i] = false;
@@ -54,7 +54,7 @@ void ErrorHandler::Init(int argc, char* argv[]) {
     }
 }
 
-void ErrorHandler::Error(const char* filename, int32_t line, const char* function, const std::string& msg) {
+void WarningHandler::Error(const char* filename, int32_t line, const char* function, const std::string& msg) {
     // if (something) {
         fprintf(stderr, "%s:%i: in function %s:\n", filename, line, function);
     // }
@@ -67,14 +67,14 @@ void ErrorHandler::Error(const char* filename, int32_t line, const char* functio
     throw std::runtime_error(errorMsg);
 }
 
-void ErrorHandler::Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& msg) {
+void WarningHandler::Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& msg) {
     assert(static_cast<size_t>(warnType) >= 0 && warnType < WarningType::Max);
     if (!enabledWarnings.at(static_cast<size_t>(WarningType::Everything)) && !enabledWarnings.at(static_cast<size_t>(warnType))) {
         return;
     }
     
     if (Werror) {
-        ErrorHandler::Error(filename, line, function, msg);
+        WarningHandler::Error(filename, line, function, msg);
         return;
     }
 
@@ -89,9 +89,9 @@ void ErrorHandler::Warning(const char* filename, int32_t line, const char* funct
     fprintf(stderr, "%s" VT_RST "\n", msg.c_str());
 }
 
-void ErrorHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& msg) {
+void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& msg) {
     std::string warningMsg = StringHelper::Sprintf("When processing file %s: in input binary file %s, offset 0x%06X:\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
     warningMsg += msg;
 
-    ErrorHandler::Warning(filename, line, function, warnType, warningMsg);
+    WarningHandler::Warning(filename, line, function, warnType, warningMsg);
 }
