@@ -2,15 +2,25 @@
 
 #include <cassert>
 #include <unordered_map>
+#include <vector>
 
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
 static std::unordered_map<std::string, WarningType> sWarningsStringToTypeMap = {
     {"deprecated", WarningType::Deprecated},
+    {"unaccounted", WarningType::Unaccounted},
+    {"missing-offsets", WarningType::MissingOffsets},
 };
 static std::unordered_map<WarningType, std::string> sWarningsTypeToStringMap = {
     {WarningType::Deprecated, "deprecated"},
+    {WarningType::Unaccounted, "unaccounted"},
+    {WarningType::MissingOffsets, "missing-offsets"},
+};
+
+static std::vector<WarningType> sWarningsEnabledByDefault = {
+    WarningType::Always,
+    WarningType::Intersection,
 };
 
 std::array<bool, static_cast<size_t>(WarningType::Max)> WarningHandler::enabledWarnings = {false};
@@ -23,29 +33,40 @@ void WarningHandler::Init(int argc, char* argv[]) {
     //     enabledWarnings[i] = false;
     // }
 
-    enabledWarnings[static_cast<size_t>(WarningType::Always)] = true;
+    for (const auto& warnType: sWarningsEnabledByDefault) {
+        enabledWarnings[static_cast<size_t>(warnType)] = true;
+    }
 
     for (int i = 1; i < argc; i++) {
 
         // If it doesn't starts with "-W" skip it.
-        if (argv[i][0] != '-' || argv[i][1] != 'W' || argv[i][1] == '\0') {
+        if (argv[i][0] != '-' || argv[i][1] != 'W' || argv[i][2] == '\0') {
             continue;
         }
 
-        // Skip "-W"
-        std::string_view currentArgv = &argv[i][2];
+        bool enableDisable = true;
+        size_t startingIndex = 2;
+
+        // "-Wno-"
+        if (argv[i][2] == 'n' || argv[i][3] == 'o' || argv[i][4] == '-' || argv[i][5] != '\0') {
+            enableDisable = false;
+            startingIndex = 5;
+        }
+
+        // Skip "-W" or "-Wno-"
+        std::string_view currentArgv = &argv[i][startingIndex];
 
         if (currentArgv == "error") {
-            Werror = true;
+            Werror = enableDisable;
         } else if (currentArgv == "everything") {
             for (size_t i = 0; i < enabledWarnings.size(); i++) {
-                enabledWarnings[i] = true;
+                enabledWarnings[i] = enableDisable;
             }
         } else {
             auto warning_type = sWarningsStringToTypeMap.find(std::string(currentArgv));
             if (warning_type != sWarningsStringToTypeMap.end()) {
                 size_t index = static_cast<size_t>(warning_type->second);
-                enabledWarnings[index] = true;
+                enabledWarnings[index] = enableDisable;
             }
             else {
                 HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("Unknown warning flag '%s'", argv[i]));

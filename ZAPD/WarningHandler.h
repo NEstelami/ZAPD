@@ -19,8 +19,11 @@
 
 enum class WarningType {
     Everything,
-    Always, // Warnings of this type is always printed
+    Always, // Warnings of this type is always printed, can't be disabled.
     Deprecated,
+    Unaccounted,
+    MissingOffsets,
+    Intersection,
 
     Max,
 };
