@@ -25,6 +25,7 @@
 #include "ZTexture.h"
 #include "ZVector.h"
 #include "ZVtx.h"
+#include "WarningHandler.h"
 
 using namespace tinyxml2;
 
@@ -976,6 +977,7 @@ std::string ZFile::ProcessDeclarations()
 								"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
 								"\t Block size: '0x%X'.\n",
 								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, unaccountedAddress, "A non-zero unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
 						}
 						else if (diff >= 16)
 						{

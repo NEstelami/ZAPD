@@ -104,7 +104,7 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
     std::string headerMsg = header;
     auto warningNameIter = sWarningsTypeToStringMap.find(warnType);
     if (warningNameIter != sWarningsTypeToStringMap.end()) {
-        headerMsg += StringHelper::Sprintf("[-W%s]", warningNameIter->second);
+        headerMsg += StringHelper::Sprintf(" [-W%s]", warningNameIter->second);
     }
 
     if (Werror) {
@@ -127,8 +127,9 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
 }
 
 void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body) {
+    assert(parent != nullptr);
     std::string warningMsg = body;
-    warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X:\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
 
     WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
 }

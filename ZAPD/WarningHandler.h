@@ -16,6 +16,7 @@
 // TODO: better names
 #define HANDLE_ERROR(header, body) WarningHandler::Error(__FILE__, __LINE__, __PRETTY_FUNCTION__, header, body)
 #define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
+#define HANDLE_WARNING_RESOURCE(warningType, parent, offset, header, body) WarningHandler::Warning_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, offset, header, body)
 
 enum class WarningType {
     Everything,
@@ -42,7 +43,6 @@ public:
     // variadic?
     static void Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
     static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body);
-
 
 protected:
     static bool Werror;
