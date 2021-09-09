@@ -25,6 +25,12 @@ enum class WarningType {
     Unaccounted,
     MissingOffsets,
     Intersection,
+    MissingAttribute, // MissingXmlAttributes?
+    InvalidAttributeValue,
+    UnknownAttribute,
+    InvalidXML,
+    MissingSegment,
+    NotImplemented,
 
     Max,
 };

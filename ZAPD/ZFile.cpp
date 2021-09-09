@@ -163,15 +163,19 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 			}
 			offsetSet.insert(offsetXml);
 		}
-		else if (Globals::Instance->warnNoOffset)
-		{
-			fprintf(stderr, "Warning No offset specified for: %s", nameXml);
+		//else if (Globals::Instance->warnNoOffset)
+		//{
+		//	//fprintf(stderr, "Warning No offset specified for: %s", nameXml);
+		//}
+		//else if (Globals::Instance->errorNoOffset)
+		//{
+		//	throw std::runtime_error(
+		//		StringHelper::Sprintf("Error no offset specified for %s", nameXml));
+		//}
+		else {
+			HANDLE_WARNING_RESOURCE(WarningType::MissingOffsets, this, rawDataIndex, StringHelper::Sprintf("No offset specified for %s.", nameXml), "");
 		}
-		else if (Globals::Instance->errorNoOffset)
-		{
-			throw std::runtime_error(
-				StringHelper::Sprintf("Error no offset specified for %s", nameXml));
-		}
+
 		if (outNameXml != nullptr)
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
@@ -900,11 +904,12 @@ std::string ZFile::ProcessDeclarations()
 			{
 				Declaration* currentDecl = declarations.at(currentAddress);
 
-				fprintf(stderr,
-				        "WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
-				        "0x%06X (%s)\n",
-				        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
-				        currentDecl->varName.c_str());
+				//fprintf(stderr,
+				//        "WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
+				//        "0x%06X (%s)\n",
+				//        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
+				//        currentDecl->varName.c_str());
+				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, currentAddress, "Intersection detected.", StringHelper::Sprintf("Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress, currentDecl->varName.c_str()));
 			}
 		}
 
@@ -967,28 +972,29 @@ std::string ZFile::ProcessDeclarations()
 						diff, src);
 					decl->isUnaccounted = true;
 
-					if (Globals::Instance->warnUnaccounted)
-					{
+					//if (Globals::Instance->warnUnaccounted)
+					//{
 						if (nonZeroUnaccounted)
 						{
-							fprintf(
-								stderr,
-								"Warning in file: %s (%s)\n"
-								"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-								"\t Block size: '0x%X'.\n",
-								xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+							//fprintf(
+							//	stderr,
+							//	"Warning in file: %s (%s)\n"
+							//	"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+							//	"\t Block size: '0x%X'.\n",
+							//	xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, unaccountedAddress, "A non-zero unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
 						}
 						else if (diff >= 16)
 						{
-							fprintf(stderr,
-							        "Warning in file: %s (%s)\n"
-							        "\t A big (size>=0x10) zero-only unaccounted block was found "
-							        "at address '0x%06X'.\n"
-							        "\t Block size: '0x%X'.\n",
-							        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+							//fprintf(stderr,
+							//        "Warning in file: %s (%s)\n"
+							//        "\t A big (size>=0x10) zero-only unaccounted block was found "
+							//        "at address '0x%06X'.\n"
+							//        "\t Block size: '0x%X'.\n",
+							//        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, unaccountedAddress, "A big (size>=0x10) zero-only unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
 						}
-					}
+					//}
 				}
 			}
 		}

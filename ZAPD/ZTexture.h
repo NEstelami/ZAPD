@@ -59,7 +59,7 @@ public:
 	void FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight, TextureType nType,
 	                bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
-	static TextureType GetTextureTypeFromString(std::string str);
+	static TextureType GetTextureTypeFromString(const std::string& str);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;

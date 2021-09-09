@@ -15,6 +15,9 @@
 #define VT_COLOR_FOREGROUND    3
 #define VT_COLOR_BACKGROUND    4
 
+#define VT_COLOR_BRIGHT_FOREGROUND    9
+#define VT_COLOR_BRIGHT_BACKGROUND    10
+
 #define VT_COLOR_EXPAND0(type, color)  #type #color
 #define VT_COLOR_EXPAND1(type, color)  VT_COLOR_EXPAND0(type, color)
 #define VT_COLOR(type, color)  VT_COLOR_EXPAND1(VT_COLOR_##type, VT_COLOR_##color)

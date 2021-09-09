@@ -1,4 +1,5 @@
 #include "ZRoom.h"
+
 #include <Utils/Path.h>
 #include <algorithm>
 #include <chrono>
@@ -41,6 +42,7 @@
 #include "Commands/ZRoomCommandUnk.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
+#include "WarningHandler.h"
 
 using namespace tinyxml2;
 
@@ -151,14 +153,16 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 			delete pathway;
 		}
 
-#ifdef DEPRECATION_ON
-		fprintf(stderr,
-		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
-		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
-		        "version.\n"
-		        "\t Use the non-hint version instead.\n",
-		        name.c_str(), child->Name());
-#endif
+//#ifdef DEPRECATION_ON
+//		//fprintf(stderr,
+//		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
+//		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
+//		        "version.\n"
+//		        "\t Use the non-hint version instead.\n",
+//		        name.c_str(), child->Name());
+//#endif
+		HANDLE_WARNING_RESOURCE(WarningType::Deprecated, parent, rawDataIndex, StringHelper::Sprintf("The resource '%s' is currently deprecated", child->Name()), "It will be depreacted in a future version.\n\t  Use the non-hint version instead.");
+		
 	}
 
 	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));

@@ -7,23 +7,43 @@
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
+// If a warning isn't in this list, it would not be possible to enable/disable it
 static std::unordered_map<std::string, WarningType> sWarningsStringToTypeMap = {
     {"deprecated", WarningType::Deprecated},
     {"unaccounted", WarningType::Unaccounted},
     {"missing-offsets", WarningType::MissingOffsets},
+    {"intersection", WarningType::Intersection},
+    {"missing-attribute", WarningType::MissingAttribute},
+    {"invalid-attribute-value", WarningType::InvalidAttributeValue},
+    {"unknown-attribute", WarningType::UnknownAttribute},
+    {"invalid-xml", WarningType::InvalidXML},
+    {"missing-segment", WarningType::MissingSegment},
+    {"not-implemented", WarningType::NotImplemented},
 };
 static std::unordered_map<WarningType, const char*> sWarningsTypeToStringMap = {
     {WarningType::Deprecated, "deprecated"},
     {WarningType::Unaccounted, "unaccounted"},
     {WarningType::MissingOffsets, "missing-offsets"},
+    {WarningType::Intersection, "intersection"},
+    {WarningType::MissingAttribute, "missing-attribute"},
+    {WarningType::InvalidAttributeValue, "invalid-attribute-value"},
+    {WarningType::UnknownAttribute, "unknown-attribute"},
+    {WarningType::InvalidXML, "invalid-xml"},
+    {WarningType::MissingSegment, "missing-segment"},
+    {WarningType::NotImplemented, "not-implemented"},
 };
-
 static std::vector<WarningType> sWarningsEnabledByDefault = {
     WarningType::Always,
     WarningType::Intersection,
 #ifdef DEPRECATION_ON
     WarningType::Deprecated,
 #endif
+    //WarningType::MissingOffsets,
+    WarningType::MissingAttribute,
+    WarningType::InvalidAttributeValue,
+    WarningType::UnknownAttribute,
+    WarningType::InvalidXML,
+    WarningType::NotImplemented,
 };
 
 std::array<bool, static_cast<size_t>(WarningType::Max)> WarningHandler::enabledWarnings = {false};
@@ -47,12 +67,12 @@ void WarningHandler::Init(int argc, char* argv[]) {
             continue;
         }
 
-        bool enableDisable = true;
+        bool warningTypeOn = true; // ?
         size_t startingIndex = 2;
 
         // "-Wno-"
         if (argv[i][2] == 'n' && argv[i][3] == 'o' && argv[i][4] == '-' && argv[i][5] != '\0') {
-            enableDisable = false;
+            warningTypeOn = false;
             startingIndex = 5;
         }
 
@@ -60,16 +80,16 @@ void WarningHandler::Init(int argc, char* argv[]) {
         std::string_view currentArgv = &argv[i][startingIndex];
 
         if (currentArgv == "error") {
-            Werror = enableDisable;
+            Werror = warningTypeOn;
         } else if (currentArgv == "everything") {
             for (size_t i = 0; i < enabledWarnings.size(); i++) {
-                enabledWarnings[i] = enableDisable;
+                enabledWarnings[i] = warningTypeOn;
             }
         } else {
-            auto warning_type = sWarningsStringToTypeMap.find(std::string(currentArgv));
-            if (warning_type != sWarningsStringToTypeMap.end()) {
-                size_t index = static_cast<size_t>(warning_type->second);
-                enabledWarnings[index] = enableDisable;
+            auto warningTypeIter = sWarningsStringToTypeMap.find(std::string(currentArgv));
+            if (warningTypeIter != sWarningsStringToTypeMap.end()) {
+                size_t index = static_cast<size_t>(warningTypeIter->second);
+                enabledWarnings[index] = warningTypeOn;
             }
             else {
                 HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("Unknown warning flag '%s'", argv[i]), "");
@@ -92,7 +112,10 @@ void WarningHandler::Error(const char* filename, int32_t line, const char* funct
         errorMsg += body;
     }
 
-    throw std::runtime_error(errorMsg);
+    // Which one is better??
+    //throw std::runtime_error(errorMsg);
+    fprintf(stderr, "%s\n", errorMsg.c_str());
+    exit(EXIT_FAILURE);
 }
 
 void WarningHandler::Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
@@ -129,7 +152,8 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
 void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
     std::string warningMsg = body;
-    warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    //warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
 
     WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
 }

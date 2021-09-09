@@ -1,9 +1,11 @@
 #include "ZScalar.h"
+
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
+#include "WarningHandler.h"
 
 REGISTER_ZFILENODE(Scalar, ZScalar);
 
@@ -199,8 +201,10 @@ void ZScalar::ParseRawData()
 		scalarData.f64 = BitConverter::ToDoubleBE(rawData, rawDataIndex);
 		break;
 	case ZScalarType::ZSCALAR_NONE:
-		fprintf(stderr, "Warning in ZScalar: Invalid type. %d %s %d\n", (int32_t)scalarType,
-		        __FILE__, __LINE__);
+		//fprintf(stderr, "Warning in ZScalar: Invalid type. %d %s %d\n", (int32_t)scalarType,
+		//        __FILE__, __LINE__);
+
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, rawDataIndex, "Invalid value found for 'Type' attribute.", "Defaulting to ''.");
 		break;
 	}
 }

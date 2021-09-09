@@ -196,10 +196,10 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
 		}
-		else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
-		{
-			Globals::Instance->warnUnaccounted = true;
-		}
+		//else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
+		//{
+		//	Globals::Instance->warnUnaccounted = true;
+		//}
 		else if (arg == "-wno" || arg == "--warn-no-offset")
 		{
 			Globals::Instance->warnNoOffset = true;
