@@ -9,6 +9,7 @@
 #include "ZBlob.h"
 #include "ZFile.h"
 #include "ZTexture.h"
+#include "ErrorHandler.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <csignal>
@@ -218,6 +219,8 @@ int main(int argc, char* argv[])
 			Globals::Instance->gccCompat = true;
 		}
 	}
+
+	ErrorHandler::Init(argc, argv);
 
 	// Parse File Mode
 	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
