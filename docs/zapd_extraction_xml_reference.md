@@ -13,6 +13,7 @@ This document aims to be a small reference of how to create a compatible xml fil
     - [Background](#background)
     - [Blob](#blob)
     - [DList](#dlist)
+    - [TextureAnimation](#textureanimation)
     - [Scene and Room](#scene-and-room)
     - [Animation](#animation)
     - [PlayerAnimation](#playeranimation)
@@ -193,6 +194,21 @@ A.k.a. Display list, or Gfx.
 - Attributes:
 
   - `Name`: Required. Suxffixed by `DL`.
+
+-------------------------
+
+### TextureAnimation
+
+A data type exclusive to Majora's Mask, that has scrolling, color changing, and texture changing capabilities. Declaring the main array will generate everything else; textures for the TextureCycle type must be declared manually in the XML to use symbols. (If it does reference any undeclared textures, ZAPD will warn and give the their offsets.)
+
+
+```xml
+<TextureAnimation Name="gRosaSistersTexAnim" Offset="0xD768"/>
+```
+
+- Attributes:
+
+  - `Name`: Required. Suxffixed by `TexAnim`.
 
 -------------------------
 
