@@ -1,13 +1,19 @@
+/**
+ * File: SetAnimatedMaterialList.cpp
+ * Description: Defines a class SetAnimatedMaterialList to enable ZRoom to declare
+ * ZTextureAnimations, using that ZResource to do the work.
+ */
 #include "SetAnimatedMaterialList.h"
 
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
 #include "ZTextureAnimation.h"
 
-SetAnimatedMaterialList::SetAnimatedMaterialList(ZFile* nParent) : ZRoomCommand(nParent), textureAnimation(nParent)
+SetAnimatedMaterialList::SetAnimatedMaterialList(ZFile* nParent)
+	: ZRoomCommand(nParent), textureAnimation(nParent)
 {
 }
 

@@ -238,20 +238,19 @@ void TextureColorChangingParams::ParseRawData()
 		((type == TextureAnimationParamsType::ColorChange) ? animLength : colorListCount);
 
 	if (listLength == 0)
-		throw std::runtime_error(
-			StringHelper::Sprintf("When processing file %s: in input binary file %s, offset 0x%06X:"
-		                          "\n\t"
-		                          "\033[97m"
-		                          "TextureColorChangingParams::ParseRawData:"
-		                          "\033[0m"
-		                          "\033[91m"
-		                          " error: "
-		                          "\033[0m"
-		                          "\033[97m"
-		                          "color list length cannot be 0\n"
-		                          "\033[0m",
-		                          Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-		                          rawDataIndex));
+		throw std::runtime_error(StringHelper::Sprintf(
+			"When processing file %s: in input binary file %s, offset 0x%06X:"
+			"\n\t"
+			"\033[97m"
+			"TextureColorChangingParams::ParseRawData:"
+			"\033[0m"
+			"\033[91m"
+			" error: "
+			"\033[0m"
+			"\033[97m"
+			"color list length cannot be 0\n"
+			"\033[0m",
+			Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), rawDataIndex));
 
 	primColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	envColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
@@ -368,12 +367,12 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 
 		frameDataBodyStr.pop_back();
 
-		parent->AddDeclarationArray(Seg2Filespace(frameDataListAddress, parent->baseAddress),
-		                            DeclarationAlignment::Align4, frameDataList.size() * 2, "u16",
-		                            StringHelper::Sprintf("%sTexColorChangingFrameData_%06X",
-		                                                  parent->GetName().c_str(),
-		                                                  Seg2Filespace(frameDataListAddress, parent->baseAddress)),
-		                            frameDataList.size(), frameDataBodyStr);
+		parent->AddDeclarationArray(
+			Seg2Filespace(frameDataListAddress, parent->baseAddress), DeclarationAlignment::Align4,
+			frameDataList.size() * 2, "u16",
+			StringHelper::Sprintf("%sTexColorChangingFrameData_%06X", parent->GetName().c_str(),
+		                          Seg2Filespace(frameDataListAddress, parent->baseAddress)),
+			frameDataList.size(), frameDataBodyStr);
 	}
 }
 
@@ -522,8 +521,8 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 
 		// printf("Declaring texture index array\n");
 		parent->AddDeclarationArray(
-			Seg2Filespace(textureIndexListAddress, parent->baseAddress), DeclarationAlignment::Align4,
-			textureIndexList.size(), "u8",
+			Seg2Filespace(textureIndexListAddress, parent->baseAddress),
+			DeclarationAlignment::Align4, textureIndexList.size(), "u8",
 			StringHelper::Sprintf("%sTexCycleTexIndices_%06X", parent->GetName().c_str(),
 		                          Seg2Filespace(textureIndexListAddress, parent->baseAddress)),
 			textureIndexList.size(), indicesBodyStr);
@@ -590,9 +589,8 @@ void ZTextureAnimation::ParseRawData()
 				"0x%02X, 0x%02X, 0x%08X }\n(type should be between "
 				"0x00 and 0x06)\n"
 				"\033[0m",
-				Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-				rawDataIndex, type, currentEntry.segment, type,
-				currentEntry.paramsPtr));
+				Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), rawDataIndex, type,
+				currentEntry.segment, type, currentEntry.paramsPtr));
 		}
 
 		if (currentEntry.segment <= 0)
@@ -662,8 +660,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					        "{ 0x%02X, 0x%02X, 0x%08X }\n"
 					        "\033[0m",
 					        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-					        rawDataIndex, entry.segment, entry.type,
-					        entry.paramsPtr);
+					        rawDataIndex, entry.segment, entry.type, entry.paramsPtr);
 					return;
 				}
 
