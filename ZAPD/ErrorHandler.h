@@ -18,7 +18,10 @@ class ErrorHandler {
 
     [[ noreturn ]]
     static void Error(const std::string& filename, const std::string& line, const std::string& function, const std::string& msg);
+    //[[ noreturn ]]
+    //static void Error_Resource(const std::string& filename, const std::string& line, const std::string& function, const std::string& msg);
 
     // variadic?
     static void Warning(const std::string& filename, const std::string& line, const std::string& function, const std::string& msg);
+    static void Warning_Resource(const std::string& filename, const std::string& line, const std::string& function, ZFile *parent, uint32_t offset, const std::string& msg);
 };
