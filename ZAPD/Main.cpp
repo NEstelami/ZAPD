@@ -113,6 +113,8 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	WarningHandler::Init(argc, argv);
+
 	Globals* g = new Globals();
 
 	// Parse other "commands"
@@ -219,8 +221,6 @@ int main(int argc, char* argv[])
 			Globals::Instance->gccCompat = true;
 		}
 	}
-
-	WarningHandler::Init(argc, argv);
 
 	// Parse File Mode
 	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();

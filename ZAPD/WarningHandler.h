@@ -14,8 +14,8 @@
 #endif
 
 // TODO: better names
-#define HANDLE_ERROR(msg) WarningHandler::Error(__FILE__, __LINE__, __PRETTY_FUNCTION__, msg)
-#define HANDLE_WARNING(warningType, msg) WarningHandler::Warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, msg)
+#define HANDLE_ERROR(header, body) WarningHandler::Error(__FILE__, __LINE__, __PRETTY_FUNCTION__, header, body)
+#define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 
 enum class WarningType {
     Everything,
@@ -35,13 +35,13 @@ public:
     static void Init(int argc, char* argv[]);
 
     [[ noreturn ]]
-    static void Error(const char* filename, int32_t line, const char* function, const std::string& msg);
+    static void Error(const char* filename, int32_t line, const char* function, const std::string& header, const std::string& body);
     //[[ noreturn ]]
-    //static void Error_Resource(const std::string& filename, int32_t line, const char* function, const std::string& msg);
+    //static void Error_Resource(const std::string& filename, int32_t line, const char* function, const std::string& header, const std::string& body);
 
     // variadic?
-    static void Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& msg);
-    static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& msg);
+    static void Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
+    static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body);
 
 
 protected:
