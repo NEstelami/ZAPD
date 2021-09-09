@@ -201,7 +201,7 @@ void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::st
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, count, bodyStr);
 }
 
@@ -251,15 +251,15 @@ void TextureColorChangingParams::ParseRawData()
 		                          "color list length cannot be 0\n"
 		                          "\033[0m",
 		                          Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-		                          Seg2Filespace(rawDataIndex, 0)));
+		                          rawDataIndex));
 
 	primColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	envColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 	frameDataListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
 
-	uint32_t primColorListOffset = Seg2Filespace(primColorListAddress, 0);
-	uint32_t envColorListOffset = Seg2Filespace(envColorListAddress, 0);
-	uint32_t frameDataListOffset = Seg2Filespace(frameDataListAddress, 0);
+	uint32_t primColorListOffset = Seg2Filespace(primColorListAddress, parent->baseAddress);
+	uint32_t envColorListOffset = Seg2Filespace(envColorListAddress, parent->baseAddress);
+	uint32_t frameDataListOffset = Seg2Filespace(frameDataListAddress, parent->baseAddress);
 
 	uint32_t currentPtr;
 
@@ -321,7 +321,7 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 	{
 		std::string primColorBodyStr = "";
 
-		for (auto color : primColorList)
+		for (const auto& color : primColorList)
 		{
 			primColorBodyStr += StringHelper::Sprintf("    { %d, %d, %d, %d, %d },\n", color.r,
 			                                          color.g, color.b, color.a, color.lodFrac);
@@ -330,10 +330,10 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 		primColorBodyStr.pop_back();
 
 		parent->AddDeclarationArray(
-			Seg2Filespace(primColorListAddress, 0), DeclarationAlignment::None,
+			Seg2Filespace(primColorListAddress, parent->baseAddress), DeclarationAlignment::Align4,
 			primColorList.size() * 5, "F3DPrimColor",
 			StringHelper::Sprintf("%sTexColorChangingPrimColors_%06X", parent->GetName().c_str(),
-		                          Seg2Filespace(primColorListAddress, 0)),
+		                          Seg2Filespace(primColorListAddress, parent->baseAddress)),
 			primColorList.size(), primColorBodyStr);
 	}
 
@@ -341,7 +341,7 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 	{
 		std::string envColorBodyStr = "";
 
-		for (auto color : envColorList)
+		for (const auto& color : envColorList)
 		{
 			envColorBodyStr += StringHelper::Sprintf("    { %d, %d, %d, %d },\n", color.r, color.g,
 			                                         color.b, color.a);
@@ -350,10 +350,10 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 		envColorBodyStr.pop_back();
 
 		parent->AddDeclarationArray(
-			Seg2Filespace(envColorListAddress, 0), DeclarationAlignment::None,
+			Seg2Filespace(envColorListAddress, parent->baseAddress), DeclarationAlignment::Align4,
 			envColorList.size() * 4, "F3DEnvColor",
 			StringHelper::Sprintf("%sTexColorChangingEnvColors_%06X", parent->GetName().c_str(),
-		                          Seg2Filespace(envColorListAddress, 0)),
+		                          Seg2Filespace(envColorListAddress, parent->baseAddress)),
 			envColorList.size(), envColorBodyStr);
 	}
 
@@ -361,18 +361,18 @@ void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
 	{
 		std::string frameDataBodyStr = "    ";
 
-		for (auto frame : frameDataList)
+		for (const auto& frame : frameDataList)
 		{
 			frameDataBodyStr += StringHelper::Sprintf("%d, ", frame);
 		}
 
 		frameDataBodyStr.pop_back();
 
-		parent->AddDeclarationArray(Seg2Filespace(frameDataListAddress, 0),
-		                            DeclarationAlignment::None, frameDataList.size() * 2, "u16",
+		parent->AddDeclarationArray(Seg2Filespace(frameDataListAddress, parent->baseAddress),
+		                            DeclarationAlignment::Align4, frameDataList.size() * 2, "u16",
 		                            StringHelper::Sprintf("%sTexColorChangingFrameData_%06X",
 		                                                  parent->GetName().c_str(),
-		                                                  Seg2Filespace(frameDataListAddress, 0)),
+		                                                  Seg2Filespace(frameDataListAddress, parent->baseAddress)),
 		                            frameDataList.size(), frameDataBodyStr);
 	}
 }
@@ -415,17 +415,18 @@ void TextureCyclingParams::ParseRawData()
 	textureListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	textureIndexListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 
-	uint32_t textureListOffset = Seg2Filespace(textureListAddress, 0);
-	uint32_t textureIndexListOffset = Seg2Filespace(textureIndexListAddress, 0);
+	uint32_t textureListOffset = Seg2Filespace(textureListAddress, parent->baseAddress);
+	uint32_t textureIndexListOffset = Seg2Filespace(textureIndexListAddress, parent->baseAddress);
 
-	uint32_t currentPtr = textureIndexListOffset;
+	uint32_t currentPtr;
 
 	uint8_t currentIndex;
 	uint8_t maxIndex = 0;  // To find the length of the texture list
 
 	// printf("cycleLength: %d\n", cycleLength);
 
-	for (; currentPtr < textureIndexListOffset + cycleLength; currentPtr++)
+	for (currentPtr = textureIndexListOffset; currentPtr < textureIndexListOffset + cycleLength;
+	     currentPtr++)
 	{
 		currentIndex = BitConverter::ToUInt8BE(rawData, currentPtr);
 		// printf("currentPtr: 0x%X\n", currentPtr);
@@ -465,7 +466,7 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 		std::string texName;
 		std::string comment = "";
 
-		for (auto tex : textureList)
+		for (const auto& tex : textureList)
 		{
 			texName = parent->GetDeclarationPtrName(tex);
 
@@ -474,7 +475,7 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 			// format on the appropriate segments.
 			if (texName.length() == 10 && texName.substr(0, 2) == "0x")
 			{
-				comment = " // Raw pointer, declare texture to use proper symbol";
+				comment = " // Raw pointer, declare texture in XML to use proper symbol";
 
 				fprintf(stderr,
 				        "When processing file %s: in input binary file %s, offset 0x%06X:"
@@ -490,7 +491,7 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 				        "Please declare the texture in the XML to use the proper symbol.\n"
 				        "\033[0m",
 				        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-				        Seg2Filespace(textureListAddress, 0), texName.c_str());
+				        Seg2Filespace(textureListAddress, parent->baseAddress), texName.c_str());
 			}
 			texturesBodyStr +=
 				StringHelper::Sprintf("    %s,%s\n", texName.c_str(), comment.c_str());
@@ -501,10 +502,10 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 		// printf("Declaring texture pointer array\n");
 
 		parent->AddDeclarationArray(
-			Seg2Filespace(textureListAddress, 0), DeclarationAlignment::Align4,
+			Seg2Filespace(textureListAddress, parent->baseAddress), DeclarationAlignment::Align4,
 			textureList.size() * 4, "TexturePtr",
 			StringHelper::Sprintf("%sTexCycleTexPtrs_%06X", parent->GetName().c_str(),
-		                          Seg2Filespace(textureListAddress, 0)),
+		                          Seg2Filespace(textureListAddress, parent->baseAddress)),
 			textureList.size(), texturesBodyStr);
 	}
 
@@ -521,10 +522,10 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 
 		// printf("Declaring texture index array\n");
 		parent->AddDeclarationArray(
-			Seg2Filespace(textureIndexListAddress, 0), DeclarationAlignment::None,
+			Seg2Filespace(textureIndexListAddress, parent->baseAddress), DeclarationAlignment::Align4,
 			textureIndexList.size(), "u8",
 			StringHelper::Sprintf("%sTexCycleTexIndices_%06X", parent->GetName().c_str(),
-		                          Seg2Filespace(textureIndexListAddress, 0)),
+		                          Seg2Filespace(textureIndexListAddress, parent->baseAddress)),
 			textureIndexList.size(), indicesBodyStr);
 	}
 }
@@ -590,7 +591,7 @@ void ZTextureAnimation::ParseRawData()
 				"0x00 and 0x06)\n"
 				"\033[0m",
 				Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-				Seg2Filespace(rawDataIndex, 0), type, currentEntry.segment, type,
+				rawDataIndex, type, currentEntry.segment, type,
 				currentEntry.paramsPtr));
 		}
 
@@ -610,7 +611,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 
 	ZResource::DeclareReferences(varPrefix);
 
-	for (TextureAnimationEntry& entry : entries)
+	for (const auto& entry : entries)
 	{
 		if (entry.paramsPtr != 0 && GETSEGNUM(entry.paramsPtr) == parent->segment)
 		{
@@ -661,7 +662,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					        "{ 0x%02X, 0x%02X, 0x%08X }\n"
 					        "\033[0m",
 					        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-					        Seg2Filespace(rawDataIndex, 0), entry.segment, entry.type,
+					        rawDataIndex, entry.segment, entry.type,
 					        entry.paramsPtr);
 					return;
 				}
@@ -712,7 +713,7 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 {
 	std::string bodyStr = "";
 
-	for (const TextureAnimationEntry& entry : entries)
+	for (const auto& entry : entries)
 	{
 		bodyStr += StringHelper::Sprintf("    { %d, %d, %s },\n", entry.segment, entry.type,
 		                                 parent->GetDeclarationPtrName(entry.paramsPtr).c_str());

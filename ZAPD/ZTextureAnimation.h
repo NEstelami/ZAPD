@@ -18,8 +18,9 @@ enum class TextureAnimationParamsType
 	/* 6 */ Empty  // An empty TextureAnimation has the form 00 00 00 06 00000000
 };
 
-struct ZTextureAnimationParams : public ZResource
+class ZTextureAnimationParams : public ZResource
 {
+public:
 	ZTextureAnimationParams(ZFile* parent);
 
 	void ExtractFromBinary(uint32_t nRawDataIndex);
@@ -42,8 +43,9 @@ struct TextureScrollingParamsEntry
 	uint8_t height;
 };
 
-struct TextureScrollingParams : public ZTextureAnimationParams
+class TextureScrollingParams : public ZTextureAnimationParams
 {
+public:
 	TextureScrollingParams(ZFile* parent);
 
 	void ParseRawData() override;
@@ -77,8 +79,9 @@ struct F3DEnvColor
 	uint8_t a;
 };
 
-struct TextureColorChangingParams : public ZTextureAnimationParams
+class TextureColorChangingParams : public ZTextureAnimationParams
 {
+public:
 	TextureColorChangingParams(ZFile* parent);
 
 	void ParseRawData() override;
@@ -91,7 +94,7 @@ struct TextureColorChangingParams : public ZTextureAnimationParams
 
 	std::string GetBodySourceCode() const override;
 
-	uint16_t animLength; // size of list for type 2
+	uint16_t animLength;  // size of list for type 2
 	uint16_t colorListCount;
 	segptr_t primColorListAddress;
 	segptr_t envColorListAddress;
@@ -101,8 +104,9 @@ struct TextureColorChangingParams : public ZTextureAnimationParams
 	std::vector<uint16_t> frameDataList;
 };
 
-struct TextureCyclingParams : public ZTextureAnimationParams
+class TextureCyclingParams : public ZTextureAnimationParams
 {
+public:
 	TextureCyclingParams(ZFile* parent);
 
 	void ParseRawData() override;
