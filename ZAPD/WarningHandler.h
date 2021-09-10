@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#include <vector>
+#include <unordered_set>
 
 #include "ZFile.h"
 #include "Utils/vt.h"
@@ -52,7 +52,7 @@ class WarningHandler {
 public:
     static std::unordered_map<std::string, WarningType> warningsStringToTypeMap;
     static std::unordered_map<WarningType, const char*> warningsTypeToStringMap;
-    static std::vector<WarningType> warningsEnabledByDefault;
+    static std::unordered_set<WarningType> warningsEnabledByDefault;
 
     static std::array<bool, static_cast<size_t>(WarningType::Max)> enabledWarnings;
 

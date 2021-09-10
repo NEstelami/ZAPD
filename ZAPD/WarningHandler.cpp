@@ -32,7 +32,7 @@ std::unordered_map<WarningType, const char*> WarningHandler::warningsTypeToStrin
     {WarningType::MissingSegment, "missing-segment"},
     {WarningType::NotImplemented, "not-implemented"},
 };
-std::vector<WarningType> WarningHandler::warningsEnabledByDefault = {
+std::unordered_set<WarningType> WarningHandler::warningsEnabledByDefault = {
     WarningType::Always,
     WarningType::Intersection,
 #ifdef DEPRECATION_ON
@@ -200,14 +200,16 @@ bool WarningHandler::IsWarningEnabled(WarningType warnType) {
 void WarningHandler::PrintHelp() {
     printf("\nExisting warnings:\n");
     for (const auto& iter: warningsTypeToStringMap) {
-        printf("\t -W%s\n", iter.second);
+        const char* enabledMsg = "";
+        if (warningsEnabledByDefault.find(iter.first) != warningsEnabledByDefault.end()) {
+            enabledMsg = "(enabled)";
+        }
+
+        printf("\t -W%-25s %s\n", iter.second, enabledMsg);
     }
 
-    printf("\nWarnings enabled by default:\n");
-    for (WarningType warnType: warningsEnabledByDefault) {
-        const auto& iter = warningsTypeToStringMap.find(warnType);
-        if (iter != warningsTypeToStringMap.end()) {
-            printf("\t -W%s\n", iter->second);
-        }
-    }
+    // TODO: mention -Weverything and -Werror
+
+    printf("\n");
+    printf("Warnings can be disabled with `-Wno-` instead of `-W`\n");
 }
