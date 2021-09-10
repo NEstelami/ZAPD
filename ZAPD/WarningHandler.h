@@ -3,6 +3,8 @@
 #include <array>
 #include <string>
 #include <string_view>
+#include <unordered_map>
+#include <vector>
 
 #include "ZFile.h"
 #include "Utils/vt.h"
@@ -48,6 +50,10 @@ enum class WarningType {
 
 class WarningHandler {
 public:
+    static std::unordered_map<std::string, WarningType> warningsStringToTypeMap;
+    static std::unordered_map<WarningType, const char*> warningsTypeToStringMap;
+    static std::vector<WarningType> warningsEnabledByDefault;
+
     static std::array<bool, static_cast<size_t>(WarningType::Max)> enabledWarnings;
 
     static void Init(int argc, char* argv[]);
@@ -61,6 +67,8 @@ public:
     static void Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
     static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body);
     static void Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
+
+    static bool IsWarningEnabled(WarningType warnType);
 
 protected:
     static bool Werror;
