@@ -99,86 +99,6 @@ void WarningHandler::Init(int argc, char* argv[]) {
     }
 }
 
-void WarningHandler::Error(const char* filename, int32_t line, const char* function, const std::string& header, const std::string& body) {
-    // if (something) {
-        fprintf(stderr, "%s:%i: in function %s:\n", filename, line, function);
-    // }
-
-    if (Globals::Instance->inputPath != "") {
-        fprintf(stderr, "\nWhen processing file %s: ", Globals::Instance->inputPath.c_str());
-    }
-
-    std::string errorMsg = VT_ERR "error: " VT_RST;
-    errorMsg += VT_HILITE;
-    errorMsg += header;
-    errorMsg += VT_RST;
-    if (body != "") {
-        errorMsg += "\n" WARN_INDT;
-        errorMsg += body;
-    }
-
-    // Which one is better??
-    // Does one mean we don't get the backtrace?
-    //throw std::runtime_error(errorMsg);
-    fprintf(stderr, "%s\n", errorMsg.c_str());
-    exit(EXIT_FAILURE);
-}
-
-void WarningHandler::Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
-    if (!IsWarningEnabled(warnType)) {
-        return;
-    }
-
-    std::string headerMsg = header;
-    auto warningNameIter = warningsTypeToStringMap.find(warnType);
-    if (warningNameIter != warningsTypeToStringMap.end()) {
-        headerMsg += StringHelper::Sprintf(" [-W%s]", warningNameIter->second);
-    }
-
-    if (Werror) {
-        WarningHandler::Error(filename, line, function, headerMsg, body);
-        return;
-    }
-
-    // Move to common function?
-    // if (something) {
-        fprintf(stderr, "%s:%i: in function '%s':\n", filename, line, function);
-    // }
-
-    if (Globals::Instance->inputPath != "") {
-        fprintf(stderr, "\nWhen processing file %s: ", Globals::Instance->inputPath.c_str());
-    }
-
-    fprintf(stderr, VT_WARN "warning" VT_RST ": ");
-    fprintf(stderr, VT_HILITE "%s" VT_RST "\n", headerMsg.c_str());
-
-    if (body != "") {
-        fprintf(stderr, "\t %s\n",  body.c_str());
-    }
-}
-
-void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body) {
-    assert(parent != nullptr);
-
-    if (!IsWarningEnabled(warnType)) {
-        return;
-    }
-
-    std::string warningMsg = body;
-    //warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
-    fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X: ", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
-
-    WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
-}
-
-void WarningHandler::Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
-    std::string warningMsg = body;
-    //warningMsg += StringHelper::Sprintf("\nWhen processing binary file %s: ", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
-    fprintf(stderr, "\nWhen processing binary file %s: ", Globals::Instance->inputPath.c_str());
-
-    WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
-}
-
 bool WarningHandler::IsWarningEnabled(WarningType warnType) {
     assert(static_cast<size_t>(warnType) >= 0 && warnType < WarningType::Max);
 
@@ -189,4 +109,124 @@ bool WarningHandler::IsWarningEnabled(WarningType warnType) {
         return true;
     }
     return false;
+}
+
+/**
+ * Print file/line/function info for debugging
+ */
+void WarningHandler::FunctionPreamble(const char* filename, int32_t line, const char* function) {
+    // if (Globals::Instance->???) {
+        fprintf(stderr, "%s:%i: in function %s:\n", filename, line, function);
+    // }
+}
+
+/**
+ *  Print the information about the file(s) being processed (XML for extraction, png etc. for building)
+ */
+void WarningHandler::ProcessedFilePreamble() {
+    if (Globals::Instance->inputPath != "") {
+        fprintf(stderr, "When processing file %s: ", Globals::Instance->inputPath.c_str());
+    }
+}
+
+/**
+ *  Print information about the binary file being extracted
+ */
+void WarningHandler::ExtractedFilePreamble(ZFile *parent, uint32_t offset) {
+    fprintf(stderr, "in input binary file %s, offset 0x%06X: ", parent, offset);
+}
+
+/**
+ * Construct the rest of the message, after warning:/error:
+ */
+std::string WarningHandler::ConstructMessage(std::string message, const std::string& header, const std::string& body) {
+    message.reserve(message.size() + header.size() + body.size() + 10 * (sizeof(HANG_INDT) - 1));
+    message += StringHelper::Sprintf(HILITE("%s"), header);
+    message += "\n";
+
+    if (std::string_view(body) != "") {
+        return message;
+    }
+
+    message += HANG_INDT;
+    for (const char* ptr = body.c_str(); *ptr != '\0'; ptr++) {
+        message += *ptr;
+        if (*ptr == '\n') {
+            message += HANG_INDT;
+        }
+    }
+
+    return message;
+}
+
+void WarningHandler::PrintErrorAndThrow(const std::string& header, const std::string& body) {
+    std::string errorMsg = ERR_FMT("error: ");
+    throw std::runtime_error(ConstructMessage(errorMsg, header, body));
+}
+
+void WarningHandler::PrintWarningBody(const std::string& header, const std::string& body) {
+    std::string errorMsg = WARN_FMT("warning: ");
+    fprintf(stderr, "%s", ConstructMessage(errorMsg, header, body).c_str());
+}
+
+/* Error types, to be used via the macros */
+
+void WarningHandler::Error_Plain(const char* filename, int32_t line, const char* function, const std::string& header, const std::string& body) {
+    FunctionPreamble(filename, line, function);
+
+    WarningHandler::PrintErrorAndThrow(header, body);
+}
+
+void WarningHandler::WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body) {
+
+    std::string headerMsg = header;
+    auto warningNameIter = warningsTypeToStringMap.find(warnType);
+    if (warningNameIter != warningsTypeToStringMap.end()) {
+        headerMsg += StringHelper::Sprintf(" [-W%s]", warningNameIter->second);
+    }
+
+    if (Werror) {
+        WarningHandler::PrintErrorAndThrow(headerMsg, body);
+    } else {
+        WarningHandler::PrintWarningBody(headerMsg, body);
+
+    }
+}
+
+
+/* Warning types, to be used via the macros */
+
+void WarningHandler::Warning_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
+    if (!IsWarningEnabled(warnType)) {
+        return;
+    }
+
+    FunctionPreamble(filename, line, function);
+
+    WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
+}
+
+void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body) {
+    assert(parent != nullptr);
+
+    if (!IsWarningEnabled(warnType)) {
+        return;
+    }
+
+    FunctionPreamble(filename, line, function);
+    ProcessedFilePreamble();
+    ExtractedFilePreamble(parent, offset);
+
+    WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
+}
+
+void WarningHandler::Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
+    if (!IsWarningEnabled(warnType)) {
+        return;
+    }
+
+    FunctionPreamble(filename, line, function);
+    ProcessedFilePreamble();
+
+    WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
 }

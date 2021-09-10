@@ -108,8 +108,8 @@ ZAPD also accepts the following list of extra parameters:
   - Could be useful for looking at raw data or testing.
   - Can be used only in `e` or `bsf` modes.
 - `-tm MODE`: Test Mode (enables certain experimental features). To enable it, set `MODE` to `1`.
-- `-wno` / `--warn-no-offsets` : Enable warnings for nodes that dont have offsets specified. Takes priority over `-eno`/ `--error-no-offsets`.
-- `-eno`/ `--error-no-offsets` : Enable errors for nodes that dont have offsets specified.
+<!-- - `-wno` / `--warn-no-offsets` : Enable warnings for nodes that dont have offsets specified. Takes priority over `-eno`/ `--error-no-offsets`. -->
+<!-- - `-eno`/ `--error-no-offsets` : Enable errors for nodes that dont have offsets specified. -->
 - `-se` / `--set-exporter` : Sets which exporter to use.
 - `--gcc-compat` : Enables GCC compatible mode. Slower.
 

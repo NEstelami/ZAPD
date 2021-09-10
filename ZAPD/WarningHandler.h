@@ -20,13 +20,17 @@
 #define VT_WARN VT_BFGCOL(PURPLE)
 #define VT_ERR VT_BFGCOL(RED)
 
+#define HILITE(string) (VT_HILITE string VT_RST)
+#define WARN_FMT(string) (VT_WARN string VT_RST)
+#define ERR_FMT(string) (VT_WARN string VT_RST)
+
 // Maybe make WARN_LF instead
 #define WARN_INDT "\t"
 #define HANG_INDT "\t\t"
 
 // TODO: better names
-#define HANDLE_ERROR(header, body) WarningHandler::Error(__FILE__, __LINE__, __PRETTY_FUNCTION__, header, body)
-#define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
+#define HANDLE_ERROR(header, body) WarningHandler::Error_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, header, body)
+#define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 #define HANDLE_WARNING_RESOURCE(warningType, parent, offset, header, body) WarningHandler::Warning_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, offset, header, body)
 #define HANDLE_WARNING_BUILD(warningType, header, body) WarningHandler::Warning_Build(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 
@@ -58,17 +62,28 @@ public:
 
     static void Init(int argc, char* argv[]);
 
+    static bool IsWarningEnabled(WarningType warnType);
+    
+    static void FunctionPreamble(const char* filename, int32_t line, const char* function);
+    static void ProcessedFilePreamble();
+    static void ExtractedFilePreamble(ZFile *parent, uint32_t offset);
+    static std::string ConstructMessage(std::string message, const std::string& header, const std::string& body);
+
+
     [[ noreturn ]]
-    static void Error(const char* filename, int32_t line, const char* function, const std::string& header, const std::string& body);
-    //[[ noreturn ]]
+    static void PrintErrorAndThrow(const std::string& header, const std::string& body);
+    static void PrintWarningBody(const std::string& header, const std::string& body);
+
+    static void Error_Plain(const char* filename, int32_t line, const char* function, const std::string& header, const std::string& body);
     //static void Error_Resource(const std::string& filename, int32_t line, const char* function, const std::string& header, const std::string& body);
 
-    // variadic?
-    static void Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
+
+    static void WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body);
+
+    static void Warning_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
     static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body);
     static void Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
 
-    static bool IsWarningEnabled(WarningType warnType);
 
 protected:
     static bool Werror;
