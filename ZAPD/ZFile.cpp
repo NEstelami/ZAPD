@@ -173,7 +173,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename, b
 		//		StringHelper::Sprintf("Error no offset specified for %s", nameXml));
 		//}
 		else {
-			HANDLE_WARNING_RESOURCE(WarningType::MissingOffsets, this, rawDataIndex, StringHelper::Sprintf("No offset specified for %s.", nameXml), "");
+			HANDLE_WARNING_RESOURCE(WarningType::MissingOffsets, this, nullptr, rawDataIndex, StringHelper::Sprintf("No offset specified for %s.", nameXml), "");
 		}
 
 		if (outNameXml != nullptr)
@@ -909,7 +909,7 @@ std::string ZFile::ProcessDeclarations()
 				//        "0x%06X (%s)\n",
 				//        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
 				//        currentDecl->varName.c_str());
-				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, currentAddress, "Intersection detected.", StringHelper::Sprintf("Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress, currentDecl->varName.c_str()));
+				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress, "Intersection detected.", StringHelper::Sprintf("Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress, currentDecl->varName.c_str()));
 			}
 		}
 
@@ -982,7 +982,7 @@ std::string ZFile::ProcessDeclarations()
 							//	"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
 							//	"\t Block size: '0x%X'.\n",
 							//	xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, unaccountedAddress, "A non-zero unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
+							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr, unaccountedAddress, "A non-zero unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
 						}
 						else if (diff >= 16)
 						{
@@ -992,7 +992,7 @@ std::string ZFile::ProcessDeclarations()
 							//        "at address '0x%06X'.\n"
 							//        "\t Block size: '0x%X'.\n",
 							//        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, unaccountedAddress, "A big (size>=0x10) zero-only unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
+							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr, unaccountedAddress, "A big (size>=0x10) zero-only unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
 						}
 					//}
 				}

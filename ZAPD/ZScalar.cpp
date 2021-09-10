@@ -204,7 +204,7 @@ void ZScalar::ParseRawData()
 		//fprintf(stderr, "Warning in ZScalar: Invalid type. %d %s %d\n", (int32_t)scalarType,
 		//        __FILE__, __LINE__);
 
-		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, rawDataIndex, "Invalid value found for 'Type' attribute.", "Defaulting to ''.");
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'Type' attribute.", "Defaulting to ''.");
 		break;
 	}
 }

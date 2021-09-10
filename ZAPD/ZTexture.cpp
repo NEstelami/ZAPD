@@ -840,7 +840,7 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 //		                "version.\n"
 //		                "\t Use the format 'rgba16' instead.\n");
 //#endif
-		//HANDLE_WARNING_RESOURCE(WarningType::Deprecated, parent, rawDataIndex, "The texture format 'rgb5a1' is currently deprecated.", "It will be removed in a future version.\n\t Use the format 'rgba16' instead.");
+		//HANDLE_WARNING_RESOURCE(WarningType::Deprecated, parent, this, rawDataIndex, "The texture format 'rgb5a1' is currently deprecated.", "It will be removed in a future version.\n\t Use the format 'rgba16' instead.");
 		HANDLE_WARNING(WarningType::Deprecated, "The texture format 'rgb5a1' is currently deprecated.", "It will be removed in a future version.\n\t Use the format 'rgba16' instead.");
 	}
 	else if (str == "i4")
@@ -859,7 +859,7 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 		texType = TextureType::Palette8bpp;
 	else
 		//fprintf(stderr, "Encountered Unknown Texture format %s \n", str.c_str());
-		//HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, rawDataIndex, "Invalid value found for 'Type' attribute.", "Defaulting to ''.");
+		//HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'Type' attribute.", "Defaulting to ''.");
 		HANDLE_WARNING(WarningType::InvalidAttributeValue, "Invalid value found for 'Type' attribute.", "Defaulting to ''.");
 	return texType;
 }

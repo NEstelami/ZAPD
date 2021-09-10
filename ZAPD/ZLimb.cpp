@@ -393,7 +393,7 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 		//        "\t Missing 'LimbType' attribute in xml.\n"
 		//        "\t Defaulting to 'Standard'.\n",
 		//        name.c_str());
-		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, rawDataIndex, "Missing 'LimbType' attribute in XML.", "Defaulting to 'Standard'.");
+		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "Missing 'LimbType' attribute in XML.", "Defaulting to 'Standard'.");
 		type = ZLimbType::Standard;
 	}
 	else
@@ -407,7 +407,7 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 			//        "\t Defaulting to 'Standard'.\n",
 			//        name.c_str(), limbType.c_str());
 
-			HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, rawDataIndex, "Invalid value found for 'LimbType' attribute.", "Defaulting to 'Standard'.");
+			HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'LimbType' attribute.", "Defaulting to 'Standard'.");
 			type = ZLimbType::Standard;
 		}
 	}
@@ -775,7 +775,7 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 			//        "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Unknown segment type "
 			//        "for SkinLimb: '%i'. \n\tPlease report this.\n",
 			//        name.c_str(), static_cast<int32_t>(skinSegmentType));
-			HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, rawDataIndex, StringHelper::Sprintf("Unknown segment type for SkinLimb: '%i'", static_cast<int32_t>(skinSegmentType)), "Please report this.");
+			HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("Unknown segment type for SkinLimb: '%i'", static_cast<int32_t>(skinSegmentType)), "Please report this.");
 			break;
 		case ZLimbSkinType::SkinType_0:
 		case ZLimbSkinType::SkinType_5:
@@ -783,7 +783,7 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 			//        "ZLimb::GetSourceOutputCodeSkinType: Error in '%s'.\n\t Segment type for "
 			//        "SkinLimb not implemented: '%i'.\n",
 			//        name.c_str(), static_cast<int32_t>(skinSegmentType));
-			HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, rawDataIndex, StringHelper::Sprintf("Segment type for SkinLimb not implemented: '%i'", static_cast<int32_t>(skinSegmentType)), "");
+			HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("Segment type for SkinLimb not implemented: '%i'", static_cast<int32_t>(skinSegmentType)), "");
 			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
 			break;
 		}

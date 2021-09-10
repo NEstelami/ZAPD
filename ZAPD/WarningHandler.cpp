@@ -108,7 +108,7 @@ void WarningHandler::Error(const char* filename, int32_t line, const char* funct
         fprintf(stderr, "\nWhen processing file %s: ", Globals::Instance->inputPath.c_str());
     }
 
-    std::string errorMsg = VT_ERR "error: " VT_RST;
+    std::string errorMsg = VT_ERR "fatal error: " VT_RST;
     errorMsg += VT_HILITE;
     errorMsg += header;
     errorMsg += VT_RST;
@@ -158,7 +158,7 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
     }
 }
 
-void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body) {
+void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
 
     if (!IsWarningEnabled(warnType)) {
@@ -167,7 +167,12 @@ void WarningHandler::Warning_Resource(const char* filename, int32_t line, const 
 
     std::string warningMsg = body;
     //warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
-    fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X: ", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    //fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X: ", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    fprintf(stderr, "\nWhen processing file %s: in input binary file %s, ", Globals::Instance->inputPath.c_str(), parent->GetName().c_str());
+    if (res != nullptr) {
+        fprintf(stderr, "resource '%s' at ", res->GetName().c_str());
+    }
+    fprintf(stderr, "offset 0x%06X: ", offset); 
 
     WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
 }
