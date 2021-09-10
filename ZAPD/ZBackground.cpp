@@ -84,9 +84,9 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		//         "\t The game will skip this jpeg.\n",
 		//         filename.c_str());
 		HANDLE_WARNING_BUILD(WarningType::InvalidJPEG,
-		               StringHelper::Sprintf("missing jpeg marker at beginning of file: '%s'",
-		                                     filename.c_str()),
-		               "The game will skip this jpeg");
+		                     StringHelper::Sprintf("missing jpeg marker at beginning of file: '%s'",
+		                                           filename.c_str()),
+		                     "The game will skip this jpeg");
 	}
 	if (data.at(6) != 'J' || data.at(7) != 'F' || data.at(8) != 'I' || data.at(9) != 'F' ||
 	    data.at(10) != '\0')
@@ -129,8 +129,8 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		//         "\t The game may not be able to decode this image properly.\n",
 		//         filename.c_str());
 		HANDLE_WARNING_BUILD(WarningType::InvalidJPEG,
-		               "there seems to be extra data before the image data in this file",
-		               "The game may not be able to decode this image correctly.");
+		                     "there seems to be extra data before the image data in this file",
+		                     "The game may not be able to decode this image correctly.");
 	}
 	if (data.size() > GetRawDataSize())
 	{
@@ -142,8 +142,7 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		//         filename.c_str(), data.size(), GetRawDataSize());
 		HANDLE_WARNING_BUILD(
 			WarningType::InvalidJPEG, "the image is bigger than the screen buffer",
-			StringHelper::Sprintf("Image size: %zu bytes\n"
-		                          HANG_INDT "Screen buffer size: %zu bytes",
+			StringHelper::Sprintf("Image size: %zu bytes\nScreen buffer size: %zu bytes",
 		                          data.size(), GetRawDataSize()));
 	}
 }
