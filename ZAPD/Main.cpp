@@ -188,8 +188,9 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, WarningHandler);
 			signal(SIGABRT, WarningHandler);
 #else
-			fprintf(stderr,
-			        "Warning: Tried to set error handler, but this build lacks support for one.\n");
+			//fprintf(stderr,
+			//        "Warning: Tried to set error handler, but this build lacks support for one.\n");
+			HANDLE_WARNING(WarningType::Always, "Tried to set error handler, but this ZAPD build lacks support for one.", "");
 #endif
 		}
 		else if (arg == "-v")  // Verbose

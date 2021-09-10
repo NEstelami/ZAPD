@@ -119,6 +119,7 @@ void WarningHandler::Error(const char* filename, int32_t line, const char* funct
 
     // Which one is better??
     // Does one mean we don't get the backtrace?
+    // I think `exit()` doesn't have a backtrace, we should test it tho
     //throw std::runtime_error(errorMsg);
     fprintf(stderr, "%s\n", errorMsg.c_str());
     exit(EXIT_FAILURE);
