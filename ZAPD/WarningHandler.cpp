@@ -145,7 +145,7 @@ void WarningHandler::ExtractedFilePreamble(ZFile *parent, ZResource* res, uint32
  */
 std::string WarningHandler::ConstructMessage(std::string message, const std::string& header, const std::string& body) {
     message.reserve(message.size() + header.size() + body.size() + 10 * (sizeof(HANG_INDT) - 1));
-    message += StringHelper::Sprintf(HILITE("%s"), header);
+    message += StringHelper::Sprintf(HILITE("%s"), header.c_str());
     message += "\n";
 
     if (std::string_view(body) != "") {
