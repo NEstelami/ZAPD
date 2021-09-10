@@ -71,7 +71,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 				//        "ZResource::ParseXML: Warning while parsing '%s'.\n"
 				//        "\t Unexpected '%s' attribute in resource '%s'.\n",
 				//        parent->GetName().c_str(), attrName.c_str(), reader->Name());
-				HANDLE_WARNING_RESOURCE(WarningType::UnknownAttribute, parent, rawDataIndex, StringHelper::Sprintf("Unexpected '%s' attribute in resource '%s'.", attrName.c_str(), reader->Name()), "");
+				HANDLE_WARNING_RESOURCE(WarningType::UnknownAttribute, parent, this, rawDataIndex, StringHelper::Sprintf("Unexpected '%s' attribute in resource '%s'.", attrName.c_str(), reader->Name()), "");
 			}
 			attrs = attrs->Next();
 		}

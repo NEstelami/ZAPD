@@ -8,6 +8,7 @@
 #include <Utils/Path.h>
 #include <Utils/StringHelper.h>
 #include "Globals.h"
+#include "WarningHandler.h"
 
 using namespace ELFIO;
 
@@ -127,8 +128,11 @@ ZOverlay* ZOverlay::FromBuild(fs::path buildPath, fs::path cfgFolderPath)
 
 			SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
 
-			if (sectionType == SectionType::ERROR)
-				fprintf(stderr, "WARNING: One of the section types returned ERROR\n");
+			if (sectionType == SectionType::ERROR) {
+				//fprintf(stderr, "WARNING: One of the section types returned ERROR\n");
+				// Should we add a WarningType for this?
+				HANDLE_WARNING(WarningType::Always, "One of the section types returned ERROR", "");
+			}
 
 			relocation_section_accessor relocs(*curReader, pSec);
 			for (Elf_Xword j = 0; j < relocs.get_entries_num(); j++)

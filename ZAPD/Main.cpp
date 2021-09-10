@@ -97,6 +97,8 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	WarningHandler::Init(argc, argv);
+
 	for (int i = 1; i < argc; i++)
 	{
 		if (!strcmp(argv[i], "--version"))
@@ -109,11 +111,11 @@ int main(int argc, char* argv[])
 			printf("Congratulations!\n");
 			printf("You just found the (unimplemented and undocumented) ZAPD's help message.\n");
 			printf("Feel free to implement it if you want :D\n");
+
+			WarningHandler::PrintHelp();
 			return 0;
 		}
 	}
-
-	WarningHandler::Init(argc, argv);
 
 	Globals* g = new Globals();
 
@@ -188,8 +190,9 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, WarningHandler);
 			signal(SIGABRT, WarningHandler);
 #else
-			fprintf(stderr,
-			        "Warning: Tried to set error handler, but this build lacks support for one.\n");
+			//fprintf(stderr,
+			//        "Warning: Tried to set error handler, but this build lacks support for one.\n");
+			HANDLE_WARNING(WarningType::Always, "Tried to set error handler, but this ZAPD build lacks support for one.", "");
 #endif
 		}
 		else if (arg == "-v")  // Verbose

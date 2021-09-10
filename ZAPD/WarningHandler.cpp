@@ -32,7 +32,7 @@ std::unordered_map<WarningType, const char*> WarningHandler::warningsTypeToStrin
     {WarningType::MissingSegment, "missing-segment"},
     {WarningType::NotImplemented, "not-implemented"},
 };
-std::vector<WarningType> WarningHandler::warningsEnabledByDefault = {
+std::unordered_set<WarningType> WarningHandler::warningsEnabledByDefault = {
     WarningType::Always,
     WarningType::Intersection,
 #ifdef DEPRECATION_ON
@@ -132,8 +132,12 @@ void WarningHandler::ProcessedFilePreamble() {
 /**
  *  Print information about the binary file being extracted
  */
-void WarningHandler::ExtractedFilePreamble(ZFile *parent, uint32_t offset) {
-    fprintf(stderr, "in input binary file %s, offset 0x%06X: ", parent, offset);
+void WarningHandler::ExtractedFilePreamble(ZFile *parent, ZResource* res, uint32_t offset) {
+    fprintf(stderr, "in input binary file %s, ", parent->GetName().c_str());
+    if (res != nullptr) {
+        fprintf(stderr, "resource '%s' at ", res->GetName().c_str());
+    }
+    fprintf(stderr, "offset 0x%06X: ", offset); 
 }
 
 /**
@@ -206,7 +210,7 @@ void WarningHandler::Warning_Plain(const char* filename, int32_t line, const cha
     WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
 }
 
-void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body) {
+void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
 
     if (!IsWarningEnabled(warnType)) {
@@ -215,7 +219,7 @@ void WarningHandler::Warning_Resource(const char* filename, int32_t line, const 
 
     FunctionPreamble(filename, line, function);
     ProcessedFilePreamble();
-    ExtractedFilePreamble(parent, offset);
+    ExtractedFilePreamble(parent, res, offset);
 
     WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
 }
@@ -229,4 +233,21 @@ void WarningHandler::Warning_Build(const char* filename, int32_t line, const cha
     ProcessedFilePreamble();
 
     WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
+}
+
+void WarningHandler::PrintHelp() {
+    printf("\nExisting warnings:\n");
+    for (const auto& iter: warningsTypeToStringMap) {
+        const char* enabledMsg = "";
+        if (warningsEnabledByDefault.find(iter.first) != warningsEnabledByDefault.end()) {
+            enabledMsg = "(enabled)";
+        }
+
+        printf("\t -W%-25s %s\n", iter.second, enabledMsg);
+    }
+
+    // TODO: mention -Weverything and -Werror
+
+    printf("\n");
+    printf("Warnings can be disabled with `-Wno-` instead of `-W`\n");
 }
