@@ -103,6 +103,10 @@ void WarningHandler::Error(const char* filename, int32_t line, const char* funct
         fprintf(stderr, "%s:%i: in function %s:\n", filename, line, function);
     // }
 
+    if (Globals::Instance->inputPath != "") {
+        fprintf(stderr, "\nWhen processing file %s: ", Globals::Instance->inputPath.c_str());
+    }
+
     std::string errorMsg = VT_FGCOL(RED) "Error" VT_RST ": ";
     //errorMsg += BOLD;
     errorMsg += header;
@@ -119,8 +123,7 @@ void WarningHandler::Error(const char* filename, int32_t line, const char* funct
 }
 
 void WarningHandler::Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
-    assert(static_cast<size_t>(warnType) >= 0 && warnType < WarningType::Max);
-    if (!enabledWarnings.at(static_cast<size_t>(WarningType::Everything)) && !enabledWarnings.at(static_cast<size_t>(warnType))) {
+    if (!IsWarningEnabled(warnType)) {
         return;
     }
 
@@ -140,6 +143,10 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
         fprintf(stderr, "%s:%i: in function '%s':\n", filename, line, function);
     // }
 
+    if (Globals::Instance->inputPath != "") {
+        fprintf(stderr, "\nWhen processing file %s: ", Globals::Instance->inputPath.c_str());
+    }
+
     // TODO: bold
     fprintf(stderr, VT_FGCOL(PURPLE) "Warning" VT_RST ": ");
     // TODO: bold
@@ -151,9 +158,27 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
 
 void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
+
+    if (!IsWarningEnabled(warnType)) {
+        return;
+    }
+
     std::string warningMsg = body;
     //warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
-    fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    //fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    fprintf(stderr, "\nIn input binary file %s, offset 0x%06X\n", parent->GetName().c_str(), offset);
 
     WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
+}
+
+bool WarningHandler::IsWarningEnabled(WarningType warnType) {
+    assert(static_cast<size_t>(warnType) >= 0 && warnType < WarningType::Max);
+
+    if (enabledWarnings.at(static_cast<size_t>(WarningType::Everything))) {
+        return true;
+    }
+    if (enabledWarnings.at(static_cast<size_t>(warnType))) {
+        return true;
+    }
+    return false;
 }

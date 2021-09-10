@@ -50,6 +50,8 @@ public:
     static void Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
     static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body);
 
+    static bool IsWarningEnabled(WarningType warnType);
+
 protected:
     static bool Werror;
 };
