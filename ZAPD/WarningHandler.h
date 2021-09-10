@@ -70,6 +70,8 @@ public:
 
     static bool IsWarningEnabled(WarningType warnType);
 
+    static void PrintHelp();
+
 protected:
     static bool Werror;
 };

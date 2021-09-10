@@ -196,3 +196,18 @@ bool WarningHandler::IsWarningEnabled(WarningType warnType) {
     }
     return false;
 }
+
+void WarningHandler::PrintHelp() {
+    printf("\nExisting warnings:\n");
+    for (const auto& iter: warningsTypeToStringMap) {
+        printf("\t -W%s\n", iter.second);
+    }
+
+    printf("\nWarnings enabled by default:\n");
+    for (WarningType warnType: warningsEnabledByDefault) {
+        const auto& iter = warningsTypeToStringMap.find(warnType);
+        if (iter != warningsTypeToStringMap.end()) {
+            printf("\t -W%s\n", iter->second);
+        }
+    }
+}
