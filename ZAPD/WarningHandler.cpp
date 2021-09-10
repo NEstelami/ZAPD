@@ -1,14 +1,12 @@
 #include "WarningHandler.h"
 
 #include <cassert>
-#include <unordered_map>
-#include <vector>
 
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
 // If a warning isn't in this list, it would not be possible to enable/disable it
-static std::unordered_map<std::string, WarningType> sWarningsStringToTypeMap = {
+std::unordered_map<std::string, WarningType> WarningHandler::warningsStringToTypeMap = {
     {"deprecated", WarningType::Deprecated},
     {"unaccounted", WarningType::Unaccounted},
     {"missing-offsets", WarningType::MissingOffsets},
@@ -20,7 +18,7 @@ static std::unordered_map<std::string, WarningType> sWarningsStringToTypeMap = {
     {"missing-segment", WarningType::MissingSegment},
     {"not-implemented", WarningType::NotImplemented},
 };
-static std::unordered_map<WarningType, const char*> sWarningsTypeToStringMap = {
+std::unordered_map<WarningType, const char*> WarningHandler::warningsTypeToStringMap = {
     {WarningType::Deprecated, "deprecated"},
     {WarningType::Unaccounted, "unaccounted"},
     {WarningType::MissingOffsets, "missing-offsets"},
@@ -32,7 +30,7 @@ static std::unordered_map<WarningType, const char*> sWarningsTypeToStringMap = {
     {WarningType::MissingSegment, "missing-segment"},
     {WarningType::NotImplemented, "not-implemented"},
 };
-static std::vector<WarningType> sWarningsEnabledByDefault = {
+std::vector<WarningType> WarningHandler::warningsEnabledByDefault = {
     WarningType::Always,
     WarningType::Intersection,
 #ifdef DEPRECATION_ON
@@ -56,7 +54,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
     //     enabledWarnings[i] = false;
     // }
 
-    for (const auto& warnType: sWarningsEnabledByDefault) {
+    for (const auto& warnType: warningsEnabledByDefault) {
         enabledWarnings[static_cast<size_t>(warnType)] = true;
     }
 
@@ -86,8 +84,8 @@ void WarningHandler::Init(int argc, char* argv[]) {
                 enabledWarnings[i] = warningTypeOn;
             }
         } else {
-            auto warningTypeIter = sWarningsStringToTypeMap.find(std::string(currentArgv));
-            if (warningTypeIter != sWarningsStringToTypeMap.end()) {
+            auto warningTypeIter = warningsStringToTypeMap.find(std::string(currentArgv));
+            if (warningTypeIter != warningsStringToTypeMap.end()) {
                 size_t index = static_cast<size_t>(warningTypeIter->second);
                 enabledWarnings[index] = warningTypeOn;
             }
@@ -128,8 +126,8 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
     }
 
     std::string headerMsg = header;
-    auto warningNameIter = sWarningsTypeToStringMap.find(warnType);
-    if (warningNameIter != sWarningsTypeToStringMap.end()) {
+    auto warningNameIter = warningsTypeToStringMap.find(warnType);
+    if (warningNameIter != warningsTypeToStringMap.end()) {
         headerMsg += StringHelper::Sprintf(" [-W%s]", warningNameIter->second);
     }
 

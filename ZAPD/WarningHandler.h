@@ -3,6 +3,8 @@
 #include <array>
 #include <string>
 #include <string_view>
+#include <unordered_map>
+#include <vector>
 
 #include "ZFile.h"
 #include "Utils/vt.h"
@@ -37,6 +39,10 @@ enum class WarningType {
 
 class WarningHandler {
 public:
+    static std::unordered_map<std::string, WarningType> warningsStringToTypeMap;
+    static std::unordered_map<WarningType, const char*> warningsTypeToStringMap;
+    static std::vector<WarningType> warningsEnabledByDefault;
+
     static std::array<bool, static_cast<size_t>(WarningType::Max)> enabledWarnings;
 
     static void Init(int argc, char* argv[]);
