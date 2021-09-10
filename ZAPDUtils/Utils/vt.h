@@ -32,6 +32,11 @@
 #define VT_COL(back, fore) VT_SGR(VT_COLOR(BACKGROUND, back) ";" VT_COLOR(FOREGROUND, fore))
 #define VT_FGCOL(color) VT_SGR(VT_COLOR(FOREGROUND, color))
 #define VT_BGCOL(color) VT_SGR(VT_COLOR(BACKGROUND, color))
+
+// Bright color support
+#define VT_BFGCOL(color) VT_SGR(VT_COLOR(BRIGHT_FOREGROUND, color))
+#define VT_BBGCOL(color) VT_SGR(VT_COLOR(BRIGHT_BACKGROUND, color))
+
 #define VT_RST VT_SGR("")
 #define VT_CLS VT_ED(2)
 

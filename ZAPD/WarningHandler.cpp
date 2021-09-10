@@ -17,6 +17,7 @@ static std::unordered_map<std::string, WarningType> sWarningsStringToTypeMap = {
     {"invalid-attribute-value", WarningType::InvalidAttributeValue},
     {"unknown-attribute", WarningType::UnknownAttribute},
     {"invalid-xml", WarningType::InvalidXML},
+    {"invalid-jpeg", WarningType::InvalidJPEG},
     {"missing-segment", WarningType::MissingSegment},
     {"not-implemented", WarningType::NotImplemented},
 };
@@ -29,6 +30,7 @@ static std::unordered_map<WarningType, const char*> sWarningsTypeToStringMap = {
     {WarningType::InvalidAttributeValue, "invalid-attribute-value"},
     {WarningType::UnknownAttribute, "unknown-attribute"},
     {WarningType::InvalidXML, "invalid-xml"},
+    {WarningType::InvalidJPEG, "invalid-jpeg"},
     {WarningType::MissingSegment, "missing-segment"},
     {WarningType::NotImplemented, "not-implemented"},
 };
@@ -43,6 +45,7 @@ static std::vector<WarningType> sWarningsEnabledByDefault = {
     WarningType::InvalidAttributeValue,
     WarningType::UnknownAttribute,
     WarningType::InvalidXML,
+    WarningType::InvalidJPEG,
     WarningType::NotImplemented,
 };
 
@@ -62,7 +65,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
 
     for (int i = 1; i < argc; i++) {
 
-        // If it doesn't starts with "-W" skip it.
+        // If it doesn't start with "-W" skip it.
         if (argv[i][0] != '-' || argv[i][1] != 'W' || argv[i][2] == '\0') {
             continue;
         }
@@ -103,16 +106,17 @@ void WarningHandler::Error(const char* filename, int32_t line, const char* funct
         fprintf(stderr, "%s:%i: in function %s:\n", filename, line, function);
     // }
 
-    std::string errorMsg = VT_FGCOL(RED) "Error" VT_RST ": ";
-    //errorMsg += BOLD;
+    std::string errorMsg = VT_ERR "error: " VT_RST;
+    errorMsg += VT_HILITE;
     errorMsg += header;
     errorMsg += VT_RST;
     if (body != "") {
-        errorMsg += "\n\t ";
+        errorMsg += "\n" WARN_INDT;
         errorMsg += body;
     }
 
     // Which one is better??
+    // Does one mean we don't get the backtrace?
     //throw std::runtime_error(errorMsg);
     fprintf(stderr, "%s\n", errorMsg.c_str());
     exit(EXIT_FAILURE);
@@ -140,10 +144,8 @@ void WarningHandler::Warning(const char* filename, int32_t line, const char* fun
         fprintf(stderr, "%s:%i: in function '%s':\n", filename, line, function);
     // }
 
-    // TODO: bold
-    fprintf(stderr, VT_FGCOL(PURPLE) "Warning" VT_RST ": ");
-    // TODO: bold
-    fprintf(stderr, "%s" VT_RST "\n", headerMsg.c_str());
+    fprintf(stderr, VT_WARN "warning" VT_RST ": ");
+    fprintf(stderr, VT_HILITE "%s" VT_RST "\n", headerMsg.c_str());
     if (body != "") {
         fprintf(stderr, "\t %s\n",  body.c_str());
     }
@@ -153,7 +155,15 @@ void WarningHandler::Warning_Resource(const char* filename, int32_t line, const 
     assert(parent != nullptr);
     std::string warningMsg = body;
     //warningMsg += StringHelper::Sprintf("\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
-    fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X\n", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    fprintf(stderr, "\nWhen processing file %s: in input binary file %s, offset 0x%06X: ", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+
+    WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
+}
+
+void WarningHandler::Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
+    std::string warningMsg = body;
+    //warningMsg += StringHelper::Sprintf("\nWhen processing binary file %s: ", Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), offset);
+    fprintf(stderr, "\nWhen processing binary file %s: ", Globals::Instance->inputPath.c_str());
 
     WarningHandler::Warning(filename, line, function, warnType, header, warningMsg);
 }

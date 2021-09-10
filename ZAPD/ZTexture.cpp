@@ -840,8 +840,8 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 //		                "version.\n"
 //		                "\t Use the format 'rgba16' instead.\n");
 //#endif
-		//HANDLE_WARNING_RESOURCE(WarningType::Deprecated, parent, rawDataIndex, "The texture format 'rgb5a1' is currently deprecated.", "It will be depreacted in a future version.\n\t Use the format 'rgba16' instead.");
-		HANDLE_WARNING(WarningType::Deprecated, "The texture format 'rgb5a1' is currently deprecated.", "It will be depreacted in a future version.\n\t Use the format 'rgba16' instead.");
+		//HANDLE_WARNING_RESOURCE(WarningType::Deprecated, parent, rawDataIndex, "The texture format 'rgb5a1' is currently deprecated.", "It will be removed in a future version.\n\t Use the format 'rgba16' instead.");
+		HANDLE_WARNING(WarningType::Deprecated, "The texture format 'rgb5a1' is currently deprecated.", "It will be removed in a future version.\n\t Use the format 'rgba16' instead.");
 	}
 	else if (str == "i4")
 		texType = TextureType::Grayscale4bpp;

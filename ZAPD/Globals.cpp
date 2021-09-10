@@ -1,7 +1,8 @@
 #include "Globals.h"
-#include <algorithm>
 #include <Utils/File.h>
 #include <Utils/Path.h>
+#include <algorithm>
+#include "WarningHandler.h"
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -73,7 +74,8 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
-		throw std::runtime_error("Error: Unable to read config file.");
+		// throw std::runtime_error("Error: Unable to read config file.");
+		HANDLE_ERROR(StringHelper::Sprintf("unable to read config XML '%s'", configFilePath), "");
 		return;
 	}
 
@@ -134,7 +136,8 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
-		fprintf(stderr, "Warning: Unable to read texture pool XML with error code %i\n", eResult);
+		// fprintf(stderr, "Warning: Unable to read texture pool XML with error code %i\n", eResult);
+		HANDLE_WARNING(WarningType::InvalidXML, StringHelper::Sprintf("unable to read texture pool XML with error code %i", eResult), "");
 		return;
 	}
 
@@ -204,7 +207,7 @@ ZResourceExporter* Globals::GetExporter(ZResourceType resType)
 	auto exporters = *GetExporterMap();
 
 	if (currentExporter != "" && exporters[currentExporter]->exporters.find(resType) !=
-		exporters[currentExporter]->exporters.end())
+	                                 exporters[currentExporter]->exporters.end())
 		return exporters[currentExporter]->exporters[resType];
 	else
 		return nullptr;

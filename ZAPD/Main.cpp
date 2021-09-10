@@ -1,15 +1,15 @@
-#include "BuildInfo.h"
 #include <Utils/Directory.h>
 #include <Utils/File.h>
 #include <Utils/Path.h>
+#include "BuildInfo.h"
 #include "Globals.h"
 #include "Overlays/ZOverlay.h"
+#include "WarningHandler.h"
 #include "ZAnimation.h"
 #include "ZBackground.h"
 #include "ZBlob.h"
 #include "ZFile.h"
 #include "ZTexture.h"
-#include "WarningHandler.h"
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <csignal>
@@ -196,18 +196,18 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
 		}
-		//else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
+		// else if (arg == "-wu" || arg == "--warn-unaccounted")  // Warn unaccounted
 		//{
 		//	Globals::Instance->warnUnaccounted = true;
 		//}
-		else if (arg == "-wno" || arg == "--warn-no-offset")
-		{
-			Globals::Instance->warnNoOffset = true;
-		}
-		else if (arg == "-eno" || arg == "--error-no-offset")
-		{
-			Globals::Instance->errorNoOffset = true;
-		}
+		// else if (arg == "-wno" || arg == "--warn-no-offset")
+		// {
+		// 	Globals::Instance->warnNoOffset = true;
+		// }
+		// else if (arg == "-eno" || arg == "--error-no-offset")
+		// {
+		// 	Globals::Instance->errorNoOffset = true;
+		// }
 		else if (arg == "-vu" || arg == "--verbose-unaccounted")  // Verbose unaccounted
 		{
 			Globals::Instance->verboseUnaccounted = true;
@@ -338,7 +338,9 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
-		fprintf(stderr, "Invalid xml file: '%s'\n", xmlFilePath.c_str());
+		// fprintf(stderr, "Invalid xml file: '%s'\n", xmlFilePath.c_str());
+		HANDLE_WARNING(WarningType::InvalidXML,
+		               StringHelper::Sprintf("Invalid xml file: '%s'", xmlFilePath.c_str()), "");
 		return false;
 	}
 
@@ -346,7 +348,10 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 
 	if (root == nullptr)
 	{
-		fprintf(stderr, "Missing Root tag in xml file: '%s'\n", xmlFilePath.c_str());
+		// fprintf(stderr, "Missing Root tag in xml file: '%s'\n", xmlFilePath.c_str());
+		HANDLE_WARNING(
+			WarningType::InvalidXML,
+			StringHelper::Sprintf("Missing Root tag in xml file: '%s'", xmlFilePath.c_str()), "");
 		return false;
 	}
 
@@ -360,10 +365,14 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 		}
 		else
 		{
-			throw std::runtime_error(
-				StringHelper::Sprintf("Parse: Fatal error in '%s'.\n\t Found a resource outside of "
-			                          "a File element: '%s'\n",
-			                          xmlFilePath.c_str(), child->Name()));
+			// throw std::runtime_error(
+			// 	StringHelper::Sprintf("Parse: Fatal error in '%s'.\n\t Found a resource outside of "
+			//                           "a File element: '%s'\n",
+			//                           xmlFilePath.c_str(), child->Name()));
+			// Should this still be Fatal?
+			HANDLE_ERROR(StringHelper::Sprintf("when parsing file '%s'", xmlFilePath.c_str()),
+			             StringHelper::Sprintf("Found a resource outside a File element: '%s'",
+			                                   child->Name()));
 		}
 	}
 

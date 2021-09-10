@@ -13,14 +13,24 @@
 #define __PRETTY_FUNCTION__ __func__
 #endif
 
+// Macros for displaying warnings/errors
+#define VT_HILITE VT_BFGCOL(WHITE)
+#define VT_WARN VT_BFGCOL(PURPLE)
+#define VT_ERR VT_BFGCOL(RED)
+
+// Maybe make WARN_LF instead
+#define WARN_INDT "\t"
+#define HANG_INDT "\t\t"
+
 // TODO: better names
 #define HANDLE_ERROR(header, body) WarningHandler::Error(__FILE__, __LINE__, __PRETTY_FUNCTION__, header, body)
 #define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 #define HANDLE_WARNING_RESOURCE(warningType, parent, offset, header, body) WarningHandler::Warning_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, offset, header, body)
+#define HANDLE_WARNING_BUILD(warningType, header, body) WarningHandler::Warning_Build(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 
 enum class WarningType {
     Everything,
-    Always, // Warnings of this type is always printed, can't be disabled.
+    Always, // Warnings of this type are always printed, cannot be disabled.
     Deprecated,
     Unaccounted,
     MissingOffsets,
@@ -29,6 +39,7 @@ enum class WarningType {
     InvalidAttributeValue,
     UnknownAttribute,
     InvalidXML,
+    InvalidJPEG,
     MissingSegment,
     NotImplemented,
 
@@ -49,6 +60,7 @@ public:
     // variadic?
     static void Warning(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
     static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, uint32_t offset, const std::string& header, const std::string& body);
+    static void Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
 
 protected:
     static bool Werror;
