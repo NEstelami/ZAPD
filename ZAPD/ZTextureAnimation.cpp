@@ -217,7 +217,6 @@ std::string TextureScrollingParams::GetBodySourceCode() const
 
 	bodyStr.pop_back();
 
-	// printf("bodyStr = %s\n", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -261,8 +260,6 @@ void TextureColorChangingParams::ParseRawData()
 	uint32_t frameDataListOffset = Seg2Filespace(frameDataListAddress, parent->baseAddress);
 
 	uint32_t currentPtr;
-
-	// printf("cycleLength: %d\n", listLength);
 
 	F3DPrimColor currentPrimColor;
 
@@ -384,7 +381,6 @@ std::string TextureColorChangingParams::GetBodySourceCode() const
 	                          parent->GetDeclarationPtrName(envColorListAddress).c_str(),
 	                          parent->GetDeclarationPtrName(frameDataListAddress).c_str());
 
-	// printf("bodyStr = %s\n", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -422,14 +418,10 @@ void TextureCyclingParams::ParseRawData()
 	uint8_t currentIndex;
 	uint8_t maxIndex = 0;  // To find the length of the texture list
 
-	// printf("cycleLength: %d\n", cycleLength);
-
 	for (currentPtr = textureIndexListOffset; currentPtr < textureIndexListOffset + cycleLength;
 	     currentPtr++)
 	{
 		currentIndex = BitConverter::ToUInt8BE(rawData, currentPtr);
-		// printf("currentPtr: 0x%X\n", currentPtr);
-		// printf("currentIndex: %d\n", currentIndex);
 		textureIndexList.push_back(currentIndex);
 		if (currentIndex > maxIndex)
 			maxIndex = currentIndex;
@@ -498,8 +490,6 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 
 		texturesBodyStr.pop_back();
 
-		// printf("Declaring texture pointer array\n");
-
 		parent->AddDeclarationArray(
 			Seg2Filespace(textureListAddress, parent->baseAddress), DeclarationAlignment::Align4,
 			textureList.size() * 4, "TexturePtr",
@@ -519,7 +509,6 @@ void TextureCyclingParams::DeclareReferences(const std::string& prefix)
 
 		indicesBodyStr.pop_back();
 
-		// printf("Declaring texture index array\n");
 		parent->AddDeclarationArray(
 			Seg2Filespace(textureIndexListAddress, parent->baseAddress),
 			DeclarationAlignment::Align4, textureIndexList.size(), "u8",
@@ -536,7 +525,6 @@ std::string TextureCyclingParams::GetBodySourceCode() const
 	                          parent->GetDeclarationPtrName(textureListAddress).c_str(),
 	                          parent->GetDeclarationPtrName(textureIndexListAddress).c_str());
 
-	// printf("bodyStr = %s\n", bodyStr.c_str());
 	return bodyStr;
 }
 
@@ -565,7 +553,6 @@ void ZTextureAnimation::ParseRawData()
 
 	for (uint32_t currentPtr = rawDataIndex;; currentPtr += 8)
 	{
-		// printf("Parsing TextureAnimationEntry raw data\n");
 		type = BitConverter::ToInt16BE(rawData, currentPtr + 2);
 
 		currentEntry.segment = BitConverter::ToInt8BE(rawData, currentPtr);
@@ -623,8 +610,6 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				case TextureAnimationParamsType::SingleScroll:
 					count = 1;
 				case TextureAnimationParamsType::DualScroll:
-					// printf("Declaring references to texture scrolling\n");
-
 					params = new TextureScrollingParams(parent);
 					params->ExtractFromBinary(paramsOffset, count);
 					break;
@@ -632,14 +617,12 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				case TextureAnimationParamsType::ColorChange:
 				case TextureAnimationParamsType::ColorChangeLERP:
 				case TextureAnimationParamsType::ColorChangeLagrange:
-					// printf("Declaring references to texture color changing\n");
 					params = new TextureColorChangingParams(parent);
 					params->type = entry.type;
 					params->ExtractFromBinary(paramsOffset);
 					break;
 
 				case TextureAnimationParamsType::TextureCycle:
-					// printf("Declaring references to texture cycling\n");
 					params = new TextureCyclingParams(parent);
 					params->ExtractFromBinary(paramsOffset);
 					break;
@@ -718,7 +701,6 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 
 	bodyStr.pop_back();
 
-	// printf("bodyStr = %s", bodyStr.c_str());
 	return bodyStr;
 }
 
