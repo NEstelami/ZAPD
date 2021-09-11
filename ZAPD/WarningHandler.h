@@ -16,9 +16,9 @@
 #endif
 
 // Macros for displaying warnings/errors
-#define VT_HILITE VT_BFGCOL(WHITE)
-#define VT_WARN VT_BFGCOL(PURPLE)
-#define VT_ERR VT_BFGCOL(RED)
+#define VT_HILITE VT_BOLD_FGCOL(WHITE)
+#define VT_WARN VT_BOLD_FGCOL(PURPLE)
+#define VT_ERR VT_BOLD_FGCOL(RED)
 
 #define HILITE(string) (VT_HILITE string VT_RST)
 #define WARN_FMT(string) (VT_WARN string VT_RST)
