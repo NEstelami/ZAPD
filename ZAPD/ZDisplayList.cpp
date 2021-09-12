@@ -78,7 +78,8 @@ void ZDisplayList::ParseRawData()
 	}
 }
 
-Declaration* ZDisplayList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix,
+                                      const std::string& bodyStr)
 {
 	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                                   GetSourceTypeName(), name, 0, bodyStr, true);
@@ -426,7 +427,8 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 				StringHelper::Sprintf("%s: Fatal error.\n"
 			                          "\t End of file found when trying to find the end of the "
 			                          "DisplayList at offset: '0x%X'.\n",
-			                          __PRETTY_FUNCTION__, rawDataIndex));
+			                          "Raw data size: 0x%zX.\n",
+			                          __PRETTY_FUNCTION__, rawDataIndex, rawDataSize));
 			throw std::runtime_error("");
 		}
 
@@ -1537,12 +1539,12 @@ void ZDisplayList::Opcode_G_ENDDL(std::string prefix, char* line)
 	TextureGenCheck(prefix);
 }
 
-std::string ZDisplayList::GetSourceOutputHeader(const std::string& prefix)
+std::string ZDisplayList::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return "";
 }
 
-static int32_t GfxdCallback_FormatSingleEntry(void)
+static int32_t GfxdCallback_FormatSingleEntry()
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	gfxd_puts("\t");
@@ -1655,7 +1657,7 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 }
 
 static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int32_t width,
-                                    int32_t height, int32_t pal)
+                                    int32_t height, [[maybe_unused]] int32_t pal)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t texOffset = Seg2Filespace(seg, self->parent->baseAddress);
@@ -1691,7 +1693,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 	return 1;
 }
 
-static int32_t GfxdCallback_Palette(uint32_t seg, int32_t idx, int32_t count)
+static int32_t GfxdCallback_Palette(uint32_t seg, [[maybe_unused]] int32_t idx, int32_t count)
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 	uint32_t palOffset = Seg2Filespace(seg, self->parent->baseAddress);
@@ -2044,7 +2046,7 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, std::string prefix,
+bool ZDisplayList::TextureGenCheck(ZRoom* scene, ZFile* parent, [[maybe_unused]] std::string prefix,
                                    int32_t texWidth, int32_t texHeight, uint32_t texAddr,
                                    uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
                                    bool texLoaded, bool texIsPalette, ZDisplayList* self)

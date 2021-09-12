@@ -49,7 +49,7 @@ void ZBlob::ParseRawData()
 	                parent->GetRawData().begin() + rawDataIndex + blobSize);
 }
 
-std::string ZBlob::GetSourceOutputCode(const std::string& prefix)
+std::string ZBlob::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	sourceOutput = "";
 
@@ -72,7 +72,7 @@ std::string ZBlob::GetSourceOutputCode(const std::string& prefix)
 	return sourceOutput;
 }
 
-std::string ZBlob::GetSourceOutputHeader(const std::string& prefix)
+std::string ZBlob::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return StringHelper::Sprintf("extern u8 %s[];\n", name.c_str());
 }

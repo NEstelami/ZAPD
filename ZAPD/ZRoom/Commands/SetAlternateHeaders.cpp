@@ -8,7 +8,7 @@ SetAlternateHeaders::SetAlternateHeaders(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-void SetAlternateHeaders::DeclareReferences(const std::string& prefix)
+void SetAlternateHeaders::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 	if (segmentOffset != 0)
 		parent->AddDeclarationPlaceholder(segmentOffset);
@@ -47,7 +47,7 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, headers.size() * 4, "SCmdBase*",
+			segmentOffset, DeclarationAlignment::None, headers.size() * 4, "SceneCmd*",
 			StringHelper::Sprintf("%sAlternateHeaders0x%06X", prefix.c_str(), segmentOffset), 0,
 			declaration);
 	}

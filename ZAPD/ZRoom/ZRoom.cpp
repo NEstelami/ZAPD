@@ -344,7 +344,7 @@ void ZRoom::ProcessCommandSets()
 
 			parent->AddDeclarationArray(
 				GETSEGOFFSET(commandSet), DeclarationAlignment::Align16, 8 * setCommands.size(),
-				"static SCmdBase",
+				"static SceneCmd",
 				StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),
 				setCommands.size(), declaration);
 
@@ -421,12 +421,12 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 	return 0;
 }
 
-std::string ZRoom::GetSourceOutputHeader(const std::string& prefix)
+std::string ZRoom::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return "\n" + extDefines + "\n\n";
 }
 
-std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
+std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	sourceOutput = "";
 

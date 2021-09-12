@@ -46,7 +46,7 @@ public:
 	std::string GetSourceTypeName() const override;
 
 protected:
-	virtual void ParseRawData() override;
+	void ParseRawData() override;
 };
 
 class ZLinkAnimation : public ZAnimation
@@ -61,7 +61,7 @@ public:
 	std::string GetSourceTypeName() const override;
 
 protected:
-	virtual void ParseRawData() override;
+	void ParseRawData() override;
 };
 
 class TransformData
