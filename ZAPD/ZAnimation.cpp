@@ -190,7 +190,7 @@ TransformData::TransformData(ZFile* parent, const std::vector<uint8_t>& rawData,
 {
 }
 
-std::string TransformData::GetBody(const std::string& prefix) const
+std::string TransformData::GetBody([[maybe_unused]] const std::string& prefix) const
 {
 	return StringHelper::Sprintf("0x%04X, 0x%04X, %i, %i, %ff", unk_00, unk_02, unk_04, unk_06,
 	                             unk_08);

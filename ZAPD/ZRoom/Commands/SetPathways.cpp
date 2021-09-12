@@ -9,7 +9,7 @@ SetPathways::SetPathways(ZFile* nParent) : ZRoomCommand(nParent), pathwayList(nP
 {
 }
 
-void SetPathways::DeclareReferences(const std::string& prefix)
+void SetPathways::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 	if (segmentOffset != 0)
 	{

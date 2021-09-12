@@ -10,7 +10,7 @@ SetExitList::SetExitList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-void SetExitList::DeclareReferences(const std::string& prefix)
+void SetExitList::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 	if (segmentOffset != 0)
 	{
@@ -35,7 +35,7 @@ void SetExitList::ParseRawDataLate()
 	}
 }
 
-void SetExitList::DeclareReferencesLate(const std::string& prefix)
+void SetExitList::DeclareReferencesLate([[maybe_unused]] const std::string& prefix)
 {
 	if (!exits.empty())
 	{

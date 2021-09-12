@@ -267,7 +267,8 @@ std::string WaterBoxHeader::GetBodySourceCode() const
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
                                const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
-                               uint32_t polyTypeDefSegmentOffset, uint32_t polygonTypesCnt)
+                               uint32_t polyTypeDefSegmentOffset,
+                               [[maybe_unused]] uint32_t polygonTypesCnt)
 {
 	std::string declaration = "";
 

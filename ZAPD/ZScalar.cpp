@@ -1,4 +1,5 @@
 #include "ZScalar.h"
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"

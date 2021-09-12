@@ -129,7 +129,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-void ZResource::Save(const fs::path& outFolder)
+void ZResource::Save([[maybe_unused]] const fs::path& outFolder)
 {
 }
 
@@ -219,7 +219,7 @@ std::string ZResource::GetDefaultName(const std::string& prefix) const
 	                             rawDataIndex);
 }
 
-std::string ZResource::GetSourceOutputCode(const std::string& prefix)
+std::string ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string declaration = GetBodySourceCode();
 
@@ -232,7 +232,7 @@ std::string ZResource::GetSourceOutputCode(const std::string& prefix)
 	return "";
 }
 
-std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
+std::string ZResource::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return "";
 }
@@ -241,7 +241,7 @@ void ZResource::ParseRawData()
 {
 }
 
-void ZResource::DeclareReferences(const std::string& prefix)
+void ZResource::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 }
 

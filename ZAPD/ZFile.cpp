@@ -47,8 +47,7 @@ ZFile::ZFile(const fs::path& nOutPath, std::string nName) : ZFile()
 }
 
 ZFile::ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
-             const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
-             bool placeholderMode)
+             const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath)
 	: ZFile()
 {
 	xmlFilePath = nXmlFilePath;
@@ -64,7 +63,7 @@ ZFile::ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBas
 
 	mode = nMode;
 
-	ParseXML(reader, filename, placeholderMode);
+	ParseXML(reader, filename);
 	if (mode != ZFileMode::ExternalFile)
 		DeclareResourceSubReferences();
 }
@@ -87,7 +86,7 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(XMLElement* reader, std::string filename, bool placeholderMode)
+void ZFile::ParseXML(XMLElement* reader, std::string filename)
 {
 	assert(mode != ZFileMode::Invalid);
 
@@ -1276,7 +1275,7 @@ std::string ZFile::ProcessExterns()
 	return output;
 }
 
-std::string ZFile::ProcessTextureIntersections(std::string prefix)
+std::string ZFile::ProcessTextureIntersections([[maybe_unused]] std::string prefix)
 {
 	if (texturesResources.empty())
 		return "";

@@ -11,7 +11,7 @@ SetEntranceList::SetEntranceList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-void SetEntranceList::DeclareReferences(const std::string& prefix)
+void SetEntranceList::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 	if (segmentOffset != 0)
 	{
@@ -36,7 +36,7 @@ void SetEntranceList::ParseRawDataLate()
 	}
 }
 
-void SetEntranceList::DeclareReferencesLate(const std::string& prefix)
+void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& prefix)
 {
 	if (!entrances.empty())
 	{

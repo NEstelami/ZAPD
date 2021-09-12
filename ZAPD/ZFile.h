@@ -3,7 +3,7 @@
 #include <Utils/Directory.h>
 #include <string>
 #include <vector>
-//#include "ZResource.h"
+
 #include "ZSymbol.h"
 #include "ZTexture.h"
 #include "tinyxml2.h"
@@ -40,8 +40,7 @@ public:
 
 	ZFile(const fs::path& nOutPath, std::string nName);
 	ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
-	      const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath,
-	      bool placeholderMode);
+	      const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath);
 	~ZFile();
 
 	std::string GetName() const;
@@ -126,7 +125,7 @@ protected:
 	ZFileMode mode = ZFileMode::Invalid;
 
 	ZFile();
-	void ParseXML(tinyxml2::XMLElement* reader, std::string filename, bool placeholderMode);
+	void ParseXML(tinyxml2::XMLElement* reader, std::string filename);
 	void DeclareResourceSubReferences();
 	void GenerateSourceFiles(fs::path outputDir);
 	void GenerateSourceHeaderFiles();

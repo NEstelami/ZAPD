@@ -78,7 +78,7 @@ std::string ZBlob::GetBodySourceCode() const
 	return sourceOutput;
 }
 
-std::string ZBlob::GetSourceOutputHeader(const std::string& prefix)
+std::string ZBlob::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return StringHelper::Sprintf("extern u8 %s[];\n", name.c_str());
 }
