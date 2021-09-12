@@ -75,6 +75,7 @@
  * Each of these will declare all its subsidiary arrays, using POD structs.
  */
 #include "ZTextureAnimation.h"
+#include <cassert>
 #include <memory>
 #include <vector>
 #include "Globals.h"
@@ -587,6 +588,7 @@ void ZTextureAnimation::ParseRawData()
 	}
 }
 
+#include <optional>
 /**
  * For each params entry,
  */
@@ -647,6 +649,10 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					        "\033[0m",
 					        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
 					        rawDataIndex, entry.segment, (int)entry.type, entry.paramsPtr);
+					return;
+				default:
+					// Because GCC is worried this could happen
+					assert(entry.type < TextureAnimationParamsType::SingleScroll || entry.type > TextureAnimationParamsType::Empty );
 					return;
 				}
 
