@@ -1,4 +1,5 @@
 #include "ZCutscene.h"
+
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZResource.h"
@@ -127,8 +128,8 @@ void ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr
 		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
 
 	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4,
-	                            DeclarationPadding::Pad16, GetRawDataSize(), "CutsceneData", auxName, 0,
-	                            bodyStr);
+	                            DeclarationPadding::Pad16, GetRawDataSize(), "CutsceneData",
+	                            auxName, 0, bodyStr);
 }
 
 size_t ZCutscene::GetRawDataSize() const
@@ -555,13 +556,13 @@ std::string CutsceneCommandSetCameraPos::GenerateSourceCode(uint32_t baseAddress
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		std::string continueMacro = "CS_CMD_CONTINUE";
-		if (entries[i]->continueFlag != 0) 
+		if (entries[i]->continueFlag != 0)
 			continueMacro = "CS_CMD_STOP";
 		result += StringHelper::Sprintf("        %s(%s, 0x%02X, %i, %ff, %i, %i, %i, 0x%04X),\n",
 		                                posStr.c_str(), continueMacro.c_str(),
 		                                entries[i]->cameraRoll, entries[i]->nextPointFrame,
-		                                entries[i]->viewAngle, entries[i]->posX,
-		                                entries[i]->posY, entries[i]->posZ, entries[i]->unused);
+		                                entries[i]->viewAngle, entries[i]->posX, entries[i]->posY,
+		                                entries[i]->posZ, entries[i]->unused);
 	}
 
 	return result;
@@ -1036,9 +1037,9 @@ ActorAction::ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIn
 	endPosX = BitConverter::ToInt32BE(data, rawDataIndex + 24);
 	endPosY = BitConverter::ToInt32BE(data, rawDataIndex + 28);
 	endPosZ = BitConverter::ToInt32BE(data, rawDataIndex + 32);
-	normalX = BitConverter::ToInt32BE(data, rawDataIndex + 36);
-	normalY = BitConverter::ToInt32BE(data, rawDataIndex + 40);
-	normalZ = BitConverter::ToInt32BE(data, rawDataIndex + 44);
+	normalX = BitConverter::ToFloatBE(data, rawDataIndex + 36);
+	normalY = BitConverter::ToFloatBE(data, rawDataIndex + 40);
+	normalZ = BitConverter::ToFloatBE(data, rawDataIndex + 44);
 }
 
 CutsceneCommandActorAction::CutsceneCommandActorAction(const std::vector<uint8_t>& rawData,
@@ -1075,13 +1076,12 @@ std::string CutsceneCommandActorAction::GenerateSourceCode(uint32_t baseAddress)
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf(
-			"    CS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, "
-			"%i, %i),\n",
-			entries[i]->action, entries[i]->startFrame, entries[i]->endFrame, entries[i]->rotX,
-			entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX, entries[i]->startPosY,
-			entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY, entries[i]->endPosZ,
-			*(int32_t*)&entries[i]->normalX, *(int32_t*)&entries[i]->normalY,
-			*(int32_t*)&entries[i]->normalZ);
+			"\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %.11ef, %.11ef, "
+		    "%.11ef),\n",
+			subCommand.c_str(), entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
+			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX,
+			entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY,
+			entries[i]->endPosZ, entries[i]->normalX, entries[i]->normalY, entries[i]->normalZ);
 	}
 
 	return result;
