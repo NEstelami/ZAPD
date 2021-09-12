@@ -112,7 +112,6 @@ public:
 	std::string GetDefaultName(const std::string& prefix) const;
 
 protected:
-
 	uint32_t rawDataIndex;
 	ZFile* parent;
 	ZRoom* zRoom;
