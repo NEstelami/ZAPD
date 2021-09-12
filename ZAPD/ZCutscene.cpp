@@ -555,13 +555,13 @@ std::string CutsceneCommandSetCameraPos::GenerateSourceCode(uint32_t baseAddress
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		std::string continueMacro = "CS_CMD_CONTINUE";
-		if (entries[i]->continueFlag != 0) 
+		if (entries[i]->continueFlag != 0)
 			continueMacro = "CS_CMD_STOP";
 		result += StringHelper::Sprintf("        %s(%s, 0x%02X, %i, %ff, %i, %i, %i, 0x%04X),\n",
 		                                posStr.c_str(), continueMacro.c_str(),
 		                                entries[i]->cameraRoll, entries[i]->nextPointFrame,
-		                                entries[i]->viewAngle, entries[i]->posX,
-		                                entries[i]->posY, entries[i]->posZ, entries[i]->unused);
+		                                entries[i]->viewAngle, entries[i]->posX, entries[i]->posY,
+		                                entries[i]->posZ, entries[i]->unused);
 	}
 
 	return result;

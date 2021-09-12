@@ -4,9 +4,6 @@
 #include <cassert>
 #include <chrono>
 
-#include "Utils/File.h"
-#include "Utils/Path.h"
-#include "Utils/StringHelper.h"
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
@@ -41,6 +38,9 @@
 #include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
 #include "Globals.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
+#include "Utils/StringHelper.h"
 #include "ZBlob.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
