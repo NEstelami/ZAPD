@@ -160,7 +160,7 @@ void ZBackground::Save(const fs::path& outFolder)
 	File::WriteAllBytes(filepath.string(), data);
 }
 
-std::string ZBackground::GetBodySourceCode()
+std::string ZBackground::GetBodySourceCode() const
 {
 	std::string bodyStr = "    ";
 

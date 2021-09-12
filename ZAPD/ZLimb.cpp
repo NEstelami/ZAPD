@@ -446,7 +446,7 @@ void ZLimb::ParseRawData()
 	{
 	case ZLimbType::LOD:
 		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		// Intended fallthrough
+		[[fallthrough]];
 	case ZLimbType::Standard:
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 		break;

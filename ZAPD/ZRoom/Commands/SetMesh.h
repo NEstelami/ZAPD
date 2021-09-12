@@ -95,6 +95,7 @@ public:
 
 	PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
 	                ZRoom* nRoom);
+	virtual ~PolygonTypeBase() = default;
 
 	virtual void ParseRawData() = 0;
 	virtual void DeclareReferences(const std::string& prefix) = 0;
