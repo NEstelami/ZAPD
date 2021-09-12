@@ -112,12 +112,12 @@ void ZTextureAnimationParams::ExtractFromBinary(uint32_t nRawDataIndex)
 	ParseRawData();
 }
 
-// Implemented by TextureScrollingParams only
-void ZTextureAnimationParams::ExtractFromBinary(uint32_t nRawDataIndex, int count)
+// Implemented by TextureScrollingParams only[
+void ZTextureAnimationParams::ExtractFromBinary([[maybe_unused]] uint32_t nRawDataIndex, [[maybe_unused]]int count)
 {
 }
 
-std::string ZTextureAnimationParams::GetDefaultName(const std::string& prefix) const
+std::string ZTextureAnimationParams::GetDefaultName([[maybe_unused]] const std::string& prefix) const
 {
 	return "ShouldNotBeVIsible";
 }
@@ -311,7 +311,7 @@ size_t TextureColorChangingParams::GetRawDataSize() const
 	return 0x10;
 }
 
-void TextureColorChangingParams::DeclareReferences(const std::string& prefix)
+void TextureColorChangingParams::DeclareReferences([[maybe_unused]]const std::string& prefix)
 {
 	if (primColorListAddress != 0)  // NULL
 	{
@@ -449,7 +449,7 @@ size_t TextureCyclingParams::GetRawDataSize() const
 	return 0xC;
 }
 
-void TextureCyclingParams::DeclareReferences(const std::string& prefix)
+void TextureCyclingParams::DeclareReferences([[maybe_unused]]const std::string& prefix)
 {
 	if (textureListAddress != 0)  // NULL
 	{
