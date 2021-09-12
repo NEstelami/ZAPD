@@ -158,7 +158,7 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 		if (type == ZLimbType::Curve)
 			suffix = "Curve2";
 		DeclareDList(dList2Ptr, varPrefix, suffix);
-		// Intended fallthrough
+		[[fallthrough]];
 	case ZLimbType::Standard:
 		suffix = "";
 		if (type == ZLimbType::Curve)

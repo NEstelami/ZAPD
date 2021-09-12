@@ -102,17 +102,6 @@ PolygonDlist::PolygonDlist(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                           uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
-	: ZResource(nParent)
-{
-	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-	zRoom = nRoom;
-
-	name = GetDefaultName(prefix);
-}
-
 void PolygonDlist::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
@@ -211,7 +200,7 @@ void PolygonDlist::SetPolyType(uint8_t nPolyType)
 	polyType = nPolyType;
 }
 
-ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
+ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::string& prefix)
 {
 	if (ptr == 0)
 	{
@@ -435,10 +424,9 @@ void PolygonType1::ParseRawData()
 
 	if (dlist != 0)
 	{
-		PolygonDlist polyGfxList(zRoom->GetName(), rawData,
-		                         Seg2Filespace(dlist, parent->baseAddress), parent, zRoom);
+		PolygonDlist polyGfxList(parent);
 		polyGfxList.SetPolyType(type);
-		polyGfxList.ParseRawData();
+		polyGfxList.ExtractFromFile(Seg2Filespace(dlist, parent->baseAddress));
 		polyGfxList.DeclareReferences(zRoom->GetName());
 		polyDLists.push_back(polyGfxList);
 	}
@@ -566,9 +554,9 @@ void PolygonType2::ParseRawData()
 	uint32_t currentPtr = GETSEGOFFSET(start);
 	for (size_t i = 0; i < num; i++)
 	{
-		PolygonDlist entry(zRoom->GetName(), rawData, currentPtr, parent, zRoom);
+		PolygonDlist entry(parent);
 		entry.SetPolyType(type);
-		entry.ParseRawData();
+		entry.ExtractFromFile(currentPtr);
 		entry.DeclareReferences(zRoom->GetName());
 		polyDLists.push_back(entry);
 		currentPtr += entry.GetRawDataSize();

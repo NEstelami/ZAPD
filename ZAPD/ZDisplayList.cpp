@@ -444,12 +444,11 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 	{
 		if (ptr >= rawDataSize)
 		{
-			throw std::runtime_error(
-				StringHelper::Sprintf("%s: Fatal error.\n"
-			                          "\t End of file found when trying to find the end of the "
-			                          "DisplayList at offset: '0x%X'.\n",
-			                          "Raw data size: 0x%zX.\n",
-			                          __PRETTY_FUNCTION__, rawDataIndex, rawDataSize));
+			throw std::runtime_error(StringHelper::Sprintf(
+				"%s: Fatal error.\n"
+				"\t End of file found when trying to find the end of the "
+				"DisplayList at offset: '0x%X'.\n",
+				"Raw data size: 0x%zX.\n", __PRETTY_FUNCTION__, rawDataIndex, rawDataSize));
 			throw std::runtime_error("");
 		}
 
@@ -496,7 +495,7 @@ int32_t ZDisplayList::OptimizationChecks(int32_t startIndex, std::string& output
 }
 
 int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std::string& output,
-                                                         std::string prefix)
+                                                         [[maybe_unused]] std::string prefix)
 {
 	std::vector<F3DZEXOpcode> sequence = {F3DZEXOpcode::G_SETTIMG,     F3DZEXOpcode::G_SETTILE,
 	                                      F3DZEXOpcode::G_RDPLOADSYNC, F3DZEXOpcode::G_LOADBLOCK,
@@ -989,7 +988,7 @@ void ZDisplayList::Opcode_G_SETTILE(uint64_t data, char* line)
 	        ssss, dd, bbbb, uuuu);
 }
 
-void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, [[maybe_unused]] std::string prefix, char* line)
 {
 	int32_t sss = (data & 0x00FFF00000000000) >> 44;
 	int32_t ttt = (data & 0x00000FFF00000000) >> 32;
@@ -1509,7 +1508,7 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_H(uint64_t data, char* line)
 		sprintf(line, "gsSPSetOtherMode(0xE3, %i, %i, 0x%08X),", sft, nn + 1, dd);
 }
 
-void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, std::string prefix, char* line)
+void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, [[maybe_unused]] std::string prefix, char* line)
 {
 	int32_t t = (data & 0x0000000007000000) >> 24;
 	int32_t ccc = (data & 0x00000000003FF000) >> 14;
@@ -1528,7 +1527,7 @@ void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, std::string prefix, char* li
 	sprintf(line, "gsDPLoadTLUTCmd(%i, %i),", t, ccc);
 }
 
-void ZDisplayList::Opcode_G_ENDDL(std::string prefix, char* line)
+void ZDisplayList::Opcode_G_ENDDL([[maybe_unused]] std::string prefix, char* line)
 {
 	sprintf(line, "gsSPEndDisplayList(),");
 
@@ -1929,7 +1928,7 @@ std::string ZDisplayList::ProcessLegacy(const std::string& prefix)
 	return sourceOutput;
 }
 
-std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
+std::string ZDisplayList::ProcessGfxDis([[maybe_unused]] const std::string& prefix)
 {
 	std::string sourceOutput = "";
 

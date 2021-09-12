@@ -56,12 +56,12 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-Declaration* ZSymbol::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+Declaration* ZSymbol::DeclareVar([[maybe_unused]] const std::string& prefix, [[maybe_unused]] const std::string& bodyStr)
 {
 	return nullptr;
 }
 
-std::string ZSymbol::GetSourceOutputHeader(const std::string& prefix)
+std::string ZSymbol::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	if (isArray)
 	{

@@ -20,8 +20,6 @@ public:
 	ZDisplayList* xluDList = nullptr;  // Gfx*
 
 	PolygonDlist(ZFile* nParent);
-	PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
-	             uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

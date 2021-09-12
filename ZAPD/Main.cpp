@@ -338,7 +338,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	{
 		if (std::string(child->Name()) == "File")
 		{
-			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath, false);
+			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath);
 			Globals::Instance->files.push_back(file);
 			if (fileMode == ZFileMode::ExternalFile)
 				Globals::Instance->externalFiles.push_back(file);
