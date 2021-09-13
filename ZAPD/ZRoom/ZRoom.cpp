@@ -293,7 +293,7 @@ void ZRoom::DeclareReferencesLate(const std::string& prefix)
 		cmd->DeclareReferencesLate(prefix);
 }
 
-void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
+Declaration* ZRoom::DeclareVar(const std::string& prefix, const std::string& body)
 {
 	std::string auxName = name;
 	if (auxName == "")
@@ -301,7 +301,7 @@ void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, 0, body);
 }
 
@@ -432,11 +432,6 @@ size_t ZRoom::GetRawDataSize() const
 std::string ZRoom::GetSourceTypeName() const
 {
 	return "SceneCmd";
-}
-
-ZResourceType ZRoom::GetResourceType() const
-{
-	return ZResourceType::Room;
 }
 
 ZResourceType ZRoom::GetResourceType() const

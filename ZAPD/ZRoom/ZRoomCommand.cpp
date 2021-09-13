@@ -27,11 +27,6 @@ void ZRoomCommand::ParseRawData()
 	segmentOffset = Seg2Filespace(cmdArg2, parent->baseAddress);
 }
 
-std::string ZRoomCommand::GetSourceTypeName() const
-{
-	return "SCmdBase";
-}
-
 RoomCommand ZRoomCommand::GetRoomCommand() const
 {
 	return RoomCommand::Error;

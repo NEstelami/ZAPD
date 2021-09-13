@@ -16,9 +16,8 @@ void SetRoomList::ParseRawData()
 	int numRooms = cmdArg1;
 
 	romfile = new RomFile(parent);
-	romfile->SetRawDataIndex(segmentOffset);
 	romfile->numRooms = numRooms;
-	romfile->ParseRawData();
+	romfile->ExtractFromFile(segmentOffset);
 
 	parent->resources.push_back(romfile);
 
@@ -78,13 +77,13 @@ void RomFile::ParseRawData()
 	}
 }
 
-void RomFile::DeclareVar(const std::string& prefix, const std::string body)
+Declaration* RomFile::DeclareVar(const std::string& prefix, const std::string& body)
 {
 	std::string auxName = name;
 	if (name == "")
 		auxName = StringHelper::Sprintf("%sRoomList0x%06X", prefix.c_str(), rawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4,
+	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4,
 	                            rooms.size() * rooms.at(0).GetRawDataSize(), GetSourceTypeName(),
 	                            auxName, 0, body);
 }
