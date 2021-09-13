@@ -51,7 +51,7 @@ void ZBlob::ParseRawData()
 
 std::string ZBlob::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	sourceOutput = "";
+	std::string sourceOutput = "";
 
 	for (size_t i = 0; i < blobData.size(); i += 1)
 	{
