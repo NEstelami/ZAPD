@@ -1,9 +1,9 @@
 #pragma once
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
-#include <cstdint>
 #include "Utils/Directory.h"
 #include "tinyxml2.h"
 
