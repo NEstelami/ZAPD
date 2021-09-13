@@ -126,7 +126,7 @@ void ZResource::ParseRawDataLate()
 {
 }
 
-void ZResource::DeclareReferencesLate(const std::string& prefix)
+void ZResource::DeclareReferencesLate([[maybe_unused]] const std::string& prefix)
 {
 }
 
