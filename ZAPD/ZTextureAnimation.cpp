@@ -171,15 +171,17 @@ size_t TextureScrollingParams::GetRawDataSize() const
 /**
  * Overrides the parent version to declare an array of the params rather than just one entry.
  */
-Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix,
+                                                const std::string& bodyStr)
 {
 	std::string auxName = name;
 
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, count, bodyStr);
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetSourceTypeName(), auxName, count, bodyStr);
 }
 
 std::string TextureScrollingParams::GetBodySourceCode() const
@@ -663,8 +665,9 @@ Declaration* ZTextureAnimation::DeclareVar(const std::string& prefix, const std:
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, entries.size(), bodyStr);
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetSourceTypeName(), auxName, entries.size(), bodyStr);
 }
 
 std::string ZTextureAnimation::GetBodySourceCode() const
