@@ -112,6 +112,12 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZTexture::ParseRawData()
 {
+	if (rawDataIndex % 8 != 0)
+		fprintf(stderr,
+		        "ZTexture::ParseXML: Warning in '%s'.\n"
+		        "\t This texture is not 64-bit aligned.\n",
+		        name.c_str());
+
 	switch (format)
 	{
 		case TextureType::RGBA16bpp:
@@ -325,7 +331,7 @@ void ZTexture::PrepareBitmapPalette8()
 	}
 }
 
-void ZTexture::DeclareReferences(const std::string& prefix)
+void ZTexture::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 	if (tlutOffset != static_cast<uint32_t>(-1))
 	{
