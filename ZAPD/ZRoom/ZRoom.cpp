@@ -391,12 +391,12 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 	return 0;
 }
 
-std::string ZRoom::GetSourceOutputHeader(const std::string& prefix)
+std::string ZRoom::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return "\n" + extDefines + "\n\n";
 }
 
-std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
+std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string sourceOutput = "";
 

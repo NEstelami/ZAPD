@@ -118,7 +118,7 @@ void ZResource::ParseRawData()
 {
 }
 
-void ZResource::DeclareReferences(const std::string& prefix)
+void ZResource::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 }
 
@@ -130,7 +130,7 @@ void ZResource::DeclareReferencesLate(const std::string& prefix)
 {
 }
 
-void ZResource::Save(const fs::path& outFolder)
+void ZResource::Save([[maybe_unused]] const fs::path& outFolder)
 {
 }
 
@@ -189,12 +189,12 @@ std::string ZResource::GetBodySourceCode() const
 	return "ERROR";
 }
 
-std::string ZResource::GetSourceOutputCode(const std::string& prefix)
+std::string ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	return "";
 }
 
-std::string ZResource::GetSourceOutputHeader(const std::string& prefix)
+std::string ZResource::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return "";
 }

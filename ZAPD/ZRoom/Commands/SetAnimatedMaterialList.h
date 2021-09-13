@@ -4,14 +4,15 @@
 #include "ZRoom/ZRoomCommand.h"
 
 // TODO move into header and add all types
-class AnitmatedTextureParams
+class AnimatedTextureParams
 {
 public:
+	virtual ~AnimatedTextureParams() = default;
 	virtual std::string GenerateSourceCode(ZRoom* zRoom, uint32_t baseAddress) = 0;
 	virtual size_t GetParamsSize() = 0;
 };
 
-class ScrollingTexture : public AnitmatedTextureParams
+class ScrollingTexture : public AnimatedTextureParams
 {
 public:
 	ScrollingTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
@@ -47,7 +48,7 @@ public:
 	uint8_t a;
 };
 
-class FlashingTexture : public AnitmatedTextureParams
+class FlashingTexture : public AnimatedTextureParams
 {
 public:
 	FlashingTexture(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex, int32_t type);
@@ -70,7 +71,7 @@ public:
 	std::vector<uint16_t> keyFrames;
 };
 
-class AnimatedMatTexCycleParams : public AnitmatedTextureParams
+class AnimatedMatTexCycleParams : public AnimatedTextureParams
 {
 public:
 	AnimatedMatTexCycleParams(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
@@ -97,7 +98,7 @@ public:
 	int16_t type;
 	segptr_t segmentAddress;
 	uint32_t segmentOffset;
-	std::vector<std::shared_ptr<AnitmatedTextureParams>> params;
+	std::vector<std::shared_ptr<AnimatedTextureParams>> params;
 };
 
 class SetAnimatedMaterialList : public ZRoomCommand

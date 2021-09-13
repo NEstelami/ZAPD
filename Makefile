@@ -2,25 +2,25 @@ OPTIMIZATION_ON ?= 1
 ASAN ?= 0
 DEPRECATION_ON ?= 1
 DEBUG ?= 0
-CXXFLAGS ?= 
 COPYCHECK_ARGS ?= 
 
 CXX := g++
 INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
-CXXFLAGS += -fpic -std=c++17 -Wall -fno-omit-frame-pointer
+CXXFLAGS := -fpic -std=c++17 -Wall -Wextra -fno-omit-frame-pointer
 
 ifneq ($(DEBUG),0)
   OPTIMIZATION_ON = 0
   DEPRECATION_OFF = 1
-  CXXFLAGS += -g3 -DDEVELOPMENT
   COPYCHECK_ARGS += --devel
   DEPRECATION_ON = 0
+else
+  CXXFLAGS +=  -Werror
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
   CXXFLAGS += -O0
 else
-CXXFLAGS += -O2 -march=native -mtune=native
+  CXXFLAGS += -O2 -march=native -mtune=native
 endif
 
 ifneq ($(ASAN),0)

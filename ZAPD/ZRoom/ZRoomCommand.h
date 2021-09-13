@@ -66,8 +66,6 @@ public:
 
 	void ParseRawData() override;
 
-	virtual std::string GetBodySourceCode() const = 0;
-
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
 

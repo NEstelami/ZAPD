@@ -413,7 +413,7 @@ class ZCutsceneBase : public ZResource
 public:
 	ZCutsceneBase(ZFile* nParent);
 
-	virtual std::string GetBodySourceCode() = 0;
+	std::string GetBodySourceCode() const override = 0;
 
 	virtual void DeclareVar(const std::string& prefix, const std::string& bodyStr) const = 0;
 
@@ -430,7 +430,7 @@ public:
 
 	void ParseRawData() override;
 
-	std::string GetBodySourceCode() override;
+	std::string GetBodySourceCode() const override;
 	void DeclareVar(const std::string& prefix, const std::string& bodyStr) const override;
 	std::string GetSourceOutputCode(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
