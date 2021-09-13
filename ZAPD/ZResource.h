@@ -28,6 +28,7 @@ enum class ZResourceType
 	Error,
 	Animation,
 	Array,
+	AltHeader,
 	Background,
 	Blob,
 	CollisionHeader,
@@ -40,6 +41,7 @@ enum class ZResourceType
 	Room,
 	RoomCommand,
 	Scalar,
+	Scene,
 	Skeleton,
 	String,
 	Symbol,
@@ -92,6 +94,8 @@ public:
 	 * declared previously by something else
 	 */
 	virtual void DeclareReferences(const std::string& prefix);
+	virtual void ParseRawDataLate();
+	virtual void DeclareReferencesLate(const std::string& prefix);
 
 	/**
 	 * Adds this resource as a Declaration of its parent ZFile
@@ -108,7 +112,6 @@ public:
 
 	virtual std::string GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
-	virtual void PreGenSourceFiles();
 	virtual void CalcHash();
 	/**
 	 * Exports the resource to binary format
@@ -133,6 +136,9 @@ public:
 	 * The type in the ZResource enum
 	 */
 	[[nodiscard]] virtual ZResourceType GetResourceType() const = 0;
+	/**
+	 * The filename extension for assets extracted as standalone files
+	 */
 	[[nodiscard]] virtual std::string GetExternalExtension() const;
 
 	// Getters/Setters

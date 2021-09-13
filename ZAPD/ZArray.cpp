@@ -104,6 +104,11 @@ std::string ZArray::GetBodySourceCode() const
 	return output;
 }
 
+std::string ZArray::GetSourceTypeName() const
+{
+	return resList.at(0)->GetSourceTypeName();
+}
+
 size_t ZArray::GetRawDataSize() const
 {
 	size_t size = 0;

@@ -123,11 +123,34 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-void ZResource::Save([[maybe_unused]] const fs::path& outFolder)
+void ZResource::ParseRawData()
 {
 }
 
-void ZResource::PreGenSourceFiles()
+void ZResource::DeclareReferences([[maybe_unused]] const std::string& prefix)
+{
+}
+
+void ZResource::ParseRawDataLate()
+{
+}
+
+void ZResource::DeclareReferencesLate([[maybe_unused]] const std::string& prefix)
+{
+}
+
+Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
+	                              GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
+}
+
+void ZResource::Save([[maybe_unused]] const fs::path& outFolder)
 {
 }
 
@@ -213,25 +236,6 @@ std::string ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& p
 std::string ZResource::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	return "";
-}
-
-void ZResource::ParseRawData()
-{
-}
-
-void ZResource::DeclareReferences([[maybe_unused]] const std::string& prefix)
-{
-}
-
-Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string& bodyStr)
-{
-	std::string auxName = name;
-
-	if (name == "")
-		auxName = GetDefaultName(prefix);
-
-	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
-	                              GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
 }
 
 ZResourceType ZResource::GetResourceType() const
