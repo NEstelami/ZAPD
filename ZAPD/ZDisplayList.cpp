@@ -1728,7 +1728,9 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	if ((dListSegNum <= 6) && Globals::Instance->HasSegment(dListSegNum))
 	{
 		ZDisplayList* newDList = new ZDisplayList(self->parent);
-		newDList->ExtractFromBinary( dListOffset, self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
+		newDList->ExtractFromBinary(
+			dListOffset,
+			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
 		newDList->SetName(newDList->GetDefaultName(self->parent->GetName()));
 		self->otherDLists.push_back(newDList);
 	}
@@ -2036,10 +2038,10 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string prefix, int32_t texWidth,
-                                   int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
-                                   F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
-                                   bool texIsPalette, ZDisplayList* self)
+bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string prefix,
+                                   int32_t texWidth, int32_t texHeight, uint32_t texAddr,
+                                   uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
+                                   bool texLoaded, bool texIsPalette, ZDisplayList* self)
 {
 	int32_t segmentNumber = GETSEGNUM(texSeg);
 

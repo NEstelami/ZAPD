@@ -302,7 +302,7 @@ Declaration* ZRoom::DeclareVar(const std::string& prefix, const std::string& bod
 		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
 
 	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, 0, body);
+	                                   GetSourceTypeName(), auxName, 0, body);
 }
 
 std::string ZRoom::GetBodySourceCode() const

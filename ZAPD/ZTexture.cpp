@@ -734,7 +734,8 @@ void ZTexture::Save(const fs::path& outFolder)
 #endif
 }
 
-Declaration* ZTexture::DeclareVar(const std::string& prefix, [[maybe_unused]] const std::string& bodyStr)
+Declaration* ZTexture::DeclareVar(const std::string& prefix,
+                                  [[maybe_unused]] const std::string& bodyStr)
 {
 	std::string auxName = name;
 

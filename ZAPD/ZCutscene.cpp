@@ -1045,8 +1045,8 @@ std::string CutsceneCommandActorAction::GenerateSourceCode([[maybe_unused]] uint
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		result += StringHelper::Sprintf(
-			"\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %.11ef, %.11ef, "
-		    "%.11ef),\n",
+			"\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %.11ef, "
+		    "%.11ef, %.11ef),\n",
 			subCommand.c_str(), entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX,
 			entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY,
