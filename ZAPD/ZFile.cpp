@@ -601,6 +601,7 @@ bool ZFile::AddDeclarationChecks(uint32_t address, const std::string& varName)
 	if (address == 0x0000)
 	{
 		int32_t bp = 0;
+		(void)bp;
 	}
 #endif
 
