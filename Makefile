@@ -2,12 +2,12 @@ OPTIMIZATION_ON ?= 1
 ASAN ?= 0
 DEPRECATION_ON ?= 1
 DEBUG ?= 0
-CXXFLAGS ?= 
 COPYCHECK_ARGS ?= 
 
 CXX := g++
-INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
-CXXFLAGS += -fpic -std=c++17 -Wall -Wextra -fno-omit-frame-pointer
+INC := -I ZAPD -I lib/elfio -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
+CXXFLAGS := -fpic -std=c++17 -Wall -Wextra -fno-omit-frame-pointer
+OPTFLAGS :=
 
 ifneq ($(DEBUG),0)
   OPTIMIZATION_ON = 0
@@ -19,9 +19,9 @@ else
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
-  CXXFLAGS += -O0
+  OPTFLAGS := -O0
 else
-  CXXFLAGS += -O2 -march=native -mtune=native
+  OPTFLAGS := -O2 -march=native -mtune=native
 endif
 
 ifneq ($(ASAN),0)
@@ -67,10 +67,10 @@ format:
 .PHONY: all genbuildinfo copycheck clean rebuild format
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $< -o $@
 
 ZAPD/Main.o: genbuildinfo ZAPD/Main.cpp
-	$(CXX) $(CXXFLAGS) $(INC) -c ZAPD/Main.cpp -o $@
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c ZAPD/Main.cpp -o $@
 
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd
@@ -82,4 +82,4 @@ ZAPDUtils/ZAPDUtils.a:
 	$(MAKE) -C ZAPDUtils
 
 ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest/ExporterTest.a ZAPDUtils/ZAPDUtils.a
-	$(CXX) $(CXXFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(FS_INC) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(FS_INC) $(LDFLAGS)

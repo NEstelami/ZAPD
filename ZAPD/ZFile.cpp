@@ -307,8 +307,10 @@ void ZFile::ExtractResources()
 	if (!Directory::Exists(GetSourceOutputFolderPath()))
 		Directory::CreateDirectory(GetSourceOutputFolderPath());
 
-	for (ZResource* res : resources)
-		res->PreGenSourceFiles();
+	for (size_t i = 0; i < resources.size(); i++)
+		resources[i]->ParseRawDataLate();
+	for (size_t i = 0; i < resources.size(); i++)
+		resources[i]->DeclareReferencesLate(name);
 
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles(outputPath);
@@ -430,6 +432,14 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+                                        size_t size, std::string varType, std::string varName,
+                                        size_t arrayItemCnt, std::string body)
+{
+	return AddDeclarationArray(address, alignment, DeclarationPadding::None, size, varType, varName,
+	                           arrayItemCnt, body);
+}
+
+Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         size_t size, const std::string& varType,
                                         const std::string& varName, size_t arrayItemCnt,
                                         const std::string& body)
@@ -499,21 +509,24 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, alignment, padding, size, varType, varName, true,
-		                       arrayItemCnt, body);
+		decl =
+			new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
 	{
+		if (decl->isPlaceholder)
+			decl->varName = varName;
 		decl->alignment = alignment;
 		decl->padding = padding;
 		decl->size = size;
 		decl->varType = varType;
-		decl->varName = varName;
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
-		decl->text = body;
+		if (body != "" && decl->text == "")
+			decl->text = body;
 	}
+
 	return decl;
 }
 
@@ -592,7 +605,7 @@ bool ZFile::AddDeclarationChecks(uint32_t address, const std::string& varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	assert(varName != "");
-#ifdef _DEBUG
+#ifdef DEVELOPMENT
 	if (address == 0x0000)
 	{
 		int32_t bp = 0;

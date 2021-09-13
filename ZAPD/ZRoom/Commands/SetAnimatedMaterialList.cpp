@@ -120,20 +120,6 @@ std::string SetAnimatedMaterialList::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_ANIMATED_MATERIAL_LIST(%s)", listName.c_str());
 }
 
-size_t SetAnimatedMaterialList::GetRawDataSize() const
-{
-	size_t paramsSize = 0;
-	for (const auto& texture : textures)
-	{
-		for (const auto& param : texture.params)
-		{
-			paramsSize += param->GetParamsSize();
-		}
-	}
-
-	return ZRoomCommand::GetRawDataSize() + paramsSize;
-}
-
 std::string SetAnimatedMaterialList::GetCommandCName() const
 {
 	return "SCmdTextureAnimations";
@@ -258,11 +244,10 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, [[maybe_unused]] u
 			index++;
 		}
 
+		std::string primColorName = StringHelper::Sprintf(
+			"%sAnimatedMaterialPrimColor_%06X", zRoom->GetName().c_str(), primColorSegmentOffset);
 		zRoom->parent->AddDeclarationArray(primColorSegmentOffset, DeclarationAlignment::Align4,
-		                                   primColors.size() * 5, "F3DPrimColor",
-		                                   StringHelper::Sprintf("%sAnimatedMaterialPrimColor_%06X",
-		                                                         zRoom->GetName().c_str(),
-		                                                         primColorSegmentOffset),
+		                                   primColors.size() * 5, "F3DPrimColor", primColorName,
 		                                   primColors.size(), declaration);
 	}
 
@@ -282,12 +267,11 @@ std::string FlashingTexture::GenerateSourceCode(ZRoom* zRoom, [[maybe_unused]] u
 			index++;
 		}
 
-		zRoom->parent->AddDeclarationArray(
-			envColorSegmentOffset, DeclarationAlignment::Align4, envColors.size() * 4,
-			"F3DEnvColor",
-			StringHelper::Sprintf("%sAnimatedMaterialEnvColors0x%06X", zRoom->GetName().c_str(),
-		                          envColorSegmentOffset),
-			envColors.size(), declaration);
+		std::string envColorName = StringHelper::Sprintf(
+			"%sAnimatedMaterialEnvColors0x%06X", zRoom->GetName().c_str(), envColorSegmentOffset);
+		zRoom->parent->AddDeclarationArray(envColorSegmentOffset, DeclarationAlignment::Align4,
+		                                   envColors.size() * 4, "F3DEnvColor", envColorName,
+		                                   envColors.size(), declaration);
 	}
 
 	if (keyFrameSegmentOffset != 0)

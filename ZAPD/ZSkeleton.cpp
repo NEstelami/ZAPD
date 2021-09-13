@@ -273,6 +273,7 @@ std::string ZLimbTable::GetSourceTypeName() const
 		return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
 
 	case ZLimbType::Invalid:
+		// TODO: Proper error message or something.
 		assert("Invalid limb type.\n");
 	}
 

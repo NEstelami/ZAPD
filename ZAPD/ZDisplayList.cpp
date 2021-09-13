@@ -1792,7 +1792,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			{
 				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
 
-				curAddr += 16;
+				curAddr += vtx.GetRawDataSize();
 			}
 
 			if (parent != nullptr)
@@ -1866,8 +1866,13 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			if (parent != nullptr)
 			{
-				std::string vtxName =
-					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), vtxKeys[i]);
+				std::string vtxName;
+				ZResource* vtxRes = parent->FindResource(vtxKeys[i]);
+
+				if (vtxRes != nullptr)
+					vtxName = vtxRes->GetName();
+				else
+					vtxName = StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), vtxKeys[i]);
 
 				auto filepath = Globals::Instance->outputPath / vtxName;
 				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), "vtx");

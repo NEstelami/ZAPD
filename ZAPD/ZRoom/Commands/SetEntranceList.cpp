@@ -54,7 +54,7 @@ void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& 
 
 		std::string varName =
 			StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
-		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::None, entrances.size() * 2,
+		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4, entrances.size() * 2,
 		                            "EntranceEntry", varName, entrances.size(), declaration);
 	}
 }
