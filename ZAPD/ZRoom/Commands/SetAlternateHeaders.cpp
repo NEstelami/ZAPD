@@ -47,8 +47,9 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 
 		for (size_t i = 0; i < headers.size(); i++)
 		{
-			declaration += StringHelper::Sprintf(
-				"\t%s,", parent->GetDeclarationPtrName(headers.at(i)).c_str());
+			std::string altHeaderName;
+			parent->GetDeclarationPtrName(headers.at(i), "SceneCmd", altHeaderName);
+			declaration += StringHelper::Sprintf("\t%s,", altHeaderName.c_str());
 
 			if (i + 1 < headers.size())
 				declaration += "\n";

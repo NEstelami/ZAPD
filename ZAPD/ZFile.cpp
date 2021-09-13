@@ -432,14 +432,6 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body)
-{
-	return AddDeclarationArray(address, alignment, DeclarationPadding::None, size, varType, varName,
-	                           arrayItemCnt, body);
-}
-
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         size_t size, const std::string& varType,
                                         const std::string& varName, size_t arrayItemCnt,
                                         const std::string& body)
@@ -510,7 +502,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	if (decl == nullptr)
 	{
 		decl =
-			new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+			new Declaration(address, alignment, padding, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else

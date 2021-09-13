@@ -31,10 +31,12 @@ public:
 	void ParseRawDataLate() override;
 	void DeclareReferencesLate(const std::string& prefix) override;
 
-	void DeclareVar(const std::string& prefix, const std::string body);
-	std::string GetBodySourceCode() const;
+	Declaration* DeclareVar(const std::string& prefix, const std::string& body) override;
+	std::string GetBodySourceCode() const override;
 
-	std::string GetDefaultName(const std::string& prefix) const;
+	std::string GetSourceOutputCode(const std::string& prefix) override;
+
+	std::string GetDefaultName(const std::string& prefix) const override;
 	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
@@ -45,7 +47,5 @@ public:
 	ZResourceType GetResourceType() const override;
 
 protected:
-	std::string GetSourceOutputHeader(const std::string& prefix) override;
-	std::string GetSourceOutputCode(const std::string& prefix) override;
 	void SyotesRoomHack();
 };

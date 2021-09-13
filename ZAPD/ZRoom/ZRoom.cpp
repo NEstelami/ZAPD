@@ -113,7 +113,6 @@ void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 	std::string nodeName = std::string(reader->Name());
 	if (nodeName == "Scene")
 	{
-		Globals::Instance->lastScene = this;
 		zroomType = ZResourceType::Scene;
 	}
 	else if (nodeName == "Room")
@@ -293,7 +292,7 @@ void ZRoom::DeclareReferencesLate(const std::string& prefix)
 		cmd->DeclareReferencesLate(prefix);
 }
 
-void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
+Declaration* ZRoom::DeclareVar(const std::string& prefix, const std::string& body)
 {
 	std::string auxName = name;
 	if (auxName == "")
@@ -301,7 +300,7 @@ void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                            GetSourceTypeName(), auxName, 0, body);
 }
 
@@ -401,6 +400,7 @@ std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefi
 		sourceOutput += "#include \"command_macros_base.h\"\n";
 		sourceOutput += "#include \"z64cutscene_commands.h\"\n";
 		sourceOutput += "#include \"variables.h\"\n";
+	}
 
 	if (Globals::Instance->HasSegment(SEGMENT_SCENE))
 	{
