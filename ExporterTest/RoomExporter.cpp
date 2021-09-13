@@ -22,7 +22,7 @@
 
 void ExporterExample_Room::Save(ZResource* res, fs::path outPath, BinaryWriter* writer)
 {
-	ZRoom* room = (ZRoom*)res;
+	ZRoom* room = dynamic_cast<ZRoom*>(res);
 
 	//MemoryStream* memStream = new MemoryStream();
 	//BinaryWriter* writer = new BinaryWriter(memStream);
