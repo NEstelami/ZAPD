@@ -652,7 +652,8 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					return;
 				default:
 					// Because GCC is worried this could happen
-					assert(entry.type < TextureAnimationParamsType::SingleScroll || entry.type > TextureAnimationParamsType::Empty );
+					assert(entry.type < TextureAnimationParamsType::SingleScroll ||
+					       entry.type > TextureAnimationParamsType::Empty);
 					return;
 				}
 
