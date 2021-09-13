@@ -56,7 +56,8 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-Declaration* ZSymbol::DeclareVar([[maybe_unused]] const std::string& prefix, [[maybe_unused]] const std::string& bodyStr)
+Declaration* ZSymbol::DeclareVar([[maybe_unused]] const std::string& prefix,
+                                 [[maybe_unused]] const std::string& bodyStr)
 {
 	return nullptr;
 }

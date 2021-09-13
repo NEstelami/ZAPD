@@ -38,7 +38,6 @@ public:
 	void SetPolyType(uint8_t nPolyType);
 
 protected:
-
 	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
 };
 

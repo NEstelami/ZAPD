@@ -36,7 +36,8 @@ void ZBlob::ParseRawData()
 	                parent->GetRawData().begin() + rawDataIndex + blobSize);
 }
 
-Declaration* ZBlob::DeclareVar(const std::string& prefix, [[maybe_unused]] const std::string& bodyStr)
+Declaration* ZBlob::DeclareVar(const std::string& prefix,
+                               [[maybe_unused]] const std::string& bodyStr)
 {
 	std::string auxName = name;
 

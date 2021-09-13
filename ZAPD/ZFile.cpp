@@ -501,8 +501,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl =
-			new Declaration(address, alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+		decl = new Declaration(address, alignment, padding, size, varType, varName, true,
+		                       arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else

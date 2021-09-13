@@ -988,7 +988,8 @@ void ZDisplayList::Opcode_G_SETTILE(uint64_t data, char* line)
 	        ssss, dd, bbbb, uuuu);
 }
 
-void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, [[maybe_unused]] std::string prefix, char* line)
+void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, [[maybe_unused]] std::string prefix,
+                                        char* line)
 {
 	int32_t sss = (data & 0x00FFF00000000000) >> 44;
 	int32_t ttt = (data & 0x00000FFF00000000) >> 32;
