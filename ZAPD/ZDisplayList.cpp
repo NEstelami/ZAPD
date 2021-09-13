@@ -2037,10 +2037,10 @@ void ZDisplayList::TextureGenCheck(std::string prefix)
 	}
 }
 
-bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string prefix, int32_t texWidth,
-                                   int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
-                                   F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
-                                   bool texIsPalette, ZDisplayList* self)
+bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string prefix,
+                                   int32_t texWidth, int32_t texHeight, uint32_t texAddr,
+                                   uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
+                                   bool texLoaded, bool texIsPalette, ZDisplayList* self)
 {
 	int32_t segmentNumber = GETSEGNUM(texSeg);
 
