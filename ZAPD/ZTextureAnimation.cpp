@@ -358,9 +358,9 @@ std::string TextureColorChangingParams::GetBodySourceCode() const
 	std::string envColorListName;
 	std::string frameDataListName;
 
-	parent->GetDeclarationPtrName(primColorListAddress, "", primColorListName);
-	parent->GetDeclarationPtrName(envColorListAddress, "", envColorListName);
-	parent->GetDeclarationPtrName(frameDataListAddress, "", frameDataListName);
+	Globals::Instance->GetSegmentedPtrName(primColorListAddress, parent, "", primColorListName);
+	Globals::Instance->GetSegmentedPtrName(envColorListAddress, parent, "", envColorListName);
+	Globals::Instance->GetSegmentedPtrName(frameDataListAddress, parent, "", frameDataListName);
 
 	std::string bodyStr =
 		StringHelper::Sprintf("\n    %d, %d, %s, %s, %s,\n", animLength, colorListCount,
@@ -446,7 +446,7 @@ void TextureCyclingParams::DeclareReferences([[maybe_unused]] const std::string&
 
 		for (const auto& tex : textureList)
 		{
-			bool texFound = parent->GetDeclarationPtrName(tex, "", texName);
+			bool texFound = Globals::Instance->GetSegmentedPtrName(tex, parent, "", texName);
 
 			// texName is a raw segmented pointer. This occurs if the texture is not declared
 			// separately since we cannot read the format. In theory we could scan DLists for the
@@ -510,8 +510,8 @@ std::string TextureCyclingParams::GetBodySourceCode() const
 	std::string textureListName;
 	std::string textureIndexListName;
 
-	parent->GetDeclarationPtrName(textureListAddress, "", textureListName);
-	parent->GetDeclarationPtrName(textureIndexListAddress, "", textureIndexListName);
+	Globals::Instance->GetSegmentedPtrName(textureListAddress, parent, "", textureListName);
+	Globals::Instance->GetSegmentedPtrName(textureIndexListAddress, parent, "", textureIndexListName);
 
 	std::string bodyStr =
 		StringHelper::Sprintf("\n    %d, %s, %s,\n", cycleLength,
@@ -690,7 +690,7 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 	for (const auto& entry : entries)
 	{
 		std::string paramName;
-		parent->GetDeclarationPtrName(entry.paramsPtr, "", paramName);
+		Globals::Instance->GetSegmentedPtrName(entry.paramsPtr, parent, "", paramName);
 
 		bodyStr += StringHelper::Sprintf("\t{ %d, %d, %s },\n", entry.segment, entry.type,
 		                                 paramName.c_str());
