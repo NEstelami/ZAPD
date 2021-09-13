@@ -1,12 +1,8 @@
 #include "ZRoom.h"
-#include <Utils/File.h>
-#include <Utils/Path.h>
-#include <Utils/StringHelper.h>
 #include <algorithm>
+#include <cassert>
 #include <chrono>
 #include <string_view>
-#include "../Globals.h"
-#include "../ZBlob.h"
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
@@ -40,13 +36,17 @@
 #include "Commands/Unused09.h"
 #include "Commands/Unused1D.h"
 #include "Commands/ZRoomCommandUnk.h"
+#include "Globals.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
+#include "Utils/StringHelper.h"
+#include "ZBlob.h"
 #include "ZCutscene.h"
 #include "ZFile.h"
 
-using namespace tinyxml2;
-
 REGISTER_ZFILENODE(Room, ZRoom);
 REGISTER_ZFILENODE(Scene, ZRoom);
+REGISTER_ZFILENODE(AltHeader, ZRoom);
 
 ZRoom::ZRoom(ZFile* nParent) : ZResource(nParent)
 {
@@ -65,410 +65,375 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	scene = Globals::Instance->lastScene;
-
-	if (std::string_view(reader->Name()) == "Scene")
-	{
-		scene = this;
-		Globals::Instance->lastScene = this;
-	}
-
-	uint32_t cmdCount = UINT32_MAX;
-
-	if (name == "syotes_room_0")
+	if (hackMode == "syotes_room")
 	{
 		SyotesRoomHack();
-		cmdCount = 0;
 	}
-
-	for (XMLElement* child = reader->FirstChildElement(); child != nullptr;
-	     child = child->NextSiblingElement())
+	else
 	{
-		std::string childName =
-			child->Attribute("Name") == NULL ? "" : std::string(child->Attribute("Name"));
-		std::string childComment = child->Attribute("Comment") == NULL ?
-                                       "" :
-                                       "// " + std::string(child->Attribute("Comment")) + "\n";
-
-		// TODO: Bunch of repeated code between all of these that needs to be combined.
-		if (std::string_view(child->Name()) == "DListHint")
-		{
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			ZDisplayList* dList = new ZDisplayList(
-				address,
-				ZDisplayList::GetDListLength(parent->GetRawData(), address,
-			                                 Globals::Instance->game == ZGame::OOT_SW97 ?
-                                                 DListType::F3DEX :
-                                                 DListType::F3DZEX),
-				parent);
-			dList->SetInnerNode(true);
-
-			dList->GetSourceOutputCode(name);
-			delete dList;
-		}
-		else if (std::string_view(child->Name()) == "CutsceneHint")
-		{
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			ZCutscene* cutscene = new ZCutscene(parent);
-			cutscene->SetInnerNode(true);
-			cutscene->ExtractFromXML(child, address);
-
-			cutscene->GetSourceOutputCode(name);
-
-			delete cutscene;
-		}
-		else if (std::string_view(child->Name()) == "AltHeaderHint")
-		{
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			uint32_t commandsCount = UINT32_MAX;
-
-			if (child->FindAttribute("Count") != NULL)
-			{
-				std::string commandCountStr = child->Attribute("Count");
-				commandsCount = strtol(commandCountStr.c_str(), NULL, 10);
-			}
-
-			commandSets.push_back(CommandSet(address, commandsCount));
-		}
-		else if (std::string_view(child->Name()) == "PathHint")
-		{
-			std::string addressStr = child->Attribute("Offset");
-			int32_t address = strtol(StringHelper::Split(addressStr, "0x")[1].c_str(), NULL, 16);
-
-			// TODO: add this to command set
-			ZPath* pathway = new ZPath(parent);
-			pathway->SetInnerNode(true);
-			pathway->SetRawDataIndex(address);
-			pathway->ParseRawData();
-			pathway->DeclareReferences(name);
-			pathway->GetSourceOutputCode(name);
-
-			delete pathway;
-		}
-
-#ifdef DEPRECATION_ON
-		fprintf(stderr,
-		        "ZRoom::ExtractFromXML: Deprecation warning in '%s'.\n"
-		        "\t The resource '%s' is currently deprecated, and will be removed in a future "
-		        "version.\n"
-		        "\t Use the non-hint version instead.\n",
-		        name.c_str(), child->Name());
-#endif
-	}
-
-	commandSets.push_back(CommandSet(rawDataIndex, cmdCount));
-	ProcessCommandSets();
-}
-
-void ZRoom::ParseCommands(std::vector<ZRoomCommand*>& commandList, CommandSet commandSet)
-{
-	bool shouldContinue = true;
-	uint32_t currentIndex = 0;
-	uint32_t rawDataIndex = GETSEGOFFSET(commandSet.address);
-
-	uint32_t commandsLeft = commandSet.commandCount;
-
-	const auto& rawData = parent->GetRawData();
-	while (shouldContinue)
-	{
-		if (commandsLeft <= 0)
-			break;
-
-		RoomCommand opcode = static_cast<RoomCommand>(rawData.at(rawDataIndex));
-
-		ZRoomCommand* cmd = nullptr;
-
-		auto start = std::chrono::steady_clock::now();
-
-		switch (opcode)
-		{
-		case RoomCommand::SetStartPositionList:
-			cmd = new SetStartPositionList(parent);
-			break;  // 0x00
-		case RoomCommand::SetActorList:
-			cmd = new SetActorList(parent);
-			break;  // 0x01
-		case RoomCommand::SetCsCamera:
-			cmd = new SetCsCamera(parent);
-			break;  // 0x02 (MM-ONLY)
-		case RoomCommand::SetCollisionHeader:
-			cmd = new SetCollisionHeader(parent);
-			break;  // 0x03
-		case RoomCommand::SetRoomList:
-			cmd = new SetRoomList(parent);
-			break;  // 0x04
-		case RoomCommand::SetWind:
-			cmd = new SetWind(parent);
-			break;  // 0x05
-		case RoomCommand::SetEntranceList:
-			cmd = new SetEntranceList(parent);
-			break;  // 0x06
-		case RoomCommand::SetSpecialObjects:
-			cmd = new SetSpecialObjects(parent);
-			break;  // 0x07
-		case RoomCommand::SetRoomBehavior:
-			cmd = new SetRoomBehavior(parent);
-			break;  // 0x08
-		case RoomCommand::Unused09:
-			cmd = new Unused09(parent);
-			break;  // 0x09
-		case RoomCommand::SetMesh:
-			cmd = new SetMesh(parent);
-			break;  // 0x0A
-		case RoomCommand::SetObjectList:
-			cmd = new SetObjectList(parent);
-			break;  // 0x0B
-		case RoomCommand::SetLightList:
-			cmd = new SetLightList(parent);
-			break;  // 0x0C (MM-ONLY)
-		case RoomCommand::SetPathways:
-			cmd = new SetPathways(parent);
-			break;  // 0x0D
-		case RoomCommand::SetTransitionActorList:
-			cmd = new SetTransitionActorList(parent);
-			break;  // 0x0E
-		case RoomCommand::SetLightingSettings:
-			cmd = new SetLightingSettings(parent);
-			break;  // 0x0F
-		case RoomCommand::SetTimeSettings:
-			cmd = new SetTimeSettings(parent);
-			break;  // 0x10
-		case RoomCommand::SetSkyboxSettings:
-			cmd = new SetSkyboxSettings(parent);
-			break;  // 0x11
-		case RoomCommand::SetSkyboxModifier:
-			cmd = new SetSkyboxModifier(parent);
-			break;  // 0x12
-		case RoomCommand::SetExitList:
-			cmd = new SetExitList(parent);
-			break;  // 0x13
-		case RoomCommand::EndMarker:
-			cmd = new EndMarker(parent);
-			break;  // 0x14
-		case RoomCommand::SetSoundSettings:
-			cmd = new SetSoundSettings(parent);
-			break;  // 0x15
-		case RoomCommand::SetEchoSettings:
-			cmd = new SetEchoSettings(parent);
-			break;  // 0x16
-		case RoomCommand::SetCutscenes:
-			cmd = new SetCutscenes(parent);
-			break;  // 0x17
-		case RoomCommand::SetAlternateHeaders:
-			cmd = new SetAlternateHeaders(parent);
-			break;  // 0x18
-		case RoomCommand::SetCameraSettings:
-			if (Globals::Instance->game == ZGame::MM_RETAIL)
-				cmd = new SetWorldMapVisited(parent);
-			else
-				cmd = new SetCameraSettings(parent);
-			break;  // 0x19
-		case RoomCommand::SetAnimatedMaterialList:
-			cmd = new SetAnimatedMaterialList(parent);
-			break;  // 0x1A (MM-ONLY)
-		case RoomCommand::SetActorCutsceneList:
-			cmd = new SetActorCutsceneList(parent);
-			break;  // 0x1B (MM-ONLY)
-		case RoomCommand::SetMinimapList:
-			cmd = new SetMinimapList(parent);
-			break;  // 0x1C (MM-ONLY)
-		case RoomCommand::Unused1D:
-			cmd = new Unused1D(parent);
-			break;  // 0x1D
-		case RoomCommand::SetMinimapChests:
-			cmd = new SetMinimapChests(parent);
-			break;  // 0x1E (MM-ONLY)
-		default:
-			cmd = new ZRoomCommandUnk(parent);
-		}
-
-		cmd->ExtractCommandFromRoom(this, rawDataIndex);
-		cmd->DeclareReferences(GetName());
-
-		if (Globals::Instance->profile)
-		{
-			auto end = std::chrono::steady_clock::now();
-			auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-			if (diff > 50)
-				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
-		}
-
-		cmd->cmdIndex = currentIndex;
-
-		commandList.push_back(cmd);
-
-		if (opcode == RoomCommand::EndMarker)
-			shouldContinue = false;
-
-		rawDataIndex += 8;
-		currentIndex++;
-
-		commandsLeft--;
+		DeclareVar(name, "");
 	}
 }
 
-void ZRoom::ProcessCommandSets()
-{
-	while (commandSets.size() > 0)
-	{
-		std::vector<ZRoomCommand*> setCommands = std::vector<ZRoomCommand*>();
-
-		int32_t commandSet = commandSets[0].address;
-		ParseCommands(setCommands, commandSets[0]);
-		commandSets.erase(commandSets.begin());
-
-		for (auto& cmd : setCommands)
-		{
-			cmd->ParseRawDataLate();
-			cmd->DeclareReferencesLate(name);
-		}
-
-		if (!setCommands.empty())
-		{
-			std::string declaration;
-
-			for (size_t i = 0; i < setCommands.size(); i++)
+			void ZRoom::ExtractFromBinary(uint32_t nRawDataIndex, ZResourceType parentType)
 			{
-				ZRoomCommand* cmd = setCommands[i];
-				cmd->commandSet = GETSEGOFFSET(commandSet);
-				declaration += StringHelper::Sprintf("\t%s,", cmd->GetBodySourceCode().c_str());
+				rawDataIndex = nRawDataIndex;
+				name = GetDefaultName(parent->GetName());
 
-				if (i + 1 < setCommands.size())
-					declaration += "\n";
+	zroomType = ZResourceType::AltHeader;
+	switch (parentType)
+	{
+	case ZResourceType::Scene:
+	case ZResourceType::Room:
+	case ZResourceType::AltHeader:
+		parentZroomType = parentType;
+		break;
+
+	default:
+		// TODO: error message or something
+		assert(false);
+		break;
+	}
+
+				ParseRawData();
+				DeclareVar(name, "");
 			}
 
-			parent->AddDeclarationArray(
-				GETSEGOFFSET(commandSet), DeclarationAlignment::Align16, 8 * setCommands.size(),
-				"static SCmdBase",
-				StringHelper::Sprintf("%sSet%04X", name.c_str(), GETSEGOFFSET(commandSet)),
-				setCommands.size(), declaration);
+			void ZRoom::ParseXML(tinyxml2::XMLElement * reader)
+			{
+				ZResource::ParseXML(reader);
 
-			sourceOutput += "\n";
+	// TODO: HACK: remove this specific check when the repo uses the correct HackMode="syotes_room"
+	if (name == "syotes_room_0")
+	{
+		hackMode = "syotes_room";
+	}
 
-			for (ZRoomCommand* cmd : setCommands)
+			std::string nodeName = std::string(reader->Name());
+			if (nodeName == "Scene")
+			{
+				Globals::Instance->lastScene = this;
+				zroomType = ZResourceType::Scene;
+			}
+			else if (nodeName == "Room")
+				zroomType = ZResourceType::Room;
+			else if (nodeName == "AltHeader")
+				zroomType = ZResourceType::AltHeader;
+
+			if (reader->Attribute("HackMode") != nullptr)
+			{
+				hackMode = std::string(reader->Attribute("HackMode"));
+				if (hackMode != "syotes_room")
+					throw std::runtime_error(
+						StringHelper::Sprintf("ZRoom::ParseXML: Fatal error in '%s'.\n"
+					                          "\t Invalid value for attribute 'HackMode': '%s'\n",
+					                          name.c_str(), hackMode.c_str()));
+			}
+		}
+
+		void ZRoom::ParseRawData()
+		{
+			if (hackMode == "syotes_room")
+				return;
+
+			bool shouldContinue = true;
+			uint32_t currentIndex = 0;
+			uint32_t currentPtr = rawDataIndex;
+
+			const auto& rawData = parent->GetRawData();
+			while (shouldContinue)
+			{
+				RoomCommand opcode = static_cast<RoomCommand>(rawData.at(currentPtr));
+
+				ZRoomCommand* cmd = nullptr;
+
+				auto start = std::chrono::steady_clock::now();
+
+				switch (opcode)
+				{
+				case RoomCommand::SetStartPositionList:
+					cmd = new SetStartPositionList(parent);
+					break;  // 0x00
+				case RoomCommand::SetActorList:
+					cmd = new SetActorList(parent);
+					break;  // 0x01
+				case RoomCommand::SetCsCamera:
+					cmd = new SetCsCamera(parent);
+					break;  // 0x02 (MM-ONLY)
+				case RoomCommand::SetCollisionHeader:
+					cmd = new SetCollisionHeader(parent);
+					break;  // 0x03
+				case RoomCommand::SetRoomList:
+					cmd = new SetRoomList(parent);
+					break;  // 0x04
+				case RoomCommand::SetWind:
+					cmd = new SetWind(parent);
+					break;  // 0x05
+				case RoomCommand::SetEntranceList:
+					cmd = new SetEntranceList(parent);
+					break;  // 0x06
+				case RoomCommand::SetSpecialObjects:
+					cmd = new SetSpecialObjects(parent);
+					break;  // 0x07
+				case RoomCommand::SetRoomBehavior:
+					cmd = new SetRoomBehavior(parent);
+					break;  // 0x08
+				case RoomCommand::Unused09:
+					cmd = new Unused09(parent);
+					break;  // 0x09
+				case RoomCommand::SetMesh:
+					cmd = new SetMesh(parent);
+					break;  // 0x0A
+				case RoomCommand::SetObjectList:
+					cmd = new SetObjectList(parent);
+					break;  // 0x0B
+				case RoomCommand::SetLightList:
+					cmd = new SetLightList(parent);
+					break;  // 0x0C (MM-ONLY)
+				case RoomCommand::SetPathways:
+					cmd = new SetPathways(parent);
+					break;  // 0x0D
+				case RoomCommand::SetTransitionActorList:
+					cmd = new SetTransitionActorList(parent);
+					break;  // 0x0E
+				case RoomCommand::SetLightingSettings:
+					cmd = new SetLightingSettings(parent);
+					break;  // 0x0F
+				case RoomCommand::SetTimeSettings:
+					cmd = new SetTimeSettings(parent);
+					break;  // 0x10
+				case RoomCommand::SetSkyboxSettings:
+					cmd = new SetSkyboxSettings(parent);
+					break;  // 0x11
+				case RoomCommand::SetSkyboxModifier:
+					cmd = new SetSkyboxModifier(parent);
+					break;  // 0x12
+				case RoomCommand::SetExitList:
+					cmd = new SetExitList(parent);
+					break;  // 0x13
+				case RoomCommand::EndMarker:
+					cmd = new EndMarker(parent);
+					break;  // 0x14
+				case RoomCommand::SetSoundSettings:
+					cmd = new SetSoundSettings(parent);
+					break;  // 0x15
+				case RoomCommand::SetEchoSettings:
+					cmd = new SetEchoSettings(parent);
+					break;  // 0x16
+				case RoomCommand::SetCutscenes:
+					cmd = new SetCutscenes(parent);
+					break;  // 0x17
+				case RoomCommand::SetAlternateHeaders:
+					cmd = new SetAlternateHeaders(parent);
+					break;  // 0x18
+				case RoomCommand::SetCameraSettings:
+					if (Globals::Instance->game == ZGame::MM_RETAIL)
+						cmd = new SetWorldMapVisited(parent);
+					else
+						cmd = new SetCameraSettings(parent);
+					break;  // 0x19
+				case RoomCommand::SetAnimatedMaterialList:
+					cmd = new SetAnimatedMaterialList(parent);
+					break;  // 0x1A (MM-ONLY)
+				case RoomCommand::SetActorCutsceneList:
+					cmd = new SetActorCutsceneList(parent);
+					break;  // 0x1B (MM-ONLY)
+				case RoomCommand::SetMinimapList:
+					cmd = new SetMinimapList(parent);
+					break;  // 0x1C (MM-ONLY)
+				case RoomCommand::Unused1D:
+					cmd = new Unused1D(parent);
+					break;  // 0x1D
+				case RoomCommand::SetMinimapChests:
+					cmd = new SetMinimapChests(parent);
+					break;  // 0x1E (MM-ONLY)
+				default:
+					cmd = new ZRoomCommandUnk(parent);
+				}
+
+				cmd->commandSet = rawDataIndex;
+				cmd->ExtractCommandFromRoom(this, currentPtr);
+
+				if (Globals::Instance->profile)
+				{
+					auto end = std::chrono::steady_clock::now();
+					auto diff =
+						std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+					if (diff > 50)
+						printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
+				}
+
+				cmd->cmdIndex = currentIndex;
+
 				commands.push_back(cmd);
+
+				if (opcode == RoomCommand::EndMarker)
+					shouldContinue = false;
+
+				currentPtr += 8;
+				currentIndex++;
+			}
 		}
-	}
-}
 
-/*
- * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates back to very
- * early in the game's development. Since this room is a special case, this hack adds back a header
- * so that the room can be processed properly.
- */
-void ZRoom::SyotesRoomHack()
-{
-	PolygonType2 poly(parent, parent->GetRawData(), 0, this);
-
-	poly.ParseRawData();
-	poly.DeclareReferences(GetName());
-	parent->AddDeclaration(0, DeclarationAlignment::Align4, poly.GetRawDataSize(),
-	                       poly.GetSourceTypeName(), poly.GetDefaultName(GetName()),
-	                       poly.GetBodySourceCode());
-}
-
-ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
-{
-	for (size_t i = 0; i < commands.size(); i++)
-	{
-		if (commands[i]->GetRoomCommand() == cmdType)
-			return commands[i];
-	}
-
-	return nullptr;
-}
-
-size_t ZRoom::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
-{
-	auto currentDecl = parent->declarations.find(declarationAddress);
-	if (currentDecl == parent->declarations.end())
-		return 0;
-
-	auto nextDecl = currentDecl;
-	std::advance(nextDecl, 1);
-	if (nextDecl == parent->declarations.end())
-		return parent->GetRawData().size() - currentDecl->first;
-
-	return nextDecl->first - currentDecl->first;
-}
-
-size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
-{
-	int32_t cmdIndex = -1;
-
-	for (size_t i = 0; i < commands.size(); i++)
-	{
-		if (commands[i] == cmd)
+		void ZRoom::DeclareReferences(const std::string& prefix)
 		{
-			cmdIndex = i;
-			break;
+			for (auto& cmd : commands)
+				cmd->DeclareReferences(prefix);
 		}
-	}
 
-	if (cmdIndex != -1)
-	{
-		if (cmdIndex + 1 < (int32_t)commands.size())
-			return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
-		else
-			return parent->GetRawData().size() - commands[cmdIndex]->cmdAddress;
-	}
+		void ZRoom::ParseRawDataLate()
+		{
+			for (auto& cmd : commands)
+				cmd->ParseRawDataLate();
+		}
 
-	return 0;
-}
+		void ZRoom::DeclareReferencesLate(const std::string& prefix)
+		{
+			for (auto& cmd : commands)
+				cmd->DeclareReferencesLate(prefix);
+		}
 
-std::string ZRoom::GetSourceOutputHeader(const std::string& prefix)
+void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
 {
-	return "\n" + extDefines + "\n\n";
+	std::string auxName = name;
+	if (auxName == "")
+		auxName = GetDefaultName(prefix);
+	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
+		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
+
+	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                            GetSourceTypeName(), auxName, 0, body);
 }
 
-std::string ZRoom::GetSourceOutputCode(const std::string& prefix)
-{
-	sourceOutput = "";
+			std::string ZRoom::GetBodySourceCode() const
+			{
+				std::string declaration = "";
 
-	sourceOutput += "#include \"segment_symbols.h\"\n";
-	sourceOutput += "#include \"command_macros_base.h\"\n";
-	sourceOutput += "#include \"z64cutscene_commands.h\"\n";
-	sourceOutput += "#include \"variables.h\"\n";
+				for (size_t i = 0; i < commands.size(); i++)
+				{
+					ZRoomCommand* cmd = commands[i];
+					declaration += StringHelper::Sprintf("\t%s,", cmd->GetBodySourceCode().c_str());
 
-	if (scene != nullptr)
-		sourceOutput += scene->parent->GetHeaderInclude();
+					if (i + 1 < commands.size())
+						declaration += "\n";
+				}
 
-	ProcessCommandSets();
+				return declaration;
+			}
 
-	return sourceOutput;
-}
+			std::string ZRoom::GetDefaultName(const std::string& prefix) const
+			{
+				return StringHelper::Sprintf("%sSet_%06X", prefix.c_str(), rawDataIndex);
+			}
 
-size_t ZRoom::GetRawDataSize() const
-{
-	size_t size = 0;
+			/*
+			 * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates
+			 * back to very early in the game's development. Since this room is a special case,
+			 * declare automatically the data its contains whitout the need of a header.
+			 */
+			void ZRoom::SyotesRoomHack()
+			{
+				PolygonType2 poly(parent, parent->GetRawData(), 0, this);
 
-	for (ZRoomCommand* cmd : commands)
-		size += cmd->GetRawDataSize();
+				poly.ParseRawData();
+				poly.DeclareReferences(GetName());
+				parent->AddDeclaration(0, DeclarationAlignment::Align4, poly.GetRawDataSize(),
+				                       poly.GetSourceTypeName(), poly.GetDefaultName(GetName()),
+				                       poly.GetBodySourceCode());
+			}
 
-	return size;
-}
+			ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
+			{
+				for (size_t i = 0; i < commands.size(); i++)
+				{
+					if (commands[i]->GetRoomCommand() == cmdType)
+						return commands[i];
+				}
 
-ZResourceType ZRoom::GetResourceType() const
-{
-	return ZResourceType::Room;
-}
+				return nullptr;
+			}
 
-void ZRoom::PreGenSourceFiles()
-{
-	for (ZRoomCommand* cmd : commands)
-		cmd->PreGenSourceFiles();
-}
+			size_t ZRoom::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
+			{
+				auto currentDecl = parent->declarations.find(declarationAddress);
+				if (currentDecl == parent->declarations.end())
+					return 0;
 
-/* CommandSet */
+				auto nextDecl = currentDecl;
+				std::advance(nextDecl, 1);
+				if (nextDecl == parent->declarations.end())
+					return parent->GetRawData().size() - currentDecl->first;
 
-CommandSet::CommandSet(uint32_t nAddress, uint32_t nCommandCount)
-{
-	address = nAddress;
-	commandCount = nCommandCount;
-}
+				return nextDecl->first - currentDecl->first;
+			}
+
+			size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand * cmd)
+			{
+				int32_t cmdIndex = -1;
+
+				for (size_t i = 0; i < commands.size(); i++)
+				{
+					if (commands[i] == cmd)
+					{
+						cmdIndex = i;
+						break;
+					}
+				}
+
+				if (cmdIndex != -1)
+				{
+					if (cmdIndex + 1 < (int32_t)commands.size())
+						return commands[cmdIndex + 1]->cmdAddress - commands[cmdIndex]->cmdAddress;
+					else
+						return parent->GetRawData().size() - commands[cmdIndex]->cmdAddress;
+				}
+
+				return 0;
+			}
+
+			std::string ZRoom::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
+			{
+				return "\n" + extDefines + "\n\n";
+			}
+
+			std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
+			{
+				std::string sourceOutput = "";
+
+				if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
+				{
+					sourceOutput += "#include \"segment_symbols.h\"\n";
+					sourceOutput += "#include \"command_macros_base.h\"\n";
+					sourceOutput += "#include \"z64cutscene_commands.h\"\n";
+					sourceOutput += "#include \"variables.h\"\n";
+
+					if (Globals::Instance->lastScene != nullptr)
+						sourceOutput += Globals::Instance->lastScene->parent->GetHeaderInclude();
+				}
+
+				if (hackMode == "syotes_room")
+					return sourceOutput;
+
+				DeclareVar(prefix, GetBodySourceCode());
+
+				return sourceOutput;
+			}
+
+			size_t ZRoom::GetRawDataSize() const
+			{
+				size_t size = 0;
+
+				for (ZRoomCommand* cmd : commands)
+					size += cmd->GetRawDataSize();
+
+				return size;
+			}
+
+			std::string ZRoom::GetSourceTypeName() const { return "SceneCmd"; }
+
+			ZResourceType ZRoom::GetResourceType() const
+			{
+				assert(zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room ||
+				       zroomType == ZResourceType::AltHeader);
+				return zroomType;
+			}
