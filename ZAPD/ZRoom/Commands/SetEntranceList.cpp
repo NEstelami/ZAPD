@@ -50,7 +50,7 @@ void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& 
 
 		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::None, entrances.size() * 2, "EntranceEntry",
-			StringHelper::Sprintf("%sEntranceList0x%06X", zRoom->GetName().c_str(), segmentOffset),
+			StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset),
 			entrances.size(), declaration);
 	}
 }
