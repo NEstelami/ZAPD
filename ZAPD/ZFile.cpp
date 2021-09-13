@@ -71,7 +71,7 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
+void ZFile::ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
                      [[maybe_unused]] bool placeholderMode)
 {
 	if (filename == "")
