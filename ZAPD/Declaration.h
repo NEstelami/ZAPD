@@ -7,6 +7,8 @@
 typedef uint32_t segptr_t;
 typedef uint32_t offset_t;
 
+#define SEGMENTED_NULL ((segptr_t)0)
+
 enum class DeclarationAlignment
 {
 	None,
