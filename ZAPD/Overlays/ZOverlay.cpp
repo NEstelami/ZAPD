@@ -16,16 +16,16 @@ const char* RelocationEntry::GetSectionName() const
 {
 	switch (sectionType)
 	{
-	case SectionType::Text:
-		return ".text";
-	case SectionType::Data:
-		return ".data";
-	case SectionType::RoData:
-		return ".rodata";
-	case SectionType::Bss:
-		return ".bss";
-	case SectionType::ERROR:
-		return ".ERROR";
+		case SectionType::Text:
+			return ".text";
+		case SectionType::Data:
+			return ".data";
+		case SectionType::RoData:
+			return ".rodata";
+		case SectionType::Bss:
+			return ".bss";
+		case SectionType::ERROR:
+			return ".ERROR";
 	}
 	assert(!"Oh no :c");
 }
@@ -34,14 +34,14 @@ const char* RelocationEntry::GetRelocTypeName() const
 {
 	switch (relocationType)
 	{
-	case RelocationType::R_MIPS_32:
-		return "R_MIPS_32";
-	case RelocationType::R_MIPS_26:
-		return "R_MIPS_26";
-	case RelocationType::R_MIPS_HI16:
-		return "R_MIPS_HI16";
-	case RelocationType::R_MIPS_LO16:
-		return "R_MIPS_LO16";
+		case RelocationType::R_MIPS_32:
+			return "R_MIPS_32";
+		case RelocationType::R_MIPS_26:
+			return "R_MIPS_26";
+		case RelocationType::R_MIPS_HI16:
+			return "R_MIPS_HI16";
+		case RelocationType::R_MIPS_LO16:
+			return "R_MIPS_LO16";
 	}
 	assert(!"Oh no :c");
 }

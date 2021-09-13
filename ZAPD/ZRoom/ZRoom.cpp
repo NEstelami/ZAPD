@@ -82,16 +82,16 @@ void ZRoom::ExtractFromBinary(uint32_t nRawDataIndex, ZResourceType parentType)
 	zroomType = ZResourceType::AltHeader;
 	switch (parentType)
 	{
-	case ZResourceType::Scene:
-	case ZResourceType::Room:
-	case ZResourceType::AltHeader:
-		parentZroomType = parentType;
-		break;
+		case ZResourceType::Scene:
+		case ZResourceType::Room:
+		case ZResourceType::AltHeader:
+			parentZroomType = parentType;
+			break;
 
-	default:
-		// TODO: error message or something
-		assert(false);
-		break;
+		default:
+			// TODO: error message or something
+			assert(false);
+			break;
 	}
 
 	ParseRawData();
