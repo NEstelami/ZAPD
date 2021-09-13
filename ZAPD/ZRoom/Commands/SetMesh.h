@@ -8,6 +8,8 @@
 class PolygonDlist : public ZResource
 {
 public:
+	ZRoom* zRoom;
+
 	uint8_t polyType;
 
 	int16_t x, y, z;  // polyType == 2
@@ -36,7 +38,6 @@ public:
 	void SetPolyType(uint8_t nPolyType);
 
 protected:
-	ZRoom* zRoom;
 
 	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
 };

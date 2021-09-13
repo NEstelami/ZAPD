@@ -425,6 +425,7 @@ void PolygonType1::ParseRawData()
 	if (dlist != 0)
 	{
 		PolygonDlist polyGfxList(parent);
+		polyGfxList.zRoom = zRoom;
 		polyGfxList.SetPolyType(type);
 		polyGfxList.ExtractFromFile(Seg2Filespace(dlist, parent->baseAddress));
 		polyGfxList.DeclareReferences(zRoom->GetName());
@@ -555,6 +556,7 @@ void PolygonType2::ParseRawData()
 	for (size_t i = 0; i < num; i++)
 	{
 		PolygonDlist entry(parent);
+		entry.zRoom = zRoom;
 		entry.SetPolyType(type);
 		entry.ExtractFromFile(currentPtr);
 		entry.DeclareReferences(zRoom->GetName());
