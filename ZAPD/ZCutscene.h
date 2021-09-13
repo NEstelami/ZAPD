@@ -428,11 +428,6 @@ public:
 
 	std::string GetBodySourceCode() const override;
 	size_t GetRawDataSize() const override;
-	CutsceneCommands GetCommandFromID(int32_t id);
-
-	ZResourceType GetResourceType() const override;
-
-protected:
 	int32_t numCommands;
 	int32_t endFrame;
 	std::vector<CutsceneCommand*> commands;

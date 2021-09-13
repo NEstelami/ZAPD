@@ -31,7 +31,7 @@ void ZRoomCommand::ParseRawDataLate()
 {
 }
 
-void ZRoomCommand::DeclareReferencesLate(const std::string& prefix)
+void ZRoomCommand::DeclareReferencesLate([[maybe_unused]] const std::string& prefix)
 {
 }
 

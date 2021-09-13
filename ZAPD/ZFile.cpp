@@ -71,8 +71,8 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, std::string filename,
-                     bool placeholderMode)
+void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
+                     [[maybe_unused]] bool placeholderMode)
 {
 	if (filename == "")
 		name = reader->Attribute("Name");
@@ -1228,7 +1228,7 @@ std::string ZFile::ProcessExterns()
 	return output;
 }
 
-std::string ZFile::ProcessTextureIntersections(std::string prefix)
+std::string ZFile::ProcessTextureIntersections([[maybe_unused]] std::string prefix)
 {
 	if (texturesResources.empty())
 		return "";

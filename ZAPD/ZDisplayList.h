@@ -373,7 +373,7 @@ public:
 	std::string ProcessGfxDis(const std::string& prefix);
 
 	bool IsExternalResource() const override;
-	virtual std::string GetExternalExtension() const override;
+	std::string GetExternalExtension() const override;
 	std::string GetSourceTypeName() const override;
 
 	ZResourceType GetResourceType() const override;

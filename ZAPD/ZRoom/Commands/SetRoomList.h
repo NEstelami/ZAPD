@@ -20,7 +20,7 @@ public:
 	SetRoomList(ZFile* nParent);
 
 	void ParseRawData() override;
-	virtual void DeclareReferences(const std::string& prefix) override;
+	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const override;
 	void PreGenSourceFiles() override;
