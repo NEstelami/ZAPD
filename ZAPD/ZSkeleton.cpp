@@ -126,7 +126,7 @@ size_t ZSkeleton::GetRawDataSize() const
 	}
 }
 
-std::string ZSkeleton::GetSourceOutputCode(const std::string& prefix)
+std::string ZSkeleton::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string headerStr = GetBodySourceCode();
 
@@ -275,7 +275,7 @@ std::string ZLimbTable::GetBodySourceCode() const
 	return body;
 }
 
-std::string ZLimbTable::GetSourceOutputCode(const std::string& prefix)
+std::string ZLimbTable::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string body = GetBodySourceCode();
 
@@ -303,6 +303,7 @@ std::string ZLimbTable::GetSourceTypeName() const
 		return StringHelper::Sprintf("%s*", ZLimb::GetSourceTypeName(limbType));
 
 	case ZLimbType::Invalid:
+		// TODO: Proper error message or something.
 		assert("Invalid limb type.\n");
 	}
 

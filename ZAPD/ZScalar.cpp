@@ -2,7 +2,6 @@
 
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "WarningHandler.h"
@@ -251,7 +250,7 @@ std::string ZScalar::GetBodySourceCode() const
 	}
 }
 
-std::string ZScalar::GetSourceOutputCode(const std::string& prefix)
+std::string ZScalar::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	if (parent != nullptr)
 		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),

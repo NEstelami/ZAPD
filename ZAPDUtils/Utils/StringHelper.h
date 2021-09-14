@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cstring>
 #include <numeric>
-#include <stdarg.h>
+#include <cstdarg>
 #include <string>
 #include <vector>
 
