@@ -1,10 +1,13 @@
 #include "ZAnimation.h"
+
 #include <utility>
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
+#include "WarningHandler.h"
 
 REGISTER_ZFILENODE(Animation, ZNormalAnimation);
 REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
@@ -223,11 +226,13 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 	std::string skelOffsetXml = registeredAttributes.at("SkelOffset").value;
 	if (skelOffsetXml == "")
 	{
-		throw std::runtime_error(
-			StringHelper::Sprintf("ZCurveAnimation::ParseXML: Fatal error in '%s'.\n"
-		                          "\t Missing 'SkelOffset' attribute in ZCurveAnimation.\n"
-		                          "\t You need to provide the offset of the curve skeleton.",
-		                          name.c_str()));
+		// throw std::runtime_error(
+		// 	StringHelper::Sprintf("ZCurveAnimation::ParseXML: Fatal error in '%s'.\n"
+		//                           "\t Missing 'SkelOffset' attribute in ZCurveAnimation.\n"
+		//                           "\t You need to provide the offset of the curve skeleton.",
+		//                           name.c_str()));
+
+		HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "Missing 'SkelOffset' attribute in <ZCurveAnimation>.", "You need to provide the offset of the curve skeleton.");
 	}
 	skelOffset = StringHelper::StrToL(skelOffsetXml, 0);
 }

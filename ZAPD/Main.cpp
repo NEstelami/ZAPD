@@ -379,9 +379,9 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 			//                           "a File element: '%s'\n",
 			//                           xmlFilePath.c_str(), child->Name()));
 			// Should this still be Fatal?
-			HANDLE_ERROR(StringHelper::Sprintf("when parsing file '%s'", xmlFilePath.c_str()),
-			             StringHelper::Sprintf("Found a resource outside a File element: '%s'",
-			                                   child->Name()));
+			std::string errorHeader = StringHelper::Sprintf("when parsing file '%s'", xmlFilePath.c_str());
+			std::string errorBody = StringHelper::Sprintf("Found a resource outside a File element: '%s'", child->Name());
+			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 		}
 	}
 

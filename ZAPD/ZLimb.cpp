@@ -392,7 +392,7 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 		//        "\t Missing 'LimbType' attribute in xml.\n"
 		//        "\t Defaulting to 'Standard'.\n",
 		//        name.c_str());
-		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "Missing 'LimbType' attribute in XML.", "Defaulting to 'Standard'.");
+		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "Missing 'LimbType' attribute in <Limb>.", "Defaulting to 'Standard'.");
 		type = ZLimbType::Standard;
 	}
 	else

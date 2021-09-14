@@ -96,9 +96,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			Globals::Instance->game = ZGame::OOT_SW97;
 		else if (std::string(gameStr) == "OOT")
 			Globals::Instance->game = ZGame::OOT_RETAIL;
-		else
-			throw std::runtime_error(
-				StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
+		else {
+			// throw std::runtime_error(
+			// 	StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
+			std::string errorHeader = StringHelper::Sprintf("Game type '%s' is not supported.", gameStr);
+			HANDLE_ERROR(WarningType::InvalidAttributeValue, errorHeader, "");
+		}
 	}
 
 	if (reader->Attribute("BaseAddress") != nullptr)
@@ -110,26 +113,22 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	// Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
-	/*
-	if (reader->Attribute("Segment") == nullptr)
-	    throw std::runtime_error(StringHelper::Sprintf(
-	        "ZFile::ParseXML: Error in '%s'.\n"
-	        "\t Missing 'Segment' attribute in File node. \n",
-	        name.c_str()));
-	*/
-
 	if (reader->Attribute("Segment") != nullptr)
 	{
 		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
 		Globals::Instance->AddSegment(segment, this);
+	} else {
+		HANDLE_WARNING(WarningType::MissingSegment, "Missing 'Segment' attribute in <File>", "");
 	}
 
 	if (mode == ZFileMode::Extract)
 	{
-		if (!File::Exists((basePath / name).string()))
-			throw std::runtime_error(
-				StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
+		if (!File::Exists((basePath / name).string())) {
+			// throw std::runtime_error(
+			// 	StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
+			std::string errorHeader = StringHelper::Sprintf("Binary file '%s' does not exist.", (basePath / name).c_str());
+			HANDLE_ERROR(WarningType::Always, errorHeader, "");
+		}
 
 		rawData = File::ReadAllBytes((basePath / name).string());
 	}
@@ -158,9 +157,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 
 			if (offsetSet.find(offsetXml) != offsetSet.end())
 			{
-				throw std::runtime_error(StringHelper::Sprintf(
-					"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Offset' attribute: %s \n",
-					name.c_str(), offsetXml));
+				// throw std::runtime_error(StringHelper::Sprintf(
+				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Offset' attribute: %s \n",
+				// 	name.c_str(), offsetXml));
+				std::string errorHeader = StringHelper::Sprintf("Repeated 'Offset' attribute: %s", offsetXml);
+				std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 			}
 			offsetSet.insert(offsetXml);
 		}
@@ -181,9 +183,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
 			{
-				throw std::runtime_error(StringHelper::Sprintf(
-					"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'OutName' attribute: %s \n",
-					name.c_str(), outNameXml));
+				// throw std::runtime_error(StringHelper::Sprintf(
+				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'OutName' attribute: %s \n",
+				// 	name.c_str(), outNameXml));
+				std::string errorHeader = StringHelper::Sprintf("Repeated 'OutName' attribute: %s", outNameXml);
+				std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 			}
 			outNameSet.insert(outNameXml);
 		}
@@ -191,9 +196,13 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		{
 			if (nameSet.find(nameXml) != nameSet.end())
 			{
-				throw std::runtime_error(StringHelper::Sprintf(
-					"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Name' attribute: %s \n",
-					name.c_str(), nameXml));
+				// throw std::runtime_error(StringHelper::Sprintf(
+				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Name' attribute: %s \n",
+				// 	name.c_str(), nameXml));
+
+				std::string errorHeader = StringHelper::Sprintf("Repeated 'Name' attribute: %s", nameXml);
+				std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 			}
 			nameSet.insert(nameXml);
 		}
@@ -217,16 +226,23 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		}
 		else if (std::string(child->Name()) == "File")
 		{
-			throw std::runtime_error(StringHelper::Sprintf(
-				"ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n",
-				name.c_str()));
+			// throw std::runtime_error(StringHelper::Sprintf(
+			// 	"ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n",
+			// 	name.c_str()));
+
+			std::string errorHeader = "Can't declare a <File> inside a <File>";
+			std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 		}
 		else
 		{
-			throw std::runtime_error(
-				StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n\t Unknown element found "
-			                          "inside a File element: '%s'.\n",
-			                          name.c_str(), nodeName.c_str()));
+			// throw std::runtime_error(
+			// 	StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n\t Unknown element found "
+			//                           "inside a File element: '%s'.\n",
+			//                           name.c_str(), nodeName.c_str()));
+			std::string errorHeader = StringHelper::Sprintf("Unknown element found inside a <File> element: %s", nodeName.c_str());
+			std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 		}
 	}
 }

@@ -203,6 +203,16 @@ void WarningHandler::Error_Plain(const char* filename, int32_t line, const char*
     ErrorType(warnType, header, body);
 }
 
+void WarningHandler::Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body) {
+    assert(parent != nullptr);
+
+    FunctionPreamble(filename, line, function);
+    ProcessedFilePreamble();
+    ExtractedFilePreamble(parent, res, offset);
+
+    ErrorType(warnType, header, body);
+}
+
 
 void WarningHandler::WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body) {
     std::string headerMsg = header;

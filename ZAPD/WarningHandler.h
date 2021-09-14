@@ -29,6 +29,7 @@
 
 // TODO: better names
 #define HANDLE_ERROR(warningType, header, body) WarningHandler::Error_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
+#define HANDLE_ERROR_RESOURCE(warningType, parent, resource, offset, header, body) WarningHandler::Error_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, resource, offset, header, body)
 #define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 #define HANDLE_WARNING_RESOURCE(warningType, parent, resource, offset, header, body) WarningHandler::Warning_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, resource, offset, header, body)
 #define HANDLE_WARNING_BUILD(warningType, header, body) WarningHandler::Warning_Build(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
@@ -81,7 +82,7 @@ public:
 
     static void ErrorType(WarningType warnType, const std::string& header, const std::string& body);
     static void Error_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
-    //static void Error_Resource(const std::string& filename, int32_t line, const char* function, const std::string& header, const std::string& body);
+    static void Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body);
 
 
     static void WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body);
