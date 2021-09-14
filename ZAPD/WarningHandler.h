@@ -21,7 +21,7 @@
 
 #define HILITE(string) (VT_HILITE string VT_RST)
 #define WARN_FMT(string) (VT_WARN string VT_RST)
-#define ERR_FMT(string) (VT_WARN string VT_RST)
+#define ERR_FMT(string) (VT_ERR string VT_RST)
 
 // Maybe make WARN_LF instead
 #define WARN_INDT "\t"
