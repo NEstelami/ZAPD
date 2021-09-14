@@ -338,7 +338,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 {
 	if (xmlFilePath == "") {
 		// We could consider reading from stdin 
-		HANDLE_ERROR("The input filename cannot be empty", "");
+		//HANDLE_ERROR(WarningType::Always, "The input filename cannot be empty", "");
 	}
 
 	XMLDocument doc;

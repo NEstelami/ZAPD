@@ -38,11 +38,6 @@ std::array<WarningLevel, static_cast<size_t>(WarningType::Max)> WarningHandler::
 bool WarningHandler::Werror = false;
 
 void WarningHandler::Init(int argc, char* argv[]) {
-    // Werror = false;
-    // for (size_t i = 0; i < enabledWarnings.size(); i++) {
-    //     enabledWarnings[i] = false;
-    // }
-
     for (const auto& warnTypeIter: warningsEnabledByDefault) {
         enabledWarnings[static_cast<size_t>(warnTypeIter.first)] = warnTypeIter.second;
     }
@@ -190,11 +185,24 @@ void WarningHandler::PrintWarningBody(const std::string& header, const std::stri
 
 /* Error types, to be used via the macros */
 
-void WarningHandler::Error_Plain(const char* filename, int32_t line, const char* function, const std::string& header, const std::string& body) {
+void WarningHandler::ErrorType(WarningType warnType, const std::string& header, const std::string& body) {
+    std::string headerMsg = header;
+
+    for (const auto& iter: warningsStringToTypeMap) {
+        if (iter.second == warnType) {
+            headerMsg += StringHelper::Sprintf(" [%s]", iter.first.c_str());
+        }
+    }
+
+    WarningHandler::PrintErrorAndThrow(headerMsg, body);
+}
+
+void WarningHandler::Error_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
     FunctionPreamble(filename, line, function);
 
-    WarningHandler::PrintErrorAndThrow(header, body);
+    ErrorType(warnType, header, body);
 }
+
 
 void WarningHandler::WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body) {
     std::string headerMsg = header;

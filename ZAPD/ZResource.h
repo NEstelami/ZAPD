@@ -167,4 +167,4 @@ typedef ZResource*(ZResourceFactoryFunc)(ZFile* nParent);
 	public:                                                                                        \
 		ZResExp_##expFunc() { expFunc(); }                                                         \
 	};                                                                                             \
-	static ZResExp_##expFunc inst_ZResExp_##expFunc;
+	static ZResExp_##expFunc inst_ZResExp_##expFunc

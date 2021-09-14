@@ -77,7 +77,7 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
 		// throw std::runtime_error("Error: Unable to read config file.");
-		HANDLE_ERROR(StringHelper::Sprintf("unable to read config XML '%s'", configFilePath.c_str()), "");
+		HANDLE_ERROR(StringHelper::Sprintf(WarningType::InvalidXML, "unable to read config XML '%s'", configFilePath.c_str()), "");
 		return;
 	}
 
