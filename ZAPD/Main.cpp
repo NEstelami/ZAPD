@@ -336,14 +336,20 @@ int main(int argc, char* argv[])
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode fileMode)
 {
+	if (xmlFilePath == "") {
+		// We could consider reading from stdin 
+		HANDLE_ERROR("The input filename cannot be empty", "");
+	}
+
 	XMLDocument doc;
 	XMLError eResult = doc.LoadFile(xmlFilePath.string().c_str());
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
+		// TODO: change to HANDLE_ERROR
 		// fprintf(stderr, "Invalid xml file: '%s'\n", xmlFilePath.c_str());
 		HANDLE_WARNING(WarningType::InvalidXML,
-		               StringHelper::Sprintf("Invalid xml file: '%s'", xmlFilePath.c_str()), "");
+		               StringHelper::Sprintf("Invalid XML file: '%s'", xmlFilePath.c_str()), "");
 		return false;
 	}
 

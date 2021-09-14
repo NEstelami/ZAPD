@@ -4,7 +4,6 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
-#include <unordered_set>
 
 #include "ZFile.h"
 #include "Utils/vt.h"
@@ -52,18 +51,24 @@ enum class WarningType {
     Max,
 };
 
+enum class WarningLevel {
+    Off,
+    Warn,
+    Err,
+};
+
 class WarningHandler {
 public:
     static std::unordered_map<std::string, WarningType> warningsStringToTypeMap;
-    static std::unordered_map<WarningType, const char*> warningsTypeToStringMap;
-    static std::unordered_set<WarningType> warningsEnabledByDefault;
+    static std::unordered_map<WarningType, WarningLevel> warningsEnabledByDefault;
 
-    static std::array<bool, static_cast<size_t>(WarningType::Max)> enabledWarnings;
+    static std::array<WarningLevel, static_cast<size_t>(WarningType::Max)> enabledWarnings;
 
     static void Init(int argc, char* argv[]);
 
     static bool IsWarningEnabled(WarningType warnType);
-    
+    static bool WasElevatedToError(WarningType warnType);
+
     static void FunctionPreamble(const char* filename, int32_t line, const char* function);
     static void ProcessedFilePreamble();
     static void ExtractedFilePreamble(ZFile *parent, ZResource *res, uint32_t offset);

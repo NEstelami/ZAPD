@@ -917,7 +917,9 @@ std::string ZFile::ProcessDeclarations()
 				//        "0x%06X (%s)\n",
 				//        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
 				//        currentDecl->varName.c_str());
-				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress, "Intersection detected.", StringHelper::Sprintf("Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress, currentDecl->varName.c_str()));
+
+				std::string intersectionInfo = StringHelper::Sprintf("Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress, currentDecl->varName.c_str());
+				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress, "Intersection detected.", intersectionInfo);
 			}
 		}
 
