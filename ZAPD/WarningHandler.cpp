@@ -148,7 +148,7 @@ std::string WarningHandler::ConstructMessage(std::string message, const std::str
     message += StringHelper::Sprintf(HILITE("%s"), header.c_str());
     message += "\n";
 
-    if (std::string_view(body) != "") {
+    if (std::string_view(body) == "") {
         return message;
     }
 
