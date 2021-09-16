@@ -5,11 +5,11 @@
 #include <chrono>
 #include <cmath>
 
-#include <Utils/File.h>
-#include <Utils/Path.h>
 #include "Globals.h"
 #include "OutputFormatter.h"
 #include "Utils/BitConverter.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 
@@ -411,11 +411,18 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
                                      DListType dListType)
 {
 	uint8_t endDLOpcode;
+	uint8_t branchListOpcode;
 
 	if (dListType == DListType::F3DZEX)
-		endDLOpcode = (uint8_t)F3DZEXOpcode::G_ENDDL;
+	{
+		endDLOpcode = static_cast<uint8_t>(F3DZEXOpcode::G_ENDDL);
+		branchListOpcode = static_cast<uint8_t>(F3DZEXOpcode::G_DL);
+	}
 	else
-		endDLOpcode = (uint8_t)F3DEXOpcode::G_ENDDL;
+	{
+		endDLOpcode = static_cast<uint8_t>(F3DEXOpcode::G_ENDDL);
+		branchListOpcode = static_cast<uint8_t>(F3DEXOpcode::G_DL);
+	}
 
 	uint32_t ptr = rawDataIndex;
 	size_t rawDataSize = rawData.size();
@@ -428,14 +435,16 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 				"\t End of file found when trying to find the end of the "
 				"DisplayList at offset: '0x%X'.\n",
 				"Raw data size: 0x%zX.\n", __PRETTY_FUNCTION__, rawDataIndex, rawDataSize));
-			throw std::runtime_error("");
 		}
 
 		uint8_t opcode = rawData.at(ptr);
+		bool dlNoPush = rawData.at(ptr + 1) == 1;
 		ptr += 8;
 
-		if (opcode == endDLOpcode)
+		if (opcode == endDLOpcode || (opcode == branchListOpcode && dlNoPush))
+		{
 			return ptr - rawDataIndex;
+		}
 	}
 }
 
@@ -1572,9 +1581,15 @@ static int32_t GfxdCallback_FormatSingleEntry()
 	}
 
 	// dont print a new line after the last command
-	if (macroId != gfxd_SPEndDisplayList)
+	switch (macroId)
 	{
+	case gfxd_SPEndDisplayList:
+	case gfxd_SPBranchList:
+		break;
+
+	default:
 		gfxd_puts("\n");
+		break;
 	}
 
 	return 0;
