@@ -337,3 +337,4 @@ ExporterTest/ExporterTest.a
 ZAPDUtils/ZAPDUtils.a
 .vscode/
 build/
+ZAPDUtils/build/
