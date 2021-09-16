@@ -1,6 +1,7 @@
 #include "BinaryReader.h"
 #include "Stream.h"
 #include <math.h>
+#include <stdexcept>
 
 BinaryReader::BinaryReader(Stream* nStream)
 {
