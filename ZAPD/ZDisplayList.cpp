@@ -5,11 +5,11 @@
 #include <chrono>
 #include <math.h>
 
-#include "Utils/File.h"
-#include "Utils/Path.h"
 #include "Globals.h"
 #include "OutputFormatter.h"
 #include "Utils/BitConverter.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
 #include "Utils/StringHelper.h"
 #include "gfxd.h"
 
@@ -438,7 +438,7 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 		}
 
 		uint8_t opcode = rawData.at(ptr);
-		bool dlNoPush = rawData.at(ptr+1) == 1;
+		bool dlNoPush = rawData.at(ptr + 1) == 1;
 		ptr += 8;
 
 		if (opcode == endDLOpcode || (opcode == branchListOpcode && dlNoPush))
