@@ -1073,8 +1073,7 @@ std::string ZFile::ProcessDeclarations()
 				output += StringHelper::Sprintf(
 					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
 					item.second->varName.c_str(),
-					StringHelper::Replace(item.second->includePath, "assets/", "../assets/")
-						.c_str());
+					item.second->includePath.c_str());
 			}
 			else
 			{
