@@ -67,7 +67,8 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 	for (const auto& vtxEntry : dList->vtxDeclarations)
 	{
 		parent->AddDeclarationArray(
-			vtxEntry.first, DeclarationAlignment::Align16, dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
+			vtxEntry.first, DeclarationAlignment::Align16,
+			dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}

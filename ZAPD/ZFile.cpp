@@ -374,8 +374,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                    	size_t size,
-                                        std::string varType, std::string varName,
+                                        size_t size, std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
 {
 	assert(GETSEGNUM(address) == 0);
@@ -384,8 +383,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl =
-			new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
+		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -414,8 +412,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCntStr,
-		                       body);
+		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
 		declarations[address] = decl;
 	}
 	else

@@ -184,8 +184,8 @@ void ZCollisionHeader::ParseRawData()
 		name.c_str(), polyTypeDefSegmentOffset, name.c_str(), camDataSegmentOffset, numWaterBoxes,
 		waterBoxStr);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, 44,
-	                       GetSourceTypeName(), name, declaration);
+	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, 44, GetSourceTypeName(),
+	                       name, declaration);
 }
 
 std::string ZCollisionHeader::GetSourceTypeName() const
