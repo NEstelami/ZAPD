@@ -173,7 +173,8 @@ size_t TextureScrollingParams::GetRawDataSize() const
 /**
  * Overrides the parent version to declare an array of the params rather than just one entry.
  */
-Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix,
+                                                const std::string& bodyStr)
 {
 	std::string auxName = name;
 
@@ -181,7 +182,7 @@ Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix, const
 		auxName = GetDefaultName(prefix);
 
 	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, count, bodyStr);
+	                                   GetSourceTypeName(), auxName, count, bodyStr);
 }
 
 std::string TextureScrollingParams::GetBodySourceCode() const
@@ -362,11 +363,9 @@ std::string TextureColorChangingParams::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(envColorListAddress, parent, "", envColorListName);
 	Globals::Instance->GetSegmentedPtrName(frameDataListAddress, parent, "", frameDataListName);
 
-	std::string bodyStr =
-		StringHelper::Sprintf("\n    %d, %d, %s, %s, %s,\n", animLength, colorListCount,
-	                          primColorListName.c_str(),
-	                          envColorListName.c_str(),
-	                          frameDataListName.c_str());
+	std::string bodyStr = StringHelper::Sprintf(
+		"\n    %d, %d, %s, %s, %s,\n", animLength, colorListCount, primColorListName.c_str(),
+		envColorListName.c_str(), frameDataListName.c_str());
 
 	return bodyStr;
 }
@@ -471,8 +470,7 @@ void TextureCyclingParams::DeclareReferences([[maybe_unused]] const std::string&
 				        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
 				        Seg2Filespace(textureListAddress, parent->baseAddress), texName.c_str());
 			}
-			texturesBodyStr +=
-				StringHelper::Sprintf("\t%s,%s\n", texName.c_str(), comment.c_str());
+			texturesBodyStr += StringHelper::Sprintf("\t%s,%s\n", texName.c_str(), comment.c_str());
 		}
 
 		texturesBodyStr.pop_back();
@@ -511,12 +509,11 @@ std::string TextureCyclingParams::GetBodySourceCode() const
 	std::string textureIndexListName;
 
 	Globals::Instance->GetSegmentedPtrName(textureListAddress, parent, "", textureListName);
-	Globals::Instance->GetSegmentedPtrName(textureIndexListAddress, parent, "", textureIndexListName);
+	Globals::Instance->GetSegmentedPtrName(textureIndexListAddress, parent, "",
+	                                       textureIndexListName);
 
-	std::string bodyStr =
-		StringHelper::Sprintf("\n    %d, %s, %s,\n", cycleLength,
-	                          textureListName.c_str(),
-	                          textureIndexListName.c_str());
+	std::string bodyStr = StringHelper::Sprintf(
+		"\n    %d, %s, %s,\n", cycleLength, textureListName.c_str(), textureIndexListName.c_str());
 
 	return bodyStr;
 }
@@ -680,7 +677,7 @@ Declaration* ZTextureAnimation::DeclareVar(const std::string& prefix, const std:
 		auxName = GetDefaultName(prefix);
 
 	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, entries.size(), bodyStr);
+	                                   GetSourceTypeName(), auxName, entries.size(), bodyStr);
 }
 
 std::string ZTextureAnimation::GetBodySourceCode() const
