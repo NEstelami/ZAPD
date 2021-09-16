@@ -1,7 +1,6 @@
-#pragma once
-
 #include "BinaryReader.h"
 #include "Stream.h"
+#include <math.h>
 
 BinaryReader::BinaryReader(Stream* nStream)
 {
@@ -23,7 +22,7 @@ uint32_t BinaryReader::GetBaseAddress()
 	return stream->GetBaseAddress();
 }
 
-void BinaryReader::Read(char* buffer, int32_t length)
+void BinaryReader::Read([[maybe_unused]]char* buffer, int32_t length)
 {
 	stream->Read(length);
 }
@@ -45,7 +44,7 @@ uint8_t BinaryReader::ReadUByte()
 
 int16_t BinaryReader::ReadInt16()
 {
-	int16_t result;
+	int16_t result = 0;
 
 	stream->Read((char*)&result, sizeof(int16_t));
 	return result;
@@ -53,7 +52,7 @@ int16_t BinaryReader::ReadInt16()
 
 int32_t BinaryReader::ReadInt32()
 {
-	int32_t result;
+	int32_t result = 0;
 
 	stream->Read((char*)&result, sizeof(int32_t));
 	return result;
@@ -61,7 +60,7 @@ int32_t BinaryReader::ReadInt32()
 
 uint16_t BinaryReader::ReadUInt16()
 {
-	uint16_t result;
+	uint16_t result = 0;
 
 	stream->Read((char*)&result, sizeof(uint16_t));
 	return result;
@@ -69,7 +68,7 @@ uint16_t BinaryReader::ReadUInt16()
 
 uint32_t BinaryReader::ReadUInt32()
 {
-	uint32_t result;
+	uint32_t result = 0;
 
 	stream->Read((char*)&result, sizeof(uint32_t));
 	return result;
@@ -77,7 +76,7 @@ uint32_t BinaryReader::ReadUInt32()
 
 uint64_t BinaryReader::ReadUInt64()
 {
-	uint64_t result;
+	uint64_t result = 0;
 
 	stream->Read((char*)&result, sizeof(uint64_t));
 	return result;
@@ -85,17 +84,24 @@ uint64_t BinaryReader::ReadUInt64()
 
 float BinaryReader::ReadSingle()
 {
-	float result;
+	float result = NAN;
 
 	stream->Read((char*)&result, sizeof(float));
+
+	if (isnan(result))
+		throw std::runtime_error("BinaryReader::ReadSingle(): Error reading stream");
+
 	return result;
 }
 
 double BinaryReader::ReadDouble()
 {
-	double result;
+	double result = NAN;
 
 	stream->Read((char*)&result, sizeof(double));
+	if (isnan(result))
+		throw std::runtime_error("BinaryReader::ReadDouble(): Error reading stream");
+
 	return result;
 }
 

@@ -1,23 +1,29 @@
-CXXFLAGS = -Wall -O2 -g -std=c++17
-OBJ = Utils/BinaryWriter.o Utils/MemoryStream.o
+CXXFLAGS ?= -Wall -Wextra -O2 -g -std=c++17
+
+SRC_DIRS := $(shell find -type d -not -path "*build*")
+CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
+H_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
+
+O_FILES   := $(foreach f,$(CPP_FILES:.cpp=.o),build/$f)
 LIB = ZAPDUtils.a
 
-CPPFLAGS-$(MT) += -DCONFIG_MT
-CPPFLAGS += $(CPPFLAGS-y)
+# create build directories
+$(shell mkdir -p $(foreach dir,$(SRC_DIRS),build/$(dir)))
 
-.PHONY: all
 all: $(LIB)
 
-.PHONY: clean
 clean:
-	rm -f $(OBJ) $(LIB)
+	rm -rf build $(LIB)
 
-.INTERMEDIATE: $(OBJ)
+format:
+	clang-format-11 -i $(CPP_FILES) $(H_FILES)
 
-$(OBJ): Utils/BinaryReader.cpp Utils/BinaryWriter.cpp Utils/MemoryStream.cpp
+.PHONY: all clean format
 
-$(LIB): $(OBJ)
+$(O_FILES): $(CPP_FILES)
+
+$(LIB): $(O_FILES)
 	$(AR) rcs $@ $^
 
-%.o: %.cpp
-	$(COMPILE.c) $(OUTPUT_OPTION) $(CXXFLAGS) $< -I ./ -I ../ZAPD -I ../lib/tinyxml2
+build/%.o: %.cpp
+	$(CXX) -c $(OUTPUT_OPTION) $(CXXFLAGS) $<
