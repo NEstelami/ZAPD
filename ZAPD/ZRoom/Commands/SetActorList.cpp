@@ -17,13 +17,11 @@ void SetActorList::ParseRawData()
 	numActors = cmdArg1;
 }
 
-void SetActorList::DeclareReferences(const std::string& prefix)
+void SetActorList::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 	if (numActors != 0 && cmdArg2 != 0)
 	{
-		std::string varName =
-			StringHelper::Sprintf("%sActorList_%06X", prefix.c_str(), segmentOffset);
-		parent->AddDeclarationPlaceholder(segmentOffset, varName);
+		parent->AddDeclarationPlaceholder(segmentOffset);
 	}
 }
 

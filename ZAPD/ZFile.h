@@ -58,7 +58,6 @@ public:
 	                                 std::string varType, std::string varName,
 	                                 std::string arrayItemCntStr, std::string body);
 	Declaration* AddDeclarationPlaceholder(uint32_t address);
-	Declaration* AddDeclarationPlaceholder(uint32_t address, std::string varName);
 	Declaration* AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,
 	                                   std::string varType, std::string varName);
 	Declaration* AddDeclarationIncludeArray(uint32_t address, std::string includePath, size_t size,
