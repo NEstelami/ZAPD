@@ -361,24 +361,35 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 	return decl;
 }
 
-Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-                                   DeclarationPadding padding, size_t size, std::string varType,
-                                   std::string varName, std::string body)
+Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+                                    	size_t size,
+                                        std::string varType, std::string varName,
+                                        size_t arrayItemCnt, std::string body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
-	declarations[address] =
-		new Declaration(alignment, padding, size, varType, varName, false, body);
-	return declarations[address];
-}
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl =
+			new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
+		declarations[address] = decl;
+	}
+	else
+	{
+		if (decl->isPlaceholder)
+			decl->varName = varName;
+		decl->alignment = alignment;
+		decl->size = size;
+		decl->varType = varType;
+		decl->isArray = true;
+		decl->arrayItemCnt = arrayItemCnt;
+		if (body != "" && decl->text == "")
+			decl->text = body;
+	}
 
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body)
-{
-	return AddDeclarationArray(address, alignment, DeclarationPadding::None, size, varType, varName,
-	                           arrayItemCnt, body);
+	return decl;
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
@@ -391,38 +402,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	declarations[address] =
 		new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
 	return declarations[address];
-}
-
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        DeclarationPadding padding, size_t size,
-                                        std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body)
-{
-	assert(GETSEGNUM(address) == 0);
-	AddDeclarationDebugChecks(address);
-
-	Declaration* decl = GetDeclaration(address);
-	if (decl == nullptr)
-	{
-		decl =
-			new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
-		declarations[address] = decl;
-	}
-	else
-	{
-		if (decl->isPlaceholder)
-			decl->varName = varName;
-		decl->alignment = alignment;
-		decl->padding = padding;
-		decl->size = size;
-		decl->varType = varType;
-		decl->isArray = true;
-		decl->arrayItemCnt = arrayItemCnt;
-		if (body != "" && decl->text == "")
-			decl->text = body;
-	}
-
-	return decl;
 }
 
 Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
@@ -850,25 +829,6 @@ std::string ZFile::ProcessDeclarations()
 					// item.second->size += 4;
 					curPtr += 4;
 				}
-			}
-		}
-
-		if (item.second->padding == DeclarationPadding::Pad16)
-		{
-			int32_t curPtr = item.first + item.second->size;
-
-			while (curPtr % 4 != 0)
-			{
-				item.second->size++;
-				curPtr++;
-			}
-
-			while (curPtr % 16 != 0)
-			{
-				item.second->postText += StringHelper::Sprintf("static u32 pad%02X = 0;\n", curPtr);
-
-				item.second->size += 4;
-				curPtr += 4;
 			}
 		}
 

@@ -128,7 +128,7 @@ void ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr
 		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
 
 	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4,
-	                            DeclarationPadding::Pad16, GetRawDataSize(), GetSourceTypeName(),
+	                            GetRawDataSize(), GetSourceTypeName(),
 	                            auxName, 0, bodyStr);
 }
 

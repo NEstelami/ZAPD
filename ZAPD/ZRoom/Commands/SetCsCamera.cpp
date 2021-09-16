@@ -98,7 +98,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		std::string camTypename = entry.GetSourceTypeName();
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
+			segmentOffset, DeclarationAlignment::Align4,
 			cameras.size() * entry.GetRawDataSize(), camTypename,
 			StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), camTypename.c_str(), segmentOffset),
 			cameras.size(), declaration);
