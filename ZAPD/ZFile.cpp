@@ -369,7 +369,6 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 		decl->varType = varType;
 		decl->varName = varName;
 		decl->text = body;
-		decl->isPlaceholder = false;
 	}
 	return decl;
 }
@@ -389,14 +388,15 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	}
 	else
 	{
-		decl->varName = varName;
+		if (decl->isPlaceholder)
+			decl->varName = varName;
 		decl->alignment = alignment;
 		decl->size = size;
 		decl->varType = varType;
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
-		decl->text = body;
-		decl->isPlaceholder = false;
+		if (body != "" && decl->text == "")
+			decl->text = body;
 	}
 
 	return decl;
@@ -424,7 +424,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 		decl->isArray = true;
 		decl->arrayItemCntStr = arrayItemCntStr;
 		decl->text = body;
-		decl->isPlaceholder = false;
 	}
 	return decl;
 }
@@ -438,6 +437,24 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 	if (declarations.find(address) == declarations.end())
 	{
 		decl = new Declaration(DeclarationAlignment::Align4, 0, "", "", false, "");
+		decl->isPlaceholder = true;
+		declarations[address] = decl;
+	}
+	else
+		decl = declarations[address];
+
+	return decl;
+}
+
+Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varName)
+{
+	assert(GETSEGNUM(address) == 0);
+	AddDeclarationDebugChecks(address);
+	Declaration* decl;
+
+	if (declarations.find(address) == declarations.end())
+	{
+		decl = new Declaration(DeclarationAlignment::Align4, 0, "", varName, false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -465,7 +482,6 @@ Declaration* ZFile::AddDeclarationInclude(uint32_t address, std::string includeP
 		decl->size = size;
 		decl->varType = varType;
 		decl->varName = varName;
-		decl->isPlaceholder = false;
 	}
 	return decl;
 }
@@ -500,7 +516,6 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 		decl->size = size;
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
-		decl->isPlaceholder = false;
 	}
 	return decl;
 }
@@ -699,7 +714,7 @@ void ZFile::GeneratePlaceholderDeclarations()
 	for (ZResource* res : resources)
 	{
 		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
-			AddDeclarationPlaceholder(res->GetRawDataIndex());
+			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
 	}
 }
 
