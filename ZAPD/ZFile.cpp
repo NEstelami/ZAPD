@@ -412,7 +412,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+		decl = new Declaration(DeclarationAlignment::Align4, 0, "", "", false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -430,7 +430,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varN
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
+		decl = new Declaration(DeclarationAlignment::Align4, 0, "", varName, false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -928,7 +928,7 @@ std::string ZFile::ProcessDeclarations()
 					}
 
 					Declaration* decl = AddDeclarationArray(
-						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
+						unaccountedAddress, DeclarationAlignment::Align4, diff, "static u8",
 						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
 					                          unaccountedAddress),
 						diff, src);

@@ -48,7 +48,7 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 
 Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVarType,
                          std::string nVarName)
-	: Declaration(DeclarationAlignment::None, nSize, "")
+	: Declaration(DeclarationAlignment::Align4, nSize, "")
 {
 	includePath = nIncludePath;
 	varType = nVarType;

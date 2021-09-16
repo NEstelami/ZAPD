@@ -5,7 +5,6 @@
 
 enum class DeclarationAlignment
 {
-	None,
 	Align4,
 	Align8,
 	Align16
