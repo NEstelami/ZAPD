@@ -1,12 +1,15 @@
+# use variables in submakes
 export
 OPTIMIZATION_ON ?= 1
 ASAN ?= 0
 DEPRECATION_ON ?= 1
 DEBUG ?= 0
 COPYCHECK_ARGS ?= 
+# Set LLD=1 to use ld.lld as the linker
+LLD ?= 0
 
 CXX := g++
-INC := -I ZAPD -I lib/assimp/include -I lib/elfio -I lib/json/include -I lib/stb -I lib/tinygltf -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils -I usr/include
+INC := -I ZAPD -I lib/elfio -I lib/libgfxd -I lib/tinyxml2 -I ZAPDUtils
 CXXFLAGS := -fpic -std=c++17 -Wall -Wextra -fno-omit-frame-pointer
 OPTFLAGS :=
 
@@ -33,7 +36,11 @@ ifneq ($(DEPRECATION_ON),0)
 endif
 # CXXFLAGS += -DTEXTURE_DEBUG
 
-LDFLAGS := -lstdc++ -lm -ldl -lpng -fuse-ld=lld
+LDFLAGS := -lm -ldl -lpng 
+
+ifneq ($(LLD),0)
+  LDFLAGS += -fuse-ld=lld
+endif
 
 UNAME := $(shell uname)
 ifneq ($(UNAME), Darwin)
@@ -54,11 +61,12 @@ O_FILES   += build/ZAPD/BuildInfo.o
 $(shell mkdir -p $(foreach dir,$(SRC_DIRS),build/$(dir)))
 
 
+# Main targets
 all: ZAPD.out copycheck
 
 build/ZAPD/BuildInfo.o:
 	python3 ZAPD/genbuildinfo.py $(COPYCHECK_ARGS)
-	$(CXX) $(CXXFLAGS) $(INC) -c build/ZAPD/BuildInfo.cpp -o build/ZAPD/BuildInfo.o
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c build/ZAPD/BuildInfo.cpp -o build/ZAPD/BuildInfo.o
 
 copycheck: ZAPD.out
 	python3 copycheck.py
@@ -84,6 +92,8 @@ build/%.o: %.cpp
 build/ZAPD/Main.o: ZAPD/Main.cpp build/ZAPD/BuildInfo.o
 	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $< -o $@
 
+
+# Submakes
 lib/libgfxd/libgfxd.a:
 	$(MAKE) -C lib/libgfxd
 
@@ -95,5 +105,7 @@ ExporterTest:
 ZAPDUtils:
 	$(MAKE) -C ZAPDUtils
 
+
+# Linking
 ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest ZAPDUtils
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(FS_INC) $(LDFLAGS)
+	$(CXX) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(LDFLAGS)
