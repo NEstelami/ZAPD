@@ -597,7 +597,7 @@ void ZTextureAnimation::ParseRawData()
 				StringHelper::Sprintf(
 					"unknown TextureAnimationParams type 0x%02X in TextureAnimation", type),
 				StringHelper::Sprintf("entry reads  { 0x%02X, 0x%02X, 0x%08X }  (type should be "
-			                          "between 0x00 and 0x06) inclusive",
+			                          "between 0x00 and 0x06 inclusive)",
 			                          currentEntry.segment, type, currentEntry.paramsPtr));
 		}
 
