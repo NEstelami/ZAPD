@@ -1,22 +1,27 @@
 CXXFLAGS ?= -Wall -Wextra -O2 -g -std=c++17
-OBJ = Main.o TextureExporter.o RoomExporter.o CollisionExporter.o
-LIB = ExporterTest.a
 
+SRC_DIRS  := $(shell find -type d -not -path "*build*")
+CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
+H_FILES   := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
+
+O_FILES   := $(foreach f,$(CPP_FILES:.cpp=.o),build/$f)
+LIB       := ExporterTest.a
+
+# create build directories
+$(shell mkdir -p $(foreach dir,$(SRC_DIRS),build/$(dir)))
 
 all: $(LIB)
 
 clean:
-	rm -f $(OBJ) $(LIB)
+	rm -rf build $(LIB)
 
 format:
 	clang-format-11 -i $(CPP_FILES) $(H_FILES)
 
 .PHONY: all clean format
 
-$(OBJ): Main.cpp TextureExporter.cpp RoomExporter.cpp CollisionExporter.cpp
+build/%.o: %.cpp
+	$(CXX)  $(CXXFLAGS) -I ./ -I ../ZAPD -I ../ZAPDUtils -I ../lib/tinyxml2 -c $< -c $(OUTPUT_OPTION)
 
-$(LIB): $(OBJ)
+$(LIB): $(O_FILES)
 	$(AR) rcs $@ $^
-
-%.o: %.cpp
-	$(CXX) $(OUTPUT_OPTION) $(CXXFLAGS) -c $< -I ./ -I ../ZAPD -I ../ZAPDUtils -I ../lib/tinyxml2
