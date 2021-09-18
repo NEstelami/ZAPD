@@ -46,7 +46,9 @@ enum class WarningType {
     UnknownAttribute,
     InvalidXML,
     InvalidJPEG,
+    InvalidData,
     MissingSegment,
+    HardcodedPointer,
     NotImplemented,
 
     Max,
@@ -64,6 +66,11 @@ public:
     static std::unordered_map<WarningType, WarningLevel> warningsEnabledByDefault;
 
     static std::array<WarningLevel, static_cast<size_t>(WarningType::Max)> enabledWarnings;
+
+    static void ConstructTypeToInfoMap();
+    static void PrintWarningsInformation();
+
+
 
     static void Init(int argc, char* argv[]);
 

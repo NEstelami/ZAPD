@@ -5,6 +5,82 @@
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
+
+typedef struct {
+    WarningType type;
+    WarningLevel defaultLevel;
+    std::string description;
+} WarningInfoInit;
+
+typedef struct {
+    WarningLevel level;
+    std::string name;
+    std::string description;
+} WarningInfo;
+
+/**
+ * Master list of all warning features
+ */
+std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
+    {"deprecated",              {WarningType::Deprecated,               WarningLevel::Off,  "Deprecated features"}},
+    {"unaccounted",             {WarningType::Unaccounted,              WarningLevel::Off,  "Large blocks of unaccounted"}},
+    {"missing-offsets",         {WarningType::MissingOffsets,           WarningLevel::Err,  "Offset attribute missing in XML tag"}},
+    {"intersection",            {WarningType::Intersection,             WarningLevel::Warn, "Two assets intersect"}},
+    {"missing-attribute",       {WarningType::MissingAttribute,         WarningLevel::Warn, "Required attribute missing in XML tag"}},
+    {"invalid-attribute-value", {WarningType::InvalidAttributeValue,    WarningLevel::Warn, "Attribute declared in XML is wrong"}},
+    {"unknown-attribute",       {WarningType::UnknownAttribute,         WarningLevel::Warn, "Unknown attribute in XML entry tag"}},
+    {"invalid-xml",             {WarningType::InvalidXML,               WarningLevel::Warn, "XML has syntax errors"}},
+    {"invalid-jpeg",            {WarningType::InvalidJPEG,              WarningLevel::Warn, "JPEG file does not conform to the game's format requirements"}},
+    {"missing-segment",         {WarningType::MissingSegment,           WarningLevel::Warn,  "Segment not given in File tag in XML"}},
+    {"not-implemented",         {WarningType::NotImplemented,           WarningLevel::Warn, "ZAPD does not currently support this feature"}},
+};
+
+std::unordered_map<WarningType, WarningInfo> warningTypeToInfoMap;
+
+void WarningHandler::ConstructTypeToInfoMap() {
+    for (auto& entry : warningStringToInitMap) {
+        warningTypeToInfoMap[entry.second.type] = {entry.second.defaultLevel, entry.first, entry.second.description};
+    }
+}
+
+#define HELP_DT_INDT "  "
+
+void WarningHandler::PrintWarningsInformation() {
+    uint columnWidth = 25;
+    std::string dt;
+
+    printf("\nWarning types ( * means enabled by default)\n");
+    for (auto& entry : warningStringToInitMap) {
+        if (entry.second.defaultLevel <= WarningLevel::Warn) {
+            dt = "-W";
+            dt += entry.first;
+            if (entry.second.defaultLevel == WarningLevel::Warn) {
+                dt += " *";
+            }
+            printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
+
+            if (dt.length() + 2 > columnWidth) {
+                printf("\n" HELP_DT_INDT "%-*s", columnWidth, "");
+            }
+            printf("%s\n", entry.second.description.c_str());
+        }
+    }
+
+    printf("\nDefault errors\n");
+    for (auto& entry : warningStringToInitMap) {
+        if (entry.second.defaultLevel > WarningLevel::Warn) {
+            dt = "-W";
+            dt += entry.first;
+            printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
+
+            if (dt.length() + 2 > columnWidth) {
+                printf("\n" HELP_DT_INDT "%*s", columnWidth, "");
+            }
+            printf("%s\n", entry.second.description.c_str());
+        }
+    }
+}
+
 // If a warning isn't in this list, it would not be possible to enable/disable it
 std::unordered_map<std::string, WarningType> WarningHandler::warningsStringToTypeMap = {
     {"deprecated", WarningType::Deprecated},
@@ -269,15 +345,19 @@ void WarningHandler::Warning_Build(const char* filename, int32_t line, const cha
 }
 
 void WarningHandler::PrintHelp() {
-    printf("\nExisting warnings:\n");
-    for (const auto& iter: warningsStringToTypeMap) {
-        const char* enabledMsg = "";
-        if (warningsEnabledByDefault.find(iter.second) != warningsEnabledByDefault.end()) {
-            enabledMsg = "(enabled)";
-        }
+    // printf("\nExisting warnings:\n");
+    // for (const auto& iter: warningsStringToTypeMap) {
+    //     const char* enabledMsg = "";
+    //     if (warningsEnabledByDefault.find(iter.second) != warningsEnabledByDefault.end()) {
+    //         enabledMsg = "(enabled)";
+    //     }
 
-        printf("\t -W%-25s %s\n", iter.first.c_str(), enabledMsg);
-    }
+    //     printf("\t -W%-25s %s\n", iter.first.c_str(), enabledMsg);
+    // }
+    PrintWarningsInformation();
+
+    printf("\n");
+    printf("Other\n" HELP_DT_INDT "-Weverything will enable all existing warnings.\n" HELP_DT_INDT "-Werror will promote all warnings to errors.\n");
 
     // TODO: mention -Weverything and -Werror
 
