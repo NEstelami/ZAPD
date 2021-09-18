@@ -2,8 +2,8 @@
  * File: ZTextureAnimation.cpp
  * ZResources defined: ZTextureAnimation, ZTextureAnimationParams (XML declaration not supported for
  * the latter)
- * Purpose: extracting texture animating structures from asset files Note: data type is exclusive to
- * Majora's Mask
+ * Purpose: extracting texture animating structures from asset files
+ * Note: data type is exclusive to Majora's Mask
  *
  * Structure of data:
  * A texture animation consists of a main array of data of the form
@@ -80,6 +80,7 @@
 #include <vector>
 #include "Globals.h"
 #include "Utils/BitConverter.h"
+#include "WarningHandler.h"
 #include "ZFile.h"
 #include "ZResource.h"
 #include "tinyxml2.h"
@@ -113,7 +114,7 @@ void ZTextureAnimationParams::ExtractFromBinary(uint32_t nRawDataIndex)
 	ParseRawData();
 }
 
-// Implemented by TextureScrollingParams only[
+// Implemented by TextureScrollingParams only
 void ZTextureAnimationParams::ExtractFromBinary([[maybe_unused]] uint32_t nRawDataIndex,
                                                 [[maybe_unused]] int count)
 {
@@ -240,19 +241,21 @@ void TextureColorChangingParams::ParseRawData()
 		((type == TextureAnimationParamsType::ColorChange) ? animLength : colorListCount);
 
 	if (listLength == 0)
-		throw std::runtime_error(StringHelper::Sprintf(
-			"When processing file %s: in input binary file %s, offset 0x%06X:"
-			"\n\t"
-			"\033[97m"
-			"TextureColorChangingParams::ParseRawData:"
-			"\033[0m"
-			"\033[91m"
-			" error: "
-			"\033[0m"
-			"\033[97m"
-			"color list length cannot be 0\n"
-			"\033[0m",
-			Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), rawDataIndex));
+		// throw std::runtime_error(StringHelper::Sprintf(
+		// 	"When processing file %s: in input binary file %s, offset 0x%06X:"
+		// 	"\n\t"
+		// 	"\033[97m"
+		// 	"TextureColorChangingParams::ParseRawData:"
+		// 	"\033[0m"
+		// 	"\033[91m"
+		// 	" error: "
+		// 	"\033[0m"
+		// 	"\033[97m"
+		// 	"color list length cannot be 0\n"
+		// 	"\033[0m",
+		// 	Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), rawDataIndex));
+		HANDLE_ERROR_RESOURCE(WarningType::Always, parent, this, rawDataIndex,
+		                      "color list length cannot be 0", "");
 
 	primColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	envColorListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
@@ -395,20 +398,22 @@ void TextureCyclingParams::ParseRawData()
 
 	cycleLength = BitConverter::ToUInt16BE(rawData, rawDataIndex);
 	if (cycleLength == 0)
-		throw std::runtime_error(
-			StringHelper::Sprintf("When processing file %s: in input binary file %s, offset 0x%06X:"
-		                          "\n\t"
-		                          "\033[97m"
-		                          "TextureCyclingParams::ParseRawData:"
-		                          "\033[0m"
-		                          "\033[91m"
-		                          " error: "
-		                          "\033[0m"
-		                          "\033[97m"
-		                          "cycleLength cannot be 0\n"
-		                          "\033[0m",
-		                          Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-		                          Seg2Filespace(rawDataIndex, 0)));
+		// throw std::runtime_error(
+		// 	StringHelper::Sprintf("When processing file %s: in input binary file %s, offset 0x%06X:"
+		//                           "\n\t"
+		//                           "\033[97m"
+		//                           "TextureCyclingParams::ParseRawData:"
+		//                           "\033[0m"
+		//                           "\033[91m"
+		//                           " error: "
+		//                           "\033[0m"
+		//                           "\033[97m"
+		//                           "cycleLength cannot be 0\n"
+		//                           "\033[0m",
+		//                           Globals::Instance->inputPath.c_str(),
+		//                           parent->GetName().c_str(), Seg2Filespace(rawDataIndex, 0)));
+		HANDLE_ERROR_RESOURCE(WarningType::Always, parent, this, rawDataIndex,
+		                      "cycle length cannot be 0", "");
 
 	textureListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
 	textureIndexListAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
@@ -471,21 +476,27 @@ void TextureCyclingParams::DeclareReferences([[maybe_unused]] const std::string&
 			{
 				comment = " // Raw pointer, declare texture in XML to use proper symbol";
 
-				fprintf(stderr,
-				        "When processing file %s: in input binary file %s, offset 0x%06X:"
-				        "\n\t"
-				        "\033[97m"
-				        "TextureCyclingParams::DeclareReferences:"
-				        "\033[0m"
-				        "\033[95m"
-				        " warning: "
-				        "\033[0m"
-				        "\033[97m"
-				        "TexCycle declared here points to unknown texture at address %s. "
-				        "Please declare the texture in the XML to use the proper symbol.\n"
-				        "\033[0m",
-				        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-				        Seg2Filespace(textureListAddress, parent->baseAddress), texName.c_str());
+				// fprintf(stderr,
+				//         "When processing file %s: in input binary file %s, offset 0x%06X:"
+				//         "\n\t"
+				//         "\033[97m"
+				//         "TextureCyclingParams::DeclareReferences:"
+				//         "\033[0m"
+				//         "\033[95m"
+				//         " warning: "
+				//         "\033[0m"
+				//         "\033[97m"
+				//         "TexCycle declared here points to unknown texture at address %s. "
+				//         "Please declare the texture in the XML to use the proper symbol.\n"
+				//         "\033[0m",
+				//         Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+				//         Seg2Filespace(textureListAddress, parent->baseAddress), texName.c_str());
+				auto msgHeader = StringHelper::Sprintf(
+					"TexCycle texture array declared here points to unknown texture at address %s.",
+					texName.c_str());
+				HANDLE_WARNING_RESOURCE(
+					WarningType::HardcodedPointer, parent, this, rawDataIndex, msgHeader,
+					"Please declare the texture in the XML to use the proper symbol.");
 			}
 			texturesBodyStr +=
 				StringHelper::Sprintf("    %s,%s\n", texName.c_str(), comment.c_str());
@@ -565,22 +576,29 @@ void ZTextureAnimation::ParseRawData()
 
 		if ((type < 0) || (type > 6))
 		{
-			throw std::runtime_error(StringHelper::Sprintf(
-				"When processing file %s: in input binary file %s, offset 0x%06X:"
-				"\n\t"
-				"\033[97m"
-				"ZTextureAnimation::ParseRawData:"
-				"\033[0m"
-				"\033[91m"
-				" error: "
-				"\033[0m"
-				"\033[97m"
-				"unknown TextureAnimationParams type 0x%02X in TextureAnimation: entry reads\n\t{ "
-				"0x%02X, 0x%02X, 0x%08X }\n(type should be between "
-				"0x00 and 0x06)\n"
-				"\033[0m",
-				Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), rawDataIndex, type,
-				currentEntry.segment, type, currentEntry.paramsPtr));
+			// throw std::runtime_error(StringHelper::Sprintf(
+			// 	"When processing file %s: in input binary file %s, offset 0x%06X:"
+			// 	"\n\t"
+			// 	"\033[97m"
+			// 	"ZTextureAnimation::ParseRawData:"
+			// 	"\033[0m"
+			// 	"\033[91m"
+			// 	" error: "
+			// 	"\033[0m"
+			// 	"\033[97m"
+			// 	"unknown TextureAnimationParams type 0x%02X in TextureAnimation: entry reads\n\t{ "
+			// 	"0x%02X, 0x%02X, 0x%08X }\n(type should be between "
+			// 	"0x00 and 0x06 inclusive)\n"
+			// 	"\033[0m",
+			// 	Globals::Instance->inputPath.c_str(), parent->GetName().c_str(), rawDataIndex, type,
+			// 	currentEntry.segment, type, currentEntry.paramsPtr));
+			HANDLE_ERROR_RESOURCE(
+				WarningType::Always, parent, this, rawDataIndex,
+				StringHelper::Sprintf(
+					"unknown TextureAnimationParams type 0x%02X in TextureAnimation", type),
+				StringHelper::Sprintf("entry reads  { 0x%02X, 0x%02X, 0x%08X }  (type should be "
+			                          "between 0x00 and 0x06) inclusive",
+			                          currentEntry.segment, type, currentEntry.paramsPtr));
 		}
 
 		if (currentEntry.segment <= 0)
@@ -633,22 +651,28 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					break;
 
 				case TextureAnimationParamsType::Empty:
-					fprintf(stderr,
-					        "When processing file %s: in input binary file %s: offset 0x%06X:"
-					        "\n\t"
-					        "\033[97m"
-					        "ZTextureAnimation::DeclareReferences:"
-					        "\033[0m"
-					        "\033[95m"
-					        " warning: "
-					        "\033[0m"
-					        "\033[97m"
-					        "TextureAnimationParams entry has empty type (6), but params pointer "
-					        "is not NULL. Params read\n\t\t"
-					        "{ 0x%02X, 0x%02X, 0x%08X }\n"
-					        "\033[0m",
-					        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-					        rawDataIndex, entry.segment, (int)entry.type, entry.paramsPtr);
+					// fprintf(stderr,
+					//         "When processing file %s: in input binary file %s: offset 0x%06X:"
+					//         "\n\t"
+					//         "\033[97m"
+					//         "ZTextureAnimation::DeclareReferences:"
+					//         "\033[0m"
+					//         "\033[95m"
+					//         " warning: "
+					//         "\033[0m"
+					//         "\033[97m"
+					//         "TextureAnimationParams entry has empty type (6), but params pointer
+					//         " "is not NULL. Params read\n\t\t"
+					//         "{ 0x%02X, 0x%02X, 0x%08X }\n"
+					//         "\033[0m",
+					//         Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+					//         rawDataIndex, entry.segment, (int)entry.type, entry.paramsPtr);
+					HANDLE_WARNING_RESOURCE(
+						WarningType::InvalidData, parent, this, rawDataIndex,
+						"TextureAnimationParams entry has empty type (6), but params pointer is "
+						"not NULL.",
+						StringHelper::Sprintf("Params read { 0x%02X, 0x%02X, 0x%08X }",
+					                          entry.segment, (int)entry.type, entry.paramsPtr));
 					return;
 				default:
 					// Because GCC is worried this could happen
