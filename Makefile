@@ -87,10 +87,7 @@ format:
 .PHONY: all build/ZAPD/BuildInfo.o copycheck clean rebuild format
 
 build/%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $< -o $@
-
-build/ZAPD/Main.o: ZAPD/Main.cpp build/ZAPD/BuildInfo.o
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $< $(OUTPUT_OPTION)
 
 
 # Submakes

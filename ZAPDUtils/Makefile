@@ -1,11 +1,11 @@
 CXXFLAGS ?= -Wall -Wextra -O2 -g -std=c++17
 
-SRC_DIRS := $(shell find -type d -not -path "*build*")
+SRC_DIRS  := $(shell find -type d -not -path "*build*")
 CPP_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
-H_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
+H_FILES   := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.h))
 
 O_FILES   := $(foreach f,$(CPP_FILES:.cpp=.o),build/$f)
-LIB = ZAPDUtils.a
+LIB       := ZAPDUtils.a
 
 # create build directories
 $(shell mkdir -p $(foreach dir,$(SRC_DIRS),build/$(dir)))
@@ -20,10 +20,10 @@ format:
 
 .PHONY: all clean format
 
-$(O_FILES): $(CPP_FILES)
+# $(O_FILES): $(CPP_FILES)
+
+build/%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< $(OUTPUT_OPTION) 
 
 $(LIB): $(O_FILES)
 	$(AR) rcs $@ $^
-
-build/%.o: %.cpp
-	$(CXX) -c $(OUTPUT_OPTION) $(CXXFLAGS) $<
