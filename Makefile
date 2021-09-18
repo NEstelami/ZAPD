@@ -4,7 +4,7 @@ OPTIMIZATION_ON ?= 1
 ASAN ?= 0
 DEPRECATION_ON ?= 1
 DEBUG ?= 0
-COPYCHECK_ARGS ?= 
+COPYCHECK_ARGS ?=
 # Set LLD=1 to use ld.lld as the linker
 LLD ?= 0
 
@@ -36,7 +36,7 @@ ifneq ($(DEPRECATION_ON),0)
 endif
 # CXXFLAGS += -DTEXTURE_DEBUG
 
-LDFLAGS := -lm -ldl -lpng 
+LDFLAGS := -lm -ldl -lpng
 
 ifneq ($(LLD),0)
   LDFLAGS += -fuse-ld=lld
@@ -66,7 +66,7 @@ all: ZAPD.out copycheck
 
 build/ZAPD/BuildInfo.o:
 	python3 ZAPD/genbuildinfo.py $(COPYCHECK_ARGS)
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c build/ZAPD/BuildInfo.cpp -o build/ZAPD/BuildInfo.o
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $(OUTPUT_OPTION) build/ZAPD/BuildInfo.cpp
 
 copycheck: ZAPD.out
 	python3 copycheck.py
@@ -87,7 +87,7 @@ format:
 .PHONY: all build/ZAPD/BuildInfo.o copycheck clean rebuild format
 
 build/%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $< $(OUTPUT_OPTION)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) $(INC) -c $(OUTPUT_OPTION) $<
 
 
 # Submakes
@@ -105,4 +105,4 @@ ZAPDUtils:
 
 # Linking
 ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest ZAPDUtils
-	$(CXX) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive -o $@ $(LDFLAGS)
+	$(CXX) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive $(LDFLAGS) $(OUTPUT_OPTION)

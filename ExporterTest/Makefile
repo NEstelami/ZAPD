@@ -1,3 +1,4 @@
+# Only used for standalone compilation, usually inherits these from the main makefile
 CXXFLAGS ?= -Wall -Wextra -O2 -g -std=c++17
 
 SRC_DIRS  := $(shell find -type d -not -path "*build*")
@@ -21,7 +22,7 @@ format:
 .PHONY: all clean format
 
 build/%.o: %.cpp
-	$(CXX)  $(CXXFLAGS) -I ./ -I ../ZAPD -I ../ZAPDUtils -I ../lib/tinyxml2 -c $< -c $(OUTPUT_OPTION)
+	$(CXX) $(CXXFLAGS) $(OPTFLAGS) -I ./ -I ../ZAPD -I ../ZAPDUtils -I ../lib/tinyxml2 -c $(OUTPUT_OPTION) $<
 
 $(LIB): $(O_FILES)
 	$(AR) rcs $@ $^
