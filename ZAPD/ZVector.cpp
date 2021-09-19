@@ -4,6 +4,7 @@
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
 #include "Utils/StringHelper.h"
+#include "WarningHandler.h"
 #include "ZFile.h"
 
 REGISTER_ZFILENODE(Vector, ZVector);
@@ -71,14 +72,15 @@ std::string ZVector::GetSourceTypeName() const
 		return "Vec3i";
 	else
 	{
-		std::string output = StringHelper::Sprintf(
+		std::string msgHeader = StringHelper::Sprintf(
 			"Encountered unsupported vector type: %d dimensions, %s type", dimensions,
 			ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
 
-		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-			printf("%s\n", output.c_str());
+		// if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+		// 	printf("%s\n", output.c_str());
 
-		throw std::runtime_error(output);
+		// throw std::runtime_error(output);
+		HANDLE_ERROR_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, msgHeader, "");
 	}
 }
 

@@ -197,7 +197,7 @@ void WarningHandler::ProcessedFilePreamble() {
 /**
  *  Print information about the binary file being extracted
  */
-void WarningHandler::ExtractedFilePreamble(ZFile *parent, ZResource* res, uint32_t offset) {
+void WarningHandler::ExtractedFilePreamble(const ZFile *parent, const ZResource* res, const uint32_t offset) {
     fprintf(stderr, "in input binary file %s, ", parent->GetName().c_str());
     if (res != nullptr) {
         fprintf(stderr, "resource '%s' at ", res->GetName().c_str());
@@ -258,7 +258,7 @@ void WarningHandler::Error_Plain(const char* filename, int32_t line, const char*
     ErrorType(warnType, header, body);
 }
 
-void WarningHandler::Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body) {
+void WarningHandler::Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
 
     FunctionPreamble(filename, line, function);
@@ -298,7 +298,7 @@ void WarningHandler::Warning_Plain(const char* filename, int32_t line, const cha
     WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
 }
 
-void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body) {
+void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
 
     if (!IsWarningEnabled(warnType)) {

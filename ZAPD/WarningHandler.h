@@ -73,7 +73,7 @@ public:
 
     static void FunctionPreamble(const char* filename, int32_t line, const char* function);
     static void ProcessedFilePreamble();
-    static void ExtractedFilePreamble(ZFile *parent, ZResource *res, uint32_t offset);
+    static void ExtractedFilePreamble(const ZFile *parent, const ZResource *res, const uint32_t offset);
     static std::string ConstructMessage(std::string message, const std::string& header, const std::string& body);
 
 
@@ -83,13 +83,13 @@ public:
 
     static void ErrorType(WarningType warnType, const std::string& header, const std::string& body);
     static void Error_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
-    static void Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body);
+    static void Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body);
 
 
     static void WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body);
 
     static void Warning_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
-    static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, ZFile *parent, ZResource* res, uint32_t offset, const std::string& header, const std::string& body);
+    static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body);
     static void Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
 
 
