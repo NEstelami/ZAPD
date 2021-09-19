@@ -67,17 +67,21 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (!StringHelper::HasOnlyDigits(widthXml))
 	{
-		throw std::runtime_error(
-			StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
-		                          "\t Value of 'Width' attribute has non-decimal digits: '%s'.\n",
-		                          name.c_str(), widthXml.c_str()));
+		// throw std::runtime_error(
+		// 	StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
+		//                           "\t Value of 'Width' attribute has non-decimal digits: '%s'.\n",
+		//                           name.c_str(), widthXml.c_str()));
+		std::string errorHeader = StringHelper::Sprintf("Value of 'Width' attribute has non-decimal digits: '%s'", widthXml.c_str());
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, errorHeader, "");
 	}
 	if (!StringHelper::HasOnlyDigits(heightXml))
 	{
-		throw std::runtime_error(
-			StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
-		                          "\t Value of 'Height' attribute has non-decimal digits: '%s'.\n",
-		                          name.c_str(), heightXml.c_str()));
+		// throw std::runtime_error(
+		// 	StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
+		//                           "\t Value of 'Height' attribute has non-decimal digits: '%s'.\n",
+		//                           name.c_str(), heightXml.c_str()));
+		std::string errorHeader = StringHelper::Sprintf("Value of 'Height' attribute has non-decimal digits: '%s'", heightXml.c_str());
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, errorHeader, "");
 	}
 
 	width = StringHelper::StrToL(widthXml);
@@ -87,7 +91,10 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 	format = GetTextureTypeFromString(formatStr);
 
 	if (format == TextureType::Error)
-		throw std::runtime_error("Format " + formatStr + " is not supported!");
+	{
+		//throw std::runtime_error("Format " + formatStr + " is not supported!");
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'Format' attribute.", "");
+	}
 
 	const auto& tlutOffsetAttr = registeredAttributes.at("TlutOffset");
 	if (tlutOffsetAttr.wasSet)
@@ -100,10 +107,11 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 			break;
 
 		default:
-			throw std::runtime_error(StringHelper::Sprintf(
-				"ZTexture::ParseXML: Error in %s\n"
-				"\t 'TlutOffset' declared in non color-indexed (ci4 or ci8) texture.\n",
-				name.c_str()));
+			// throw std::runtime_error(StringHelper::Sprintf(
+			// 	"ZTexture::ParseXML: Error in %s\n"
+			// 	"\t 'TlutOffset' declared in non color-indexed (ci4 or ci8) texture.\n",
+			// 	name.c_str()));
+			HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex, "'TlutOffset' declared in non color-indexed (ci4 or ci8) texture", "");
 			break;
 		}
 	}
@@ -112,10 +120,13 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 void ZTexture::ParseRawData()
 {
 	if (rawDataIndex % 8 != 0)
-		fprintf(stderr,
-		        "ZTexture::ParseXML: Warning in '%s'.\n"
-		        "\t This texture is not 64-bit aligned.\n",
-		        name.c_str());
+	{
+		//fprintf(stderr,
+		//        "ZTexture::ParseXML: Warning in '%s'.\n"
+		//        "\t This texture is not 64-bit aligned.\n",
+		//        name.c_str());
+		HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, "This texture is not 64-bit aligned", "");
+	}
 
 	switch (format)
 	{
@@ -146,8 +157,11 @@ void ZTexture::ParseRawData()
 	case TextureType::Palette8bpp:
 		PrepareBitmapPalette8();
 		break;
-	default:
-		throw std::runtime_error("Format is not supported!");
+	// default:
+	// 	throw std::runtime_error("Format is not supported!");
+	case TextureType::Error:
+		assert(!"TODO");
+		break;
 	}
 }
 
@@ -390,8 +404,10 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 	case TextureType::Palette8bpp:
 		PrepareRawDataPalette8(pngFilePath);
 		break;
-	default:
-		throw std::runtime_error("Format is not supported!");
+	case TextureType::Error:
+		//throw std::runtime_error("Format is not supported!");
+		assert(!"TODO");
+		break;
 	}
 }
 
