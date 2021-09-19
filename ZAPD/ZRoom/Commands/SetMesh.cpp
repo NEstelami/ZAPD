@@ -39,7 +39,7 @@ void SetMesh::ParseRawData()
 		//throw std::runtime_error(StringHelper::Sprintf("Error in SetMesh::ParseRawData\n"
 		//                                               "\t Unknown meshHeaderType: %i\n",
 		//                                               meshHeaderType));
-		HANDLE_ERROR(WarningType::InvalidData, StringHelper::Sprintf("Unknown meshHeaderType: %i", meshHeaderType), "");
+		HANDLE_ERROR(WarningType::InvalidExtractedData, StringHelper::Sprintf("Unknown meshHeaderType: %i", meshHeaderType), "");
 	}
 
 	polyType->ParseRawData();
@@ -539,7 +539,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 	default:
 		// throw std::runtime_error(StringHelper::Sprintf(
 		// 	"Error in PolygonType1::PolygonType1\n\t Unknown format: %i\n", format));
-		HANDLE_ERROR(WarningType::InvalidData, StringHelper::Sprintf("Unknown format: %i", format), "");
+		HANDLE_ERROR(WarningType::InvalidExtractedData, StringHelper::Sprintf("Unknown format: %i", format), "");
 		break;
 	}
 }
