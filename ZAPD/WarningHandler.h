@@ -28,10 +28,16 @@
 #define HANG_INDT "\t\t"
 
 // TODO: better names
+
+// General-purpose
 #define HANDLE_ERROR(warningType, header, body) WarningHandler::Error_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
-#define HANDLE_ERROR_RESOURCE(warningType, parent, resource, offset, header, body) WarningHandler::Error_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, resource, offset, header, body)
 #define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
+
+// For ZResource-related stuff
+#define HANDLE_ERROR_RESOURCE(warningType, parent, resource, offset, header, body) WarningHandler::Error_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, resource, offset, header, body)
 #define HANDLE_WARNING_RESOURCE(warningType, parent, resource, offset, header, body) WarningHandler::Warning_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, resource, offset, header, body)
+
+// For the texture/blob building mode
 #define HANDLE_WARNING_BUILD(warningType, header, body) WarningHandler::Warning_Build(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 
 enum class WarningType {
