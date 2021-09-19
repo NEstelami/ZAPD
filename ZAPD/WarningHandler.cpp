@@ -22,7 +22,13 @@ typedef struct {
  * Master list of all warning features
  */
 std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
-    {"deprecated",              {WarningType::Deprecated,               WarningLevel::Off,  "Deprecated features"}},
+    {"deprecated",              {WarningType::Deprecated,               
+#ifdef DEPRECATION_ON
+    WarningLevel::Warn,
+#else
+    WarningLevel::Off,  
+#endif
+    "Deprecated features"}},
     {"unaccounted",             {WarningType::Unaccounted,              WarningLevel::Off,  "Large blocks of unaccounted"}},
     {"missing-offsets",         {WarningType::MissingOffsets,           WarningLevel::Warn,  "Offset attribute missing in XML tag"}},
     {"intersection",            {WarningType::Intersection,             WarningLevel::Warn, "Two assets intersect"}},
@@ -31,18 +37,16 @@ std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"unknown-attribute",       {WarningType::UnknownAttribute,         WarningLevel::Warn, "Unknown attribute in XML entry tag"}},
     {"invalid-xml",             {WarningType::InvalidXML,               WarningLevel::Warn, "XML has syntax errors"}},
     {"invalid-jpeg",            {WarningType::InvalidJPEG,              WarningLevel::Warn, "JPEG file does not conform to the game's format requirements"}},
-    {"invalid-data",            {WarningType::InvalidData,              WarningLevel::Err,  "TODO"}},
-    {"missing-segment",         {WarningType::MissingSegment,           WarningLevel::Warn,  "Segment not given in File tag in XML"}},
-    {"hardcoded-pointer",       {WarningType::HardcodedPointer,         WarningLevel::Warn,  "TODO"}},
+    {"invalid-data",            {WarningType::InvalidData,              WarningLevel::Warn, "Extracted data does not have correct format"}},
+    {"missing-segment",         {WarningType::MissingSegment,           WarningLevel::Warn, "Segment not given in File tag in XML"}},
+    {"hardcoded-pointer",       {WarningType::HardcodedPointer,         WarningLevel::Warn, "ZAPD lacks the info to make a symbol, so must output a hardcoded pointer"}},
     {"not-implemented",         {WarningType::NotImplemented,           WarningLevel::Warn, "ZAPD does not currently support this feature"}},
+    
 };
 
 std::unordered_map<WarningType, WarningInfo> warningTypeToInfoMap;
 
 void WarningHandler::ConstructTypeToInfoMap() {
-#ifdef DEPRECATION_ON
-    warningStringToInitMap["deprecated"].defaultLevel = WarningLevel::Warn;
-#endif
     for (auto& entry : warningStringToInitMap) {
         warningTypeToInfoMap[entry.second.type] = {entry.second.defaultLevel, entry.first, entry.second.description};
     }
