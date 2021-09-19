@@ -4,8 +4,8 @@
 
 #include "Globals.h"
 #include "Utils/StringHelper.h"
-#include "ZFile.h"
 #include "WarningHandler.h"
+#include "ZFile.h"
 
 REGISTER_ZFILENODE(Array, ZArray);
 
@@ -27,16 +27,20 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 
 	arrayCnt = reader->IntAttribute("Count", 0);
 	// TODO: do a better check.
-	//assert(arrayCnt > 0);
-	if (arrayCnt <= 0) {
-		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'Count' attribute.", "");
+	// assert(arrayCnt > 0);
+	if (arrayCnt <= 0)
+	{
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                      "Invalid value found for 'Count' attribute.", "");
 	}
 
 	tinyxml2::XMLElement* child = reader->FirstChildElement();
-	if (child == nullptr) {
-		//throw std::runtime_error(
-		//	StringHelper::Sprintf("Error! Array needs at least one sub-element.\n"));
-		HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex, "<Array> needs one sub-element.", "");
+	if (child == nullptr)
+	{
+		// throw std::runtime_error(
+		// 	StringHelper::Sprintf("Error! Array needs at least one sub-element.\n"));
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex,
+		                      "<Array> needs one sub-element.", "");
 	}
 
 	childName = child->Name();
@@ -52,8 +56,10 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 			// 	"Error! Resource %s does not support being wrapped in an array!\n",
 			// 	childName.c_str()));
 
-			std::string errorHeader = StringHelper::Sprintf("Resource <%s> does not support being wrapped in an array.", childName.c_str());
-			HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex, errorHeader, "");
+			std::string errorHeader = StringHelper::Sprintf(
+				"Resource <%s> does not support being wrapped in an array.", childName.c_str());
+			HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex, errorHeader,
+			                      "");
 		}
 		res->parent = parent;
 		res->SetInnerNode(true);

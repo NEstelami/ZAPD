@@ -9,6 +9,7 @@
 #include "Utils/Directory.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
+#include "WarningHandler.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
 #include "ZBackground.h"
@@ -25,7 +26,6 @@
 #include "ZTexture.h"
 #include "ZVector.h"
 #include "ZVtx.h"
-#include "WarningHandler.h"
 
 using namespace tinyxml2;
 
@@ -96,10 +96,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			Globals::Instance->game = ZGame::OOT_SW97;
 		else if (std::string(gameStr) == "OOT")
 			Globals::Instance->game = ZGame::OOT_RETAIL;
-		else {
+		else
+		{
 			// throw std::runtime_error(
 			// 	StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
-			std::string errorHeader = StringHelper::Sprintf("Game type '%s' is not supported.", gameStr);
+			std::string errorHeader =
+				StringHelper::Sprintf("Game type '%s' is not supported.", gameStr);
 			HANDLE_ERROR(WarningType::InvalidAttributeValue, errorHeader, "");
 		}
 	}
@@ -117,16 +119,20 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	{
 		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
 		Globals::Instance->AddSegment(segment, this);
-	} else {
+	}
+	else
+	{
 		HANDLE_WARNING(WarningType::MissingSegment, "Missing 'Segment' attribute in <File>", "");
 	}
 
 	if (mode == ZFileMode::Extract)
 	{
-		if (!File::Exists((basePath / name).string())) {
+		if (!File::Exists((basePath / name).string()))
+		{
 			// throw std::runtime_error(
 			// 	StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
-			std::string errorHeader = StringHelper::Sprintf("Binary file '%s' does not exist.", (basePath / name).c_str());
+			std::string errorHeader = StringHelper::Sprintf("Binary file '%s' does not exist.",
+			                                                (basePath / name).c_str());
 			HANDLE_ERROR(WarningType::Always, errorHeader, "");
 		}
 
@@ -160,23 +166,28 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 				// throw std::runtime_error(StringHelper::Sprintf(
 				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Offset' attribute: %s \n",
 				// 	name.c_str(), offsetXml));
-				std::string errorHeader = StringHelper::Sprintf("Repeated 'Offset' attribute: %s", offsetXml);
-				std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+				std::string errorHeader =
+					StringHelper::Sprintf("Repeated 'Offset' attribute: %s", offsetXml);
+				std::string errorBody =
+					StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
 				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 			}
 			offsetSet.insert(offsetXml);
 		}
-		//else if (Globals::Instance->warnNoOffset)
-		//{
-		//	//fprintf(stderr, "Warning No offset specified for: %s", nameXml);
-		//}
-		//else if (Globals::Instance->errorNoOffset)
-		//{
-		//	throw std::runtime_error(
-		//		StringHelper::Sprintf("Error no offset specified for %s", nameXml));
-		//}
-		else {
-			HANDLE_WARNING_RESOURCE(WarningType::MissingOffsets, this, nullptr, rawDataIndex, StringHelper::Sprintf("No offset specified for %s.", nameXml), "");
+		// else if (Globals::Instance->warnNoOffset)
+		// {
+		// 	//fprintf(stderr, "Warning No offset specified for: %s", nameXml);
+		// }
+		// else if (Globals::Instance->errorNoOffset)
+		// {
+		// 	throw std::runtime_error(
+		// 		StringHelper::Sprintf("Error no offset specified for %s", nameXml));
+		// }
+		else
+		{
+			HANDLE_WARNING_RESOURCE(WarningType::MissingOffsets, this, nullptr, rawDataIndex,
+			                        StringHelper::Sprintf("No offset specified for %s.", nameXml),
+			                        "");
 		}
 
 		if (outNameXml != nullptr)
@@ -186,8 +197,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 				// throw std::runtime_error(StringHelper::Sprintf(
 				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'OutName' attribute: %s \n",
 				// 	name.c_str(), outNameXml));
-				std::string errorHeader = StringHelper::Sprintf("Repeated 'OutName' attribute: %s", outNameXml);
-				std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+				std::string errorHeader =
+					StringHelper::Sprintf("Repeated 'OutName' attribute: %s", outNameXml);
+				std::string errorBody =
+					StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
 				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 			}
 			outNameSet.insert(outNameXml);
@@ -200,8 +213,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Name' attribute: %s \n",
 				// 	name.c_str(), nameXml));
 
-				std::string errorHeader = StringHelper::Sprintf("Repeated 'Name' attribute: %s", nameXml);
-				std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+				std::string errorHeader =
+					StringHelper::Sprintf("Repeated 'Name' attribute: %s", nameXml);
+				std::string errorBody =
+					StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
 				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 			}
 			nameSet.insert(nameXml);
@@ -231,7 +246,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			// 	name.c_str()));
 
 			std::string errorHeader = "Can't declare a <File> inside a <File>";
-			std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+			std::string errorBody =
+				StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
 			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 		}
 		else
@@ -240,8 +256,10 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			// 	StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n\t Unknown element found "
 			//                           "inside a File element: '%s'.\n",
 			//                           name.c_str(), nodeName.c_str()));
-			std::string errorHeader = StringHelper::Sprintf("Unknown element found inside a <File> element: %s", nodeName.c_str());
-			std::string errorBody = StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
+			std::string errorHeader = StringHelper::Sprintf(
+				"Unknown element found inside a <File> element: %s", nodeName.c_str());
+			std::string errorBody =
+				StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
 			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 		}
 	}
@@ -928,14 +946,18 @@ std::string ZFile::ProcessDeclarations()
 			{
 				Declaration* currentDecl = declarations.at(currentAddress);
 
-				//fprintf(stderr,
+				// fprintf(stderr,
 				//        "WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
 				//        "0x%06X (%s)\n",
 				//        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
 				//        currentDecl->varName.c_str());
 
-				std::string intersectionInfo = StringHelper::Sprintf("Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress, currentDecl->varName.c_str());
-				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress, "Intersection detected.", intersectionInfo);
+				std::string intersectionInfo = StringHelper::Sprintf(
+					"Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr,
+					lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
+					currentDecl->varName.c_str());
+				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress,
+				                        "Intersection detected.", intersectionInfo);
 			}
 		}
 
@@ -998,28 +1020,34 @@ std::string ZFile::ProcessDeclarations()
 						diff, src);
 					decl->isUnaccounted = true;
 
-					//if (Globals::Instance->warnUnaccounted)
+					// if (Globals::Instance->warnUnaccounted)
 					//{
-						if (nonZeroUnaccounted)
-						{
-							//fprintf(
-							//	stderr,
-							//	"Warning in file: %s (%s)\n"
-							//	"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-							//	"\t Block size: '0x%X'.\n",
-							//	xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr, unaccountedAddress, "A non-zero unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
-						}
-						else if (diff >= 16)
-						{
-							//fprintf(stderr,
-							//        "Warning in file: %s (%s)\n"
-							//        "\t A big (size>=0x10) zero-only unaccounted block was found "
-							//        "at address '0x%06X'.\n"
-							//        "\t Block size: '0x%X'.\n",
-							//        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
-							HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr, unaccountedAddress, "A big (size>=0x10) zero-only unaccounted block was found.", StringHelper::Sprintf("Block size: '0x%X'", diff));
-						}
+					if (nonZeroUnaccounted)
+					{
+						// fprintf(
+						//	stderr,
+						//	"Warning in file: %s (%s)\n"
+						//	"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
+						//	"\t Block size: '0x%X'.\n",
+						//	xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+						HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr,
+						                        unaccountedAddress,
+						                        "A non-zero unaccounted block was found.",
+						                        StringHelper::Sprintf("Block size: '0x%X'", diff));
+					}
+					else if (diff >= 16)
+					{
+						// fprintf(stderr,
+						//        "Warning in file: %s (%s)\n"
+						//        "\t A big (size>=0x10) zero-only unaccounted block was found "
+						//        "at address '0x%06X'.\n"
+						//        "\t Block size: '0x%X'.\n",
+						//        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
+						HANDLE_WARNING_RESOURCE(
+							WarningType::Unaccounted, this, nullptr, unaccountedAddress,
+							"A big (size>=0x10) zero-only unaccounted block was found.",
+							StringHelper::Sprintf("Block size: '0x%X'", diff));
+					}
 					//}
 				}
 			}
