@@ -51,6 +51,7 @@ enum class WarningType {
     UnknownAttribute,
     InvalidXML,
     InvalidJPEG,
+    InvalidPNG,
     InvalidExtractedData,
     MissingSegment,
     HardcodedPointer,
@@ -86,8 +87,11 @@ public:
     static void PrintErrorAndThrow(const std::string& header, const std::string& body);
     static void PrintWarningBody(const std::string& header, const std::string& body);
 
+    [[ noreturn ]]
     static void ErrorType(WarningType warnType, const std::string& header, const std::string& body);
+    [[ noreturn ]]
     static void Error_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
+    [[ noreturn ]]
     static void Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body);
 
 

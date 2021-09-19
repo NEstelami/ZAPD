@@ -26,7 +26,7 @@ std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
 #ifdef DEPRECATION_ON
     WarningLevel::Warn,
 #else
-    WarningLevel::Off,  
+    WarningLevel::Off,
 #endif
     "Deprecated features"}},
     {"unaccounted",             {WarningType::Unaccounted,           WarningLevel::Off,  "Large blocks of unaccounted"}},
@@ -37,11 +37,11 @@ std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"unknown-attribute",       {WarningType::UnknownAttribute,      WarningLevel::Warn, "Unknown attribute in XML entry tag"}},
     {"invalid-xml",             {WarningType::InvalidXML,            WarningLevel::Warn, "XML has syntax errors"}},
     {"invalid-jpeg",            {WarningType::InvalidJPEG,           WarningLevel::Warn, "JPEG file does not conform to the game's format requirements"}},
+    {"invalid-png",             {WarningType::InvalidPNG,            WarningLevel::Warn, "TODO"}},
     {"invalid-extracted-data",  {WarningType::InvalidExtractedData,  WarningLevel::Warn, "Extracted data does not have correct form"}},
     {"missing-segment",         {WarningType::MissingSegment,        WarningLevel::Warn, "Segment not given in File tag in XML"}},
     {"hardcoded-pointer",       {WarningType::HardcodedPointer,      WarningLevel::Warn, "ZAPD lacks the info to make a symbol, so must output a hardcoded pointer"}},
     {"not-implemented",         {WarningType::NotImplemented,        WarningLevel::Warn, "ZAPD does not currently support this feature"}},
-    
 };
 
 std::unordered_map<WarningType, WarningInfo> warningTypeToInfoMap;
