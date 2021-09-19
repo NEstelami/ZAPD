@@ -126,10 +126,15 @@ void ZRoom::ParseXML(tinyxml2::XMLElement* reader)
 	{
 		hackMode = std::string(reader->Attribute("HackMode"));
 		if (hackMode != "syotes_room")
-			throw std::runtime_error(
-				StringHelper::Sprintf("ZRoom::ParseXML: Fatal error in '%s'.\n"
-			                          "\t Invalid value for attribute 'HackMode': '%s'\n",
-			                          name.c_str(), hackMode.c_str()));
+		{
+			// throw std::runtime_error(
+			// 	StringHelper::Sprintf("ZRoom::ParseXML: Fatal error in '%s'.\n"
+			//                           "\t Invalid value for attribute 'HackMode': '%s'\n",
+			//                           name.c_str(), hackMode.c_str()));
+
+			std::string headerError = StringHelper::Sprintf("Invalid value found for 'HackMode' attribute: '%s'", hackMode.c_str());
+			HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, headerError, "");
+		}
 	}
 }
 
