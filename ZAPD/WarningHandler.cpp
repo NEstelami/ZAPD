@@ -30,7 +30,7 @@ std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
 #endif
     "Deprecated features"}},
     {"unaccounted",             {WarningType::Unaccounted,              WarningLevel::Off,  "Large blocks of unaccounted"}},
-    {"missing-offsets",         {WarningType::MissingOffsets,           WarningLevel::Err,  "Offset attribute missing in XML tag"}},
+    {"missing-offsets",         {WarningType::MissingOffsets,           WarningLevel::Warn,  "Offset attribute missing in XML tag"}},
     {"intersection",            {WarningType::Intersection,             WarningLevel::Warn, "Two assets intersect"}},
     {"missing-attribute",       {WarningType::MissingAttribute,         WarningLevel::Warn, "Required attribute missing in XML tag"}},
     {"invalid-attribute-value", {WarningType::InvalidAttributeValue,    WarningLevel::Warn, "Attribute declared in XML is wrong"}},
@@ -50,8 +50,7 @@ void WarningHandler::ConstructTypeToInfoMap() {
     for (auto& entry : warningStringToInitMap) {
         warningTypeToInfoMap[entry.second.type] = {entry.second.defaultLevel, entry.first, entry.second.description};
     }
-    warningTypeToInfoMap[WarningType::Always] = {WarningLevel::Warn, "", ""};
-    warningTypeToInfoMap[WarningType::Everything] = {WarningLevel::Warn, "", ""};
+    warningTypeToInfoMap[WarningType::Always] = {WarningLevel::Warn, "always", "you shouldn't be reading this"};
     assert(warningTypeToInfoMap.size() == static_cast<size_t>(WarningType::Max));
 }
 
@@ -141,15 +140,24 @@ void WarningHandler::Init(int argc, char* argv[]) {
             }
         }
     }
+
+    if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
+        for (auto& it: warningTypeToInfoMap) {
+            printf("%s: %i\n", it.second.name.c_str(), it.second.level);
+        }
+    }
 }
 
 bool WarningHandler::IsWarningEnabled(WarningType warnType) {
     assert(static_cast<size_t>(warnType) >= 0 && warnType < WarningType::Max);
 
-    if (warnType == WarningType::Always) {
-        return true;
+    if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
+        printf("IsWarningEnabled:\n");
+        auto& thingy = warningTypeToInfoMap.at(warnType);
+        printf("\t%s: %i\n", thingy.name.c_str(), thingy.level);
     }
-    if (warningTypeToInfoMap.at(WarningType::Everything).level != WarningLevel::Off) {
+
+    if (warnType == WarningType::Always) {
         return true;
     }
     if (warningTypeToInfoMap.at(warnType).level != WarningLevel::Off) {

@@ -35,7 +35,6 @@
 #define HANDLE_WARNING_BUILD(warningType, header, body) WarningHandler::Warning_Build(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 
 enum class WarningType {
-    Everything,
     Always, // Warnings of this type are always printed, cannot be disabled.
     Deprecated,
     Unaccounted,
