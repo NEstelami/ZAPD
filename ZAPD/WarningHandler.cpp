@@ -143,7 +143,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
 
     if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
         for (auto& it: warningTypeToInfoMap) {
-            printf("%s: %i\n", it.second.name.c_str(), it.second.level);
+            printf("%s: %i\n", it.second.name.c_str(), static_cast<int32_t>(it.second.level));
         }
     }
 }
@@ -154,7 +154,7 @@ bool WarningHandler::IsWarningEnabled(WarningType warnType) {
     if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
         printf("IsWarningEnabled:\n");
         auto& thingy = warningTypeToInfoMap.at(warnType);
-        printf("\t%s: %i\n", thingy.name.c_str(), thingy.level);
+        printf("\t%s: %i\n", thingy.name.c_str(),  static_cast<int32_t>(thingy.level));
     }
 
     if (warnType == WarningType::Always) {
