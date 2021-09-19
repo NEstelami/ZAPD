@@ -668,7 +668,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					//         Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
 					//         rawDataIndex, entry.segment, (int)entry.type, entry.paramsPtr);
 					HANDLE_WARNING_RESOURCE(
-						WarningType::InvalidData, parent, this, rawDataIndex,
+						WarningType::InvalidExtractedData, parent, this, rawDataIndex,
 						"TextureAnimationParams entry has empty type (6), but params pointer is "
 						"not NULL.",
 						StringHelper::Sprintf("Params read { 0x%02X, 0x%02X, 0x%08X }",
