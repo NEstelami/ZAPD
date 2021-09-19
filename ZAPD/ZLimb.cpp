@@ -466,8 +466,13 @@ void ZLimb::ParseRawData()
 			segmentStruct = Struct_800A5E28(parent, rawData, skinSegmentOffset);
 		}
 		break;
-	default:
-		throw std::runtime_error("Invalid ZLimb type");
+
+	case ZLimbType::Curve:
+	case ZLimbType::Legacy:
+		break;
+
+	case ZLimbType::Invalid:
+		assert(!"whoops");
 		break;
 	}
 }

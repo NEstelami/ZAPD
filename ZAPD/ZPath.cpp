@@ -4,6 +4,7 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
+#include "WarningHandler.h"
 
 REGISTER_ZFILENODE(Path, ZPath);
 
@@ -27,11 +28,13 @@ void ZPath::ParseXML(tinyxml2::XMLElement* reader)
 
 	numPaths = StringHelper::StrToL(registeredAttributes.at("NumPaths").value);
 
-	if (numPaths < 1)
-		throw std::runtime_error(
-			StringHelper::Sprintf("ZPath::ParseXML: Fatal error in '%s'.\n"
-		                          "\t Invalid value for attribute 'NumPaths': '%i'\n",
-		                          name.c_str(), numPaths));
+	if (numPaths < 1) {
+		// throw std::runtime_error(
+		// 	StringHelper::Sprintf("ZPath::ParseXML: Fatal error in '%s'.\n"
+		//                           "\t Invalid value for attribute 'NumPaths': '%i'\n",
+		//                           name.c_str(), numPaths));
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'NumPaths' attribute.", "");
+	}
 }
 
 void ZPath::ParseRawData()
