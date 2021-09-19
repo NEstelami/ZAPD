@@ -31,16 +31,24 @@ std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"unknown-attribute",       {WarningType::UnknownAttribute,         WarningLevel::Warn, "Unknown attribute in XML entry tag"}},
     {"invalid-xml",             {WarningType::InvalidXML,               WarningLevel::Warn, "XML has syntax errors"}},
     {"invalid-jpeg",            {WarningType::InvalidJPEG,              WarningLevel::Warn, "JPEG file does not conform to the game's format requirements"}},
+    {"invalid-data",            {WarningType::InvalidData,              WarningLevel::Err,  "TODO"}},
     {"missing-segment",         {WarningType::MissingSegment,           WarningLevel::Warn,  "Segment not given in File tag in XML"}},
+    {"hardcoded-pointer",       {WarningType::HardcodedPointer,         WarningLevel::Warn,  "TODO"}},
     {"not-implemented",         {WarningType::NotImplemented,           WarningLevel::Warn, "ZAPD does not currently support this feature"}},
 };
 
 std::unordered_map<WarningType, WarningInfo> warningTypeToInfoMap;
 
 void WarningHandler::ConstructTypeToInfoMap() {
+#ifdef DEPRECATION_ON
+    warningStringToInitMap["deprecated"].defaultLevel = WarningLevel::Warn;
+#endif
     for (auto& entry : warningStringToInitMap) {
         warningTypeToInfoMap[entry.second.type] = {entry.second.defaultLevel, entry.first, entry.second.description};
     }
+    warningTypeToInfoMap[WarningType::Always] = {WarningLevel::Warn, "", ""};
+    warningTypeToInfoMap[WarningType::Everything] = {WarningLevel::Warn, "", ""};
+    assert(warningTypeToInfoMap.size() == static_cast<size_t>(WarningType::Max));
 }
 
 #define HELP_DT_INDT "  "
@@ -81,42 +89,10 @@ void WarningHandler::PrintWarningsInformation() {
     }
 }
 
-// If a warning isn't in this list, it would not be possible to enable/disable it
-std::unordered_map<std::string, WarningType> WarningHandler::warningsStringToTypeMap = {
-    {"deprecated", WarningType::Deprecated},
-    {"unaccounted", WarningType::Unaccounted},
-    {"missing-offsets", WarningType::MissingOffsets},
-    {"intersection", WarningType::Intersection},
-    {"missing-attribute", WarningType::MissingAttribute},
-    {"invalid-attribute-value", WarningType::InvalidAttributeValue},
-    {"unknown-attribute", WarningType::UnknownAttribute},
-    {"invalid-xml", WarningType::InvalidXML},
-    {"invalid-jpeg", WarningType::InvalidJPEG},
-    {"missing-segment", WarningType::MissingSegment},
-    {"not-implemented", WarningType::NotImplemented},
-};
-std::unordered_map<WarningType, WarningLevel> WarningHandler::warningsEnabledByDefault = {
-    { WarningType::Always, WarningLevel::Warn },
-    { WarningType::Intersection, WarningLevel::Warn },
-#ifdef DEPRECATION_ON
-    { WarningType::Deprecated, WarningLevel::Warn },
-#endif
-    { WarningType::MissingAttribute, WarningLevel::Warn },
-    { WarningType::InvalidAttributeValue, WarningLevel::Warn },
-    { WarningType::UnknownAttribute, WarningLevel::Warn },
-    { WarningType::InvalidXML, WarningLevel::Warn },
-    { WarningType::InvalidJPEG, WarningLevel::Warn },
-    { WarningType::NotImplemented, WarningLevel::Warn },
-};
-
-std::array<WarningLevel, static_cast<size_t>(WarningType::Max)> WarningHandler::enabledWarnings = { WarningLevel::Off };
-
 bool WarningHandler::Werror = false;
 
 void WarningHandler::Init(int argc, char* argv[]) {
-    for (const auto& warnTypeIter: warningsEnabledByDefault) {
-        enabledWarnings[static_cast<size_t>(warnTypeIter.first)] = warnTypeIter.second;
-    }
+    ConstructTypeToInfoMap();
 
     for (int i = 1; i < argc; i++) {
 
@@ -140,9 +116,9 @@ void WarningHandler::Init(int argc, char* argv[]) {
         if (currentArgv == "error") {
             Werror = warningTypeOn != WarningLevel::Off;
         } else if (currentArgv == "everything") {
-            for (size_t i = 0; i < enabledWarnings.size(); i++) {
-                if (enabledWarnings[i] != WarningLevel::Err) {
-                    enabledWarnings[i] = warningTypeOn;
+            for (auto it: warningTypeToInfoMap) {
+                if (it.second.level != warningTypeOn) {
+                    it.second.level = warningTypeOn;
                 }
             }
         } else {
@@ -152,10 +128,9 @@ void WarningHandler::Init(int argc, char* argv[]) {
                 warningTypeOn = warningTypeOn != WarningLevel::Off ? WarningLevel::Err : WarningLevel::Warn;
             }
 
-            auto warningTypeIter = warningsStringToTypeMap.find(std::string(currentArgv));
-            if (warningTypeIter != warningsStringToTypeMap.end()) {
-                size_t index = static_cast<size_t>(warningTypeIter->second);
-                enabledWarnings[index] = warningTypeOn;
+            auto it = warningStringToInitMap.find(std::string(currentArgv));
+            if (it != warningStringToInitMap.end()) {
+                warningTypeToInfoMap[it->second.type].level = warningTypeOn;
             }
             else {
                 HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("Unknown warning flag '%s'", argv[i]), "");
@@ -170,10 +145,10 @@ bool WarningHandler::IsWarningEnabled(WarningType warnType) {
     if (warnType == WarningType::Always) {
         return true;
     }
-    if (enabledWarnings.at(static_cast<size_t>(WarningType::Everything)) != WarningLevel::Off) {
+    if (warningTypeToInfoMap.at(WarningType::Everything).level != WarningLevel::Off) {
         return true;
     }
-    if (enabledWarnings.at(static_cast<size_t>(warnType)) != WarningLevel::Off) {
+    if (warningTypeToInfoMap.at(warnType).level != WarningLevel::Off) {
         return true;
     }
     return false;
@@ -190,7 +165,7 @@ bool WarningHandler::WasElevatedToError(WarningType warnType) {
         return true;
     }
 
-    if (enabledWarnings.at(static_cast<size_t>(warnType)) == WarningLevel::Err) {
+    if (warningTypeToInfoMap.at(warnType).level == WarningLevel::Err) {
         return true;
     }
 
@@ -264,8 +239,8 @@ void WarningHandler::PrintWarningBody(const std::string& header, const std::stri
 void WarningHandler::ErrorType(WarningType warnType, const std::string& header, const std::string& body) {
     std::string headerMsg = header;
 
-    for (const auto& iter: warningsStringToTypeMap) {
-        if (iter.second == warnType) {
+    for (const auto& iter: warningStringToInitMap) {
+        if (iter.second.type == warnType) {
             headerMsg += StringHelper::Sprintf(" [%s]", iter.first.c_str());
         }
     }
@@ -293,8 +268,8 @@ void WarningHandler::Error_Resource(const char* filename, int32_t line, const ch
 void WarningHandler::WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body) {
     std::string headerMsg = header;
 
-    for (const auto& iter: warningsStringToTypeMap) {
-        if (iter.second == warnType) {
+    for (const auto& iter: warningStringToInitMap) {
+        if (iter.second.type == warnType) {
             headerMsg += StringHelper::Sprintf(" [-W%s]", iter.first.c_str());
         }
     }
@@ -345,15 +320,6 @@ void WarningHandler::Warning_Build(const char* filename, int32_t line, const cha
 }
 
 void WarningHandler::PrintHelp() {
-    // printf("\nExisting warnings:\n");
-    // for (const auto& iter: warningsStringToTypeMap) {
-    //     const char* enabledMsg = "";
-    //     if (warningsEnabledByDefault.find(iter.second) != warningsEnabledByDefault.end()) {
-    //         enabledMsg = "(enabled)";
-    //     }
-
-    //     printf("\t -W%-25s %s\n", iter.first.c_str(), enabledMsg);
-    // }
     PrintWarningsInformation();
 
     printf("\n");

@@ -62,14 +62,8 @@ enum class WarningLevel {
 
 class WarningHandler {
 public:
-    static std::unordered_map<std::string, WarningType> warningsStringToTypeMap;
-    static std::unordered_map<WarningType, WarningLevel> warningsEnabledByDefault;
-
-    static std::array<WarningLevel, static_cast<size_t>(WarningType::Max)> enabledWarnings;
-
     static void ConstructTypeToInfoMap();
     static void PrintWarningsInformation();
-
 
 
     static void Init(int argc, char* argv[]);
