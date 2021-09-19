@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	Globals* g = new Globals();
 	WarningHandler::Init(argc, argv);
 
 	for (int i = 1; i < argc; i++)
@@ -117,7 +118,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Globals* g = new Globals();
 
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
