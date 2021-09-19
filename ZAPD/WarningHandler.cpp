@@ -37,7 +37,7 @@ std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"unknown-attribute",       {WarningType::UnknownAttribute,      WarningLevel::Warn, "Unknown attribute in XML entry tag"}},
     {"invalid-xml",             {WarningType::InvalidXML,            WarningLevel::Warn, "XML has syntax errors"}},
     {"invalid-jpeg",            {WarningType::InvalidJPEG,           WarningLevel::Warn, "JPEG file does not conform to the game's format requirements"}},
-    {"invalid-data",            {WarningType::InvalidData,           WarningLevel::Warn, "Extracted data does not have correct format"}},
+    {"invalid-extracted-data",  {WarningType::InvalidExtractedData,  WarningLevel::Warn, "Extracted data does not have correct form"}},
     {"missing-segment",         {WarningType::MissingSegment,        WarningLevel::Warn, "Segment not given in File tag in XML"}},
     {"hardcoded-pointer",       {WarningType::HardcodedPointer,      WarningLevel::Warn, "ZAPD lacks the info to make a symbol, so must output a hardcoded pointer"}},
     {"not-implemented",         {WarningType::NotImplemented,        WarningLevel::Warn, "ZAPD does not currently support this feature"}},
@@ -340,5 +340,5 @@ void WarningHandler::PrintHelp() {
     // TODO: mention -Weverything and -Werror
 
     printf("\n");
-    printf("Warnings can be disabled using `-Wno-` instead of `-W`\n");
+    printf("Warnings can be disabled using -Wno-... instead of -W...; -Weverything will override any -Wno-... flags passed before it.\n");
 }

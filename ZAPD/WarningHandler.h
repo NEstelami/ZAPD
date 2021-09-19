@@ -51,7 +51,7 @@ enum class WarningType {
     UnknownAttribute,
     InvalidXML,
     InvalidJPEG,
-    InvalidData,
+    InvalidExtractedData,
     MissingSegment,
     HardcodedPointer,
     NotImplemented,
