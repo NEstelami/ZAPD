@@ -233,7 +233,7 @@ void WarningHandler::ExtractedFilePreamble(const ZFile *parent, const ZResource*
     if (res != nullptr) {
         fprintf(stderr, "resource '%s' at ", res->GetName().c_str());
     }
-    fprintf(stderr, "offset 0x%06X: ", offset); 
+    fprintf(stderr, "offset 0x%06X: \n\t", offset); 
 }
 
 /**
@@ -244,7 +244,7 @@ std::string WarningHandler::ConstructMessage(std::string message, const std::str
     message += StringHelper::Sprintf(HILITE("%s"), header.c_str());
     message += "\n";
 
-    if (std::string_view(body) == "") {
+    if (body == "") {
         return message;
     }
 
@@ -255,6 +255,7 @@ std::string WarningHandler::ConstructMessage(std::string message, const std::str
             message += HANG_INDT;
         }
     }
+    message += "\n";
 
     return message;
 }
