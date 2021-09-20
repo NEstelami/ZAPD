@@ -104,16 +104,14 @@ void WarningHandler::ConstructTypeToInfoMap() {
     assert(warningTypeToInfoMap.size() == static_cast<size_t>(WarningType::Max));
 }
 
-bool WarningHandler::Werror = false;
-
 /**
  * Initialises the main warning type map and reads flags passed to set each warning type's level.
  */
 void WarningHandler::Init(int argc, char* argv[]) {
     ConstructTypeToInfoMap();
 
+    bool werror = false;
     for (int i = 1; i < argc; i++) {
-
         // If it doesn't start with "-W" skip it.
         if (argv[i][0] != '-' || argv[i][1] != 'W' || argv[i][2] == '\0') {
             continue;
@@ -132,7 +130,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
         std::string_view currentArgv = &argv[i][startingIndex];
 
         if (currentArgv == "error") {
-            Werror = warningTypeOn != WarningLevel::Off;
+            werror = warningTypeOn != WarningLevel::Off;
         } else if (currentArgv == "everything") {
             for (auto& it: warningTypeToInfoMap) {
                 if (it.second.level <= WarningLevel::Warn) {
@@ -156,24 +154,20 @@ void WarningHandler::Init(int argc, char* argv[]) {
             }
         }
     }
+
+    if (werror) {
+        for (auto& it: warningTypeToInfoMap) {
+            if (it.second.level >= WarningLevel::Warn) {
+                it.second.level = WarningLevel::Err;
+            }
+        }
+    }
 }
 
 bool WarningHandler::IsWarningEnabled(WarningType warnType) {
     assert(static_cast<size_t>(warnType) >= 0 && warnType < WarningType::Max);
 
-    if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
-        printf("IsWarningEnabled:\n");
-        auto& thingy = warningTypeToInfoMap.at(warnType);
-        printf("\t%s: %i\n", thingy.name.c_str(),  static_cast<int32_t>(thingy.level));
-    }
-
-    if (warnType == WarningType::Always) {
-        return true;
-    }
-    if (warningTypeToInfoMap.at(warnType).level != WarningLevel::Off) {
-        return true;
-    }
-    return false;
+    return warningTypeToInfoMap.at(warnType).level != WarningLevel::Off;
 }
 
 bool WarningHandler::WasElevatedToError(WarningType warnType) {
@@ -183,15 +177,7 @@ bool WarningHandler::WasElevatedToError(WarningType warnType) {
         return false;
     }
 
-    if (Werror) {
-        return true;
-    }
-
-    if (warningTypeToInfoMap.at(warnType).level == WarningLevel::Err) {
-        return true;
-    }
-
-    return false;
+    return warningTypeToInfoMap.at(warnType).level >= WarningLevel::Err;
 }
 
 /**
