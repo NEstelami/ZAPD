@@ -22,23 +22,24 @@ void ImageBackend::ReadPng(const char* filename)
 	FILE* fp = fopen(filename, "rb");
 	if (fp == nullptr)
 	{
-		std::string errorHeader = StringHelper::Sprintf("Couldn't open file '%s'", filename);
+		std::string errorHeader = StringHelper::Sprintf("could not open file '%s'", filename);
 		HANDLE_ERROR(WarningType::InvalidPNG, errorHeader, "");
 	}
 
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (png == nullptr) {
-		HANDLE_ERROR(WarningType::InvalidPNG, "Couldn't create png struct", "");
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png struct", "");
 	}
 
 	png_infop info = png_create_info_struct(png);
 	if (info == nullptr)
 	{
-		HANDLE_ERROR(WarningType::InvalidPNG, "Couldn't create png info", "");
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png info", "");
 	}
 
 	if (setjmp(png_jmpbuf(png)))
 	{
+		// TODO: better warning explanation
 		HANDLE_ERROR(WarningType::InvalidPNG, "setjmp(png_jmpbuf(png))", "");
 	}
 
@@ -155,24 +156,25 @@ void ImageBackend::WritePng(const char* filename)
 	FILE* fp = fopen(filename, "wb");
 	if (fp == nullptr)
 	{
-		std::string errorHeader = StringHelper::Sprintf("Couldn't open file '%s' in write mode", filename);
+		std::string errorHeader = StringHelper::Sprintf("could not open file '%s' in write mode", filename);
 		HANDLE_ERROR(WarningType::InvalidPNG, errorHeader, "");
 	}
 
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (png == nullptr)
 	{
-		HANDLE_ERROR(WarningType::InvalidPNG, "Couldn't create png struct", "");
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png struct", "");
 	}
 
 	png_infop info = png_create_info_struct(png);
 	if (info == nullptr)
 	{
-		HANDLE_ERROR(WarningType::InvalidPNG, "Couldn't create png info", "");
+		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png info", "");
 	}
 
 	if (setjmp(png_jmpbuf(png)))
 	{
+		// TODO: better warning description
 		HANDLE_ERROR(WarningType::InvalidPNG, "setjmp(png_jmpbuf(png))", "");
 	}
 
@@ -446,7 +448,7 @@ double ImageBackend::GetBytesPerPixel() const
 		return 1 * bitDepth / 8;
 
 	default:
-		HANDLE_ERROR(WarningType::InvalidPNG, "Invalid color type", "");
+		HANDLE_ERROR(WarningType::InvalidPNG, "invalid color type", "");
 	}
 }
 

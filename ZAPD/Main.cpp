@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, WarningHandler);
 			signal(SIGABRT, WarningHandler);
 #else
-			HANDLE_WARNING(WarningType::Always, "Tried to set error handler, but this ZAPD build lacks support for one.", "");
+			HANDLE_WARNING(WarningType::Always, "tried to set error handler, but this ZAPD build lacks support for one.", "");
 #endif
 		}
 		else if (arg == "-v")  // Verbose
@@ -328,7 +328,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 {
 	if (xmlFilePath == "") {
 		// We could consider reading from stdin
-		HANDLE_ERROR(WarningType::Always, "The input filename cannot be empty", "");
+		HANDLE_ERROR(WarningType::Always, "the input filename cannot be empty", "");
 	}
 
 	XMLDocument doc;
@@ -337,7 +337,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
 		HANDLE_ERROR(WarningType::InvalidXML,
-		               StringHelper::Sprintf("Invalid XML file: '%s'", xmlFilePath.c_str()), "");
+		               StringHelper::Sprintf("invalid XML file: '%s'", xmlFilePath.c_str()), "");
 		return false;
 	}
 
@@ -347,7 +347,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 	{
 		HANDLE_WARNING(
 			WarningType::InvalidXML,
-			StringHelper::Sprintf("Missing Root tag in xml file: '%s'", xmlFilePath.c_str()), "");
+			StringHelper::Sprintf("missing Root tag in xml file: '%s'", xmlFilePath.c_str()), "");
 		return false;
 	}
 

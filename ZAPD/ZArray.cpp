@@ -29,7 +29,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 	if (arrayCnt <= 0)
 	{
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-		                      "Invalid value found for 'Count' attribute", "");
+		                      "invalid value found for 'Count' attribute", "");
 	}
 
 	tinyxml2::XMLElement* child = reader->FirstChildElement();
@@ -49,7 +49,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 		if (!res->DoesSupportArray())
 		{
 			std::string errorHeader = StringHelper::Sprintf(
-				"Resource <%s> does not support being wrapped in an <Array>", childName.c_str());
+				"resource <%s> does not support being wrapped in an <Array>", childName.c_str());
 			HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex, errorHeader,
 			                      "");
 		}

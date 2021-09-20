@@ -1,5 +1,6 @@
 /**
  * ZAPD Warning- and Error-handling system (?)
+ * ===========================================
  *
  * This provides a common standard way to write ZAPD warnings/errors, which should be used for all
  * such. It will pretty-print them in a uniform way, with styles defined in the header.
@@ -23,6 +24,21 @@
  * - -Werror escalates all warnings to errors
  *
  * Errors do not have types, and will always throw an exception; they cannot be disabled.
+ *
+ * Format
+ * ===
+ * Each printed warning/error contains the same three sections:
+ * - Preamble: automatically generated; the content varies depending on category. It will print the
+ *     file and function that the warning is from, and information about the files being processed
+ *     or extracted.
+ * - Header: begins with 'warning: ' or 'error:', should contain essential information about the
+ *     warning/error, ends with the warning type if applicable. Printed with emphasis to make it
+ *     stand out
+ * - Body (optional): indented, should contain further diagnostic information useful for identifying
+ *     and fixing the warning/error
+ *
+ * Please think of what the end user will find most useful when writing the header and body, and try
+ * to keep it brief without sacrificing important information!
  */
 #include "WarningHandler.h"
 
@@ -91,7 +107,7 @@ void WarningHandler::ConstructTypeToInfoMap() {
 bool WarningHandler::Werror = false;
 
 /**
- * Initialises the main warning type map and reads flags passed to set warning level.
+ * Initialises the main warning type map and reads flags passed to set each warning type's level.
  */
 void WarningHandler::Init(int argc, char* argv[]) {
     ConstructTypeToInfoMap();
@@ -136,7 +152,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
                 warningTypeToInfoMap[it->second.type].level = warningTypeOn;
             }
             else {
-                HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("Unknown warning flag '%s'", argv[i]), "");
+                HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("unknown warning flag '%s'", argv[i]), "");
             }
         }
     }

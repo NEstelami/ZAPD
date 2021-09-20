@@ -14,6 +14,9 @@
 #define __PRETTY_FUNCTION__ __func__
 #endif
 
+// =======================================
+// Formatting macros
+
 // TODO: move this somewhere else so it can be used by other help
 #define HELP_DT_INDT "  "
 
@@ -32,6 +35,8 @@
 // Currently 16 spaces
 #define HANG_INDT "                "
 
+// =======================================
+// Warning and error macros
 // TODO: better names
 
 // General-purpose, plain style
@@ -44,6 +49,8 @@
 
 // For the texture/blob building mode
 #define HANDLE_WARNING_BUILD(warningType, header, body) WarningHandler::Warning_Build(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
+
+// =======================================
 
 enum class WarningType {
     Always, // Warnings of this type are always printed, cannot be disabled.

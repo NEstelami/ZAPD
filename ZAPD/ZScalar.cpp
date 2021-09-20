@@ -200,7 +200,7 @@ void ZScalar::ParseRawData()
 		scalarData.f64 = BitConverter::ToDoubleBE(rawData, rawDataIndex);
 		break;
 	case ZScalarType::ZSCALAR_NONE:
-		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'Type' attribute.", "Defaulting to ''.");
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Type' attribute.", "Defaulting to ''.");
 		break;
 	}
 }
