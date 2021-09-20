@@ -69,7 +69,7 @@ typedef struct
  */
 // clang-format off
 static const std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
-    {"deprecated",              {WarningType::Deprecated,               
+    {"deprecated",              {WarningType::Deprecated,
 #ifdef DEPRECATION_ON
     WarningLevel::Warn,
 #else
