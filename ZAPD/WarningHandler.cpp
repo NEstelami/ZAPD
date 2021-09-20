@@ -148,8 +148,8 @@ void WarningHandler::Init(int argc, char* argv[]) {
         if (currentArgv == "error") {
             Werror = warningTypeOn != WarningLevel::Off;
         } else if (currentArgv == "everything") {
-            for (auto it: warningTypeToInfoMap) {
-                if (it.second.level != warningTypeOn) {
+            for (auto& it: warningTypeToInfoMap) {
+                if (it.second.level <= WarningLevel::Warn) {
                     it.second.level = warningTypeOn;
                 }
             }
