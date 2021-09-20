@@ -277,6 +277,13 @@ void WarningHandler::Error_Plain(const char* filename, int32_t line, const char*
     ErrorType(warnType, header, body);
 }
 
+void WarningHandler::Error_Process(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
+    FunctionPreamble(filename, line, function);
+    ProcessedFilePreamble();
+
+    ErrorType(warnType, header, body);
+}
+
 void WarningHandler::Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
 
@@ -317,6 +324,17 @@ void WarningHandler::Warning_Plain(const char* filename, int32_t line, const cha
     WarningTypeAndChooseEscalate(warnType, header, body);
 }
 
+void WarningHandler::Warning_Process(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
+    if (!IsWarningEnabled(warnType)) {
+        return;
+    }
+
+    FunctionPreamble(filename, line, function);
+    ProcessedFilePreamble();
+
+    WarningTypeAndChooseEscalate(warnType, header, body);
+}
+
 void WarningHandler::Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body) {
     assert(parent != nullptr);
 
@@ -327,17 +345,6 @@ void WarningHandler::Warning_Resource(const char* filename, int32_t line, const 
     FunctionPreamble(filename, line, function);
     ProcessedFilePreamble();
     ExtractedFilePreamble(parent, res, offset);
-
-    WarningTypeAndChooseEscalate(warnType, header, body);
-}
-
-void WarningHandler::Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body) {
-    if (!IsWarningEnabled(warnType)) {
-        return;
-    }
-
-    FunctionPreamble(filename, line, function);
-    ProcessedFilePreamble();
 
     WarningTypeAndChooseEscalate(warnType, header, body);
 }

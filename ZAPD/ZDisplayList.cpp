@@ -432,11 +432,11 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 		if (ptr > rawDataSize)
 		{
 			std::string errorHeader =
-				StringHelper::Sprintf("end of file found when trying to find the end of the "
-			                          "DisplayList at offset: '0x%X'",
+				StringHelper::Sprintf("reached end of file when trying to find the end of the "
+			                          "DisplayList starting at offset 0x%X",
 			                          rawDataIndex);
 			std::string errorBody = StringHelper::Sprintf("Raw data size: 0x%zX.", rawDataSize);
-			HANDLE_ERROR(WarningType::Always, errorHeader, errorBody);
+			HANDLE_ERROR_PROCESS(WarningType::Always, errorHeader, errorBody);
 		}
 
 		uint8_t opcode = rawData.at(ptr);

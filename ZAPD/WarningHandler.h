@@ -15,12 +15,12 @@
 #endif
 
 // =======================================
-// Formatting macros
+/* Formatting macros */
 
 // TODO: move this somewhere else so it can be used by other help
 #define HELP_DT_INDT "  "
 
-// Macros for displaying warnings/errors
+/* Macros for formatting warnings/errors */
 #define VT_HILITE VT_BOLD_FGCOL(WHITE)
 #define VT_WARN VT_BOLD_FGCOL(PURPLE)
 #define VT_ERR VT_BOLD_FGCOL(RED)
@@ -36,19 +36,21 @@
 #define HANG_INDT "                "
 
 // =======================================
-// Warning and error macros
+/* Warning and error macros */
 // TODO: better names
 
-// General-purpose, plain style
+// General-purpose, plain style (only prints function,file,line in the preamble)
 #define HANDLE_ERROR(warningType, header, body) WarningHandler::Error_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 #define HANDLE_WARNING(warningType, header, body) WarningHandler::Warning_Plain(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 
-// For ZResource-related stuff
+// For processing XMLs or textures/blobs (preamble contains function,file,line; processed file)
+#define HANDLE_ERROR_PROCESS(warningType, header, body) WarningHandler::Error_Process(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
+#define HANDLE_WARNING_PROCESS(warningType, header, body) WarningHandler::Warning_Process(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
+
+// For ZResource-related stuff (preamble contains function,file,line; processed file; extracted file and offset)
 #define HANDLE_ERROR_RESOURCE(warningType, parent, resource, offset, header, body) WarningHandler::Error_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, resource, offset, header, body)
 #define HANDLE_WARNING_RESOURCE(warningType, parent, resource, offset, header, body) WarningHandler::Warning_Resource(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, parent, resource, offset, header, body)
 
-// For the texture/blob building mode
-#define HANDLE_WARNING_BUILD(warningType, header, body) WarningHandler::Warning_Build(__FILE__, __LINE__, __PRETTY_FUNCTION__, warningType, header, body)
 
 // =======================================
 
@@ -103,14 +105,16 @@ public:
     [[ noreturn ]]
     static void Error_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
     [[ noreturn ]]
+    static void Error_Process(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
+    [[ noreturn ]]
     static void Error_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body);
 
 
     static void WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body);
 
     static void Warning_Plain(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
+    static void Warning_Process(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
     static void Warning_Resource(const char* filename, int32_t line, const char* function, WarningType warnType, const ZFile *parent, const ZResource* res, const uint32_t offset, const std::string& header, const std::string& body);
-    static void Warning_Build(const char* filename, int32_t line, const char* function, WarningType warnType, const std::string& header, const std::string& body);
 
 
     static void PrintHelp();
