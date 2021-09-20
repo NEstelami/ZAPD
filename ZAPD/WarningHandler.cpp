@@ -1,26 +1,57 @@
+/**
+ * ZAPD Warning- and Error-handling system (?)
+ *
+ * This provides a common standard way to write ZAPD warnings/errors, which should be used for all
+ * such. It will pretty-print them in a uniform way, with styles defined in the header.
+ *
+ * Warnings/errors should be constructed using the macros given in the header; there are now plenty
+ * of examples in the codebase of how to do this. Their purposes are noted above each category in
+ * the header. Each warning has a type, one of the ones in warningStringToInitMap, or
+ * WarningType::Always, which is used for warnings that cannot be disabled and do not display a
+ * type.
+ *
+ * Currently there are three levels of alert a warning can have:
+ * - Off (does not display anything)
+ * - Warn (print a warning but continue processing)
+ * - Err (behave like an error, i.e. print and throw an exception to crash ZAPD when occurs)
+ *
+ * Flag use:
+ * - -Wno-foo disables warnings of type foo
+ * - -Wfoo enables warnings of type foo
+ * - -Werror=foo escalates foo to behave like an error
+ * - -Weverything enables all warnings
+ * - -Werror escalates all warnings to errors
+ *
+ * Errors do not have types, and will always throw an exception; they cannot be disabled.
+ */
 #include "WarningHandler.h"
 
 #include <cassert>
-
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
-
-typedef struct {
-    WarningType type;
-    WarningLevel defaultLevel;
-    std::string description;
+typedef struct
+{
+	WarningType type;
+	WarningLevel defaultLevel;
+	std::string description;
 } WarningInfoInit;
 
-typedef struct {
-    WarningLevel level;
-    std::string name;
-    std::string description;
+typedef struct
+{
+	WarningLevel level;
+	std::string name;
+	std::string description;
 } WarningInfo;
 
 /**
- * Master list of all default warning features
+ * Master list of all default warning types and features
+ *
+ * To add a warning type, fill in a new row of this map. Think carefully about what its default
+ * level should be, and try and make the description both brief and informative: it is used in the
+ * help message, so again, think about what the end user needs to know.
  */
+// clang-format off
 static const std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"deprecated",              {WarningType::Deprecated,               
 #ifdef DEPRECATION_ON
@@ -59,6 +90,9 @@ void WarningHandler::ConstructTypeToInfoMap() {
 
 bool WarningHandler::Werror = false;
 
+/**
+ * Initialises the main warning type map and reads flags passed to set warning level.
+ */
 void WarningHandler::Init(int argc, char* argv[]) {
     ConstructTypeToInfoMap();
 
@@ -173,7 +207,7 @@ void WarningHandler::ExtractedFilePreamble(const ZFile *parent, const ZResource*
 }
 
 /**
- * Construct the rest of the message, after warning:/error:
+ * Construct the rest of the message, after warning:/error. The message is filled in one character at a time, with indents added after newlines
  */
 std::string WarningHandler::ConstructMessage(std::string message, const std::string& header, const std::string& body) {
     message.reserve(message.size() + header.size() + body.size() + 10 * (sizeof(HANG_INDT) - 1));
