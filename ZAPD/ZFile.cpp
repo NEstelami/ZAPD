@@ -100,7 +100,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		{
 			std::string errorHeader =
 				StringHelper::Sprintf("'Game' type '%s' is not supported.", gameStr);
-			HANDLE_ERROR(WarningType::InvalidAttributeValue, errorHeader, "");
+			HANDLE_ERROR_PROCESS(WarningType::InvalidAttributeValue, errorHeader, "");
 		}
 	}
 
@@ -120,7 +120,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	}
 	else
 	{
-		HANDLE_WARNING(WarningType::MissingSegment, "missing 'Segment' attribute in <File>", "");
+		HANDLE_WARNING_PROCESS(WarningType::MissingSegment, "missing 'Segment' attribute in <File>", "");
 	}
 
 	if (mode == ZFileMode::Extract)
@@ -129,7 +129,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		{
 			std::string errorHeader = StringHelper::Sprintf("binary file '%s' does not exist.",
 			                                                (basePath / name).c_str());
-			HANDLE_ERROR(WarningType::Always, errorHeader, "");
+			HANDLE_ERROR_PROCESS(WarningType::Always, errorHeader, "");
 		}
 
 		rawData = File::ReadAllBytes((basePath / name).string());
@@ -160,10 +160,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			if (offsetSet.find(offsetXml) != offsetSet.end())
 			{
 				std::string errorHeader =
-					StringHelper::Sprintf("Repeated 'Offset' attribute: %s", offsetXml);
-				std::string errorBody =
-					StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
-				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
+					StringHelper::Sprintf("repeated 'Offset' attribute: %s", offsetXml);
+				HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
 			}
 			offsetSet.insert(offsetXml);
 		}
@@ -179,10 +177,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			if (outNameSet.find(outNameXml) != outNameSet.end())
 			{
 				std::string errorHeader =
-					StringHelper::Sprintf("Repeated 'OutName' attribute: %s", outNameXml);
-				std::string errorBody =
-					StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
-				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
+					StringHelper::Sprintf("repeated 'OutName' attribute: %s", outNameXml);
+				HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
 			}
 			outNameSet.insert(outNameXml);
 		}
@@ -191,10 +187,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			if (nameSet.find(nameXml) != nameSet.end())
 			{
 				std::string errorHeader =
-					StringHelper::Sprintf("Repeated 'Name' attribute: %s", nameXml);
-				std::string errorBody =
-					StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
-				HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
+					StringHelper::Sprintf("repeated 'Name' attribute: %s", nameXml);
+				HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
 			}
 			nameSet.insert(nameXml);
 		}
@@ -219,17 +213,13 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		else if (std::string(child->Name()) == "File")
 		{
 			std::string errorHeader = "Can't declare a <File> inside a <File>";
-			std::string errorBody =
-				StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
-			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
+			HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
 		}
 		else
 		{
 			std::string errorHeader = StringHelper::Sprintf(
 				"Unknown element found inside a <File> element: %s", nodeName.c_str());
-			std::string errorBody =
-				StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
-			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
+			HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
 		}
 	}
 }

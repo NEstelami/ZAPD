@@ -75,7 +75,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		if (!canHaveInner && !reader->NoChildren())
 		{
 			std::string errorHeader = StringHelper::Sprintf("resource '%s' with inner element/child detected", reader->Name());
-			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, "");
+			HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
 		}
 
 		for (const auto& attr : registeredAttributes)

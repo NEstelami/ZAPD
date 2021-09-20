@@ -855,6 +855,7 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 	else if (str == "ci8")
 		texType = TextureType::Palette8bpp;
 	else
+		// TODO: handle this case in a more coherent way
 		HANDLE_WARNING(WarningType::InvalidAttributeValue, "invalid value found for 'Type' attribute", "Defaulting to ''.");
 	return texType;
 }

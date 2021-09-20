@@ -38,7 +38,14 @@
  *     and fixing the warning/error. Can be a sentence with captialisation and '.' on the end.
  *
  * Please think of what the end user will find most useful when writing the header and body, and try
- * to keep it brief without sacrificing important information!
+ * to keep it brief without sacrificing important information! Also remember that if the user is
+ * only looking at stderr, they will normally have no other context.
+ * 
+ * Warning vs error
+ * ===
+ * The principle that we have operated on so far is 
+ * - issue a warning if ZAPD will still be able to produce a valid, compilable C file that will match
+ * - if this cannot happen, use an error.
  */
 #include "WarningHandler.h"
 
@@ -233,14 +240,11 @@ std::string WarningHandler::ConstructMessage(std::string message, const std::str
     return message;
 }
 
+/* Error module functions */
+
 void WarningHandler::PrintErrorAndThrow(const std::string& header, const std::string& body) {
     std::string errorMsg = ERR_FMT("error: ");
     throw std::runtime_error(ConstructMessage(errorMsg, header, body));
-}
-
-void WarningHandler::PrintWarningBody(const std::string& header, const std::string& body) {
-    std::string errorMsg = WARN_FMT("warning: ");
-    fprintf(stderr, "%s", ConstructMessage(errorMsg, header, body).c_str());
 }
 
 /* Error types, to be used via the macros */
@@ -280,6 +284,12 @@ void WarningHandler::Error_Resource(const char* filename, int32_t line, const ch
     ErrorType(warnType, header, body);
 }
 
+/* Warning module functions */
+
+void WarningHandler::PrintWarningBody(const std::string& header, const std::string& body) {
+    std::string errorMsg = WARN_FMT("warning: ");
+    fprintf(stderr, "%s", ConstructMessage(errorMsg, header, body).c_str());
+}
 
 void WarningHandler::WarningTypeAndChooseEscalate(WarningType warnType, const std::string& header, const std::string& body) {
     std::string headerMsg = header;
