@@ -17,8 +17,8 @@
  * - Err (behave like an error, i.e. print and throw an exception to crash ZAPD when occurs)
  *
  * Flag use:
- * - -Wno-foo disables warnings of type foo
  * - -Wfoo enables warnings of type foo
+ * - -Wno-foo disables warnings of type foo
  * - -Werror=foo escalates foo to behave like an error
  * - -Weverything enables all warnings
  * - -Werror escalates all warnings to errors
@@ -40,12 +40,18 @@
  * Please think of what the end user will find most useful when writing the header and body, and try
  * to keep it brief without sacrificing important information! Also remember that if the user is
  * only looking at stderr, they will normally have no other context.
- * 
+ *
  * Warning vs error
  * ===
- * The principle that we have operated on so far is 
- * - issue a warning if ZAPD will still be able to produce a valid, compilable C file that will match
+ * The principle that we have operated on so far is
+ * - issue a warning if ZAPD will still be able to produce a valid, compilable C file that will
+ *     match
  * - if this cannot happen, use an error.
+ *
+ * Documentation
+ * ===
+ * Remember that all warnings also need to be documented in the README.md. The help is generated
+ * automatically.
  */
 #include "WarningHandler.h"
 
@@ -87,12 +93,12 @@ static const std::unordered_map<std::string, WarningInfoInit> warningStringToIni
     {"missing-offsets",         {WarningType::MissingOffsets,        WarningLevel::Warn, "Offset attribute missing in XML tag"}},
     {"intersection",            {WarningType::Intersection,          WarningLevel::Warn, "Two assets intersect"}},
     {"missing-attribute",       {WarningType::MissingAttribute,      WarningLevel::Warn, "Required attribute missing in XML tag"}},
-    {"invalid-attribute-value", {WarningType::InvalidAttributeValue, WarningLevel::Warn, "Attribute declared in XML is wrong"}},
+    {"invalid-attribute-value", {WarningType::InvalidAttributeValue, WarningLevel::Err,  "Attribute declared in XML is wrong"}},
     {"unknown-attribute",       {WarningType::UnknownAttribute,      WarningLevel::Warn, "Unknown attribute in XML entry tag"}},
     {"invalid-xml",             {WarningType::InvalidXML,            WarningLevel::Warn, "XML has syntax errors"}},
     {"invalid-jpeg",            {WarningType::InvalidJPEG,           WarningLevel::Warn, "JPEG file does not conform to the game's format requirements"}},
     {"invalid-png",             {WarningType::InvalidPNG,            WarningLevel::Warn, "Issues arising when processing PNG data"}},
-    {"invalid-extracted-data",  {WarningType::InvalidExtractedData,  WarningLevel::Warn, "Extracted data does not have correct form"}},
+    {"invalid-extracted-data",  {WarningType::InvalidExtractedData,  WarningLevel::Err,  "Extracted data does not have correct form"}},
     {"missing-segment",         {WarningType::MissingSegment,        WarningLevel::Warn, "Segment not given in File tag in XML"}},
     {"hardcoded-pointer",       {WarningType::HardcodedPointer,      WarningLevel::Warn, "ZAPD lacks the info to make a symbol, so must output a hardcoded pointer"}},
     {"not-implemented",         {WarningType::NotImplemented,        WarningLevel::Warn, "ZAPD does not currently support this feature"}},
@@ -348,19 +354,29 @@ void WarningHandler::Warning_Resource(const char* filename, int32_t line, const 
 
 /* Help-related functions */
 
+#include <set>
+
 /**
  * Print each warning name, default status, and description using the init map
  */
 void WarningHandler::PrintHelp() {
+    std::set<std::string> sortedKeys;
+    WarningInfoInit warningInfo;
     uint columnWidth = 25;
     std::string dt;
 
+    // Sort keys through the magic of `set`, to print in alphabetical order
+    for (auto& it : warningStringToInitMap) {
+        sortedKeys.insert(it.first);
+    }
+
     printf("\nWarning types ( * means enabled by default)\n");
-    for (auto& entry : warningStringToInitMap) {
-        if (entry.second.defaultLevel <= WarningLevel::Warn) {
+    for (auto& key : sortedKeys) {
+        warningInfo = warningStringToInitMap.at(key);
+        if (warningInfo.defaultLevel <= WarningLevel::Warn) {
             dt = "-W";
-            dt += entry.first;
-            if (entry.second.defaultLevel == WarningLevel::Warn) {
+            dt += key;
+            if (warningInfo.defaultLevel == WarningLevel::Warn) {
                 dt += " *";
             }
             printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
@@ -368,21 +384,21 @@ void WarningHandler::PrintHelp() {
             if (dt.length() + 2 > columnWidth) {
                 printf("\n" HELP_DT_INDT "%-*s", columnWidth, "");
             }
-            printf("%s\n", entry.second.description.c_str());
+            printf("%s\n", warningInfo.description.c_str());
         }
     }
 
     printf("\nDefault errors\n");
-    for (auto& entry : warningStringToInitMap) {
-        if (entry.second.defaultLevel > WarningLevel::Warn) {
+    for (auto& key : sortedKeys) {
+        if (warningInfo.defaultLevel > WarningLevel::Warn) {
             dt = "-W";
-            dt += entry.first;
+            dt += key;
             printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
 
             if (dt.length() + 2 > columnWidth) {
                 printf("\n" HELP_DT_INDT "%*s", columnWidth, "");
             }
-            printf("%s\n", entry.second.description.c_str());
+            printf("%s\n", warningInfo.description.c_str());
         }
     }
 
