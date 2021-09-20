@@ -260,8 +260,6 @@ void ZCutscene::ParseRawData()
 				cmd = new CutsceneCommandEnd(rawData, currentPtr);
 				break;
 			case CutsceneCommands::Error:
-				// fprintf(stderr, "Cutscene command error %d  %s  %d\n", (int32_t)cmdID, __FILE__,
-				//         __LINE__);
 				HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("Cutscene command error %d", cmdID), "");
 				break;
 			}
@@ -440,7 +438,6 @@ CutsceneCommands ZCutscene::GetCommandFromID(int32_t id)
 		return CutsceneCommands::Unknown;
 	}
 
-	//fprintf(stderr, "WARNING: Could not identify cutscene command ID 0x%04X\n", id);
 	HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("Could not identify cutscene command. ID 0x%04X", id), "");
 
 	return CutsceneCommands::Error;

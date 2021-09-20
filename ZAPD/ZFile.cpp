@@ -98,8 +98,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			Globals::Instance->game = ZGame::OOT_RETAIL;
 		else
 		{
-			// throw std::runtime_error(
-			// 	StringHelper::Sprintf("Error: Game type %s not supported.", gameStr));
 			std::string errorHeader =
 				StringHelper::Sprintf("Game type '%s' is not supported.", gameStr);
 			HANDLE_ERROR(WarningType::InvalidAttributeValue, errorHeader, "");
@@ -129,8 +127,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	{
 		if (!File::Exists((basePath / name).string()))
 		{
-			// throw std::runtime_error(
-			// 	StringHelper::Sprintf("Error! File %s does not exist.", (basePath / name).c_str()));
 			std::string errorHeader = StringHelper::Sprintf("Binary file '%s' does not exist.",
 			                                                (basePath / name).c_str());
 			HANDLE_ERROR(WarningType::Always, errorHeader, "");
@@ -163,9 +159,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 
 			if (offsetSet.find(offsetXml) != offsetSet.end())
 			{
-				// throw std::runtime_error(StringHelper::Sprintf(
-				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Offset' attribute: %s \n",
-				// 	name.c_str(), offsetXml));
 				std::string errorHeader =
 					StringHelper::Sprintf("Repeated 'Offset' attribute: %s", offsetXml);
 				std::string errorBody =
@@ -174,15 +167,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 			}
 			offsetSet.insert(offsetXml);
 		}
-		// else if (Globals::Instance->warnNoOffset)
-		// {
-		// 	//fprintf(stderr, "Warning No offset specified for: %s", nameXml);
-		// }
-		// else if (Globals::Instance->errorNoOffset)
-		// {
-		// 	throw std::runtime_error(
-		// 		StringHelper::Sprintf("Error no offset specified for %s", nameXml));
-		// }
 		else
 		{
 			HANDLE_WARNING_RESOURCE(WarningType::MissingOffsets, this, nullptr, rawDataIndex,
@@ -194,9 +178,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())
 			{
-				// throw std::runtime_error(StringHelper::Sprintf(
-				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'OutName' attribute: %s \n",
-				// 	name.c_str(), outNameXml));
 				std::string errorHeader =
 					StringHelper::Sprintf("Repeated 'OutName' attribute: %s", outNameXml);
 				std::string errorBody =
@@ -209,10 +190,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		{
 			if (nameSet.find(nameXml) != nameSet.end())
 			{
-				// throw std::runtime_error(StringHelper::Sprintf(
-				// 	"ZFile::ParseXML: Error in '%s'.\n\t Repeated 'Name' attribute: %s \n",
-				// 	name.c_str(), nameXml));
-
 				std::string errorHeader =
 					StringHelper::Sprintf("Repeated 'Name' attribute: %s", nameXml);
 				std::string errorBody =
@@ -241,10 +218,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		}
 		else if (std::string(child->Name()) == "File")
 		{
-			// throw std::runtime_error(StringHelper::Sprintf(
-			// 	"ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n",
-			// 	name.c_str()));
-
 			std::string errorHeader = "Can't declare a <File> inside a <File>";
 			std::string errorBody =
 				StringHelper::Sprintf("While processing the file '%s'.", name.c_str());
@@ -252,10 +225,6 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		}
 		else
 		{
-			// throw std::runtime_error(
-			// 	StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n\t Unknown element found "
-			//                           "inside a File element: '%s'.\n",
-			//                           name.c_str(), nodeName.c_str()));
 			std::string errorHeader = StringHelper::Sprintf(
 				"Unknown element found inside a <File> element: %s", nodeName.c_str());
 			std::string errorBody =
@@ -946,12 +915,6 @@ std::string ZFile::ProcessDeclarations()
 			{
 				Declaration* currentDecl = declarations.at(currentAddress);
 
-				// fprintf(stderr,
-				//        "WARNING: Intersection detected from 0x%06X:0x%06X (%s), conflicts with "
-				//        "0x%06X (%s)\n",
-				//        lastAddr, lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
-				//        currentDecl->varName.c_str());
-
 				std::string intersectionInfo = StringHelper::Sprintf(
 					"Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr,
 					lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
@@ -1020,16 +983,8 @@ std::string ZFile::ProcessDeclarations()
 						diff, src);
 					decl->isUnaccounted = true;
 
-					// if (Globals::Instance->warnUnaccounted)
-					//{
 					if (nonZeroUnaccounted)
 					{
-						// fprintf(
-						//	stderr,
-						//	"Warning in file: %s (%s)\n"
-						//	"\t A non-zero unaccounted block was found at address '0x%06X'.\n"
-						//	"\t Block size: '0x%X'.\n",
-						//	xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 						HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr,
 						                        unaccountedAddress,
 						                        "A non-zero unaccounted block was found.",
@@ -1037,18 +992,11 @@ std::string ZFile::ProcessDeclarations()
 					}
 					else if (diff >= 16)
 					{
-						// fprintf(stderr,
-						//        "Warning in file: %s (%s)\n"
-						//        "\t A big (size>=0x10) zero-only unaccounted block was found "
-						//        "at address '0x%06X'.\n"
-						//        "\t Block size: '0x%X'.\n",
-						//        xmlFilePath.c_str(), name.c_str(), unaccountedAddress, diff);
 						HANDLE_WARNING_RESOURCE(
 							WarningType::Unaccounted, this, nullptr, unaccountedAddress,
 							"A big (size>=0x10) zero-only unaccounted block was found.",
 							StringHelper::Sprintf("Block size: '0x%X'", diff));
 					}
-					//}
 				}
 			}
 		}

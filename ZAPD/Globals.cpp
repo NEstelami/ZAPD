@@ -76,7 +76,6 @@ void Globals::ReadConfigFile(const std::string& configFilePath)
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
-		// throw std::runtime_error("Error: Unable to read config file.");
 		HANDLE_ERROR(WarningType::InvalidXML, StringHelper::Sprintf("unable to read config XML '%s'", configFilePath.c_str()), "");
 		return;
 	}
@@ -138,7 +137,6 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
-		// fprintf(stderr, "Warning: Unable to read texture pool XML with error code %i\n", eResult);
 		HANDLE_WARNING(WarningType::InvalidXML, StringHelper::Sprintf("unable to read texture pool XML with error code %i", eResult), "");
 		return;
 	}

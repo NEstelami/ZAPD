@@ -67,21 +67,13 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 
 			if (!attrDeclared)
 			{
-				//fprintf(stderr,
-				//        "ZResource::ParseXML: Warning while parsing '%s'.\n"
-				//        "\t Unexpected '%s' attribute in resource '%s'.\n",
-				//        parent->GetName().c_str(), attrName.c_str(), reader->Name());
-				HANDLE_WARNING_RESOURCE(WarningType::UnknownAttribute, parent, this, rawDataIndex, StringHelper::Sprintf("Unexpected '%s' attribute in resource '%s'.", attrName.c_str(), reader->Name()), "");
+				HANDLE_WARNING_RESOURCE(WarningType::UnknownAttribute, parent, this, rawDataIndex, StringHelper::Sprintf("Unexpected '%s' attribute in resource <%s>", attrName.c_str(), reader->Name()), "");
 			}
 			attrs = attrs->Next();
 		}
 
 		if (!canHaveInner && !reader->NoChildren())
 		{
-			// throw std::runtime_error(
-			// 	StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n"
-			//                           "\t Resource '%s' with inner element/child detected.\n",
-			//                           name.c_str(), reader->Name()));
 			std::string errorHeader = StringHelper::Sprintf("Resource '%s' with inner element/child detected", reader->Name());
 			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, "");
 		}
@@ -90,12 +82,6 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			if (attr.second.isRequired && attr.second.value == "")
 			{
-				// throw std::runtime_error(StringHelper::Sprintf(
-				// 	"ZResource::ParseXML: Fatal error while parsing '%s'.\n"
-				// 	"\t Missing required attribute '%s' in resource '%s'.\n"
-				// 	"\t Aborting...",
-				// 	parent->GetName().c_str(), attr.first.c_str(), reader->Name()));
-
 				std::string headerMsg = StringHelper::Sprintf("Missing required attribute '%s' in resource <%s>", attr.first.c_str(), reader->Name());
 				HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, headerMsg, "");
 			}
@@ -109,10 +95,6 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			if (!std::regex_match(name, r))
 			{
-				// throw std::domain_error(
-				// 	StringHelper::Sprintf("ZResource::ParseXML: Fatal error in '%s'.\n"
-				//                           "\t Resource with invalid 'Name' attribute.\n",
-				//                           name.c_str()));
 				HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "Invalid value found for 'Name' attribute.", "");
 			}
 		}
