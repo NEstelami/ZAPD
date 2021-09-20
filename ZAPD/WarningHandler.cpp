@@ -124,6 +124,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
                 }
             }
         } else {
+            // "-Werror=" / "-Wno-error=" parser
             if (currentArgv.rfind("error=", 0) == 0) {
                 // Read starting after the "error=" part
                 currentArgv = &argv[i][startingIndex + 6];

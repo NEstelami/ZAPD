@@ -78,11 +78,6 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 	uint32_t jpegMarker = BitConverter::ToUInt32BE(data, 0);
 	if (jpegMarker != JPEG_MARKER)
 	{
-		// fprintf(stderr,
-		//         "ZBackground::CheckValidJpeg: Warning.\n"
-		//         "\t Missing jpeg marker at the beginning of file: '%s'.\n"
-		//         "\t The game will skip this jpeg.\n",
-		//         filename.c_str());
 		HANDLE_WARNING_BUILD(WarningType::InvalidJPEG,
 		                     StringHelper::Sprintf("missing jpeg marker at beginning of file: '%s'",
 		                                           filename.c_str()),
@@ -92,12 +87,6 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 	    data.at(10) != '\0')
 	{
 		std::string jfifIdentifier(data.begin() + 6, data.begin() + 6 + 5);
-		// fprintf(stderr,
-		//         "ZBackground::CheckValidJpeg: Warning.\n"
-		//         "\t Missing 'JFIF' identifier. File: '%s'.\n"
-		//         "\t This image may be corrupted or not be a jpeg iamge.\n"
-		//         "\t The identifier found was '%s'.\n",
-		//         filename.c_str(), jfifIdentifier.c_str());
 		HANDLE_WARNING_BUILD(
 			WarningType::InvalidJPEG, "missing 'JFIF' identifier",
 			StringHelper::Sprintf(
@@ -108,11 +97,6 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 	uint8_t minorVersion = data.at(12);
 	if (majorVersion != 0x01 || minorVersion != 0x01)
 	{
-		// fprintf(stderr,
-		//         "ZBackground::CheckValidJpeg: Warning.\n"
-		//         "\t Wrong JFIF version '%i.%02i'. File: '%s'.\n"
-		//         "\t The expected version is '1.01'. The game may not be able to decode this image
-		//         " "properly.\n", majorVersion, minorVersion, filename.c_str());
 		HANDLE_WARNING_BUILD(
 			WarningType::InvalidJPEG,
 			StringHelper::Sprintf("wrong JFIF version '%i.%02i'", majorVersion, minorVersion),
@@ -123,23 +107,12 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 	{
 		// This may happen when creating a custom image with Exif, XMP, thumbnail, progressive, etc.
 		// enabled.
-		// fprintf(stderr,
-		//         "ZBackground::CheckValidJpeg: Warning.\n"
-		//         "\t There seems to be extra data before the image data in file: '%s'.\n"
-		//         "\t The game may not be able to decode this image properly.\n",
-		//         filename.c_str());
 		HANDLE_WARNING_BUILD(WarningType::InvalidJPEG,
 		                     "there seems to be extra data before the image data in this file",
 		                     "The game may not be able to decode this image correctly.");
 	}
 	if (data.size() > GetRawDataSize())
 	{
-		// fprintf(stderr,
-		//         "ZBackground::CheckValidJpeg: Warning.\n"
-		//         "\t The image is bigger than the screen buffer. File: '%s'.\n"
-		//         "\t Image size: %zu bytes.\n"
-		//         "\t Screen buffer size: %zu bytes.\n",
-		//         filename.c_str(), data.size(), GetRawDataSize());
 		HANDLE_WARNING_BUILD(
 			WarningType::InvalidJPEG, "the image is bigger than the screen buffer",
 			StringHelper::Sprintf("Image size: %zu bytes\nScreen buffer size: %zu bytes",
