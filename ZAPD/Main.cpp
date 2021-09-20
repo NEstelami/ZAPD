@@ -263,6 +263,10 @@ int main(int argc, char* argv[])
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
+    if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
+		WarningHandler::PrintWarningsDebugInfo();
+	}
+
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
 	{
 		bool procFileModeSuccess = false;

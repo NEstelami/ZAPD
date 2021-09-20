@@ -70,6 +70,7 @@ class WarningHandler {
 public:
     static void ConstructTypeToInfoMap();
     static void PrintWarningsInformation();
+    static void PrintWarningsDebugInfo();
 
 
     static void Init(int argc, char* argv[]);

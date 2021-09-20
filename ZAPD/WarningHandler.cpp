@@ -92,6 +92,35 @@ void WarningHandler::PrintWarningsInformation() {
     }
 }
 
+
+void WarningHandler::PrintWarningsDebugInfo()
+{
+    std::string dt;
+
+    printf("Warnings status:\n");
+    for (auto& it: warningTypeToInfoMap) {
+        dt = it.second.name;
+        dt += ": ";
+
+        printf("\t %-25s", dt.c_str());
+        switch (it.second.level)
+        {
+        case WarningLevel::Off:
+            printf(VT_FGCOL(LIGHTGRAY) "Off" VT_RST);
+            break;
+        case WarningLevel::Warn:
+            printf(VT_FGCOL(YELLOW) "Warn" VT_RST);
+            break;
+        case WarningLevel::Err:
+            printf(VT_FGCOL(RED) "Err" VT_RST);
+            break;
+
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
 bool WarningHandler::Werror = false;
 
 void WarningHandler::Init(int argc, char* argv[]) {
@@ -138,12 +167,6 @@ void WarningHandler::Init(int argc, char* argv[]) {
             else {
                 HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("Unknown warning flag '%s'", argv[i]), "");
             }
-        }
-    }
-
-    if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
-        for (auto& it: warningTypeToInfoMap) {
-            printf("%s: %i\n", it.second.name.c_str(), static_cast<int32_t>(it.second.level));
         }
     }
 }
