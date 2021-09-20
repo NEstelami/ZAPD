@@ -19,9 +19,9 @@ typedef struct {
 } WarningInfo;
 
 /**
- * Master list of all warning features
+ * Master list of all default warning features
  */
-std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
+static const std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"deprecated",              {WarningType::Deprecated,               
 #ifdef DEPRECATION_ON
     WarningLevel::Warn,
@@ -44,7 +44,10 @@ std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"not-implemented",         {WarningType::NotImplemented,        WarningLevel::Warn, "ZAPD does not currently support this feature"}},
 };
 
-std::unordered_map<WarningType, WarningInfo> warningTypeToInfoMap;
+/**
+ * Map constructed at runtime to contain the warning features as set by the user using -W flags.
+ */
+static std::unordered_map<WarningType, WarningInfo> warningTypeToInfoMap;
 
 void WarningHandler::ConstructTypeToInfoMap() {
     for (auto& entry : warningStringToInitMap) {
@@ -52,73 +55,6 @@ void WarningHandler::ConstructTypeToInfoMap() {
     }
     warningTypeToInfoMap[WarningType::Always] = {WarningLevel::Warn, "always", "you shouldn't be reading this"};
     assert(warningTypeToInfoMap.size() == static_cast<size_t>(WarningType::Max));
-}
-
-#define HELP_DT_INDT "  "
-
-void WarningHandler::PrintWarningsInformation() {
-    uint columnWidth = 25;
-    std::string dt;
-
-    printf("\nWarning types ( * means enabled by default)\n");
-    for (auto& entry : warningStringToInitMap) {
-        if (entry.second.defaultLevel <= WarningLevel::Warn) {
-            dt = "-W";
-            dt += entry.first;
-            if (entry.second.defaultLevel == WarningLevel::Warn) {
-                dt += " *";
-            }
-            printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
-
-            if (dt.length() + 2 > columnWidth) {
-                printf("\n" HELP_DT_INDT "%-*s", columnWidth, "");
-            }
-            printf("%s\n", entry.second.description.c_str());
-        }
-    }
-
-    printf("\nDefault errors\n");
-    for (auto& entry : warningStringToInitMap) {
-        if (entry.second.defaultLevel > WarningLevel::Warn) {
-            dt = "-W";
-            dt += entry.first;
-            printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
-
-            if (dt.length() + 2 > columnWidth) {
-                printf("\n" HELP_DT_INDT "%*s", columnWidth, "");
-            }
-            printf("%s\n", entry.second.description.c_str());
-        }
-    }
-}
-
-
-void WarningHandler::PrintWarningsDebugInfo()
-{
-    std::string dt;
-
-    printf("Warnings status:\n");
-    for (auto& it: warningTypeToInfoMap) {
-        dt = it.second.name;
-        dt += ": ";
-
-        printf("\t %-25s", dt.c_str());
-        switch (it.second.level)
-        {
-        case WarningLevel::Off:
-            printf(VT_FGCOL(LIGHTGRAY) "Off" VT_RST);
-            break;
-        case WarningLevel::Warn:
-            printf(VT_FGCOL(YELLOW) "Warn" VT_RST);
-            break;
-        case WarningLevel::Err:
-            printf(VT_FGCOL(RED) "Err" VT_RST);
-            break;
-
-        }
-        printf("\n");
-    }
-    printf("\n");
 }
 
 bool WarningHandler::Werror = false;
@@ -142,7 +78,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
             startingIndex = 5;
         }
 
-        // Skip "-W" or "-Wno-"
+        // Read starting after the "-W" or "-Wno-"
         std::string_view currentArgv = &argv[i][startingIndex];
 
         if (currentArgv == "error") {
@@ -155,7 +91,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
             }
         } else {
             if (currentArgv.rfind("error=", 0) == 0) {
-                // Skip the "error=" part
+                // Read starting after the "error=" part
                 currentArgv = &argv[i][startingIndex + 6];
                 warningTypeOn = warningTypeOn != WarningLevel::Off ? WarningLevel::Err : WarningLevel::Warn;
             }
@@ -355,14 +291,78 @@ void WarningHandler::Warning_Build(const char* filename, int32_t line, const cha
     WarningHandler::WarningTypeAndChooseEscalate(warnType, header, body);
 }
 
+/**
+ * Print each warning name, default status, and description using the init map
+ */
 void WarningHandler::PrintHelp() {
-    PrintWarningsInformation();
+    uint columnWidth = 25;
+    std::string dt;
+
+    printf("\nWarning types ( * means enabled by default)\n");
+    for (auto& entry : warningStringToInitMap) {
+        if (entry.second.defaultLevel <= WarningLevel::Warn) {
+            dt = "-W";
+            dt += entry.first;
+            if (entry.second.defaultLevel == WarningLevel::Warn) {
+                dt += " *";
+            }
+            printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
+
+            if (dt.length() + 2 > columnWidth) {
+                printf("\n" HELP_DT_INDT "%-*s", columnWidth, "");
+            }
+            printf("%s\n", entry.second.description.c_str());
+        }
+    }
+
+    printf("\nDefault errors\n");
+    for (auto& entry : warningStringToInitMap) {
+        if (entry.second.defaultLevel > WarningLevel::Warn) {
+            dt = "-W";
+            dt += entry.first;
+            printf(HELP_DT_INDT "%-*s", columnWidth, dt.c_str());
+
+            if (dt.length() + 2 > columnWidth) {
+                printf("\n" HELP_DT_INDT "%*s", columnWidth, "");
+            }
+            printf("%s\n", entry.second.description.c_str());
+        }
+    }
 
     printf("\n");
     printf("Other\n" HELP_DT_INDT "-Weverything will enable all existing warnings.\n" HELP_DT_INDT "-Werror will promote all warnings to errors.\n");
 
-    // TODO: mention -Weverything and -Werror
-
     printf("\n");
     printf("Warnings can be disabled using -Wno-... instead of -W...; -Weverything will override any -Wno-... flags passed before it.\n");
+}
+
+/**
+ * Print which warnings are currently enabled
+ */
+void WarningHandler::PrintWarningsDebugInfo()
+{
+    std::string dt;
+
+    printf("Warnings status:\n");
+    for (auto& it: warningTypeToInfoMap) {
+        dt = it.second.name;
+        dt += ": ";
+
+        printf(HELP_DT_INDT "%-25s", dt.c_str());
+        switch (it.second.level)
+        {
+        case WarningLevel::Off:
+            printf(VT_FGCOL(LIGHTGRAY) "Off" VT_RST);
+            break;
+        case WarningLevel::Warn:
+            printf(VT_FGCOL(YELLOW) "Warn" VT_RST);
+            break;
+        case WarningLevel::Err:
+            printf(VT_FGCOL(RED) "Err" VT_RST);
+            break;
+
+        }
+        printf("\n");
+    }
+    printf("\n");
 }

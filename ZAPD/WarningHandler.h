@@ -14,6 +14,9 @@
 #define __PRETTY_FUNCTION__ __func__
 #endif
 
+// TODO: move this somewhere else so it can be used by other help
+#define HELP_DT_INDT "  "
+
 // Macros for displaying warnings/errors
 #define VT_HILITE VT_BOLD_FGCOL(WHITE)
 #define VT_WARN VT_BOLD_FGCOL(PURPLE)
@@ -24,8 +27,10 @@
 #define ERR_FMT(string) (VT_ERR string VT_RST)
 
 // Maybe make WARN_LF instead
-#define WARN_INDT "\t"
-#define HANG_INDT "\t\t"
+// Currently 8 spaces
+#define WARN_INDT "        "
+// Currently 16 spaces
+#define HANG_INDT "                "
 
 // TODO: better names
 
@@ -69,11 +74,9 @@ enum class WarningLevel {
 class WarningHandler {
 public:
     static void ConstructTypeToInfoMap();
-    static void PrintWarningsInformation();
-    static void PrintWarningsDebugInfo();
-
 
     static void Init(int argc, char* argv[]);
+
 
     static bool IsWarningEnabled(WarningType warnType);
     static bool WasElevatedToError(WarningType warnType);
@@ -104,6 +107,8 @@ public:
 
 
     static void PrintHelp();
+    static void PrintWarningsDebugInfo();
+
 
 protected:
     static bool Werror;
