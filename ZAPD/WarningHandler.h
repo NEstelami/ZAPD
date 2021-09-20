@@ -108,8 +108,4 @@ public:
 
     static void PrintHelp();
     static void PrintWarningsDebugInfo();
-
-
-protected:
-    static bool Werror;
 };
