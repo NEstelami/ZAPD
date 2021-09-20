@@ -450,7 +450,7 @@ void TextureCyclingParams::DeclareReferences([[maybe_unused]] const std::string&
 				comment = " // Raw pointer, declare texture in XML to use proper symbol";
 
 				auto msgHeader = StringHelper::Sprintf(
-					"TexCycle texture array declared here points to unknown texture at address %s.",
+					"TexCycle texture array declared here points to unknown texture at address %s",
 					texName.c_str());
 				HANDLE_WARNING_RESOURCE(
 					WarningType::HardcodedPointer, parent, this, rawDataIndex, msgHeader,
@@ -538,9 +538,10 @@ void ZTextureAnimation::ParseRawData()
 				WarningType::Always, parent, this, rawDataIndex,
 				StringHelper::Sprintf(
 					"unknown TextureAnimationParams type 0x%02X in TextureAnimation", type),
-				StringHelper::Sprintf("entry reads  { 0x%02X, 0x%02X, 0x%08X }  (type should be "
-			                          "between 0x00 and 0x06 inclusive)",
-			                          currentEntry.segment, type, currentEntry.paramsPtr));
+				StringHelper::Sprintf(
+					"Entry reads  { 0x%02X, 0x%02X, 0x%08X } , but type should be "
+					"between 0x00 and 0x06 inclusive.",
+					currentEntry.segment, type, currentEntry.paramsPtr));
 		}
 
 		if (currentEntry.segment <= 0)
@@ -596,8 +597,8 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					HANDLE_WARNING_RESOURCE(
 						WarningType::InvalidExtractedData, parent, this, rawDataIndex,
 						"TextureAnimationParams entry has empty type (6), but params pointer is "
-						"not NULL.",
-						StringHelper::Sprintf("Params read { 0x%02X, 0x%02X, 0x%08X }",
+						"not NULL",
+						StringHelper::Sprintf("Params read { 0x%02X, 0x%02X, 0x%08X } .",
 					                          entry.segment, (int)entry.type, entry.paramsPtr));
 					return;
 				default:

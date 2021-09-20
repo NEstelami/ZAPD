@@ -260,7 +260,7 @@ void ZCutscene::ParseRawData()
 				cmd = new CutsceneCommandEnd(rawData, currentPtr);
 				break;
 			case CutsceneCommands::Error:
-				HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("Cutscene command error %d", cmdID), "");
+				HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("cutscene command error %d", cmdID), "");
 				break;
 			}
 
@@ -438,7 +438,7 @@ CutsceneCommands ZCutscene::GetCommandFromID(int32_t id)
 		return CutsceneCommands::Unknown;
 	}
 
-	HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("Could not identify cutscene command. ID 0x%04X", id), "");
+	HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("could not identify cutscene command. ID 0x%04X", id), "");
 
 	return CutsceneCommands::Error;
 }
@@ -1078,8 +1078,7 @@ std::string CutsceneCommandActorAction::GenerateSourceCode([[maybe_unused]] uint
 	{
 		result += StringHelper::Sprintf(
 			"\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %.11ef, "
-		    "%.11ef, "
-			"%.11ef),\n",
+		    "%.11ef, %.11ef),\n",
 			subCommand.c_str(), entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX,
 			entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY,

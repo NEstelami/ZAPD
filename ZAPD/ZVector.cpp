@@ -73,7 +73,7 @@ std::string ZVector::GetSourceTypeName() const
 	else
 	{
 		std::string msgHeader = StringHelper::Sprintf(
-			"Encountered unsupported vector type: %d dimensions, %s type", dimensions,
+			"encountered unsupported vector type: %d dimensions, %s type", dimensions,
 			ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
 
 		HANDLE_ERROR_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, msgHeader, "");

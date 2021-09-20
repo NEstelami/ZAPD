@@ -81,7 +81,7 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		HANDLE_WARNING_BUILD(WarningType::InvalidJPEG,
 		                     StringHelper::Sprintf("missing jpeg marker at beginning of file: '%s'",
 		                                           filename.c_str()),
-		                     "The game will skip this jpeg");
+		                     "The game will skip this jpeg.");
 	}
 	if (data.at(6) != 'J' || data.at(7) != 'F' || data.at(8) != 'I' || data.at(9) != 'F' ||
 	    data.at(10) != '\0')

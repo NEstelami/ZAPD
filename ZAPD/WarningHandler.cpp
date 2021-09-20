@@ -1,26 +1,73 @@
+/**
+ * ZAPD Warning- and Error-handling system (?)
+ * ===========================================
+ *
+ * This provides a common standard way to write ZAPD warnings/errors, which should be used for all
+ * such. It will pretty-print them in a uniform way, with styles defined in the header.
+ *
+ * Warnings/errors should be constructed using the macros given in the header; there are now plenty
+ * of examples in the codebase of how to do this. Their purposes are noted above each category in
+ * the header. Each warning has a type, one of the ones in warningStringToInitMap, or
+ * WarningType::Always, which is used for warnings that cannot be disabled and do not display a
+ * type.
+ *
+ * Currently there are three levels of alert a warning can have:
+ * - Off (does not display anything)
+ * - Warn (print a warning but continue processing)
+ * - Err (behave like an error, i.e. print and throw an exception to crash ZAPD when occurs)
+ *
+ * Flag use:
+ * - -Wno-foo disables warnings of type foo
+ * - -Wfoo enables warnings of type foo
+ * - -Werror=foo escalates foo to behave like an error
+ * - -Weverything enables all warnings
+ * - -Werror escalates all warnings to errors
+ *
+ * Errors do not have types, and will always throw an exception; they cannot be disabled.
+ *
+ * Format
+ * ===
+ * Each printed warning/error contains the same three sections:
+ * - Preamble: automatically generated; the content varies depending on category. It will print the
+ *     file and function that the warning is from, and information about the files being processed
+ *     or extracted.
+ * - Header: begins with 'warning: ' or 'error:', should contain essential information about the
+ *     warning/error, ends with the warning type if applicable. Printed with emphasis to make it
+ *     stand out. Does not start with a capital letter or end with a '.'
+ * - Body (optional): indented, should contain further diagnostic information useful for identifying
+ *     and fixing the warning/error. Can be a sentence with captialisation and '.' on the end.
+ *
+ * Please think of what the end user will find most useful when writing the header and body, and try
+ * to keep it brief without sacrificing important information!
+ */
 #include "WarningHandler.h"
 
 #include <cassert>
-
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
-
-typedef struct {
-    WarningType type;
-    WarningLevel defaultLevel;
-    std::string description;
+typedef struct
+{
+	WarningType type;
+	WarningLevel defaultLevel;
+	std::string description;
 } WarningInfoInit;
 
-typedef struct {
-    WarningLevel level;
-    std::string name;
-    std::string description;
+typedef struct
+{
+	WarningLevel level;
+	std::string name;
+	std::string description;
 } WarningInfo;
 
 /**
- * Master list of all default warning features
+ * Master list of all default warning types and features
+ *
+ * To add a warning type, fill in a new row of this map. Think carefully about what its default
+ * level should be, and try and make the description both brief and informative: it is used in the
+ * help message, so again, think about what the end user needs to know.
  */
+// clang-format off
 static const std::unordered_map<std::string, WarningInfoInit> warningStringToInitMap = {
     {"deprecated",              {WarningType::Deprecated,               
 #ifdef DEPRECATION_ON
@@ -57,6 +104,9 @@ void WarningHandler::ConstructTypeToInfoMap() {
     assert(warningTypeToInfoMap.size() == static_cast<size_t>(WarningType::Max));
 }
 
+/**
+ * Initialises the main warning type map and reads flags passed to set each warning type's level.
+ */
 void WarningHandler::Init(int argc, char* argv[]) {
     ConstructTypeToInfoMap();
 
@@ -100,7 +150,7 @@ void WarningHandler::Init(int argc, char* argv[]) {
                 warningTypeToInfoMap[it->second.type].level = warningTypeOn;
             }
             else {
-                HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("Unknown warning flag '%s'", argv[i]), "");
+                HANDLE_WARNING(WarningType::Always, StringHelper::Sprintf("unknown warning flag '%s'", argv[i]), "");
             }
         }
     }
@@ -160,7 +210,7 @@ void WarningHandler::ExtractedFilePreamble(const ZFile *parent, const ZResource*
 }
 
 /**
- * Construct the rest of the message, after warning:/error:
+ * Construct the rest of the message, after warning:/error. The message is filled in one character at a time, with indents added after newlines
  */
 std::string WarningHandler::ConstructMessage(std::string message, const std::string& header, const std::string& body) {
     message.reserve(message.size() + header.size() + body.size() + 10 * (sizeof(HANG_INDT) - 1));
