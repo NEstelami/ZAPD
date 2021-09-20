@@ -22,7 +22,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (typeXml == "")
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'Type' attribute in <Symbol>.", "Defaulting to 'void*'.");
+		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'Type' attribute in <Symbol>", "Defaulting to 'void*'.");
 		type = "void*";
 	}
 	else
@@ -33,7 +33,7 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 	std::string typeSizeXml = registeredAttributes.at("TypeSize").value;
 	if (typeSizeXml == "")
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'TypeSize' attribute in <Symbol>.", "Defaulting to '4'.");
+		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'TypeSize' attribute in <Symbol>", "Defaulting to '4'.");
 		typeSize = 4;  // Size of a word.
 	}
 	else

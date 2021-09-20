@@ -99,7 +99,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		else
 		{
 			std::string errorHeader =
-				StringHelper::Sprintf("Game type '%s' is not supported.", gameStr);
+				StringHelper::Sprintf("'Game' type '%s' is not supported.", gameStr);
 			HANDLE_ERROR(WarningType::InvalidAttributeValue, errorHeader, "");
 		}
 	}
@@ -120,14 +120,14 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	}
 	else
 	{
-		HANDLE_WARNING(WarningType::MissingSegment, "Missing 'Segment' attribute in <File>", "");
+		HANDLE_WARNING(WarningType::MissingSegment, "missing 'Segment' attribute in <File>", "");
 	}
 
 	if (mode == ZFileMode::Extract)
 	{
 		if (!File::Exists((basePath / name).string()))
 		{
-			std::string errorHeader = StringHelper::Sprintf("Binary file '%s' does not exist.",
+			std::string errorHeader = StringHelper::Sprintf("binary file '%s' does not exist.",
 			                                                (basePath / name).c_str());
 			HANDLE_ERROR(WarningType::Always, errorHeader, "");
 		}
@@ -170,7 +170,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 		else
 		{
 			HANDLE_WARNING_RESOURCE(WarningType::MissingOffsets, this, nullptr, rawDataIndex,
-			                        StringHelper::Sprintf("No offset specified for %s.", nameXml),
+			                        StringHelper::Sprintf("no offset specified for %s.", nameXml),
 			                        "");
 		}
 
@@ -920,7 +920,7 @@ std::string ZFile::ProcessDeclarations()
 					lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
 					currentDecl->varName.c_str());
 				HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress,
-				                        "Intersection detected.", intersectionInfo);
+				                        "intersection detected", intersectionInfo);
 			}
 		}
 
@@ -987,14 +987,14 @@ std::string ZFile::ProcessDeclarations()
 					{
 						HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr,
 						                        unaccountedAddress,
-						                        "A non-zero unaccounted block was found.",
+						                        "a non-zero unaccounted block was found",
 						                        StringHelper::Sprintf("Block size: '0x%X'", diff));
 					}
 					else if (diff >= 16)
 					{
 						HANDLE_WARNING_RESOURCE(
 							WarningType::Unaccounted, this, nullptr, unaccountedAddress,
-							"A big (size>=0x10) zero-only unaccounted block was found.",
+							"a big (size>=0x10) zero-only unaccounted block was found",
 							StringHelper::Sprintf("Block size: '0x%X'", diff));
 					}
 				}

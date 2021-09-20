@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, WarningHandler);
 			signal(SIGABRT, WarningHandler);
 #else
-			HANDLE_WARNING(WarningType::Always, "tried to set error handler, but this ZAPD build lacks support for one.", "");
+			HANDLE_WARNING(WarningType::Always, "tried to set error handler, but this ZAPD build lacks support for one", "");
 #endif
 		}
 		else if (arg == "-v")  // Verbose

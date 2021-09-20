@@ -95,7 +95,7 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			if (!std::regex_match(name, r))
 			{
-				HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Name' attribute.", "");
+				HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Name' attribute", "");
 			}
 		}
 

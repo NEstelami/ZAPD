@@ -226,7 +226,7 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 	std::string skelOffsetXml = registeredAttributes.at("SkelOffset").value;
 	if (skelOffsetXml == "")
 	{
-		HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'SkelOffset' attribute in <ZCurveAnimation>", "You need to provide the offset of the curve skeleton");
+		HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'SkelOffset' attribute in <ZCurveAnimation>", "You need to provide the offset of the curve skeleton.");
 	}
 	skelOffset = StringHelper::StrToL(skelOffsetXml, 0);
 }

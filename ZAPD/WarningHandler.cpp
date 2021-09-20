@@ -33,9 +33,9 @@
  *     or extracted.
  * - Header: begins with 'warning: ' or 'error:', should contain essential information about the
  *     warning/error, ends with the warning type if applicable. Printed with emphasis to make it
- *     stand out
+ *     stand out. Does not start with a capital letter or end with a '.'
  * - Body (optional): indented, should contain further diagnostic information useful for identifying
- *     and fixing the warning/error
+ *     and fixing the warning/error. Can be a sentence with captialisation and '.' on the end.
  *
  * Please think of what the end user will find most useful when writing the header and body, and try
  * to keep it brief without sacrificing important information!

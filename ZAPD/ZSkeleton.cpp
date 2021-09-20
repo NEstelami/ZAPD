@@ -35,7 +35,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		type = ZSkeletonType::Curve;
 	else if (skelTypeXml != "Normal")
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Type' attribute.", "Defaulting to 'Normal'.");
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Type' attribute", "Defaulting to 'Normal'.");
 		type = ZSkeletonType::Normal;
 	}
 
@@ -43,7 +43,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	limbType = ZLimb::GetTypeByAttributeName(limbTypeXml);
 	if (limbType == ZLimbType::Invalid)
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'LimbType' attribute.", "Defaulting to 'Standard'.");
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'LimbType' attribute", "Defaulting to 'Standard'.");
 		limbType = ZLimbType::Standard;
 	}
 }
