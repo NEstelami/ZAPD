@@ -118,17 +118,18 @@ Additionally, you can pass the flag `--version` to see the current ZAPD version.
 ### Warning flags
 
 ZAPD contains a variety of warning types, with similar syntax to GCC or Clang's compiler warnings. Warnings can have three levels:
- - Off (does not display anything)
- - Warn (print a warning but continue processing)
- - Err (behave like an error, i.e. print and throw an exception to crash ZAPD when occurs)
+
+- Off (does not display anything)
+- Warn (print a warning but continue processing)
+- Err (behave like an error, i.e. print and throw an exception to crash ZAPD when occurs)
 
 Each warning type uses one of these by default, but can be modified with flags, similarly to GCC or Clang:
- - `-Wfoo` enables warnings of type `foo`
- - `-Wno-foo` disables warnings of type `foo`
- - `-Werror=foo` escalates `foo` to behave like an error
- - `-Weverything` enables all warnings (they may be turned off using `-Wno-` flags afterwards)
- - `-Werror` escalates all enabled warnings to errors
 
+- `-Wfoo` enables warnings of type `foo`
+- `-Wno-foo` disables warnings of type `foo`
+- `-Werror=foo` escalates `foo` to behave like an error
+- `-Weverything` enables all warnings (they may be turned off using `-Wno-` flags afterwards)
+- `-Werror` escalates all enabled warnings to errorsZZ
 
 All warning types currently implemented, with their default levels:
 
@@ -148,7 +149,6 @@ All warning types currently implemented, with their default levels:
 | `-Wnot-implemented`         | Warn          | ZAPD does not currently support this feature                             |
 | `-Wunaccounted`             | Off           | Large blocks of unaccounted                                              |
 | `-Wunknown-attribute`       | Warn          | Unknown attribute in XML entry tag                                       |
-
 
 There are also errors that do not have a type, and cannot be disabled.
 
