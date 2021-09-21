@@ -1,6 +1,6 @@
 /**
- * ZAPD Warning- and Error-handling system (?)
- * ===========================================
+ * ZAPD Warning- and Error-handling system
+ * =======================================
  *
  * This provides a common standard way to write ZAPD warnings/errors, which should be used for all
  * such. It will pretty-print them in a uniform way, with styles defined in the header.

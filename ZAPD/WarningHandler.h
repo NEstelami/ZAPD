@@ -72,7 +72,7 @@ enum class WarningType
 	Unaccounted,
 	MissingOffsets,
 	Intersection,
-	MissingAttribute,  // MissingXmlAttributes?
+	MissingAttribute,
 	InvalidAttributeValue,
 	UnknownAttribute,
 	InvalidXML,
@@ -82,7 +82,6 @@ enum class WarningType
 	MissingSegment,
 	HardcodedPointer,
 	NotImplemented,
-
 	Max,
 };
 

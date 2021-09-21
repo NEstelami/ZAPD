@@ -35,7 +35,7 @@ void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
 
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #define ARRAY_COUNT(arr) (sizeof(arr) / sizeof(arr[0]))
-void WarningHandler(int sig)
+void ErrorHandler(int sig)
 {
 	void* array[4096];
 	const size_t nMaxFrames = sizeof(array) / sizeof(array[0]);
@@ -187,8 +187,8 @@ int main(int argc, char* argv[])
 		else if (arg == "-eh")  // Enable Error Handler
 		{
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
-			signal(SIGSEGV, WarningHandler);
-			signal(SIGABRT, WarningHandler);
+			signal(SIGSEGV, ErrorHandler);
+			signal(SIGABRT, ErrorHandler);
 #else
 			HANDLE_WARNING(WarningType::Always,
 			               "tried to set error handler, but this ZAPD build lacks support for one",
@@ -331,7 +331,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 {
 	if (xmlFilePath == "")
 	{
-		// We could consider reading from stdin
+		// TODO: We could consider reading from stdin
 		HANDLE_ERROR(WarningType::Always, "the input filename cannot be empty", "");
 	}
 
