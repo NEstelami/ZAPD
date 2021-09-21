@@ -1,4 +1,3 @@
-#include "BuildInfo.h"
 #include "Globals.h"
 #include "Overlays/ZOverlay.h"
 #include "Utils/Directory.h"
