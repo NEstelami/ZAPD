@@ -149,6 +149,8 @@ void ZTexture::ParseRawData()
 		PrepareBitmapPalette8();
 		break;
 	case TextureType::Error:
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                      StringHelper::Sprintf("Invalid texture format", format), "");
 		assert(!"TODO");
 		break;
 	}
@@ -394,7 +396,7 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 		PrepareRawDataPalette8(pngFilePath);
 		break;
 	case TextureType::Error:
-		assert(!"TODO");
+		HANDLE_ERROR_PROCESS(WarningType::InvalidPNG, "Input PNG file has invalid format type", "");
 		break;
 	}
 }
