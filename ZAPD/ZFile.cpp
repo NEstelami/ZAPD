@@ -1,6 +1,6 @@
 #include "ZFile.h"
-#include <Utils/BinaryWriter.h>
-#include <Utils/MemoryStream.h>
+#include "Utils/BinaryWriter.h"
+#include "Utils/MemoryStream.h"
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>

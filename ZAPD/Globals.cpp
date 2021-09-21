@@ -1,7 +1,6 @@
 #include "Globals.h"
 
 #include <algorithm>
-
 #include "Utils/File.h"
 #include "Utils/Path.h"
 #include "WarningHandler.h"

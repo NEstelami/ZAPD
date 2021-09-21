@@ -1,15 +1,14 @@
 #pragma once
 
-#include <Utils/BinaryWriter.h>
+#include "Utils/BinaryWriter.h"
 #include <map>
 #include <stdexcept>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include "Declaration.h"
 #include "tinyxml2.h"
-
-#include <Utils/Directory.h>
+#include "Utils/Directory.h"
 
 #define SEGMENT_SCENE 2
 #define SEGMENT_ROOM 3

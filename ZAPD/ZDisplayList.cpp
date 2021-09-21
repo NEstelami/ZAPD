@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
-#include <math.h>
+#include <cmath>
 
 #include "Globals.h"
 #include "OutputFormatter.h"
