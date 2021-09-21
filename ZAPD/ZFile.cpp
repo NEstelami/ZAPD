@@ -1,13 +1,13 @@
 #include "ZFile.h"
-#include "Utils/BinaryWriter.h"
-#include "Utils/MemoryStream.h"
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BinaryWriter.h"
 #include "Utils/Directory.h"
 #include "Utils/File.h"
+#include "Utils/MemoryStream.h"
 #include "Utils/Path.h"
 #include "WarningHandler.h"
 #include "ZAnimation.h"

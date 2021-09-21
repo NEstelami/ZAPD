@@ -2,11 +2,11 @@
 
 #include <cassert>
 #include <unordered_set>
+#include "Globals.h"
 #include "Utils/Directory.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
 #include "Utils/StringHelper.h"
-#include "Globals.h"
 #include "WarningHandler.h"
 
 using namespace ELFIO;

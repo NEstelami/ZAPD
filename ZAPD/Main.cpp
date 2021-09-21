@@ -1,8 +1,8 @@
+#include "Globals.h"
+#include "Overlays/ZOverlay.h"
 #include "Utils/Directory.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
-#include "Globals.h"
-#include "Overlays/ZOverlay.h"
 #include "WarningHandler.h"
 #include "ZAnimation.h"
 #include "ZBackground.h"
@@ -13,10 +13,10 @@
 #if !defined(_MSC_VER) && !defined(__CYGWIN__)
 #include <csignal>
 #include <cstdlib>
+#include <ctime>
 #include <cxxabi.h>  // for __cxa_demangle
 #include <dlfcn.h>   // for dladdr
 #include <execinfo.h>
-#include <ctime>
 #include <unistd.h>
 #endif
 

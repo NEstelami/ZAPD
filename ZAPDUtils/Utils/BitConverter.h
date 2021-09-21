@@ -1,7 +1,7 @@
 #pragma once
 
-#include <limits>
 #include <cstdint>
+#include <limits>
 #include <vector>
 
 class BitConverter
