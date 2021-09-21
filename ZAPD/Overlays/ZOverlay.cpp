@@ -1,6 +1,6 @@
 #include "ZOverlay.h"
 
-#include <assert.h>
+#include <cassert>
 #include <unordered_set>
 
 #include <Utils/Directory.h>
