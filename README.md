@@ -129,7 +129,7 @@ Each warning type uses one of these by default, but can be modified with flags, 
  - `-Wno-foo` disables warnings of type `foo`
  - `-Werror=foo` escalates `foo` to behave like an error
  - `-Weverything` enables all warnings (they may be turned off using `-Wno-` flags afterwards)
- - `-Werror` escalates all warnings to errors
+ - `-Werror` escalates all enabled warnings to errors
 
 
 All warning types currently implemented, with their default levels:
@@ -141,9 +141,9 @@ All warning types currently implemented, with their default levels:
 | -Wintersection            | Warn          | Two assets intersect                                                     |
 | -Winvalid-attribute-value | Err           | Attribute declared in XML is wrong                                       |
 | -Winvalid-extracted-data  | Err           | Extracted data does not have correct form                                |
-| -Winvalid-jpeg            | Warn          | JPEG file does not conform to the game's format requirements             |
-| -Winvalid-png             | Warn          | Issues arising when processing PNG data                                  |
-| -Winvalid-xml             | Warn          | XML has syntax errors                                                    |
+| -Winvalid-jpeg            | Err           | JPEG file does not conform to the game's format requirements             |
+| -Winvalid-png             | Err           | Issues arising when processing PNG data                                  |
+| -Winvalid-xml             | Err           | XML has syntax errors                                                    |
 | -Wmissing-attribute       | Warn          | Required attribute missing in XML tag                                    |
 | -Wmissing-offsets         | Warn          | Offset attribute missing in XML tag                                      |
 | -Wmissing-segment         | Warn          | Segment not given in File tag in XML                                     |
@@ -153,3 +153,7 @@ All warning types currently implemented, with their default levels:
 
 
 There are also errors that do not have a type, and cannot be disabled.
+
+For example, here we have invoked ZAPD in the usual way to extract using a (rather badly-written) XML, but escalating `-Wintersection` to an error:
+
+![ZAPD warnings example](docs/zapd_warning_example.png?raw=true)

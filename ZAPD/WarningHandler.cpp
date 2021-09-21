@@ -21,7 +21,7 @@
  * - -Wno-foo disables warnings of type foo
  * - -Werror=foo escalates foo to behave like an error
  * - -Weverything enables all warnings
- * - -Werror escalates all warnings to errors
+ * - -Werror escalates all enabled warnings to errors
  *
  * Errors do not have types, and will always throw an exception; they cannot be disabled.
  *
@@ -95,9 +95,9 @@ static const std::unordered_map<std::string, WarningInfoInit> warningStringToIni
     {"missing-attribute",       {WarningType::MissingAttribute,      WarningLevel::Warn, "Required attribute missing in XML tag"}},
     {"invalid-attribute-value", {WarningType::InvalidAttributeValue, WarningLevel::Err,  "Attribute declared in XML is wrong"}},
     {"unknown-attribute",       {WarningType::UnknownAttribute,      WarningLevel::Warn, "Unknown attribute in XML entry tag"}},
-    {"invalid-xml",             {WarningType::InvalidXML,            WarningLevel::Warn, "XML has syntax errors"}},
-    {"invalid-jpeg",            {WarningType::InvalidJPEG,           WarningLevel::Warn, "JPEG file does not conform to the game's format requirements"}},
-    {"invalid-png",             {WarningType::InvalidPNG,            WarningLevel::Warn, "Issues arising when processing PNG data"}},
+    {"invalid-xml",             {WarningType::InvalidXML,            WarningLevel::Err,  "XML has syntax errors"}},
+    {"invalid-jpeg",            {WarningType::InvalidJPEG,           WarningLevel::Err,  "JPEG file does not conform to the game's format requirements"}},
+    {"invalid-png",             {WarningType::InvalidPNG,            WarningLevel::Err,  "Issues arising when processing PNG data"}},
     {"invalid-extracted-data",  {WarningType::InvalidExtractedData,  WarningLevel::Err,  "Extracted data does not have correct form"}},
     {"missing-segment",         {WarningType::MissingSegment,        WarningLevel::Warn, "Segment not given in File tag in XML"}},
     {"hardcoded-pointer",       {WarningType::HardcodedPointer,      WarningLevel::Warn, "ZAPD lacks the info to make a symbol, so must output a hardcoded pointer"}},
@@ -197,9 +197,9 @@ bool WarningHandler::WasElevatedToError(WarningType warnType) {
  * Print file/line/function info for debugging
  */
 void WarningHandler::FunctionPreamble(const char* filename, int32_t line, const char* function) {
-    // if (Globals::Instance->???) {
+    if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
         fprintf(stderr, "%s:%i: in function %s:\n", filename, line, function);
-    // }
+    }
 }
 
 /**
