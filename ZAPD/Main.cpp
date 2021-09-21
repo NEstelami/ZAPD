@@ -25,6 +25,8 @@
 
 using namespace tinyxml2;
 
+extern const char gBuildHash[];
+
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode fileMode);
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
