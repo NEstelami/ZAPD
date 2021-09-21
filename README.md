@@ -110,7 +110,7 @@ ZAPD also accepts the following list of extra parameters:
   - Can be used only in `e` or `bsf` modes.
 - `-tm MODE`: Test Mode (enables certain experimental features). To enable it, set `MODE` to `1`.
 - `-se` / `--set-exporter` : Sets which exporter to use.
-- `--gcc-compat` : Enables GCC compatible mode. Slower.
+- `--gcc-compat` : Enables GCC compatibly mode. Slower.
 - `-W...`: warning flags, see below
 
 Additionally, you can pass the flag `--version` to see the current ZAPD version. If that flag is passed, ZAPD will ignore any other parameter passed.
