@@ -119,7 +119,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
 	{
@@ -191,7 +190,9 @@ int main(int argc, char* argv[])
 			signal(SIGSEGV, WarningHandler);
 			signal(SIGABRT, WarningHandler);
 #else
-			HANDLE_WARNING(WarningType::Always, "tried to set error handler, but this ZAPD build lacks support for one", "");
+			HANDLE_WARNING(WarningType::Always,
+			               "tried to set error handler, but this ZAPD build lacks support for one",
+			               "");
 #endif
 		}
 		else if (arg == "-v")  // Verbose
@@ -250,7 +251,8 @@ int main(int argc, char* argv[])
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
-    if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG) {
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+	{
 		WarningHandler::PrintWarningsDebugInfo();
 	}
 
@@ -327,7 +329,8 @@ int main(int argc, char* argv[])
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode fileMode)
 {
-	if (xmlFilePath == "") {
+	if (xmlFilePath == "")
+	{
 		// We could consider reading from stdin
 		HANDLE_ERROR(WarningType::Always, "the input filename cannot be empty", "");
 	}
@@ -338,7 +341,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
 		HANDLE_ERROR(WarningType::InvalidXML,
-		               StringHelper::Sprintf("invalid XML file: '%s'", xmlFilePath.c_str()), "");
+		             StringHelper::Sprintf("invalid XML file: '%s'", xmlFilePath.c_str()), "");
 		return false;
 	}
 
@@ -362,8 +365,10 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 		}
 		else
 		{
-			std::string errorHeader = StringHelper::Sprintf("when parsing file '%s'", xmlFilePath.c_str());
-			std::string errorBody = StringHelper::Sprintf("Found a resource outside a File element: '%s'", child->Name());
+			std::string errorHeader =
+				StringHelper::Sprintf("when parsing file '%s'", xmlFilePath.c_str());
+			std::string errorBody = StringHelper::Sprintf(
+				"Found a resource outside a File element: '%s'", child->Name());
 			HANDLE_ERROR(WarningType::InvalidXML, errorHeader, errorBody);
 		}
 	}

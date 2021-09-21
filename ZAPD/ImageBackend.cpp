@@ -27,7 +27,8 @@ void ImageBackend::ReadPng(const char* filename)
 	}
 
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-	if (png == nullptr) {
+	if (png == nullptr)
+	{
 		HANDLE_ERROR(WarningType::InvalidPNG, "could not create png struct", "");
 	}
 
@@ -156,7 +157,8 @@ void ImageBackend::WritePng(const char* filename)
 	FILE* fp = fopen(filename, "wb");
 	if (fp == nullptr)
 	{
-		std::string errorHeader = StringHelper::Sprintf("could not open file '%s' in write mode", filename);
+		std::string errorHeader =
+			StringHelper::Sprintf("could not open file '%s' in write mode", filename);
 		HANDLE_ERROR(WarningType::InvalidPNG, errorHeader, "");
 	}
 

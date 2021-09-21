@@ -3,8 +3,8 @@
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
-#include "ZFile.h"
 #include "WarningHandler.h"
+#include "ZFile.h"
 
 REGISTER_ZFILENODE(Path, ZPath);
 
@@ -28,8 +28,12 @@ void ZPath::ParseXML(tinyxml2::XMLElement* reader)
 
 	numPaths = StringHelper::StrToL(registeredAttributes.at("NumPaths").value);
 
-	if (numPaths < 1) {
-		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'NumPaths' attribute", "");
+	if (numPaths < 1)
+	{
+		HANDLE_ERROR_RESOURCE(
+			WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+			StringHelper::Sprintf("invalid value '%d' found for 'NumPaths' attribute", numPaths),
+			"Should be at least '1'");
 	}
 }
 

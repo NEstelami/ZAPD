@@ -1,13 +1,13 @@
 #include "SetMesh.h"
 
 #include "Globals.h"
-#include "Utils/Path.h"
 #include "Utils/BitConverter.h"
+#include "Utils/Path.h"
 #include "Utils/StringHelper.h"
+#include "WarningHandler.h"
 #include "ZBackground.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
-#include "WarningHandler.h"
 
 void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList);
 
@@ -36,7 +36,8 @@ void SetMesh::ParseRawData()
 		break;
 
 	default:
-		HANDLE_ERROR(WarningType::InvalidExtractedData, StringHelper::Sprintf("unknown meshHeaderType: %i", meshHeaderType), "");
+		HANDLE_ERROR(WarningType::InvalidExtractedData,
+		             StringHelper::Sprintf("unknown meshHeaderType: %i", meshHeaderType), "");
 	}
 
 	polyType->ParseRawData();
@@ -534,7 +535,8 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 		break;
 
 	default:
-		HANDLE_ERROR(WarningType::InvalidExtractedData, StringHelper::Sprintf("unknown format: %i", format), "");
+		HANDLE_ERROR(WarningType::InvalidExtractedData,
+		             StringHelper::Sprintf("unknown format: %i", format), "");
 		break;
 	}
 }

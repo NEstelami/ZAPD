@@ -128,7 +128,8 @@ ZOverlay* ZOverlay::FromBuild(fs::path buildPath, fs::path cfgFolderPath)
 
 			SectionType sectionType = GetSectionTypeFromStr(pSec->get_name());
 
-			if (sectionType == SectionType::ERROR) {
+			if (sectionType == SectionType::ERROR)
+			{
 				HANDLE_WARNING(WarningType::Always, "one of the section types returned ERROR", "");
 			}
 

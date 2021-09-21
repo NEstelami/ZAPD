@@ -120,7 +120,8 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	}
 	else
 	{
-		HANDLE_WARNING_PROCESS(WarningType::MissingSegment, "missing 'Segment' attribute in <File>", "");
+		HANDLE_WARNING_PROCESS(WarningType::MissingSegment, "missing 'Segment' attribute in <File>",
+		                       "");
 	}
 
 	if (mode == ZFileMode::Extract)

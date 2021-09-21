@@ -6,8 +6,8 @@
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
 #include "Utils/StringHelper.h"
-#include "ZFile.h"
 #include "WarningHandler.h"
+#include "ZFile.h"
 
 REGISTER_ZFILENODE(Animation, ZNormalAnimation);
 REGISTER_ZFILENODE(PlayerAnimation, ZLinkAnimation);
@@ -226,7 +226,9 @@ void ZCurveAnimation::ParseXML(tinyxml2::XMLElement* reader)
 	std::string skelOffsetXml = registeredAttributes.at("SkelOffset").value;
 	if (skelOffsetXml == "")
 	{
-		HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'SkelOffset' attribute in <ZCurveAnimation>", "You need to provide the offset of the curve skeleton.");
+		HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex,
+		                      "missing 'SkelOffset' attribute in <ZCurveAnimation>",
+		                      "You need to provide the offset of the curve skeleton.");
 	}
 	skelOffset = StringHelper::StrToL(skelOffsetXml, 0);
 }

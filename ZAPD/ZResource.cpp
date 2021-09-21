@@ -4,8 +4,8 @@
 #include <regex>
 
 #include "Utils/StringHelper.h"
-#include "ZFile.h"
 #include "WarningHandler.h"
+#include "ZFile.h"
 
 ZResource::ZResource(ZFile* nParent)
 {
@@ -67,14 +67,19 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 
 			if (!attrDeclared)
 			{
-				HANDLE_WARNING_RESOURCE(WarningType::UnknownAttribute, parent, this, rawDataIndex, StringHelper::Sprintf("unexpected '%s' attribute in resource <%s>", attrName.c_str(), reader->Name()), "");
+				HANDLE_WARNING_RESOURCE(
+					WarningType::UnknownAttribute, parent, this, rawDataIndex,
+					StringHelper::Sprintf("unexpected '%s' attribute in resource <%s>",
+				                          attrName.c_str(), reader->Name()),
+					"");
 			}
 			attrs = attrs->Next();
 		}
 
 		if (!canHaveInner && !reader->NoChildren())
 		{
-			std::string errorHeader = StringHelper::Sprintf("resource '%s' with inner element/child detected", reader->Name());
+			std::string errorHeader = StringHelper::Sprintf(
+				"resource '%s' with inner element/child detected", reader->Name());
 			HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
 		}
 
@@ -82,8 +87,11 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			if (attr.second.isRequired && attr.second.value == "")
 			{
-				std::string headerMsg = StringHelper::Sprintf("missing required attribute '%s' in resource <%s>", attr.first.c_str(), reader->Name());
-				HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, headerMsg, "");
+				std::string headerMsg =
+					StringHelper::Sprintf("missing required attribute '%s' in resource <%s>",
+				                          attr.first.c_str(), reader->Name());
+				HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex,
+				                      headerMsg, "");
 			}
 		}
 
@@ -95,7 +103,8 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		{
 			if (!std::regex_match(name, r))
 			{
-				HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Name' attribute", "");
+				HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this,
+				                      rawDataIndex, "invalid value found for 'Name' attribute", "");
 			}
 		}
 

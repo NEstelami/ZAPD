@@ -1,9 +1,8 @@
 #include "ZLimb.h"
 
 #include <cassert>
-
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "WarningHandler.h"
 
 REGISTER_ZFILENODE(Limb, ZLimb);
@@ -387,7 +386,9 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (limbType == "")
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "missing 'LimbType' attribute in <Limb>", "Defaulting to 'Standard'");
+		HANDLE_WARNING_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex,
+		                        "missing 'LimbType' attribute in <Limb>",
+		                        "Defaulting to 'Standard'");
 		type = ZLimbType::Standard;
 	}
 	else
@@ -395,7 +396,9 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 		type = GetTypeByAttributeName(limbType);
 		if (type == ZLimbType::Invalid)
 		{
-			HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'LimbType' attribute", "Defaulting to 'Standard'");
+			HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+			                        "invalid value found for 'LimbType' attribute",
+			                        "Defaulting to 'Standard'");
 			type = ZLimbType::Standard;
 		}
 	}
@@ -764,11 +767,18 @@ std::string ZLimb::GetSourceOutputCodeSkin(const std::string& prefix)
 			skinSegmentStr = GetLimbDListSourceOutputCode(prefix, "Skin", skinSegment);
 			break;
 		default:
-			HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("unknown segment type for SkinLimb: '%i'", static_cast<int32_t>(skinSegmentType)), "Please report this");
+			HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
+			                        StringHelper::Sprintf("unknown segment type for SkinLimb: '%i'",
+			                                              static_cast<int32_t>(skinSegmentType)),
+			                        "Please report this");
 			break;
 		case ZLimbSkinType::SkinType_0:
 		case ZLimbSkinType::SkinType_5:
-			HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, StringHelper::Sprintf("segment type for SkinLimb not implemented: '%i'", static_cast<int32_t>(skinSegmentType)), "");
+			HANDLE_WARNING_RESOURCE(
+				WarningType::NotImplemented, parent, this, rawDataIndex,
+				StringHelper::Sprintf("segment type for SkinLimb not implemented: '%i'",
+			                          static_cast<int32_t>(skinSegmentType)),
+				"");
 			skinSegmentStr = StringHelper::Sprintf("0x%08X", skinSegment);
 			break;
 		}

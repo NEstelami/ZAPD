@@ -3,8 +3,8 @@
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
 #include "Utils/StringHelper.h"
-#include "ZFile.h"
 #include "WarningHandler.h"
+#include "ZFile.h"
 
 REGISTER_ZFILENODE(Scalar, ZScalar);
 
@@ -200,7 +200,8 @@ void ZScalar::ParseRawData()
 		scalarData.f64 = BitConverter::ToDoubleBE(rawData, rawDataIndex);
 		break;
 	case ZScalarType::ZSCALAR_NONE:
-		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Type' attribute", "Defaulting to ''");
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                      "invalid value found for 'Type' attribute", "Defaulting to ''");
 		break;
 	}
 }

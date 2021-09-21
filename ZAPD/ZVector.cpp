@@ -76,7 +76,8 @@ std::string ZVector::GetSourceTypeName() const
 			"encountered unsupported vector type: %d dimensions, %s type", dimensions,
 			ZScalar::MapScalarTypeToOutputType(scalarType).c_str());
 
-		HANDLE_ERROR_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, msgHeader, "");
+		HANDLE_ERROR_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, msgHeader,
+		                      "");
 	}
 }
 

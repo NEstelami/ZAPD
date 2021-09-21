@@ -67,13 +67,17 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (!StringHelper::HasOnlyDigits(widthXml))
 	{
-		std::string errorHeader = StringHelper::Sprintf("value of 'Width' attribute has non-decimal digits: '%s'", widthXml.c_str());
-		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, errorHeader, "");
+		std::string errorHeader = StringHelper::Sprintf(
+			"value of 'Width' attribute has non-decimal digits: '%s'", widthXml.c_str());
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                      errorHeader, "");
 	}
 	if (!StringHelper::HasOnlyDigits(heightXml))
 	{
-		std::string errorHeader = StringHelper::Sprintf("value of 'Height' attribute has non-decimal digits: '%s'", heightXml.c_str());
-		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, errorHeader, "");
+		std::string errorHeader = StringHelper::Sprintf(
+			"value of 'Height' attribute has non-decimal digits: '%s'", heightXml.c_str());
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                      errorHeader, "");
 	}
 
 	width = StringHelper::StrToL(widthXml);
@@ -84,7 +88,8 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (format == TextureType::Error)
 	{
-		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "invalid value found for 'Format' attribute", "");
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                      "invalid value found for 'Format' attribute", "");
 	}
 
 	const auto& tlutOffsetAttr = registeredAttributes.at("TlutOffset");
@@ -98,7 +103,9 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 			break;
 
 		default:
-			HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex, "'TlutOffset' declared in non color-indexed (ci4 or ci8) texture", "");
+			HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex,
+			                      "'TlutOffset' declared in non color-indexed (ci4 or ci8) texture",
+			                      "");
 			break;
 		}
 	}
@@ -108,7 +115,8 @@ void ZTexture::ParseRawData()
 {
 	if (rawDataIndex % 8 != 0)
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex, "this texture is not 64-bit aligned", "");
+		HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
+		                        "this texture is not 64-bit aligned", "");
 	}
 
 	switch (format)
@@ -140,8 +148,6 @@ void ZTexture::ParseRawData()
 	case TextureType::Palette8bpp:
 		PrepareBitmapPalette8();
 		break;
-	// default:
-	// 	throw std::runtime_error("Format is not supported!");
 	case TextureType::Error:
 		assert(!"TODO");
 		break;
@@ -388,7 +394,6 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 		PrepareRawDataPalette8(pngFilePath);
 		break;
 	case TextureType::Error:
-		//throw std::runtime_error("Format is not supported!");
 		assert(!"TODO");
 		break;
 	}
@@ -838,7 +843,9 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 	else if (str == "rgb5a1")
 	{
 		texType = TextureType::RGBA16bpp;
-		HANDLE_WARNING(WarningType::Deprecated, "the texture format 'rgb5a1' is currently deprecated", "It will be removed in a future version. Use the format 'rgba16' instead.");
+		HANDLE_WARNING(WarningType::Deprecated,
+		               "the texture format 'rgb5a1' is currently deprecated",
+		               "It will be removed in a future version. Use the format 'rgba16' instead.");
 	}
 	else if (str == "i4")
 		texType = TextureType::Grayscale4bpp;
@@ -856,7 +863,8 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 		texType = TextureType::Palette8bpp;
 	else
 		// TODO: handle this case in a more coherent way
-		HANDLE_WARNING(WarningType::InvalidAttributeValue, "invalid value found for 'Type' attribute", "Defaulting to ''.");
+		HANDLE_WARNING(WarningType::InvalidAttributeValue,
+		               "invalid value found for 'Type' attribute", "Defaulting to ''.");
 	return texType;
 }
 

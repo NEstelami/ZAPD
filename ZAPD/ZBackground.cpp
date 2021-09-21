@@ -78,10 +78,11 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 	uint32_t jpegMarker = BitConverter::ToUInt32BE(data, 0);
 	if (jpegMarker != JPEG_MARKER)
 	{
-		HANDLE_WARNING_PROCESS(WarningType::InvalidJPEG,
-		                     StringHelper::Sprintf("missing jpeg marker at beginning of file: '%s'",
-		                                           filename.c_str()),
-		                     "The game will skip this jpeg.");
+		HANDLE_WARNING_PROCESS(
+			WarningType::InvalidJPEG,
+			StringHelper::Sprintf("missing jpeg marker at beginning of file: '%s'",
+		                          filename.c_str()),
+			"The game will skip this jpeg.");
 	}
 	if (data.at(6) != 'J' || data.at(7) != 'F' || data.at(8) != 'I' || data.at(9) != 'F' ||
 	    data.at(10) != '\0')
@@ -108,8 +109,8 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		// This may happen when creating a custom image with Exif, XMP, thumbnail, progressive, etc.
 		// enabled.
 		HANDLE_WARNING_PROCESS(WarningType::InvalidJPEG,
-		                     "there seems to be extra data before the image data in this file",
-		                     "The game may not be able to decode this image correctly.");
+		                       "there seems to be extra data before the image data in this file",
+		                       "The game may not be able to decode this image correctly.");
 	}
 	if (data.size() > GetRawDataSize())
 	{
