@@ -47,6 +47,8 @@
  * - issue a warning if ZAPD will still be able to produce a valid, compilable C file that will
  *     match
  * - if this cannot happen, use an error.
+ * but at the end of the day, it is up to the programmer's discretion what it should be possible to
+ * disable.
  *
  * Documentation
  * ===
