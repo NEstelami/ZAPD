@@ -78,12 +78,12 @@ std::string ZNormalAnimation::GetSourceOutputCode([[maybe_unused]] const std::st
 				indicesStr += "\n";
 		}
 
-		parent->AddDeclarationArray(rotationValuesSeg, DeclarationAlignment::Align16,
+		parent->AddDeclarationArray(rotationValuesOffset, DeclarationAlignment::Align16,
 		                            rotationValues.size() * 2, "static s16",
 		                            StringHelper::Sprintf("%sFrameData", defaultPrefix.c_str()),
 		                            rotationValues.size(), valuesStr);
 
-		parent->AddDeclarationArray(rotationIndicesSeg, DeclarationAlignment::Align16,
+		parent->AddDeclarationArray(rotationIndicesOffset, DeclarationAlignment::Align16,
 		                            rotationIndices.size() * 6, "static JointIndex",
 		                            StringHelper::Sprintf("%sJointIndices", defaultPrefix.c_str()),
 		                            rotationIndices.size(), indicesStr);
@@ -108,23 +108,26 @@ void ZNormalAnimation::ParseRawData()
 
 	const uint8_t* data = parent->GetRawData().data();
 
-	rotationValuesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 4) & 0x00FFFFFF;
-	rotationIndicesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 8) & 0x00FFFFFF;
+	rotationValuesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 4);
+	rotationIndicesSeg = BitConverter::ToInt32BE(data, rawDataIndex + 8);
 	limit = BitConverter::ToInt16BE(data, rawDataIndex + 12);
 
-	uint32_t currentPtr = rotationValuesSeg;
+	rotationValuesOffset = Seg2Filespace(rotationValuesSeg, parent->baseAddress);
+	rotationIndicesOffset = Seg2Filespace(rotationIndicesSeg, parent->baseAddress);
+
+	uint32_t currentPtr = rotationValuesOffset;
 
 	// Read the Rotation Values
-	for (uint32_t i = 0; i < ((rotationIndicesSeg - rotationValuesSeg) / 2); i++)
+	for (uint32_t i = 0; i < ((rotationIndicesOffset - rotationValuesOffset) / 2); i++)
 	{
 		rotationValues.push_back(BitConverter::ToInt16BE(data, currentPtr));
 		currentPtr += 2;
 	}
 
-	currentPtr = rotationIndicesSeg;
+	currentPtr = rotationIndicesOffset;
 
 	// Read the Rotation Indices
-	for (uint32_t i = 0; i < ((rawDataIndex - rotationIndicesSeg) / 6); i++)
+	for (uint32_t i = 0; i < ((rawDataIndex - rotationIndicesOffset) / 6); i++)
 	{
 		rotationIndices.push_back(RotationIndex(BitConverter::ToInt16BE(data, currentPtr),
 		                                        BitConverter::ToInt16BE(data, currentPtr + 2),
