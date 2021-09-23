@@ -38,11 +38,11 @@ void ZVtx::ParseRawData()
 
 std::string ZVtx::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b,
+	return StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b,
 	                             a);
 }
 
-std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
+std::string ZVtx::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string output = GetBodySourceCode();
 

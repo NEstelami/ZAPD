@@ -59,7 +59,6 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 		StringHelper::Sprintf("%s%s", zRoom->GetName().c_str(), dList->GetName().c_str());
 
 	dList->SetName(srcVarName);
-	dList->scene = zRoom->scene;
 	std::string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
@@ -98,11 +97,6 @@ std::string SetMesh::GetBodySourceCode() const
 	return StringHelper::Sprintf("SCENE_CMD_MESH(%s)", list.c_str());
 }
 
-size_t SetMesh::GetRawDataSize() const
-{
-	return ZRoomCommand::GetRawDataSize();
-}
-
 std::string SetMesh::GetCommandCName() const
 {
 	return "SCmdMesh";
@@ -113,7 +107,8 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
-PolygonDlist::PolygonDlist(const std::string& prefix, const std::vector<uint8_t>& nRawData,
+PolygonDlist::PolygonDlist(const std::string& prefix,
+                           [[maybe_unused]] const std::vector<uint8_t>& nRawData,
                            uint32_t nRawDataIndex, ZFile* nParent, ZRoom* nRoom)
 {
 	rawDataIndex = nRawDataIndex;
@@ -151,7 +146,7 @@ void PolygonDlist::DeclareReferences(const std::string& prefix)
 	xluDList = MakeDlist(xlu, prefix);
 }
 
-ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, const std::string& prefix)
+ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::string& prefix)
 {
 	if (ptr == 0)
 	{
@@ -268,8 +263,9 @@ std::string PolygonDlist::GetName()
 	return name;
 }
 
-BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, const std::vector<uint8_t>& nRawData,
-                 uint32_t nRawDataIndex, ZFile* nParent)
+BgImage::BgImage(bool nIsSubStruct, const std::string& prefix,
+                 [[maybe_unused]] const std::vector<uint8_t>& nRawData, uint32_t nRawDataIndex,
+                 ZFile* nParent)
 {
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
@@ -404,7 +400,8 @@ std::string BgImage::GetName()
 
 /* PolygonType section */
 
-PolygonTypeBase::PolygonTypeBase(ZFile* nParent, const std::vector<uint8_t>& nRawData,
+PolygonTypeBase::PolygonTypeBase(ZFile* nParent,
+                                 [[maybe_unused]] const std::vector<uint8_t>& nRawData,
                                  uint32_t nRawDataIndex, ZRoom* nRoom)
 	: rawDataIndex{nRawDataIndex}, parent{nParent}, zRoom{nRoom}
 {
@@ -652,7 +649,7 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 	}
 
 	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4,
-	                       DeclarationPadding::Pad16, 4, "s32", StringHelper::Sprintf("%s_terminatorMaybe_%06X", parent->GetName().c_str(), GETSEGOFFSET(end)),
+	                       4, "s32", StringHelper::Sprintf("%s_terminatorMaybe_%06X", parent->GetName().c_str(), GETSEGOFFSET(end)),
 	                       "0x01000000");
 }
 
