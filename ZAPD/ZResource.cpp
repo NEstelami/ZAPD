@@ -243,7 +243,6 @@ uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 				"\nSeg2Filespace: Segmented address is smaller than 'BaseAddress'. Maybe your 'BaseAddress' is wrong?\n"
 				"\t SegmentedAddress: 0x%08X\n"
 				"\t BaseAddress:      0x%08X\n"
-				"\t Aborting...",
 				segmentedAddress, parentBaseAddress));
 		}
 		currentPtr -= parentBaseOffset;
