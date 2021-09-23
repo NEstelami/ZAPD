@@ -19,6 +19,13 @@ enum class DeclarationPadding
 	Pad16
 };
 
+enum class StaticConfig
+{
+	Off,
+	Global,
+	On
+};
+
 class Declaration
 {
 public:
@@ -41,6 +48,7 @@ public:
 	std::vector<uint32_t> references;
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
+	StaticConfig staticConf = StaticConfig::Global;
 
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);
@@ -58,6 +66,13 @@ public:
 	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
 	            std::string nText);
 	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
+
+	std::string GetNormalDeclarationStr() const;
+	std::string GetExternalDeclarationStr() const;
+
+	std::string GetExternStr() const;
+
+	std::string GetStaticForwardDeclarationStr() const;
 
 protected:
 	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,

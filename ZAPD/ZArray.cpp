@@ -60,9 +60,10 @@ std::string ZArray::GetSourceOutputCode([[maybe_unused]] const std::string& pref
 	for (size_t i = 0; i < arrayCnt; i++)
 	{
 		output += resList.at(i)->GetBodySourceCode();
+		output += ",";
 
 		if (i < arrayCnt - 1)
-			output += ",\n";
+			output += "\n";
 	}
 
 	if (parent != nullptr)
