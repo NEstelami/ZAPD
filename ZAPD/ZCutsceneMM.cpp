@@ -49,8 +49,9 @@ void ZCutsceneMM::DeclareVar(const std::string& prefix, const std::string& bodyS
 	if (auxName == "")
 		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
 
-	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4, GetRawDataSize(),
+	Declaration* decl = parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4, GetRawDataSize(),
 	                            "s32", auxName, 0, bodyStr);
+	decl->staticConf = staticConf;
 }
 
 size_t ZCutsceneMM::GetRawDataSize() const

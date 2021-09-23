@@ -44,8 +44,9 @@ void ZMtx::DeclareVar(const std::string& prefix, const std::string& bodyStr) con
 	if (name == "")
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
+	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                       GetSourceTypeName(), auxName, bodyStr);
+	decl->staticConf = staticConf;
 }
 
 std::string ZMtx::GetBodySourceCode() const

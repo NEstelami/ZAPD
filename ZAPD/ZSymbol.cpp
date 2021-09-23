@@ -54,6 +54,9 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 		if (countXml != "")
 			count = StringHelper::StrToL(countXml, 0);
 	}
+
+	staticConf = StaticConfig::Off;
+	// TODO: add a warning/error or something
 }
 
 size_t ZSymbol::GetRawDataSize() const

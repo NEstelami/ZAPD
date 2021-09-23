@@ -66,9 +66,9 @@ std::string ZArray::GetSourceOutputCode([[maybe_unused]] const std::string& pref
 			output += "\n";
 	}
 
-	if (parent != nullptr)
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 		                            resList.at(0)->GetSourceTypeName(), name, arrayCnt, output);
+	decl->staticConf = staticConf;
 
 	return "";
 }

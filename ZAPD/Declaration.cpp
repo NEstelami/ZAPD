@@ -1,5 +1,6 @@
 #include "Declaration.h"
 
+#include "Globals.h"
 #include "Utils/StringHelper.h"
 
 Declaration::Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
@@ -80,12 +81,42 @@ Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVa
 	varName = nVarName;
 }
 
+bool Declaration::IsStatic() const
+{
+	if (isArray)
+	{
+		if (arrayItemCnt == 0)
+		{
+			return false;
+		}
+	}
+
+	switch (staticConf)
+	{
+	case StaticConfig::Off:
+		return false;
+
+	case StaticConfig::Global:
+		return Globals::Instance->forceStatic;
+
+	case StaticConfig::On:
+		return true;
+	}
+
+	return false;
+}
+
 std::string Declaration::GetNormalDeclarationStr() const
 {
 	std::string output;
 
 	if (preText != "")
 		output += preText + "\n";
+
+	if (IsStatic())
+	{
+		output += "static ";
+	}
 
 	if (isArray)
 	{
@@ -121,7 +152,10 @@ std::string Declaration::GetNormalDeclarationStr() const
 	else
 		output += " };";
 
-	output += " " + rightText + "\n\n";
+	if (rightText != "")
+		output += " " + rightText + "";
+
+	output += "\n\n";
 
 	if (postText != "")
 		output += postText + "\n";
@@ -133,10 +167,14 @@ std::string Declaration::GetExternalDeclarationStr() const
 {
 	std::string output;
 
+	if (IsStatic())
+	{
+		output += "static ";
+	}
+
 	// Do not asm_process vertex arrays. They have no practical use being overridden.
-	// if (varType == "Vtx" || varType == "static Vtx")
-	if (varType != "u64" && varType != "static u64" &&
-		varType != "u8" && varType != "static u8")
+	// if (varType == "Vtx")
+	if (varType != "u64" &&  varType != "u8")
 	{
 		output += StringHelper::Sprintf(
 			"%s %s[] = {\n    #include \"%s\"\n};\n\n", varType.c_str(),
@@ -164,7 +202,7 @@ std::string Declaration::GetExternStr() const
 {
 	std::string output;
 
-	if (!StringHelper::StartsWith(varType, "static ") &&
+	if (!IsStatic() &&
 		varType != "")  // && includePath == "")
 	{
 		if (isArray)
@@ -190,31 +228,33 @@ std::string Declaration::GetStaticForwardDeclarationStr() const
 {
 	std::string output;
 
-	if (StringHelper::StartsWith(varType, "static ") &&
-		!isUnaccounted)
+	if (!IsStatic())
+		return "";
+
+	if (IsStatic() && !isUnaccounted)
 	{
 		if (isArray)
 		{
 			if (arrayItemCntStr != "")
 			{
-				output += StringHelper::Sprintf("%s %s[%s];\n", varType.c_str(),
+				output += StringHelper::Sprintf("static %s %s[%s];\n", varType.c_str(),
 												varName.c_str(),
 												arrayItemCntStr.c_str());
 			}
 			else if (arrayItemCnt == 0)
 			{
-				output += StringHelper::Sprintf("%s %s[];\n", varType.c_str(),
+				output += StringHelper::Sprintf("static %s %s[];\n", varType.c_str(),
 												varName.c_str());
 			}
 			else
 			{
-				output += StringHelper::Sprintf("%s %s[%i];\n", varType.c_str(),
+				output += StringHelper::Sprintf("static %s %s[%i];\n", varType.c_str(),
 												varName.c_str(),
 												arrayItemCnt);
 			}
 		}
 		else
-			output += StringHelper::Sprintf("%s %s;\n", varType.c_str(),
+			output += StringHelper::Sprintf("static %s %s;\n", varType.c_str(),
 											varName.c_str());
 	}
 

@@ -83,6 +83,7 @@ Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix
 		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
 	                                GetSourceTypeName(), name, 0, bodyStr);
 	decl->isExternal = true;
+	decl->staticConf = staticConf;
 	return decl;
 }
 
@@ -2118,9 +2119,10 @@ bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string p
 								Path::GetFileNameWithoutExtension(tex->GetName());
 				auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
 				                                      tex->GetExternalExtension().c_str());
-				Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
+				Declaration* decl = Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
 					texAddr, filename, tex->GetRawDataSize(), tex->GetSourceTypeName(),
 					tex->GetName(), 0);
+				decl->staticConf = StaticConfig::Off;
 			}
 			return true;
 		}

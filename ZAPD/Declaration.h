@@ -67,6 +67,8 @@ public:
 	            std::string nText);
 	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
 
+	bool IsStatic() const;
+
 	std::string GetNormalDeclarationStr() const;
 	std::string GetExternalDeclarationStr() const;
 

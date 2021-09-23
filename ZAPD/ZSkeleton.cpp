@@ -17,8 +17,9 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIn
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
+	decl->staticConf = staticConf;
 }
 
 void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
@@ -129,13 +130,14 @@ std::string ZSkeleton::GetSourceOutputCode([[maybe_unused]] const std::string& p
 
 	if (decl == nullptr)
 	{
-		parent->AddDeclaration(GetAddress(), DeclarationAlignment::Align16, GetRawDataSize(),
+		decl = parent->AddDeclaration(GetAddress(), DeclarationAlignment::Align16, GetRawDataSize(),
 		                       GetSourceTypeName(), name, headerStr);
 	}
 	else
 	{
 		decl->text = headerStr;
 	}
+	decl->staticConf = staticConf;
 
 	return "";
 }
@@ -182,8 +184,9 @@ void ZLimbTable::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataI
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                            GetSourceTypeName(), name, limbsAddresses.size(), "");
+	decl->staticConf = staticConf;
 }
 
 void ZLimbTable::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount)
@@ -275,10 +278,11 @@ std::string ZLimbTable::GetSourceOutputCode([[maybe_unused]] const std::string& 
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+		decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 		                            GetSourceTypeName(), name, limbsAddresses.size(), body);
 	else
 		decl->text = body;
+	decl->staticConf = staticConf;
 
 	return "";
 }

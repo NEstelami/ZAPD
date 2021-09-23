@@ -707,8 +707,16 @@ void ZFile::GeneratePlaceholderDeclarations()
 	// Generate placeholder declarations
 	for (ZResource* res : resources)
 	{
-		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
-			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		if (GetDeclaration(res->GetRawDataIndex()) != nullptr)
+		{
+			continue;
+		}
+
+		Declaration* decl = AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		if (res->GetResourceType() == ZResourceType::Symbol)
+		{
+			decl->staticConf = StaticConfig::Off;
+		}
 	}
 }
 

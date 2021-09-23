@@ -51,9 +51,10 @@ std::string ZNormalAnimation::GetSourceOutputCode([[maybe_unused]] const std::st
 		headerStr += StringHelper::Sprintf("\t%sFrameData,\n", defaultPrefix.c_str());
 		headerStr += StringHelper::Sprintf("\t%sJointIndices,\n", defaultPrefix.c_str());
 		headerStr += StringHelper::Sprintf("\t%i\n", limit);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
 		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
 		                       headerStr);
+		decl->staticConf = staticConf;
 
 		std::string indicesStr = "";
 		std::string valuesStr = "    ";
@@ -284,8 +285,9 @@ void ZCurveAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRaw
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
+	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
+	decl->staticConf = staticConf;
 }
 
 void ZCurveAnimation::DeclareReferences(const std::string& prefix)
@@ -444,13 +446,14 @@ std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		parent->AddDeclaration(address, DeclarationAlignment::None, GetRawDataSize(),
+		decl = parent->AddDeclaration(address, DeclarationAlignment::None, GetRawDataSize(),
 		                       GetSourceTypeName(), name, bodyStr);
 	}
 	else
 	{
 		decl->text = bodyStr;
 	}
+	decl->staticConf = staticConf;
 
 	return "";
 }
@@ -470,8 +473,9 @@ void ZLegacyAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRa
 {
 	ZAnimation::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
+	decl->staticConf = staticConf;
 }
 
 void ZLegacyAnimation::ParseRawData()
@@ -583,10 +587,11 @@ std::string ZLegacyAnimation::GetSourceOutputCode([[maybe_unused]] const std::st
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+		decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 		                       GetSourceTypeName(), name, body);
 	else
 		decl->text = body;
+	decl->staticConf = staticConf;
 
 	return "";
 }
