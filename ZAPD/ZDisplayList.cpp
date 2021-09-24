@@ -2122,7 +2122,6 @@ bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string p
 				Declaration* decl = Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
 					texAddr, filename, tex->GetRawDataSize(), tex->GetSourceTypeName(),
 					tex->GetName(), tex->GetRawDataSize()/8);
-				//decl->staticConf = StaticConfig::Off;
 			}
 			return true;
 		}

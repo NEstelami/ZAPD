@@ -32,6 +32,7 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataInd
 
 	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
 	                                   name, GetRawDataSize()/8);
+	decl->staticConf = staticConf;
 }
 
 void ZTexture::FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,

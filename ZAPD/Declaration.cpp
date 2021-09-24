@@ -156,10 +156,12 @@ std::string Declaration::GetNormalDeclarationStr() const
 	if (rightText != "")
 		output += " " + rightText + "";
 
-	output += "\n\n";
+	output += "\n";
 
 	if (postText != "")
 		output += postText + "\n";
+
+	output += "\n";
 
 	return output;
 }
@@ -167,6 +169,9 @@ std::string Declaration::GetNormalDeclarationStr() const
 std::string Declaration::GetExternalDeclarationStr() const
 {
 	std::string output;
+
+	if (preText != "")
+		output += preText + "\n";
 
 	if (IsStatic())
 	{
@@ -178,7 +183,7 @@ std::string Declaration::GetExternalDeclarationStr() const
 	if (varType != "u64" &&  varType != "u8")
 	{
 		output += StringHelper::Sprintf(
-			"%s %s[] = {\n#include \"%s\"\n};\n\n", varType.c_str(),
+			"%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
 			varName.c_str(),
 			StringHelper::Replace(includePath, "assets/", "../assets/")
 				.c_str());
@@ -187,18 +192,28 @@ std::string Declaration::GetExternalDeclarationStr() const
 	{
 		if (arrayItemCntStr != "")
 			output += StringHelper::Sprintf(
-				"%s %s[%s] = {\n#include \"%s\"\n};\n\n", varType.c_str(),
+				"%s %s[%s] = {\n#include \"%s\"\n};", varType.c_str(),
 				varName.c_str(), arrayItemCntStr.c_str(),
 				includePath.c_str());
 		else if (arrayItemCnt != 0)
 			output += StringHelper::Sprintf(
-				"%s %s[%i] = {\n#include \"%s\"\n};\n\n", varType.c_str(),
+				"%s %s[%i] = {\n#include \"%s\"\n};", varType.c_str(),
 				varName.c_str(), arrayItemCnt, includePath.c_str());
 		else
 			output += StringHelper::Sprintf(
-				"%s %s[] = {\n#include \"%s\"\n};\n\n", varType.c_str(),
+				"%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
 				varName.c_str(), includePath.c_str());
 	}
+
+	if (rightText != "")
+		output += " " + rightText + "";
+
+	output += "\n";
+
+	if (postText != "")
+		output += postText + "\n";
+
+	output += "\n";
 
 	return output;
 }
