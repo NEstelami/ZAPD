@@ -114,6 +114,6 @@ ZAPD also accepts the following list of extra parameters:
 - `-se` / `--set-exporter` : Sets which exporter to use.
 - `--gcc-compat` : Enables GCC compatible mode. Slower.
 - `-s` / `--static` : Mark every asset as `static`.
-  - This behaviour can be overrided per asset using `Static=` in the respective XML node.
+  - This behaviour can be overridden per asset using `Static=` in the respective XML node.
 
 Additionally, you can pass the flag `--version` to see the current ZAPD version. If that flag is passed, ZAPD will ignore any other parameter passed.
