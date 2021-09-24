@@ -76,6 +76,13 @@ There are 3 valid values (defaults to `Global`):
 - `On`: Override the global config and **always mark** as `static`.
 - `Off`: Override the global config and **don't mark** as `static`.
 
+This table summarizes if the asset will be marked `static` (✅) or not (❌)
+| `Static=""` attribute in XML | Without `--static` flag | With `--static` flag |
+| ---------------------------- | ----------------------- | -------------------- |
+| `On`                         | ✅                       | ✅                    |
+| `Global` (default)           | ❌                       | ✅                    |
+| `Off`                        | ❌                       | ❌                    |
+
 -------------------------
 
 ### File
