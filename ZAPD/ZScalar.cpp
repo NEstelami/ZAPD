@@ -249,8 +249,9 @@ std::string ZScalar::GetBodySourceCode() const
 
 std::string ZScalar::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
+	Declaration* decl =
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+	                           GetSourceTypeName(), GetName(), GetBodySourceCode());
 	decl->staticConf = staticConf;
 
 	return "";

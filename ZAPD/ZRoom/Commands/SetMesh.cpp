@@ -648,8 +648,9 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 		                            polyDlistType, polyDListName, polyDLists.size(), declaration);
 	}
 
-	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4,
-	                       4, "s32", StringHelper::Sprintf("%s_terminatorMaybe_%06X", parent->GetName().c_str(), GETSEGOFFSET(end)),
+	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "s32",
+	                       StringHelper::Sprintf("%s_terminatorMaybe_%06X",
+	                                             parent->GetName().c_str(), GETSEGOFFSET(end)),
 	                       "0x01000000");
 }
 

@@ -112,13 +112,20 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		isCustomAsset = registeredAttributes["Custom"].wasSet;
 
 		std::string& staticXml = registeredAttributes["Static"].value;
-		if (staticXml == "Global") {
+		if (staticXml == "Global")
+		{
 			staticConf = StaticConfig::Global;
-		} else if (staticXml == "On") {
+		}
+		else if (staticXml == "On")
+		{
 			staticConf = StaticConfig::On;
-		} else if (staticXml == "Off") {
+		}
+		else if (staticXml == "Off")
+		{
 			staticConf = StaticConfig::Off;
-		} else {
+		}
+		else
+		{
 			throw std::runtime_error("Invalid value for 'Static' attribute.");
 		}
 

@@ -30,8 +30,8 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataInd
 	std::string incStr =
 		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 
-	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
-	                                   name, GetRawDataSize()/8);
+	Declaration* decl = parent->AddDeclarationIncludeArray(
+		rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), name, GetRawDataSize() / 8);
 	decl->staticConf = staticConf;
 }
 

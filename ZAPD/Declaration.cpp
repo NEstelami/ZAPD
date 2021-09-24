@@ -83,14 +83,6 @@ Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVa
 
 bool Declaration::IsStatic() const
 {
-	//if (isArray)
-	//{
-	//	if (arrayItemCnt == 0 && arrayItemCntStr == "")
-	//	{
-	//		return false;
-	//	}
-	//}
-
 	switch (staticConf)
 	{
 	case StaticConfig::Off:
@@ -122,29 +114,24 @@ std::string Declaration::GetNormalDeclarationStr() const
 	{
 		if (arrayItemCntStr != "")
 		{
-			output += StringHelper::Sprintf(
-				"%s %s[%s];\n", varType.c_str(),
-				varName.c_str(), arrayItemCntStr.c_str());
+			output += StringHelper::Sprintf("%s %s[%s];\n", varType.c_str(), varName.c_str(),
+			                                arrayItemCntStr.c_str());
 		}
 		else if (arrayItemCnt == 0)
 		{
-				output +=
-					StringHelper::Sprintf("%s %s[] = {\n", varType.c_str(),
-											varName.c_str());
+			output += StringHelper::Sprintf("%s %s[] = {\n", varType.c_str(), varName.c_str());
 		}
 		else
 		{
-				output += StringHelper::Sprintf(
-					"%s %s[%i] = {\n", varType.c_str(),
-					varName.c_str(), arrayItemCnt);
+			output += StringHelper::Sprintf("%s %s[%i] = {\n", varType.c_str(), varName.c_str(),
+			                                arrayItemCnt);
 		}
 
 		output += text + "\n";
 	}
 	else
 	{
-		output += StringHelper::Sprintf("%s %s = { ", varType.c_str(),
-										varName.c_str());
+		output += StringHelper::Sprintf("%s %s = { ", varType.c_str(), varName.c_str());
 		output += text;
 	}
 
@@ -180,29 +167,24 @@ std::string Declaration::GetExternalDeclarationStr() const
 
 	// Do not asm_process vertex arrays. They have no practical use being overridden.
 	// if (varType == "Vtx")
-	if (varType != "u64" &&  varType != "u8")
+	if (varType != "u64" && varType != "u8")
 	{
 		output += StringHelper::Sprintf(
-			"%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
-			varName.c_str(),
-			StringHelper::Replace(includePath, "assets/", "../assets/")
-				.c_str());
+			"%s %s[] = {\n#include \"%s\"\n};", varType.c_str(), varName.c_str(),
+			StringHelper::Replace(includePath, "assets/", "../assets/").c_str());
 	}
 	else
 	{
 		if (arrayItemCntStr != "")
-			output += StringHelper::Sprintf(
-				"%s %s[%s] = {\n#include \"%s\"\n};", varType.c_str(),
-				varName.c_str(), arrayItemCntStr.c_str(),
-				includePath.c_str());
+			output += StringHelper::Sprintf("%s %s[%s] = {\n#include \"%s\"\n};", varType.c_str(),
+			                                varName.c_str(), arrayItemCntStr.c_str(),
+			                                includePath.c_str());
 		else if (arrayItemCnt != 0)
-			output += StringHelper::Sprintf(
-				"%s %s[%i] = {\n#include \"%s\"\n};", varType.c_str(),
-				varName.c_str(), arrayItemCnt, includePath.c_str());
+			output += StringHelper::Sprintf("%s %s[%i] = {\n#include \"%s\"\n};", varType.c_str(),
+			                                varName.c_str(), arrayItemCnt, includePath.c_str());
 		else
-			output += StringHelper::Sprintf(
-				"%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
-				varName.c_str(), includePath.c_str());
+			output += StringHelper::Sprintf("%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
+			                                varName.c_str(), includePath.c_str());
 	}
 
 	if (rightText != "")
@@ -229,20 +211,17 @@ std::string Declaration::GetExternStr() const
 	{
 		if (arrayItemCntStr != "")
 		{
-			return StringHelper::Sprintf("extern %s %s[%s];\n", varType.c_str(),
-										varName.c_str(), arrayItemCntStr.c_str());
+			return StringHelper::Sprintf("extern %s %s[%s];\n", varType.c_str(), varName.c_str(),
+			                             arrayItemCntStr.c_str());
 		}
 		else if (arrayItemCnt != 0)
-			return StringHelper::Sprintf(
-				"extern %s %s[%i];\n", varType.c_str(),
-				varName.c_str(), arrayItemCnt);
+			return StringHelper::Sprintf("extern %s %s[%i];\n", varType.c_str(), varName.c_str(),
+			                             arrayItemCnt);
 		else
-			return StringHelper::Sprintf("extern %s %s[];\n", varType.c_str(),
-										varName.c_str());
+			return StringHelper::Sprintf("extern %s %s[];\n", varType.c_str(), varName.c_str());
 	}
 
-	return StringHelper::Sprintf("extern %s %s;\n", varType.c_str(),
-										varName.c_str());
+	return StringHelper::Sprintf("extern %s %s;\n", varType.c_str(), varName.c_str());
 }
 
 std::string Declaration::GetStaticForwardDeclarationStr() const
@@ -260,15 +239,13 @@ std::string Declaration::GetStaticForwardDeclarationStr() const
 
 		if (arrayItemCntStr != "")
 		{
-			return StringHelper::Sprintf("static %s %s[%s];\n", varType.c_str(),
-											varName.c_str(),
-											arrayItemCntStr.c_str());
+			return StringHelper::Sprintf("static %s %s[%s];\n", varType.c_str(), varName.c_str(),
+			                             arrayItemCntStr.c_str());
 		}
 		else
 		{
-			return StringHelper::Sprintf("static %s %s[%i];\n", varType.c_str(),
-											varName.c_str(),
-											arrayItemCnt);
+			return StringHelper::Sprintf("static %s %s[%i];\n", varType.c_str(), varName.c_str(),
+			                             arrayItemCnt);
 		}
 	}
 

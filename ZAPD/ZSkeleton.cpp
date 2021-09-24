@@ -17,8 +17,8 @@ void ZSkeleton::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIn
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
+	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4,
+	                                           GetRawDataSize(), GetSourceTypeName(), name, "");
 	decl->staticConf = staticConf;
 }
 
@@ -131,7 +131,7 @@ std::string ZSkeleton::GetSourceOutputCode([[maybe_unused]] const std::string& p
 	if (decl == nullptr)
 	{
 		decl = parent->AddDeclaration(GetAddress(), DeclarationAlignment::Align16, GetRawDataSize(),
-		                       GetSourceTypeName(), name, headerStr);
+		                              GetSourceTypeName(), name, headerStr);
 	}
 	else
 	{
@@ -184,8 +184,9 @@ void ZLimbTable::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataI
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), name, limbsAddresses.size(), "");
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                                GetSourceTypeName(), name, limbsAddresses.size(), "");
 	decl->staticConf = staticConf;
 }
 
@@ -278,8 +279,9 @@ std::string ZLimbTable::GetSourceOutputCode([[maybe_unused]] const std::string& 
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-		decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-		                            GetSourceTypeName(), name, limbsAddresses.size(), body);
+		decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4,
+		                                   GetRawDataSize(), GetSourceTypeName(), name,
+		                                   limbsAddresses.size(), body);
 	else
 		decl->text = body;
 	decl->staticConf = staticConf;

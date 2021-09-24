@@ -127,9 +127,9 @@ void ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr
 	if (auxName == "")
 		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
 
-	Declaration* decl = parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4,
-	                            DeclarationPadding::Pad16, GetRawDataSize(), GetSourceTypeName(),
-	                            auxName, 0, bodyStr);
+	Declaration* decl = parent->AddDeclarationArray(
+		getSegmentOffset(), DeclarationAlignment::Align4, DeclarationPadding::Pad16,
+		GetRawDataSize(), GetSourceTypeName(), auxName, 0, bodyStr);
 	decl->staticConf = staticConf;
 }
 
@@ -1079,7 +1079,7 @@ std::string CutsceneCommandActorAction::GenerateSourceCode([[maybe_unused]] uint
 	{
 		result += StringHelper::Sprintf(
 			"\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %.11ef, "
-		    "%.11ef, %.11ef),\n",
+			"%.11ef, %.11ef),\n",
 			subCommand.c_str(), entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX,
 			entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY,

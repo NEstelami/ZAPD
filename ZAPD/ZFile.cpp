@@ -109,7 +109,7 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	if( rangeStart > rangeEnd )
+	if (rangeStart > rangeEnd)
 		throw std::runtime_error("Error: RangeStart must be before than RangeEnd.");
 
 	// Commented until ZArray doesn't use a ZFile to parse it's contents anymore.
@@ -877,7 +877,8 @@ std::string ZFile::ProcessDeclarations()
 
 			while (curPtr % 16 != 0)
 			{
-				item.second->postText += StringHelper::Sprintf("u32 %s_pad%02X = 0;\n", name.c_str(), curPtr);
+				item.second->postText +=
+					StringHelper::Sprintf("u32 %s_pad%02X = 0;\n", name.c_str(), curPtr);
 
 				item.second->size += 4;
 				curPtr += 4;
