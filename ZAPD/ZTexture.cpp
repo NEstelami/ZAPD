@@ -31,8 +31,7 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataInd
 		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 
 	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
-	                                   name, 0);
-	decl->staticConf = StaticConfig::Off;
+	                                   name, GetRawDataSize()/8);
 }
 
 void ZTexture::FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
@@ -48,7 +47,6 @@ void ZTexture::FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeigh
 
 	ParseRawData();
 	CalcHash();
-	staticConf = StaticConfig::Off;
 }
 
 void ZTexture::FromPNG(const fs::path& pngFilePath, TextureType texType)
@@ -107,8 +105,6 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 			break;
 		}
 	}
-
-	staticConf = StaticConfig::Off;
 }
 
 void ZTexture::ParseRawData()

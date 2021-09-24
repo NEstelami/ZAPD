@@ -83,13 +83,13 @@ Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVa
 
 bool Declaration::IsStatic() const
 {
-	if (isArray)
-	{
-		if (arrayItemCnt == 0)
-		{
-			return false;
-		}
-	}
+	//if (isArray)
+	//{
+	//	if (arrayItemCnt == 0 && arrayItemCntStr == "")
+	//	{
+	//		return false;
+	//	}
+	//}
 
 	switch (staticConf)
 	{
@@ -189,6 +189,10 @@ std::string Declaration::GetExternalDeclarationStr() const
 				"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", varType.c_str(),
 				varName.c_str(), arrayItemCntStr.c_str(),
 				includePath.c_str());
+		else if (arrayItemCnt != 0)
+			output += StringHelper::Sprintf(
+				"%s %s[%i] = {\n    #include \"%s\"\n};\n\n", varType.c_str(),
+				varName.c_str(), arrayItemCnt, includePath.c_str());
 		else
 			output += StringHelper::Sprintf(
 				"%s %s[] = {\n    #include \"%s\"\n};\n\n", varType.c_str(),
@@ -228,35 +232,33 @@ std::string Declaration::GetStaticForwardDeclarationStr() const
 {
 	std::string output;
 
-	if (!IsStatic())
+	if (!IsStatic() || isUnaccounted)
 		return "";
 
-	if (IsStatic() && !isUnaccounted)
+	if (isArray)
 	{
-		if (isArray)
+		if (arrayItemCntStr == "" && arrayItemCnt == 0)
 		{
-			if (arrayItemCntStr != "")
-			{
-				output += StringHelper::Sprintf("static %s %s[%s];\n", varType.c_str(),
-												varName.c_str(),
-												arrayItemCntStr.c_str());
-			}
-			else if (arrayItemCnt == 0)
-			{
-				output += StringHelper::Sprintf("static %s %s[];\n", varType.c_str(),
-												varName.c_str());
-			}
-			else
-			{
-				output += StringHelper::Sprintf("static %s %s[%i];\n", varType.c_str(),
-												varName.c_str(),
-												arrayItemCnt);
-			}
+			// Forward declaring static arrays without specifying the size is not allowed.
+			return "";
+		}
+
+		if (arrayItemCntStr != "")
+		{
+			output += StringHelper::Sprintf("static %s %s[%s];\n", varType.c_str(),
+											varName.c_str(),
+											arrayItemCntStr.c_str());
 		}
 		else
-			output += StringHelper::Sprintf("static %s %s;\n", varType.c_str(),
-											varName.c_str());
+		{
+			output += StringHelper::Sprintf("static %s %s[%i];\n", varType.c_str(),
+											varName.c_str(),
+											arrayItemCnt);
+		}
 	}
+	else
+		output += StringHelper::Sprintf("static %s %s;\n", varType.c_str(),
+										varName.c_str());
 
 	return output;
 }

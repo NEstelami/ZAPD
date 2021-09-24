@@ -81,7 +81,7 @@ Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix
 {
 	Declaration* decl =
 		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                                GetSourceTypeName(), name, 0, bodyStr);
+	                                GetSourceTypeName(), name, numInstructions, bodyStr);
 	decl->isExternal = true;
 	decl->staticConf = staticConf;
 	return decl;
@@ -2121,8 +2121,8 @@ bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string p
 				                                      tex->GetExternalExtension().c_str());
 				Declaration* decl = Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
 					texAddr, filename, tex->GetRawDataSize(), tex->GetSourceTypeName(),
-					tex->GetName(), 0);
-				decl->staticConf = StaticConfig::Off;
+					tex->GetName(), tex->GetRawDataSize()/8);
+				//decl->staticConf = StaticConfig::Off;
 			}
 			return true;
 		}
