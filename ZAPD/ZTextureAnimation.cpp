@@ -569,13 +569,20 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 			if (!parent->HasDeclaration(paramsOffset))
 			{
 				ZTextureAnimationParams* params;
-				int count = 2;
+				int count;
 				switch (entry.type)
 				{
 				case TextureAnimationParamsType::SingleScroll:
-					count = 1;
-					[[fallthrough]];
-				case TextureAnimationParamsType::DualScroll:
+					if (true)
+					{
+						count = 1;
+					}
+					else
+					{
+						[[fallthrough]];
+					case TextureAnimationParamsType::DualScroll:
+						count = 2;
+					}
 					params = new TextureScrollingParams(parent);
 					params->ExtractFromBinary(paramsOffset, count);
 					break;
