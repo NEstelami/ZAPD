@@ -69,6 +69,13 @@ For most resources inside a `<File>` tag **you should also set an `Offset` attri
 
 It's worth noting that every tag expects a `Name="gNameOfTheAsset"`. This is will be the name of the extracted variable in the output C code. Every asset must be prefixed with `g` and the suffix should represent the type of the variable.
 
+Every tag can accept a `Static` attribute to specify if the asset should be marked as `static` or not.
+There are 3 valid values (defaults to `Global`):
+
+- `Global`: Mark static if the flag `--static` was used.
+- `On`: Override the global config and **always mark** as `static`.
+- `Off`: Override the global config and **don't mark** as `static`.
+
 -------------------------
 
 ### File
@@ -567,8 +574,6 @@ Currently, only [`Scalar`](#scalar), [`Vector`](#vector) and [`Vtx`](#vtx) suppo
 
   - `Name`: Required. How the variable will be named. By our convention it should be prefixed by `g`. The sufix is mandated by the element contained.
   - `Count`: Required. Amount of elements. Integer.
-
--------------------------
 
 -------------------------
 
