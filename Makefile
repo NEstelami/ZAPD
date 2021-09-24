@@ -5,6 +5,7 @@ ASAN ?= 0
 DEPRECATION_ON ?= 1
 DEBUG ?= 0
 COPYCHECK_ARGS ?=
+LLD ?= 0
 
 # Use clang++ if available, else use g++
 ifeq ($(shell command -v clang++ >/dev/null 2>&1; echo $$?),0)
