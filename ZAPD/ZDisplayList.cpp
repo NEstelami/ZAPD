@@ -2119,10 +2119,9 @@ bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string p
 								Path::GetFileNameWithoutExtension(tex->GetName());
 				auto filename = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
 				                                      tex->GetExternalExtension().c_str());
-				Declaration* decl =
-					Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
-						texAddr, filename, tex->GetRawDataSize(), tex->GetSourceTypeName(),
-						tex->GetName(), tex->GetRawDataSize() / 8);
+				Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
+					texAddr, filename, tex->GetRawDataSize(), tex->GetSourceTypeName(),
+					tex->GetName(), tex->GetRawDataSize() / 8);
 			}
 			return true;
 		}
