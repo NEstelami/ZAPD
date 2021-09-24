@@ -44,7 +44,7 @@ Reminder that in
     - `<Array>`
     - `<Path>`
 
-- A `<File>` cannot be the parent of a `<File>`.
+- A `<File>` cannot descend from a `<File>`.
 - All resources must be children of a `<File>`.
 - `<Array>` is the only paired resource tag enclosing an element; the element must be a single resource tag, one of
     - `<Scalar>`
