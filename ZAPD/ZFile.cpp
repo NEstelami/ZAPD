@@ -113,8 +113,12 @@ void ZFile::ParseXML(ZFileMode mode, XMLElement* reader, std::string filename,
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	if( rangeStart > rangeEnd )
-		throw std::runtime_error("Error: RangeStart must be before than RangeEnd.");
+	if (rangeStart > rangeEnd)
+		HANDLE_ERROR_PROCESS(
+			WarningType::Always,
+			StringHelper::Sprintf("'RangeStart' 0x%06X must be before 'RangeEnd' 0x%06X", rangeStart,
+		                          rangeEnd),
+			"");
 
 	if (reader->Attribute("Segment") != nullptr)
 	{
