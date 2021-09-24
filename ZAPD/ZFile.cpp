@@ -519,8 +519,7 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #ifdef _DEBUG
 	if (address == 0x0000)
 	{
-		int32_t bp = 0;
-		(void)bp;
+		[[maybe_unused]] int32_t bp = 0;
 	}
 #endif
 }
