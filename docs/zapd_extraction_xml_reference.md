@@ -416,6 +416,7 @@ extern u8 gJsjutanShadowTex[2048];
   - `Type`: The type of the declared variable. If missing, it will default to `void*`.
   - `TypeSize`: The size in bytes of the type. If missing, it will default to `4` (the size of a word and a pointer). Integer or hex value.
   - `Count`: Optional. If it is present, the variable will be declared as an array instead of a plain variable. The value of this attribute specifies the length of the array. If `Count` is present but it has no value (`Count=""`), then the length of the array will not be specified either in the declared variable. Integer or hex value.
+  - `Static`: This attribute can't be enabled on a Symbol node. A warning will be showed in this case.
 
 -------------------------
 
