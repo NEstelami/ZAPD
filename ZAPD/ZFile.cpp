@@ -125,6 +125,9 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename)
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
+	if( rangeStart > rangeEnd )
+		throw std::runtime_error("Error: RangeStart must be before than RangeEnd.");
+
 	// Not every XML may have a segment number, so this doesn't make much sense anymore.
 	// if (reader->Attribute("Segment") == nullptr)
 	// 	throw std::runtime_error(
@@ -1139,29 +1142,15 @@ std::string ZFile::ProcessDeclarations()
 					item.second->text);
 			}
 
-			// Do not asm_process vertex arrays. They have no practical use being overridden.
-			// if (item.second->varType == "Vtx" || item.second->varType == "static Vtx")
-			if (item.second->varType != "u64" && item.second->varType != "static u64" &&
-			    item.second->varType != "u8" && item.second->varType != "static u8")
-			{
+			if (item.second->arrayItemCntStr != "")
+				output += StringHelper::Sprintf(
+					"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
+					item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(),
+					item.second->includePath.c_str());
+			else
 				output += StringHelper::Sprintf(
 					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-					item.second->varName.c_str(),
-					StringHelper::Replace(item.second->includePath, "assets/", "../assets/")
-						.c_str());
-			}
-			else
-			{
-				if (item.second->arrayItemCntStr != "")
-					output += StringHelper::Sprintf(
-						"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-						item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(),
-						item.second->includePath.c_str());
-				else
-					output += StringHelper::Sprintf(
-						"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-						item.second->varName.c_str(), item.second->includePath.c_str());
-			}
+					item.second->varName.c_str(), item.second->includePath.c_str());
 		}
 		else if (item.second->varType != "")
 		{
