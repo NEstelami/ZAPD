@@ -165,27 +165,16 @@ std::string Declaration::GetExternalDeclarationStr() const
 		output += "static ";
 	}
 
-	// Do not asm_process vertex arrays. They have no practical use being overridden.
-	// if (varType == "Vtx")
-	if (varType != "u64" && varType != "u8")
-	{
-		output += StringHelper::Sprintf(
-			"%s %s[] = {\n#include \"%s\"\n};", varType.c_str(), varName.c_str(),
-			StringHelper::Replace(includePath, "assets/", "../assets/").c_str());
-	}
+	if (arrayItemCntStr != "")
+		output += StringHelper::Sprintf("%s %s[%s] = {\n#include \"%s\"\n};", varType.c_str(),
+										varName.c_str(), arrayItemCntStr.c_str(),
+										includePath.c_str());
+	else if (arrayItemCnt != 0)
+		output += StringHelper::Sprintf("%s %s[%i] = {\n#include \"%s\"\n};", varType.c_str(),
+										varName.c_str(), arrayItemCnt, includePath.c_str());
 	else
-	{
-		if (arrayItemCntStr != "")
-			output += StringHelper::Sprintf("%s %s[%s] = {\n#include \"%s\"\n};", varType.c_str(),
-			                                varName.c_str(), arrayItemCntStr.c_str(),
-			                                includePath.c_str());
-		else if (arrayItemCnt != 0)
-			output += StringHelper::Sprintf("%s %s[%i] = {\n#include \"%s\"\n};", varType.c_str(),
-			                                varName.c_str(), arrayItemCnt, includePath.c_str());
-		else
-			output += StringHelper::Sprintf("%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
-			                                varName.c_str(), includePath.c_str());
-	}
+		output += StringHelper::Sprintf("%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
+										varName.c_str(), includePath.c_str());
 
 	if (rightText != "")
 		output += " " + rightText + "";
