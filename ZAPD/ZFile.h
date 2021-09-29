@@ -52,18 +52,12 @@ public:
 
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                            std::string varType, std::string varName, std::string body);
-	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-	                            DeclarationPadding padding, size_t size, std::string varType,
-	                            std::string varName, std::string body);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                                 std::string varType, std::string varName, size_t arrayItemCnt,
 	                                 std::string body);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                                 std::string varType, std::string varName,
 	                                 std::string arrayItemCntStr, std::string body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	                                 DeclarationPadding padding, size_t size, std::string varType,
-	                                 std::string varName, size_t arrayItemCnt, std::string body);
 	Declaration* AddDeclarationPlaceholder(uint32_t address);
 	Declaration* AddDeclarationPlaceholder(uint32_t address, std::string varName);
 	Declaration* AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,

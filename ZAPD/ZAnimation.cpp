@@ -51,7 +51,7 @@ std::string ZNormalAnimation::GetSourceOutputCode([[maybe_unused]] const std::st
 		headerStr += StringHelper::Sprintf("\t%sFrameData,\n", defaultPrefix.c_str());
 		headerStr += StringHelper::Sprintf("\t%sJointIndices,\n", defaultPrefix.c_str());
 		headerStr += StringHelper::Sprintf("\t%i\n", limit);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
 		                       headerStr);
 
@@ -150,7 +150,7 @@ std::string ZLinkAnimation::GetSourceOutputCode([[maybe_unused]] const std::stri
 					StringHelper::Sprintf("%sSeg%06X", name.c_str(), segmentAddress));
 		std::string headerStr =
 			StringHelper::Sprintf("\n\t{ %i },\n\t0x%08X\n", frameCount, segmentAddress);
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
 		                       GetSourceTypeName(), StringHelper::Sprintf("%s", name.c_str()),
 		                       headerStr);
 	}
@@ -308,7 +308,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(refIndexOffset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(refIndexOffset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(refIndexOffset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * 1, "u8", refIndexStr, arrayItemCnt,
 			                            entryStr);
 		}
@@ -338,7 +338,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(transformDataOffset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(transformDataOffset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(transformDataOffset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * transformDataArr.at(0).GetRawDataSize(),
 			                            transformDataArr.at(0).GetSourceTypeName(),
 			                            transformDataStr, arrayItemCnt, entryStr);
@@ -367,7 +367,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(copyValuesOffset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(copyValuesOffset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(copyValuesOffset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * 2, "s16", copyValuesStr, arrayItemCnt,
 			                            entryStr);
 		}
@@ -444,7 +444,7 @@ std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		parent->AddDeclaration(address, DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(address, DeclarationAlignment::Align4, GetRawDataSize(),
 		                       GetSourceTypeName(), name, bodyStr);
 	}
 	else

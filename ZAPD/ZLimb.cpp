@@ -127,7 +127,7 @@ void Struct_800A598C::DeclareReferences(const std::string& prefix)
 
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(unk_8_Offset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(unk_8_Offset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * Struct_800A57C0::GetRawDataSize(),
 			                            Struct_800A57C0::GetSourceTypeName(), unk_8_Str,
 			                            arrayItemCnt, entryStr);
@@ -158,7 +158,7 @@ void Struct_800A598C::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(unk_C_Offset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(unk_C_Offset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(unk_C_Offset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * Struct_800A598C_2::GetRawDataSize(),
 			                            Struct_800A598C_2::GetSourceTypeName(), unk_C_Str,
 			                            arrayItemCnt, entryStr);
@@ -267,7 +267,7 @@ void Struct_800A5E28::DeclareReferences(const std::string& prefix)
 
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(unk_4_Offset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(unk_4_Offset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * Struct_800A598C::GetRawDataSize(),
 			                            Struct_800A598C::GetSourceTypeName(), unk_4_Str,
 			                            arrayItemCnt, entryStr);
@@ -371,7 +371,7 @@ void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),
+	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4, GetRawDataSize(),
 	                       GetSourceTypeName(), name, "");
 }
 
@@ -587,7 +587,7 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(GetFileAddress());
 
 	if (decl == nullptr)
-		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),
+		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4, GetRawDataSize(),
 		                       GetSourceTypeName(), name, entryStr);
 	else
 		decl->text = entryStr;
@@ -726,7 +726,7 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 		segmentStruct.DeclareReferences(prefix);
 		std::string entryStr = segmentStruct.GetSourceOutputCode(prefix);
 
-		parent->AddDeclaration(skinSegmentOffset, DeclarationAlignment::None,
+		parent->AddDeclaration(skinSegmentOffset, DeclarationAlignment::Align4,
 		                       Struct_800A5E28::GetRawDataSize(),
 		                       Struct_800A5E28::GetSourceTypeName(), struct_800A5E28_Str, entryStr);
 	}
