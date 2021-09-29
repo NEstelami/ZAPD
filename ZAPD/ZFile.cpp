@@ -526,7 +526,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		Declaration* decl = new Declaration(address, includePath, size, varType, varName);
+		decl = new Declaration(address, includePath, size, varType, varName);
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
