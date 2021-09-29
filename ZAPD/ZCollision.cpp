@@ -105,7 +105,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			waterBoxSegmentOffset, DeclarationAlignment::None, 16 * waterBoxes.size(), "WaterBox",
+			waterBoxSegmentOffset, DeclarationAlignment::Align4, 16 * waterBoxes.size(), "WaterBox",
 			StringHelper::Sprintf("%s_waterBoxes_%06X", auxName.c_str(), waterBoxSegmentOffset), 0,
 			declaration);
 	}
@@ -125,7 +125,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			polySegmentOffset, DeclarationAlignment::None, polygons.size() * 16, "CollisionPoly",
+			polySegmentOffset, DeclarationAlignment::Align4, polygons.size() * 16, "CollisionPoly",
 			StringHelper::Sprintf("%s_polygons_%08X", auxName.c_str(), polySegmentOffset), 0,
 			declaration);
 	}
@@ -142,7 +142,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 	if (polyTypeDefAddress != 0)
 		parent->AddDeclarationArray(
-			polyTypeDefSegmentOffset, DeclarationAlignment::None, polygonTypes.size() * 8,
+			polyTypeDefSegmentOffset, DeclarationAlignment::Align4, polygonTypes.size() * 8,
 			"SurfaceType",
 			StringHelper::Sprintf("%s_surfaceType_%08X", auxName.c_str(), polyTypeDefSegmentOffset),
 			0, declaration);
@@ -319,7 +319,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	}
 
 	parent->AddDeclarationArray(
-		rawDataIndex, DeclarationAlignment::None, entries.size() * 8, "CamData",
+		rawDataIndex, DeclarationAlignment::Align4, entries.size() * 8, "CamData",
 		StringHelper::Sprintf("%s_camDataList_%08X", prefix.c_str(), rawDataIndex), entries.size(),
 		declaration);
 
@@ -342,7 +342,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		int32_t cameraPosDataIndex = GETSEGOFFSET(cameraPosDataSeg);
 		uint32_t entrySize = numDataTotal * 0x6;
 		parent->AddDeclarationArray(
-			cameraPosDataIndex, DeclarationAlignment::None, entrySize, "Vec3s",
+			cameraPosDataIndex, DeclarationAlignment::Align4, entrySize, "Vec3s",
 			StringHelper::Sprintf("%s_camPosData_%08X", prefix.c_str(), cameraPosDataIndex),
 			numDataTotal, declaration);
 	}
