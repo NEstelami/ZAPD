@@ -171,8 +171,7 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 	if (decl == nullptr)
 	{
 		parent->AddDeclarationArray(GETSEGOFFSET(listSegmentAddress), DeclarationAlignment::Align4,
-		                            DeclarationPadding::Pad4, points.size() * 6,
-		                            points.at(0).GetSourceTypeName(),
+		                            points.size() * 6, points.at(0).GetSourceTypeName(),
 		                            StringHelper::Sprintf("%sPathwayList0x%06X", prefix.c_str(),
 		                                                  GETSEGOFFSET(listSegmentAddress)),
 		                            points.size(), declaration);

@@ -1849,14 +1849,11 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			vtxDeclarations[item.first] = declaration;
 
-			if (parent != nullptr)
-			{
-				parent->AddDeclarationArray(item.first, DeclarationAlignment::None,
-				                            item.second.size() * 16, "Vtx",
-				                            StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(),
-				                                                  item.first, item.second.size()),
-				                            item.second.size(), declaration);
-			}
+			parent->AddDeclarationArray(item.first, DeclarationAlignment::Align16,
+										item.second.size() * 16, "Vtx",
+										StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(),
+																item.first, item.second.size()),
+										item.second.size(), declaration);
 		}
 	}
 
@@ -1946,7 +1943,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				auto filepath = Globals::Instance->outputPath / vtxName;
 				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), "vtx");
 
-				parent->AddDeclarationArray(vtxKeys[i], DeclarationAlignment::None,
+				parent->AddDeclarationArray(vtxKeys[i], DeclarationAlignment::Align16,
 				                            item.size() * 16, "Vtx", vtxName, item.size(),
 				                            declaration);
 

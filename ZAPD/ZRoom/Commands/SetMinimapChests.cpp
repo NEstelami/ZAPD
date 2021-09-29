@@ -42,7 +42,7 @@ void SetMinimapChests::DeclareReferences(const std::string& prefix)
 	}
 
 	parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, chests.size() * 10, "MinimapChest",
+		segmentOffset, DeclarationAlignment::Align4, chests.size() * 10, "MinimapChest",
 		StringHelper::Sprintf("%sMinimapChests0x%06X", prefix.c_str(), segmentOffset),
 		chests.size(), declaration);
 }

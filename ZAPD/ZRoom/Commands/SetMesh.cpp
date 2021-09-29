@@ -66,11 +66,8 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 
 	for (const auto& vtxEntry : dList->vtxDeclarations)
 	{
-		DeclarationAlignment alignment = DeclarationAlignment::Align4;
-		if (Globals::Instance->game == ZGame::MM_RETAIL)
-			alignment = DeclarationAlignment::None;
 		parent->AddDeclarationArray(
-			vtxEntry.first, alignment, dList->vertices[vtxEntry.first].size() * 16, "Vtx",
+			vtxEntry.first, DeclarationAlignment::Align16, dList->vertices[vtxEntry.first].size() * 16, "Vtx",
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}
