@@ -180,7 +180,7 @@ Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix,
 		auxName = GetDefaultName(prefix);
 
 	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
-	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetRawDataSize(),
 	                                   GetSourceTypeName(), auxName, count, bodyStr);
 }
 
@@ -666,7 +666,7 @@ Declaration* ZTextureAnimation::DeclareVar(const std::string& prefix, const std:
 		auxName = GetDefaultName(prefix);
 
 	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
-	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetRawDataSize(),
 	                                   GetSourceTypeName(), auxName, entries.size(), bodyStr);
 }
 

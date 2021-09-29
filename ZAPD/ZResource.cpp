@@ -146,7 +146,7 @@ Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string&
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(),
+	return parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(),
 	                              GetRawDataSize(), GetSourceTypeName(), auxName, bodyStr);
 }
 
@@ -192,11 +192,6 @@ std::string ZResource::GetExternalExtension() const
 DeclarationAlignment ZResource::GetDeclarationAlignment() const
 {
 	return DeclarationAlignment::Align4;
-}
-
-DeclarationPadding ZResource::GetDeclarationPadding() const
-{
-	return DeclarationPadding::None;
 }
 
 bool ZResource::WasDeclaredInXml() const

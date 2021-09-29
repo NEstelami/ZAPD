@@ -157,10 +157,6 @@ public:
 	 * The alignment of the extracted struct
 	 */
 	[[nodiscard]] virtual DeclarationAlignment GetDeclarationAlignment() const;
-	/**
-	 * The padding of the extracted struct
-	 */
-	[[nodiscard]] virtual DeclarationPadding GetDeclarationPadding() const;
 	void SetInnerNode(bool inner);
 	/**
 	 * Returns `true` if this ZResource was declared using an XML node,

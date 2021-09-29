@@ -229,7 +229,7 @@ Declaration* ZLimbTable::DeclareVar(const std::string& prefix, const std::string
 		auxName = GetDefaultName(prefix);
 
 	return parent->AddDeclarationArray(
-		rawDataIndex, GetDeclarationAlignment(), GetDeclarationPadding(), GetRawDataSize(),
+		rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 		GetSourceTypeName(), auxName, limbsAddresses.size(), bodyStr);
 }
 
