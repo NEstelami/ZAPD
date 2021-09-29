@@ -107,7 +107,6 @@ public:
 	virtual void SetRawDataIndex(uint32_t value);
 	virtual size_t GetRawDataSize() const = 0;
 	virtual DeclarationAlignment GetDeclarationAlignment() const;
-	virtual DeclarationPadding GetDeclarationPadding() const;
 	void SetInnerNode(bool inner);
 	bool WasDeclaredInXml() const;
 

@@ -224,11 +224,6 @@ size_t ZCollisionHeader::GetRawDataSize() const
 	return 44;
 }
 
-DeclarationPadding ZCollisionHeader::GetDeclarationPadding() const
-{
-	return DeclarationPadding::Pad16;
-}
-
 PolygonEntry::PolygonEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	const uint8_t* data = rawData.data();

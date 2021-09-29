@@ -430,7 +430,6 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawDataSize() const override;
-	DeclarationPadding GetDeclarationPadding() const override;
 	CutsceneCommands GetCommandFromID(int32_t id);
 	uint32_t getSegmentOffset() const override { return rawDataIndex; }
 

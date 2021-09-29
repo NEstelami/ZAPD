@@ -126,11 +126,6 @@ size_t ZCutscene::GetRawDataSize() const
 	return size;
 }
 
-DeclarationPadding ZCutscene::GetDeclarationPadding() const
-{
-	return DeclarationPadding::Pad16;
-}
-
 void ZCutscene::ParseRawData()
 {
 	ZResource::ParseRawData();
@@ -1250,7 +1245,7 @@ Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::str
 		auxName = GetDefaultName(prefix);
 
 	return parent->AddDeclarationArray(getSegmentOffset(), GetDeclarationAlignment(),
-	                                   GetDeclarationPadding(), GetRawDataSize(),
+	                                   GetRawDataSize(),
 	                                   GetSourceTypeName(), auxName, 0, bodyStr);
 }
 

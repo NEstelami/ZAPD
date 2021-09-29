@@ -97,5 +97,4 @@ public:
 	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() const override;
-	DeclarationPadding GetDeclarationPadding() const override;
 };
