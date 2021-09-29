@@ -60,8 +60,7 @@ Declaration* ZPath::DeclareVar(const std::string& prefix, const std::string& bod
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
-	                                   GetRawDataSize(),
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                                   GetSourceTypeName(), name, pathways.size(), bodyStr);
 }
 
