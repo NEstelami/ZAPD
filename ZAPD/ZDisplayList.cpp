@@ -1802,6 +1802,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			std::string declaration = "";
 
 			uint32_t curAddr = item.first;
+			auto& firstVtx = item.second.at(0);
 
 			for (auto vtx : item.second)
 			{
@@ -1810,15 +1811,10 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				curAddr += vtx.GetRawDataSize();
 			}
 
-			if (parent != nullptr)
-			{
-				Declaration* decl = parent->AddDeclarationArray(
-					item.first, DeclarationAlignment::Align4, item.second.size() * 16, "Vtx",
-					StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first,
-				                          item.second.size()),
-					item.second.size(), declaration);
-				decl->isExternal = true;
-			}
+			Declaration* decl = parent->AddDeclarationArray(
+					item.first, firstVtx.GetDeclarationAlignment(), item.second.size() * firstVtx.GetRawDataSize(), firstVtx.GetSourceTypeName(),
+					firstVtx.GetDefaultName(name), item.second.size(), declaration);
+			decl->isExternal = true;
 		}
 	}
 

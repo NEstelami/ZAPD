@@ -72,12 +72,8 @@ void SetActorList::DeclareReferencesLate(const std::string& prefix)
 
 	const auto& entry = actors.front();
 
-	DeclarationPadding padding = DeclarationPadding::Pad16;
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-		padding = DeclarationPadding::None;
-
 	std::string varName = StringHelper::Sprintf("%sActorList_%06X", prefix.c_str(), segmentOffset);
-	parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4, padding,
+	parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
 	                            actors.size() * entry.GetRawDataSize(), entry.GetSourceTypeName(),
 	                            varName, GetActorListArraySize(), declaration);
 }

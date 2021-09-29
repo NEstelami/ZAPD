@@ -42,7 +42,7 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 		const auto& light = lights.front();
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, lights.size() * light.GetRawDataSize(),
+			segmentOffset, DeclarationAlignment::Align4, lights.size() * light.GetRawDataSize(),
 			light.GetSourceTypeName(),
 			StringHelper::Sprintf("%sLightInfo0x%06X", prefix.c_str(), segmentOffset),
 			lights.size(), declarations);

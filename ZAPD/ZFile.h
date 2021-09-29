@@ -56,9 +56,6 @@ public:
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                            const std::string& varType, const std::string& varName,
 	                            const std::string& body);
-	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-	                            DeclarationPadding padding, size_t size, const std::string& varType,
-	                            const std::string& varName, const std::string& body);
 
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                                 const std::string& varType, const std::string& varName,
@@ -66,10 +63,6 @@ public:
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                                 const std::string& varType, const std::string& varName,
 	                                 const std::string& arrayItemCntStr, const std::string& body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	                                 DeclarationPadding padding, size_t size,
-	                                 const std::string& varType, const std::string& varName,
-	                                 size_t arrayItemCnt, const std::string& body);
 
 	Declaration* AddDeclarationPlaceholder(uint32_t address, const std::string& varName);
 

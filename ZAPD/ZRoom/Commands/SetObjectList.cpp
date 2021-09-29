@@ -42,7 +42,7 @@ void SetObjectList::DeclareReferences(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::None, objects.size() * 2, "s16",
+			segmentOffset, DeclarationAlignment::Align4, objects.size() * 2, "s16",
 			StringHelper::Sprintf("%sObjectList_%06X", prefix.c_str(), segmentOffset),
 			objects.size(), declaration);
 	}

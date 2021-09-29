@@ -295,7 +295,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(refIndexOffset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(refIndexOffset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(refIndexOffset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * 1, "u8", refIndexStr, arrayItemCnt,
 			                            entryStr);
 		}
@@ -325,7 +325,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(transformDataOffset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(transformDataOffset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(transformDataOffset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * transformDataArr.at(0).GetRawDataSize(),
 			                            transformDataArr.at(0).GetSourceTypeName(),
 			                            transformDataStr, arrayItemCnt, entryStr);
@@ -354,7 +354,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(copyValuesOffset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(copyValuesOffset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(copyValuesOffset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * 2, "s16", copyValuesStr, arrayItemCnt,
 			                            entryStr);
 		}
