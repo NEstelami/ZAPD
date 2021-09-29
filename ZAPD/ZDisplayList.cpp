@@ -1849,11 +1849,10 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			vtxDeclarations[item.first] = declaration;
 
-			parent->AddDeclarationArray(item.first, DeclarationAlignment::Align16,
-										item.second.size() * 16, "Vtx",
-										StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(),
-																item.first, item.second.size()),
-										item.second.size(), declaration);
+			parent->AddDeclarationArray(
+				item.first, DeclarationAlignment::Align16, item.second.size() * 16, "Vtx",
+				StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first, item.second.size()),
+				item.second.size(), declaration);
 		}
 	}
 

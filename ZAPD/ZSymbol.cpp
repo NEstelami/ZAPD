@@ -55,7 +55,8 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 			count = StringHelper::StrToL(countXml, 0);
 	}
 
-	if (registeredAttributes.at("Static").value == "On") {
+	if (registeredAttributes.at("Static").value == "On")
+	{
 		fprintf(stderr, "A <Symbol> can't be marked as static.\n\t Disabling static\n");
 	}
 	staticConf = StaticConfig::Off;

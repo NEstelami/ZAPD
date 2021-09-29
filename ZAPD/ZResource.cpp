@@ -256,13 +256,14 @@ uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 	if (GETSEGNUM(segmentedAddress) == 0x80)  // Is defined in code?
 	{
 		uint32_t parentBaseOffset = GETSEGOFFSET(parentBaseAddress);
-		if (parentBaseOffset > currentPtr) 
+		if (parentBaseOffset > currentPtr)
 		{
-			throw std::runtime_error(StringHelper::Sprintf(
-				"\nSeg2Filespace: Segmented address is smaller than 'BaseAddress'. Maybe your 'BaseAddress' is wrong?\n"
-				"\t SegmentedAddress: 0x%08X\n"
-				"\t BaseAddress:      0x%08X\n",
-				segmentedAddress, parentBaseAddress));
+			throw std::runtime_error(
+				StringHelper::Sprintf("\nSeg2Filespace: Segmented address is smaller than "
+			                          "'BaseAddress'. Maybe your 'BaseAddress' is wrong?\n"
+			                          "\t SegmentedAddress: 0x%08X\n"
+			                          "\t BaseAddress:      0x%08X\n",
+			                          segmentedAddress, parentBaseAddress));
 		}
 		currentPtr -= parentBaseOffset;
 	}

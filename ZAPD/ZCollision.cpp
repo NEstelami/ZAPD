@@ -185,8 +185,8 @@ void ZCollisionHeader::ParseRawData()
 		waterBoxStr);
 
 	Declaration* decl =
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4,
-	                           GetRawDataSize(), GetSourceTypeName(), name, declaration);
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                           GetSourceTypeName(), name, declaration);
 	decl->staticConf = staticConf;
 }
 
