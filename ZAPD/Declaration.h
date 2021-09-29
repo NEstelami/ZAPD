@@ -5,25 +5,15 @@
 
 enum class DeclarationAlignment
 {
-	None,
 	Align4,
 	Align8,
 	Align16
-};
-
-enum class DeclarationPadding
-{
-	None,
-	Pad4,
-	Pad8,
-	Pad16
 };
 
 class Declaration
 {
 public:
 	DeclarationAlignment alignment;
-	DeclarationPadding padding;
 	size_t size;
 	std::string preText = "";
 	std::string text = "";
@@ -44,8 +34,6 @@ public:
 
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
@@ -54,12 +42,8 @@ public:
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
 	            bool nIsExternal);
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
-	            std::string nText);
 	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
 
 protected:
-	Declaration(DeclarationAlignment nAlignment, DeclarationPadding nPadding, size_t nSize,
-	            std::string nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nText);
 };
