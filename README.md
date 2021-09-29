@@ -129,7 +129,7 @@ Each warning type uses one of these by default, but can be modified with flags, 
 - `-Wno-foo` disables warnings of type `foo`
 - `-Werror=foo` escalates `foo` to behave like an error
 - `-Weverything` enables all warnings (they may be turned off using `-Wno-` flags afterwards)
-- `-Werror` escalates all enabled warnings to errorsZZ
+- `-Werror` escalates all enabled warnings to errors
 
 All warning types currently implemented, with their default levels:
 
