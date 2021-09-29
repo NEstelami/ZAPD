@@ -504,7 +504,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string inc
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		Declaration* decl = new Declaration(includePath, size, varType, varName);
+		decl = new Declaration(includePath, size, varType, varName);
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
