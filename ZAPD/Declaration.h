@@ -40,19 +40,22 @@ public:
 	bool isPlaceholder = false;
 	bool declaredInXml = false;
 
-	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
-	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, std::string nText);
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
 	            std::string nText);
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+	            std::string nVarType, std::string nVarName, bool nIsArray,
+	            std::string nArrayItemCntStr, std::string nText);
 	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
 	            std::string nVarType, std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
 	            std::string nText, bool nIsExternal);
 
-	Declaration(offset_t nAddress, std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
+	Declaration(offset_t nAddress, std::string nIncludePath, size_t nSize, std::string nVarType,
+	            std::string nVarName);
 
 protected:
-	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, std::string nText);
+	Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+	            std::string nText);
 };

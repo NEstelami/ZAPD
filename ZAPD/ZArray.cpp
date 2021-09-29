@@ -75,8 +75,8 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 	else
 	{
 		return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
-		                                   GetRawDataSize(),
-		                                   GetSourceTypeName(), name, arrayCnt, bodyStr);
+		                                   GetRawDataSize(), GetSourceTypeName(), name, arrayCnt,
+		                                   bodyStr);
 	}
 }
 

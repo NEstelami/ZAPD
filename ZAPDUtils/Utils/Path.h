@@ -46,8 +46,5 @@ public:
 		return output;
 	};
 
-	static fs::path GetDirectoryName(const fs::path& path)
-	{
-		return path.parent_path();
-	};
+	static fs::path GetDirectoryName(const fs::path& path) { return path.parent_path(); };
 };

@@ -1812,8 +1812,9 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			}
 
 			Declaration* decl = parent->AddDeclarationArray(
-					item.first, firstVtx.GetDeclarationAlignment(), item.second.size() * firstVtx.GetRawDataSize(), firstVtx.GetSourceTypeName(),
-					firstVtx.GetDefaultName(name), item.second.size(), declaration);
+				item.first, firstVtx.GetDeclarationAlignment(),
+				item.second.size() * firstVtx.GetRawDataSize(), firstVtx.GetSourceTypeName(),
+				firstVtx.GetDefaultName(name), item.second.size(), declaration);
 			decl->isExternal = true;
 		}
 	}

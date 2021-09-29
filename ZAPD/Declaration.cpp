@@ -1,7 +1,7 @@
 #include "Declaration.h"
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment,
-                         size_t nSize, std::string nText)
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         std::string nText)
 {
 	address = nAddress;
 	alignment = nAlignment;
@@ -9,8 +9,9 @@ Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment,
 	text = nText;
 }
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, std::string nText)
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         std::string nVarType, std::string nVarName, bool nIsArray,
+                         std::string nText)
 	: Declaration(nAddress, nAlignment, nSize, nText)
 {
 	varType = nVarType;
@@ -48,8 +49,8 @@ Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, siz
 	isExternal = nIsExternal;
 }
 
-Declaration::Declaration(offset_t nAddress, std::string nIncludePath, size_t nSize, std::string nVarType,
-                         std::string nVarName)
+Declaration::Declaration(offset_t nAddress, std::string nIncludePath, size_t nSize,
+                         std::string nVarType, std::string nVarName)
 	: Declaration(nAddress, DeclarationAlignment::Align4, nSize, "")
 {
 	includePath = nIncludePath;

@@ -125,7 +125,7 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename)
 	if (reader->Attribute("RangeEnd") != nullptr)
 		rangeEnd = StringHelper::StrToL(reader->Attribute("RangeEnd"), 16);
 
-	if( rangeStart > rangeEnd )
+	if (rangeStart > rangeEnd)
 		throw std::runtime_error("Error: RangeStart must be before than RangeEnd.");
 
 	// Not every XML may have a segment number, so this doesn't make much sense anymore.
@@ -419,7 +419,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body);
+		decl =
+			new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -438,7 +439,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, const std::string& varType, const std::string& varName,
+                                        size_t size, const std::string& varType,
+                                        const std::string& varName,
                                         const std::string& arrayItemCntStr, const std::string& body)
 {
 	bool validOffset = AddDeclarationChecks(address, varName);
@@ -448,7 +450,8 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCntStr, body);
+		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCntStr,
+		                       body);
 		declarations[address] = decl;
 	}
 	else
