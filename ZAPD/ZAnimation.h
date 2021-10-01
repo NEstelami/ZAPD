@@ -45,8 +45,10 @@ public:
 protected:
 	std::vector<uint16_t> rotationValues;
 	std::vector<RotationIndex> rotationIndices;
-	segptr_t rotationValuesAddress = 0;
-	segptr_t rotationIndicesAddress = 0;
+	segptr_t rotationValuesSeg = 0;
+	segptr_t rotationIndicesSeg = 0;
+	offset_t rotationValuesOffset = 0;
+	offset_t rotationIndicesOffset = 0;
 	int16_t limit = 0;
 };
 
