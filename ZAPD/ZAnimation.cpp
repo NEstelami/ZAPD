@@ -116,9 +116,9 @@ void ZNormalAnimation::DeclareReferences(const std::string& prefix)
 std::string ZNormalAnimation::GetBodySourceCode() const
 {
 	std::string frameDataName;
-	Globals::Instance->GetSegmentedPtrName(rotationValuesAddress, parent, "s16", frameDataName);
+	Globals::Instance->GetSegmentedPtrName(rotationValuesOffset, parent, "s16", frameDataName);
 	std::string jointIndicesName;
-	Globals::Instance->GetSegmentedPtrName(rotationIndicesAddress, parent, "JointIndex",
+	Globals::Instance->GetSegmentedPtrName(rotationIndicesOffset, parent, "JointIndex",
 	                                       jointIndicesName);
 
 	std::string headerStr =
