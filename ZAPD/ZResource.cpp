@@ -19,6 +19,7 @@ ZResource::ZResource(ZFile* nParent)
 	RegisterOptionalAttribute("OutName");
 	RegisterOptionalAttribute("Offset");
 	RegisterOptionalAttribute("Custom");
+	RegisterOptionalAttribute("Static", "Global");
 }
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
@@ -109,6 +110,24 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			outName = name;
 
 		isCustomAsset = registeredAttributes["Custom"].wasSet;
+
+		std::string& staticXml = registeredAttributes["Static"].value;
+		if (staticXml == "Global")
+		{
+			staticConf = StaticConfig::Global;
+		}
+		else if (staticXml == "On")
+		{
+			staticConf = StaticConfig::On;
+		}
+		else if (staticXml == "Off")
+		{
+			staticConf = StaticConfig::Off;
+		}
+		else
+		{
+			throw std::runtime_error("Invalid value for 'Static' attribute.");
+		}
 
 		declaredInXml = true;
 	}
@@ -237,13 +256,14 @@ uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 	if (GETSEGNUM(segmentedAddress) == 0x80)  // Is defined in code?
 	{
 		uint32_t parentBaseOffset = GETSEGOFFSET(parentBaseAddress);
-		if (parentBaseOffset > currentPtr) 
+		if (parentBaseOffset > currentPtr)
 		{
-			throw std::runtime_error(StringHelper::Sprintf(
-				"\nSeg2Filespace: Segmented address is smaller than 'BaseAddress'. Maybe your 'BaseAddress' is wrong?\n"
-				"\t SegmentedAddress: 0x%08X\n"
-				"\t BaseAddress:      0x%08X\n",
-				segmentedAddress, parentBaseAddress));
+			throw std::runtime_error(
+				StringHelper::Sprintf("\nSeg2Filespace: Segmented address is smaller than "
+			                          "'BaseAddress'. Maybe your 'BaseAddress' is wrong?\n"
+			                          "\t SegmentedAddress: 0x%08X\n"
+			                          "\t BaseAddress:      0x%08X\n",
+			                          segmentedAddress, parentBaseAddress));
 		}
 		currentPtr -= parentBaseOffset;
 	}

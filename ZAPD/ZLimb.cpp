@@ -371,8 +371,9 @@ void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
+	Declaration* decl = parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4,
+	                                           GetRawDataSize(), GetSourceTypeName(), name, "");
+	decl->staticConf = staticConf;
 }
 
 void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
@@ -587,10 +588,11 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(GetFileAddress());
 
 	if (decl == nullptr)
-		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4, GetRawDataSize(),
-		                       GetSourceTypeName(), name, entryStr);
+		decl = parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4,
+		                              GetRawDataSize(), GetSourceTypeName(), name, entryStr);
 	else
 		decl->text = entryStr;
+	decl->staticConf = staticConf;
 
 	return "";
 }

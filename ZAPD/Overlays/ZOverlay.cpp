@@ -3,12 +3,11 @@
 #include <assert.h>
 #include <unordered_map>
 #include <unordered_set>
-
-#include <Utils/Directory.h>
-#include <Utils/File.h>
-#include <Utils/Path.h>
-#include <Utils/StringHelper.h>
 #include "Globals.h"
+#include "Utils/Directory.h"
+#include "Utils/File.h"
+#include "Utils/Path.h"
+#include "Utils/StringHelper.h"
 
 using namespace ELFIO;
 

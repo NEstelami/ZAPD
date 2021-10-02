@@ -233,6 +233,10 @@ int main(int argc, char* argv[])
 		{
 			Globals::Instance->gccCompat = true;
 		}
+		else if (arg == "-s" || arg == "--static")
+		{
+			Globals::Instance->forceStatic = true;
+		}
 	}
 
 	// Parse File Mode

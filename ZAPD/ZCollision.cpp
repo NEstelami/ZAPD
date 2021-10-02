@@ -118,8 +118,8 @@ void ZCollisionHeader::ParseRawData()
 			parent->AddDeclarationArray(
 				polySegmentOffset, DeclarationAlignment::Align4, polygons.size() * 16,
 				"CollisionPoly",
-				StringHelper::Sprintf("%s_polygons_%08X", name.c_str(), polySegmentOffset), 0,
-				declaration);
+				StringHelper::Sprintf("%s_polygons_%08X", name.c_str(), polySegmentOffset),
+				polygons.size(), declaration);
 		}
 	}
 
@@ -137,8 +137,8 @@ void ZCollisionHeader::ParseRawData()
 		parent->AddDeclarationArray(
 			polyTypeDefSegmentOffset, DeclarationAlignment::Align4, polygonTypes.size() * 8,
 			"SurfaceType",
-			StringHelper::Sprintf("%s_surfaceType_%08X", name.c_str(), polyTypeDefSegmentOffset), 0,
-			declaration);
+			StringHelper::Sprintf("%s_surfaceType_%08X", name.c_str(), polyTypeDefSegmentOffset),
+			polygonTypes.size(), declaration);
 
 	declaration = "";
 
@@ -184,8 +184,10 @@ void ZCollisionHeader::ParseRawData()
 		name.c_str(), polyTypeDefSegmentOffset, name.c_str(), camDataSegmentOffset, numWaterBoxes,
 		waterBoxStr);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, 44, GetSourceTypeName(),
-	                       name, declaration);
+	Declaration* decl =
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                           GetSourceTypeName(), name, declaration);
+	decl->staticConf = staticConf;
 }
 
 std::string ZCollisionHeader::GetSourceTypeName() const

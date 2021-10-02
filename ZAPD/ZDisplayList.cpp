@@ -83,8 +83,9 @@ Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix
 {
 	Declaration* decl =
 		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                                GetSourceTypeName(), name, 0, bodyStr);
+	                                GetSourceTypeName(), name, numInstructions, bodyStr);
 	decl->isExternal = true;
+	decl->staticConf = staticConf;
 	return decl;
 }
 
@@ -1850,14 +1851,10 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			vtxDeclarations[item.first] = declaration;
 
-			if (parent != nullptr)
-			{
-				parent->AddDeclarationArray(item.first, DeclarationAlignment::Align16,
-				                            item.second.size() * 16, "static Vtx",
-				                            StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(),
-				                                                  item.first, item.second.size()),
-				                            item.second.size(), declaration);
-			}
+			parent->AddDeclarationArray(
+				item.first, DeclarationAlignment::Align16, item.second.size() * 16, "Vtx",
+				StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), item.first, item.second.size()),
+				item.second.size(), declaration);
 		}
 	}
 
@@ -1948,11 +1945,11 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), "vtx");
 
 				parent->AddDeclarationArray(vtxKeys[i], DeclarationAlignment::Align16,
-				                            item.size() * 16, "static Vtx", vtxName, item.size(),
+				                            item.size() * 16, "Vtx", vtxName, item.size(),
 				                            declaration);
 
 				Declaration* vtxDecl = parent->AddDeclarationIncludeArray(
-					vtxKeys[i], incStr, item.size() * 16, "static Vtx", vtxName, item.size());
+					vtxKeys[i], incStr, item.size() * 16, "Vtx", vtxName, item.size());
 				vtxDecl->isExternal = true;
 			}
 		}
@@ -2122,7 +2119,7 @@ bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string p
 				                                      tex->GetExternalExtension().c_str());
 				Globals::Instance->lastScene->parent->AddDeclarationIncludeArray(
 					texAddr, filename, tex->GetRawDataSize(), tex->GetSourceTypeName(),
-					tex->GetName(), 0);
+					tex->GetName(), tex->GetRawDataSize() / 8);
 			}
 			return true;
 		}

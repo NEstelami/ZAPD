@@ -110,8 +110,10 @@ ZAPD also accepts the following list of extra parameters:
   - Can be used only in `e` or `bsf` modes.
 - `-tm MODE`: Test Mode (enables certain experimental features). To enable it, set `MODE` to `1`.
 - `-wno` / `--warn-no-offsets` : Enable warnings for nodes that dont have offsets specified. Takes priority over `-eno`/ `--error-no-offsets`.
-- `-eno`/ `--error-no-offsets` : Enable errors for nodes that dont have offsets specified.
+- `-eno` / `--error-no-offsets` : Enable errors for nodes that dont have offsets specified.
 - `-se` / `--set-exporter` : Sets which exporter to use.
 - `--gcc-compat` : Enables GCC compatible mode. Slower.
+- `-s` / `--static` : Mark every asset as `static`.
+  - This behaviour can be overridden per asset using `Static=` in the respective XML node.
 
 Additionally, you can pass the flag `--version` to see the current ZAPD version. If that flag is passed, ZAPD will ignore any other parameter passed.
