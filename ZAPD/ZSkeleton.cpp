@@ -228,9 +228,9 @@ Declaration* ZLimbTable::DeclareVar(const std::string& prefix, const std::string
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                                   GetSourceTypeName(), auxName, limbsAddresses.size(),
-	                                   bodyStr);
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                GetSourceTypeName(), auxName, limbsAddresses.size(), bodyStr);
 	decl->staticConf = staticConf;
 	return decl;
 }

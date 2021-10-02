@@ -165,8 +165,9 @@ Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string&
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	Declaration* decl = parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                              GetSourceTypeName(), auxName, bodyStr);
+	Declaration* decl =
+		parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                           GetSourceTypeName(), auxName, bodyStr);
 	decl->staticConf = staticConf;
 	return decl;
 }

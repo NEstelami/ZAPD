@@ -69,16 +69,16 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 		auto filepath = Globals::Instance->outputPath / name;
 		std::string includePath = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(),
 		                                                res->GetExternalExtension().c_str());
-		decl = parent->AddDeclarationIncludeArray(
-			rawDataIndex, includePath, GetRawDataSize(), GetSourceTypeName(), name, arrayCnt);
+		decl = parent->AddDeclarationIncludeArray(rawDataIndex, includePath, GetRawDataSize(),
+		                                          GetSourceTypeName(), name, arrayCnt);
 		decl->text = bodyStr;
 		decl->isExternal = true;
 	}
 	else
 	{
-		decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
-		                                   GetRawDataSize(), GetSourceTypeName(), name, arrayCnt,
-		                                   bodyStr);
+		decl =
+			parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+		                                GetSourceTypeName(), name, arrayCnt, bodyStr);
 	}
 
 	decl->staticConf = staticConf;
