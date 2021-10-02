@@ -145,7 +145,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 			polyTypeDefSegmentOffset, DeclarationAlignment::Align4, polygonTypes.size() * 8,
 			"SurfaceType",
 			StringHelper::Sprintf("%s_surfaceType_%08X", auxName.c_str(), polyTypeDefSegmentOffset),
-			0, declaration);
+			polygonTypes.size(), declaration);
 
 	declaration = "";
 

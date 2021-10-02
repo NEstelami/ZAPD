@@ -16,6 +16,13 @@ enum class DeclarationAlignment
 	Align16
 };
 
+enum class StaticConfig
+{
+	Off,
+	Global,
+	On
+};
+
 class Declaration
 {
 public:
@@ -38,6 +45,7 @@ public:
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
 	bool declaredInXml = false;
+	StaticConfig staticConf = StaticConfig::Global;
 
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
 	            std::string nVarName, bool nIsArray, std::string nText);
@@ -50,6 +58,15 @@ public:
 	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
 	            bool nIsExternal);
 	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
+
+	bool IsStatic() const;
+
+	std::string GetNormalDeclarationStr() const;
+	std::string GetExternalDeclarationStr() const;
+
+	std::string GetExternStr() const;
+
+	std::string GetStaticForwardDeclarationStr() const;
 
 protected:
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nText);
