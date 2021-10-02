@@ -26,6 +26,8 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+
 	std::string GetBodySourceCode() const override;
 
 	std::string GetSourceTypeName() const override;
