@@ -139,9 +139,10 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
 	if (name == "")
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, "SCREEN_WIDTH * SCREEN_HEIGHT / 4",
-	                            bodyStr);
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8,
+	                                                GetRawDataSize(), GetSourceTypeName(), auxName,
+	                                                "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
+	decl->staticConf = staticConf;
 }
 
 bool ZBackground::IsExternalResource() const
