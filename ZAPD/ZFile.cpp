@@ -362,46 +362,25 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
-	Declaration* decl = new Declaration(alignment, size, varType, varName, false, body);
-	declarations[address] = decl;
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl = new Declaration(alignment, size, varType, varName, false, body);
+		declarations[address] = decl;
+	}
+	else
+	{
+		decl->alignment = alignment;
+		decl->size = size;
+		decl->varType = varType;
+		decl->varName = varName;
+		decl->text = body;
+	}
 	return decl;
 }
 
-Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-                                   DeclarationPadding padding, size_t size, std::string varType,
-                                   std::string varName, std::string body)
-{
-	assert(GETSEGNUM(address) == 0);
-	AddDeclarationDebugChecks(address);
-
-	declarations[address] =
-		new Declaration(alignment, padding, size, varType, varName, false, body);
-	return declarations[address];
-}
-
 Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
                                         size_t size, std::string varType, std::string varName,
-                                        size_t arrayItemCnt, std::string body)
-{
-	return AddDeclarationArray(address, alignment, DeclarationPadding::None, size, varType, varName,
-	                           arrayItemCnt, body);
-}
-
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        size_t size, std::string varType, std::string varName,
-                                        std::string arrayItemCntStr, std::string body)
-{
-	assert(GETSEGNUM(address) == 0);
-	AddDeclarationDebugChecks(address);
-
-	declarations[address] =
-		new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
-	return declarations[address];
-}
-
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-                                        DeclarationPadding padding, size_t size,
-                                        std::string varType, std::string varName,
                                         size_t arrayItemCnt, std::string body)
 {
 	assert(GETSEGNUM(address) == 0);
@@ -410,8 +389,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl =
-			new Declaration(alignment, padding, size, varType, varName, true, arrayItemCnt, body);
+		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCnt, body);
 		declarations[address] = decl;
 	}
 	else
@@ -419,7 +397,6 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 		if (decl->isPlaceholder)
 			decl->varName = varName;
 		decl->alignment = alignment;
-		decl->padding = padding;
 		decl->size = size;
 		decl->varType = varType;
 		decl->isArray = true;
@@ -431,6 +408,32 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	return decl;
 }
 
+Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+                                        size_t size, std::string varType, std::string varName,
+                                        std::string arrayItemCntStr, std::string body)
+{
+	assert(GETSEGNUM(address) == 0);
+	AddDeclarationDebugChecks(address);
+
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl = new Declaration(alignment, size, varType, varName, true, arrayItemCntStr, body);
+		declarations[address] = decl;
+	}
+	else
+	{
+		decl->alignment = alignment;
+		decl->size = size;
+		decl->varType = varType;
+		decl->varName = varName;
+		decl->isArray = true;
+		decl->arrayItemCntStr = arrayItemCntStr;
+		decl->text = body;
+	}
+	return decl;
+}
+
 Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 {
 	assert(GETSEGNUM(address) == 0);
@@ -439,7 +442,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address)
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", "", false, "");
+		decl = new Declaration(DeclarationAlignment::Align4, 0, "", "", false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -457,7 +460,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, std::string varN
 
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(DeclarationAlignment::None, 0, "", varName, false, "");
+		decl = new Declaration(DeclarationAlignment::Align4, 0, "", varName, false, "");
 		decl->isPlaceholder = true;
 		declarations[address] = decl;
 	}
@@ -473,10 +476,20 @@ Declaration* ZFile::AddDeclarationInclude(uint32_t address, std::string includeP
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
 
-	if (declarations.find(address) == declarations.end())
-		declarations[address] = new Declaration(includePath, size, varType, varName);
-
-	return declarations[address];
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl = new Declaration(includePath, size, varType, varName);
+		declarations[address] = decl;
+	}
+	else
+	{
+		decl->includePath = includePath;
+		decl->size = size;
+		decl->varType = varType;
+		decl->varName = varName;
+	}
+	return decl;
 }
 
 Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath,
@@ -491,29 +504,26 @@ Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string inc
 	if (StringHelper::StartsWith(includePath, "assets/custom/"))
 		includePath = "assets/" + StringHelper::Split(includePath, "assets/custom/")[1];
 
-	auto declCheck = declarations.find(address);
-
-	if (declCheck != declarations.end())
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
 	{
-		declCheck->second->includePath = includePath;
-		declCheck->second->varType = varType;
-		declCheck->second->varName = varName;
-		declCheck->second->size = size;
-		declCheck->second->isArray = true;
-		declCheck->second->arrayItemCnt = arrayItemCnt;
-
-		return declCheck->second;
-	}
-	else
-	{
-		Declaration* decl = new Declaration(includePath, size, varType, varName);
+		decl = new Declaration(includePath, size, varType, varName);
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
 
 		declarations[address] = decl;
-		return declarations[address];
 	}
+	else
+	{
+		decl->includePath = includePath;
+		decl->varType = varType;
+		decl->varName = varName;
+		decl->size = size;
+		decl->isArray = true;
+		decl->arrayItemCnt = arrayItemCnt;
+	}
+	return decl;
 }
 
 void ZFile::AddDeclarationDebugChecks(uint32_t address)
@@ -522,7 +532,7 @@ void ZFile::AddDeclarationDebugChecks(uint32_t address)
 #ifdef _DEBUG
 	if (address == 0x0000)
 	{
-		int32_t bp = 0;
+		[[maybe_unused]] int32_t bp = 0;
 	}
 #endif
 }
@@ -709,8 +719,16 @@ void ZFile::GeneratePlaceholderDeclarations()
 	// Generate placeholder declarations
 	for (ZResource* res : resources)
 	{
-		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
-			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		if (GetDeclaration(res->GetRawDataIndex()) != nullptr)
+		{
+			continue;
+		}
+
+		Declaration* decl = AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		if (res->GetResourceType() == ZResourceType::Symbol)
+		{
+			decl->staticConf = StaticConfig::Off;
+		}
 	}
 }
 
@@ -849,32 +867,13 @@ std::string ZFile::ProcessDeclarations()
 				{
 					char buffer[2048];
 
-					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
+					sprintf(buffer, "u32 %s_align%02X = 0;\n", name.c_str(), curPtr);
 					item.second->preText = buffer + item.second->preText;
 
 					declarations[lastAddr]->size += 4;
 					// item.second->size += 4;
 					curPtr += 4;
 				}
-			}
-		}
-
-		if (item.second->padding == DeclarationPadding::Pad16)
-		{
-			int32_t curPtr = item.first + item.second->size;
-
-			while (curPtr % 4 != 0)
-			{
-				item.second->size++;
-				curPtr++;
-			}
-
-			while (curPtr % 16 != 0)
-			{
-				item.second->postText += StringHelper::Sprintf("static u32 pad%02X = 0;\n", curPtr);
-
-				item.second->size += 4;
-				curPtr += 4;
 			}
 		}
 
@@ -975,8 +974,8 @@ std::string ZFile::ProcessDeclarations()
 					}
 
 					Declaration* decl = AddDeclarationArray(
-						unaccountedAddress, DeclarationAlignment::None, diff, "static u8",
-						StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(),
+						unaccountedAddress, DeclarationAlignment::Align4, diff, "u8",
+						StringHelper::Sprintf("%s_%s_%06X", name.c_str(), unaccountedPrefix.c_str(),
 					                          unaccountedAddress),
 						diff, src);
 					decl->isUnaccounted = true;
@@ -1004,42 +1003,12 @@ std::string ZFile::ProcessDeclarations()
 
 	// Go through include declarations
 	// First, handle the prototypes (static only for now)
-	int32_t protoCnt = 0;
 	for (std::pair<uint32_t, Declaration*> item : declarations)
 	{
-		if (StringHelper::StartsWith(item.second->varType, "static ") &&
-		    !item.second->isUnaccounted)
-		{
-			if (item.second->isArray)
-			{
-				if (item.second->arrayItemCntStr != "")
-				{
-					output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str(),
-					                                item.second->arrayItemCntStr.c_str());
-				}
-				else if (item.second->arrayItemCnt == 0)
-				{
-					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str());
-				}
-				else
-				{
-					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str(),
-					                                item.second->arrayItemCnt);
-				}
-			}
-			else
-				output += StringHelper::Sprintf("%s %s;\n", item.second->varType.c_str(),
-				                                item.second->varName.c_str());
-
-			protoCnt++;
-		}
+		output += item.second->GetStaticForwardDeclarationStr();
 	}
 
-	if (protoCnt > 0)
-		output += "\n";
+	output += "\n";
 
 	// Next, output the actual declarations
 	for (std::pair<uint32_t, Declaration*> item : declarations)
@@ -1065,61 +1034,11 @@ std::string ZFile::ProcessDeclarations()
 					item.second->text);
 			}
 
-			if (item.second->arrayItemCntStr != "")
-				output += StringHelper::Sprintf(
-					"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-					item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(),
-					item.second->includePath.c_str());
-			else
-				output += StringHelper::Sprintf(
-					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-					item.second->varName.c_str(), item.second->includePath.c_str());
+			output += item.second->GetExternalDeclarationStr();
 		}
 		else if (item.second->varType != "")
 		{
-			if (item.second->preText != "")
-				output += item.second->preText + "\n";
-
-			{
-				if (item.second->isArray)
-				{
-					if (item.second->arrayItemCntStr != "")
-					{
-						output += StringHelper::Sprintf(
-							"%s %s[%s];\n", item.second->varType.c_str(),
-							item.second->varName.c_str(), item.second->arrayItemCntStr.c_str());
-					}
-					else
-					{
-						if (item.second->arrayItemCnt == 0)
-							output +=
-								StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
-							                          item.second->varName.c_str());
-						else
-							output += StringHelper::Sprintf(
-								"%s %s[%i] = {\n", item.second->varType.c_str(),
-								item.second->varName.c_str(), item.second->arrayItemCnt);
-					}
-
-					output += item.second->text + "\n";
-				}
-				else
-				{
-					output += StringHelper::Sprintf("%s %s = { ", item.second->varType.c_str(),
-					                                item.second->varName.c_str());
-					output += item.second->text;
-				}
-
-				if (output.back() == '\n')
-					output += "};";
-				else
-					output += " };";
-			}
-
-			output += " " + item.second->rightText + "\n\n";
-
-			if (item.second->postText != "")
-				output += item.second->postText + "\n";
+			output += item.second->GetNormalDeclarationStr();
 		}
 	}
 
@@ -1192,24 +1111,7 @@ std::string ZFile::ProcessExterns()
 			continue;
 		}
 
-		if (!StringHelper::StartsWith(item.second->varType, "static ") &&
-		    item.second->varType != "")  // && item.second->includePath == "")
-		{
-			if (item.second->isArray)
-			{
-				if (item.second->arrayItemCnt == 0)
-					output +=
-						StringHelper::Sprintf("extern %s %s[];\n", item.second->varType.c_str(),
-					                          item.second->varName.c_str());
-				else
-					output += StringHelper::Sprintf(
-						"extern %s %s[%i];\n", item.second->varType.c_str(),
-						item.second->varName.c_str(), item.second->arrayItemCnt);
-			}
-			else
-				output += StringHelper::Sprintf("extern %s %s;\n", item.second->varType.c_str(),
-				                                item.second->varName.c_str());
-		}
+		output += item.second->GetExternStr();
 	}
 
 	output += "\n";

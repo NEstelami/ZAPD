@@ -117,6 +117,7 @@ protected:
 	bool isCustomAsset;  // If set to true, create a reference for the asset in the file, but don't
 	                     // actually try to extract it from the file
 	bool declaredInXml = false;
+	StaticConfig staticConf = StaticConfig::Global;
 
 	// Reading from this XMLs attributes should be performed in the overrided `ParseXML` method.
 	std::map<std::string, ResourceAttribute> registeredAttributes;

@@ -304,8 +304,10 @@ void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, 0, body);
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                                GetSourceTypeName(), auxName, 0, body);
+	decl->staticConf = staticConf;
 }
 
 std::string ZRoom::GetBodySourceCode() const

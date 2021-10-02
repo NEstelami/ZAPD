@@ -18,8 +18,10 @@ void ZPath::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, pathways.size() * 8,
-	                            GetSourceTypeName(), name, pathways.size(), "");
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, pathways.size() * 8,
+	                                GetSourceTypeName(), name, pathways.size(), "");
+	decl->staticConf = staticConf;
 }
 
 void ZPath::ParseXML(tinyxml2::XMLElement* reader)
@@ -89,10 +91,12 @@ std::string ZPath::GetSourceOutputCode([[maybe_unused]] const std::string& prefi
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, pathways.size() * 8,
-		                            GetSourceTypeName(), name, pathways.size(), declaration);
+		decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4,
+		                                   pathways.size() * 8, GetSourceTypeName(), name,
+		                                   pathways.size(), declaration);
 	else
 		decl->text = declaration;
+	decl->staticConf = staticConf;
 
 	return "";
 }
@@ -170,8 +174,7 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 	if (decl == nullptr)
 	{
 		parent->AddDeclarationArray(GETSEGOFFSET(listSegmentAddress), DeclarationAlignment::Align4,
-		                            DeclarationPadding::Pad4, points.size() * 6,
-		                            points.at(0).GetSourceTypeName(),
+		                            points.size() * 6, points.at(0).GetSourceTypeName(),
 		                            StringHelper::Sprintf("%sPathwayList0x%06X", prefix.c_str(),
 		                                                  GETSEGOFFSET(listSegmentAddress)),
 		                            points.size(), declaration);

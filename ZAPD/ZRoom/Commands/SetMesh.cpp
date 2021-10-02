@@ -67,11 +67,9 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 
 	for (const auto& vtxEntry : dList->vtxDeclarations)
 	{
-		DeclarationAlignment alignment = DeclarationAlignment::Align4;
-		if (Globals::Instance->game == ZGame::MM_RETAIL)
-			alignment = DeclarationAlignment::None;
 		parent->AddDeclarationArray(
-			vtxEntry.first, alignment, dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
+			vtxEntry.first, DeclarationAlignment::Align16,
+			dList->vertices[vtxEntry.first].size() * 16, "Vtx",
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}
@@ -649,8 +647,10 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 		                            polyDlistType, polyDListName, polyDLists.size(), declaration);
 	}
 
-	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "static s32",
-	                       "terminatorMaybe", "0x01000000");
+	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "s32",
+	                       StringHelper::Sprintf("%s_terminatorMaybe_%06X",
+	                                             parent->GetName().c_str(), GETSEGOFFSET(end)),
+	                       "0x01000000");
 }
 
 std::string PolygonType2::GetBodySourceCode() const

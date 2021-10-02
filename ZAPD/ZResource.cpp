@@ -21,6 +21,7 @@ ZResource::ZResource(ZFile* nParent)
 	RegisterOptionalAttribute("OutName");
 	RegisterOptionalAttribute("Offset");
 	RegisterOptionalAttribute("Custom");
+	RegisterOptionalAttribute("Static", "Global");
 }
 
 void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
@@ -113,6 +114,24 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 			outName = name;
 
 		isCustomAsset = registeredAttributes["Custom"].wasSet;
+
+		std::string& staticXml = registeredAttributes["Static"].value;
+		if (staticXml == "Global")
+		{
+			staticConf = StaticConfig::Global;
+		}
+		else if (staticXml == "On")
+		{
+			staticConf = StaticConfig::On;
+		}
+		else if (staticXml == "Off")
+		{
+			staticConf = StaticConfig::Off;
+		}
+		else
+		{
+			throw std::runtime_error("Invalid value for 'Static' attribute.");
+		}
 
 		declaredInXml = true;
 	}

@@ -36,8 +36,10 @@ std::string ZString::GetBodySourceCode() const
 
 std::string ZString::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-	                            GetSourceTypeName(), name, 0, GetBodySourceCode());
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                                GetSourceTypeName(), name, 0, GetBodySourceCode());
+	decl->staticConf = staticConf;
 
 	return "";
 }
