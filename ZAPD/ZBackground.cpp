@@ -57,9 +57,11 @@ Declaration* ZBackground::DeclareVar(const std::string& prefix, const std::strin
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                                   GetSourceTypeName(), auxName,
 	                                   "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
+	decl->staticConf = staticConf;
+	return decl;
 }
 
 std::string ZBackground::GetBodySourceCode() const

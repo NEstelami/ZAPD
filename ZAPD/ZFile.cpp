@@ -552,8 +552,7 @@ bool ZFile::AddDeclarationChecks(uint32_t address, const std::string& varName)
 #ifdef DEVELOPMENT
 	if (address == 0x0000)
 	{
-		int32_t bp = 0;
-		(void)bp;
+		[[maybe_unused]] int32_t bp = 0;
 	}
 #endif
 
@@ -808,8 +807,16 @@ void ZFile::GeneratePlaceholderDeclarations()
 	// Generate placeholder declarations
 	for (ZResource* res : resources)
 	{
-		if (GetDeclaration(res->GetRawDataIndex()) == nullptr)
-			AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		if (GetDeclaration(res->GetRawDataIndex()) != nullptr)
+		{
+			continue;
+		}
+
+		Declaration* decl = AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		if (res->GetResourceType() == ZResourceType::Symbol)
+		{
+			decl->staticConf = StaticConfig::Off;
+		}
 	}
 }
 
@@ -994,7 +1001,7 @@ std::string ZFile::ProcessDeclarations()
 				{
 					char buffer[2048];
 
-					sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
+					sprintf(buffer, "u32 %s_align%02X = 0;\n", name.c_str(), curPtr);
 					item.second->preText = buffer + item.second->preText;
 
 					declarations[lastAddr]->size += 4;
@@ -1011,42 +1018,12 @@ std::string ZFile::ProcessDeclarations()
 
 	// Go through include declarations
 	// First, handle the prototypes (static only for now)
-	int32_t protoCnt = 0;
 	for (std::pair<uint32_t, Declaration*> item : declarations)
 	{
-		if (StringHelper::StartsWith(item.second->varType, "static ") &&
-		    !item.second->isUnaccounted)
-		{
-			if (item.second->isArray)
-			{
-				if (item.second->arrayItemCntStr != "")
-				{
-					output += StringHelper::Sprintf("%s %s[%s];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str(),
-					                                item.second->arrayItemCntStr.c_str());
-				}
-				else if (item.second->arrayItemCnt == 0)
-				{
-					output += StringHelper::Sprintf("%s %s[];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str());
-				}
-				else
-				{
-					output += StringHelper::Sprintf("%s %s[%i];\n", item.second->varType.c_str(),
-					                                item.second->varName.c_str(),
-					                                item.second->arrayItemCnt);
-				}
-			}
-			else
-				output += StringHelper::Sprintf("%s %s;\n", item.second->varType.c_str(),
-				                                item.second->varName.c_str());
-
-			protoCnt++;
-		}
+		output += item.second->GetStaticForwardDeclarationStr();
 	}
 
-	if (protoCnt > 0)
-		output += "\n";
+	output += "\n";
 
 	// Next, output the actual declarations
 	for (const auto& item : declarations)
@@ -1072,61 +1049,11 @@ std::string ZFile::ProcessDeclarations()
 					item.second->text);
 			}
 
-			if (item.second->arrayItemCntStr != "")
-				output += StringHelper::Sprintf(
-					"%s %s[%s] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-					item.second->varName.c_str(), item.second->arrayItemCntStr.c_str(),
-					item.second->includePath.c_str());
-			else
-				output += StringHelper::Sprintf(
-					"%s %s[] = {\n    #include \"%s\"\n};\n\n", item.second->varType.c_str(),
-					item.second->varName.c_str(), item.second->includePath.c_str());
+			output += item.second->GetExternalDeclarationStr();
 		}
 		else if (item.second->varType != "")
 		{
-			if (item.second->preText != "")
-				output += item.second->preText + "\n";
-
-			{
-				if (item.second->isArray)
-				{
-					if (item.second->arrayItemCntStr != "")
-					{
-						output += StringHelper::Sprintf(
-							"%s %s[%s];\n", item.second->varType.c_str(),
-							item.second->varName.c_str(), item.second->arrayItemCntStr.c_str());
-					}
-					else
-					{
-						if (item.second->arrayItemCnt == 0)
-							output +=
-								StringHelper::Sprintf("%s %s[] = {\n", item.second->varType.c_str(),
-							                          item.second->varName.c_str());
-						else
-							output += StringHelper::Sprintf(
-								"%s %s[%i] = {\n", item.second->varType.c_str(),
-								item.second->varName.c_str(), item.second->arrayItemCnt);
-					}
-
-					output += item.second->text + "\n";
-				}
-				else
-				{
-					output += StringHelper::Sprintf("%s %s = { ", item.second->varType.c_str(),
-					                                item.second->varName.c_str());
-					output += item.second->text;
-				}
-
-				if (output.back() == '\n')
-					output += "};";
-				else
-					output += " };";
-			}
-
-			output += " " + item.second->rightText + "\n\n";
-
-			if (item.second->postText != "")
-				output += item.second->postText + "\n";
+			output += item.second->GetNormalDeclarationStr();
 		}
 	}
 
@@ -1173,24 +1100,7 @@ std::string ZFile::ProcessExterns()
 			continue;
 		}
 
-		if (!StringHelper::StartsWith(item.second->varType, "static ") &&
-		    item.second->varType != "")  // && item.second->includePath == "")
-		{
-			if (item.second->isArray)
-			{
-				if (item.second->arrayItemCnt == 0)
-					output +=
-						StringHelper::Sprintf("extern %s %s[];\n", item.second->varType.c_str(),
-					                          item.second->varName.c_str());
-				else
-					output += StringHelper::Sprintf(
-						"extern %s %s[%i];\n", item.second->varType.c_str(),
-						item.second->varName.c_str(), item.second->arrayItemCnt);
-			}
-			else
-				output += StringHelper::Sprintf("extern %s %s;\n", item.second->varType.c_str(),
-				                                item.second->varName.c_str());
-		}
+		output += item.second->GetExternStr();
 	}
 
 	output += "\n";

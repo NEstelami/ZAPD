@@ -96,8 +96,9 @@ Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix
 {
 	Declaration* decl =
 		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
-	                                GetSourceTypeName(), name, 0, bodyStr);
+	                                GetSourceTypeName(), name, numInstructions, bodyStr);
 	decl->isExternal = true;
+	decl->staticConf = staticConf;
 	return decl;
 }
 

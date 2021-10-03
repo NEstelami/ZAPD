@@ -61,23 +61,26 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 		auxName = GetDefaultName(prefix);
 
 	ZResource* res = resList.at(0);
+	Declaration* decl;
 	if (res->IsExternalResource())
 	{
 		auto filepath = Globals::Instance->outputPath / name;
 		std::string includePath = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(),
 		                                                res->GetExternalExtension().c_str());
-		Declaration* decl = parent->AddDeclarationIncludeArray(
+		decl = parent->AddDeclarationIncludeArray(
 			rawDataIndex, includePath, GetRawDataSize(), GetSourceTypeName(), name, arrayCnt);
 		decl->text = bodyStr;
 		decl->isExternal = true;
-		return decl;
 	}
 	else
 	{
-		return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+		decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
 		                                   GetRawDataSize(), GetSourceTypeName(), name, arrayCnt,
 		                                   bodyStr);
 	}
+
+	decl->staticConf = staticConf;
+	return decl;
 }
 
 std::string ZArray::GetBodySourceCode() const

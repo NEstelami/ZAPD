@@ -676,8 +676,11 @@ Declaration* ZTextureAnimation::DeclareVar(const std::string& prefix, const std:
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                                   GetSourceTypeName(), auxName, entries.size(), bodyStr);
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                GetSourceTypeName(), auxName, entries.size(), bodyStr);
+	decl->staticConf = staticConf;
+	return decl;
 }
 
 std::string ZTextureAnimation::GetBodySourceCode() const

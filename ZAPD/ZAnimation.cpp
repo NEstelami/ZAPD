@@ -404,8 +404,9 @@ void ZLegacyAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRa
 {
 	ZAnimation::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
+	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4,
+	                                           GetRawDataSize(), GetSourceTypeName(), name, "");
+	decl->staticConf = staticConf;
 }
 
 void ZLegacyAnimation::ParseRawData()

@@ -157,8 +157,10 @@ void ZLimbTable::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataI
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), name, limbsAddresses.size(), "");
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                                GetSourceTypeName(), name, limbsAddresses.size(), "");
+	decl->staticConf = staticConf;
 }
 
 void ZLimbTable::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount)
@@ -237,9 +239,11 @@ Declaration* ZLimbTable::DeclareVar(const std::string& prefix, const std::string
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                                   GetSourceTypeName(), auxName, limbsAddresses.size(),
 	                                   bodyStr);
+	decl->staticConf = staticConf;
+	return decl;
 }
 
 std::string ZLimbTable::GetBodySourceCode() const
