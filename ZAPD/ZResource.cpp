@@ -243,7 +243,7 @@ std::string ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& p
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
 	if (decl == nullptr || decl->isPlaceholder)
-		DeclareVar(prefix, bodyStr);
+		decl = DeclareVar(prefix, bodyStr);
 	else
 		decl->text = bodyStr;
 	decl->staticConf = staticConf;
