@@ -91,9 +91,8 @@ void ZNormalAnimation::DeclareReferences(const std::string& prefix)
 			valuesStr += "\n    ";
 	}
 
-	parent->AddDeclarationArray(rotationValuesOffset,
-	                            DeclarationAlignment::Align16, rotationValues.size() * 2,
-	                            "s16",
+	parent->AddDeclarationArray(rotationValuesOffset, DeclarationAlignment::Align16,
+	                            rotationValues.size() * 2, "s16",
 	                            StringHelper::Sprintf("%sFrameData", defaultPrefix.c_str()),
 	                            rotationValues.size(), valuesStr);
 
@@ -106,9 +105,8 @@ void ZNormalAnimation::DeclareReferences(const std::string& prefix)
 			indicesStr += "\n";
 	}
 
-	parent->AddDeclarationArray(rotationIndicesOffset,
-	                            DeclarationAlignment::Align16, rotationIndices.size() * 6,
-	                            "JointIndex",
+	parent->AddDeclarationArray(rotationIndicesOffset, DeclarationAlignment::Align16,
+	                            rotationIndices.size() * 6, "JointIndex",
 	                            StringHelper::Sprintf("%sJointIndices", defaultPrefix.c_str()),
 	                            rotationIndices.size(), indicesStr);
 }

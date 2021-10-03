@@ -124,8 +124,8 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(
 			polySegmentOffset, DeclarationAlignment::Align4, polygons.size() * 16, "CollisionPoly",
-			StringHelper::Sprintf("%s_polygons_%08X", auxName.c_str(), polySegmentOffset), polygons.size(),
-			declaration);
+			StringHelper::Sprintf("%s_polygons_%08X", auxName.c_str(), polySegmentOffset),
+			polygons.size(), declaration);
 	}
 
 	declaration = "";

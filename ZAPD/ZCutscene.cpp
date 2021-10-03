@@ -1244,8 +1244,9 @@ Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::str
 	if (auxName == "")
 		auxName = GetDefaultName(prefix);
 
-	Declaration* decl = parent->AddDeclarationArray(getSegmentOffset(), GetDeclarationAlignment(),
-	                                   GetRawDataSize(), GetSourceTypeName(), auxName, 0, bodyStr);
+	Declaration* decl =
+		parent->AddDeclarationArray(getSegmentOffset(), GetDeclarationAlignment(), GetRawDataSize(),
+	                                GetSourceTypeName(), auxName, 0, bodyStr);
 	decl->staticConf = staticConf;
 	return decl;
 }

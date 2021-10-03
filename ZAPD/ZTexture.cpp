@@ -751,7 +751,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 
 	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
-	                                          GetSourceTypeName(), auxName, 0);
+	                                                       GetSourceTypeName(), auxName, 0);
 	decl->staticConf = staticConf;
 	return decl;
 }

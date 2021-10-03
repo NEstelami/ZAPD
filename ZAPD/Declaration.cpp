@@ -3,7 +3,8 @@
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, std::string nText)
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         std::string nText)
 {
 	address = nAddress;
 	alignment = nAlignment;
