@@ -929,8 +929,7 @@ std::string ZFile::ProcessDeclarations()
 				if (!curItem.second->declaredInXml && !lastItem.second->declaredInXml)
 				{
 					// TEST: For now just do Vtx declarations...
-					if (lastItem.second->varType == "static Vtx" ||
-					    lastItem.second->varType == "Vtx")
+					if (lastItem.second->varType == "Vtx")
 					{
 						int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
 
@@ -1040,7 +1039,7 @@ std::string ZFile::ProcessDeclarations()
 
 				if (item.second->varType == "Gfx")
 					extType = "dlist";
-				else if (item.second->varType == "Vtx" || item.second->varType == "static Vtx")
+				else if (item.second->varType == "Vtx")
 					extType = "vtx";
 
 				auto filepath = outputPath / item.second->varName;
@@ -1289,7 +1288,7 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 			}
 
 			Declaration* decl = AddDeclarationArray(
-				unaccountedAddress, DeclarationAlignment::Align4, diff, "static u8",
+				unaccountedAddress, DeclarationAlignment::Align4, diff, "u8",
 				StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(), unaccountedAddress),
 				diff, src);
 			decl->isUnaccounted = true;
