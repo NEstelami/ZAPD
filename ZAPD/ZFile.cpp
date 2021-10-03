@@ -1289,7 +1289,8 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 
 			Declaration* decl = AddDeclarationArray(
 				unaccountedAddress, DeclarationAlignment::Align4, diff, "u8",
-				StringHelper::Sprintf("%s_%06X", unaccountedPrefix.c_str(), unaccountedAddress),
+				StringHelper::Sprintf("%s_%s_%06X", name.c_str(), unaccountedPrefix.c_str(),
+			                          unaccountedAddress),
 				diff, src);
 			decl->isUnaccounted = true;
 
