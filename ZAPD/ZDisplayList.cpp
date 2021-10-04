@@ -1385,60 +1385,49 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, char* line)
 
 		if (mode2Str == "")
 		{
-			int32_t remainingFlags = mode2;
-
 			if (mode2 & AA_EN)
 			{
 				mode2Str += "AA_EN | ";
-				remainingFlags ^= AA_EN;
 			}
 
 			if (mode2 & Z_CMP)
 			{
 				mode2Str += "Z_CMP | ";
-				remainingFlags ^= Z_CMP;
 			}
 
 			if (mode2 & Z_UPD)
 			{
 				mode2Str += "Z_UPD | ";
-				remainingFlags ^= Z_UPD;
 			}
 
 			if (mode2 & IM_RD)
 			{
 				mode2Str += "IM_RD | ";
-				remainingFlags ^= IM_RD;
 			}
 
 			if (mode2 & CLR_ON_CVG)
 			{
 				mode2Str += "CLR_ON_CVG | ";
-				remainingFlags ^= CLR_ON_CVG;
 			}
 
 			if (mode2 & CVG_DST_CLAMP)
 			{
 				mode2Str += "CVG_DST_CLAMP | ";
-				remainingFlags ^= CVG_DST_CLAMP;
 			}
 
 			if (mode2 & CVG_DST_WRAP)
 			{
 				mode2Str += "CVG_DST_WRAP | ";
-				remainingFlags ^= CVG_DST_WRAP;
 			}
 
 			if (mode2 & CVG_DST_FULL)
 			{
 				mode2Str += "CVG_DST_FULL | ";
-				remainingFlags ^= CVG_DST_FULL;
 			}
 
 			if (mode2 & CVG_DST_SAVE)
 			{
 				mode2Str += "CVG_DST_SAVE | ";
-				remainingFlags ^= CVG_DST_SAVE;
 			}
 
 			int32_t zMode = mode2 & 0xC00;
@@ -1446,35 +1435,29 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_L(uint64_t data, char* line)
 			if (zMode == ZMODE_INTER)
 			{
 				mode2Str += "ZMODE_INTER | ";
-				remainingFlags ^= ZMODE_INTER;
 			}
 			else if (zMode == ZMODE_XLU)
 			{
 				mode2Str += "ZMODE_XLU | ";
-				remainingFlags ^= ZMODE_XLU;
 			}
 			else if (zMode == ZMODE_DEC)
 			{
 				mode2Str += "ZMODE_DEC | ";
-				remainingFlags ^= ZMODE_DEC;
 			}
 
 			if (mode2 & CVG_X_ALPHA)
 			{
 				mode2Str += "CVG_X_ALPHA | ";
-				remainingFlags ^= CVG_X_ALPHA;
 			}
 
 			if (mode2 & ALPHA_CVG_SEL)
 			{
 				mode2Str += "ALPHA_CVG_SEL | ";
-				remainingFlags ^= ALPHA_CVG_SEL;
 			}
 
 			if (mode2 & FORCE_BL)
 			{
 				mode2Str += "FORCE_BL | ";
-				remainingFlags ^= FORCE_BL;
 			}
 
 			int32_t bp = (mode2 >> 28) & 0b11;
@@ -1838,13 +1821,9 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		{
 			std::string declaration = "";
 
-			uint32_t curAddr = item.first;
-
 			for (auto vtx : item.second)
 			{
 				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
-
-				curAddr += vtx.GetRawDataSize();
 			}
 
 			vtxDeclarations[item.first] = declaration;
