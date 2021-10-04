@@ -1,11 +1,11 @@
 #include "ZTexture.h"
 
 #include <cassert>
-#include "Utils/BitConverter.h"
 #include "CRC32.h"
+#include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/Directory.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/Path.h"
 
 REGISTER_ZFILENODE(Texture, ZTexture);
@@ -30,8 +30,9 @@ void ZTexture::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataInd
 	std::string incStr =
 		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 
-	parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(),
-	                                   name, 0);
+	Declaration* decl = parent->AddDeclarationIncludeArray(
+		rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), name, GetRawDataSize() / 8);
+	decl->staticConf = staticConf;
 }
 
 void ZTexture::FromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
@@ -109,6 +110,12 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 void ZTexture::ParseRawData()
 {
+	if (rawDataIndex % 8 != 0)
+		fprintf(stderr,
+		        "ZTexture::ParseXML: Warning in '%s'.\n"
+		        "\t This texture is not 64-bit aligned.\n",
+		        name.c_str());
+
 	switch (format)
 	{
 	case TextureType::RGBA16bpp:
@@ -322,7 +329,7 @@ void ZTexture::PrepareBitmapPalette8()
 	}
 }
 
-void ZTexture::DeclareReferences(const std::string& prefix)
+void ZTexture::DeclareReferences([[maybe_unused]] const std::string& prefix)
 {
 	if (tlutOffset != static_cast<uint32_t>(-1))
 	{

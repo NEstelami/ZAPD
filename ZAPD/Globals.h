@@ -82,6 +82,8 @@ public:
 	bool errorNoOffset = false;
 	bool verboseUnaccounted = false;
 	VerbosityLevel verbosity;  // ZAPD outputs additional information
+	bool gccCompat = false;
+	bool forceStatic = false;
 
 	std::string currentExporter;
 	static std::map<std::string, ExporterSet*>* GetExporterMap();

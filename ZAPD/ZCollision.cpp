@@ -1,8 +1,8 @@
 #include "ZCollision.h"
 #include <stdint.h>
 #include <string>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Collision, ZCollisionHeader);
@@ -95,7 +95,7 @@ void ZCollisionHeader::ParseRawData()
 
 	if (waterBoxAddress != 0)
 		parent->AddDeclarationArray(
-			waterBoxSegmentOffset, DeclarationAlignment::None, 16 * waterBoxes.size(), "WaterBox",
+			waterBoxSegmentOffset, DeclarationAlignment::Align4, 16 * waterBoxes.size(), "WaterBox",
 			StringHelper::Sprintf("%s_waterBoxes_%06X", name.c_str(), waterBoxSegmentOffset), 0,
 			declaration);
 
@@ -116,10 +116,10 @@ void ZCollisionHeader::ParseRawData()
 		if (polyAddress != 0)
 		{
 			parent->AddDeclarationArray(
-				polySegmentOffset, DeclarationAlignment::None, polygons.size() * 16,
+				polySegmentOffset, DeclarationAlignment::Align4, polygons.size() * 16,
 				"CollisionPoly",
-				StringHelper::Sprintf("%s_polygons_%08X", name.c_str(), polySegmentOffset), 0,
-				declaration);
+				StringHelper::Sprintf("%s_polygons_%08X", name.c_str(), polySegmentOffset),
+				polygons.size(), declaration);
 		}
 	}
 
@@ -135,10 +135,10 @@ void ZCollisionHeader::ParseRawData()
 
 	if (polyTypeDefAddress != 0)
 		parent->AddDeclarationArray(
-			polyTypeDefSegmentOffset, DeclarationAlignment::None, polygonTypes.size() * 8,
+			polyTypeDefSegmentOffset, DeclarationAlignment::Align4, polygonTypes.size() * 8,
 			"SurfaceType",
-			StringHelper::Sprintf("%s_surfaceType_%08X", name.c_str(), polyTypeDefSegmentOffset), 0,
-			declaration);
+			StringHelper::Sprintf("%s_surfaceType_%08X", name.c_str(), polyTypeDefSegmentOffset),
+			polygonTypes.size(), declaration);
 
 	declaration = "";
 
@@ -157,7 +157,7 @@ void ZCollisionHeader::ParseRawData()
 
 		if (vtxAddress != 0)
 			parent->AddDeclarationArray(
-				vtxSegmentOffset, DeclarationAlignment::None, vertices.size() * 6, "Vec3s",
+				vtxSegmentOffset, DeclarationAlignment::Align4, vertices.size() * 6, "Vec3s",
 				StringHelper::Sprintf("%s_vtx_%08X", name.c_str(), vtxSegmentOffset), 0,
 				declaration);
 
@@ -184,9 +184,15 @@ void ZCollisionHeader::ParseRawData()
 		name.c_str(), polyTypeDefSegmentOffset, name.c_str(), camDataSegmentOffset, numWaterBoxes,
 		waterBoxStr);
 
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, DeclarationPadding::Pad16,
-	                       GetRawDataSize(), "CollisionHeader",
-	                       StringHelper::Sprintf("%s", name.c_str(), rawDataIndex), declaration);
+	Declaration* decl =
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                           GetSourceTypeName(), name, declaration);
+	decl->staticConf = staticConf;
+}
+
+std::string ZCollisionHeader::GetSourceTypeName() const
+{
+	return "CollisionHeader";
 }
 
 ZResourceType ZCollisionHeader::GetResourceType() const
@@ -240,7 +246,8 @@ WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, uint32_t raw
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
                                const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
-                               uint32_t polyTypeDefSegmentOffset, uint32_t polygonTypesCnt)
+                               uint32_t polyTypeDefSegmentOffset,
+                               [[maybe_unused]] uint32_t polygonTypesCnt)
 {
 	std::string declaration = "";
 
@@ -294,7 +301,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	}
 
 	parent->AddDeclarationArray(
-		rawDataIndex, DeclarationAlignment::None, entries.size() * 8, "CamData",
+		rawDataIndex, DeclarationAlignment::Align4, entries.size() * 8, "CamData",
 		StringHelper::Sprintf("%s_camDataList_%08X", prefix.c_str(), rawDataIndex), entries.size(),
 		declaration);
 
@@ -317,7 +324,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		int32_t cameraPosDataIndex = GETSEGOFFSET(cameraPosDataSeg);
 		uint32_t entrySize = numDataTotal * 0x6;
 		parent->AddDeclarationArray(
-			cameraPosDataIndex, DeclarationAlignment::None, entrySize, "Vec3s",
+			cameraPosDataIndex, DeclarationAlignment::Align4, entrySize, "Vec3s",
 			StringHelper::Sprintf("%s_camPosData_%08X", prefix.c_str(), cameraPosDataIndex),
 			numDataTotal, declaration);
 	}

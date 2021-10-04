@@ -336,4 +336,6 @@ lib/libgfxd/libgfxd.a
 ExporterTest/ExporterTest.a
 ZAPDUtils/ZAPDUtils.a
 .vscode/
+build/
+ZAPDUtils/build/
 ZAPD/BuildInfo.h

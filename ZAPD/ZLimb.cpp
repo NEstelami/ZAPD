@@ -1,7 +1,7 @@
 #include "ZLimb.h"
 #include <cassert>
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
 REGISTER_ZFILENODE(Limb, ZLimb);
@@ -101,7 +101,7 @@ Struct_800A598C::Struct_800A598C(ZFile* parent, const std::vector<uint8_t>& rawD
 {
 }
 
-void Struct_800A598C::PreGenSourceFiles(const std::string& prefix)
+void Struct_800A598C::DeclareReferences(const std::string& prefix)
 {
 	std::string entryStr;
 
@@ -126,7 +126,7 @@ void Struct_800A598C::PreGenSourceFiles(const std::string& prefix)
 
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(unk_8_Offset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(unk_8_Offset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * Struct_800A57C0::GetRawDataSize(),
 			                            Struct_800A57C0::GetSourceTypeName(), unk_8_Str,
 			                            arrayItemCnt, entryStr);
@@ -157,7 +157,7 @@ void Struct_800A598C::PreGenSourceFiles(const std::string& prefix)
 		Declaration* decl = parent->GetDeclaration(unk_C_Offset);
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(unk_C_Offset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(unk_C_Offset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * Struct_800A598C_2::GetRawDataSize(),
 			                            Struct_800A598C_2::GetSourceTypeName(), unk_C_Str,
 			                            arrayItemCnt, entryStr);
@@ -240,7 +240,7 @@ Struct_800A5E28::~Struct_800A5E28()
 	delete unk_8_dlist;
 }
 
-void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
+void Struct_800A5E28::DeclareReferences(const std::string& prefix)
 {
 	if (unk_4 != 0)
 	{
@@ -256,7 +256,7 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 
 		for (auto& child : unk_4_arr)
 		{
-			child.PreGenSourceFiles(prefix);
+			child.DeclareReferences(prefix);
 			entryStr +=
 				StringHelper::Sprintf("    { %s },%s", child.GetSourceOutputCode(prefix).c_str(),
 			                          (++i < arrayItemCnt) ? "\n" : "");
@@ -266,7 +266,7 @@ void Struct_800A5E28::PreGenSourceFiles(const std::string& prefix)
 
 		if (decl == nullptr)
 		{
-			parent->AddDeclarationArray(unk_4_Offset, DeclarationAlignment::None,
+			parent->AddDeclarationArray(unk_4_Offset, DeclarationAlignment::Align4,
 			                            arrayItemCnt * Struct_800A598C::GetRawDataSize(),
 			                            Struct_800A598C::GetSourceTypeName(), unk_4_Str,
 			                            arrayItemCnt, entryStr);
@@ -370,8 +370,9 @@ void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
-	parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),
-	                       GetSourceTypeName(), name, "");
+	Declaration* decl = parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4,
+	                                           GetRawDataSize(), GetSourceTypeName(), name, "");
+	decl->staticConf = staticConf;
 }
 
 void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
@@ -446,7 +447,7 @@ void ZLimb::ParseRawData()
 	{
 	case ZLimbType::LOD:
 		dList2Ptr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		// Intended fallthrough
+		[[fallthrough]];
 	case ZLimbType::Standard:
 		dListPtr = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 		break;
@@ -586,10 +587,11 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(GetFileAddress());
 
 	if (decl == nullptr)
-		parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), name, entryStr);
+		decl = parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4,
+		                              GetRawDataSize(), GetSourceTypeName(), name, entryStr);
 	else
 		decl->text = entryStr;
+	decl->staticConf = staticConf;
 
 	return "";
 }
@@ -733,10 +735,10 @@ std::string ZLimb::GetSourceOutputCodeSkin_Type_4(const std::string& prefix)
 			StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(),
 		                          Struct_800A5E28::GetSourceTypeName().c_str(), skinSegmentOffset);
 
-		segmentStruct.PreGenSourceFiles(prefix);
+		segmentStruct.DeclareReferences(prefix);
 		std::string entryStr = segmentStruct.GetSourceOutputCode(prefix);
 
-		parent->AddDeclaration(skinSegmentOffset, DeclarationAlignment::None,
+		parent->AddDeclaration(skinSegmentOffset, DeclarationAlignment::Align4,
 		                       Struct_800A5E28::GetRawDataSize(),
 		                       Struct_800A5E28::GetSourceTypeName(), struct_800A5E28_Str, entryStr);
 	}

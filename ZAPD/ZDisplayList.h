@@ -325,8 +325,8 @@ protected:
 
 public:
 	std::string sceneSegName;
-	std::string defines;  // Hack for special cases where vertex arrays intersect...
 	std::string curPrefix;
+	std::string defines;
 	std::vector<ZMtx> mtxList;
 	std::vector<uint64_t> instructions;
 	std::vector<ZDisplayList*> otherDLists;
@@ -358,10 +358,10 @@ public:
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
 
 	void TextureGenCheck(const std::string& prefix);
-	static bool TextureGenCheck(ZRoom* scene, ZFile* parent, const std::string& prefix,
-	                            int32_t texWidth, int32_t texHeight, uint32_t texAddr,
-	                            uint32_t texSeg, F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz,
-	                            bool texLoaded, bool texIsPalette, ZDisplayList* self);
+	static bool TextureGenCheck(ZFile* parent, const std::string& prefix, int32_t texWidth,
+	                            int32_t texHeight, uint32_t texAddr, uint32_t texSeg,
+	                            F3DZEXTexFormats texFmt, F3DZEXTexSizes texSiz, bool texLoaded,
+	                            bool texIsPalette, ZDisplayList* self);
 	static int32_t GetDListLength(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
 	                              DListType dListType);
 
@@ -372,7 +372,7 @@ public:
 	std::string ProcessGfxDis(const std::string& prefix);
 
 	bool IsExternalResource() const override;
-	virtual std::string GetExternalExtension() const override;
+	std::string GetExternalExtension() const override;
 	std::string GetSourceTypeName() const override;
 
 	ZResourceType GetResourceType() const override;

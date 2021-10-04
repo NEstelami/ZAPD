@@ -1,7 +1,7 @@
 #include "SetMinimapChests.h"
 
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 #include "ZRoom/ZRoom.h"
@@ -42,7 +42,7 @@ void SetMinimapChests::DeclareReferences(const std::string& prefix)
 	}
 
 	parent->AddDeclarationArray(
-		segmentOffset, DeclarationAlignment::None, chests.size() * 10, "MinimapChest",
+		segmentOffset, DeclarationAlignment::Align4, chests.size() * 10, "MinimapChest",
 		StringHelper::Sprintf("%sMinimapChests0x%06X", prefix.c_str(), segmentOffset),
 		chests.size(), declaration);
 }
@@ -62,11 +62,6 @@ std::string SetMinimapChests::GetCommandCName() const
 RoomCommand SetMinimapChests::GetRoomCommand() const
 {
 	return RoomCommand::SetMinimapChests;
-}
-
-size_t SetMinimapChests::GetRawDataSize() const
-{
-	return ZRoomCommand::GetRawDataSize() + (chests.size() * 10);
 }
 
 MinimapChest::MinimapChest(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)

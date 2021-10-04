@@ -1,8 +1,8 @@
 #include "ZVector.h"
 #include <assert.h>
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
 
@@ -12,6 +12,7 @@ ZVector::ZVector(ZFile* nParent) : ZResource(nParent)
 {
 	scalarType = ZScalarType::ZSCALAR_NONE;
 	dimensions = 0;
+
 	RegisterRequiredAttribute("Type");
 	RegisterRequiredAttribute("Dimensions");
 }
@@ -91,11 +92,12 @@ std::string ZVector::GetBodySourceCode() const
 	return "{ " + body + "}";
 }
 
-std::string ZVector::GetSourceOutputCode(const std::string& prefix)
+std::string ZVector::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	if (parent != nullptr)
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::None, GetRawDataSize(),
-		                       GetSourceTypeName(), GetName(), GetBodySourceCode());
+	Declaration* decl =
+		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+	                           GetSourceTypeName(), GetName(), GetBodySourceCode());
+	decl->staticConf = staticConf;
 
 	return "";
 }

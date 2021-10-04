@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Utils/Directory.h>
 #include <string>
 #include <vector>
-#include <Utils/Directory.h>
 #include "ZTexture.h"
 #include "tinyxml2.h"
 
@@ -50,27 +50,16 @@ public:
 	std::vector<ZResource*> GetResourcesOfType(ZResourceType resType);
 
 	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
-	                            const std::string& varType, const std::string& varName,
-	                            const std::string& body);
-	Declaration* AddDeclaration(uint32_t address, DeclarationAlignment alignment,
-	                            DeclarationPadding padding, size_t size, const std::string& varType,
-	                            const std::string& varName, const std::string& body);
+	                            const std::string& varType, const std::string& varName, const std::string& body);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                                 const std::string& varType, const std::string& varName,
 	                                 size_t arrayItemCnt, const std::string& body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
-	                                 const std::string& varType, const std::string& varName,
-	                                 size_t arrayItemCnt, const std::string& body, bool isExternal);
 	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment, size_t size,
 	                                 const std::string& varType, const std::string& varName,
 	                                 const std::string& arrayItemCntStr, const std::string& body);
-	Declaration* AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
-	                                 DeclarationPadding padding, size_t size,
-	                                 const std::string& varType, const std::string& varName,
-	                                 size_t arrayItemCnt, const std::string& body);
 	Declaration* AddDeclarationPlaceholder(uint32_t address);
 	Declaration* AddDeclarationPlaceholder(uint32_t address, const std::string& varName);
-	Declaration* AddDeclarationInclude(uint32_t address, std::string includePath, size_t size,
+	Declaration* AddDeclarationInclude(uint32_t address, const std::string& includePath, size_t size,
 	                                   const std::string& varType, const std::string& varName);
 	Declaration* AddDeclarationIncludeArray(uint32_t address, std::string includePath, size_t size,
 	                                        const std::string& varType, const std::string& varName,

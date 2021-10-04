@@ -98,8 +98,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		std::string camTypename = entry.GetSourceTypeName();
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
-			cameras.size() * entry.GetRawDataSize(), camTypename,
+			segmentOffset, DeclarationAlignment::Align4, cameras.size() * entry.GetRawDataSize(),
+			camTypename,
 			StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), camTypename.c_str(), segmentOffset),
 			cameras.size(), declaration);
 	}
@@ -110,11 +110,6 @@ std::string SetCsCamera::GetBodySourceCode() const
 	std::string listName = parent->GetDeclarationPtrName(cmdArg2);
 	return StringHelper::Sprintf("SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(%i, %s)", cameras.size(),
 	                             listName.c_str());
-}
-
-size_t SetCsCamera::GetRawDataSize() const
-{
-	return ZRoomCommand::GetRawDataSize() + (cameras.size() * 8) + (points.size() * 6);
 }
 
 std::string SetCsCamera::GetCommandCName() const

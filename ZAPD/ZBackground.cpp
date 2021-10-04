@@ -1,7 +1,7 @@
 #include "ZBackground.h"
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
-#include "Globals.h"
 #include "Utils/Path.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
@@ -139,9 +139,10 @@ void ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyS
 	if (name == "")
 		auxName = GetDefaultName(prefix, rawDataIndex);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, "SCREEN_WIDTH * SCREEN_HEIGHT / 4",
-	                            bodyStr);
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align8,
+	                                                GetRawDataSize(), GetSourceTypeName(), auxName,
+	                                                "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
+	decl->staticConf = staticConf;
 }
 
 bool ZBackground::IsExternalResource() const
@@ -160,7 +161,7 @@ void ZBackground::Save(const fs::path& outFolder)
 	File::WriteAllBytes(filepath.string(), data);
 }
 
-std::string ZBackground::GetBodySourceCode()
+std::string ZBackground::GetBodySourceCode() const
 {
 	std::string bodyStr = "    ";
 

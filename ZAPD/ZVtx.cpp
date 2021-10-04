@@ -38,21 +38,18 @@ void ZVtx::ParseRawData()
 
 std::string ZVtx::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g, b,
-	                             a);
+	return StringHelper::Sprintf("    VTX(%i, %i, %i, %i, %i, %i, %i, %i, %i)", x, y, z, s, t, r, g,
+	                             b, a);
 }
 
-std::string ZVtx::GetSourceOutputCode(const std::string& prefix)
+std::string ZVtx::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string output = GetBodySourceCode();
 
-	if (parent != nullptr)
-	{
-		Declaration* decl =
-			parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16, GetRawDataSize(),
-		                           GetSourceTypeName(), name, output);
-		decl->isExternal = true;
-	}
+	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align16,
+	                                           GetRawDataSize(), GetSourceTypeName(), name, output);
+	decl->isExternal = true;
+	decl->staticConf = staticConf;
 
 	return "";
 }

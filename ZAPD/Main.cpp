@@ -1,4 +1,3 @@
-#include "BuildInfo.h"
 #include <Utils/Directory.h>
 #include <Utils/File.h>
 #include <Utils/Path.h>
@@ -24,6 +23,8 @@
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
+
+extern const char gBuildHash[];
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode fileMode);
 
@@ -212,6 +213,14 @@ int main(int argc, char* argv[])
 		else if (arg == "-se" || arg == "--set-exporter")  // Set Current Exporter
 		{
 			Globals::Instance->currentExporter = argv[++i];
+		}
+		else if (arg == "--gcc-compat")  // GCC compatibility
+		{
+			Globals::Instance->gccCompat = true;
+		}
+		else if (arg == "-s" || arg == "--static")
+		{
+			Globals::Instance->forceStatic = true;
 		}
 	}
 
