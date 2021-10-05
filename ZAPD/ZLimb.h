@@ -34,7 +34,7 @@ public:
 	segptr_t siblingPtr;                    // LegacyLimb*
 
 	segptr_t dListPtr = 0;
-	segptr_t dList2Ptr = 0; // LOD and Curve Only
+	segptr_t dList2Ptr = 0;  // LOD and Curve Only
 
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
