@@ -293,7 +293,7 @@ void ZRoom::DeclareReferencesLate(const std::string& prefix)
 		cmd->DeclareReferencesLate(prefix);
 }
 
-void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
+Declaration* ZRoom::DeclareVar(const std::string& prefix, const std::string& body)
 {
 	std::string auxName = name;
 	if (auxName == "")
@@ -302,9 +302,10 @@ void ZRoom::DeclareVar(const std::string& prefix, const std::string body)
 		auxName = StringHelper::Sprintf("%sCommands", name.c_str());
 
 	Declaration* decl =
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                                GetSourceTypeName(), auxName, 0, body);
 	decl->staticConf = staticConf;
+	return decl;
 }
 
 std::string ZRoom::GetBodySourceCode() const

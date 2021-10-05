@@ -1,4 +1,5 @@
 #include "ZScalar.h"
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
@@ -14,9 +15,12 @@ ZScalar::ZScalar(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Type");
 }
 
-ZScalar::ZScalar(const ZScalarType scalarType, ZFile* nParent) : ZScalar(nParent)
+void ZScalar::ExtractFromBinary(uint32_t nRawDataIndex, ZScalarType nScalarType)
 {
-	this->scalarType = scalarType;
+	rawDataIndex = nRawDataIndex;
+	scalarType = nScalarType;
+
+	ParseRawData();
 }
 
 void ZScalar::ParseXML(tinyxml2::XMLElement* reader)
@@ -247,16 +251,6 @@ std::string ZScalar::GetBodySourceCode() const
 	}
 }
 
-std::string ZScalar::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
-{
-	Declaration* decl =
-		parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                           GetSourceTypeName(), GetName(), GetBodySourceCode());
-	decl->staticConf = staticConf;
-
-	return "";
-}
-
 ZResourceType ZScalar::GetResourceType() const
 {
 	return ZResourceType::Scalar;
@@ -265,4 +259,17 @@ ZResourceType ZScalar::GetResourceType() const
 bool ZScalar::DoesSupportArray() const
 {
 	return true;
+}
+
+DeclarationAlignment ZScalar::GetDeclarationAlignment() const
+{
+	switch (scalarType)
+	{
+	case ZScalarType::ZSCALAR_S64:
+	case ZScalarType::ZSCALAR_U64:
+	case ZScalarType::ZSCALAR_F64:
+		return DeclarationAlignment::Align8;
+	default:
+		return DeclarationAlignment::Align4;
+	}
 }

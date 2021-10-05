@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
-#include <math.h>
+#include <cmath>
 
 #include "Globals.h"
 #include "OutputFormatter.h"
@@ -54,12 +54,11 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 	DeclareVar("", "");
 }
 
-ZDisplayList::ZDisplayList(uint32_t nRawDataIndex, int32_t rawDataSize, ZFile* nParent)
-	: ZDisplayList(nParent)
+void ZDisplayList::ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize)
 {
 	rawDataIndex = nRawDataIndex;
-	name = StringHelper::Sprintf("DL_%06X", rawDataIndex);
 	numInstructions = rawDataSize / 8;
+
 	ParseRawData();
 }
 
@@ -260,9 +259,10 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 			sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
 			        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
 
-			ZDisplayList* nList = new ZDisplayList(
-				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
-				parent);
+			ZDisplayList* nList = new ZDisplayList(parent);
+			nList->ExtractFromBinary(
+				h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType));
+			nList->SetName(nList->GetDefaultName(prefix));
 			otherDLists.push_back(nList);
 
 			i++;
@@ -714,9 +714,10 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, std::string prefix, char* line)
 	}
 	else
 	{
-		ZDisplayList* nList = new ZDisplayList(
-			GETSEGOFFSET(data), GetDListLength(parent->GetRawData(), GETSEGOFFSET(data), dListType),
-			parent);
+		ZDisplayList* nList = new ZDisplayList(parent);
+		nList->ExtractFromBinary(GETSEGOFFSET(data), GetDListLength(parent->GetRawData(),
+		                                                            GETSEGOFFSET(data), dListType));
+		nList->SetName(nList->GetDefaultName(prefix));
 
 		otherDLists.push_back(nList);
 	}
@@ -870,8 +871,7 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, char* line)
 			for (int32_t i = 0; i < nn; i++)
 			{
 				ZVtx vtx(parent);
-				vtx.SetRawDataIndex(currentPtr);
-				vtx.ParseRawData();
+				vtx.ExtractFromFile(currentPtr);
 				vtxList.push_back(vtx);
 
 				currentPtr += 16;
@@ -1629,8 +1629,7 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 			for (int32_t i = 0; i < count; i++)
 			{
 				ZVtx vtx(self->parent);
-				vtx.SetRawDataIndex(currentPtr);
-				vtx.ParseRawData();
+				vtx.ExtractFromFile(currentPtr);
 
 				vtxList.push_back(vtx);
 				currentPtr += 16;
@@ -1727,11 +1726,11 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 
 	if ((dListSegNum <= 6) && Globals::Instance->HasSegment(dListSegNum))
 	{
-		ZDisplayList* newDList = new ZDisplayList(
+		ZDisplayList* newDList = new ZDisplayList(self->parent);
+		newDList->ExtractFromBinary(
 			dListOffset,
-			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType),
-			self->parent);
-		newDList->parent = self->parent;
+			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
+		newDList->SetName(newDList->GetDefaultName(self->parent->GetName()));
 		self->otherDLists.push_back(newDList);
 	}
 
@@ -1759,7 +1758,10 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 			self->parent->GetDeclaration(Seg2Filespace(seg, self->parent->baseAddress));
 		if (decl == nullptr)
 		{
-			ZMtx mtx(self->GetName(), Seg2Filespace(seg, self->parent->baseAddress), self->parent);
+			ZMtx mtx(self->parent);
+			mtx.SetName(mtx.GetDefaultName(self->GetName()));
+			mtx.ExtractFromFile(Seg2Filespace(seg, self->parent->baseAddress));
+			mtx.DeclareVar(self->GetName(), "");
 
 			mtx.GetSourceOutputCode(self->GetName());
 			self->mtxList.push_back(mtx);
@@ -2056,8 +2058,8 @@ bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string p
 				else
 				{
 					tex = new ZTexture(parent);
-					tex->FromBinary(texAddr, texWidth, texHeight,
-					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
+					tex->ExtractFromBinary(texAddr, texWidth, texHeight,
+					                       TexFormatToTexType(texFmt, texSiz), texIsPalette);
 					parent->AddTextureResource(texAddr, tex);
 				}
 
@@ -2079,8 +2081,8 @@ bool ZDisplayList::TextureGenCheck(ZFile* parent, [[maybe_unused]] std::string p
 				else
 				{
 					tex = new ZTexture(Globals::Instance->lastScene->parent);
-					tex->FromBinary(texAddr, texWidth, texHeight,
-					                TexFormatToTexType(texFmt, texSiz), texIsPalette);
+					tex->ExtractFromBinary(texAddr, texWidth, texHeight,
+					                       TexFormatToTexType(texFmt, texSiz), texIsPalette);
 
 					Globals::Instance->lastScene->parent->AddTextureResource(texAddr, tex);
 				}
