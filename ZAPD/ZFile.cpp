@@ -172,9 +172,6 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, std::string filename)
 		const char* outNameXml = child->Attribute("OutName");
 		const char* offsetXml = child->Attribute("Offset");
 
-		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
-			printf("%s: 0x%06X\n", nameXml, rawDataIndex);
-
 		// Check for repeated attributes.
 		if (offsetXml != nullptr)
 		{
@@ -197,6 +194,10 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, std::string filename)
 			throw std::runtime_error(
 				StringHelper::Sprintf("Error no offset specified for %s", nameXml));
 		}
+
+		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+			printf("%s: 0x%06X\n", nameXml, rawDataIndex);
+
 		if (outNameXml != nullptr)
 		{
 			if (outNameSet.find(outNameXml) != outNameSet.end())

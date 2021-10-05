@@ -277,6 +277,13 @@ int main(int argc, char* argv[])
 			{
 				fs::path externalXmlFilePath =
 					Globals::Instance->cfg.externalXmlFolder / extFile.xmlPath;
+
+				if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+				{
+					printf("Parsing external file from config: '%s'\n",
+					       externalXmlFilePath.c_str());
+				}
+
 				parseSuccessful = Parse(externalXmlFilePath, Globals::Instance->baseRomPath,
 				                        extFile.outPath, ZFileMode::ExternalFile);
 
@@ -346,10 +353,10 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 			ZFile* file = new ZFile(fileMode, child, basePath, outPath, "", xmlFilePath);
 			Globals::Instance->files.push_back(file);
 			if (fileMode == ZFileMode::ExternalFile)
+			{
 				Globals::Instance->externalFiles.push_back(file);
-
-			if (fileMode == ZFileMode::ExternalFile)
 				file->isExternalFile = true;
+			}
 		}
 		else if (std::string(child->Name()) == "ExternalFile")
 		{
@@ -373,6 +380,12 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 			fs::path externalXmlFilePath =
 				Globals::Instance->cfg.externalXmlFolder / fs::path(xmlPathValue);
 			fs::path externalOutFilePath = fs::path(outPathValue);
+
+			if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+			{
+				printf("Parsing external file: '%s'\n", externalXmlFilePath.c_str());
+			}
+
 			// Recursion. What can go wrong?
 			Parse(externalXmlFilePath, basePath, externalOutFilePath, ZFileMode::ExternalFile);
 		}

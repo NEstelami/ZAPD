@@ -44,14 +44,14 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 	ParseXML(reader);
 
 	// Don't parse raw data of external files
-	if (parent->GetMode() == ZFileMode::ExternalFile)
-		return;
-
-	int32_t rawDataSize = ZDisplayList::GetDListLength(
-		parent->GetRawData(), rawDataIndex,
-		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	numInstructions = rawDataSize / 8;
-	ParseRawData();
+	if (parent->GetMode() != ZFileMode::ExternalFile)
+	{
+		int32_t rawDataSize = ZDisplayList::GetDListLength(
+			parent->GetRawData(), rawDataIndex,
+			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		numInstructions = rawDataSize / 8;
+		ParseRawData();
+	}
 
 	Declaration* decl = DeclareVar("", "");
 	decl->declaredInXml = true;

@@ -119,5 +119,9 @@ ZResourceType ZVector::GetResourceType() const
 
 DeclarationAlignment ZVector::GetDeclarationAlignment() const
 {
+	if (scalars.size() == 0)
+	{
+		return DeclarationAlignment::Align4;
+	}
 	return scalars.at(0).GetDeclarationAlignment();
 }

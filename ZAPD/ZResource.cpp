@@ -32,11 +32,11 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, offset_t nRawDataIn
 		ParseXML(reader);
 
 	// Don't parse raw data of external files
-	if (parent->GetMode() == ZFileMode::ExternalFile)
-		return;
-
-	ParseRawData();
-	CalcHash();
+	if (parent->GetMode() != ZFileMode::ExternalFile)
+	{
+		ParseRawData();
+		CalcHash();
+	}
 
 	if (!isInner)
 	{
