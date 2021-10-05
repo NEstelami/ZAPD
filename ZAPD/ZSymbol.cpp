@@ -69,6 +69,14 @@ Declaration* ZSymbol::DeclareVar([[maybe_unused]] const std::string& prefix,
 	return nullptr;
 }
 
+size_t ZSymbol::GetRawDataSize() const
+{
+	if (isArray)
+		return count * typeSize;
+
+	return typeSize;
+}
+
 std::string ZSymbol::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	if (isArray)
@@ -90,12 +98,4 @@ std::string ZSymbol::GetSourceTypeName() const
 ZResourceType ZSymbol::GetResourceType() const
 {
 	return ZResourceType::Symbol;
-}
-
-size_t ZSymbol::GetRawDataSize() const
-{
-	if (isArray)
-		return count * typeSize;
-
-	return typeSize;
 }

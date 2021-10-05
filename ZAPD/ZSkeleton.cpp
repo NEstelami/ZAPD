@@ -98,6 +98,19 @@ std::string ZSkeleton::GetBodySourceCode() const
 	return "ERROR";
 }
 
+size_t ZSkeleton::GetRawDataSize() const
+{
+	switch (type)
+	{
+	case ZSkeletonType::Flex:
+		return 0xC;
+	case ZSkeletonType::Normal:
+	case ZSkeletonType::Curve:
+	default:
+		return 0x8;
+	}
+}
+
 std::string ZSkeleton::GetSourceTypeName() const
 {
 	switch (type)
@@ -116,19 +129,6 @@ std::string ZSkeleton::GetSourceTypeName() const
 ZResourceType ZSkeleton::GetResourceType() const
 {
 	return ZResourceType::Skeleton;
-}
-
-size_t ZSkeleton::GetRawDataSize() const
-{
-	switch (type)
-	{
-	case ZSkeletonType::Flex:
-		return 0xC;
-	case ZSkeletonType::Normal:
-	case ZSkeletonType::Curve:
-	default:
-		return 0x8;
-	}
 }
 
 DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const

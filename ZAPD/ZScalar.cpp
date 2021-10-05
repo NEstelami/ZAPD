@@ -162,6 +162,11 @@ size_t ZScalar::MapTypeToSize(const ZScalarType scalarType)
 	}
 }
 
+size_t ZScalar::GetRawDataSize() const
+{
+	return ZScalar::MapTypeToSize(scalarType);
+}
+
 void ZScalar::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
@@ -258,11 +263,6 @@ ZResourceType ZScalar::GetResourceType() const
 bool ZScalar::DoesSupportArray() const
 {
 	return true;
-}
-
-size_t ZScalar::GetRawDataSize() const
-{
-	return ZScalar::MapTypeToSize(scalarType);
 }
 
 DeclarationAlignment ZScalar::GetDeclarationAlignment() const

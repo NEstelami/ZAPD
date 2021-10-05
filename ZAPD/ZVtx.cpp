@@ -50,6 +50,11 @@ std::string ZVtx::GetBodySourceCode() const
 	                             a);
 }
 
+size_t ZVtx::GetRawDataSize() const
+{
+	return 16;
+}
+
 bool ZVtx::DoesSupportArray() const
 {
 	return true;
@@ -73,11 +78,6 @@ std::string ZVtx::GetSourceTypeName() const
 std::string ZVtx::GetExternalExtension() const
 {
 	return "vtx";
-}
-
-size_t ZVtx::GetRawDataSize() const
-{
-	return 16;
 }
 
 DeclarationAlignment ZVtx::GetDeclarationAlignment() const

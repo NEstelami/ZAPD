@@ -20,6 +20,11 @@ void ZMtx::ParseRawData()
 			mtx[i][j] = BitConverter::ToInt32BE(rawData, rawDataIndex + (i * 4 + j) * 4);
 }
 
+size_t ZMtx::GetRawDataSize() const
+{
+	return 64;
+}
+
 std::string ZMtx::GetBodySourceCode() const
 {
 	std::string bodyStr = "\n";
@@ -45,11 +50,6 @@ std::string ZMtx::GetSourceTypeName() const
 ZResourceType ZMtx::GetResourceType() const
 {
 	return ZResourceType::Mtx;
-}
-
-size_t ZMtx::GetRawDataSize() const
-{
-	return 64;
 }
 
 DeclarationAlignment ZMtx::GetDeclarationAlignment() const

@@ -26,7 +26,7 @@ enum class StaticConfig
 class Declaration
 {
 public:
-	uint32_t address;  // offset
+	offset_t address;
 	DeclarationAlignment alignment;
 	size_t size;
 	std::string preText = "";

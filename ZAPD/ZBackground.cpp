@@ -113,17 +113,6 @@ std::string ZBackground::GetExternalExtension() const
 	return "jpg";
 }
 
-size_t ZBackground::GetRawDataSize() const
-{
-	// Jpgs use the whole sceen buffer, which is a u16 matrix.
-	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
-}
-
-DeclarationAlignment ZBackground::GetDeclarationAlignment() const
-{
-	return DeclarationAlignment::Align8;
-}
-
 void ZBackground::CheckValidJpeg(const std::string& filepath)
 {
 	std::string filename = outName;
@@ -182,4 +171,15 @@ void ZBackground::CheckValidJpeg(const std::string& filepath)
 		        "\t Screen buffer size: %zu bytes.\n",
 		        filename.c_str(), data.size(), GetRawDataSize());
 	}
+}
+
+size_t ZBackground::GetRawDataSize() const
+{
+	// Jpgs use the whole sceen buffer, which is a u16 matrix.
+	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
+}
+
+DeclarationAlignment ZBackground::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align8;
 }
