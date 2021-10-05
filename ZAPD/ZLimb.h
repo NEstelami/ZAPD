@@ -21,6 +21,23 @@ enum class ZLimbType
 class ZLimb : public ZResource
 {
 public:
+	ZLimbType type = ZLimbType::Standard;
+
+	int16_t transX, transY, transZ;
+	uint8_t childIndex, siblingIndex;
+
+	segptr_t dListPtr = 0;
+	segptr_t dList2Ptr = 0;                                     // LOD and Curve Only
+	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
+	segptr_t skinSegment = 0;                                   // Skin only
+	Struct_800A5E28 segmentStruct;                              // Skin only
+
+	// Legacy only
+	float legTransX, legTransY, legTransZ;  // Vec3f
+	uint16_t rotX, rotY, rotZ;              // Vec3s
+	segptr_t childPtr;                      // LegacyLimb*
+	segptr_t siblingPtr;                    // LegacyLimb*
+
 	ZLimb(ZFile* nParent);
 
 	void ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nType);
@@ -42,23 +59,6 @@ public:
 	static ZLimbType GetTypeByAttributeName(const std::string& attrName);
 
 protected:
-	ZLimbType type = ZLimbType::Standard;
-
-	int16_t transX, transY, transZ;
-	uint8_t childIndex, siblingIndex;
-
-	segptr_t dListPtr = 0;
-	segptr_t dList2Ptr = 0;                                     // LOD and Curve Only
-	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
-	segptr_t skinSegment = 0;                                   // Skin only
-	Struct_800A5E28 segmentStruct;                              // Skin only
-
-	// Legacy only
-	float legTransX, legTransY, legTransZ;  // Vec3f
-	uint16_t rotX, rotY, rotZ;              // Vec3s
-	segptr_t childPtr;                      // LegacyLimb*
-	segptr_t siblingPtr;                    // LegacyLimb*
-
 	void DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
 	                  const std::string& limbSuffix);
 };

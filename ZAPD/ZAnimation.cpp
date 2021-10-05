@@ -36,6 +36,16 @@ ZNormalAnimation::ZNormalAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
 }
 
+size_t ZNormalAnimation::GetRawDataSize() const
+{
+	return 16;
+}
+
+std::string ZNormalAnimation::GetSourceTypeName() const
+{
+	return "AnimationHeader";
+}
+
 void ZNormalAnimation::ParseRawData()
 {
 	ZAnimation::ParseRawData();
@@ -128,21 +138,21 @@ std::string ZNormalAnimation::GetBodySourceCode() const
 	return headerStr;
 }
 
-size_t ZNormalAnimation::GetRawDataSize() const
-{
-	return 16;
-}
-
-std::string ZNormalAnimation::GetSourceTypeName() const
-{
-	return "AnimationHeader";
-}
-
 /* ZLinkAnimation */
 
 ZLinkAnimation::ZLinkAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
 	segmentAddress = 0;
+}
+
+size_t ZLinkAnimation::GetRawDataSize() const
+{
+	return 8;
+}
+
+std::string ZLinkAnimation::GetSourceTypeName() const
+{
+	return "LinkAnimationHeader";
 }
 
 void ZLinkAnimation::ParseRawData()
@@ -159,16 +169,6 @@ std::string ZLinkAnimation::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(segmentAddress, parent, "", segSymbol);
 
 	return StringHelper::Sprintf("\n\t{ %i }, %s\n", frameCount, segSymbol.c_str());
-}
-
-size_t ZLinkAnimation::GetRawDataSize() const
-{
-	return 8;
-}
-
-std::string ZLinkAnimation::GetSourceTypeName() const
-{
-	return "LinkAnimationHeader";
 }
 
 /* ZCurveAnimation */

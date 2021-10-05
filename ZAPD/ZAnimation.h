@@ -32,6 +32,14 @@ protected:
 class ZNormalAnimation : public ZAnimation
 {
 public:
+	std::vector<uint16_t> rotationValues;
+	std::vector<RotationIndex> rotationIndices;
+	segptr_t rotationValuesSeg = 0;
+	segptr_t rotationIndicesSeg = 0;
+	offset_t rotationValuesOffset = 0;
+	offset_t rotationIndicesOffset = 0;
+	int16_t limit = 0;
+
 	ZNormalAnimation(ZFile* nParent);
 
 	void ParseRawData() override;
@@ -41,15 +49,6 @@ public:
 
 	size_t GetRawDataSize() const override;
 	std::string GetSourceTypeName() const override;
-
-protected:
-	std::vector<uint16_t> rotationValues;
-	std::vector<RotationIndex> rotationIndices;
-	segptr_t rotationValuesSeg = 0;
-	segptr_t rotationIndicesSeg = 0;
-	offset_t rotationValuesOffset = 0;
-	offset_t rotationIndicesOffset = 0;
-	int16_t limit = 0;
 };
 
 class ZLinkAnimation : public ZAnimation
@@ -59,12 +58,12 @@ public:
 
 	ZLinkAnimation(ZFile* nParent);
 
-	void ParseRawData() override;
-
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawDataSize() const override;
 	std::string GetSourceTypeName() const override;
+
+	void ParseRawData() override;
 };
 
 class TransformData
