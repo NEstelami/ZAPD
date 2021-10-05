@@ -1,7 +1,9 @@
 #include "Globals.h"
+
+#include <algorithm>
+
 #include <Utils/File.h>
 #include <Utils/Path.h>
-#include <algorithm>
 #include "tinyxml2.h"
 
 Globals* Globals::Instance;

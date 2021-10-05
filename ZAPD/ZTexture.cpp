@@ -1,6 +1,7 @@
 #include "ZTexture.h"
 
 #include <cassert>
+
 #include "CRC32.h"
 #include "Globals.h"
 #include "Utils/BitConverter.h"

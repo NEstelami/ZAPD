@@ -20,8 +20,7 @@ SetAnimatedMaterialList::SetAnimatedMaterialList(ZFile* nParent)
 void SetAnimatedMaterialList::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
-	textureAnimation.SetRawDataIndex(segmentOffset);
-	textureAnimation.ParseRawData();
+	textureAnimation.ExtractFromFile(segmentOffset);
 }
 
 void SetAnimatedMaterialList::DeclareReferences(const std::string& prefix)

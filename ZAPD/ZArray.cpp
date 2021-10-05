@@ -1,5 +1,7 @@
 #include "ZArray.h"
+
 #include <cassert>
+
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"

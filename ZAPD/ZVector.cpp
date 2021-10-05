@@ -1,5 +1,7 @@
 #include "ZVector.h"
-#include <assert.h>
+
+#include <cassert>
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"

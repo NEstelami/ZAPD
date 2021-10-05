@@ -343,7 +343,6 @@ public:
 	std::vector<ZMtx> mtxList;
 
 	ZDisplayList(ZFile* nParent);
-	ZDisplayList(uint32_t rawDataIndex, int32_t rawDataSize, ZFile* nParent);
 	~ZDisplayList();
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;

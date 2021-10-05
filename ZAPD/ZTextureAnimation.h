@@ -4,8 +4,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+
 #include "ZResource.h"
-#include "tinyxml2.h"
 
 enum class TextureAnimationParamsType
 {

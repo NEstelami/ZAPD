@@ -16,9 +16,8 @@ void SetRoomList::ParseRawData()
 	int numRooms = cmdArg1;
 
 	romfile = new RomFile(parent);
-	romfile->SetRawDataIndex(segmentOffset);
 	romfile->numRooms = numRooms;
-	romfile->ParseRawData();
+	romfile->ExtractFromFile(segmentOffset);
 
 	parent->resources.push_back(romfile);
 

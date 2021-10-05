@@ -1,4 +1,5 @@
 #include "ZMtx.h"
+
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
@@ -49,6 +50,11 @@ ZResourceType ZMtx::GetResourceType() const
 size_t ZMtx::GetRawDataSize() const
 {
 	return 64;
+}
+
+DeclarationAlignment ZMtx::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align8;
 }
 
 DeclarationAlignment ZMtx::GetDeclarationAlignment() const

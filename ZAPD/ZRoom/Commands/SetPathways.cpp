@@ -1,4 +1,5 @@
 #include "SetPathways.h"
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
@@ -27,8 +28,7 @@ void SetPathways::ParseRawDataLate()
 		pathwayList.SetNumPaths(numPaths);
 	}
 
-	pathwayList.SetRawDataIndex(segmentOffset);
-	pathwayList.ParseRawData();
+	pathwayList.ExtractFromFile(segmentOffset);
 }
 
 void SetPathways::DeclareReferencesLate(const std::string& prefix)

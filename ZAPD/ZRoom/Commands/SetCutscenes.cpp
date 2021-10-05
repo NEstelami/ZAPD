@@ -46,6 +46,7 @@ void SetCutscenes::ParseRawData()
 			cutsceneEntries.push_back(entry);
 			currentPtr += 8;
 
+			// TODO: don't hardcode %sCutsceneData_%06X, look up for the declared name instead
 			declaration += StringHelper::Sprintf(
 				"    { %sCutsceneData_%06X, 0x%04X, 0x%02X, 0x%02X },", zRoom->GetName().c_str(),
 				entry.segmentOffset, entry.exit, entry.entrance, entry.flag);
@@ -67,9 +68,9 @@ void SetCutscenes::ParseRawData()
 
 	for (ZCutsceneBase* cutscene : cutscenes)
 	{
-		if (cutscene->getSegmentOffset() != 0)
+		if (cutscene->GetRawDataIndex() != 0)
 		{
-			Declaration* decl = parent->GetDeclaration(cutscene->getSegmentOffset());
+			Declaration* decl = parent->GetDeclaration(cutscene->GetRawDataIndex());
 			if (decl == nullptr)
 			{
 				cutscene->GetSourceOutputCode(zRoom->GetName());

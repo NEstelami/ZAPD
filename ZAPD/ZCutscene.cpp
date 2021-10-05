@@ -88,7 +88,6 @@ CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
 std::string ZCutscene::GetBodySourceCode() const
 {
 	std::string output = "";
-	size_t size = 0;
 	uint32_t curPtr = 0;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
@@ -98,7 +97,6 @@ std::string ZCutscene::GetBodySourceCode() const
 		CutsceneCommand* cmd = commands[i];
 		output += "    " + cmd->GenerateSourceCode(curPtr);
 		curPtr += cmd->GetCommandSize();
-		size += cmd->GetCommandSize();
 	}
 
 	output += StringHelper::Sprintf("    CS_END(),\n", commands.size(), endFrame);
@@ -1245,7 +1243,7 @@ Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::str
 		auxName = GetDefaultName(prefix);
 
 	Declaration* decl =
-		parent->AddDeclarationArray(getSegmentOffset(), GetDeclarationAlignment(), GetRawDataSize(),
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
 	                                GetSourceTypeName(), auxName, 0, bodyStr);
 	decl->staticConf = staticConf;
 	return decl;

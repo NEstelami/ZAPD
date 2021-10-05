@@ -416,7 +416,6 @@ public:
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 
 	std::string GetSourceTypeName() const override;
-	virtual uint32_t getSegmentOffset() const = 0;
 };
 
 class ZCutscene : public ZCutsceneBase
@@ -429,13 +428,13 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
+
 	size_t GetRawDataSize() const override;
-	CutsceneCommands GetCommandFromID(int32_t id);
-	uint32_t getSegmentOffset() const override { return rawDataIndex; }
 
 	ZResourceType GetResourceType() const override;
 
-protected:
+	CutsceneCommands GetCommandFromID(int32_t id);
+
 	int32_t numCommands;
 	int32_t endFrame;
 	std::vector<CutsceneCommand*> commands;

@@ -1,6 +1,7 @@
 #include "ZSkeleton.h"
 
 #include <cassert>
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
@@ -135,9 +136,9 @@ DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const
 	return DeclarationAlignment::Align16;
 }
 
-segptr_t ZSkeleton::GetAddress()
+DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const
 {
-	return rawDataIndex;
+	return DeclarationAlignment::Align16;
 }
 
 uint8_t ZSkeleton::GetLimbCount()
@@ -151,16 +152,6 @@ ZLimbTable::ZLimbTable(ZFile* nParent) : ZResource(nParent)
 {
 	RegisterRequiredAttribute("LimbType");
 	RegisterRequiredAttribute("Count");
-}
-
-void ZLimbTable::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-
-	Declaration* decl =
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                                GetSourceTypeName(), name, limbsAddresses.size(), "");
-	decl->staticConf = staticConf;
 }
 
 void ZLimbTable::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount)

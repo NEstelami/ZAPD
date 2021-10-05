@@ -1,9 +1,11 @@
 #include "ZFile.h"
-#include <Utils/BinaryWriter.h>
-#include <Utils/MemoryStream.h>
+
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
+
+#include <Utils/BinaryWriter.h>
+#include <Utils/MemoryStream.h>
 #include "Globals.h"
 #include "OutputFormatter.h"
 #include "Utils/Directory.h"
@@ -25,8 +27,6 @@
 #include "ZTexture.h"
 #include "ZVector.h"
 #include "ZVtx.h"
-
-using namespace tinyxml2;
 
 ZFile::ZFile()
 {
@@ -165,7 +165,7 @@ void ZFile::ParseXML(XMLElement* reader, std::string filename)
 	auto nodeMap = *GetNodeMap();
 	uint32_t rawDataIndex = 0;
 
-	for (XMLElement* child = reader->FirstChildElement(); child != nullptr;
+	for (tinyxml2::XMLElement* child = reader->FirstChildElement(); child != nullptr;
 	     child = child->NextSiblingElement())
 	{
 		const char* nameXml = child->Attribute("Name");
@@ -382,7 +382,7 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 	return resList;
 }
 
-Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignment, size_t size,
+Declaration* ZFile::AddDeclaration(offset_t address, DeclarationAlignment alignment, size_t size,
                                    const std::string& varType, const std::string& varName,
                                    const std::string& body)
 {
@@ -407,7 +407,7 @@ Declaration* ZFile::AddDeclaration(uint32_t address, DeclarationAlignment alignm
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
                                         size_t size, const std::string& varType,
                                         const std::string& varName, size_t arrayItemCnt,
                                         const std::string& body)
@@ -438,7 +438,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment alignment,
+Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
                                         size_t size, const std::string& varType,
                                         const std::string& varName,
                                         const std::string& arrayItemCntStr, const std::string& body)
@@ -467,7 +467,7 @@ Declaration* ZFile::AddDeclarationArray(uint32_t address, DeclarationAlignment a
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, const std::string& varName)
+Declaration* ZFile::AddDeclarationPlaceholder(offset_t address, const std::string& varName)
 {
 	bool validOffset = AddDeclarationChecks(address, varName);
 	if (!validOffset)
@@ -486,7 +486,7 @@ Declaration* ZFile::AddDeclarationPlaceholder(uint32_t address, const std::strin
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationInclude(uint32_t address, const std::string& includePath,
+Declaration* ZFile::AddDeclarationInclude(offset_t address, const std::string& includePath,
                                           size_t size, const std::string& varType,
                                           const std::string& varName)
 {
@@ -510,7 +510,7 @@ Declaration* ZFile::AddDeclarationInclude(uint32_t address, const std::string& i
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationIncludeArray(uint32_t address, std::string includePath,
+Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string includePath,
                                                size_t size, const std::string& varType,
                                                const std::string& varName, size_t arrayItemCnt)
 {

@@ -1,6 +1,8 @@
 #include "ZCollision.h"
-#include <stdint.h>
+
+#include <cstdint>
 #include <string>
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"

@@ -1,4 +1,5 @@
 #include "ZCutsceneMM.h"
+
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
@@ -35,7 +36,6 @@ size_t ZCutsceneMM::GetRawDataSize() const
 
 void ZCutsceneMM::ParseRawData()
 {
-	segmentOffset = rawDataIndex;
 	const auto& rawData = parent->GetRawData();
 
 	numCommands = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);

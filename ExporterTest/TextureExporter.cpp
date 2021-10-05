@@ -8,6 +8,7 @@ void ExporterExample_Texture::Save(ZResource* res, [[maybe_unused]] fs::path out
 
 	auto data = tex->parent->GetRawData();
 
-	for (uint i = tex->GetRawDataIndex(); i < tex->GetRawDataIndex() + tex->GetRawDataSize(); i++)
+	for (offset_t i = tex->GetRawDataIndex(); i < tex->GetRawDataIndex() + tex->GetRawDataSize();
+	     i++)
 		writer->Write(data[i]);
 }

@@ -1,5 +1,7 @@
 #include "ZAnimation.h"
+
 #include <utility>
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/File.h"
@@ -396,15 +398,6 @@ std::string ZCurveAnimation::GetSourceTypeName() const
 
 ZLegacyAnimation::ZLegacyAnimation(ZFile* nParent) : ZAnimation(nParent)
 {
-}
-
-void ZLegacyAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZAnimation::ExtractFromXML(reader, nRawDataIndex);
-
-	Declaration* decl = parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4,
-	                                           GetRawDataSize(), GetSourceTypeName(), name, "");
-	decl->staticConf = staticConf;
 }
 
 void ZLegacyAnimation::ParseRawData()

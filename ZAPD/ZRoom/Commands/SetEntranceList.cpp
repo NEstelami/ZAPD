@@ -1,6 +1,5 @@
 #include "SetEntranceList.h"
 
-#include "Globals.h"
 #include "SetStartPositionList.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
