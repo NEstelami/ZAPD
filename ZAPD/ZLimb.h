@@ -23,11 +23,6 @@ class ZLimb : public ZResource
 public:
 	ZLimbType type = ZLimbType::Standard;
 
-	int16_t transX, transY, transZ;
-	uint8_t childIndex, siblingIndex;
-
-	segptr_t dListPtr = 0;
-	segptr_t dList2Ptr = 0;                                     // LOD and Curve Only
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
 	segptr_t skinSegment = 0;                                   // Skin only
 	Struct_800A5E28 segmentStruct;                              // Skin only
@@ -37,6 +32,12 @@ public:
 	uint16_t rotX, rotY, rotZ;              // Vec3s
 	segptr_t childPtr;                      // LegacyLimb*
 	segptr_t siblingPtr;                    // LegacyLimb*
+
+	segptr_t dListPtr = 0;
+	segptr_t dList2Ptr = 0; // LOD and Curve Only
+
+	int16_t transX, transY, transZ;
+	uint8_t childIndex, siblingIndex;
 
 	ZLimb(ZFile* nParent);
 

@@ -51,20 +51,6 @@ void ZBackground::ParseBinaryFile(const std::string& inFolder, bool appendOutNam
 	CheckValidJpeg(filepath.generic_string());
 }
 
-Declaration* ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
-{
-	std::string auxName = name;
-
-	if (name == "")
-		auxName = GetDefaultName(prefix);
-
-	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
-	                                                GetRawDataSize(), GetSourceTypeName(), auxName,
-	                                                "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
-	decl->staticConf = staticConf;
-	return decl;
-}
-
 void ZBackground::CheckValidJpeg(const std::string& filepath)
 {
 	std::string filename = outName;
@@ -131,6 +117,36 @@ size_t ZBackground::GetRawDataSize() const
 	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
 }
 
+Declaration* ZBackground::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	Declaration* decl = parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(),
+	                                                GetRawDataSize(), GetSourceTypeName(), auxName,
+	                                                "SCREEN_WIDTH * SCREEN_HEIGHT / 4", bodyStr);
+	decl->staticConf = staticConf;
+	return decl;
+}
+
+bool ZBackground::IsExternalResource() const
+{
+	return true;
+}
+
+std::string ZBackground::GetExternalExtension() const
+{
+	return "jpg";
+}
+
+void ZBackground::Save(const fs::path& outFolder)
+{
+	fs::path filepath = outFolder / (outName + "." + GetExternalExtension());
+	File::WriteAllBytes(filepath.string(), data);
+}
+
 std::string ZBackground::GetBodySourceCode() const
 {
 	std::string bodyStr = "    ";
@@ -153,17 +169,6 @@ std::string ZBackground::GetDefaultName(const std::string& prefix) const
 	return StringHelper::Sprintf("%sBackground_%06X", prefix.c_str(), rawDataIndex);
 }
 
-void ZBackground::Save(const fs::path& outFolder)
-{
-	fs::path filepath = outFolder / (outName + "." + GetExternalExtension());
-	File::WriteAllBytes(filepath.string(), data);
-}
-
-bool ZBackground::IsExternalResource() const
-{
-	return true;
-}
-
 std::string ZBackground::GetSourceTypeName() const
 {
 	return "u64";
@@ -172,11 +177,6 @@ std::string ZBackground::GetSourceTypeName() const
 ZResourceType ZBackground::GetResourceType() const
 {
 	return ZResourceType::Background;
-}
-
-std::string ZBackground::GetExternalExtension() const
-{
-	return "jpg";
 }
 
 DeclarationAlignment ZBackground::GetDeclarationAlignment() const
