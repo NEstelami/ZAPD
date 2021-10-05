@@ -69,7 +69,7 @@ public:
 	Declaration* AddDeclarationInclude(offset_t address, const std::string& includePath,
 	                                   size_t size, const std::string& varType,
 	                                   const std::string& varName);
-	Declaration* AddDeclarationIncludeArray(offset_t address, const std::string& includePath, size_t size,
+	Declaration* AddDeclarationIncludeArray(offset_t address, std::string includePath, size_t size,
 	                                        const std::string& varType, const std::string& varName,
 	                                        size_t arrayItemCnt);
 

@@ -86,7 +86,7 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(XMLElement* reader, std::string filename)
+void ZFile::ParseXML(tinyxml2::XMLElement* reader, std::string filename)
 {
 	assert(mode != ZFileMode::Invalid);
 

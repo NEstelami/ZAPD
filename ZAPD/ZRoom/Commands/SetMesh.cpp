@@ -207,7 +207,9 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	ZDisplayList* dlist = new ZDisplayList(dlistAddress, dlistLength, parent);
+	ZDisplayList* dlist = new ZDisplayList(parent);
+	dlist->ExtractFromBinary(dlistAddress, dlistLength);
+	dlist->SetName(dlist->GetDefaultName(prefix));
 	GenDListDeclarations(zRoom, parent, dlist);
 
 	return dlist;

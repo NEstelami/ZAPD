@@ -245,12 +245,6 @@ std::string ZResource::GetDefaultName(const std::string& prefix) const
 	                             rawDataIndex);
 }
 
-std::string ZResource::GetDefaultName(const std::string& prefix) const
-{
-	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), GetSourceTypeName().c_str(),
-	                             rawDataIndex);
-}
-
 std::string ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string bodyStr = GetBodySourceCode();

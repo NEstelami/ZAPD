@@ -60,20 +60,12 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 void ZDisplayList::ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize)
 {
 	rawDataIndex = nRawDataIndex;
+	name = GetDefaultName(parent->GetName());
 	numInstructions = rawDataSize / 8;
 
 	// Don't parse raw data of external files
 	if (parent->GetMode() == ZFileMode::ExternalFile)
 		return;
-
-	ParseRawData();
-}
-
-void ZDisplayList::ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize)
-{
-	rawDataIndex = nRawDataIndex;
-	name = GetDefaultName(parent->GetName());
-	numInstructions = rawDataSize / 8;
 
 	ParseRawData();
 }
@@ -1786,7 +1778,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		{
 			std::string declaration = "";
 
-			uint32_t curAddr = item.first;
+			offset_t curAddr = item.first;
 			auto& firstVtx = item.second.at(0);
 
 			for (auto vtx : item.second)
@@ -1795,7 +1787,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			}
 
 			Declaration* decl = parent->AddDeclarationArray(
-				item.first, firstVtx.GetDeclarationAlignment(),
+				curAddr, firstVtx.GetDeclarationAlignment(),
 				item.second.size() * firstVtx.GetRawDataSize(), firstVtx.GetSourceTypeName(),
 				firstVtx.GetDefaultName(name), item.second.size(), declaration);
 			decl->isExternal = true;

@@ -56,8 +56,3 @@ DeclarationAlignment ZMtx::GetDeclarationAlignment() const
 {
 	return DeclarationAlignment::Align8;
 }
-
-DeclarationAlignment ZMtx::GetDeclarationAlignment() const
-{
-	return DeclarationAlignment::Align8;
-}

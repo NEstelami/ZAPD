@@ -136,11 +136,6 @@ DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const
 	return DeclarationAlignment::Align16;
 }
 
-DeclarationAlignment ZSkeleton::GetDeclarationAlignment() const
-{
-	return DeclarationAlignment::Align16;
-}
-
 uint8_t ZSkeleton::GetLimbCount()
 {
 	return limbCount;
