@@ -122,7 +122,6 @@ public:
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void DeclareReferences(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
@@ -157,8 +156,6 @@ class ZLegacyAnimation : public ZAnimation
 {
 public:
 	ZLegacyAnimation(ZFile* nParent);
-
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

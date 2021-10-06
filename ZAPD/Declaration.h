@@ -3,6 +3,12 @@
 #include <string>
 #include <vector>
 
+// TODO: should we drop the `_t` suffix because of UNIX compliance?
+typedef uint32_t segptr_t;
+typedef uint32_t offset_t;
+
+#define SEGMENTED_NULL ((segptr_t)0)
+
 enum class DeclarationAlignment
 {
 	Align4,
@@ -35,9 +41,10 @@ public:
 	bool isArray = false;
 	size_t arrayItemCnt = 0;
 	std::string arrayItemCntStr = "";
-	std::vector<uint32_t> references;
+	std::vector<segptr_t> references;
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
+	bool declaredInXml = false;
 	StaticConfig staticConf = StaticConfig::Global;
 
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,

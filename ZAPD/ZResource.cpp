@@ -24,18 +24,26 @@ ZResource::ZResource(ZFile* nParent)
 	RegisterOptionalAttribute("Static", "Global");
 }
 
-void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, offset_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
+	declaredInXml = true;
 
 	if (reader != nullptr)
 		ParseXML(reader);
 
 	ParseRawData();
 	CalcHash();
+
+	if (!isInner)
+	{
+		Declaration* decl = DeclareVar(parent->GetName(), "");
+		assert(decl != nullptr);
+		decl->declaredInXml = true;
+	}
 }
 
-void ZResource::ExtractFromFile(uint32_t nRawDataIndex)
+void ZResource::ExtractFromFile(offset_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 
@@ -153,6 +161,20 @@ void ZResource::DeclareReferencesLate([[maybe_unused]] const std::string& prefix
 {
 }
 
+Declaration* ZResource::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	Declaration* decl =
+		parent->AddDeclaration(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                           GetSourceTypeName(), auxName, bodyStr);
+	decl->staticConf = staticConf;
+	return decl;
+}
+
 void ZResource::Save([[maybe_unused]] const fs::path& outFolder)
 {
 }
@@ -192,19 +214,19 @@ std::string ZResource::GetExternalExtension() const
 	return "";
 }
 
+DeclarationAlignment ZResource::GetDeclarationAlignment() const
+{
+	return DeclarationAlignment::Align4;
+}
+
 bool ZResource::WasDeclaredInXml() const
 {
 	return declaredInXml;
 }
 
-uint32_t ZResource::GetRawDataIndex() const
+offset_t ZResource::GetRawDataIndex() const
 {
 	return rawDataIndex;
-}
-
-void ZResource::SetRawDataIndex(uint32_t value)
-{
-	rawDataIndex = value;
 }
 
 std::string ZResource::GetBodySourceCode() const
@@ -212,8 +234,23 @@ std::string ZResource::GetBodySourceCode() const
 	return "ERROR";
 }
 
+std::string ZResource::GetDefaultName(const std::string& prefix) const
+{
+	return StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), GetSourceTypeName().c_str(),
+	                             rawDataIndex);
+}
+
 std::string ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
+	std::string bodyStr = GetBodySourceCode();
+
+	Declaration* decl = parent->GetDeclaration(rawDataIndex);
+	if (decl == nullptr || decl->isPlaceholder)
+		decl = DeclareVar(prefix, bodyStr);
+	else
+		decl->text = bodyStr;
+	decl->staticConf = staticConf;
+
 	return "";
 }
 
@@ -253,9 +290,9 @@ void ZResource::RegisterOptionalAttribute(const std::string& attr, const std::st
 	registeredAttributes[attr] = resAtrr;
 }
 
-uint32_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
+offset_t Seg2Filespace(segptr_t segmentedAddress, uint32_t parentBaseAddress)
 {
-	uint32_t currentPtr = GETSEGOFFSET(segmentedAddress);
+	offset_t currentPtr = GETSEGOFFSET(segmentedAddress);
 
 	if (GETSEGNUM(segmentedAddress) == 0x80)  // Is defined in code?
 	{

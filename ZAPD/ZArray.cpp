@@ -62,30 +62,56 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 	}
 }
 
-std::string ZArray::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
+Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	ZResource* res = resList.at(0);
+	Declaration* decl;
+	if (res->IsExternalResource())
+	{
+		auto filepath = Globals::Instance->outputPath / name;
+		std::string includePath = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(),
+		                                                res->GetExternalExtension().c_str());
+		decl = parent->AddDeclarationIncludeArray(rawDataIndex, includePath, GetRawDataSize(),
+		                                          GetSourceTypeName(), name, arrayCnt);
+		decl->text = bodyStr;
+		decl->isExternal = true;
+	}
+	else
+	{
+		decl =
+			parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+		                                GetSourceTypeName(), name, arrayCnt, bodyStr);
+	}
+
+	decl->staticConf = staticConf;
+	return decl;
+}
+
+std::string ZArray::GetBodySourceCode() const
 {
 	std::string output = "";
 
 	for (size_t i = 0; i < arrayCnt; i++)
 	{
-		output += resList.at(i)->GetBodySourceCode();
-		output += ",";
+		const auto& res = resList[i];
+		output += "\t";
 
-		if (i < arrayCnt - 1)
-			output += "\n";
+		if (res->GetResourceType() == ZResourceType::Scalar ||
+		    res->GetResourceType() == ZResourceType::Vertex)
+			output += resList.at(i)->GetBodySourceCode();
+		else
+			output += StringHelper::Sprintf("{ %s }", resList.at(i)->GetBodySourceCode().c_str());
+
+		if (i < arrayCnt - 1 || res->IsExternalResource())
+			output += ",\n";
 	}
 
-	Declaration* decl =
-		parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                                resList.at(0)->GetSourceTypeName(), name, arrayCnt, output);
-	decl->staticConf = staticConf;
-
-	return "";
-}
-
-std::string ZArray::GetSourceTypeName() const
-{
-	return resList.at(0)->GetSourceTypeName();
+	return output;
 }
 
 size_t ZArray::GetRawDataSize() const
@@ -96,7 +122,17 @@ size_t ZArray::GetRawDataSize() const
 	return size;
 }
 
+std::string ZArray::GetSourceTypeName() const
+{
+	return resList.at(0)->GetSourceTypeName();
+}
+
 ZResourceType ZArray::GetResourceType() const
 {
 	return ZResourceType::Array;
+}
+
+DeclarationAlignment ZArray::GetDeclarationAlignment() const
+{
+	return resList.at(0)->GetDeclarationAlignment();
 }
