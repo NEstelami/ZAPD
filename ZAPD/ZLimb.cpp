@@ -465,21 +465,30 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 	switch (type)
 	{
 		case ZLimbType::Legacy:
+
 			if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment)
 			{
-				ZLimb* child = new ZLimb(parent);
-				child->ExtractFromBinary(childOffset, ZLimbType::Legacy);
-				child->DeclareVar(prefix, "");
-				child->DeclareReferences(prefix);
-				parent->AddResource(child);
+				uint32_t childOffset = Seg2Filespace(childPtr, parent->baseAddress);
+				if (!parent->HasDeclaration(childOffset))
+				{
+					ZLimb* child = new ZLimb(parent);
+					child->ExtractFromBinary(childOffset, ZLimbType::Legacy);
+					child->DeclareVar(prefix, "");
+					child->DeclareReferences(prefix);
+					parent->AddResource(child);
+				}
 			}
 			if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment)
 			{
-				ZLimb* sibling = new ZLimb(parent);
-				sibling->ExtractFromBinary(siblingdOffset, ZLimbType::Legacy);
-				sibling->DeclareVar(prefix, "");
-				sibling->DeclareReferences(prefix);
-				parent->AddResource(sibling);
+				uint32_t siblingdOffset = Seg2Filespace(siblingPtr, parent->baseAddress);
+				if (!parent->HasDeclaration(siblingdOffset))
+				{
+					ZLimb* sibling = new ZLimb(parent);
+					sibling->ExtractFromBinary(siblingdOffset, ZLimbType::Legacy);
+					sibling->DeclareVar(prefix, "");
+					sibling->DeclareReferences(prefix);
+					parent->AddResource(sibling);
+				}
 			}
 			break;
 

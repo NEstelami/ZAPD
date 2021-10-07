@@ -257,17 +257,16 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, st
 				uint32_t b = (data2 & 0x00000FFF00000000) >> 32;
 				uint32_t z = (data2 & 0x00000000FFFFFFFF) >> 0;
 
+				// sprintf(line, "gsDPWord(%i, 0),", h);
+				sprintf(line, "gsSPBranchLessZraw(%sDlist0x%06X, 0x%02X, 0x%02X),", prefix.c_str(),
+				        h & 0x00FFFFFF, (a / 5) | (b / 2), z);
+
 				ZDisplayList* nList = new ZDisplayList(parent);
 				nList->ExtractFromBinary(h & 0x00FFFFFF, GetDListLength(parent->GetRawData(),
 				                                                        h & 0x00FFFFFF, dListType));
 				nList->SetName(nList->GetDefaultName(prefix));
 				otherDLists.push_back(nList);
-
-				ZDisplayList* nList = new ZDisplayList(
-					h & 0x00FFFFFF, GetDListLength(parent->GetRawData(), h & 0x00FFFFFF, dListType),
-					parent);
-				otherDLists.push_back(nList);
-
+				
 				i++;
 			}
 		}
