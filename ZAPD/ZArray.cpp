@@ -87,7 +87,7 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 
 std::string ZArray::GetBodySourceCode() const
 {
-	std::string output;
+	std::string output = "";
 
 	for (size_t i = 0; i < arrayCnt; i++)
 	{

@@ -1821,7 +1821,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		// Generate Vertex Declarations
 		for (auto& item : vertices)
 		{
-			std::string declaration;
+			std::string declaration = "";
 
 			for (auto vtx : item.second)
 			{
