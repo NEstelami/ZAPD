@@ -32,7 +32,7 @@ void SetObjectList::DeclareReferences(const std::string& prefix)
 {
 	if (!objects.empty())
 	{
-		std::string declaration = "";
+		std::string declaration;
 
 		for (size_t i = 0; i < objects.size(); i++)
 		{

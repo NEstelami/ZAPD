@@ -782,7 +782,7 @@ void ZDisplayList::Opcode_G_MTX(uint64_t data, char* line)
 	else
 		pp = (data & 0x000000FF00000000) >> 32;
 
-	std::string matrixRef = "";
+	std::string matrixRef;
 
 	if (Globals::Instance->symbolMap.find(mm) != Globals::Instance->symbolMap.end())
 		matrixRef = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[mm].c_str());
@@ -1699,7 +1699,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, [[maybe_unused]] int32_t idx, 
 
 	self->TextureGenCheck(self->curPrefix);
 
-	std::string palName = "";
+	std::string palName;
 
 	ZFile* auxParent = self->parent;
 	if (self->parent->segment != palSegNum && Globals::Instance->HasSegment(palSegNum))
@@ -1747,7 +1747,7 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 
 static int32_t GfxdCallback_Matrix(uint32_t seg)
 {
-	std::string mtxName = "";
+	std::string mtxName;
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 
 	if (Globals::Instance->symbolMap.find(seg) != Globals::Instance->symbolMap.end())
@@ -1782,7 +1782,7 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 
 std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	if (Globals::Instance->useLegacyZDList)
 		sourceOutput += ProcessLegacy(prefix);
@@ -1985,7 +1985,7 @@ std::string ZDisplayList::ProcessLegacy(const std::string& prefix)
 
 std::string ZDisplayList::ProcessGfxDis(const std::string& prefix)
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	OutputFormatter outputformatter;
 	int32_t dListSize = instructions.size() * sizeof(instructions[0]);

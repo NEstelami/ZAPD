@@ -251,7 +251,7 @@ void Struct_800A5E28::DeclareReferences(const std::string& prefix)
 			StringHelper::Sprintf("%sSkinLimb_%s_%06X", prefix.c_str(),
 		                          Struct_800A598C::GetSourceTypeName().c_str(), unk_4_Offset);
 
-		std::string entryStr = "";
+		std::string entryStr;
 		uint16_t arrayItemCnt = unk_4_arr.size();
 
 		size_t i = 0;
@@ -298,7 +298,7 @@ void Struct_800A5E28::DeclareReferences(const std::string& prefix)
 
 std::string Struct_800A5E28::GetSourceOutputCode(const std::string& prefix) const
 {
-	std::string entryStr = "";
+	std::string entryStr;
 
 	std::string unk_4_Str = "NULL";
 

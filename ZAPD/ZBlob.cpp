@@ -58,7 +58,7 @@ Declaration* ZBlob::DeclareVar(const std::string& prefix,
 
 std::string ZBlob::GetBodySourceCode() const
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	for (size_t i = 0; i < blobData.size(); i += 1)
 	{
