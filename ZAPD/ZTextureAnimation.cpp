@@ -545,9 +545,13 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					if (true)
 					{
 						count = 1;
+						// The else now allows SingleScroll to fall through to params = ... without
+						// touching the code in the else block
 					}
 					else
 					{
+						// The contents of this block can only be run by jumping into it with the
+						// case label
 						[[fallthrough]];
 					case TextureAnimationParamsType::DualScroll:
 						count = 2;
