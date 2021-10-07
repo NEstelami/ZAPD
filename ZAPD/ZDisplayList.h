@@ -288,7 +288,8 @@ class ZDisplayList : public ZResource
 protected:
 	static TextureType TexFormatToTexType(F3DZEXTexFormats fmt, F3DZEXTexSizes siz);
 
-	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix, char* line);
+	void ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix,
+	                 char* line);
 	void ParseF3DEX(F3DEXOpcode opcode, uint64_t data, const std::string& prefix, char* line);
 
 	// Various Instruction Optimizations

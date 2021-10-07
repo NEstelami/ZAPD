@@ -25,7 +25,7 @@ Globals::Globals()
 	useExternalResources = true;
 	lastScene = nullptr;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
-	currentExporter = "";
+	currentExporter;
 	outputPath = Directory::GetCurrentDirectory();
 }
 

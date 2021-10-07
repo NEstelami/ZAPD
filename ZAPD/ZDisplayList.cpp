@@ -86,8 +86,8 @@ Declaration* ZDisplayList::DeclareVar([[maybe_unused]] const std::string& prefix
 	return decl;
 }
 
-void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix,
-                               char* line)
+void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i,
+                               const std::string& prefix, char* line)
 {
 	switch (opcode)
 	{
@@ -278,7 +278,8 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, co
 	}
 }
 
-void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, const std::string& prefix, char* line)
+void ZDisplayList::ParseF3DEX(F3DEXOpcode opcode, uint64_t data, const std::string& prefix,
+                              char* line)
 {
 	switch (opcode)
 	{
@@ -616,26 +617,26 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 			if (tmem != 0)
 				output += StringHelper::Sprintf(
 					"gsDPLoadMultiBlock_4b(%s, %i, %i, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), tmem, rtile, fmtTbl[fmt], width2, height2, pal, cms,
-					cmt, masks, maskt, shifts, shiftt);
+					texStr.c_str(), tmem, rtile, fmtTbl[fmt], width2, height2, pal, cms, cmt, masks,
+					maskt, shifts, shiftt);
 			else
 				output += StringHelper::Sprintf(
 					"gsDPLoadTextureBlock_4b(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), fmtTbl[fmt], width2, height2, pal, cms, cmt, masks,
-					maskt, shifts, shiftt);
+					texStr.c_str(), fmtTbl[fmt], width2, height2, pal, cms, cmt, masks, maskt,
+					shifts, shiftt);
 		}
 		else if (siz == 2 && sizB != 0)
 		{
 			if (tmem != 0)
 				output += StringHelper::Sprintf(
 					"gsDPLoadMultiBlock(%s, %i, %i, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), tmem, rtile, fmtTbl[fmt], sizTbl[sizB], width2,
-					height2, pal, cms, cmt, masks, maskt, shifts, shiftt);
+					texStr.c_str(), tmem, rtile, fmtTbl[fmt], sizTbl[sizB], width2, height2, pal,
+					cms, cmt, masks, maskt, shifts, shiftt);
 			else
 				output += StringHelper::Sprintf(
 					"gsDPLoadTextureBlock(%s, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-					texStr.c_str(), fmtTbl[fmt], sizTbl[sizB], width2, height2, pal,
-					cms, cmt, masks, maskt, shifts, shiftt);
+					texStr.c_str(), fmtTbl[fmt], sizTbl[sizB], width2, height2, pal, cms, cmt,
+					masks, maskt, shifts, shiftt);
 		}
 		else
 		{
@@ -655,8 +656,8 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 
 			output += StringHelper::Sprintf(
 				"gsDPLoadMultiBlock(%s, %i, %i, %s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-				texStr.c_str(), tmem, rtile, fmtTbl[fmt], sizTbl[siz], width,
-				height, pal, cms, cmt, masks, maskt, shifts, shiftt);
+				texStr.c_str(), tmem, rtile, fmtTbl[fmt], sizTbl[siz], width, height, pal, cms, cmt,
+				masks, maskt, shifts, shiftt);
 		}
 
 		lastTexAddr = texAddr;
@@ -946,14 +947,13 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, const std::string& prefix, ch
 			sprintf(texStr, "0x%08lX", data & 0xFFFFFFFF);
 		}
 
-		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt],
-		        sizTbl[siz], www + 1, texStr);
+		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt], sizTbl[siz], www + 1,
+		        texStr);
 	}
 	else
 	{
-		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %sTex_%06lX),", fmtTbl[fmt],
-		        sizTbl[siz], www + 1, Globals::Instance->lastScene->GetName().c_str(),
-		        GETSEGOFFSET(data));
+		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %sTex_%06lX),", fmtTbl[fmt], sizTbl[siz],
+		        www + 1, Globals::Instance->lastScene->GetName().c_str(), GETSEGOFFSET(data));
 	}
 }
 
@@ -986,9 +986,8 @@ void ZDisplayList::Opcode_G_SETTILE(uint64_t data, char* line)
 
 	lastTexSizTest = (F3DZEXTexSizes)ii;
 
-	sprintf(line, "gsDPSetTile(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
-	        fmtTbl[fff], sizTbl[ii], nnnnnnnnn, mmmmmmmmm, ttt, pppp, cc, aaaa,
-	        ssss, dd, bbbb, uuuu);
+	sprintf(line, "gsDPSetTile(%s, %s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", fmtTbl[fff],
+	        sizTbl[ii], nnnnnnnnn, mmmmmmmmm, ttt, pppp, cc, aaaa, ssss, dd, bbbb, uuuu);
 }
 
 void ZDisplayList::Opcode_G_SETTILESIZE(uint64_t data, const std::string& prefix, char* line)
@@ -1111,10 +1110,9 @@ void ZDisplayList::Opcode_G_SETCOMBINE(uint64_t data, char* line)
 	sprintf(line,
 	        "gsDPSetCombineLERP(%s, %s, %s, %s, %s, %s, %s, %s,\n                       %s, %s, "
 	        "%s, %s, %s, %s, %s, %s),",
-	        modesA[a0], modesB[b0], modesC[c0], modesD[d0],
-	        modes2[aa0], modes2[ab0], modes2C[ac0], modes2[ad0],
-	        modesA[a1], modesB[b1], modesC[c1], modesD[d1],
-	        modes2[aa1], modes2[ab1], modes2C[ac1], modes2[ad1]);
+	        modesA[a0], modesB[b0], modesC[c0], modesD[d0], modes2[aa0], modes2[ab0], modes2C[ac0],
+	        modes2[ad0], modesA[a1], modesB[b1], modesC[c1], modesD[d1], modes2[aa1], modes2[ab1],
+	        modes2C[ac1], modes2[ad1]);
 }
 
 void ZDisplayList::Opcode_G_SETPRIMCOLOR(uint64_t data, char* line)

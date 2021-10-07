@@ -31,8 +31,8 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, const st
 }
 
 Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
-                         const std::string& nVarName, bool nIsArray, const std::string& nArrayItemCntStr,
-                         const std::string& nText)
+                         const std::string& nVarName, bool nIsArray,
+                         const std::string& nArrayItemCntStr, const std::string& nText)
 	: Declaration(nAlignment, nSize, nText)
 {
 	varType = nVarType;

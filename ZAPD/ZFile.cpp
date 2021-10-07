@@ -354,7 +354,8 @@ std::vector<ZResource*> ZFile::GetResourcesOfType(ZResourceType resType)
 }
 
 Declaration* ZFile::AddDeclaration(offset_t address, DeclarationAlignment alignment, size_t size,
-                                   const std::string& varType, const std::string& varName, const std::string& body)
+                                   const std::string& varType, const std::string& varName,
+                                   const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -377,8 +378,9 @@ Declaration* ZFile::AddDeclaration(offset_t address, DeclarationAlignment alignm
 }
 
 Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
-                                        size_t size, const std::string& varType, const std::string& varName,
-                                        size_t arrayItemCnt, const std::string& body)
+                                        size_t size, const std::string& varType,
+                                        const std::string& varName, size_t arrayItemCnt,
+                                        const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);
@@ -406,7 +408,8 @@ Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment a
 }
 
 Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment alignment,
-                                        size_t size, const std::string& varType, const std::string& varName,
+                                        size_t size, const std::string& varType,
+                                        const std::string& varName,
                                         const std::string& arrayItemCntStr, const std::string& body)
 {
 	assert(GETSEGNUM(address) == 0);
@@ -467,8 +470,9 @@ Declaration* ZFile::AddDeclarationPlaceholder(offset_t address, const std::strin
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationInclude(offset_t address, const std::string& includePath, size_t size,
-                                          const std::string& varType, const std::string& varName)
+Declaration* ZFile::AddDeclarationInclude(offset_t address, const std::string& includePath,
+                                          size_t size, const std::string& varType,
+                                          const std::string& varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	AddDeclarationDebugChecks(address);

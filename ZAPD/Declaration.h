@@ -50,14 +50,16 @@ public:
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
 	            const std::string& nVarName, bool nIsArray, const std::string& nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
-	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt, const std::string& nText);
+	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            const std::string& nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
 	            const std::string& nVarName, bool nIsArray, const std::string& nArrayItemCntStr,
 	            const std::string& nText);
 	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
-	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt, const std::string& nText,
-	            bool nIsExternal);
-	Declaration(const std::string& nIncludePath, size_t nSize, const std::string& nVarType, const std::string& nVarName);
+	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            const std::string& nText, bool nIsExternal);
+	Declaration(const std::string& nIncludePath, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName);
 
 	bool IsStatic() const;
 

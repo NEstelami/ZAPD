@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Globals* g = new Globals();
+	Globals g;
 
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
@@ -327,7 +327,6 @@ int main(int argc, char* argv[])
 			File::WriteAllText(Globals::Instance->outputPath.string(),
 			                   overlay->GetSourceOutputCode(""));
 	}
-	delete g;
 	return 0;
 }
 
