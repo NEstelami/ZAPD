@@ -34,7 +34,7 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 		if (cfg.segmentRefFiles.find(segNumber) == cfg.segmentRefFiles.end())
 		{
 			tinyxml2::XMLDocument doc;
-			std::string filePath = segmentRefs[segNumber];
+			std::string filePath = cfg.segmentRefs[segNumber];
 			tinyxml2::XMLError eResult = doc.LoadFile(filePath.c_str());
 
 			if (eResult != tinyxml2::XML_SUCCESS)
