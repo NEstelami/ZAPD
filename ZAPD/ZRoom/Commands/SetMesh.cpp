@@ -66,11 +66,9 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 
 	for (const auto& vtxEntry : dList->vtxDeclarations)
 	{
-		DeclarationAlignment alignment = DeclarationAlignment::Align4;
-		if (Globals::Instance->game == ZGame::MM_RETAIL)
-			alignment = DeclarationAlignment::None;
 		parent->AddDeclarationArray(
-			vtxEntry.first, alignment, dList->vertices[vtxEntry.first].size() * 16, "static Vtx",
+			vtxEntry.first, DeclarationAlignment::Align16,
+			dList->vertices[vtxEntry.first].size() * 16, "Vtx",
 			StringHelper::Sprintf("%sVtx_%06X", zRoom->GetName().c_str(), vtxEntry.first),
 			dList->vertices[vtxEntry.first].size(), vtxEntry.second);
 	}
@@ -158,7 +156,9 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
-	ZDisplayList* dlist = new ZDisplayList(dlistAddress, dlistLength, parent);
+	ZDisplayList* dlist = new ZDisplayList(parent);
+	dlist->ExtractFromBinary(dlistAddress, dlistLength);
+	dlist->SetName(dlist->GetDefaultName(prefix));
 	GenDListDeclarations(zRoom, parent, dlist);
 
 	return dlist;
@@ -306,7 +306,13 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 
 	uint32_t backAddress = Seg2Filespace(ptr, parent->baseAddress);
 
-	ZBackground* background = new ZBackground(prefix, backAddress, parent);
+	ZBackground* background = new ZBackground(parent);
+	background->ExtractFromFile(backAddress);
+
+	std::string defaultName = background->GetDefaultName(prefix);
+	background->SetName(defaultName);
+	background->SetOutName(defaultName);
+
 	background->DeclareVar(prefix, "");
 	parent->resources.push_back(background);
 
@@ -648,8 +654,10 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 		                            polyDlistType, polyDListName, polyDLists.size(), declaration);
 	}
 
-	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "static s32",
-	                       "terminatorMaybe", "0x01000000");
+	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "s32",
+	                       StringHelper::Sprintf("%s_terminatorMaybe_%06X",
+	                                             parent->GetName().c_str(), GETSEGOFFSET(end)),
+	                       "0x01000000");
 }
 
 std::string PolygonType2::GetBodySourceCode() const

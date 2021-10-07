@@ -35,8 +35,10 @@ class ZNormalAnimation : public ZAnimation
 public:
 	std::vector<uint16_t> rotationValues;
 	std::vector<RotationIndex> rotationIndices;
-	uint32_t rotationValuesSeg;
-	uint32_t rotationIndicesSeg;
+	segptr_t rotationValuesSeg;
+	segptr_t rotationIndicesSeg;
+	uint32_t rotationValuesOffset;
+	uint32_t rotationIndicesOffset;
 	int16_t limit;
 
 	ZNormalAnimation(ZFile* nParent);
@@ -120,7 +122,6 @@ public:
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void DeclareReferences(const std::string& prefix) override;
 	size_t GetRawDataSize() const override;
@@ -155,8 +156,6 @@ class ZLegacyAnimation : public ZAnimation
 {
 public:
 	ZLegacyAnimation(ZFile* nParent);
-
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

@@ -33,10 +33,7 @@ void SetCsCamera::ParseRawData()
 		for (int32_t i = 0; i < numPoints; i++)
 		{
 			ZVector vec(parent);
-			vec.SetRawDataIndex(currentPtr);
-			vec.SetScalarType(ZScalarType::ZSCALAR_S16);
-			vec.SetDimensions(3);
-			vec.ParseRawData();
+			vec.ExtractFromBinary(currentPtr, ZScalarType::ZSCALAR_S16, 3);
 
 			currentPtr += vec.GetRawDataSize();
 			points.push_back(vec);
@@ -98,8 +95,8 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		std::string camTypename = entry.GetSourceTypeName();
 
 		parent->AddDeclarationArray(
-			segmentOffset, DeclarationAlignment::Align4, DeclarationPadding::Pad16,
-			cameras.size() * entry.GetRawDataSize(), camTypename,
+			segmentOffset, DeclarationAlignment::Align4, cameras.size() * entry.GetRawDataSize(),
+			camTypename,
 			StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), camTypename.c_str(), segmentOffset),
 			cameras.size(), declaration);
 	}

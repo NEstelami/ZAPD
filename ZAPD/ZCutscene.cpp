@@ -87,8 +87,7 @@ CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
 
 std::string ZCutscene::GetBodySourceCode() const
 {
-	std::string output;
-	size_t size = 0;
+	std::string output = "";
 	uint32_t curPtr = 0;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
@@ -98,38 +97,11 @@ std::string ZCutscene::GetBodySourceCode() const
 		CutsceneCommand* cmd = commands[i];
 		output += "    " + cmd->GenerateSourceCode(curPtr);
 		curPtr += cmd->GetCommandSize();
-		size += cmd->GetCommandSize();
 	}
 
 	output += StringHelper::Sprintf("    CS_END(),\n", commands.size(), endFrame);
 
 	return output;
-}
-
-std::string ZCutscene::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
-}
-
-void ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
-{
-	std::string auxName = name;
-
-	if (auxName == "")
-		auxName = StringHelper::Sprintf("%sCutsceneData0x%06X", prefix.c_str(), rawDataIndex);
-
-	parent->AddDeclarationArray(getSegmentOffset(), DeclarationAlignment::Align4,
-	                            DeclarationPadding::Pad16, GetRawDataSize(), GetSourceTypeName(),
-	                            auxName, 0, bodyStr);
 }
 
 size_t ZCutscene::GetRawDataSize() const
@@ -150,12 +122,6 @@ size_t ZCutscene::GetRawDataSize() const
 	size += 8;
 
 	return size;
-}
-
-void ZCutscene::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-	DeclareVar(parent->GetName(), "");
 }
 
 void ZCutscene::ParseRawData()
@@ -1078,8 +1044,7 @@ std::string CutsceneCommandActorAction::GenerateSourceCode([[maybe_unused]] uint
 	{
 		result += StringHelper::Sprintf(
 			"\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %.11ef, "
-		    "%.11ef, "
-			"%.11ef),\n",
+			"%.11ef, %.11ef),\n",
 			subCommand.c_str(), entries[i]->action, entries[i]->startFrame, entries[i]->endFrame,
 			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX,
 			entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY,
@@ -1268,6 +1233,20 @@ size_t CutsceneCommandSceneTransFX::GetCommandSize()
 
 ZCutsceneBase::ZCutsceneBase(ZFile* nParent) : ZResource(nParent)
 {
+}
+
+Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+{
+	std::string auxName = name;
+
+	if (name == "")
+		auxName = GetDefaultName(prefix);
+
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                GetSourceTypeName(), auxName, 0, bodyStr);
+	decl->staticConf = staticConf;
+	return decl;
 }
 
 std::string ZCutsceneBase::GetSourceTypeName() const

@@ -125,32 +125,6 @@ ZTextureAnimationParams::GetDefaultName([[maybe_unused]] const std::string& pref
 	return "ShouldNotBeVIsible";
 }
 
-void ZTextureAnimationParams::DeclareVar(const std::string& prefix,
-                                         const std::string& bodyStr) const
-{
-	std::string auxName = name;
-
-	if (name == "")
-		auxName = GetDefaultName(prefix);
-
-	parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                       GetSourceTypeName(), auxName, bodyStr);
-}
-
-std::string ZTextureAnimationParams::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
-}
-
 ZResourceType ZTextureAnimationParams::GetResourceType() const
 {
 	return ZResourceType::TextureAnimationParams;
@@ -197,15 +171,16 @@ size_t TextureScrollingParams::GetRawDataSize() const
 /**
  * Overrides the parent version to declare an array of the params rather than just one entry.
  */
-void TextureScrollingParams::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
+Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix,
+                                                const std::string& bodyStr)
 {
 	std::string auxName = name;
 
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, count, bodyStr);
+	return parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                   GetSourceTypeName(), auxName, count, bodyStr);
 }
 
 std::string TextureScrollingParams::GetBodySourceCode() const
@@ -537,12 +512,6 @@ ZTextureAnimation::ZTextureAnimation(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-void ZTextureAnimation::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-	DeclareVar("", "");
-}
-
 /**
  * Builds the array of params
  */
@@ -688,15 +657,18 @@ std::string ZTextureAnimation::GetDefaultName(const std::string& prefix) const
 	return StringHelper::Sprintf("%sTexAnim_%06X", prefix.c_str(), rawDataIndex);
 }
 
-void ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string& bodyStr) const
+Declaration* ZTextureAnimation::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
 	std::string auxName = name;
 
 	if (name == "")
 		auxName = GetDefaultName(prefix);
 
-	parent->AddDeclarationArray(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	                            GetSourceTypeName(), auxName, entries.size(), bodyStr);
+	Declaration* decl =
+		parent->AddDeclarationArray(rawDataIndex, GetDeclarationAlignment(), GetRawDataSize(),
+	                                GetSourceTypeName(), auxName, entries.size(), bodyStr);
+	decl->staticConf = staticConf;
+	return decl;
 }
 
 std::string ZTextureAnimation::GetBodySourceCode() const
@@ -712,18 +684,4 @@ std::string ZTextureAnimation::GetBodySourceCode() const
 	bodyStr.pop_back();
 
 	return bodyStr;
-}
-
-std::string ZTextureAnimation::GetSourceOutputCode(const std::string& prefix)
-{
-	std::string bodyStr = GetBodySourceCode();
-
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-
-	if (decl == nullptr)
-		DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-
-	return "";
 }
