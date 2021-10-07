@@ -5,8 +5,6 @@
 #include "Utils/Path.h"
 #include "tinyxml2.h"
 
-using namespace tinyxml2;
-
 Globals* Globals::Instance;
 
 Globals::Globals()
@@ -36,9 +34,9 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 	{
 		if (segmentRefFiles.find(segNumber) == segmentRefFiles.end())
 		{
-			XMLDocument doc;
+			tinyxml2::XMLDocument doc;
 			std::string filePath = segmentRefs[segNumber];
-			XMLError eResult = doc.LoadFile(filePath.c_str());
+			tinyxml2::XMLError eResult = doc.LoadFile(filePath.c_str());
 
 			if (eResult != tinyxml2::XML_SUCCESS)
 				return "ERROR";
@@ -48,7 +46,7 @@ std::string Globals::FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress)
 			if (root == nullptr)
 				return "ERROR";
 
-			for (XMLElement* child = root->FirstChildElement(); child != nullptr;
+			for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != nullptr;
 			     child = child->NextSiblingElement())
 			{
 				if (std::string(child->Name()) == "File")

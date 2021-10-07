@@ -348,14 +348,14 @@ public:
 	std::vector<ZMtx> mtxList;
 
 	ZDisplayList(ZFile* nParent);
-	ZDisplayList(uint32_t rawDataIndex, int32_t rawDataSize, ZFile* nParent);
 	~ZDisplayList();
 
 	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
+	void ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize);
 
 	void ParseRawData() override;
 
-	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr);
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 
 	void TextureGenCheck(std::string prefix);
 	static bool TextureGenCheck(ZFile* parent, std::string prefix, int32_t texWidth,

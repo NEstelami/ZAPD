@@ -1,4 +1,5 @@
 #include "ZLimb.h"
+
 #include <cassert>
 #include <unordered_map>
 #include "Globals.h"
@@ -285,7 +286,8 @@ void Struct_800A5E28::DeclareReferences(const std::string& prefix)
 		int32_t dlistLength = ZDisplayList::GetDListLength(
 			parent->GetRawData(), unk_8_Offset,
 			Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
-		unk_8_dlist = new ZDisplayList(unk_8_Offset, dlistLength, parent);
+		unk_8_dlist = new ZDisplayList(parent);
+		unk_8_dlist->ExtractFromBinary(unk_8_Offset, dlistLength);
 
 		std::string dListStr =
 			StringHelper::Sprintf("%sSkinLimbDL_%06X", prefix.c_str(), unk_8_Offset);
@@ -355,25 +357,12 @@ ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("Type");
 }
 
-ZLimb::ZLimb(ZLimbType limbType, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent)
-	: ZLimb(nParent)
+void ZLimb::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nType)
 {
 	rawDataIndex = nRawDataIndex;
-	parent = nParent;
-	type = limbType;
-
-	name = StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), GetFileAddress());
+	type = nType;
 
 	ParseRawData();
-}
-
-void ZLimb::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
-{
-	ZResource::ExtractFromXML(reader, nRawDataIndex);
-
-	Declaration* decl = parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4,
-	                                           GetRawDataSize(), GetSourceTypeName(), name, "");
-	decl->staticConf = staticConf;
 }
 
 void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
@@ -478,23 +467,19 @@ void ZLimb::DeclareReferences(const std::string& prefix)
 		case ZLimbType::Legacy:
 			if (childPtr != 0 && GETSEGNUM(childPtr) == parent->segment)
 			{
-				uint32_t childOffset = Seg2Filespace(childPtr, parent->baseAddress);
-				if (!parent->HasDeclaration(childOffset))
-				{
-					ZLimb* child = new ZLimb(ZLimbType::Legacy, prefix, childOffset, parent);
-					child->GetSourceOutputCode(prefix);
-					parent->AddResource(child);
-				}
+				ZLimb* child = new ZLimb(parent);
+				child->ExtractFromBinary(childOffset, ZLimbType::Legacy);
+				child->DeclareVar(prefix, "");
+				child->DeclareReferences(prefix);
+				parent->AddResource(child);
 			}
 			if (siblingPtr != 0 && GETSEGNUM(siblingPtr) == parent->segment)
 			{
-				uint32_t siblingdOffset = Seg2Filespace(siblingPtr, parent->baseAddress);
-				if (!parent->HasDeclaration(siblingdOffset))
-				{
-					ZLimb* sibling = new ZLimb(ZLimbType::Legacy, prefix, siblingdOffset, parent);
-					sibling->GetSourceOutputCode(prefix);
-					parent->AddResource(sibling);
-				}
+				ZLimb* sibling = new ZLimb(parent);
+				sibling->ExtractFromBinary(siblingdOffset, ZLimbType::Legacy);
+				sibling->DeclareVar(prefix, "");
+				sibling->DeclareReferences(prefix);
+				parent->AddResource(sibling);
 			}
 			break;
 
@@ -532,12 +517,10 @@ size_t ZLimb::GetRawDataSize() const
 	return 0x0C;
 }
 
-std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
+std::string ZLimb::GetBodySourceCode() const
 {
-	std::string limbPrefix = type == ZLimbType::Curve ? "Curve" : "";
-	std::string dListStr = GetLimbDListSourceOutputCode(prefix, limbPrefix, dListPtr);
-	limbPrefix = type == ZLimbType::Curve ? "Curve" : "Far";
-	std::string dListStr2 = GetLimbDListSourceOutputCode(prefix, limbPrefix, dList2Ptr);
+	std::string dListStr = parent->GetDeclarationPtrName(dListPtr);
+	std::string dListStr2 = parent->GetDeclarationPtrName(dList2Ptr);
 
 	std::string entryStr = "\n\t";
 	if (type == ZLimbType::Legacy)
@@ -558,24 +541,27 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 		{
 			entryStr += StringHelper::Sprintf("{ %i, %i, %i }, ", transX, transY, transZ);
 		}
-
 		entryStr += StringHelper::Sprintf("0x%02X, 0x%02X,\n", childIndex, siblingIndex);
 
 		switch (type)
 		{
 			case ZLimbType::Standard:
-				entryStr += StringHelper::Sprintf("    %s\n", dListStr.c_str());
+				entryStr += StringHelper::Sprintf("\t%s\n", dListStr.c_str());
 				break;
 
 			case ZLimbType::LOD:
 			case ZLimbType::Curve:
 				entryStr +=
-					StringHelper::Sprintf("    { %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
+					StringHelper::Sprintf("\t{ %s, %s }\n", dListStr.c_str(), dListStr2.c_str());
 				break;
 
 			case ZLimbType::Skin:
-				entryStr += GetSourceOutputCodeSkin(prefix);
-				break;
+			{
+				std::string skinSegmentStr = parent->GetDeclarationPtrName(skinSegment);
+				entryStr += StringHelper::Sprintf("\t0x%02X, %s\n", skinSegmentType,
+				                                  skinSegmentStr.c_str());
+			}
+			break;
 
 			case ZLimbType::Legacy:
 				break;
@@ -585,16 +571,12 @@ std::string ZLimb::GetSourceOutputCode(const std::string& prefix)
 		}
 	}
 
-	Declaration* decl = parent->GetDeclaration(GetFileAddress());
+	return entryStr;
+}
 
-	if (decl == nullptr)
-		decl = parent->AddDeclaration(GetFileAddress(), DeclarationAlignment::Align4,
-		                              GetRawDataSize(), GetSourceTypeName(), name, entryStr);
-	else
-		decl->text = entryStr;
-	decl->staticConf = staticConf;
-
-	return "";
+std::string ZLimb::GetDefaultName(const std::string& prefix) const
+{
+	return StringHelper::Sprintf("%sLimb_%06X", prefix.c_str(), rawDataIndex);
 }
 
 std::string ZLimb::GetSourceTypeName() const
@@ -655,11 +637,6 @@ ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 	return it->second;
 }
 
-uint32_t ZLimb::GetFileAddress()
-{
-	return Seg2Filespace(rawDataIndex, parent->baseAddress);
-}
-
 // Returns the ptrname of a dlist. Declares it if it has not been declared yet.
 std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
                                                 const std::string& limbPrefix, segptr_t dListPtr)
@@ -701,7 +678,8 @@ std::string ZLimb::GetLimbDListSourceOutputCode(const std::string& prefix,
 	int32_t dlistLength = ZDisplayList::GetDListLength(
 		parent->GetRawData(), dListOffset,
 		Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
-	auto dList = new ZDisplayList(dListOffset, dlistLength, parent);
+	auto dList = new ZDisplayList(parent);
+	dList->ExtractFromBinary(dListOffset, dlistLength);
 	dList->SetName(dListStr);
 	dList->GetSourceOutputCode(prefix);
 	return dListStr;
