@@ -48,7 +48,7 @@ void SetActorList::DeclareReferencesLate(const std::string& prefix)
 	if (actors.empty())
 		return;
 
-	std::string declaration = "";
+	std::string declaration;
 
 	size_t largestlength = 0;
 	for (const auto& entry : actors)
@@ -137,7 +137,7 @@ ActorSpawnEntry::ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t r
 
 std::string ActorSpawnEntry::GetBodySourceCode() const
 {
-	std::string body = "";
+	std::string body;
 
 	std::string actorNameFmt = StringHelper::Sprintf("%%-%zus ", largestActorName + 1);
 	body =

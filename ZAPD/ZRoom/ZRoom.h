@@ -14,7 +14,7 @@ public:
 	std::vector<ZRoomCommand*> commands;
 	int32_t roomCount;  // Only valid for scenes
 
-	std::string hackMode = "";
+	std::string hackMode;
 
 	ZResourceType zroomType = ZResourceType::Error;
 	ZResourceType parentZroomType = ZResourceType::Error;

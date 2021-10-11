@@ -309,7 +309,7 @@ Declaration* ZRoom::DeclareVar(const std::string& prefix, const std::string& bod
 
 std::string ZRoom::GetBodySourceCode() const
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	for (size_t i = 0; i < commands.size(); i++)
 	{

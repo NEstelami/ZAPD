@@ -15,7 +15,7 @@ ZCutsceneMM::~ZCutsceneMM()
 
 std::string ZCutsceneMM::GetBodySourceCode() const
 {
-	std::string output = "";
+	std::string output;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),", numCommands, endFrame);
 

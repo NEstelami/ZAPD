@@ -39,7 +39,7 @@ ZFile::ZFile()
 	rangeEnd = 0xFFFFFFFF;
 }
 
-ZFile::ZFile(const fs::path& nOutPath, std::string nName) : ZFile()
+ZFile::ZFile(const fs::path& nOutPath, const std::string& nName) : ZFile()
 {
 	name = nName;
 	outName = nName;
@@ -86,7 +86,7 @@ ZFile::~ZFile()
 	}
 }
 
-void ZFile::ParseXML(tinyxml2::XMLElement* reader, std::string filename)
+void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 {
 	assert(mode != ZFileMode::Invalid);
 
@@ -511,7 +511,7 @@ Declaration* ZFile::AddDeclarationInclude(offset_t address, const std::string& i
 	return decl;
 }
 
-Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string includePath,
+Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& includePath,
                                                size_t size, const std::string& varType,
                                                const std::string& varName, size_t arrayItemCnt)
 {
@@ -675,7 +675,7 @@ bool ZFile::HasDeclaration(uint32_t address)
 
 void ZFile::GenerateSourceFiles()
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	sourceOutput += "#include \"ultra64.h\"\n";
 	sourceOutput += "#include \"z64.h\"\n";
@@ -882,7 +882,7 @@ void ZFile::RegisterNode(std::string nodeName, ZResourceFactoryFunc* nodeFunc)
 
 std::string ZFile::ProcessDeclarations()
 {
-	std::string output = "";
+	std::string output;
 
 	if (declarations.size() == 0)
 		return output;
@@ -956,7 +956,7 @@ std::string ZFile::ProcessDeclarations()
 			}
 			else if (item.second->alignment == DeclarationAlignment::Align8)
 			{
-				int32_t curPtr = lastAddr + declarations[lastAddr]->size;
+				size_t curPtr = lastAddr + declarations[lastAddr]->size;
 
 				while (curPtr % 4 != 0)
 				{
@@ -968,7 +968,7 @@ std::string ZFile::ProcessDeclarations()
 				{
 					char buffer[2048];
 
-					sprintf(buffer, "u32 %s_align%02X = 0;\n", name.c_str(), curPtr);
+					sprintf(buffer, "u32 %s_align%02zX = 0;\n", name.c_str(), curPtr);
 					item.second->preText = buffer + item.second->preText;
 
 					declarations[lastAddr]->size += 4;
@@ -1002,7 +1002,7 @@ std::string ZFile::ProcessDeclarations()
 			if (item.second->isExternal)
 			{
 				// HACK
-				std::string extType = "";
+				std::string extType;
 
 				if (item.second->varType == "Gfx")
 					extType = "dlist";
@@ -1057,7 +1057,7 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 
 std::string ZFile::ProcessExterns()
 {
-	std::string output = "";
+	std::string output;
 
 	for (const auto& item : declarations)
 	{
@@ -1076,12 +1076,12 @@ std::string ZFile::ProcessExterns()
 	return output;
 }
 
-std::string ZFile::ProcessTextureIntersections([[maybe_unused]] std::string prefix)
+std::string ZFile::ProcessTextureIntersections([[maybe_unused]] const std::string& prefix)
 {
 	if (texturesResources.empty())
 		return "";
 
-	std::string defines = "";
+	std::string defines;
 	std::vector<std::pair<uint32_t, ZTexture*>> texturesSorted(texturesResources.begin(),
 	                                                           texturesResources.end());
 

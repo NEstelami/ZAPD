@@ -11,7 +11,7 @@ SetLightList::SetLightList(ZFile* nParent) : ZRoomCommand(nParent)
 void SetLightList::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
-	std::string declarations = "";
+	std::string declarations;
 
 	numLights = cmdArg1;
 	int32_t currentPtr = segmentOffset;
@@ -28,7 +28,7 @@ void SetLightList::DeclareReferences(const std::string& prefix)
 {
 	if (!lights.empty())
 	{
-		std::string declarations = "";
+		std::string declarations;
 
 		for (size_t i = 0; i < lights.size(); i++)
 		{

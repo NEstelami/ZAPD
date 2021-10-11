@@ -38,9 +38,9 @@ public:
 	uint32_t baseAddress, rangeStart, rangeEnd;
 	bool isExternalFile = false;
 
-	ZFile(const fs::path& nOutPath, std::string nName);
+	ZFile(const fs::path& nOutPath, const std::string& nName);
 	ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
-	      const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath);
+	      const fs::path& nOutPath, const std::string& filename, const fs::path& nXmlFilePath);
 	~ZFile();
 
 	std::string GetName() const;
@@ -69,7 +69,7 @@ public:
 	Declaration* AddDeclarationInclude(offset_t address, const std::string& includePath,
 	                                   size_t size, const std::string& varType,
 	                                   const std::string& varName);
-	Declaration* AddDeclarationIncludeArray(offset_t address, std::string includePath, size_t size,
+	Declaration* AddDeclarationIncludeArray(offset_t address, std::string& includePath, size_t size,
 	                                        const std::string& varType, const std::string& varName,
 	                                        size_t arrayItemCnt);
 
@@ -118,7 +118,7 @@ protected:
 	ZFileMode mode = ZFileMode::Invalid;
 
 	ZFile();
-	void ParseXML(tinyxml2::XMLElement* reader, std::string filename);
+	void ParseXML(tinyxml2::XMLElement* reader, const std::string& filename);
 	void DeclareResourceSubReferences();
 	void GenerateSourceFiles();
 	void GenerateSourceHeaderFiles();
@@ -127,7 +127,7 @@ protected:
 	void ProcessDeclarationText(Declaration* decl);
 	std::string ProcessExterns();
 
-	std::string ProcessTextureIntersections(std::string prefix);
+	std::string ProcessTextureIntersections(const std::string& prefix);
 	void HandleUnaccountedData();
 	bool HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr, uint32_t& lastSize);
 };

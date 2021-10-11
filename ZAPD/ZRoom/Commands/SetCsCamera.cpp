@@ -46,7 +46,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 {
 	if (points.size() > 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 		for (auto& point : points)
 		{
@@ -72,7 +72,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 		std::string camPointsName;
 		Globals::Instance->GetSegmentedPtrName(cameras.at(0).GetCamAddress(), parent, "Vec3s",
 		                                       camPointsName);
-		std::string declaration = "";
+		std::string declaration;
 
 		size_t index = 0;
 		size_t pointsIndex = 0;

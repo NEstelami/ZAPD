@@ -10,7 +10,7 @@ enum class ExporterFileMode
 	ModeExample3 = (int)ZFileMode::Custom + 3,
 };
 
-static void ExporterParseFileMode(std::string buildMode, ZFileMode& fileMode)
+static void ExporterParseFileMode(const std::string& buildMode, ZFileMode& fileMode)
 {
 	if (buildMode == "me1")
 		fileMode = (ZFileMode)ExporterFileMode::ModeExample1;

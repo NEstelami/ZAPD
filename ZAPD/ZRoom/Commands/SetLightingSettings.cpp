@@ -23,7 +23,7 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 {
 	if (settings.size() > 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 
 		for (size_t i = 0; i < settings.size(); i++)
 		{

@@ -65,7 +65,7 @@ void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 
 std::string SetMesh::GenDListExterns(ZDisplayList* dList)
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	sourceOutput += StringHelper::Sprintf("extern Gfx %sDL_%06X[];\n", zRoom->GetName().c_str(),
 	                                      dList->GetRawDataIndex());
@@ -127,7 +127,7 @@ void PolygonDlist::DeclareReferences(const std::string& prefix)
 
 std::string PolygonDlist::GetBodySourceCode() const
 {
-	std::string bodyStr = "";
+	std::string bodyStr;
 	std::string opaStr;
 	std::string xluStr;
 	Globals::Instance->GetSegmentedPtrName(opa, parent, "Gfx", opaStr);
@@ -435,7 +435,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 	polyDLists.at(0).GetSourceOutputCode(prefix);
 
 	uint32_t listAddress;
-	std::string bgImageArrayBody = "";
+	std::string bgImageArrayBody;
 	switch (format)
 	{
 	case 1:
@@ -566,7 +566,7 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 {
 	if (num > 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 
 		for (size_t i = 0; i < polyDLists.size(); i++)
 		{
@@ -577,7 +577,7 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 		}
 
 		std::string polyDlistType = polyDLists.at(0).GetSourceTypeName();
-		std::string polyDListName = "";
+		std::string polyDListName;
 		polyDListName = StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), polyDlistType.c_str(),
 		                                      GETSEGOFFSET(start));
 

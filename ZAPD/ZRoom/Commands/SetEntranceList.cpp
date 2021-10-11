@@ -40,7 +40,7 @@ void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& 
 {
 	if (!entrances.empty())
 	{
-		std::string declaration = "";
+		std::string declaration;
 
 		size_t index = 0;
 		for (const auto& entry : entrances)

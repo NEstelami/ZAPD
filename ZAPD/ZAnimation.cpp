@@ -312,7 +312,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 			"%sCurveAnime_%s_%06X", prefix.c_str(),
 			transformDataArr.at(0).GetSourceTypeName().c_str(), transformDataOffset);
 
-		std::string entryStr = "";
+		std::string entryStr;
 		uint16_t arrayItemCnt = transformDataArr.size();
 
 		size_t i = 0;
@@ -469,7 +469,7 @@ void ZLegacyAnimation::DeclareReferences(const std::string& prefix)
 		if (GETSEGNUM(jointKey) == parent->segment && !parent->HasDeclaration(jointKeyOffset))
 		{
 			const auto res = jointKeyArray.at(0);
-			std::string jointKeyBody = "";
+			std::string jointKeyBody;
 
 			for (size_t i = 0; i < jointKeyArray.size(); i++)
 			{

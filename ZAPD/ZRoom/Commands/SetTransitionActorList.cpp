@@ -28,7 +28,7 @@ void SetTransitionActorList::ParseRawData()
 
 void SetTransitionActorList::DeclareReferences(const std::string& prefix)
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	size_t index = 0;
 	for (const auto& entry : transitionActors)
