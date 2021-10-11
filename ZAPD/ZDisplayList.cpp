@@ -533,7 +533,6 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 
 			lastTexSeg = segmentNumber;
 
-			texStr;
 			Globals::Instance->GetSegmentedPtrName(data & 0xFFFFFFFF, parent, "", texStr);
 		}
 
@@ -1992,7 +1991,7 @@ bool ZDisplayList::TextureGenCheck(int32_t texWidth, int32_t texHeight, uint32_t
 		{
 			// Try to find a non-external file (ie, one we are actually extracting)
 			// which has the same segment number we are looking for.
-			for (auto& otherFile : Globals::Instance->segmentRefFiles[segmentNumber])
+			for (auto& otherFile : Globals::Instance->cfg.segmentRefFiles[segmentNumber])
 			{
 				if (!otherFile->isExternalFile)
 				{

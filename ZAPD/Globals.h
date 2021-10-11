@@ -61,7 +61,6 @@ public:
 	std::vector<ZFile*> files;
 	std::vector<ZFile*> externalFiles;
 	std::vector<int32_t> segments;
-	std::map<int32_t, std::vector<ZFile*>> segmentRefFiles;
 	std::map<uint32_t, std::string> symbolMap;
 
 	std::string currentExporter;
@@ -69,7 +68,6 @@ public:
 	static void AddExporter(std::string exporterName, ExporterSet* exporterSet);
 
 	Globals();
-	~Globals();
 
 	void AddSegment(int32_t segment, ZFile* file);
 	bool HasSegment(int32_t segment);

@@ -763,7 +763,7 @@ std::string ZFile::GetHeaderInclude() const
 
 		if (Globals::Instance->HasSegment(SEGMENT_SCENE))
 		{
-			for (const auto& sceneFile : Globals::Instance->segmentRefFiles[SEGMENT_SCENE])
+			for (const auto& sceneFile : Globals::Instance->cfg.segmentRefFiles[SEGMENT_SCENE])
 			{
 				if (sceneFile != this)
 				{
