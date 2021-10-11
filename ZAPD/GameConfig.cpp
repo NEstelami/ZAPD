@@ -6,8 +6,8 @@
 #include "Utils/Directory.h"
 #include "Utils/File.h"
 #include "Utils/Path.h"
-#include "tinyxml2.h"
 #include "ZFile.h"
+#include "tinyxml2.h"
 
 using ConfigFunc = void (GameConfig::*)(const tinyxml2::XMLElement&);
 
@@ -117,20 +117,19 @@ void GameConfig::ConfigFunc_ExternalFile(const tinyxml2::XMLElement& element)
 	const char* xmlPathValue = element.Attribute("XmlPath");
 	if (xmlPathValue == nullptr)
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-			"Parse: Fatal error in configuration file.\n"
-			"\t Missing 'XmlPath' attribute in `ExternalFile` element.\n"));
+		throw std::runtime_error(
+			StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
+		                          "\t Missing 'XmlPath' attribute in `ExternalFile` element.\n"));
 	}
 	const char* outPathValue = element.Attribute("OutPath");
 	if (outPathValue == nullptr)
 	{
-		throw std::runtime_error(StringHelper::Sprintf(
-			"Parse: Fatal error in configuration file.\n"
-			"\t Missing 'OutPath' attribute in `ExternalFile` element.\n"));
+		throw std::runtime_error(
+			StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
+		                          "\t Missing 'OutPath' attribute in `ExternalFile` element.\n"));
 	}
 
-	externalFiles.push_back(
-		ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
+	externalFiles.push_back(ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
 }
 
 void GameConfig::ReadConfigFile(const fs::path& argConfigFilePath)
