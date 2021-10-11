@@ -29,7 +29,7 @@ void ZPlayerAnimationData::ParseRawData() {
     limbRotData.reserve(totalSize * frameCount / 2);
 
     for (size_t i = 0; i < totalSize; i+=2) {
-        limbRotData.push_back(BitConverter::ToInt16BE(rawData, rawDataIndex + i));
+        limbRotData.push_back(BitConverter::ToUInt16BE(rawData, rawDataIndex + i));
     }
 }
 
@@ -58,7 +58,7 @@ std::string ZPlayerAnimationData::GetBodySourceCode() const {
             declaration += "\t";
         }
 
-		declaration += StringHelper::Sprintf("% 6i, ", entry);
+        declaration += StringHelper::Sprintf("0x%04X, ", entry);
 
         if ((index + 1) % 8 == 0) {
 			declaration += "\n";
