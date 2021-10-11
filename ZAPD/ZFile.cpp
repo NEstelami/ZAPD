@@ -47,7 +47,7 @@ ZFile::ZFile(const fs::path& nOutPath, const std::string& nName) : ZFile()
 }
 
 ZFile::ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
-             const fs::path& nOutPath, std::string filename, const fs::path& nXmlFilePath)
+             const fs::path& nOutPath, const std::string& filename, const fs::path& nXmlFilePath)
 	: ZFile()
 {
 	xmlFilePath = nXmlFilePath;
