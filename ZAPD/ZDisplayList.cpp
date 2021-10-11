@@ -266,7 +266,7 @@ void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i,
 				                                                        h & 0x00FFFFFF, dListType));
 				nList->SetName(nList->GetDefaultName(prefix));
 				otherDLists.push_back(nList);
-				
+
 				i++;
 			}
 		}

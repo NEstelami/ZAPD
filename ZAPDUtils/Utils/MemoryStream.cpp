@@ -30,7 +30,8 @@ uint64_t MemoryStream::GetLength()
 
 void MemoryStream::Seek(int32_t offset, SeekOffsetType seekType)
 {
-	switch (seekType) {
+	switch (seekType)
+	{
 		case SeekOffsetType::Start:
 			baseAddress = offset;
 			break;

@@ -580,50 +580,51 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				int count = 2;
 				switch (entry.type)
 				{
-				case TextureAnimationParamsType::SingleScroll:
-					count = 1;
-					[[fallthrough]];
-				case TextureAnimationParamsType::DualScroll:
-					params = new TextureScrollingParams(parent);
-					params->ExtractFromBinary(paramsOffset, count);
-					break;
+					case TextureAnimationParamsType::SingleScroll:
+						count = 1;
+						[[fallthrough]];
+					case TextureAnimationParamsType::DualScroll:
+						params = new TextureScrollingParams(parent);
+						params->ExtractFromBinary(paramsOffset, count);
+						break;
 
-				case TextureAnimationParamsType::ColorChange:
-				case TextureAnimationParamsType::ColorChangeLERP:
-				case TextureAnimationParamsType::ColorChangeLagrange:
-					params = new TextureColorChangingParams(parent);
-					params->type = entry.type;
-					params->ExtractFromBinary(paramsOffset);
-					break;
+					case TextureAnimationParamsType::ColorChange:
+					case TextureAnimationParamsType::ColorChangeLERP:
+					case TextureAnimationParamsType::ColorChangeLagrange:
+						params = new TextureColorChangingParams(parent);
+						params->type = entry.type;
+						params->ExtractFromBinary(paramsOffset);
+						break;
 
-				case TextureAnimationParamsType::TextureCycle:
-					params = new TextureCyclingParams(parent);
-					params->ExtractFromBinary(paramsOffset);
-					break;
+					case TextureAnimationParamsType::TextureCycle:
+						params = new TextureCyclingParams(parent);
+						params->ExtractFromBinary(paramsOffset);
+						break;
 
-				case TextureAnimationParamsType::Empty:
-					fprintf(stderr,
-					        "When processing file %s: in input binary file %s: offset 0x%06X:"
-					        "\n\t"
-					        "\033[97m"
-					        "ZTextureAnimation::DeclareReferences:"
-					        "\033[0m"
-					        "\033[95m"
-					        " warning: "
-					        "\033[0m"
-					        "\033[97m"
-					        "TextureAnimationParams entry has empty type (6), but params pointer "
-					        "is not NULL. Params read\n\t\t"
-					        "{ 0x%02X, 0x%02X, 0x%08X }\n"
-					        "\033[0m",
-					        Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
-					        rawDataIndex, entry.segment, (int)entry.type, entry.paramsPtr);
-					return;
-				default:
-					// Because GCC is worried this could happen
-					assert(entry.type < TextureAnimationParamsType::SingleScroll ||
-					       entry.type > TextureAnimationParamsType::Empty);
-					return;
+					case TextureAnimationParamsType::Empty:
+						fprintf(
+							stderr,
+							"When processing file %s: in input binary file %s: offset 0x%06X:"
+							"\n\t"
+							"\033[97m"
+							"ZTextureAnimation::DeclareReferences:"
+							"\033[0m"
+							"\033[95m"
+							" warning: "
+							"\033[0m"
+							"\033[97m"
+							"TextureAnimationParams entry has empty type (6), but params pointer "
+							"is not NULL. Params read\n\t\t"
+							"{ 0x%02X, 0x%02X, 0x%08X }\n"
+							"\033[0m",
+							Globals::Instance->inputPath.c_str(), parent->GetName().c_str(),
+							rawDataIndex, entry.segment, (int)entry.type, entry.paramsPtr);
+						return;
+					default:
+						// Because GCC is worried this could happen
+						assert(entry.type < TextureAnimationParamsType::SingleScroll ||
+						       entry.type > TextureAnimationParamsType::Empty);
+						return;
 				}
 
 				params->SetName(params->GetDefaultName(varPrefix));

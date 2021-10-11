@@ -62,14 +62,14 @@ bool Declaration::IsStatic() const
 {
 	switch (staticConf)
 	{
-	case StaticConfig::Off:
-		return false;
+		case StaticConfig::Off:
+			return false;
 
-	case StaticConfig::Global:
-		return Globals::Instance->forceStatic;
+		case StaticConfig::Global:
+			return Globals::Instance->forceStatic;
 
-	case StaticConfig::On:
-		return true;
+		case StaticConfig::On:
+			return true;
 	}
 
 	return false;

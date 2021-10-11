@@ -252,11 +252,11 @@ DeclarationAlignment ZScalar::GetDeclarationAlignment() const
 {
 	switch (scalarType)
 	{
-	case ZScalarType::ZSCALAR_S64:
-	case ZScalarType::ZSCALAR_U64:
-	case ZScalarType::ZSCALAR_F64:
-		return DeclarationAlignment::Align8;
-	default:
-		return DeclarationAlignment::Align4;
+		case ZScalarType::ZSCALAR_S64:
+		case ZScalarType::ZSCALAR_U64:
+		case ZScalarType::ZSCALAR_F64:
+			return DeclarationAlignment::Align8;
+		default:
+			return DeclarationAlignment::Align4;
 	}
 }
