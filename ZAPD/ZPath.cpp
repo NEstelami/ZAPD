@@ -138,9 +138,9 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 	if (points.empty())
 		return;
 
-	std::string pointsName = "";
+	std::string pointsName;
 
-	std::string declaration = "";
+	std::string declaration;
 
 	size_t index = 0;
 	for (const auto& point : points)

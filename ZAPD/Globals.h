@@ -18,7 +18,7 @@ enum class VerbosityLevel
 typedef void (*ExporterSetFunc)(ZFile*);
 typedef bool (*ExporterSetFuncBool)(ZFileMode fileMode);
 typedef void (*ExporterSetFuncVoid)(int argc, char* argv[], int& i);
-typedef void (*ExporterSetFuncVoid2)(std::string buildMode, ZFileMode& fileMode);
+typedef void (*ExporterSetFuncVoid2)(const std::string& buildMode, ZFileMode& fileMode);
 typedef void (*ExporterSetFuncVoid3)();
 
 class ExporterSet
