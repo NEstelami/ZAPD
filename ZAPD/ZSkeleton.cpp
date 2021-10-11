@@ -237,7 +237,7 @@ Declaration* ZLimbTable::DeclareVar(const std::string& prefix, const std::string
 
 std::string ZLimbTable::GetBodySourceCode() const
 {
-	std::string body = "";
+	std::string body;
 
 	for (size_t i = 0; i < count; i++)
 	{

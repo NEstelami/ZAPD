@@ -25,7 +25,6 @@ Globals::Globals()
 	useExternalResources = true;
 	lastScene = nullptr;
 	verbosity = VerbosityLevel::VERBOSITY_SILENT;
-	currentExporter = "";
 	outputPath = Directory::GetCurrentDirectory();
 }
 
@@ -150,7 +149,7 @@ void Globals::ReadTexturePool(const std::string& texturePoolXmlPath)
 		{
 			std::string crcStr = std::string(child->Attribute("CRC"));
 			fs::path texPath = std::string(child->Attribute("Path"));
-			std::string texName = "";
+			std::string texName;
 
 			uint32_t crc = strtoul(crcStr.c_str(), NULL, 16);
 

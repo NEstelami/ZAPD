@@ -755,7 +755,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 
 std::string ZTexture::GetBodySourceCode() const
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
 	{
@@ -833,7 +833,7 @@ fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 	return defaultValue;
 }
 
-TextureType ZTexture::GetTextureTypeFromString(std::string str)
+TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 {
 	TextureType texType = TextureType::Error;
 

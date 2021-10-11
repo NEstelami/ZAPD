@@ -28,36 +28,38 @@ class Declaration
 public:
 	DeclarationAlignment alignment;
 	size_t size;
-	std::string preText = "";
-	std::string text = "";
-	std::string rightText = "";
-	std::string postText = "";
-	std::string preComment = "";
-	std::string postComment = "";
-	std::string varType = "";
-	std::string varName = "";
-	std::string includePath = "";
+	std::string preText;
+	std::string text;
+	std::string rightText;
+	std::string postText;
+	std::string preComment;
+	std::string postComment;
+	std::string varType;
+	std::string varName;
+	std::string includePath;
 	bool isExternal = false;
 	bool isArray = false;
 	size_t arrayItemCnt = 0;
-	std::string arrayItemCntStr = "";
+	std::string arrayItemCntStr;
 	std::vector<segptr_t> references;
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
 	bool declaredInXml = false;
 	StaticConfig staticConf = StaticConfig::Global;
 
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
-	            std::string nText);
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-	            std::string nVarName, bool nIsArray, size_t nArrayItemCnt, std::string nText,
-	            bool nIsExternal);
-	Declaration(std::string nIncludePath, size_t nSize, std::string nVarType, std::string nVarName);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, const std::string& nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            const std::string& nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, const std::string& nArrayItemCntStr,
+	            const std::string& nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+	            const std::string& nText, bool nIsExternal);
+	Declaration(const std::string& nIncludePath, size_t nSize, const std::string& nVarType,
+	            const std::string& nVarName);
 
 	bool IsStatic() const;
 
@@ -69,5 +71,5 @@ public:
 	std::string GetStaticForwardDeclarationStr() const;
 
 protected:
-	Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nText);
+	Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nText);
 };

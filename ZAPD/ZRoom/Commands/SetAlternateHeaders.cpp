@@ -38,7 +38,7 @@ void SetAlternateHeaders::DeclareReferencesLate(const std::string& prefix)
 {
 	if (!headers.empty())
 	{
-		std::string declaration = "";
+		std::string declaration;
 
 		for (size_t i = 0; i < headers.size(); i++)
 		{

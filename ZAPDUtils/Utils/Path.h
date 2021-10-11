@@ -35,7 +35,7 @@ public:
 	static std::string GetPath(const std::string& input)
 	{
 		std::vector<std::string> split = StringHelper::Split(input, "/");
-		std::string output = "";
+		std::string output;
 
 		for (std::string str : split)
 		{
