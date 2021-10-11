@@ -366,8 +366,9 @@ void ZTexture::DeclareReferences([[maybe_unused]] const std::string& prefix)
 				tlutDim = 4;
 
 			auto filepath = Globals::Instance->outputPath / fs::path(name).stem();
-			std::string incStr = StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(),
-			                                           GetExternalExtension().c_str());
+			std::string incStr =
+				StringHelper::Sprintf("%s.%s.%s.inc.c", filepath.c_str(),
+			                          GetSourceTypeName().c_str(), GetExternalExtension().c_str());
 
 			tlut = new ZTexture(parent);
 			tlut->ExtractFromBinary(tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
@@ -756,7 +757,8 @@ void ZTexture::Save(const fs::path& outFolder)
 	if (!Directory::Exists(outPath.string()))
 		Directory::CreateDirectory(outPath.string());
 
-	auto outFileName = outPath / (outName + "." + GetExternalExtension() + ".png");
+	auto outFileName =
+		outPath / (outName + "." + GetSourceTypeName() + "." + GetExternalExtension() + ".png");
 
 #ifdef TEXTURE_DEBUG
 	printf("Saving PNG: %s\n", outFileName.c_str());
@@ -783,7 +785,8 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 	auto filepath = Globals::Instance->outputPath / fs::path(auxName).stem();
 
 	std::string incStr =
-		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
+		StringHelper::Sprintf("%s.%s.%s.inc.c", filepath.c_str(), GetSourceTypeName().c_str(),
+	                          GetExternalExtension().c_str());
 
 	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
 	                                                       GetSourceTypeName(), auxName, 0);
@@ -794,7 +797,15 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 std::string ZTexture::GetBodySourceCode() const
 {
 	std::string sourceOutput = "";
-
+	std::string typeSizeStr =
+		Globals::Instance->outputPath.stem().stem().stem().extension().c_str();
+	TextureTypeSize texTypeSize;
+	if (!typeSizeStr.empty())
+	{
+		texTypeSize =
+			static_cast<TextureTypeSize>(StringHelper::StrToL(typeSizeStr.substr(2)));
+		printf("%s	%hhu\n", typeSizeStr.c_str(), texTypeSize);
+	}
 	for (size_t i = 0; i < textureDataRaw.size();
 	     i += (static_cast<uint8_t>(texTypeSize) / 8))  // TODO clean that up
 	{

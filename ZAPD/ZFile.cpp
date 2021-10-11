@@ -627,12 +627,19 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 				(outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
 			std::string declType = res->GetSourceTypeName();
 
-			std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
-			                                           res->GetExternalExtension().c_str());
+			// std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
+			//                                           res->GetExternalExtension().c_str());
+			std::string incStr = assetOutDir;
 
-			if (res->GetResourceType() == ZResourceType::Texture)
+			if (res->GetResourceType() != ZResourceType::Texture)
+			{
+				incStr += res->GetExternalExtension() + ".inc";
+			}
+			else if (res->GetResourceType() == ZResourceType::Texture)
 			{
 				ZTexture* tex = static_cast<ZTexture*>(res);
+				incStr +=
+					'.' + tex->GetSourceTypeName() + '.' + res->GetExternalExtension() + ".inc";
 
 				if (!Globals::Instance->cfg.texturePool.empty())
 				{
