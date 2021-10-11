@@ -120,7 +120,7 @@ protected:
 	ZFile();
 	void ParseXML(tinyxml2::XMLElement* reader, std::string filename);
 	void DeclareResourceSubReferences();
-	void GenerateSourceFiles(fs::path outputDir);
+	void GenerateSourceFiles();
 	void GenerateSourceHeaderFiles();
 	bool AddDeclarationChecks(uint32_t address, const std::string& varName);
 	std::string ProcessDeclarations();

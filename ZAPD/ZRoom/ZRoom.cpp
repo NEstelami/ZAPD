@@ -395,30 +395,12 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 
 std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	std::string sourceOutput = "";
-
-	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
-	{
-		sourceOutput += "#include \"segment_symbols.h\"\n";
-		sourceOutput += "#include \"command_macros_base.h\"\n";
-		sourceOutput += "#include \"z64cutscene_commands.h\"\n";
-		sourceOutput += "#include \"variables.h\"\n";
-	}
-
-	if (Globals::Instance->HasSegment(SEGMENT_SCENE))
-	{
-		for (const auto& sceneFile : Globals::Instance->segmentRefFiles[SEGMENT_SCENE])
-		{
-			sourceOutput += sceneFile->GetHeaderInclude();
-		}
-	}
-
 	if (hackMode == "syotes_room")
-		return sourceOutput;
+		return "";
 
 	DeclareVar(prefix, GetBodySourceCode());
 
-	return sourceOutput;
+	return "";
 }
 
 size_t ZRoom::GetRawDataSize() const

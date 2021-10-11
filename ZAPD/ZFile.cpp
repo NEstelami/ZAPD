@@ -277,7 +277,7 @@ void ZFile::BuildSourceFile()
 	if (!Directory::Exists(outputPath))
 		Directory::CreateDirectory(outputPath);
 
-	GenerateSourceFiles(outputPath);
+	GenerateSourceFiles();
 }
 
 std::string ZFile::GetName() const
@@ -317,7 +317,7 @@ void ZFile::ExtractResources()
 		resources[i]->DeclareReferencesLate(name);
 
 	if (Globals::Instance->genSourceFile)
-		GenerateSourceFiles(outputPath);
+		GenerateSourceFiles();
 
 	MemoryStream* memStream = new MemoryStream();
 	BinaryWriter writer = BinaryWriter(memStream);
@@ -673,7 +673,7 @@ bool ZFile::HasDeclaration(uint32_t address)
 	return declarations.find(address) != declarations.end();
 }
 
-void ZFile::GenerateSourceFiles(fs::path outputDir)
+void ZFile::GenerateSourceFiles()
 {
 	std::string sourceOutput = "";
 
@@ -690,54 +690,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 	for (size_t i = 0; i < resources.size(); i++)
 	{
 		ZResource* res = resources.at(i);
-		std::string resSrc = res->GetSourceOutputCode(name);
-
-		if (res->IsExternalResource())
-		{
-			std::string path = Path::GetFileNameWithoutExtension(res->GetName());
-
-			std::string assetOutDir =
-				(outputDir / Path::GetFileNameWithoutExtension(res->GetOutName())).string();
-			std::string declType = res->GetSourceTypeName();
-
-			std::string incStr = StringHelper::Sprintf("%s.%s.inc", assetOutDir.c_str(),
-			                                           res->GetExternalExtension().c_str());
-
-			if (res->GetResourceType() == ZResourceType::Texture)
-			{
-				ZTexture* tex = static_cast<ZTexture*>(res);
-
-				if (!Globals::Instance->cfg.texturePool.empty())
-				{
-					tex->CalcHash();
-
-					// TEXTURE POOL CHECK
-					if (Globals::Instance->cfg.texturePool.find(tex->hash) !=
-					    Globals::Instance->cfg.texturePool.end())
-					{
-						incStr = Globals::Instance->cfg.texturePool[tex->hash].path.string() + "." +
-								 res->GetExternalExtension() + ".inc";
-					}
-				}
-
-				incStr += ".c";
-			}
-			else if (res->GetResourceType() == ZResourceType::Blob ||
-			         res->GetResourceType() == ZResourceType::Background)
-			{
-				incStr += ".c";
-			}
-
-			AddDeclarationIncludeArray(res->GetRawDataIndex(), incStr, res->GetRawDataSize(),
-			                           declType, res->GetName(), 0);
-		}
-		else
-		{
-			sourceOutput += resSrc;
-		}
-
-		if (resSrc != "" && !res->IsExternalResource())
-			sourceOutput += "\n";
+		res->GetSourceOutputCode(name);
 	}
 
 	sourceOutput += ProcessDeclarations();
@@ -785,8 +738,36 @@ void ZFile::GenerateSourceHeaderFiles()
 
 std::string ZFile::GetHeaderInclude() const
 {
-	return StringHelper::Sprintf("#include \"%s.h\"\n",
+	std::string headers = StringHelper::Sprintf("#include \"%s.h\"\n",
 	                             (outName.parent_path() / outName.stem()).c_str());
+
+	bool hasZRoom = false;
+	for (const auto& res : resources) {
+		ZResourceType resType = res->GetResourceType();
+		if (resType == ZResourceType::Room || resType == ZResourceType::Scene || resType == ZResourceType::AltHeader) {
+			hasZRoom = true;
+			break;
+		}
+	}
+
+	if (hasZRoom) {
+		headers += "#include \"segment_symbols.h\"\n";
+		headers += "#include \"command_macros_base.h\"\n";
+		headers += "#include \"z64cutscene_commands.h\"\n";
+		headers += "#include \"variables.h\"\n";
+
+		if (Globals::Instance->HasSegment(SEGMENT_SCENE))
+		{
+			for (const auto& sceneFile : Globals::Instance->segmentRefFiles[SEGMENT_SCENE])
+			{
+				if (sceneFile != this) {
+					headers += sceneFile->GetHeaderInclude();
+				}
+			}
+		}
+	}
+
+	return headers;
 }
 
 std::string ZFile::GetExternalFileHeaderInclude() const
@@ -965,26 +946,13 @@ std::string ZFile::ProcessDeclarations()
 		{
 			if (item.second->alignment == DeclarationAlignment::Align16)
 			{
-				// int32_t lastAddrSizeTest = declarations[lastAddr]->size;
 				int32_t curPtr = lastAddr + declarations[lastAddr]->size;
 
 				while (curPtr % 4 != 0)
 				{
 					declarations[lastAddr]->size++;
-					// item.second->size++;
 					curPtr++;
 				}
-
-				/*while (curPtr % 16 != 0)
-				{
-				    char buffer[2048];
-
-				    sprintf(buffer, "static u32 align%02X = 0;\n", curPtr);
-				    item.second->text = buffer + item.second->text;
-
-				    declarations[lastAddr]->size += 4;
-				    curPtr += 4;
-				}*/
 			}
 			else if (item.second->alignment == DeclarationAlignment::Align8)
 			{
@@ -993,7 +961,6 @@ std::string ZFile::ProcessDeclarations()
 				while (curPtr % 4 != 0)
 				{
 					declarations[lastAddr]->size++;
-					// item.second->size++;
 					curPtr++;
 				}
 
@@ -1005,7 +972,6 @@ std::string ZFile::ProcessDeclarations()
 					item.second->preText = buffer + item.second->preText;
 
 					declarations[lastAddr]->size += 4;
-					// item.second->size += 4;
 					curPtr += 4;
 				}
 			}
