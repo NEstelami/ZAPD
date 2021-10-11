@@ -533,7 +533,7 @@ int32_t ZDisplayList::OptimizationCheck_LoadTextureBlock(int32_t startIndex, std
 
 			lastTexSeg = segmentNumber;
 
-			texStr = "";
+			texStr;
 			Globals::Instance->GetSegmentedPtrName(data & 0xFFFFFFFF, parent, "", texStr);
 		}
 
@@ -784,8 +784,8 @@ void ZDisplayList::Opcode_G_MTX(uint64_t data, char* line)
 
 	std::string matrixRef;
 
-	if (Globals::Instance->symbolMap.find(mm) != Globals::Instance->symbolMap.end())
-		matrixRef = StringHelper::Sprintf("&%s", Globals::Instance->symbolMap[mm].c_str());
+	if (Globals::Instance->cfg.symbolMap.find(mm) != Globals::Instance->cfg.symbolMap.end())
+		matrixRef = StringHelper::Sprintf("&%s", Globals::Instance->cfg.symbolMap[mm].c_str());
 	else
 		matrixRef = StringHelper::Sprintf("0x%08X", mm);
 
@@ -1653,7 +1653,7 @@ static int32_t GfxdCallback_Texture(segptr_t seg, int32_t fmt, int32_t siz, int3
 
 	self->TextureGenCheck();
 
-	std::string texName = "";
+	std::string texName;
 	Globals::Instance->GetSegmentedPtrName(seg, self->parent, "", texName);
 
 	gfxd_puts(texName.c_str());
@@ -1677,7 +1677,7 @@ static int32_t GfxdCallback_Palette(uint32_t seg, [[maybe_unused]] int32_t idx, 
 
 	self->TextureGenCheck();
 
-	std::string palName = "";
+	std::string palName;
 	Globals::Instance->GetSegmentedPtrName(seg, self->parent, "", palName);
 
 	gfxd_puts(palName.c_str());
