@@ -99,8 +99,8 @@ std::string ZDisplayList::GetDefaultName(const std::string& prefix) const
 	return StringHelper::Sprintf("%sDL_%06X", prefix.c_str(), rawDataIndex);
 }
 
-void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i, const std::string& prefix,
-                               char* line)
+void ZDisplayList::ParseF3DZEX(F3DZEXOpcode opcode, uint64_t data, int32_t i,
+                               const std::string& prefix, char* line)
 {
 	switch (opcode)
 	{
@@ -952,8 +952,8 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, const std::string& prefix, ch
 	{
 		std::string texName;
 		Globals::Instance->GetSegmentedPtrName(data, parent, "", texName);
-		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt],
-		        sizTbl[siz], www + 1, texName.c_str());
+		sprintf(line, "gsDPSetTextureImage(%s, %s, %i, %s),", fmtTbl[fmt], sizTbl[siz], www + 1,
+		        texName.c_str());
 	}
 }
 
@@ -1493,7 +1493,8 @@ void ZDisplayList::Opcode_G_SETOTHERMODE_H(uint64_t data, char* line)
 		sprintf(line, "gsSPSetOtherMode(0xE3, %i, %i, 0x%08X),", sft, nn + 1, dd);
 }
 
-void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, [[maybe_unused]] const std::string& prefix, char* line)
+void ZDisplayList::Opcode_G_LOADTLUT(uint64_t data, [[maybe_unused]] const std::string& prefix,
+                                     char* line)
 {
 	int32_t t = (data & 0x0000000007000000) >> 24;
 	int32_t ccc = (data & 0x00000000003FF000) >> 14;

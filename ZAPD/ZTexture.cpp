@@ -758,7 +758,8 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		const auto& poolEntry = Globals::Instance->cfg.texturePool.find(hash);
 		if (poolEntry != Globals::Instance->cfg.texturePool.end())
 		{
-			incStr = StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.c_str(), GetExternalExtension().c_str());
+			incStr = StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.c_str(),
+			                               GetExternalExtension().c_str());
 		}
 	}
 

@@ -739,18 +739,22 @@ void ZFile::GenerateSourceHeaderFiles()
 std::string ZFile::GetHeaderInclude() const
 {
 	std::string headers = StringHelper::Sprintf("#include \"%s.h\"\n",
-	                             (outName.parent_path() / outName.stem()).c_str());
+	                                            (outName.parent_path() / outName.stem()).c_str());
 
 	bool hasZRoom = false;
-	for (const auto& res : resources) {
+	for (const auto& res : resources)
+	{
 		ZResourceType resType = res->GetResourceType();
-		if (resType == ZResourceType::Room || resType == ZResourceType::Scene || resType == ZResourceType::AltHeader) {
+		if (resType == ZResourceType::Room || resType == ZResourceType::Scene ||
+		    resType == ZResourceType::AltHeader)
+		{
 			hasZRoom = true;
 			break;
 		}
 	}
 
-	if (hasZRoom) {
+	if (hasZRoom)
+	{
 		headers += "#include \"segment_symbols.h\"\n";
 		headers += "#include \"command_macros_base.h\"\n";
 		headers += "#include \"z64cutscene_commands.h\"\n";
@@ -760,7 +764,8 @@ std::string ZFile::GetHeaderInclude() const
 		{
 			for (const auto& sceneFile : Globals::Instance->segmentRefFiles[SEGMENT_SCENE])
 			{
-				if (sceneFile != this) {
+				if (sceneFile != this)
+				{
 					headers += sceneFile->GetHeaderInclude();
 				}
 			}

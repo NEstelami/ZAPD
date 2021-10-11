@@ -3,7 +3,8 @@
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, const std::string& nText)
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         const std::string& nText)
 {
 	address = nAddress;
 	alignment = nAlignment;
@@ -11,8 +12,9 @@ Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, siz
 	text = nText;
 }
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
-                         const std::string& nVarName, bool nIsArray, const std::string& nText)
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         const std::string& nVarType, const std::string& nVarName, bool nIsArray,
+                         const std::string& nText)
 	: Declaration(nAddress, nAlignment, nSize, nText)
 {
 	varType = nVarType;
@@ -20,9 +22,9 @@ Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, siz
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
-                         const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
-                         const std::string& nText)
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         const std::string& nVarType, const std::string& nVarName, bool nIsArray,
+                         size_t nArrayItemCnt, const std::string& nText)
 	: Declaration(nAddress, nAlignment, nSize, nText)
 {
 	varType = nVarType;
@@ -31,8 +33,8 @@ Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, siz
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
-                         const std::string& nVarName, bool nIsArray,
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         const std::string& nVarType, const std::string& nVarName, bool nIsArray,
                          const std::string& nArrayItemCntStr, const std::string& nText)
 	: Declaration(nAddress, nAlignment, nSize, nText)
 {
@@ -42,16 +44,16 @@ Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, siz
 	arrayItemCntStr = nArrayItemCntStr;
 }
 
-Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
-                         const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
-                         const std::string& nText, bool nIsExternal)
+Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, size_t nSize,
+                         const std::string& nVarType, const std::string& nVarName, bool nIsArray,
+                         size_t nArrayItemCnt, const std::string& nText, bool nIsExternal)
 	: Declaration(nAddress, nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
 	isExternal = nIsExternal;
 }
 
-Declaration::Declaration(offset_t nAddress, const std::string& nIncludePath, size_t nSize, const std::string& nVarType,
-                         const std::string& nVarName)
+Declaration::Declaration(offset_t nAddress, const std::string& nIncludePath, size_t nSize,
+                         const std::string& nVarType, const std::string& nVarName)
 	: Declaration(nAddress, DeclarationAlignment::Align4, nSize, "")
 {
 	includePath = nIncludePath;
