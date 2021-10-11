@@ -19,7 +19,7 @@ SetCutscenes::~SetCutscenes()
 void SetCutscenes::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
-	std::string output = "";
+	std::string output;
 
 	numCutscenes = cmdArg1;
 	if (Globals::Instance->game == ZGame::OoT || Globals::Instance->game == ZGame::OoTSW97)
@@ -38,7 +38,7 @@ void SetCutscenes::ParseRawData()
 	else
 	{
 		int32_t currentPtr = segmentOffset;
-		std::string declaration = "";
+		std::string declaration;
 
 		for (uint8_t i = 0; i < numCutscenes; i++)
 		{

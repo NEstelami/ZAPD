@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Globals* g = new Globals();
+	Globals* g = new Globals;
 
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)

@@ -55,8 +55,8 @@ enum class ZResourceType
 class ResourceAttribute
 {
 public:
-	std::string key = "";
-	std::string value = "";
+	std::string key;
+	std::string value;
 	bool isRequired = false;
 	bool wasSet = false;
 };

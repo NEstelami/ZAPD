@@ -48,7 +48,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 {
 	if (points.size() > 0)
 	{
-		std::string declaration = "";
+		std::string declaration;
 		size_t index = 0;
 		for (auto& point : points)
 		{
@@ -74,7 +74,7 @@ void SetCsCamera::DeclareReferences(const std::string& prefix)
 	if (!cameras.empty())
 	{
 		std::string camPointsName = parent->GetDeclarationName(cameras.at(0).GetSegmentOffset());
-		std::string declaration = "";
+		std::string declaration;
 
 		size_t index = 0;
 		size_t pointsIndex = 0;

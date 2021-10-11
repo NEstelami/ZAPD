@@ -757,7 +757,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 
 std::string ZTexture::GetBodySourceCode() const
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
 	{
@@ -835,7 +835,7 @@ fs::path ZTexture::GetPoolOutPath(const fs::path& defaultValue)
 	return defaultValue;
 }
 
-TextureType ZTexture::GetTextureTypeFromString(std::string type)
+TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 {
 	static const std::unordered_map<std::string, TextureType> ZTextureTypeDictionary = {
 		{"rgba32", TextureType::RGBA32bpp},         {"rgba16", TextureType::RGBA16bpp},
@@ -845,7 +845,7 @@ TextureType ZTexture::GetTextureTypeFromString(std::string type)
 		{"ci8", TextureType::Palette8bpp},
 	};
 
-	auto it = ZTextureTypeDictionary.find(type);
+	auto it = ZTextureTypeDictionary.find(str);
 	if (it == ZTextureTypeDictionary.end())
 		return TextureType::Error;
 

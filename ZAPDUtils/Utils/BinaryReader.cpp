@@ -133,7 +133,7 @@ Color3b BinaryReader::ReadColor3b()
 
 std::string BinaryReader::ReadString()
 {
-	std::string res = "";
+	std::string res;
 	char c;
 
 	do
