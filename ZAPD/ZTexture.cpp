@@ -15,11 +15,13 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 {
 	width = 0;
 	height = 0;
+	texTypeSize = TextureTypeSize::TEX_TYPE_64;
 
 	RegisterRequiredAttribute("Width");
 	RegisterRequiredAttribute("Height");
 	RegisterRequiredAttribute("Format");
 	RegisterOptionalAttribute("TlutOffset");
+	RegisterOptionalAttribute("TexTypeSize");
 }
 
 void ZTexture::ExtractFromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
@@ -68,6 +70,42 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	width = StringHelper::StrToL(widthXml);
 	height = StringHelper::StrToL(heightXml);
+
+	const auto& texTypeSizeXml = registeredAttributes.at("TexTypeSize");
+
+	if (texTypeSizeXml.wasSet)
+	{
+		if (!StringHelper::HasOnlyDigits(texTypeSizeXml.value))
+		{
+			throw std::runtime_error(StringHelper::Sprintf(
+				"ZTexture::ParseXML: Error in %s\n"
+				"\t Value of 'TexTypeSize' attribute has non-decimal digits: '%s'.\n",
+				name.c_str(), texTypeSizeXml.value.c_str()));
+		}
+
+		uint8_t typeSize = StringHelper::StrToL(texTypeSizeXml.value);
+
+		switch (typeSize)
+		{
+		case 8:
+			texTypeSize = TextureTypeSize::TEX_TYPE_8;
+			break;
+		case 16:
+			texTypeSize = TextureTypeSize::TEX_TYPE_16;
+			break;
+		case 32:
+			texTypeSize = TextureTypeSize::TEX_TYPE_32;
+			break;
+		case 64:
+			texTypeSize = TextureTypeSize::TEX_TYPE_64;
+			break;
+		default:
+			throw std::runtime_error(
+				StringHelper::Sprintf("ZTexture::ParseXML: Error in %s\n"
+			                          "\t TexTypeSize was specified but is invalid: %d\n",
+			                          name.c_str(), typeSize));
+		}
+	}
 
 	std::string formatStr = registeredAttributes.at("Format").value;
 	format = GetTextureTypeFromString(formatStr);
@@ -757,13 +795,31 @@ std::string ZTexture::GetBodySourceCode() const
 {
 	std::string sourceOutput = "";
 
-	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
+	for (size_t i = 0; i < textureDataRaw.size();
+	     i += (static_cast<uint8_t>(texTypeSize) / 8))  // TODO clean that up
 	{
 		if (i % 32 == 0)
 			sourceOutput += "    ";
 
-		sourceOutput +=
-			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(textureDataRaw, i));
+		switch (texTypeSize)
+		{
+		case TextureTypeSize::TEX_TYPE_8:
+			sourceOutput +=
+				StringHelper::Sprintf("0x%02hhX, ", BitConverter::ToUInt8BE(textureDataRaw, i));
+			break;
+		case TextureTypeSize::TEX_TYPE_16:
+			sourceOutput +=
+				StringHelper::Sprintf("0x%04hX, ", BitConverter::ToUInt16BE(textureDataRaw, i));
+			break;
+		case TextureTypeSize::TEX_TYPE_32:
+			sourceOutput +=
+				StringHelper::Sprintf("0x%08UX, ", BitConverter::ToUInt32BE(textureDataRaw, i));
+			break;
+		case TextureTypeSize::TEX_TYPE_64:
+			sourceOutput +=
+				StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(textureDataRaw, i));
+			break;
+		}
 
 		if (i % 32 == 24)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));
@@ -789,7 +845,21 @@ ZResourceType ZTexture::GetResourceType() const
 
 std::string ZTexture::GetSourceTypeName() const
 {
-	return "u64";
+	switch (texTypeSize)
+	{
+	case TextureTypeSize::TEX_TYPE_8:
+		return "u8";
+		break;
+	case TextureTypeSize::TEX_TYPE_16:
+		return "u16";
+		break;
+	case TextureTypeSize::TEX_TYPE_32:
+		return "u32";
+		break;
+	case TextureTypeSize::TEX_TYPE_64:
+		return "u64";
+		break;
+	}
 }
 
 void ZTexture::CalcHash()

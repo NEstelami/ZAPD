@@ -18,6 +18,14 @@ enum class TextureType
 	GrayscaleAlpha16bpp,
 };
 
+enum class TextureTypeSize : uint8_t
+{
+	TEX_TYPE_8 = 8,
+	TEX_TYPE_16 = 16,
+	TEX_TYPE_32 = 32,
+	TEX_TYPE_64 = 64,
+};
+
 class ZTexture : public ZResource
 {
 protected:
@@ -28,6 +36,7 @@ protected:
 	std::vector<uint8_t> textureDataRaw;  // When reading from a PNG file.
 	uint32_t tlutOffset = static_cast<uint32_t>(-1);
 	ZTexture* tlut = nullptr;
+	TextureTypeSize texTypeSize;
 
 	void PrepareBitmapRGBA16();
 	void PrepareBitmapRGBA32();
