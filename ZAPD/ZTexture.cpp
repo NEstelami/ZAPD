@@ -866,6 +866,10 @@ std::string ZTexture::GetSourceTypeName() const
 	case TextureTypeSize::Size64:
 		return "u64";
 		break;
+	default:
+		// Clang doesn't care about this but GCC sometimes generates a warning without this default
+		// statement. Don't remove unless Jenkins doesn't care anymore.
+		throw std::runtime_error("ZTexture::GetSourceTypeName invalid texTypeSize\n");
 	}
 }
 
