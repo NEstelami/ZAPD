@@ -20,10 +20,10 @@ enum class TextureType
 
 enum class TextureTypeSize : uint8_t
 {
-	TEX_TYPE_8 = 8,
-	TEX_TYPE_16 = 16,
-	TEX_TYPE_32 = 32,
-	TEX_TYPE_64 = 64,
+	Size8 = 8,
+	Size16 = 16,
+	Size32 = 32,
+	Size64 = 64,
 };
 
 class ZTexture : public ZResource
@@ -67,7 +67,7 @@ public:
 	void ExtractFromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
 	                       TextureType nType, bool nIsPalette);
 	void FromPNG(const fs::path& pngFilePath, TextureType texType);
-	static TextureType GetTextureTypeFromString(std::string str);
+	static TextureType GetTextureTypeFromString(const std::string& str);
 
 	void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;

@@ -90,7 +90,7 @@ Declaration* RomFile::DeclareVar(const std::string& prefix, const std::string& b
 
 std::string RomFile::GetBodySourceCode() const
 {
-	std::string declaration = "";
+	std::string declaration;
 	bool isFirst = true;
 
 	for (ZFile* file : Globals::Instance->files)

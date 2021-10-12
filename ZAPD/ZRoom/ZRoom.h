@@ -16,7 +16,7 @@ public:
 
 	std::string extDefines;
 
-	std::string hackMode = "";
+	std::string hackMode;
 
 	ZResourceType zroomType = ZResourceType::Error;
 	ZResourceType parentZroomType = ZResourceType::Error;

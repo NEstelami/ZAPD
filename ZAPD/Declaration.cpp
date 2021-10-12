@@ -3,15 +3,15 @@
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nText)
 {
 	alignment = nAlignment;
 	size = nSize;
 	text = nText;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, std::string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+                         const std::string& nVarName, bool nIsArray, const std::string& nText)
 	: Declaration(nAlignment, nSize, nText)
 {
 	varType = nVarType;
@@ -19,9 +19,9 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 	isArray = nIsArray;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
-                         std::string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+                         const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         const std::string& nText)
 	: Declaration(nAlignment, nSize, nText)
 {
 	varType = nVarType;
@@ -30,9 +30,9 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 	arrayItemCnt = nArrayItemCnt;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, std::string nArrayItemCntStr,
-                         std::string nText)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+                         const std::string& nVarName, bool nIsArray,
+                         const std::string& nArrayItemCntStr, const std::string& nText)
 	: Declaration(nAlignment, nSize, nText)
 {
 	varType = nVarType;
@@ -41,16 +41,16 @@ Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::str
 	arrayItemCntStr = nArrayItemCntStr;
 }
 
-Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, std::string nVarType,
-                         std::string nVarName, bool nIsArray, size_t nArrayItemCnt,
-                         std::string nText, bool nIsExternal)
+Declaration::Declaration(DeclarationAlignment nAlignment, size_t nSize, const std::string& nVarType,
+                         const std::string& nVarName, bool nIsArray, size_t nArrayItemCnt,
+                         const std::string& nText, bool nIsExternal)
 	: Declaration(nAlignment, nSize, nVarType, nVarName, nIsArray, nArrayItemCnt, nText)
 {
 	isExternal = nIsExternal;
 }
 
-Declaration::Declaration(std::string nIncludePath, size_t nSize, std::string nVarType,
-                         std::string nVarName)
+Declaration::Declaration(const std::string& nIncludePath, size_t nSize, const std::string& nVarType,
+                         const std::string& nVarName)
 	: Declaration(DeclarationAlignment::Align4, nSize, "")
 {
 	includePath = nIncludePath;

@@ -1,9 +1,8 @@
 #include "ZRoom.h"
-
 #include <algorithm>
 #include <cassert>
 #include <chrono>
-
+#include <string_view>
 #include "Commands/EndMarker.h"
 #include "Commands/SetActorCutsceneList.h"
 #include "Commands/SetActorList.h"
@@ -310,7 +309,7 @@ Declaration* ZRoom::DeclareVar(const std::string& prefix, const std::string& bod
 
 std::string ZRoom::GetBodySourceCode() const
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	for (size_t i = 0; i < commands.size(); i++)
 	{
@@ -330,9 +329,9 @@ std::string ZRoom::GetDefaultName(const std::string& prefix) const
 }
 
 /*
- * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates back to very
- * early in the game's development. Since this room is a special case, declare automatically the
- * data its contains whitout the need of a header.
+ * There is one room in Ocarina of Time that lacks a header. Room 120, "Syotes", dates
+ * back to very early in the game's development. Since this room is a special case,
+ * declare automatically the data its contains whitout the need of a header.
  */
 void ZRoom::SyotesRoomHack()
 {
@@ -401,7 +400,7 @@ std::string ZRoom::GetSourceOutputHeader([[maybe_unused]] const std::string& pre
 
 std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 	{

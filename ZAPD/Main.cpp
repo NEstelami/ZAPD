@@ -20,6 +20,7 @@
 #endif
 
 #include <string>
+#include <string_view>
 #include "tinyxml2.h"
 
 extern const char gBuildHash[];
@@ -111,7 +112,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Globals* g = new Globals();
+	Globals* g = new Globals;
 
 	// Parse other "commands"
 	for (int32_t i = 2; i < argc; i++)
@@ -139,30 +140,30 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-gsf")  // Generate source file during extraction
 		{
-			Globals::Instance->genSourceFile = std::string(argv[++i]) == "1";
+			Globals::Instance->genSourceFile = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
 		{
-			Globals::Instance->testMode = std::string(argv[++i]) == "1";
+			Globals::Instance->testMode = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-crc" ||
 		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
 		{
-			Globals::Instance->testMode = std::string(argv[++i]) == "1";
+			Globals::Instance->testMode = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
 		{
-			Globals::Instance->useLegacyZDList = std::string(argv[++i]) == "1";
+			Globals::Instance->useLegacyZDList = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-profile")  // Enable profiling
 		{
-			Globals::Instance->profile = std::string(argv[++i]) == "1";
+			Globals::Instance->profile = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg ==
 		         "-uer")  // Split resources into their individual components (enabled by default)
 		                  // TODO: We may wish to make this a part of the config file...
 		{
-			Globals::Instance->useExternalResources = std::string(argv[++i]) == "1";
+			Globals::Instance->useExternalResources = std::string_view(argv[++i]) == "1";
 		}
 		else if (arg == "-tt")  // Set texture type
 		{
@@ -176,7 +177,7 @@ int main(int argc, char* argv[])
 		}
 		else if (arg == "-rconf")  // Read Config File
 		{
-			Globals::Instance->ReadConfigFile(argv[++i]);
+			Globals::Instance->cfg.ReadConfigFile(argv[++i]);
 		}
 		else if (arg == "-eh")  // Enable Error Handler
 		{
@@ -353,7 +354,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, ZFileMode file
 	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
 	     child = child->NextSiblingElement())
 	{
-		if (std::string(child->Name()) == "File")
+		if (std::string_view(child->Name()) == "File")
 		{
 			ZFile* file = new ZFile(fileMode, child, basePath, "", xmlFilePath, false);
 			Globals::Instance->files.push_back(file);
