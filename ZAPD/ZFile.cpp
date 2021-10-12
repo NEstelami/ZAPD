@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <string_view>
 #include <unordered_set>
 
 #include "Globals.h"
@@ -90,11 +91,11 @@ void ZFile::ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, const std::st
 	const char* gameStr = reader->Attribute("Game");
 	if (reader->Attribute("Game") != nullptr)
 	{
-		if (std::string(gameStr) == "MM")
+		if (std::string_view(gameStr) == "MM")
 			Globals::Instance->game = ZGame::MM_RETAIL;
-		else if (std::string(gameStr) == "SW97" || std::string(gameStr) == "OOTSW97")
+		else if (std::string_view(gameStr) == "SW97" || std::string_view(gameStr) == "OOTSW97")
 			Globals::Instance->game = ZGame::OOT_SW97;
-		else if (std::string(gameStr) == "OOT")
+		else if (std::string_view(gameStr) == "OOT")
 			Globals::Instance->game = ZGame::OOT_RETAIL;
 		else
 		{
@@ -218,7 +219,7 @@ void ZFile::ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, const std::st
 
 			rawDataIndex += nRes->GetRawDataSize();
 		}
-		else if (std::string(child->Name()) == "File")
+		else if (std::string_view(child->Name()) == "File")
 		{
 			std::string errorHeader = "Can't declare a <File> inside a <File>";
 			HANDLE_ERROR_PROCESS(WarningType::InvalidXML, errorHeader, "");
