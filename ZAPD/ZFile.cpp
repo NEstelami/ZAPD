@@ -3,6 +3,7 @@
 #include <cassert>
 #include <map>
 #include <unordered_map>
+#include <string_view>
 #include <unordered_set>
 
 #include <Utils/BinaryWriter.h>
@@ -228,7 +229,7 @@ void ZFile::ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, const std::st
 
 			rawDataIndex += nRes->GetRawDataSize();
 		}
-		else if (nodeName == "File")
+		else if (std::string_view(child->Name()) == "File")
 		{
 			throw std::runtime_error(StringHelper::Sprintf(
 				"ZFile::ParseXML: Error in '%s'.\n\t Can't declare a File inside a File.\n",

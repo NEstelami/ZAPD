@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "GameConfig.h"
 #include "ZFile.h"
 
 class ZRoom;
@@ -13,27 +14,6 @@ enum class VerbosityLevel
 	VERBOSITY_SILENT,
 	VERBOSITY_INFO,
 	VERBOSITY_DEBUG
-};
-
-struct TexturePoolEntry
-{
-	fs::path path = "";  // Path to Shared Texture
-};
-
-class GameConfig
-{
-public:
-	std::map<int32_t, std::string> segmentRefs;
-	std::map<int32_t, ZFile*> segmentRefFiles;
-	std::map<uint32_t, std::string> symbolMap;
-	std::vector<std::string> actorList;
-	std::vector<std::string> objectList;
-	std::map<uint32_t, TexturePoolEntry> texturePool;  // Key = CRC
-
-	// ZBackground
-	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
-
-	GameConfig() = default;
 };
 
 typedef void (*ExporterSetFunc)(ZFile*);
@@ -81,10 +61,7 @@ public:
 
 	std::vector<ZFile*> files;
 	std::vector<int32_t> segments;
-	std::map<int32_t, std::string> segmentRefs;
-	std::map<int32_t, ZFile*> segmentRefFiles;
 	ZRoom* lastScene;
-	std::map<uint32_t, std::string> symbolMap;
 
 	std::string currentExporter;
 	static std::unordered_map<std::string, ExporterSet*>* GetExporterMap();
@@ -92,9 +69,6 @@ public:
 
 	Globals();
 	std::string FindSymbolSegRef(int32_t segNumber, uint32_t symbolAddress);
-	void ReadConfigFile(const std::string& configFilePath);
-	void ReadTexturePool(const std::string& texturePoolXmlPath);
-	void GenSymbolMap(const std::string& symbolMapPath);
 	void AddSegment(int32_t segment, ZFile* file);
 	bool HasSegment(int32_t segment);
 	ZResourceExporter* GetExporter(ZResourceType resType);
