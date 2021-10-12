@@ -105,7 +105,7 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 			                          "\t TexTypeSize was specified but is invalid: %d\n",
 			                          name.c_str(), typeSize));
 		}
-	}
+	}  // TODO detect if texture is not aligned and force a different type
 
 	std::string formatStr = registeredAttributes.at("Format").value;
 	format = GetTextureTypeFromString(formatStr);
@@ -802,9 +802,7 @@ std::string ZTexture::GetBodySourceCode() const
 	TextureTypeSize texTypeSize;
 	if (!typeSizeStr.empty())
 	{
-		texTypeSize =
-			static_cast<TextureTypeSize>(StringHelper::StrToL(typeSizeStr.substr(2)));
-		printf("%s	%hhu\n", typeSizeStr.c_str(), texTypeSize);
+		texTypeSize = static_cast<TextureTypeSize>(StringHelper::StrToL(typeSizeStr.substr(2)));
 	}
 	for (size_t i = 0; i < textureDataRaw.size();
 	     i += (static_cast<uint8_t>(texTypeSize) / 8))  // TODO clean that up
@@ -824,7 +822,7 @@ std::string ZTexture::GetBodySourceCode() const
 			break;
 		case TextureTypeSize::TEX_TYPE_32:
 			sourceOutput +=
-				StringHelper::Sprintf("0x%08UX, ", BitConverter::ToUInt32BE(textureDataRaw, i));
+				StringHelper::Sprintf("0x%08X ", BitConverter::ToUInt32BE(textureDataRaw, i));
 			break;
 		case TextureTypeSize::TEX_TYPE_64:
 			sourceOutput +=

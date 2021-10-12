@@ -633,7 +633,7 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 			if (res->GetResourceType() != ZResourceType::Texture)
 			{
-				incStr += res->GetExternalExtension() + ".inc";
+				incStr += '.' + res->GetExternalExtension() + ".inc";
 			}
 			else if (res->GetResourceType() == ZResourceType::Texture)
 			{
@@ -656,8 +656,8 @@ void ZFile::GenerateSourceFiles(fs::path outputDir)
 
 				incStr += ".c";
 			}
-			else if (res->GetResourceType() == ZResourceType::Blob ||
-			         res->GetResourceType() == ZResourceType::Background)
+			if (res->GetResourceType() == ZResourceType::Blob ||
+			    res->GetResourceType() == ZResourceType::Background)
 			{
 				incStr += ".c";
 			}
