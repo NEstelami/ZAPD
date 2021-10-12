@@ -762,7 +762,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 
 std::string ZTexture::GetBodySourceCode() const
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
 	{

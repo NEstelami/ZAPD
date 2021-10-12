@@ -313,7 +313,7 @@ Declaration* ZRoom::DeclareVar(const std::string& prefix, const std::string& bod
 
 std::string ZRoom::GetBodySourceCode() const
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	for (size_t i = 0; i < commands.size(); i++)
 	{
@@ -404,7 +404,7 @@ std::string ZRoom::GetSourceOutputHeader([[maybe_unused]] const std::string& pre
 
 std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	std::string sourceOutput = "";
+	std::string sourceOutput;
 
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 	{

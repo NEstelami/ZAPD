@@ -112,7 +112,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 	if (polygons.size() > 0)
 	{
-		declaration = "";
+		declaration.clear();
 
 		for (size_t i = 0; i < polygons.size(); i++)
 		{
@@ -130,7 +130,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 			declaration);
 	}
 
-	declaration = "";
+	declaration.clear();
 	for (size_t i = 0; i < polygonTypes.size(); i++)
 	{
 		declaration += StringHelper::Sprintf("\t{ 0x%08lX, 0x%08lX },", polygonTypes[i] >> 32,
@@ -147,11 +147,11 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 			StringHelper::Sprintf("%s_surfaceType_%08X", auxName.c_str(), polyTypeDefSegmentOffset),
 			polygonTypes.size(), declaration);
 
-	declaration = "";
+	declaration.clear();
 
 	if (vertices.size() > 0)
 	{
-		declaration = "";
+		declaration.clear();
 
 		for (size_t i = 0; i < vertices.size(); i++)
 		{
@@ -169,8 +169,6 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 				vertices.size() * first.GetRawDataSize(), first.GetSourceTypeName(),
 				StringHelper::Sprintf("%s_vtx_%08X", auxName.c_str(), vtxSegmentOffset), 0,
 				declaration);
-
-		declaration = "";
 	}
 }
 
@@ -262,7 +260,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
                                uint32_t polyTypeDefSegmentOffset,
                                [[maybe_unused]] uint32_t polygonTypesCnt)
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	// Parse CameraDataEntries
 	int32_t numElements = (polyTypeDefSegmentOffset - rawDataIndex) / 8;
@@ -322,7 +320,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 	if (numDataTotal > 0)
 	{
-		declaration = "";
+		declaration.clear();
 		for (uint32_t i = 0; i < numDataTotal; i++)
 		{
 			CameraPositionData* data =

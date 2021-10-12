@@ -186,7 +186,7 @@ Declaration* TextureScrollingParams::DeclareVar(const std::string& prefix,
 
 std::string TextureScrollingParams::GetBodySourceCode() const
 {
-	std::string bodyStr = "";
+	std::string bodyStr;
 
 	for (int i = 0; i < count; i++)
 	{
@@ -283,7 +283,7 @@ void TextureColorChangingParams::DeclareReferences([[maybe_unused]] const std::s
 {
 	if (primColorListAddress != 0)  // NULL
 	{
-		std::string primColorBodyStr = "";
+		std::string primColorBodyStr;
 
 		for (const auto& color : primColorList)
 		{
@@ -303,7 +303,7 @@ void TextureColorChangingParams::DeclareReferences([[maybe_unused]] const std::s
 
 	if (envColorListAddress != 0)  // NULL
 	{
-		std::string envColorBodyStr = "";
+		std::string envColorBodyStr;
 
 		for (const auto& color : envColorList)
 		{
@@ -409,9 +409,9 @@ void TextureCyclingParams::DeclareReferences([[maybe_unused]] const std::string&
 {
 	if (textureListAddress != 0)  // NULL
 	{
-		std::string texturesBodyStr = "";
+		std::string texturesBodyStr;
 		std::string texName;
-		std::string comment = "";
+		std::string comment;
 
 		for (const auto& tex : textureList)
 		{
@@ -635,7 +635,7 @@ Declaration* ZTextureAnimation::DeclareVar(const std::string& prefix, const std:
 
 std::string ZTextureAnimation::GetBodySourceCode() const
 {
-	std::string bodyStr = "";
+	std::string bodyStr;
 
 	for (const auto& entry : entries)
 	{

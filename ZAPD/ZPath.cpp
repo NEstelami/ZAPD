@@ -72,7 +72,7 @@ Declaration* ZPath::DeclareVar(const std::string& prefix, const std::string& bod
 
 std::string ZPath::GetBodySourceCode() const
 {
-	std::string declaration = "";
+	std::string declaration;
 
 	size_t index = 0;
 	for (const auto& entry : pathways)
@@ -165,7 +165,7 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 
 std::string PathwayEntry::GetBodySourceCode() const
 {
-	std::string declaration = "";
+	std::string declaration;
 	std::string listName = parent->GetDeclarationPtrName(listSegmentAddress);
 
 	if (Globals::Instance->game == ZGame::MM_RETAIL)

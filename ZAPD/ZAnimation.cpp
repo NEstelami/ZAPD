@@ -59,7 +59,7 @@ std::string ZNormalAnimation::GetSourceOutputCode([[maybe_unused]] const std::st
 			StringHelper::Sprintf("%s", name.c_str()), headerStr);
 		decl->staticConf = staticConf;
 
-		std::string indicesStr = "";
+		std::string indicesStr;
 		std::string valuesStr = "    ";
 		const uint8_t lineLength = 14;
 		const uint8_t offset = 0;
@@ -322,7 +322,7 @@ void ZCurveAnimation::DeclareReferences(const std::string& prefix)
 			"%sCurveAnime_%s_%06X", prefix.c_str(),
 			transformDataArr.at(0).GetSourceTypeName().c_str(), transformDataOffset);
 
-		std::string entryStr = "";
+		std::string entryStr;
 		uint16_t arrayItemCnt = transformDataArr.size();
 
 		size_t i = 0;
@@ -382,7 +382,7 @@ size_t ZCurveAnimation::GetRawDataSize() const
 
 std::string ZCurveAnimation::GetSourceOutputCode(const std::string& prefix)
 {
-	std::string bodyStr = "";
+	std::string bodyStr;
 	uint32_t address = Seg2Filespace(rawDataIndex, parent->baseAddress);
 
 	std::string refIndexStr = "NULL";
@@ -533,7 +533,7 @@ void ZLegacyAnimation::DeclareReferences(const std::string& prefix)
 		if (GETSEGNUM(jointKey) == parent->segment && !parent->HasDeclaration(jointKeyOffset))
 		{
 			const auto res = jointKeyArray.at(0);
-			std::string jointKeyBody = "";
+			std::string jointKeyBody;
 
 			for (size_t i = 0; i < jointKeyArray.size(); i++)
 			{
