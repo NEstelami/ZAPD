@@ -682,7 +682,26 @@ void ZFile::GenerateSourceFiles()
 	sourceOutput += "#include \"z64.h\"\n";
 	sourceOutput += "#include \"macros.h\"\n";
 	sourceOutput += GetHeaderInclude();
+
+	bool hasZRoom = false;
+	for (const auto& res : resources)
+	{
+		ZResourceType resType = res->GetResourceType();
+		if (resType == ZResourceType::Room || resType == ZResourceType::Scene ||
+		    resType == ZResourceType::AltHeader)
+		{
+			hasZRoom = true;
+			break;
+		}
+	}
+
+	if (hasZRoom)
+	{
+		sourceOutput += GetZRoomHeaderInclude();
+	}
+
 	sourceOutput += GetExternalFileHeaderInclude();
+
 	sourceOutput += "\n";
 
 	GeneratePlaceholderDeclarations();
@@ -742,37 +761,16 @@ std::string ZFile::GetHeaderInclude() const
 	std::string headers = StringHelper::Sprintf("#include \"%s.h\"\n",
 	                                            (outName.parent_path() / outName.stem()).c_str());
 
-	bool hasZRoom = false;
-	for (const auto& res : resources)
-	{
-		ZResourceType resType = res->GetResourceType();
-		if (resType == ZResourceType::Room || resType == ZResourceType::Scene ||
-		    resType == ZResourceType::AltHeader)
-		{
-			hasZRoom = true;
-			break;
-		}
-	}
+	return headers;
+}
 
-	if (hasZRoom)
-	{
-		headers += "#include \"segment_symbols.h\"\n";
-		headers += "#include \"command_macros_base.h\"\n";
-		headers += "#include \"z64cutscene_commands.h\"\n";
-		headers += "#include \"variables.h\"\n";
-
-		if (Globals::Instance->HasSegment(SEGMENT_SCENE))
-		{
-			for (const auto& sceneFile : Globals::Instance->cfg.segmentRefFiles[SEGMENT_SCENE])
-			{
-				if (sceneFile != this)
-				{
-					headers += sceneFile->GetHeaderInclude();
-				}
-			}
-		}
-	}
-
+std::string ZFile::GetZRoomHeaderInclude() const
+{
+	std::string headers;
+	headers += "#include \"segment_symbols.h\"\n";
+	headers += "#include \"command_macros_base.h\"\n";
+	headers += "#include \"z64cutscene_commands.h\"\n";
+	headers += "#include \"variables.h\"\n";
 	return headers;
 }
 
@@ -780,11 +778,19 @@ std::string ZFile::GetExternalFileHeaderInclude() const
 {
 	std::string externalFilesIncludes = "";
 
-	for (ZFile* externalFile : Globals::Instance->externalFiles)
+	for (ZFile* externalFile : Globals::Instance->files)
 	{
-		externalFilesIncludes += StringHelper::Sprintf(
-			"#include \"%s.h\"\n",
-			(externalFile->GetSourceOutputFolderPath() / externalFile->outName.stem()).c_str());
+		if (externalFile != this) {
+			fs::path outputFolderPath = externalFile->GetSourceOutputFolderPath();
+			if (outputFolderPath == this->GetSourceOutputFolderPath()) {
+				outputFolderPath = externalFile->outName.stem();
+			} else {
+				outputFolderPath /= externalFile->outName.stem();
+			}
+
+			externalFilesIncludes += StringHelper::Sprintf(
+				"#include \"%s.h\"\n", outputFolderPath.c_str());
+		}
 	}
 
 	return externalFilesIncludes;

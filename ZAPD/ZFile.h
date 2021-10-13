@@ -31,7 +31,7 @@ enum class ZGame
 class ZFile
 {
 public:
-	std::map<uint32_t, Declaration*> declarations;
+	std::map<offset_t, Declaration*> declarations;
 	std::string defines;
 	std::vector<ZResource*> resources;
 	uint32_t segment;
@@ -84,6 +84,7 @@ public:
 	bool HasDeclaration(uint32_t address);
 
 	std::string GetHeaderInclude() const;
+	std::string GetZRoomHeaderInclude() const;
 	std::string GetExternalFileHeaderInclude() const;
 	void GeneratePlaceholderDeclarations();
 
