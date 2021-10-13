@@ -780,16 +780,20 @@ std::string ZFile::GetExternalFileHeaderInclude() const
 
 	for (ZFile* externalFile : Globals::Instance->files)
 	{
-		if (externalFile != this) {
+		if (externalFile != this)
+		{
 			fs::path outputFolderPath = externalFile->GetSourceOutputFolderPath();
-			if (outputFolderPath == this->GetSourceOutputFolderPath()) {
+			if (outputFolderPath == this->GetSourceOutputFolderPath())
+			{
 				outputFolderPath = externalFile->outName.stem();
-			} else {
+			}
+			else
+			{
 				outputFolderPath /= externalFile->outName.stem();
 			}
 
-			externalFilesIncludes += StringHelper::Sprintf(
-				"#include \"%s.h\"\n", outputFolderPath.c_str());
+			externalFilesIncludes +=
+				StringHelper::Sprintf("#include \"%s.h\"\n", outputFolderPath.c_str());
 		}
 	}
 
