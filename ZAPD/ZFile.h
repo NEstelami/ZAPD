@@ -73,7 +73,10 @@ public:
 	Declaration* GetDeclarationRanged(uint32_t address) const;
 	uint32_t GetDeclarationRangedAddress(uint32_t address) const;
 	bool HasDeclaration(uint32_t address);
-	std::string GetHeaderInclude();
+
+	std::string GetHeaderInclude() const;
+	std::string GetZRoomHeaderInclude() const;
+
 	void GeneratePlaceholderDeclarations();
 
 	void AddTextureResource(uint32_t offset, ZTexture* tex);
@@ -100,7 +103,7 @@ protected:
 	void ParseXML(ZFileMode mode, tinyxml2::XMLElement* reader, const std::string& filename,
 	              bool placeholderMode);
 	void DeclareResourceSubReferences();
-	void GenerateSourceFiles(fs::path outputDir);
+	void GenerateSourceFiles();
 	void GenerateSourceHeaderFiles();
 	void AddDeclarationDebugChecks(uint32_t address);
 	std::string ProcessDeclarations();

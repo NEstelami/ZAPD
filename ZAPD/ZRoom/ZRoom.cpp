@@ -404,11 +404,6 @@ std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefi
 
 	if (zroomType == ZResourceType::Scene || zroomType == ZResourceType::Room)
 	{
-		sourceOutput += "#include \"segment_symbols.h\"\n";
-		sourceOutput += "#include \"command_macros_base.h\"\n";
-		sourceOutput += "#include \"z64cutscene_commands.h\"\n";
-		sourceOutput += "#include \"variables.h\"\n";
-
 		if (Globals::Instance->lastScene != nullptr)
 			sourceOutput += Globals::Instance->lastScene->parent->GetHeaderInclude();
 	}
