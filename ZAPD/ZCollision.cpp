@@ -106,7 +106,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(
 			waterBoxSegmentOffset, DeclarationAlignment::Align4, 16 * waterBoxes.size(), "WaterBox",
-			StringHelper::Sprintf("%s_waterBoxes_%06X", auxName.c_str(), waterBoxSegmentOffset), 0,
+			StringHelper::Sprintf("%s_waterBoxes_%06X", auxName.c_str(), waterBoxSegmentOffset), waterBoxes.size(),
 			declaration);
 	}
 
@@ -126,7 +126,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(
 			polySegmentOffset, DeclarationAlignment::Align4, polygons.size() * 16, "CollisionPoly",
-			StringHelper::Sprintf("%s_polygons_%08X", auxName.c_str(), polySegmentOffset), 0,
+			StringHelper::Sprintf("%s_polygons_%08X", auxName.c_str(), polySegmentOffset), polygons.size(),
 			declaration);
 	}
 
@@ -167,7 +167,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 			parent->AddDeclarationArray(
 				vtxSegmentOffset, first.GetDeclarationAlignment(),
 				vertices.size() * first.GetRawDataSize(), first.GetSourceTypeName(),
-				StringHelper::Sprintf("%s_vtx_%08X", auxName.c_str(), vtxSegmentOffset), 0,
+				StringHelper::Sprintf("%s_vtx_%08X", auxName.c_str(), vtxSegmentOffset), vertices.size(),
 				declaration);
 	}
 }

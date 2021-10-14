@@ -726,7 +726,8 @@ void ZFile::GeneratePlaceholderDeclarations()
 			continue;
 		}
 
-		Declaration* decl = AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		Declaration* decl = res->DeclareVar(GetName(), "");
+		decl->staticConf = res->GetStaticConf();
 		if (res->GetResourceType() == ZResourceType::Symbol)
 		{
 			decl->staticConf = StaticConfig::Off;

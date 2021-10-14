@@ -335,7 +335,7 @@ void ZTexture::DeclareReferences([[maybe_unused]] const std::string& prefix)
 			tlut->ExtractFromBinary(tlutOffset, tlutDim, tlutDim, TextureType::RGBA16bpp, true);
 			parent->AddTextureResource(tlutOffset, tlut);
 			parent->AddDeclarationIncludeArray(tlutOffset, incStr, tlut->GetRawDataSize(),
-			                                   tlut->GetSourceTypeName(), tlut->GetName(), 0);
+			                                   tlut->GetSourceTypeName(), tlut->GetName(), GetRawDataSize()/8);
 		}
 		else
 		{
@@ -748,7 +748,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 
 	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
-	                                                       GetSourceTypeName(), auxName, 0);
+	                                                       GetSourceTypeName(), auxName, GetRawDataSize()/8);
 	decl->staticConf = staticConf;
 	return decl;
 }
