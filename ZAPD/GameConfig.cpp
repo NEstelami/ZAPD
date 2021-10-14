@@ -109,15 +109,16 @@ void GameConfig::ConfigFunc_BGConfig(const tinyxml2::XMLElement& element)
 void GameConfig::ConfigFunc_ExternalXMLFolder(const tinyxml2::XMLElement& element)
 {
 	const char* pathValue = element.Attribute("Path");
-	if (pathValue == nullptr) {
+	if (pathValue == nullptr)
+	{
 		throw std::runtime_error(
 			StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
 		                          "\t Missing 'Path' attribute in `ExternalXMLFolder` element.\n"));
 	}
-	if (externalXmlFolder != "") {
-		throw std::runtime_error(
-			StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
-		                          "\t `ExternalXMLFolder` is duplicated.\n"));
+	if (externalXmlFolder != "")
+	{
+		throw std::runtime_error(StringHelper::Sprintf("Parse: Fatal error in configuration file.\n"
+		                                               "\t `ExternalXMLFolder` is duplicated.\n"));
 	}
 	externalXmlFolder = pathValue;
 }
