@@ -118,7 +118,8 @@ size_t ZBackground::GetRawDataSize() const
 	return Globals::Instance->cfg.bgScreenHeight * Globals::Instance->cfg.bgScreenWidth * 2;
 }
 
-Declaration* ZBackground::DeclareVar(const std::string& prefix, [[maybe_unused]]const std::string& bodyStr)
+Declaration* ZBackground::DeclareVar(const std::string& prefix,
+                                     [[maybe_unused]] const std::string& bodyStr)
 {
 	std::string auxName = name;
 	std::string auxOutName = outName;
