@@ -639,7 +639,12 @@ void ZFile::GenerateSourceFiles()
 	for (size_t i = 0; i < resources.size(); i++)
 	{
 		ZResource* res = resources.at(i);
-		res->GetSourceOutputCode(name);
+		std::string resSrc = res->GetSourceOutputCode(name);
+
+		sourceOutput += resSrc;
+
+		if (resSrc != "" && !res->IsExternalResource())
+			sourceOutput += "\n";
 	}
 
 	sourceOutput += ProcessDeclarations();
@@ -1127,6 +1132,7 @@ std::string ZFile::ProcessTextureIntersections([[maybe_unused]] const std::strin
 				// Shrink palette so it doesn't overlap
 				currentTex->SetDimensions(offsetDiff / currentTex->GetPixelMultiplyer(), 1);
 				declarations.at(currentOffset)->size = currentTex->GetRawDataSize();
+				currentTex->DeclareVar(GetName(), "");
 			}
 			else
 			{
