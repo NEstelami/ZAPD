@@ -33,6 +33,10 @@ void ZTexture::ExtractFromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t
 	name = GetDefaultName(parent->GetName());
 	outName = name;
 
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
+
 	ParseRawData();
 	CalcHash();
 }

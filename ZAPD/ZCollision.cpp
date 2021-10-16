@@ -181,19 +181,24 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 	declaration += StringHelper::Sprintf("\t{ %i, %i, %i },\n", absMinX, absMinY, absMinZ);
 	declaration += StringHelper::Sprintf("\t{ %i, %i, %i },\n", absMaxX, absMaxY, absMaxZ);
 
-	std::string vtxName = parent->GetDeclarationPtrName(vtxAddress).c_str();
+	std::string vtxName;
+	Globals::Instance->GetSegmentedPtrName(vtxAddress, parent, "Vec3s", vtxName);
 	declaration += StringHelper::Sprintf("\t%i,\n\t%s,\n", numVerts, vtxName.c_str());
 
-	std::string polyName = parent->GetDeclarationPtrName(polyAddress);
+	std::string polyName;
+	Globals::Instance->GetSegmentedPtrName(polyAddress, parent, "CollisionPoly", polyName);
 	declaration += StringHelper::Sprintf("\t%i,\n\t%s,\n", numPolygons, polyName.c_str());
 
-	std::string surfaceName = parent->GetDeclarationPtrName(polyTypeDefAddress);
+	std::string surfaceName;
+	Globals::Instance->GetSegmentedPtrName(polyTypeDefAddress, parent, "SurfaceType", surfaceName);
 	declaration += StringHelper::Sprintf("\t%s,\n", surfaceName.c_str());
 
-	std::string camName = parent->GetDeclarationPtrName(camDataAddress);
+	std::string camName;
+	Globals::Instance->GetSegmentedPtrName(camDataAddress, parent, "CamData", camName);
 	declaration += StringHelper::Sprintf("\t%s,\n", camName.c_str());
 
-	std::string waterBoxName = parent->GetDeclarationPtrName(waterBoxAddress);
+	std::string waterBoxName;
+	Globals::Instance->GetSegmentedPtrName(waterBoxAddress, parent, "WaterBox", waterBoxName);
 	declaration += StringHelper::Sprintf("\t%i,\n\t%s\n", numWaterBoxes, waterBoxName.c_str());
 
 	return declaration;

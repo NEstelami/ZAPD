@@ -31,21 +31,31 @@ void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, offset_t nRawDataIn
 	if (reader != nullptr)
 		ParseXML(reader);
 
-	ParseRawData();
-	CalcHash();
+	// Don't parse raw data of external files
+	if (parent->GetMode() != ZFileMode::ExternalFile)
+	{
+		ParseRawData();
+		CalcHash();
+	}
 
 	if (!isInner)
 	{
 		Declaration* decl = DeclareVar(parent->GetName(), "");
-		assert(decl != nullptr);
-		decl->declaredInXml = true;
-		decl->staticConf = staticConf;
+		if (decl != nullptr)
+		{
+			decl->declaredInXml = true;
+			decl->staticConf = staticConf;
+		}
 	}
 }
 
 void ZResource::ExtractFromFile(offset_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
+
+	// Don't parse raw data of external files
+	if (parent->GetMode() == ZFileMode::ExternalFile)
+		return;
 
 	ParseRawData();
 	CalcHash();
