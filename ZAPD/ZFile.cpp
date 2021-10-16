@@ -682,7 +682,6 @@ void ZFile::GenerateSourceFiles()
 	sourceOutput += "#include \"z64.h\"\n";
 	sourceOutput += "#include \"macros.h\"\n";
 	sourceOutput += GetHeaderInclude();
-	sourceOutput += GetExternalFileHeaderInclude();
 
 	bool hasZRoom = false;
 	for (const auto& res : resources)
@@ -700,6 +699,8 @@ void ZFile::GenerateSourceFiles()
 	{
 		sourceOutput += GetZRoomHeaderInclude();
 	}
+
+	sourceOutput += GetExternalFileHeaderInclude();
 
 	GeneratePlaceholderDeclarations();
 
