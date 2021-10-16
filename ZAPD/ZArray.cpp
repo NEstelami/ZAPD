@@ -134,5 +134,9 @@ ZResourceType ZArray::GetResourceType() const
 
 DeclarationAlignment ZArray::GetDeclarationAlignment() const
 {
+	if (resList.size() == 0)
+	{
+		return DeclarationAlignment::Align4;
+	}
 	return resList.at(0)->GetDeclarationAlignment();
 }

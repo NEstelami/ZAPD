@@ -28,10 +28,8 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		type = ZSkeletonType::Curve;
 	else if (skelTypeXml != "Normal")
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-		                        "invalid value found for 'Type' attribute",
-		                        "Defaulting to 'Normal'.");
-		type = ZSkeletonType::Normal;
+		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                        "invalid value found for 'Type' attribute", "");
 	}
 
 	std::string limbTypeXml = registeredAttributes.at("LimbType").value;
@@ -84,22 +82,22 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 
 std::string ZSkeleton::GetBodySourceCode() const
 {
-	std::string limbTableName = parent->GetDeclarationPtrName(limbsArrayAddress);
+	std::string limbArrayName;
+	Globals::Instance->GetSegmentedPtrName(limbsArrayAddress, parent, "", limbArrayName);
 
-	std::string headerStr;
 	switch (type)
 	{
 	case ZSkeletonType::Normal:
 	case ZSkeletonType::Curve:
-		headerStr = StringHelper::Sprintf("\n\t%s, %i\n", limbTableName.c_str(), limbCount);
-		break;
+		return StringHelper::Sprintf("\n\t%s, %i\n", limbArrayName.c_str(), limbCount);
+
 	case ZSkeletonType::Flex:
-		headerStr = StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbTableName.c_str(), limbCount,
-		                                  dListCount);
-		break;
+		return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbArrayName.c_str(), limbCount,
+		                             dListCount);
 	}
 
-	return headerStr;
+	// TODO: Throw exception?
+	return "ERROR";
 }
 
 size_t ZSkeleton::GetRawDataSize() const
@@ -240,7 +238,8 @@ std::string ZLimbTable::GetBodySourceCode() const
 
 	for (size_t i = 0; i < count; i++)
 	{
-		std::string limbName = parent->GetDeclarationPtrName(limbsAddresses[i]);
+		std::string limbName;
+		Globals::Instance->GetSegmentedPtrName(limbsAddresses[i], parent, "", limbName);
 		body += StringHelper::Sprintf("\t%s,", limbName.c_str());
 
 		if (i + 1 < count)
