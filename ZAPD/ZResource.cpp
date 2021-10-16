@@ -148,7 +148,9 @@ void ZResource::ParseXML(tinyxml2::XMLElement* reader)
 		}
 		else
 		{
-			HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, StringHelper::Sprintf("invalid value '%s' for 'Static' attribute", staticConf), "");
+			HANDLE_ERROR_RESOURCE(
+				WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+				StringHelper::Sprintf("invalid value '%s' for 'Static' attribute", staticConf), "");
 		}
 
 		declaredInXml = true;

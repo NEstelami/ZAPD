@@ -1211,7 +1211,7 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 				lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
 				currentDecl->varName.c_str());
 			HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress,
-									"intersection detected", intersectionInfo);
+			                        "intersection detected", intersectionInfo);
 		}
 	}
 
@@ -1284,17 +1284,15 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 
 			if (nonZeroUnaccounted)
 			{
-				HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr,
-										unaccountedAddress,
-										"a non-zero unaccounted block was found",
-										StringHelper::Sprintf("Block size: '0x%X'", diff));
+				HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr, unaccountedAddress,
+				                        "a non-zero unaccounted block was found",
+				                        StringHelper::Sprintf("Block size: '0x%X'", diff));
 			}
 			else if (diff >= 16)
 			{
-				HANDLE_WARNING_RESOURCE(
-					WarningType::Unaccounted, this, nullptr, unaccountedAddress,
-					"a big (size>=0x10) zero-only unaccounted block was found",
-					StringHelper::Sprintf("Block size: '0x%X'", diff));
+				HANDLE_WARNING_RESOURCE(WarningType::Unaccounted, this, nullptr, unaccountedAddress,
+				                        "a big (size>=0x10) zero-only unaccounted block was found",
+				                        StringHelper::Sprintf("Block size: '0x%X'", diff));
 			}
 		}
 	}

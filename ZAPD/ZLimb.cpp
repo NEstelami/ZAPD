@@ -38,15 +38,14 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 	if (limbType == "")
 	{
 		HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex,
-		                        "missing 'LimbType' attribute in <Limb>", "");
+		                      "missing 'LimbType' attribute in <Limb>", "");
 	}
 
 	type = GetTypeByAttributeName(limbType);
 	if (type == ZLimbType::Invalid)
 	{
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-								"invalid value found for 'LimbType' attribute",
-								"");
+		                      "invalid value found for 'LimbType' attribute", "");
 	}
 }
 

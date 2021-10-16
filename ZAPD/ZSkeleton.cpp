@@ -7,7 +7,7 @@
 #include "Utils/StringHelper.h"
 #include "WarningHandler.h"
 
-	REGISTER_ZFILENODE(Skeleton, ZSkeleton);
+REGISTER_ZFILENODE(Skeleton, ZSkeleton);
 REGISTER_ZFILENODE(LimbTable, ZLimbTable);
 
 ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent), limbsTable(nParent)
@@ -29,7 +29,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	else if (skelTypeXml != "Normal")
 	{
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-		                        "invalid value found for 'Type' attribute", "");
+		                      "invalid value found for 'Type' attribute", "");
 	}
 
 	std::string limbTypeXml = registeredAttributes.at("LimbType").value;

@@ -53,7 +53,9 @@ void ZSymbol::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (registeredAttributes.at("Static").value == "On")
 	{
-		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex, "a <Symbol> cannot be marked as static", "Disabling static for this resource.");
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                        "a <Symbol> cannot be marked as static",
+		                        "Disabling static for this resource.");
 	}
 	staticConf = StaticConfig::Off;
 }
