@@ -24,12 +24,9 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	type = ZSkeleton::GetTypeByAttributeName(skelTypeXml);
 	if (type == ZSkeletonType::Invalid)
 	{
-		fprintf(stderr,
-		        "ZSkeleton::ParseXML: Warning in '%s'.\n"
-		        "\t Invalid Type found: '%s'.\n"
-		        "\t Defaulting to 'Normal'.\n",
-		        name.c_str(), skelTypeXml.c_str());
-		type = ZSkeletonType::Normal;
+		throw std::runtime_error(StringHelper::Sprintf("ZSkeleton::ParseXML: Error in '%s'.\n"
+		                                               "\t Invalid Type found: '%s'.\n",
+		                                               name.c_str(), skelTypeXml.c_str()));
 	}
 
 	std::string limbTypeXml = registeredAttributes.at("LimbType").value;
@@ -80,7 +77,8 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 
 std::string ZSkeleton::GetBodySourceCode() const
 {
-	std::string limbTableName = parent->GetDeclarationPtrName(limbsArrayAddress);
+	std::string limbTableName;
+	Globals::Instance->GetSegmentedPtrName(limbsArrayAddress, parent, "", limbTableName);
 
 	switch (type)
 	{
@@ -255,7 +253,8 @@ std::string ZLimbTable::GetBodySourceCode() const
 
 	for (size_t i = 0; i < count; i++)
 	{
-		std::string limbName = parent->GetDeclarationPtrName(limbsAddresses[i]);
+		std::string limbName;
+		Globals::Instance->GetSegmentedPtrName(limbsAddresses[i], parent, "", limbName);
 		body += StringHelper::Sprintf("\t%s,", limbName.c_str());
 
 		if (i + 1 < count)
