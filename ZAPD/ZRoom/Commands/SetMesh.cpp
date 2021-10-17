@@ -125,43 +125,6 @@ void PolygonDlist::DeclareReferences(const std::string& prefix)
 	xluDList = MakeDlist(xlu, prefix);
 }
 
-ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::string& prefix)
-{
-	if (ptr == 0)
-	{
-		return nullptr;
-	}
-
-	uint32_t dlistAddress = Seg2Filespace(ptr, parent->baseAddress);
-
-	int32_t dlistLength = ZDisplayList::GetDListLength(
-		parent->GetRawData(), dlistAddress,
-		Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
-	ZDisplayList* dlist = new ZDisplayList(parent);
-	dlist->ExtractFromBinary(dlistAddress, dlistLength);
-	dlist->SetName(dlist->GetDefaultName(prefix));
-	GenDListDeclarations(zRoom, parent, dlist);
-
-	return dlist;
-}
-
-size_t PolygonDlist::GetRawDataSize() const
-{
-	switch (polyType)
-	{
-		case 2:
-			return 0x10;
-
-		default:
-			return 0x08;
-	}
-}
-
-void PolygonDlist::SetPolyType(uint8_t nPolyType)
-{
-	polyType = nPolyType;
-}
-
 std::string PolygonDlist::GetBodySourceCode() const
 {
 	std::string bodyStr;

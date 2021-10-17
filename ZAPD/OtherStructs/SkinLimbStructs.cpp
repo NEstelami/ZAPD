@@ -299,7 +299,7 @@ void Struct_800A5E28::DeclareReferences(const std::string& prefix)
 
 		int32_t dlistLength = ZDisplayList::GetDListLength(
 			parent->GetRawData(), unk_8_Offset,
-			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+			Globals::Instance->game == ZGame::OoTSW97 ? DListType::F3DEX : DListType::F3DZEX);
 		ZDisplayList* unk_8_dlist = new ZDisplayList(parent);
 		unk_8_dlist->ExtractFromBinary(unk_8_Offset, dlistLength);
 
