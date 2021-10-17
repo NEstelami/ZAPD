@@ -164,6 +164,7 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 	Declaration* decl = parent->GetDeclaration(pointsOffset);
 	if (decl == nullptr)
 	{
+		pointsName = StringHelper::Sprintf("%sPathwayList_%06X", prefix.c_str(), pointsOffset);
 		parent->AddDeclarationArray(pointsOffset, points.at(0).GetDeclarationAlignment(),
 		                            points.size() * 6, points.at(0).GetSourceTypeName(), pointsName,
 		                            points.size(), declaration);

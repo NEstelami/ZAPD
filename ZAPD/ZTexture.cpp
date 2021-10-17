@@ -770,8 +770,8 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		}
 	}
 
-	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
-	                                                       GetSourceTypeName(), auxName, 0);
+	Declaration* decl = parent->AddDeclarationIncludeArray(
+		rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), auxName, GetRawDataSize() / 8);
 	decl->staticConf = staticConf;
 	return decl;
 }
