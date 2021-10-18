@@ -938,6 +938,7 @@ std::string ZFile::ProcessDeclarations()
 							lastItem.second->text += "\n" + curItem.second->text;
 							declarations.erase(curItem.first);
 							declarationKeys.erase(declarationKeys.begin() + i);
+							delete curItem.second;
 							i--;
 							continue;
 						}
