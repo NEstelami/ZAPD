@@ -98,7 +98,7 @@ This table summarizes if the asset will be marked `static` (✅) or not (❌)
 
   - `Name`: Required. The name of the file in `baserom/` which will be extracted.
   - `OutName`: Optional. The output name of the generated C source file. Defaults to the value passed to `Name`.
-  - `Segment`: Required. This is the segment number of the current file. Expects a decimal number, usually 6 if it is an object, or 128 for overlays (It's kinda a whacky hack to get around of the `0x80` addresses).
+  - `Segment`: Optional. This is the segment number of the current file. Expects a decimal number between 0 and 15 inclusive, usually 6 if it is an object. If not specified, the file will use VRAM instead of segmented addresses.
   - `BaseAddress`: Optional. RAM address of the file. Expects a hex number (with `0x` prefix). Default value: `0`.
   - `RangeStart`: Optional. File offset where the extraction will begin. Hex. Default value: `0x000000000`.
   - `RangeEnd`: Optional. File offset where the extraction will end. Hex. Default value: `0xFFFFFFFF`.
