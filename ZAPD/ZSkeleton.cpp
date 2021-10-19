@@ -49,7 +49,7 @@ void ZSkeleton::ParseRawData()
 	const auto& rawData = parent->GetRawData();
 	limbsArrayAddress = BitConverter::ToUInt32BE(rawData, rawDataIndex);
 	limbCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 4);
-	
+
 	if (type == ZSkeletonType::Flex)
 	{
 		dListCount = BitConverter::ToUInt8BE(rawData, rawDataIndex + 8);

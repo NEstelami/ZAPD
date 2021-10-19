@@ -27,7 +27,8 @@ Globals::~Globals()
 {
 	auto& exporters = GetExporterMap();
 
-	for (auto& it: exporters) {
+	for (auto& it : exporters)
+	{
 		delete it.second;
 	}
 }
@@ -205,7 +206,8 @@ ExternalFile::ExternalFile(fs::path nXmlPath, fs::path nOutPath)
 
 ExporterSet::~ExporterSet()
 {
-	for(auto& it: exporters){
+	for (auto& it : exporters)
+	{
 		delete it.second;
 	}
 }
