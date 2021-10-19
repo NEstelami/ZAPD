@@ -5,13 +5,14 @@
 #include <string_view>
 #include <unordered_set>
 
-#include <Utils/BinaryWriter.h>
-#include <Utils/MemoryStream.h>
 #include "Globals.h"
 #include "OutputFormatter.h"
+#include "Utils/BinaryWriter.h"
 #include "Utils/Directory.h"
 #include "Utils/File.h"
+#include "Utils/MemoryStream.h"
 #include "Utils/Path.h"
+#include "Utils/StringHelper.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
 #include "ZBackground.h"
@@ -136,11 +137,32 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 	// 	                          "\t Missing 'Segment' attribute in File node. \n",
 	// 	                          name.c_str()));
 
-	if (reader->Attribute("Segment") != nullptr)
+	const char* segmentXml = reader->Attribute("Segment");
+	if (segmentXml != nullptr)
 	{
-		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
-		Globals::Instance->AddSegment(segment, this);
+		if (StringHelper::HasOnlyDigits(segmentXml))
+		{
+			segment = StringHelper::StrToL(segmentXml, 10);
+			if (segment > 15)
+			{
+				throw std::runtime_error(
+					StringHelper::Sprintf("error: invalid segment value '%s': must be a decimal "
+				                          "number between 0 and 15 inclusive",
+				                          segmentXml));
+			}
+		}
+		else if (std::string_view(segmentXml) != "None")
+		{
+			throw std::runtime_error(StringHelper::Sprintf(
+				"error: Invalid segment value '%s': must be a decimal between 0 and 15 inclusive",
+				segmentXml));
+		}
 	}
+	else
+	{
+		fprintf(stderr, "warning: segment not declared in XML\n");
+	}
+	Globals::Instance->AddSegment(segment, this);
 
 	if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 	{

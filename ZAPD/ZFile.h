@@ -34,7 +34,7 @@ public:
 	std::map<offset_t, Declaration*> declarations;
 	std::string defines;
 	std::vector<ZResource*> resources;
-	uint32_t segment;
+	int32_t segment = -1;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 	bool isExternalFile = false;
 
