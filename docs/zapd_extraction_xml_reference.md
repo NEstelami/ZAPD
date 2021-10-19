@@ -106,6 +106,25 @@ This table summarizes if the asset will be marked `static` (✅) or not (❌)
 
 -------------------------
 
+### ExternalFile
+
+Allows ZAPD to map segmented addresses to variables declared in other files by using its XML.
+
+It is useful for objects that use variables from `gameplay_keep`, `gameplay_dangeon_keep`, `gameplay_field_keep`, etc.
+
+- Example of this tag:
+
+```xml
+<ExternalFile XmlPath="objects/gameplay_keep.xml" OutPath="objects/gameplay_keep/"/>
+```
+
+- Attributes:
+
+  - `XmlPath`: Required. The path of the XML, relative to the value set by `ExternalXMLFolder` in the configuration file.
+  - `OutPath`: Required. The path were the header for the corresponding external file is. It is used to `#include` it in the generated `.c` file.
+
+-------------------------
+
 ### Texture
 
 Textures are extracted as `.png` files.
