@@ -130,13 +130,6 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 	if (rangeStart > rangeEnd)
 		throw std::runtime_error("Error: RangeStart must be before than RangeEnd.");
 
-	// Not every XML may have a segment number, so this doesn't make much sense anymore.
-	// if (reader->Attribute("Segment") == nullptr)
-	// 	throw std::runtime_error(
-	// 		StringHelper::Sprintf("ZFile::ParseXML: Error in '%s'.\n"
-	// 	                          "\t Missing 'Segment' attribute in File node. \n",
-	// 	                          name.c_str()));
-
 	const char* segmentXml = reader->Attribute("Segment");
 	if (segmentXml != nullptr)
 	{
@@ -145,24 +138,40 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 			segment = StringHelper::StrToL(segmentXml, 10);
 			if (segment > 15)
 			{
-				throw std::runtime_error(
-					StringHelper::Sprintf("error: invalid segment value '%s': must be a decimal "
-				                          "number between 0 and 15 inclusive",
-				                          segmentXml));
+				if (segment == 128)
+				{
+					fprintf(stderr, "warning: segment 128 is deprecated.\n\tRemove "
+					                "'Segment=\"128\"' from the xml to use virtual addresses\n");
+				}
+				else
+				{
+					throw std::runtime_error(StringHelper::Sprintf(
+						"error: invalid segment value '%s': must be a decimal "
+						"number between 0 and 15 inclusive",
+						segmentXml));
+				}
 			}
 		}
-		else if (std::string_view(segmentXml) != "None")
+		else
 		{
 			throw std::runtime_error(StringHelper::Sprintf(
 				"error: Invalid segment value '%s': must be a decimal between 0 and 15 inclusive",
 				segmentXml));
 		}
 	}
-	else
-	{
-		fprintf(stderr, "warning: segment not declared in XML\n");
-	}
 	Globals::Instance->AddSegment(segment, this);
+
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+	{
+		if (segment == 0x80)
+		{
+			printf("File '%s' using virtual addresses.\n", GetName().c_str());
+		}
+		else
+		{
+			printf("File '%s' using segment %X.\n", GetName().c_str(), segment);
+		}
+	}
 
 	if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 	{
