@@ -112,6 +112,8 @@ Allows ZAPD to map segmented addresses to variables declared in other files by u
 
 It is useful for objects that use variables from `gameplay_keep`, `gameplay_dangeon_keep`, `gameplay_field_keep`, etc.
 
+This tag can be used in the global `config.xml` file.
+
 - Example of this tag:
 
 ```xml
