@@ -133,30 +133,30 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 	const char* segmentXml = reader->Attribute("Segment");
 	if (segmentXml != nullptr)
 	{
-		if (StringHelper::HasOnlyDigits(segmentXml))
-		{
-			segment = StringHelper::StrToL(segmentXml, 10);
-			if (segment > 15)
-			{
-				if (segment == 128)
-				{
-					fprintf(stderr, "warning: segment 128 is deprecated.\n\tRemove "
-					                "'Segment=\"128\"' from the xml to use virtual addresses\n");
-				}
-				else
-				{
-					throw std::runtime_error(StringHelper::Sprintf(
-						"error: invalid segment value '%s': must be a decimal "
-						"number between 0 and 15 inclusive",
-						segmentXml));
-				}
-			}
-		}
-		else
+		if (!StringHelper::HasOnlyDigits(segmentXml))
 		{
 			throw std::runtime_error(StringHelper::Sprintf(
 				"error: Invalid segment value '%s': must be a decimal between 0 and 15 inclusive",
 				segmentXml));
+		}
+
+		segment = StringHelper::StrToL(segmentXml, 10);
+		if (segment > 15)
+		{
+			if (segment == 128)
+			{
+#ifdef DEPRECATION_ON
+				fprintf(stderr, "warning: segment 128 is deprecated.\n\tRemove "
+				                "'Segment=\"128\"' from the xml to use virtual addresses\n");
+#endif
+			}
+			else
+			{
+				throw std::runtime_error(
+					StringHelper::Sprintf("error: invalid segment value '%s': must be a decimal "
+				                          "number between 0 and 15 inclusive",
+				                          segmentXml));
+			}
 		}
 	}
 	Globals::Instance->AddSegment(segment, this);
