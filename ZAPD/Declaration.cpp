@@ -92,12 +92,12 @@ std::string Declaration::GetNormalDeclarationStr() const
 
 	if (isArray)
 	{
-		if (arrayItemCntStr != "")
+		if (arrayItemCntStr != "" && (IsStatic() || forceArrayCnt))
 		{
 			output += StringHelper::Sprintf("%s %s[%s];\n", varType.c_str(), varName.c_str(),
 			                                arrayItemCntStr.c_str());
 		}
-		else if (arrayItemCnt != 0 && IsStatic())
+		else if (arrayItemCnt != 0 && (IsStatic() || forceArrayCnt))
 		{
 			output += StringHelper::Sprintf("%s %s[%i] = {\n", varType.c_str(), varName.c_str(),
 			                                arrayItemCnt);
@@ -145,9 +145,9 @@ std::string Declaration::GetExternalDeclarationStr() const
 		output += "static ";
 	}
 
-	if (arrayItemCntStr != "")
+	if (arrayItemCntStr != "" && (IsStatic() || forceArrayCnt))
 		output += StringHelper::Sprintf("%s %s[%s] = ", varType.c_str(), varName.c_str(), arrayItemCntStr.c_str());
-	else if (arrayItemCnt != 0 && IsStatic())
+	else if (arrayItemCnt != 0 && (IsStatic() || forceArrayCnt))
 		output += StringHelper::Sprintf("%s %s[%i] = ", varType.c_str(), varName.c_str(), arrayItemCnt);
 	else
 		output += StringHelper::Sprintf("%s %s[] = ", varType.c_str(), varName.c_str());
@@ -176,16 +176,16 @@ std::string Declaration::GetExternStr() const
 
 	if (isArray)
 	{
-		if (arrayItemCntStr != "")
+		if (arrayItemCntStr != "" && (IsStatic() || forceArrayCnt))
 		{
 			return StringHelper::Sprintf("extern %s %s[%s];\n", varType.c_str(), varName.c_str(),
 			                             arrayItemCntStr.c_str());
 		}
-		//else if (arrayItemCnt != 0)
-		//{
-		//	return StringHelper::Sprintf("extern %s %s[%i];\n", varType.c_str(), varName.c_str(),
-		//	                             arrayItemCnt);
-		//}
+		else if (arrayItemCnt != 0 && (IsStatic() || forceArrayCnt))
+		{
+			return StringHelper::Sprintf("extern %s %s[%i];\n", varType.c_str(), varName.c_str(),
+			                             arrayItemCnt);
+		}
 		else
 			return StringHelper::Sprintf("extern %s %s[];\n", varType.c_str(), varName.c_str());
 	}
