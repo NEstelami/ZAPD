@@ -97,14 +97,14 @@ std::string Declaration::GetNormalDeclarationStr() const
 			output += StringHelper::Sprintf("%s %s[%s];\n", varType.c_str(), varName.c_str(),
 			                                arrayItemCntStr.c_str());
 		}
-		else if (arrayItemCnt == 0)
-		{
-			output += StringHelper::Sprintf("%s %s[] = {\n", varType.c_str(), varName.c_str());
-		}
-		else
+		else if (arrayItemCnt != 0 && IsStatic())
 		{
 			output += StringHelper::Sprintf("%s %s[%i] = {\n", varType.c_str(), varName.c_str(),
 			                                arrayItemCnt);
+		}
+		else
+		{
+			output += StringHelper::Sprintf("%s %s[] = {\n", varType.c_str(), varName.c_str());
 		}
 
 		output += text + "\n";
@@ -146,15 +146,13 @@ std::string Declaration::GetExternalDeclarationStr() const
 	}
 
 	if (arrayItemCntStr != "")
-		output +=
-			StringHelper::Sprintf("%s %s[%s] = {\n#include \"%s\"\n};", varType.c_str(),
-		                          varName.c_str(), arrayItemCntStr.c_str(), includePath.c_str());
-	else if (arrayItemCnt != 0)
-		output += StringHelper::Sprintf("%s %s[%i] = {\n#include \"%s\"\n};", varType.c_str(),
-		                                varName.c_str(), arrayItemCnt, includePath.c_str());
+		output += StringHelper::Sprintf("%s %s[%s] = ", varType.c_str(), varName.c_str(), arrayItemCntStr.c_str());
+	else if (arrayItemCnt != 0 && IsStatic())
+		output += StringHelper::Sprintf("%s %s[%i] = ", varType.c_str(), varName.c_str(), arrayItemCnt);
 	else
-		output += StringHelper::Sprintf("%s %s[] = {\n#include \"%s\"\n};", varType.c_str(),
-		                                varName.c_str(), includePath.c_str());
+		output += StringHelper::Sprintf("%s %s[] = ", varType.c_str(), varName.c_str());
+
+	output += StringHelper::Sprintf("{\n#include \"%s\"\n};", includePath.c_str());
 
 	if (rightText != "")
 		output += " " + rightText + "";
@@ -183,9 +181,11 @@ std::string Declaration::GetExternStr() const
 			return StringHelper::Sprintf("extern %s %s[%s];\n", varType.c_str(), varName.c_str(),
 			                             arrayItemCntStr.c_str());
 		}
-		else if (arrayItemCnt != 0)
-			return StringHelper::Sprintf("extern %s %s[%i];\n", varType.c_str(), varName.c_str(),
-			                             arrayItemCnt);
+		//else if (arrayItemCnt != 0)
+		//{
+		//	return StringHelper::Sprintf("extern %s %s[%i];\n", varType.c_str(), varName.c_str(),
+		//	                             arrayItemCnt);
+		//}
 		else
 			return StringHelper::Sprintf("extern %s %s[];\n", varType.c_str(), varName.c_str());
 	}
