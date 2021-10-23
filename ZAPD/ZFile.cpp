@@ -1070,8 +1070,6 @@ std::string ZFile::ProcessDeclarations()
 		}
 	}
 
-	output += "\n";
-
 	return output;
 }
 
