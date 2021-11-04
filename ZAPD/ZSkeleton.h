@@ -37,6 +37,8 @@ public:
 
 	size_t GetRawDataSize() const override;
 
+	std::string GetLimbEnumName(uint8_t limbIndex) const;
+
 protected:
 	ZLimbType limbType = ZLimbType::Standard;
 	size_t count = 0;

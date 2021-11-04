@@ -224,6 +224,7 @@ void ZLimbTable::DeclareReferences(const std::string& prefix)
 			}
 
 			limb->SetLimbIndex(i+1);
+			limb->limbsTable = this;
 
 			limbsReferences.push_back(limb);
 		}
@@ -315,4 +316,14 @@ ZResourceType ZLimbTable::GetResourceType() const
 size_t ZLimbTable::GetRawDataSize() const
 {
 	return 4 * limbsAddresses.size();
+}
+
+std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const {
+	if (limbIndex == 0xFF) {
+		return "LIMB_DONE";
+	}
+
+	// TODO
+
+	return StringHelper::Sprintf("0x%02X", limbIndex);
 }

@@ -5,6 +5,7 @@
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
+#include "ZSkeleton.h"
 
 REGISTER_ZFILENODE(Limb, ZLimb);
 
@@ -244,11 +245,21 @@ std::string ZLimb::GetBodySourceCode() const
 	}
 	else
 	{
+		std::string childStr;
+		std::string siblingStr;
+		if (limbsTable != nullptr) {
+			childStr = limbsTable->GetLimbEnumName(childIndex);
+			siblingStr = limbsTable->GetLimbEnumName(siblingIndex);
+		} else {
+			childStr = StringHelper::Sprintf("0x%02X", childIndex);
+			siblingStr = StringHelper::Sprintf("0x%02X", siblingIndex);
+		}
+
 		if (type != ZLimbType::Curve)
 		{
 			entryStr += StringHelper::Sprintf("{ %i, %i, %i }, ", transX, transY, transZ);
 		}
-		entryStr += StringHelper::Sprintf("0x%02X, 0x%02X,\n", childIndex, siblingIndex);
+		entryStr += StringHelper::Sprintf("%s, %s,\n", childStr.c_str(), siblingStr.c_str());
 
 		switch (type)
 		{
