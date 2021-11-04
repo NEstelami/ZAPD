@@ -21,6 +21,8 @@ enum class ZLimbType
 class ZLimb : public ZResource
 {
 public:
+	std::string enumName;
+
 	ZLimbType type = ZLimbType::Standard;
 
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only

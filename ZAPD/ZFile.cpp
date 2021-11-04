@@ -391,7 +391,7 @@ void ZFile::AddResource(ZResource* res)
 	resources.push_back(res);
 }
 
-ZResource* ZFile::FindResource(uint32_t rawDataIndex)
+ZResource* ZFile::FindResource(offset_t rawDataIndex)
 {
 	for (ZResource* res : resources)
 	{

@@ -10,6 +10,7 @@ REGISTER_ZFILENODE(Limb, ZLimb);
 
 ZLimb::ZLimb(ZFile* nParent) : ZResource(nParent), segmentStruct(nParent)
 {
+	RegisterOptionalAttribute("EnumName");
 	RegisterOptionalAttribute("LimbType");
 	RegisterOptionalAttribute("Type");
 }
@@ -29,6 +30,11 @@ void ZLimb::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nType)
 void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 {
 	ZResource::ParseXML(reader);
+
+	auto& enumNameXml = registeredAttributes.at("EnumName").value;
+	if (enumNameXml != "") {
+		enumName = enumNameXml;
+	}
 
 	// Reading from a <Skeleton/>
 	std::string limbType = registeredAttributes.at("LimbType").value;

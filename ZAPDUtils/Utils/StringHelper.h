@@ -111,4 +111,11 @@ public:
 	{
 		return std::all_of(str.begin(), str.end(), ::isdigit);
 	}
+
+	static std::string ToUpper(const std::string& str)
+	{
+		std::string buff = str;
+		std::transform(buff.begin(), buff.end(),buff.begin(), ::toupper);
+		return buff;
+	}
 };
