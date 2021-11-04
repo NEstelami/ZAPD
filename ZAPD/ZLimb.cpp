@@ -371,10 +371,17 @@ void ZLimb::SetLimbIndex(uint8_t nLimbIndex) {
 	limbIndex = nLimbIndex;
 
 	if (enumName == "") {
-		std::string defaultObjectName =  StringHelper::Split(parent->GetName(), "_").back();
-		std::string defaultObjectNameUpper = StringHelper::ToUpper(defaultObjectName);
+		std::string prefix;
+		if (limbsTable != nullptr) {
+			prefix = limbsTable->GetName();
+			if (prefix.at(0) == 'g') {
+				prefix = prefix.substr(1);
+			}
+		} else {
+			prefix = StringHelper::Split(parent->GetName(), "_").back();
+		}
 
-		enumName = StringHelper::Sprintf("%s_LIMB_%02i", defaultObjectNameUpper.c_str(), limbIndex);
+		enumName = StringHelper::Sprintf("%s_LIMB_%02i", StringHelper::ToUpper(prefix).c_str(), limbIndex);
 	}
 }
 

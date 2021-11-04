@@ -223,8 +223,8 @@ void ZLimbTable::DeclareReferences(const std::string& prefix)
 				assert(limb->GetResourceType() == ZResourceType::Limb);
 			}
 
-			limb->SetLimbIndex(i+1);
 			limb->limbsTable = this;
+			limb->SetLimbIndex(i+1);
 
 			limbsReferences.push_back(limb);
 		}
@@ -269,9 +269,14 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 	std::string defaultObjectName =  StringHelper::Split(parent->GetName(), "_").back();
 	std::string defaultObjectNameUpper = StringHelper::ToUpper(defaultObjectName);
 
+	std::string limbPrefix = GetName();
+	if (limbPrefix.at(0) == 'g') {
+		limbPrefix = limbPrefix.substr(1);
+	}
+
 	// This assumes there isn't any skeleton with more than 100 limbs
 
-	limbEnum += StringHelper::Sprintf("    /* 00 */ %s_LIMB_NONE,\n", defaultObjectNameUpper.c_str());
+	limbEnum += StringHelper::Sprintf("    /* 00 */ %s_LIMB_NONE,\n", StringHelper::ToUpper(limbPrefix).c_str());
 
 	size_t i = 0;
 	for (; i < count; i++) {
@@ -280,9 +285,9 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i+1, limbEnumName.c_str());
 	}
 
-	limbEnum += StringHelper::Sprintf("    /* %02i */ %s_LIMB_MAX\n", i+1, defaultObjectNameUpper.c_str());
+	limbEnum += StringHelper::Sprintf("    /* %02i */ %s_LIMB_MAX\n", i+1, StringHelper::ToUpper(limbPrefix).c_str());
 
-	limbEnum +=  StringHelper::Sprintf("} %sLimbs;\n", defaultObjectName.c_str());
+	limbEnum +=  StringHelper::Sprintf("} %sEnum;\n", limbPrefix.c_str());
 
 	return limbEnum;
 }
