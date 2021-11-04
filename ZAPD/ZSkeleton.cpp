@@ -323,7 +323,11 @@ std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const {
 		return "LIMB_DONE";
 	}
 
-	// TODO
+	if (limbIndex-1 < count) {
+		return limbsReferences.at(limbIndex-1)->enumName;
+	} else {
+		fprintf(stderr, "ZLimbTable::GetLimbEnumName: Warning limbIndex '%02i' out of range\n", limbIndex);
+	}
 
 	return StringHelper::Sprintf("0x%02X", limbIndex);
 }
