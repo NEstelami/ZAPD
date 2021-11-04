@@ -41,6 +41,8 @@ public:
 	int16_t transX, transY, transZ;
 	uint8_t childIndex, siblingIndex;
 
+	uint8_t limbIndex = 0;
+
 	ZLimb(ZFile* nParent);
 
 	void ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nType);
@@ -60,6 +62,8 @@ public:
 	void SetLimbType(ZLimbType value);
 	static const char* GetSourceTypeName(ZLimbType limbType);
 	static ZLimbType GetTypeByAttributeName(const std::string& attrName);
+
+	void SetLimbIndex(uint8_t nLimbIndex);
 
 protected:
 	void DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,

@@ -356,6 +356,17 @@ ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 	return ZLimbType::Invalid;
 }
 
+void ZLimb::SetLimbIndex(uint8_t nLimbIndex) {
+	limbIndex = nLimbIndex;
+
+	if (enumName == "") {
+		std::string defaultObjectName =  StringHelper::Split(parent->GetName(), "_").back();
+		std::string defaultObjectNameUpper = StringHelper::ToUpper(defaultObjectName);
+
+		enumName = StringHelper::Sprintf("%s_LIMB_%02i", defaultObjectNameUpper.c_str(), limbIndex);
+	}
+}
+
 void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,
                          const std::string& limbSuffix)
 {

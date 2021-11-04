@@ -223,6 +223,8 @@ void ZLimbTable::DeclareReferences(const std::string& prefix)
 				assert(limb->GetResourceType() == ZResourceType::Limb);
 			}
 
+			limb->SetLimbIndex(i+1);
+
 			limbsReferences.push_back(limb);
 		}
 	}
@@ -259,7 +261,7 @@ std::string ZLimbTable::GetBodySourceCode() const
 	return body;
 }
 
-std::string ZLimbTable::GetSourceOutputHeader(const std::string& prefix)
+std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
 	std::string limbEnum = "typedef enum {\n";
 
@@ -273,9 +275,6 @@ std::string ZLimbTable::GetSourceOutputHeader(const std::string& prefix)
 	size_t i = 0;
 	for (; i < count; i++) {
 		std::string limbEnumName = limbsReferences.at(i)->enumName;
-		if (limbEnumName == "") {
-			limbEnumName = StringHelper::Sprintf("%s_LIMB_%02i", defaultObjectNameUpper.c_str(), i+1);
-		}
 
 		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i+1, limbEnumName.c_str());
 	}
