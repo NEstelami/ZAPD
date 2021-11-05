@@ -13,6 +13,7 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 {
 	RegisterRequiredAttribute("Type");
 	RegisterRequiredAttribute("LimbType");
+	RegisterOptionalAttribute("EnumName");
 	RegisterOptionalAttribute("EnumPrefix");
 }
 
@@ -42,6 +43,7 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		                                               name.c_str(), limbTypeXml.c_str()));
 	}
 
+	enumName = registeredAttributes.at("EnumName").value;
 	enumPrefix = registeredAttributes.at("EnumPrefix").value;
 }
 
@@ -83,6 +85,7 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 			limbsTable = static_cast<ZLimbTable*>(parent->FindResource(ptr));
 		}
 
+		limbsTable->enumName = enumName;
 		limbsTable->enumPrefix = enumPrefix;
 	}
 }
@@ -156,6 +159,7 @@ ZLimbTable::ZLimbTable(ZFile* nParent) : ZResource(nParent)
 {
 	RegisterRequiredAttribute("LimbType");
 	RegisterRequiredAttribute("Count");
+	RegisterOptionalAttribute("EnumName");
 	RegisterOptionalAttribute("EnumPrefix");
 }
 
@@ -186,6 +190,7 @@ void ZLimbTable::ParseXML(tinyxml2::XMLElement* reader)
 
 	count = StringHelper::StrToL(registeredAttributes.at("Count").value);
 
+	enumName = registeredAttributes.at("EnumName").value;
 	enumPrefix = registeredAttributes.at("EnumPrefix").value;
 }
 
@@ -296,7 +301,7 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 	limbEnum += StringHelper::Sprintf("    /* %02i */ %s_LIMB_MAX\n", i + 1,
 	                                  limbPrefix.c_str());
 
-	limbEnum += StringHelper::Sprintf("} %sEnum;\n", limbPrefix.c_str());
+	limbEnum += StringHelper::Sprintf("} %s;\n", GetEnumName().c_str());
 
 	return limbEnum;
 }
@@ -330,6 +335,20 @@ ZResourceType ZLimbTable::GetResourceType() const
 size_t ZLimbTable::GetRawDataSize() const
 {
 	return 4 * limbsAddresses.size();
+}
+
+std::string ZLimbTable::GetEnumName() const
+{
+	if (enumName == "") {
+		std::string eName = GetName();
+		if (eName.at(0) == 'g')
+		{
+			eName = eName.substr(1);
+		}
+		return eName + "Enum";
+	}
+
+	return enumName;
 }
 
 std::string ZLimbTable::GetEnumPrefix() const
