@@ -33,7 +33,8 @@ void ZLimb::ParseXML(tinyxml2::XMLElement* reader)
 	ZResource::ParseXML(reader);
 
 	auto& enumNameXml = registeredAttributes.at("EnumName").value;
-	if (enumNameXml != "") {
+	if (enumNameXml != "")
+	{
 		enumName = enumNameXml;
 	}
 
@@ -247,10 +248,13 @@ std::string ZLimb::GetBodySourceCode() const
 	{
 		std::string childStr;
 		std::string siblingStr;
-		if (limbsTable != nullptr) {
+		if (limbsTable != nullptr)
+		{
 			childStr = limbsTable->GetLimbEnumName(childIndex);
 			siblingStr = limbsTable->GetLimbEnumName(siblingIndex);
-		} else {
+		}
+		else
+		{
 			childStr = StringHelper::Sprintf("0x%02X", childIndex);
 			siblingStr = StringHelper::Sprintf("0x%02X", siblingIndex);
 		}
@@ -367,21 +371,28 @@ ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 	return ZLimbType::Invalid;
 }
 
-void ZLimb::SetLimbIndex(uint8_t nLimbIndex) {
+void ZLimb::SetLimbIndex(uint8_t nLimbIndex)
+{
 	limbIndex = nLimbIndex;
 
-	if (enumName == "") {
+	if (enumName == "")
+	{
 		std::string prefix;
-		if (limbsTable != nullptr) {
+		if (limbsTable != nullptr)
+		{
 			prefix = limbsTable->GetName();
-			if (prefix.at(0) == 'g') {
+			if (prefix.at(0) == 'g')
+			{
 				prefix = prefix.substr(1);
 			}
-		} else {
+		}
+		else
+		{
 			prefix = StringHelper::Split(parent->GetName(), "_").back();
 		}
 
-		enumName = StringHelper::Sprintf("%s_LIMB_%02i", StringHelper::ToUpper(prefix).c_str(), limbIndex);
+		enumName =
+			StringHelper::Sprintf("%s_LIMB_%02i", StringHelper::ToUpper(prefix).c_str(), limbIndex);
 	}
 }
 

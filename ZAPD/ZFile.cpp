@@ -763,7 +763,8 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	std::string objectNameUpper = StringHelper::ToUpper(GetName());
 
-	formatter.Write(StringHelper::Sprintf("#ifndef %s_H\n#define %s_H 1\n\n", objectNameUpper.c_str(), objectNameUpper.c_str()));
+	formatter.Write(StringHelper::Sprintf("#ifndef %s_H\n#define %s_H 1\n\n",
+	                                      objectNameUpper.c_str(), objectNameUpper.c_str()));
 
 	for (ZResource* res : resources)
 	{

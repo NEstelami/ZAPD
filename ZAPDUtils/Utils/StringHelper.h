@@ -115,7 +115,7 @@ public:
 	static std::string ToUpper(const std::string& str)
 	{
 		std::string buff = str;
-		std::transform(buff.begin(), buff.end(),buff.begin(), ::toupper);
+		std::transform(buff.begin(), buff.end(), buff.begin(), ::toupper);
 		return buff;
 	}
 };

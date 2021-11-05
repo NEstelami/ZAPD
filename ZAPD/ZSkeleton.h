@@ -44,7 +44,7 @@ protected:
 	size_t count = 0;
 
 	std::vector<segptr_t> limbsAddresses;
-	std::vector<ZLimb*> limbsReferences; // borrowed pointers, do not delete!
+	std::vector<ZLimb*> limbsReferences;  // borrowed pointers, do not delete!
 };
 
 class ZSkeleton : public ZResource
@@ -73,5 +73,5 @@ public:
 	uint8_t GetLimbCount();
 
 protected:
-	ZLimbTable* limbsTable = nullptr; // borrowed pointer
+	ZLimbTable* limbsTable = nullptr;  // borrowed pointer
 };

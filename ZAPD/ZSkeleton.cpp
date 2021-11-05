@@ -74,7 +74,9 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 			limbsTable->ExtractFromBinary(ptr, limbType, limbCount);
 			limbsTable->SetName(StringHelper::Sprintf("%sLimbs", defaultPrefix.c_str()));
 			parent->AddResource(limbsTable);
-		} else {
+		}
+		else
+		{
 			limbsTable = static_cast<ZLimbTable*>(parent->FindResource(ptr));
 		}
 	}
@@ -217,14 +219,16 @@ void ZLimbTable::DeclareReferences(const std::string& prefix)
 				limb->DeclareVar(varPrefix, "");
 				limb->DeclareReferences(varPrefix);
 				parent->AddResource(limb);
-			} else {
+			}
+			else
+			{
 				limb = static_cast<ZLimb*>(parent->FindResource(limbOffset));
 				assert(limb != nullptr);
 				assert(limb->GetResourceType() == ZResourceType::Limb);
 			}
 
 			limb->limbsTable = this;
-			limb->SetLimbIndex(i+1);
+			limb->SetLimbIndex(i + 1);
 
 			limbsReferences.push_back(limb);
 		}
@@ -266,28 +270,32 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 {
 	std::string limbEnum = "typedef enum {\n";
 
-	std::string defaultObjectName =  StringHelper::Split(parent->GetName(), "_").back();
+	std::string defaultObjectName = StringHelper::Split(parent->GetName(), "_").back();
 	std::string defaultObjectNameUpper = StringHelper::ToUpper(defaultObjectName);
 
 	std::string limbPrefix = GetName();
-	if (limbPrefix.at(0) == 'g') {
+	if (limbPrefix.at(0) == 'g')
+	{
 		limbPrefix = limbPrefix.substr(1);
 	}
 
 	// This assumes there isn't any skeleton with more than 100 limbs
 
-	limbEnum += StringHelper::Sprintf("    /* 00 */ %s_LIMB_NONE,\n", StringHelper::ToUpper(limbPrefix).c_str());
+	limbEnum += StringHelper::Sprintf("    /* 00 */ %s_LIMB_NONE,\n",
+	                                  StringHelper::ToUpper(limbPrefix).c_str());
 
 	size_t i = 0;
-	for (; i < count; i++) {
+	for (; i < count; i++)
+	{
 		std::string limbEnumName = limbsReferences.at(i)->enumName;
 
-		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i+1, limbEnumName.c_str());
+		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i + 1, limbEnumName.c_str());
 	}
 
-	limbEnum += StringHelper::Sprintf("    /* %02i */ %s_LIMB_MAX\n", i+1, StringHelper::ToUpper(limbPrefix).c_str());
+	limbEnum += StringHelper::Sprintf("    /* %02i */ %s_LIMB_MAX\n", i + 1,
+	                                  StringHelper::ToUpper(limbPrefix).c_str());
 
-	limbEnum +=  StringHelper::Sprintf("} %sEnum;\n", limbPrefix.c_str());
+	limbEnum += StringHelper::Sprintf("} %sEnum;\n", limbPrefix.c_str());
 
 	return limbEnum;
 }
@@ -323,15 +331,21 @@ size_t ZLimbTable::GetRawDataSize() const
 	return 4 * limbsAddresses.size();
 }
 
-std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const {
-	if (limbIndex == 0xFF) {
+std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
+{
+	if (limbIndex == 0xFF)
+	{
 		return "LIMB_DONE";
 	}
 
-	if (limbIndex-1 < count) {
-		return limbsReferences.at(limbIndex-1)->enumName;
-	} else {
-		fprintf(stderr, "ZLimbTable::GetLimbEnumName: Warning limbIndex '%02i' out of range\n", limbIndex);
+	if (limbIndex - 1 < count)
+	{
+		return limbsReferences.at(limbIndex - 1)->enumName;
+	}
+	else
+	{
+		fprintf(stderr, "ZLimbTable::GetLimbEnumName: Warning limbIndex '%02i' out of range\n",
+		        limbIndex);
 	}
 
 	return StringHelper::Sprintf("0x%02X", limbIndex);
