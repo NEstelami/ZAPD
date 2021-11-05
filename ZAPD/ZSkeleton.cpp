@@ -13,6 +13,7 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 {
 	RegisterRequiredAttribute("Type");
 	RegisterRequiredAttribute("LimbType");
+	RegisterOptionalAttribute("EnumPrefix");
 }
 
 void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
@@ -40,6 +41,8 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 		                                               "\t Invalid LimbType found: '%s'.\n",
 		                                               name.c_str(), limbTypeXml.c_str()));
 	}
+
+	enumPrefix = registeredAttributes.at("EnumPrefix").value;
 }
 
 void ZSkeleton::ParseRawData()
@@ -79,6 +82,8 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 		{
 			limbsTable = static_cast<ZLimbTable*>(parent->FindResource(ptr));
 		}
+
+		limbsTable->enumPrefix = enumPrefix;
 	}
 }
 
@@ -151,6 +156,7 @@ ZLimbTable::ZLimbTable(ZFile* nParent) : ZResource(nParent)
 {
 	RegisterRequiredAttribute("LimbType");
 	RegisterRequiredAttribute("Count");
+	RegisterOptionalAttribute("EnumPrefix");
 }
 
 void ZLimbTable::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount)
@@ -179,6 +185,8 @@ void ZLimbTable::ParseXML(tinyxml2::XMLElement* reader)
 	}
 
 	count = StringHelper::StrToL(registeredAttributes.at("Count").value);
+
+	enumPrefix = registeredAttributes.at("EnumPrefix").value;
 }
 
 void ZLimbTable::ParseRawData()
@@ -270,19 +278,12 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 {
 	std::string limbEnum = "typedef enum {\n";
 
-	std::string defaultObjectName = StringHelper::Split(parent->GetName(), "_").back();
-	std::string defaultObjectNameUpper = StringHelper::ToUpper(defaultObjectName);
-
-	std::string limbPrefix = GetName();
-	if (limbPrefix.at(0) == 'g')
-	{
-		limbPrefix = limbPrefix.substr(1);
-	}
+	std::string limbPrefix = GetEnumPrefix();
 
 	// This assumes there isn't any skeleton with more than 100 limbs
 
 	limbEnum += StringHelper::Sprintf("    /* 00 */ %s_LIMB_NONE,\n",
-	                                  StringHelper::ToUpper(limbPrefix).c_str());
+	                                  limbPrefix.c_str());
 
 	size_t i = 0;
 	for (; i < count; i++)
@@ -293,7 +294,7 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 	}
 
 	limbEnum += StringHelper::Sprintf("    /* %02i */ %s_LIMB_MAX\n", i + 1,
-	                                  StringHelper::ToUpper(limbPrefix).c_str());
+	                                  limbPrefix.c_str());
 
 	limbEnum += StringHelper::Sprintf("} %sEnum;\n", limbPrefix.c_str());
 
@@ -329,6 +330,20 @@ ZResourceType ZLimbTable::GetResourceType() const
 size_t ZLimbTable::GetRawDataSize() const
 {
 	return 4 * limbsAddresses.size();
+}
+
+std::string ZLimbTable::GetEnumPrefix() const
+{
+	if (enumPrefix == "") {
+		std::string limbPrefix = GetName();
+		if (limbPrefix.at(0) == 'g')
+		{
+			limbPrefix = limbPrefix.substr(1);
+		}
+		return StringHelper::ToUpper(limbPrefix);
+	}
+
+	return enumPrefix;
 }
 
 std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const

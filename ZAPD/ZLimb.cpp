@@ -380,11 +380,7 @@ void ZLimb::SetLimbIndex(uint8_t nLimbIndex)
 		std::string prefix;
 		if (limbsTable != nullptr)
 		{
-			prefix = limbsTable->GetName();
-			if (prefix.at(0) == 'g')
-			{
-				prefix = prefix.substr(1);
-			}
+			prefix = limbsTable->GetEnumPrefix();
 		}
 		else
 		{
