@@ -12,6 +12,7 @@
 #include "Utils/File.h"
 #include "Utils/MemoryStream.h"
 #include "Utils/Path.h"
+#include "Utils/StringHelper.h"
 #include "WarningHandler.h"
 #include "ZAnimation.h"
 #include "ZArray.h"
@@ -137,10 +138,52 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 		                          rangeStart, rangeEnd),
 			"");
 
-	if (reader->Attribute("Segment") != nullptr)
+	const char* segmentXml = reader->Attribute("Segment");
+	if (segmentXml != nullptr)
 	{
-		segment = StringHelper::StrToL(reader->Attribute("Segment"), 10);
-		Globals::Instance->AddSegment(segment, this);
+		if (!StringHelper::HasOnlyDigits(segmentXml))
+		{
+			HANDLE_ERROR_PROCESS(WarningType::Always,
+			                     StringHelper::Sprintf("error: Invalid segment value '%s': must be "
+			                                           "a decimal between 0 and 15 inclusive",
+			                                           segmentXml),
+			                     "");
+		}
+
+		segment = StringHelper::StrToL(segmentXml, 10);
+		if (segment > 15)
+		{
+			if (segment == 128)
+			{
+#ifdef DEPRECATION_ON
+				HANDLE_WARNING_PROCESS(
+					WarningType::Always, "warning: segment 128 is deprecated.",
+					"Remove 'Segment=\"128\"' from the xml to use virtual addresses\n");
+#endif
+			}
+			else
+			{
+				HANDLE_ERROR_PROCESS(
+					WarningType::Always,
+					StringHelper::Sprintf("error: invalid segment value '%s': must be a decimal "
+				                          "number between 0 and 15 inclusive",
+				                          segmentXml),
+					"");
+			}
+		}
+	}
+	Globals::Instance->AddSegment(segment, this);
+
+	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+	{
+		if (segment == 0x80)
+		{
+			printf("File '%s' using virtual addresses.\n", GetName().c_str());
+		}
+		else
+		{
+			printf("File '%s' using segment %X.\n", GetName().c_str(), segment);
+		}
 	}
 	else
 	{
@@ -159,13 +202,8 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 
 		rawData = File::ReadAllBytes((basePath / name).string());
 
-		/*
-		 * TODO: In OoT repo ovl_Boss_Sst has a wrong RangeEnd (0xAD40 instead of 0xAD70),
-		 * so uncommenting the following produces wrong behavior.
-		 * If somebody fixes that in OoT repo, uncomment this. I'm too tired of fixing XMLs.
-		 */
-		// if (reader->Attribute("RangeEnd") == nullptr)
-		// rangeEnd = rawData.size();
+		if (reader->Attribute("RangeEnd") == nullptr)
+		rangeEnd = rawData.size();
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -706,8 +744,6 @@ void ZFile::GenerateSourceFiles()
 
 	sourceOutput += GetExternalFileHeaderInclude();
 
-	sourceOutput += "\n";
-
 	GeneratePlaceholderDeclarations();
 
 	// Generate Code
@@ -814,7 +850,8 @@ void ZFile::GeneratePlaceholderDeclarations()
 			continue;
 		}
 
-		Declaration* decl = AddDeclarationPlaceholder(res->GetRawDataIndex(), res->GetName());
+		Declaration* decl = res->DeclareVar(GetName(), "");
+		decl->staticConf = res->GetStaticConf();
 		if (res->GetResourceType() == ZResourceType::Symbol)
 		{
 			decl->staticConf = StaticConfig::Off;
@@ -943,6 +980,7 @@ std::string ZFile::ProcessDeclarations()
 							lastItem.second->text += "\n" + curItem.second->text;
 							declarations.erase(curItem.first);
 							declarationKeys.erase(declarationKeys.begin() + i);
+							delete curItem.second;
 							i--;
 							continue;
 						}
@@ -1043,8 +1081,6 @@ std::string ZFile::ProcessDeclarations()
 		}
 	}
 
-	output += "\n";
-
 	return output;
 }
 
@@ -1126,6 +1162,7 @@ std::string ZFile::ProcessTextureIntersections([[maybe_unused]] const std::strin
 				// Shrink palette so it doesn't overlap
 				currentTex->SetDimensions(offsetDiff / currentTex->GetPixelMultiplyer(), 1);
 				declarations.at(currentOffset)->size = currentTex->GetRawDataSize();
+				currentTex->DeclareVar(GetName(), "");
 			}
 			else
 			{

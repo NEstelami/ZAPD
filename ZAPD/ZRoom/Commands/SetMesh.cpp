@@ -209,6 +209,7 @@ ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::
 		parent->GetRawData(), dlistAddress,
 		Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
 	ZDisplayList* dlist = new ZDisplayList(parent);
+	parent->AddResource(dlist);
 	dlist->ExtractFromBinary(dlistAddress, dlistLength);
 	dlist->SetName(dlist->GetDefaultName(prefix));
 	GenDListDeclarations(zRoom, parent, dlist);
@@ -582,9 +583,11 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 		polyDListName = StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), polyDlistType.c_str(),
 		                                      GETSEGOFFSET(start));
 
-		parent->AddDeclarationArray(GETSEGOFFSET(start), DeclarationAlignment::Align4,
-		                            polyDLists.size() * polyDLists.at(0).GetRawDataSize(),
-		                            polyDlistType, polyDListName, polyDLists.size(), declaration);
+		Declaration* decl = parent->AddDeclarationArray(
+			GETSEGOFFSET(start), DeclarationAlignment::Align4,
+			polyDLists.size() * polyDLists.at(0).GetRawDataSize(), polyDlistType, polyDListName,
+			polyDLists.size(), declaration);
+		decl->forceArrayCnt = true;
 	}
 
 	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "s32",

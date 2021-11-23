@@ -33,7 +33,9 @@ public:
 	std::map<offset_t, Declaration*> declarations;
 	std::string defines;
 	std::vector<ZResource*> resources;
-	uint32_t segment;
+
+	// Default to using virtual addresses
+	uint32_t segment = 0x80;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 	bool isExternalFile = false;
 
@@ -85,6 +87,7 @@ public:
 	std::string GetHeaderInclude() const;
 	std::string GetZRoomHeaderInclude() const;
 	std::string GetExternalFileHeaderInclude() const;
+
 	void GeneratePlaceholderDeclarations();
 
 	void AddTextureResource(uint32_t offset, ZTexture* tex);
