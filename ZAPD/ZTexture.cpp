@@ -764,7 +764,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 	}
 
 	Declaration* decl = parent->AddDeclarationIncludeArray(
-		rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), auxName, GetRawDataSize() / 8);
+		rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), auxName, GetRawDataSize() / 4);
 	decl->staticConf = staticConf;
 	return decl;
 }
@@ -773,13 +773,13 @@ std::string ZTexture::GetBodySourceCode() const
 {
 	std::string sourceOutput;
 
-	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
+	for (size_t i = 0; i < textureDataRaw.size(); i += 4)
 	{
 		if (i % 32 == 0)
 			sourceOutput += "    ";
 
 		sourceOutput +=
-			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(textureDataRaw, i));
+			StringHelper::Sprintf("0x%08llX, ", BitConverter::ToUInt32BE(textureDataRaw, i));
 
 		if (i % 32 == 24)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));
@@ -805,7 +805,7 @@ ZResourceType ZTexture::GetResourceType() const
 
 std::string ZTexture::GetSourceTypeName() const
 {
-	return "u64";
+	return "u32";
 }
 
 void ZTexture::CalcHash()
