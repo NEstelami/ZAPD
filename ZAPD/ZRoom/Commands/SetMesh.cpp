@@ -582,9 +582,11 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 		polyDListName = StringHelper::Sprintf("%s%s_%06X", prefix.c_str(), polyDlistType.c_str(),
 		                                      GETSEGOFFSET(start));
 
-		parent->AddDeclarationArray(GETSEGOFFSET(start), DeclarationAlignment::Align4,
-		                            polyDLists.size() * polyDLists.at(0).GetRawDataSize(),
-		                            polyDlistType, polyDListName, polyDLists.size(), declaration);
+		Declaration* decl = parent->AddDeclarationArray(
+			GETSEGOFFSET(start), DeclarationAlignment::Align4,
+			polyDLists.size() * polyDLists.at(0).GetRawDataSize(), polyDlistType, polyDListName,
+			polyDLists.size(), declaration);
+		decl->forceArrayCnt = true;
 	}
 
 	parent->AddDeclaration(GETSEGOFFSET(end), DeclarationAlignment::Align4, 4, "s32",
