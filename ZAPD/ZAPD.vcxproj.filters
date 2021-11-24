@@ -258,6 +258,18 @@
     <ClCompile Include="ZString.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
+    <ClCompile Include="GameConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZTextureAnimation.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
+    <ClCompile Include="OtherStructs\SkinLimbStructs.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
+    <ClCompile Include="..\build\ZAPD\BuildInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZRoom\ZRoom.h">
@@ -495,6 +507,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZString.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="GameConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZTextureAnimation.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="OtherStructs\SkinLimbStructs.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>

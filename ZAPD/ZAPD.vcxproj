@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\libpng-v142.1.6.37.2\build\native\libpng-v142.props" Condition="Exists('..\packages\libpng-v142.1.6.37.2\build\native\libpng-v142.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -71,7 +72,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(SolutionDir)lib\libgfxd;$(SolutionDir)x64\Debug;$(SolutionDir)packages\libpng.1.6.28.1\build\native\lib\x64\v140\dynamic\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\libgfxd;$(SolutionDir)x64\Debug;$(SolutionDir)packages\libpng-v142.1.6.37.2\build\native\lib\x64\v142\Debug\;$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)ZAPDUtils;$(SolutionDir)lib\tinyxml2;$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\elfio;$(SolutionDir)lib\stb;$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -112,6 +113,7 @@
     </Link>
     <PreBuildEvent>
       <Command>cd ..
+mkdir build\ZAPD
 python3 ZAPD/genbuildinfo.py</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -146,6 +148,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\build\ZAPD\BuildInfo.cpp" />
     <ClCompile Include="..\lib\libgfxd\gfxd.c" />
     <ClCompile Include="..\lib\libgfxd\uc.c" />
     <ClCompile Include="..\lib\libgfxd\uc_f3d.c" />
@@ -155,9 +158,11 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClCompile Include="..\lib\libgfxd\uc_f3dexb.c" />
     <ClCompile Include="..\lib\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="Declaration.cpp" />
+    <ClCompile Include="GameConfig.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="ImageBackend.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="OtherStructs\SkinLimbStructs.cpp" />
     <ClCompile Include="OutputFormatter.cpp" />
     <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="ZArray.cpp" />
@@ -213,6 +218,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClCompile Include="ZString.cpp" />
     <ClCompile Include="ZSymbol.cpp" />
     <ClCompile Include="ZTexture.cpp" />
+    <ClCompile Include="ZTextureAnimation.cpp" />
     <ClCompile Include="ZVector.cpp" />
     <ClCompile Include="ZVtx.cpp" />
   </ItemGroup>
@@ -237,8 +243,10 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="..\lib\stb\tinyxml2.h" />
     <ClInclude Include="CRC32.h" />
     <ClInclude Include="Declaration.h" />
+    <ClInclude Include="GameConfig.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="ImageBackend.h" />
+    <ClInclude Include="OtherStructs\SkinLimbStructs.h" />
     <ClInclude Include="OutputFormatter.h" />
     <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="ZAnimation.h" />
@@ -294,6 +302,7 @@ python3 ZAPD/genbuildinfo.py</Command>
     <ClInclude Include="ZString.h" />
     <ClInclude Include="ZSymbol.h" />
     <ClInclude Include="ZTexture.h" />
+    <ClInclude Include="ZTextureAnimation.h" />
     <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZVtx.h" />
   </ItemGroup>
@@ -307,18 +316,15 @@ python3 ZAPD/genbuildinfo.py</Command>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\libpng.redist.1.6.28.1\build\native\libpng.redist.targets" Condition="Exists('..\packages\libpng.redist.1.6.28.1\build\native\libpng.redist.targets')" />
     <Import Project="..\packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets" Condition="Exists('..\packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets')" />
     <Import Project="..\packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets" Condition="Exists('..\packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets')" />
-    <Import Project="..\packages\libpng.1.6.28.1\build\native\libpng.targets" Condition="Exists('..\packages\libpng.1.6.28.1\build\native\libpng.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\libpng.redist.1.6.28.1\build\native\libpng.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng.redist.1.6.28.1\build\native\libpng.redist.targets'))" />
     <Error Condition="!Exists('..\packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v120.windesktop.msvcstl.dyn.rt-dyn.targets'))" />
     <Error Condition="!Exists('..\packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\build\native\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.targets'))" />
-    <Error Condition="!Exists('..\packages\libpng.1.6.28.1\build\native\libpng.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng.1.6.28.1\build\native\libpng.targets'))" />
+    <Error Condition="!Exists('..\packages\libpng-v142.1.6.37.2\build\native\libpng-v142.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng-v142.1.6.37.2\build\native\libpng-v142.props'))" />
   </Target>
 </Project>
