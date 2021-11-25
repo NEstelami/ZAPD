@@ -270,6 +270,9 @@
     <ClCompile Include="..\build\ZAPD\BuildInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZPlayerAnimationData.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZRoom\ZRoom.h">
@@ -516,6 +519,9 @@
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
     <ClInclude Include="OtherStructs\SkinLimbStructs.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="ZPlayerAnimationData.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>
