@@ -1522,11 +1522,6 @@ void ZDisplayList::Opcode_G_ENDDL([[maybe_unused]] const std::string& prefix, ch
 	TextureGenCheck();
 }
 
-std::string ZDisplayList::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
-{
-	return "";
-}
-
 static int32_t GfxdCallback_FormatSingleEntry()
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
