@@ -392,14 +392,10 @@ size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 	return 0;
 }
 
-std::string ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
+void ZRoom::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
-	if (hackMode == "syotes_room")
-		return "";
-
-	DeclareVar(prefix, GetBodySourceCode());
-
-	return "";
+	if (hackMode != "syotes_room")
+		DeclareVar(prefix, GetBodySourceCode());
 }
 
 size_t ZRoom::GetRawDataSize() const

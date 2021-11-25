@@ -53,11 +53,9 @@ void SetMesh::DeclareReferences(const std::string& prefix)
 void GenDListDeclarations(ZRoom* zRoom, ZFile* parent, ZDisplayList* dList)
 {
 	if (dList == nullptr)
-	{
 		return;
-	}
 
-	std::string sourceOutput = dList->GetSourceOutputCode(zRoom->GetName());
+	dList->DeclareReferences(zRoom->GetName());
 
 	for (ZDisplayList* otherDList : dList->otherDLists)
 		GenDListDeclarations(zRoom, parent, otherDList);
@@ -143,21 +141,17 @@ std::string PolygonDlist::GetBodySourceCode() const
 	return bodyStr;
 }
 
-std::string PolygonDlist::GetSourceOutputCode(const std::string& prefix)
+void PolygonDlist::GetSourceOutputCode(const std::string& prefix)
 {
 	std::string bodyStr = StringHelper::Sprintf("\n\t%s\n", GetBodySourceCode().c_str());
 
 	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	if (decl == nullptr)
-	{
-		DeclareVar(prefix, bodyStr);
-	}
-	else
-	{
-		decl->text = bodyStr;
-	}
 
-	return "";
+	if (decl == nullptr)
+		DeclareVar(prefix, bodyStr);
+	else
+		decl->text = bodyStr;
+
 }
 
 std::string PolygonDlist::GetSourceTypeName() const

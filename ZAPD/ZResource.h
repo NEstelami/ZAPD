@@ -113,7 +113,7 @@ public:
 	 */
 	[[nodiscard]] virtual std::string GetDefaultName(const std::string& prefix) const;
 
-	virtual std::string GetSourceOutputCode(const std::string& prefix);
+	virtual void GetSourceOutputCode(const std::string& prefix);
 	virtual std::string GetSourceOutputHeader(const std::string& prefix);
 	virtual void CalcHash();
 	/**

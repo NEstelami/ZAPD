@@ -73,19 +73,13 @@ ZFile::ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBas
 ZFile::~ZFile()
 {
 	for (ZResource* res : resources)
-	{
 		delete res;
-	}
 
 	for (auto d : declarations)
-	{
 		delete d.second;
-	}
 
 	for (auto sym : symbolResources)
-	{
 		delete sym.second;
-	}
 }
 
 void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
