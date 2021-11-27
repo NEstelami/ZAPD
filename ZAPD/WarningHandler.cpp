@@ -364,7 +364,7 @@ void WarningHandler::Warning_Resource(const char* filename, int32_t line, const 
 void WarningHandler::PrintHelp() {
     std::set<std::string> sortedKeys;
     WarningInfoInit warningInfo;
-    uint columnWidth = 25;
+    uint32_t columnWidth = 25;
     std::string dt;
 
     // Sort keys through the magic of `set`, to print in alphabetical order
