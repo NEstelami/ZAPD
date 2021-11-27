@@ -185,11 +185,6 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 			printf("File '%s' using segment %X.\n", GetName().c_str(), segment);
 		}
 	}
-	else
-	{
-		HANDLE_WARNING_PROCESS(WarningType::MissingSegment, "missing 'Segment' attribute in <File>",
-		                       "");
-	}
 
 	if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 	{
