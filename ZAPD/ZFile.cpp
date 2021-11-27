@@ -313,7 +313,7 @@ void ZFile::BuildSourceFile()
 		return;
 
 	if (!Directory::Exists(outputPath))
-		Directory::CreateDirectory(outputPath);
+		Directory::CreateDirectory(outputPath.string());
 
 	GenerateSourceFiles();
 }
@@ -344,10 +344,10 @@ void ZFile::ExtractResources()
 		return;
 
 	if (!Directory::Exists(outputPath))
-		Directory::CreateDirectory(outputPath);
+		Directory::CreateDirectory(outputPath.string());
 
 	if (!Directory::Exists(GetSourceOutputFolderPath()))
-		Directory::CreateDirectory(GetSourceOutputFolderPath());
+		Directory::CreateDirectory(GetSourceOutputFolderPath().string());
 
 	for (size_t i = 0; i < resources.size(); i++)
 		resources[i]->ParseRawDataLate();
