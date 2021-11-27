@@ -1,17 +1,11 @@
 #pragma once
 
 #include <algorithm>
+#include <cstdarg>
 #include <cstring>
 #include <numeric>
-#include <stdarg.h>
 #include <string>
 #include <vector>
-
-#ifdef _MSC_VER
-#define __PRETTY_FUNCTION__ __FUNCSIG__
-#elif not defined(__GNUC__)
-#define __PRETTY_FUNCTION__ __func__
-#endif
 
 class StringHelper
 {

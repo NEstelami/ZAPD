@@ -43,7 +43,7 @@ public:
 	bool isArray = false;
 	bool forceArrayCnt = false;
 	size_t arrayItemCnt = 0;
-	std::string arrayItemCntStr;
+	std::string arrayItemCntStr = "";
 	std::vector<segptr_t> references;
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
