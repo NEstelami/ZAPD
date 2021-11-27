@@ -53,9 +53,6 @@ public:
 	TextureType texType;
 	ZGame game;
 	GameConfig cfg;
-	bool warnUnaccounted = false;
-	bool warnNoOffset = false;
-	bool errorNoOffset = false;
 	bool verboseUnaccounted = false;
 	bool gccCompat = false;
 	bool forceStatic = false;

@@ -72,8 +72,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(SolutionDir)lib\libgfxd;$(SolutionDir)x64\Debug;$(SolutionDir)packages\libpng-v142.1.6.37.2\build\native\lib\x64\v142\Debug\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)ZAPDUtils;$(SolutionDir)lib\tinyxml2;$(SolutionDir)lib\libgfxd;$(SolutionDir)lib\elfio;$(SolutionDir)lib\stb;$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\lib\libgfxd;$(ProjectDir)..\x64\Debug;$(ProjectDir)..\packages\libpng-v142.1.6.37.2\build\native\lib\x64\v142\Debug\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\ZAPDUtils;$(ProjectDir)..\lib\tinyxml2;$(ProjectDir)..\lib\libgfxd;$(ProjectDir)..\lib\elfio;$(ProjectDir)..\lib\stb;$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(IncludePath)</IncludePath>
