@@ -258,18 +258,21 @@ std::string ZResource::GetDefaultName(const std::string& prefix) const
 	                             rawDataIndex);
 }
 
-std::string ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
+void ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 {
 	std::string bodyStr = GetBodySourceCode();
 
-	Declaration* decl = parent->GetDeclaration(rawDataIndex);
-	if (decl == nullptr || decl->isPlaceholder)
-		decl = DeclareVar(prefix, bodyStr);
-	else
-		decl->text = bodyStr;
-	decl->staticConf = staticConf;
+	if (bodyStr != "ERROR")
+	{
+		Declaration* decl = parent->GetDeclaration(rawDataIndex);
 
-	return "";
+		if (decl == nullptr || decl->isPlaceholder)
+			decl = DeclareVar(prefix, bodyStr);
+		else
+			decl->text = bodyStr;
+
+		decl->staticConf = staticConf;
+	}
 }
 
 std::string ZResource::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)

@@ -45,6 +45,7 @@ public:
 	~ZFile();
 
 	std::string GetName() const;
+	std::string GetOutName() const;
 	ZFileMode GetMode() const;
 	const fs::path& GetXmlFilePath() const;
 	const std::vector<uint8_t>& GetRawData() const;

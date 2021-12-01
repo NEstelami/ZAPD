@@ -1524,11 +1524,6 @@ void ZDisplayList::Opcode_G_ENDDL([[maybe_unused]] const std::string& prefix, ch
 	TextureGenCheck();
 }
 
-std::string ZDisplayList::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
-{
-	return "";
-}
-
 static int32_t GfxdCallback_FormatSingleEntry()
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
@@ -1739,7 +1734,7 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	return 1;
 }
 
-std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
+void ZDisplayList::DeclareReferences(const std::string& prefix)
 {
 	std::string sourceOutput;
 
@@ -1752,7 +1747,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-		                                                                   vertices.end());
+			vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1783,9 +1778,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			auto& firstVtx = item.second.at(0);
 
 			for (auto vtx : item.second)
-			{
 				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
-			}
 
 			Declaration* decl = parent->AddDeclarationArray(
 				curAddr, firstVtx.GetDeclarationAlignment(),
@@ -1802,7 +1795,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-		                                                                   vertices.end());
+			vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1865,11 +1858,6 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			}
 		}
 	}
-
-	if (parent != nullptr)
-		return "";
-
-	return sourceOutput;
 }
 
 std::string ZDisplayList::ProcessLegacy(const std::string& prefix)
