@@ -317,6 +317,11 @@ std::string ZFile::GetName() const
 	return name;
 }
 
+std::string ZFile::GetOutName() const
+{
+	return outName.string();
+}
+
 ZFileMode ZFile::GetMode() const
 {
 	return mode;
@@ -351,8 +356,8 @@ void ZFile::ExtractResources()
 	if (Globals::Instance->genSourceFile)
 		GenerateSourceFiles();
 
-	MemoryStream* memStream = new MemoryStream();
-	BinaryWriter writer = BinaryWriter(memStream);
+	auto memStreamFile = std::shared_ptr<MemoryStream>(new MemoryStream());
+	BinaryWriter writerFile = BinaryWriter(memStreamFile);
 
 	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
 
@@ -361,6 +366,9 @@ void ZFile::ExtractResources()
 
 	for (ZResource* res : resources)
 	{
+		auto memStreamRes = std::shared_ptr<MemoryStream>(new MemoryStream());
+		BinaryWriter writerRes = BinaryWriter(memStreamRes);
+
 		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
 			printf("Saving resource %s\n", res->GetName().c_str());
 
@@ -369,18 +377,24 @@ void ZFile::ExtractResources()
 		// Check if we have an exporter "registered" for this resource type
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
 		if (exporter != nullptr)
-			exporter->Save(res, Globals::Instance->outputPath.string(), &writer);
+		{
+			//exporter->Save(res, Globals::Instance->outputPath.string(), &writerFile);
+			exporter->Save(res, Globals::Instance->outputPath.string(), &writerRes);
+		}
+
+		if (exporterSet != nullptr && exporterSet->resSaveFunc != nullptr)
+			exporterSet->resSaveFunc(res, writerRes);
 	}
 
-	if (memStream->GetLength() > 0)
+	if (memStreamFile->GetLength() > 0)
 	{
 		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin",
 		                                          Globals::Instance->outputPath.string().c_str(),
 		                                          GetName().c_str()),
-		                    memStream->ToVector());
+			memStreamFile->ToVector());
 	}
 
-	writer.Close();
+	writerFile.Close();
 
 	if (exporterSet != nullptr && exporterSet->endFileFunc != nullptr)
 		exporterSet->endFileFunc(this);
