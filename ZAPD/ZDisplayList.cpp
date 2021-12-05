@@ -1892,7 +1892,7 @@ std::string ZDisplayList::ProcessLegacy(const std::string& prefix)
 		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
 		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG && diff > 5)
-			printf("F3DOP: 0x%02X, TIME: %lims\n", opcode, diff);
+			printf("F3DOP: 0x%02X, TIME: %llims\n", opcode, diff);
 
 		sourceOutput += line;
 

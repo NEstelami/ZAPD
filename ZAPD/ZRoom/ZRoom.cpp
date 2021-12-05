@@ -261,7 +261,7 @@ void ZRoom::ParseRawData()
 			auto end = std::chrono::steady_clock::now();
 			auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 			if (diff > 50)
-				printf("OP: %s, TIME: %lims\n", cmd->GetCommandCName().c_str(), diff);
+				printf("OP: %s, TIME: %llims\n", cmd->GetCommandCName().c_str(), diff);
 		}
 
 		cmd->cmdIndex = currentIndex;
