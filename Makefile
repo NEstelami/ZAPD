@@ -28,9 +28,9 @@ else
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
-  OPTFLAGS := -O0
+  OPTFLAGS := -Og
 else
-  OPTFLAGS := -O2 -march=native -mtune=native
+  OPTFLAGS := -O2
 endif
 
 ifneq ($(ASAN),0)

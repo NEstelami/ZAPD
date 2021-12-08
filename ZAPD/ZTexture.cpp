@@ -729,7 +729,7 @@ void ZTexture::Save(const fs::path& outFolder)
 	std::filesystem::__cxx11::path outFileName;
 
 	if (!dWordAligned)
-		outFileName = outPath / (outName + ".UNALIGNED" + "." + GetExternalExtension() + ".png");
+		outFileName = outPath / (outName + ".u32" + "." + GetExternalExtension() + ".png");
 	else
 		outFileName = outPath / (outName + +"." + GetExternalExtension() + ".png");
 
@@ -765,7 +765,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		incStr =
 			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 	else
-		incStr = StringHelper::Sprintf("%s.UNALIGNED.%s.inc.c", filepath.c_str(),
+		incStr = StringHelper::Sprintf("%s.u32.%s.inc.c", filepath.c_str(),
 		                               GetExternalExtension().c_str());
 
 	if (!Globals::Instance->cfg.texturePool.empty())
@@ -781,7 +781,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 				                               GetExternalExtension().c_str());
 			else
 				incStr =
-					StringHelper::Sprintf("%s.UNALIGNED.%s.inc.c", poolEntry->second.path.c_str(),
+					StringHelper::Sprintf("%s.u32.%s.inc.c", poolEntry->second.path.c_str(),
 				                          GetExternalExtension().c_str());
 		}
 	}
