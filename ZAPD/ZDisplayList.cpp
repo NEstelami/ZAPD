@@ -26,8 +26,7 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 	lastTexSizTest = F3DZEXTexSizes::G_IM_SIZ_16b;
 	lastTexLoaded = false;
 	lastTexIsPalette = false;
-	name = "";
-	dListType = Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX;
+	RegisterOptionalAttribute("Ucode");
 }
 
 ZDisplayList::~ZDisplayList()
@@ -43,13 +42,24 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
+	const char* uCodeType = reader->Attribute("Ucode");
+	if (Globals::Instance->game == ZGame::OOT_SW97 || ((uCodeType != nullptr) && std::string_view(uCodeType) == "f3dex"))
+	{
+		dListType = DListType::F3DEX;
+	}
+	else if ((uCodeType == nullptr) || std::string_view(uCodeType) == "f3dex2"))
+	{
+		dListType = DListType::F3DZEX;
+	}
+
+	
+	
 
 	// Don't parse raw data of external files
 	if (parent->GetMode() != ZFileMode::ExternalFile)
 	{
-		int32_t rawDataSize = ZDisplayList::GetDListLength(
-			parent->GetRawData(), rawDataIndex,
-			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		int32_t rawDataSize =
+			ZDisplayList::GetDListLength(parent->GetRawData(), rawDataIndex, dListType);
 		numInstructions = rawDataSize / 8;
 		ParseRawData();
 	}
@@ -1747,7 +1757,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1795,7 +1805,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
