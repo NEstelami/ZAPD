@@ -26,6 +26,7 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 	lastTexSizTest = F3DZEXTexSizes::G_IM_SIZ_16b;
 	lastTexLoaded = false;
 	lastTexIsPalette = false;
+	dListType = Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX;
 	RegisterOptionalAttribute("Ucode");
 }
 
@@ -42,17 +43,23 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
-	//TODO add error handling here
-	if (Globals::Instance->game == ZGame::OOT_SW97 || (reader->Attribute("Ucode", "f3dex")))
+	// TODO add error handling here
+	bool ucodeSet = registeredAttributes.at("Ucode").wasSet;
+	std::string ucodeValue = registeredAttributes.at("Ucode").value;
+	if ((Globals::Instance->game == ZGame::OOT_SW97) || (ucodeValue == "f3dex"))
 	{
 		dListType = DListType::F3DEX;
 	}
-	else
+	else if (!ucodeSet || ucodeValue == "f3dex2")
 	{
 		dListType = DListType::F3DZEX;
 	}
-	
-	
+	else
+	{
+		HANDLE_ERROR_RESOURCE(
+			WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+			StringHelper::Sprintf("Invalid ucode type in node: %s\n", reader->Name()), "");
+	}
 
 	// Don't parse raw data of external files
 	if (parent->GetMode() != ZFileMode::ExternalFile)
