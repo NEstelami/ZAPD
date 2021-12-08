@@ -42,16 +42,15 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
-	const char* uCodeType = reader->Attribute("Ucode");
-	if (Globals::Instance->game == ZGame::OOT_SW97 || ((uCodeType != nullptr) && std::string_view(uCodeType) == "f3dex"))
+	//TODO add error handling here
+	if (Globals::Instance->game == ZGame::OOT_SW97 || (reader->Attribute("Ucode", "f3dex")))
 	{
 		dListType = DListType::F3DEX;
 	}
-	else if ((uCodeType == nullptr) || std::string_view(uCodeType) == "f3dex2"))
+	else
 	{
 		dListType = DListType::F3DZEX;
 	}
-
 	
 	
 
