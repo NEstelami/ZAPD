@@ -16,6 +16,7 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 {
 	width = 0;
 	height = 0;
+	dWordAligned = true;
 
 	RegisterRequiredAttribute("Width");
 	RegisterRequiredAttribute("Height");
@@ -55,6 +56,10 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	std::string widthXml = registeredAttributes.at("Width").value;
 	std::string heightXml = registeredAttributes.at("Height").value;
+
+	/*if(StringHelper::StrToL(registeredAttributes.at("Offset").value,16) % 8 != 0){
+	    dWordAligned = false;
+	}*/
 
 	if (!StringHelper::HasOnlyDigits(widthXml))
 	{
@@ -105,10 +110,7 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 void ZTexture::ParseRawData()
 {
 	if (rawDataIndex % 8 != 0)
-	{
-		HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
-		                        "this texture is not 64-bit aligned", "");
-	}
+		dWordAligned = false;
 
 	switch (format)
 	{
@@ -724,7 +726,12 @@ void ZTexture::Save(const fs::path& outFolder)
 	if (!Directory::Exists(outPath.string()))
 		Directory::CreateDirectory(outPath.string());
 
-	auto outFileName = outPath / (outName + "." + GetExternalExtension() + ".png");
+	std::filesystem::__cxx11::path outFileName;
+
+	if (!dWordAligned)
+		outFileName = outPath / (outName + ".UNALIGNED" + "." + GetExternalExtension() + ".png");
+	else
+		outFileName = outPath / (outName + +"." + GetExternalExtension() + ".png");
 
 #ifdef TEXTURE_DEBUG
 	printf("Saving PNG: %s\n", outFileName.c_str());
@@ -745,7 +752,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 {
 	std::string auxName = name;
 	std::string auxOutName = outName;
-
+	std::string incStr;
 	if (auxName == "")
 		auxName = GetDefaultName(prefix);
 
@@ -754,8 +761,12 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 
 	auto filepath = Globals::Instance->outputPath / fs::path(auxOutName).stem();
 
-	std::string incStr =
-		StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
+	if (dWordAligned)
+		incStr =
+			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
+	else
+		incStr = StringHelper::Sprintf("%s.UNALIGNED.%s.inc.c", filepath.c_str(),
+		                               GetExternalExtension().c_str());
 
 	if (!Globals::Instance->cfg.texturePool.empty())
 	{
@@ -765,13 +776,20 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		const auto& poolEntry = Globals::Instance->cfg.texturePool.find(hash);
 		if (poolEntry != Globals::Instance->cfg.texturePool.end())
 		{
-			incStr = StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.c_str(),
-			                               GetExternalExtension().c_str());
+			if (dWordAligned)
+				incStr = StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.c_str(),
+				                               GetExternalExtension().c_str());
+			else
+				incStr =
+					StringHelper::Sprintf("%s.UNALIGNED.%s.inc.c", poolEntry->second.path.c_str(),
+				                          GetExternalExtension().c_str());
 		}
 	}
+	size_t texSizeDivisor = (dWordAligned) ? 8 : 4;
 
-	Declaration* decl = parent->AddDeclarationIncludeArray(
-		rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), auxName, GetRawDataSize() / 8);
+	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
+	                                                       GetSourceTypeName(), auxName,
+	                                                       GetRawDataSize() / texSizeDivisor);
 	decl->staticConf = staticConf;
 	return decl;
 }
@@ -779,15 +797,17 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 std::string ZTexture::GetBodySourceCode() const
 {
 	std::string sourceOutput;
-
-	for (size_t i = 0; i < textureDataRaw.size(); i += 8)
+	size_t texSizeInc = (dWordAligned) ? 8 : 4;
+	for (size_t i = 0; i < textureDataRaw.size(); i += texSizeInc)
 	{
 		if (i % 32 == 0)
 			sourceOutput += "    ";
-
-		sourceOutput +=
-			StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(textureDataRaw, i));
-
+		if (dWordAligned)
+			sourceOutput +=
+				StringHelper::Sprintf("0x%016llX, ", BitConverter::ToUInt64BE(textureDataRaw, i));
+		else
+			sourceOutput +=
+				StringHelper::Sprintf("0x%08llX, ", BitConverter::ToUInt32BE(textureDataRaw, i));
 		if (i % 32 == 24)
 			sourceOutput += StringHelper::Sprintf(" // 0x%06X \n", rawDataIndex + ((i / 32) * 32));
 	}
@@ -812,7 +832,10 @@ ZResourceType ZTexture::GetResourceType() const
 
 std::string ZTexture::GetSourceTypeName() const
 {
-	return "u64";
+	if (dWordAligned)
+		return "u64";
+	else
+		return "u32";
 }
 
 void ZTexture::CalcHash()
