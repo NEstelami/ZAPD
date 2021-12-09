@@ -3,9 +3,11 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "tinyxml2.h"
+
 #include "ZFile.h"
 #include "ZResource.h"
-#include "tinyxml2.h"
+#include "OtherStructs/Cutscene_Commands.h"
 
 enum class CutsceneCommands
 {
@@ -54,18 +56,6 @@ public:
 	int16_t unused;
 
 	CutsceneCameraPoint(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-};
-
-class CutsceneCommand
-{
-public:
-	uint32_t commandID;
-	uint32_t commandIndex;
-	virtual ~CutsceneCommand();
-	CutsceneCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	virtual std::string GetCName();
-	virtual std::string GenerateSourceCode(uint32_t baseAddress);
-	virtual size_t GetCommandSize();
 };
 
 class CutsceneCommandSetCameraPos : public CutsceneCommand
@@ -416,6 +406,7 @@ public:
 	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
 
 	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 };
 
 class ZCutscene : public ZCutsceneBase
@@ -429,8 +420,6 @@ public:
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawDataSize() const override;
-
-	ZResourceType GetResourceType() const override;
 
 	CutsceneCommands GetCommandFromID(int32_t id);
 

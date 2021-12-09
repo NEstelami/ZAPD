@@ -226,7 +226,7 @@ void ZCutscene::ParseRawData()
 				cmd = new CutsceneCommandEnd(rawData, currentPtr);
 				break;
 			case CutsceneCommands::Error:
-				HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
+				HANDLE_ERROR_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
 				                        StringHelper::Sprintf("cutscene command error %d", cmdID),
 				                        "");
 				break;
@@ -411,36 +411,6 @@ CutsceneCommands ZCutscene::GetCommandFromID(int32_t id)
 		StringHelper::Sprintf("could not identify cutscene command. ID 0x%04X", id), "");
 
 	return CutsceneCommands::Error;
-}
-
-ZResourceType ZCutscene::GetResourceType() const
-{
-	return ZResourceType::Cutscene;
-}
-
-CutsceneCommand::CutsceneCommand([[maybe_unused]] const std::vector<uint8_t>& rawData,
-                                 [[maybe_unused]] uint32_t rawDataIndex)
-{
-}
-
-CutsceneCommand::~CutsceneCommand()
-{
-}
-
-std::string CutsceneCommand::GetCName()
-{
-	return "SCmdCutsceneData";
-}
-
-std::string CutsceneCommand::GenerateSourceCode(uint32_t baseAddress)
-{
-	return StringHelper::Sprintf("%s CutsceneData%04XCmd%02X = { 0x%02X,", GetCName().c_str(),
-	                             baseAddress, commandIndex, commandID);
-}
-
-size_t CutsceneCommand::GetCommandSize()
-{
-	return 4;
 }
 
 CutsceneCameraPoint::CutsceneCameraPoint(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
@@ -1248,4 +1218,9 @@ Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::str
 std::string ZCutsceneBase::GetSourceTypeName() const
 {
 	return "CutsceneData";
+}
+
+ZResourceType ZCutsceneBase::GetResourceType() const
+{
+	return ZResourceType::Cutscene;
 }
