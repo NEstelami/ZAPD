@@ -114,6 +114,16 @@ public:
 
 
 
+
+class CutsceneSubCommandEntry_Misc : public CutsceneSubCommandEntry
+{
+public:
+    CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneSubCommandEntry_Misc();
+
+	std::string GetBodySourceCode() const override;
+};
+
 class CutsceneMMCommand_Misc : public CutsceneMMCommand
 {
 public:

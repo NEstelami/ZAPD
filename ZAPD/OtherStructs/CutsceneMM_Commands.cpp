@@ -191,6 +191,20 @@ size_t CutsceneMMCommand_5A::GetCommandSize()
 
 
 
+CutsceneSubCommandEntry_Misc::CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_Misc::~CutsceneSubCommandEntry_Misc()
+{
+
+}
+
+std::string CutsceneSubCommandEntry_Misc::GetBodySourceCode() const
+{
+    return StringHelper::Sprintf("CS_MISC(0x%02X, %i, %i, %i),", base, startFrame, endFrame, pad);
+}
+
 
 CutsceneMMCommand_Misc::CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 :CutsceneMMCommand(rawData, rawDataIndex)
@@ -198,7 +212,7 @@ CutsceneMMCommand_Misc::CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawDa
     rawDataIndex += 4;
 
     for(size_t i = 0; i < numEntries; i++) {
-        auto* entry = new CutsceneSubCommandEntry(rawData, rawDataIndex);
+        auto* entry = new CutsceneSubCommandEntry_Misc(rawData, rawDataIndex);
         entries.push_back(entry);
         rawDataIndex += entry->GetRawSize();
     }
