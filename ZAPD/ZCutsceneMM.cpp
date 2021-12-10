@@ -64,7 +64,7 @@ void ZCutsceneMM::ParseRawData()
 
 			switch (cmdID) {
 				case CutsceneMMCommands::CS_CMD_TEXTBOX:
-					cmd = new CutsceneCommandTextbox(rawData, currentPtr);
+					cmd = new CutsceneMMCommand_TextBox(rawData, currentPtr);
 					break;
 				case CutsceneMMCommands::CS_CMD_5A:
 					cmd = new CutsceneMMCommand_5A(rawData, currentPtr);
@@ -103,8 +103,7 @@ void ZCutsceneMM::ParseRawData()
 					cmd = new CutsceneCommandActorAction(rawData, currentPtr);
 					break;
 				case CutsceneMMCommands::CS_CMD_PLAYSEQ:
-					// TODO
-					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					cmd = new CutsceneMMCommand_PlaySeq(rawData, currentPtr);
 					break;
 				case CutsceneMMCommands::CS_CMD_130:
 					// TODO
@@ -204,7 +203,7 @@ size_t ZCutsceneMM::GetRawDataSize() const
 	}
 
 	// End
-	size += 8;
+	size += 4;
 
 	return size;
 }

@@ -44,6 +44,51 @@ public:
 };
 
 
+
+class CutsceneMMCommand : public CutsceneCommand
+{
+public:
+    uint32_t numEntries;
+    std::vector<CutsceneSubCommandEntry*> entries;
+
+	CutsceneMMCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	virtual ~CutsceneMMCommand();
+
+	virtual std::string GetCName() override;
+    virtual std::string GetCommandMacro() const;
+	virtual std::string GenerateSourceCode(uint32_t baseAddress) override;
+	virtual size_t GetCommandSize()  override;
+};
+
+
+
+
+class CutsceneSubCommandEntry_TextBox : public CutsceneSubCommandEntry
+{
+public:
+    uint16_t type;
+    uint16_t textId1;
+    uint16_t textId2;
+
+    CutsceneSubCommandEntry_TextBox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneSubCommandEntry_TextBox();
+
+	std::string GetBodySourceCode() const override;
+
+    size_t GetRawSize() override;
+};
+
+class CutsceneMMCommand_TextBox : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_TextBox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_TextBox();
+
+	//std::string GetCommandMacro() const override;
+};
+
+
+
 class CutsceneSubCommandEntry_Unk5A : public CutsceneSubCommandEntry
 {
 public:
@@ -57,19 +102,60 @@ public:
     size_t GetRawSize() override;
 };
 
+class CutsceneMMCommand_5A : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_5A(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_5A();
+
+	//std::string GetCommandMacro() const override;
+	virtual size_t GetCommandSize()  override;
+};
 
 
-class CutsceneSubCommandEntry_MusicFade : public CutsceneSubCommandEntry
+
+
+class CutsceneSubCommandEntry_FadeSeq : public CutsceneSubCommandEntry
 {
 public:
     uint32_t unk_08;
 
-    CutsceneSubCommandEntry_MusicFade(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneSubCommandEntry_MusicFade();
+    CutsceneSubCommandEntry_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneSubCommandEntry_FadeSeq();
 
 	std::string GetBodySourceCode() const override;
 
     size_t GetRawSize() override;
+};
+
+class CutsceneMMCommand_FadeSeq : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_FadeSeq();
+
+	//std::string GetCommandMacro() const override;
+};
+
+
+
+
+class CutsceneSubCommandEntry_PlaySeq : public CutsceneSubCommandEntry
+{
+public:
+
+    CutsceneSubCommandEntry_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneSubCommandEntry_PlaySeq();
+
+};
+
+class CutsceneMMCommand_PlaySeq : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_PlaySeq();
+
+	//std::string GetCommandMacro() const override;
 };
 
 
@@ -90,6 +176,17 @@ public:
     size_t GetRawSize() override;
 };
 
+class CutsceneMMCommand_Unk9B : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_Unk9B(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_Unk9B();
+
+	//std::string GetCommandMacro() const override;
+};
+
+
+
 class CutsceneSubCommandEntry_SetTime : public CutsceneSubCommandEntry
 {
 public:
@@ -104,6 +201,28 @@ public:
 
     size_t GetRawSize() override;
 };
+
+class CutsceneMMCommand_SetTime : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_SetTime();
+
+	//std::string GetCommandMacro() const override;
+};
+
+
+
+
+class CutsceneMMCommand_Misc : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_Misc();
+
+	std::string GetCommandMacro() const override;
+};
+
 
 class CutsceneSubCommandEntry_Unk190 : public CutsceneSubCommandEntry
 {
@@ -121,68 +240,6 @@ public:
     size_t GetRawSize() override;
 };
 
-
-
-class CutsceneMMCommand : public CutsceneCommand
-{
-public:
-    uint32_t numEntries;
-    std::vector<CutsceneSubCommandEntry*> entries;
-
-	CutsceneMMCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	virtual ~CutsceneMMCommand();
-
-	virtual std::string GetCName() override;
-    virtual std::string GetCommandMacro() const;
-	virtual std::string GenerateSourceCode(uint32_t baseAddress) override;
-	virtual size_t GetCommandSize()  override;
-};
-
-class CutsceneMMCommand_5A : public CutsceneMMCommand
-{
-public:
-    CutsceneMMCommand_5A(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneMMCommand_5A();
-
-	//std::string GetCommandMacro() const override;
-	virtual size_t GetCommandSize()  override;
-};
-
-class CutsceneMMCommand_Misc : public CutsceneMMCommand
-{
-public:
-    CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneMMCommand_Misc();
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneMMCommand_Unk9B : public CutsceneMMCommand
-{
-public:
-    CutsceneMMCommand_Unk9B(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneMMCommand_Unk9B();
-
-	//std::string GetCommandMacro() const override;
-};
-
-class CutsceneMMCommand_SetTime : public CutsceneMMCommand
-{
-public:
-    CutsceneMMCommand_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneMMCommand_SetTime();
-
-	//std::string GetCommandMacro() const override;
-};
-
-class CutsceneMMCommand_FadeSeq : public CutsceneMMCommand
-{
-public:
-    CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneMMCommand_FadeSeq();
-
-	//std::string GetCommandMacro() const override;
-};
 
 class CutsceneMMCommand_Unk190 : public CutsceneMMCommand
 {
