@@ -1,5 +1,6 @@
 #include "ZCutsceneMM.h"
 
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "WarningHandler.h"
@@ -23,7 +24,7 @@ void ZCutsceneMM::ParseRawData()
 
 	endFrame = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 	uint32_t currentPtr = rawDataIndex + 8;
-	uint32_t lastData = 0;
+	//uint32_t lastData = 0;
 
 	/*
 	
@@ -49,60 +50,105 @@ void ZCutsceneMM::ParseRawData()
 		CutsceneMMCommands cmdID = static_cast<CutsceneMMCommands>(id);
 		currentPtr += 4;
 
+
+		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
+		{
+			printf("CutsceneMM Command: 0x%X\n", id);
+		}
+
 		CutsceneCommand* cmd = nullptr;
 
-		switch (cmdID) {
-			//case CutsceneMMCommands::CS_CMD_TEXTBOX:
-				break;
-			case CutsceneMMCommands::CS_CMD_5A:
-				cmd = new CutsceneMMCommand_5A(rawData, currentPtr);
-				break;
-			case CutsceneMMCommands::CS_CMD_MISC:
-				cmd = new CutsceneMMCommand_Misc(rawData, currentPtr);
-				break;
-			//case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
-				break;
-			//case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
-				break;
-			//case CutsceneMMCommands::CS_CMD_99:
-				break;
-			//case CutsceneMMCommands::CS_CMD_GIVETATL:
-				break;
-			//case CutsceneMMCommands::CS_CMD_9B:
-				break;
-			//case CutsceneMMCommands::CS_CMD_FADESEQ:
-				break;
-			//case CutsceneMMCommands::CS_CMD_SETTIME:
-				break;
-			//case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
-				break;
-			//case CutsceneMMCommands::CS_CMD_PLAYSEQ:
-				break;
-			//case CutsceneMMCommands::CS_CMD_130:
-				break;
-			//case CutsceneMMCommands::CS_CMD_131:
-				break;
-			//case CutsceneMMCommands::CS_CMD_132:
-				break;
-			//case CutsceneMMCommands::CS_CMD_STOPSEQ:
-				break;
-			//case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
-				break;
-			//case CutsceneMMCommands::CS_CMD_STOPAMBIENCE:
-				break;
-			//case CutsceneMMCommands::CS_CMD_15E:
-				break;
-			//case CutsceneMMCommands::CS_CMD_15F:
-				break;
-			//case CutsceneMMCommands::CS_CMD_190:
-				break;
+		if (((id >= 0x64) && (id < 0x96)) || (id == 0xC9) || ((id >= 0x1C2) && (id < 0x258))) {
+			cmd = new CutsceneCommandActorAction(rawData, currentPtr);
+		} else {
 
-			default:
-				cmd = new CutsceneMMCommand(rawData, currentPtr);
-				HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
-				                        StringHelper::Sprintf("cutscene command error %d", cmdID),
-				                        "");
-				break;
+			switch (cmdID) {
+				case CutsceneMMCommands::CS_CMD_TEXTBOX:
+					cmd = new CutsceneCommandTextbox(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_5A:
+					cmd = new CutsceneMMCommand_5A(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_MISC:
+					cmd = new CutsceneMMCommand_Misc(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_99:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_GIVETATL:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_9B:
+					cmd = new CutsceneMMCommand_Unk9B(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_FADESEQ:
+					cmd = new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_SETTIME:
+					// TODO
+					cmd = new CutsceneMMCommand_SetTime(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
+					// stolen from OoT
+					cmd = new CutsceneCommandActorAction(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_PLAYSEQ:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_130:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_131:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_132:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_STOPSEQ:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_STOPAMBIENCE:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_15E:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_15F:
+					// TODO
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+				case CutsceneMMCommands::CS_CMD_190:
+					cmd = new CutsceneMMCommand_Unk190(rawData, currentPtr);
+					break;
+
+				default:
+					HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
+											StringHelper::Sprintf("Cutscene command not implemented", cmdID),
+											StringHelper::Sprintf("Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", cmdID, i, currentPtr-rawDataIndex));
+					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					break;
+			}
 		}
 
 		cmd->commandIndex = i;
