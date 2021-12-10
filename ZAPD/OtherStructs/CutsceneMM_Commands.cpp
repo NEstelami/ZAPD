@@ -192,6 +192,118 @@ size_t CutsceneMMCommand_5A::GetCommandSize()
 
 
 
+CutsceneMMCommand_Misc::CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Misc::~CutsceneMMCommand_Misc()
+{
+
+}
+
+std::string CutsceneMMCommand_Misc::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("CS_MISC_LIST(%i)", numEntries);
+}
+
+
+
+
+
+CutsceneSubCommandEntry_Lighting::CutsceneSubCommandEntry_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+    type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x06);
+    textId1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x08);
+    textId2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x0A);
+}
+CutsceneSubCommandEntry_Lighting::~CutsceneSubCommandEntry_Lighting()
+{
+
+}
+
+//std::string CutsceneSubCommandEntry_Lighting::GetBodySourceCode() const
+//{
+//    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, type, textId1, textId2);
+//}
+
+
+CutsceneMMCommand_Lighting::CutsceneMMCommand_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_Lighting(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Lighting::~CutsceneMMCommand_Lighting()
+{
+
+}
+/*
+std::string CutsceneMMCommand_Lighting::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+
+
+CutsceneSubCommandEntry_GiveTatl::CutsceneSubCommandEntry_GiveTatl(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_GiveTatl::~CutsceneSubCommandEntry_GiveTatl()
+{
+
+}
+
+std::string CutsceneSubCommandEntry_GiveTatl::GetBodySourceCode() const
+{
+    return StringHelper::Sprintf("CS_GIVETATL(%i, %i, %i),", base, startFrame, endFrame);
+}
+
+
+CutsceneMMCommand_GiveTatl::CutsceneMMCommand_GiveTatl(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_GiveTatl(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_GiveTatl::~CutsceneMMCommand_GiveTatl()
+{
+
+}
+
+std::string CutsceneMMCommand_GiveTatl::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("CS_GIVETATL_LIST(%i)", numEntries);
+}
+
+
+
+
+
 
 CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
@@ -365,31 +477,6 @@ std::string CutsceneMMCommand_SetTime::GetCommandMacro() const
     return StringHelper::Sprintf("(%i)", numEntries);
 }*/
 
-
-
-
-
-CutsceneMMCommand_Misc::CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-:CutsceneMMCommand(rawData, rawDataIndex)
-{
-    rawDataIndex += 4;
-
-    for(size_t i = 0; i < numEntries; i++) {
-        auto* entry = new CutsceneSubCommandEntry(rawData, rawDataIndex);
-        entries.push_back(entry);
-        rawDataIndex += entry->GetRawSize();
-    }
-}
-
-CutsceneMMCommand_Misc::~CutsceneMMCommand_Misc()
-{
-
-}
-
-std::string CutsceneMMCommand_Misc::GetCommandMacro() const
-{
-    return StringHelper::Sprintf("CS_MISC_LIST(%i)", numEntries);
-}
 
 
 

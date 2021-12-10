@@ -74,7 +74,7 @@ void ZCutsceneMM::ParseRawData()
 					break;
 				case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
 					// TODO
-					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					cmd = new CutsceneMMCommand_Lighting(rawData, currentPtr);
 					break;
 				case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
 					// TODO
@@ -86,7 +86,7 @@ void ZCutsceneMM::ParseRawData()
 					break;
 				case CutsceneMMCommands::CS_CMD_GIVETATL:
 					// TODO
-					cmd = new CutsceneMMCommand(rawData, currentPtr);
+					cmd = new CutsceneMMCommand_GiveTatl(rawData, currentPtr);
 					break;
 				case CutsceneMMCommands::CS_CMD_9B:
 					cmd = new CutsceneMMCommand_Unk9B(rawData, currentPtr);

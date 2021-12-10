@@ -22,7 +22,7 @@ enum class CutsceneMMCommands {
     /* 0x132 */ CS_CMD_132 = 0x132,
     /* 0x12D */ CS_CMD_STOPSEQ,
     /* 0x12E */ CS_CMD_PLAYAMBIENCE,
-    /* 0x12F */ CS_CMD_STOPAMBIENCE,
+    /* 0x12F */ CS_CMD_FADEAMBIENCE,
     /* 0x15E */ CS_CMD_15E = 0x15E,
     /* 0x15F */ CS_CMD_15F,
     /* 0x190 */ CS_CMD_190 = 0x190,
@@ -112,6 +112,64 @@ public:
 	virtual size_t GetCommandSize()  override;
 };
 
+
+
+class CutsceneMMCommand_Misc : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_Misc();
+
+	std::string GetCommandMacro() const override;
+};
+
+
+
+
+class CutsceneSubCommandEntry_Lighting : public CutsceneSubCommandEntry
+{
+public:
+    uint16_t type;
+    uint16_t textId1;
+    uint16_t textId2;
+
+    CutsceneSubCommandEntry_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneSubCommandEntry_Lighting();
+
+	//std::string GetBodySourceCode() const override;
+};
+
+class CutsceneMMCommand_Lighting : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_Lighting();
+
+	//std::string GetCommandMacro() const override;
+};
+
+
+
+
+
+class CutsceneSubCommandEntry_GiveTatl : public CutsceneSubCommandEntry
+{
+public:
+
+    CutsceneSubCommandEntry_GiveTatl(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneSubCommandEntry_GiveTatl();
+
+	std::string GetBodySourceCode() const override;
+};
+
+class CutsceneMMCommand_GiveTatl : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_GiveTatl(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_GiveTatl();
+
+	std::string GetCommandMacro() const override;
+};
 
 
 
@@ -212,16 +270,6 @@ public:
 };
 
 
-
-
-class CutsceneMMCommand_Misc : public CutsceneMMCommand
-{
-public:
-    CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneMMCommand_Misc();
-
-	std::string GetCommandMacro() const override;
-};
 
 
 class CutsceneSubCommandEntry_Unk190 : public CutsceneSubCommandEntry
