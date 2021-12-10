@@ -221,9 +221,6 @@ std::string CutsceneMMCommand_Misc::GetCommandMacro() const
 CutsceneSubCommandEntry_Lighting::CutsceneSubCommandEntry_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-    type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x06);
-    textId1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x08);
-    textId2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x0A);
 }
 CutsceneSubCommandEntry_Lighting::~CutsceneSubCommandEntry_Lighting()
 {
@@ -263,6 +260,90 @@ std::string CutsceneMMCommand_Lighting::GetCommandMacro() const
 
 
 
+CutsceneSubCommandEntry_SceneTransFx::CutsceneSubCommandEntry_SceneTransFx(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_SceneTransFx::~CutsceneSubCommandEntry_SceneTransFx()
+{
+
+}
+
+//std::string CutsceneSubCommandEntry_SceneTransFx::GetBodySourceCode() const
+//{
+//    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, type, textId1, textId2);
+//}
+
+
+CutsceneMMCommand_SceneTransFx::CutsceneMMCommand_SceneTransFx(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_SceneTransFx(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_SceneTransFx::~CutsceneMMCommand_SceneTransFx()
+{
+
+}
+/*
+std::string CutsceneMMCommand_SceneTransFx::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+
+
+
+
+CutsceneSubCommandEntry_Unk99::CutsceneSubCommandEntry_Unk99(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_Unk99::~CutsceneSubCommandEntry_Unk99()
+{
+
+}
+
+//std::string CutsceneSubCommandEntry_Unk99::GetBodySourceCode() const
+//{
+//    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, type, textId1, textId2);
+//}
+
+
+CutsceneMMCommand_Unk99::CutsceneMMCommand_Unk99(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_Unk99(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Unk99::~CutsceneMMCommand_Unk99()
+{
+
+}
+/*
+std::string CutsceneMMCommand_Unk99::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
 CutsceneSubCommandEntry_GiveTatl::CutsceneSubCommandEntry_GiveTatl(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
@@ -274,7 +355,7 @@ CutsceneSubCommandEntry_GiveTatl::~CutsceneSubCommandEntry_GiveTatl()
 
 std::string CutsceneSubCommandEntry_GiveTatl::GetBodySourceCode() const
 {
-    return StringHelper::Sprintf("CS_GIVETATL(%i, %i, %i),", base, startFrame, endFrame);
+    return StringHelper::Sprintf("CS_GIVETATL(%i, %i, %i, %i),", base, startFrame, endFrame, pad);
 }
 
 
@@ -300,85 +381,6 @@ std::string CutsceneMMCommand_GiveTatl::GetCommandMacro() const
     return StringHelper::Sprintf("CS_GIVETATL_LIST(%i)", numEntries);
 }
 
-
-
-
-
-
-CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-    unk_08 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-}
-CutsceneSubCommandEntry_FadeSeq::~CutsceneSubCommandEntry_FadeSeq()
-{
-
-}
-
-std::string CutsceneSubCommandEntry_FadeSeq::GetBodySourceCode() const
-{
-    return CutsceneSubCommandEntry::GetBodySourceCode() + StringHelper::Sprintf("CMD_W(0x%08X),", unk_08);
-}
-
-size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize()
-{
-    return 0x0C;
-}
-
-
-CutsceneMMCommand_FadeSeq::CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-:CutsceneMMCommand(rawData, rawDataIndex)
-{
-    rawDataIndex += 4;
-
-    for(size_t i = 0; i < numEntries; i++) {
-        auto* entry = new CutsceneSubCommandEntry_FadeSeq(rawData, rawDataIndex);
-        entries.push_back(entry);
-        rawDataIndex += entry->GetRawSize();
-    }
-}
-
-CutsceneMMCommand_FadeSeq::~CutsceneMMCommand_FadeSeq()
-{
-
-}
-/*
-std::string CutsceneMMCommand_FadeSeq::GetCommandMacro() const
-{
-    return StringHelper::Sprintf("(%i)", numEntries);
-}*/
-
-
-
-CutsceneSubCommandEntry_PlaySeq::CutsceneSubCommandEntry_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-CutsceneSubCommandEntry_PlaySeq::~CutsceneSubCommandEntry_PlaySeq()
-{
-}
-
-CutsceneMMCommand_PlaySeq::CutsceneMMCommand_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-:CutsceneMMCommand(rawData, rawDataIndex)
-{
-    rawDataIndex += 4;
-
-    for(size_t i = 0; i < numEntries; i++) {
-        auto* entry = new CutsceneSubCommandEntry_PlaySeq(rawData, rawDataIndex);
-        entries.push_back(entry);
-        rawDataIndex += entry->GetRawSize();
-    }
-}
-
-CutsceneMMCommand_PlaySeq::~CutsceneMMCommand_PlaySeq()
-{
-
-}
-/*
-std::string CutsceneMMCommand_PlaySeq::GetCommandMacro() const
-{
-    return StringHelper::Sprintf("(%i)", numEntries);
-}*/
 
 
 
@@ -430,6 +432,56 @@ std::string CutsceneMMCommand_Unk9B::GetCommandMacro() const
 
 
 
+
+
+
+
+CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+    unk_08 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+}
+CutsceneSubCommandEntry_FadeSeq::~CutsceneSubCommandEntry_FadeSeq()
+{
+
+}
+
+std::string CutsceneSubCommandEntry_FadeSeq::GetBodySourceCode() const
+{
+    return CutsceneSubCommandEntry::GetBodySourceCode() + StringHelper::Sprintf("CMD_W(0x%08X),", unk_08);
+}
+
+size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize()
+{
+    return 0x0C;
+}
+
+
+CutsceneMMCommand_FadeSeq::CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_FadeSeq(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_FadeSeq::~CutsceneMMCommand_FadeSeq()
+{
+
+}
+/*
+std::string CutsceneMMCommand_FadeSeq::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
 CutsceneSubCommandEntry_SetTime::CutsceneSubCommandEntry_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
@@ -451,8 +503,6 @@ size_t CutsceneSubCommandEntry_SetTime::GetRawSize()
 {
     return 0x0C;
 }
-
-
 
 
 CutsceneMMCommand_SetTime::CutsceneMMCommand_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
@@ -477,6 +527,372 @@ std::string CutsceneMMCommand_SetTime::GetCommandMacro() const
     return StringHelper::Sprintf("(%i)", numEntries);
 }*/
 
+
+
+
+
+CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+	rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
+	rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x8);
+	rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0xA);
+	startPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0xC);
+	startPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x10);
+	startPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x14);
+	endPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x18);
+	endPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x1C);
+	endPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x20);
+	normalX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x24);
+	normalY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x28);
+	normalZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x2C);
+}
+CutsceneSubCommandEntry_ActorAction::~CutsceneSubCommandEntry_ActorAction()
+{
+
+}
+
+std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
+{
+    return StringHelper::Sprintf(
+			"CS_NPC_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+			base, startFrame, endFrame,
+			rotX, rotY, rotZ, startPosX,
+			startPosY, startPosZ, endPosX, endPosY,
+			endPosZ, normalX, normalY, normalZ);
+}
+
+size_t CutsceneSubCommandEntry_ActorAction::GetRawSize()
+{
+    return 0x30;
+}
+
+
+CutsceneMMCommand_ActorAction::CutsceneMMCommand_ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_ActorAction(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_ActorAction::~CutsceneMMCommand_ActorAction()
+{
+
+}
+
+std::string CutsceneMMCommand_ActorAction::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("CS_NPC_ACTION_LIST(0x%04X, %i)", commandID, numEntries);
+}
+
+
+
+
+
+CutsceneSubCommandEntry_PlaySeq::CutsceneSubCommandEntry_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_PlaySeq::~CutsceneSubCommandEntry_PlaySeq()
+{
+}
+
+CutsceneMMCommand_PlaySeq::CutsceneMMCommand_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_PlaySeq(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_PlaySeq::~CutsceneMMCommand_PlaySeq()
+{
+
+}
+/*
+std::string CutsceneMMCommand_PlaySeq::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+
+
+
+
+CutsceneSubCommandEntry_Unk130::CutsceneSubCommandEntry_Unk130(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_Unk130::~CutsceneSubCommandEntry_Unk130()
+{
+}
+
+CutsceneMMCommand_Unk130::CutsceneMMCommand_Unk130(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_Unk130(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Unk130::~CutsceneMMCommand_Unk130()
+{
+
+}
+/*
+std::string CutsceneMMCommand_Unk130::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+CutsceneSubCommandEntry_Unk131::CutsceneSubCommandEntry_Unk131(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_Unk131::~CutsceneSubCommandEntry_Unk131()
+{
+}
+
+CutsceneMMCommand_Unk131::CutsceneMMCommand_Unk131(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_Unk131(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Unk131::~CutsceneMMCommand_Unk131()
+{
+
+}
+/*
+std::string CutsceneMMCommand_Unk131::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+
+
+CutsceneSubCommandEntry_Unk132::CutsceneSubCommandEntry_Unk132(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_Unk132::~CutsceneSubCommandEntry_Unk132()
+{
+}
+
+CutsceneMMCommand_Unk132::CutsceneMMCommand_Unk132(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_Unk132(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Unk132::~CutsceneMMCommand_Unk132()
+{
+
+}
+/*
+std::string CutsceneMMCommand_Unk132::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+CutsceneSubCommandEntry_StopSeq::CutsceneSubCommandEntry_StopSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_StopSeq::~CutsceneSubCommandEntry_StopSeq()
+{
+}
+
+CutsceneMMCommand_StopSeq::CutsceneMMCommand_StopSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_StopSeq(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_StopSeq::~CutsceneMMCommand_StopSeq()
+{
+
+}
+/*
+std::string CutsceneMMCommand_StopSeq::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+CutsceneSubCommandEntry_PlayAmbience::CutsceneSubCommandEntry_PlayAmbience(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_PlayAmbience::~CutsceneSubCommandEntry_PlayAmbience()
+{
+}
+
+CutsceneMMCommand_PlayAmbience::CutsceneMMCommand_PlayAmbience(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_PlayAmbience(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_PlayAmbience::~CutsceneMMCommand_PlayAmbience()
+{
+
+}
+/*
+std::string CutsceneMMCommand_PlayAmbience::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+CutsceneSubCommandEntry_FadeAmbience::CutsceneSubCommandEntry_FadeAmbience(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_FadeAmbience::~CutsceneSubCommandEntry_FadeAmbience()
+{
+}
+
+CutsceneMMCommand_FadeAmbience::CutsceneMMCommand_FadeAmbience(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_FadeAmbience(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_FadeAmbience::~CutsceneMMCommand_FadeAmbience()
+{
+
+}
+/*
+std::string CutsceneMMCommand_FadeAmbience::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+CutsceneSubCommandEntry_Unk15E::CutsceneSubCommandEntry_Unk15E(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_Unk15E::~CutsceneSubCommandEntry_Unk15E()
+{
+}
+
+CutsceneMMCommand_Unk15E::CutsceneMMCommand_Unk15E(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_Unk15E(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Unk15E::~CutsceneMMCommand_Unk15E()
+{
+
+}
+/*
+std::string CutsceneMMCommand_Unk15E::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
+
+
+
+
+CutsceneSubCommandEntry_Unk15F::CutsceneSubCommandEntry_Unk15F(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_Unk15F::~CutsceneSubCommandEntry_Unk15F()
+{
+}
+
+CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_Unk15F(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_Unk15F::~CutsceneMMCommand_Unk15F()
+{
+
+}
+/*
+std::string CutsceneMMCommand_Unk15F::GetCommandMacro() const
+{
+    return StringHelper::Sprintf("(%i)", numEntries);
+}*/
 
 
 
@@ -527,3 +943,32 @@ std::string CutsceneMMCommand_Unk190::GetCommandMacro() const
 {
     return StringHelper::Sprintf("(%i)", numEntries);
 }*/
+
+
+
+
+CutsceneSubCommandEntry_NonImplemented::CutsceneSubCommandEntry_NonImplemented(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+}
+CutsceneSubCommandEntry_NonImplemented::~CutsceneSubCommandEntry_NonImplemented()
+{
+}
+
+CutsceneMMCommand_NonImplemented::CutsceneMMCommand_NonImplemented(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+:CutsceneMMCommand(rawData, rawDataIndex)
+{
+    rawDataIndex += 4;
+
+    for(size_t i = 0; i < numEntries; i++) {
+        auto* entry = new CutsceneSubCommandEntry_NonImplemented(rawData, rawDataIndex);
+        entries.push_back(entry);
+        rawDataIndex += entry->GetRawSize();
+    }
+}
+
+CutsceneMMCommand_NonImplemented::~CutsceneMMCommand_NonImplemented()
+{
+
+}
+
