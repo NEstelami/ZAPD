@@ -14,11 +14,6 @@ CutsceneSubCommandEntry::CutsceneSubCommandEntry(const std::vector<uint8_t>& raw
     pad = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
 }
 
-CutsceneSubCommandEntry::~CutsceneSubCommandEntry()
-{
-
-}
-
 std::string CutsceneSubCommandEntry::GetBodySourceCode() const {
     return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, pad);
 }
@@ -55,7 +50,7 @@ std::string CutsceneMMCommand::GetCommandMacro() const
     return StringHelper::Sprintf("CMD_W(0x%08X), CMD_W(0x%08X)", commandID, numEntries);
 }
 
-std::string CutsceneMMCommand::GenerateSourceCode(uint32_t baseAddress)
+std::string CutsceneMMCommand::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
 {
 	std::string result;
 
@@ -75,7 +70,7 @@ size_t CutsceneMMCommand::GetCommandSize()
 {
     size_t size = 0;
     if (entries.size() > 0) {
-        size = entries.at(0)->GetRawSize() * numEntries;
+        size = entries.at(0)->GetRawSize() * entries.size();
     } else {
         // fallback during development
         size = 0x08 * numEntries;
@@ -94,10 +89,6 @@ CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(const std::vect
     type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x06);
     textId1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x08);
     textId2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x0A);
-}
-CutsceneSubCommandEntry_TextBox::~CutsceneSubCommandEntry_TextBox()
-{
-
 }
 
 std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
@@ -127,11 +118,11 @@ CutsceneMMCommand_TextBox::~CutsceneMMCommand_TextBox()
 {
 
 }
-/*
+
 std::string CutsceneMMCommand_TextBox::GetCommandMacro() const
 {
-    return StringHelper::Sprintf("(%i)", numEntries);
-}*/
+    return StringHelper::Sprintf("CS_TEXT_LIST(%i)", numEntries);
+}
 
 
 
@@ -140,10 +131,6 @@ std::string CutsceneMMCommand_TextBox::GetCommandMacro() const
 CutsceneSubCommandEntry_Unk5A::CutsceneSubCommandEntry_Unk5A(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-}
-CutsceneSubCommandEntry_Unk5A::~CutsceneSubCommandEntry_Unk5A()
-{
-
 }
 
 std::string CutsceneSubCommandEntry_Unk5A::GetBodySourceCode() const
@@ -173,31 +160,18 @@ CutsceneMMCommand_5A::~CutsceneMMCommand_5A()
 
 }
 
-//std::string CutsceneMMCommand_5A::GetCommandMacro() const override;
 
-size_t CutsceneMMCommand_5A::GetCommandSize()
+std::string CutsceneMMCommand_5A::GetCommandMacro() const
 {
-    //return 0x04 + numEntries /*+ 0x04*/;
-
-    size_t size = 0;
-    if (entries.size() > 0) {
-        size = entries.at(0)->GetRawSize() * entries.size();
-    } else {
-        // fallback during development
-        size = 0x08 * numEntries;
-    }
-	return 0x04 + size;
+    return StringHelper::Sprintf("CS_CMD_UNK_5A_LIST(%i)", numEntries);
 }
+
 
 
 
 CutsceneSubCommandEntry_Misc::CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-}
-CutsceneSubCommandEntry_Misc::~CutsceneSubCommandEntry_Misc()
-{
-
 }
 
 std::string CutsceneSubCommandEntry_Misc::GetBodySourceCode() const
@@ -236,15 +210,11 @@ CutsceneSubCommandEntry_Lighting::CutsceneSubCommandEntry_Lighting(const std::ve
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
-CutsceneSubCommandEntry_Lighting::~CutsceneSubCommandEntry_Lighting()
+
+std::string CutsceneSubCommandEntry_Lighting::GetBodySourceCode() const
 {
-
+    return StringHelper::Sprintf("CS_LIGHTING(0x%02X, %i, %i, %i),", base, startFrame, endFrame, pad);
 }
-
-//std::string CutsceneSubCommandEntry_Lighting::GetBodySourceCode() const
-//{
-//    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, type, textId1, textId2);
-//}
 
 
 CutsceneMMCommand_Lighting::CutsceneMMCommand_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
@@ -263,11 +233,11 @@ CutsceneMMCommand_Lighting::~CutsceneMMCommand_Lighting()
 {
 
 }
-/*
+
 std::string CutsceneMMCommand_Lighting::GetCommandMacro() const
 {
-    return StringHelper::Sprintf("(%i)", numEntries);
-}*/
+    return StringHelper::Sprintf("CS_LIGHTING_LIST(%i)", numEntries);
+}
 
 
 
@@ -278,15 +248,11 @@ CutsceneSubCommandEntry_SceneTransFx::CutsceneSubCommandEntry_SceneTransFx(const
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
-CutsceneSubCommandEntry_SceneTransFx::~CutsceneSubCommandEntry_SceneTransFx()
+
+std::string CutsceneSubCommandEntry_SceneTransFx::GetBodySourceCode() const
 {
-
+    return StringHelper::Sprintf("CS_SCENE_TRANS_FX(0x%02X, %i, %i, %i),", base, startFrame, endFrame, pad);
 }
-
-//std::string CutsceneSubCommandEntry_SceneTransFx::GetBodySourceCode() const
-//{
-//    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, type, textId1, textId2);
-//}
 
 
 CutsceneMMCommand_SceneTransFx::CutsceneMMCommand_SceneTransFx(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
@@ -305,11 +271,11 @@ CutsceneMMCommand_SceneTransFx::~CutsceneMMCommand_SceneTransFx()
 {
 
 }
-/*
+
 std::string CutsceneMMCommand_SceneTransFx::GetCommandMacro() const
 {
-    return StringHelper::Sprintf("(%i)", numEntries);
-}*/
+    return StringHelper::Sprintf("CS_SCENE_TRANS_FX_LIST(%i)", numEntries);
+}
 
 
 
@@ -321,10 +287,6 @@ std::string CutsceneMMCommand_SceneTransFx::GetCommandMacro() const
 CutsceneSubCommandEntry_Unk99::CutsceneSubCommandEntry_Unk99(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-}
-CutsceneSubCommandEntry_Unk99::~CutsceneSubCommandEntry_Unk99()
-{
-
 }
 
 //std::string CutsceneSubCommandEntry_Unk99::GetBodySourceCode() const
@@ -361,10 +323,6 @@ std::string CutsceneMMCommand_Unk99::GetCommandMacro() const
 CutsceneSubCommandEntry_GiveTatl::CutsceneSubCommandEntry_GiveTatl(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-}
-CutsceneSubCommandEntry_GiveTatl::~CutsceneSubCommandEntry_GiveTatl()
-{
-
 }
 
 std::string CutsceneSubCommandEntry_GiveTatl::GetBodySourceCode() const
@@ -405,10 +363,6 @@ CutsceneSubCommandEntry_Unk9B::CutsceneSubCommandEntry_Unk9B(const std::vector<u
     unk_09 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x09);
     unk_0A = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0A);
     unk_0B = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0B);
-}
-CutsceneSubCommandEntry_Unk9B::~CutsceneSubCommandEntry_Unk9B()
-{
-
 }
 
 std::string CutsceneSubCommandEntry_Unk9B::GetBodySourceCode() const
@@ -455,10 +409,6 @@ CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(const std::vect
 {
     unk_08 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 }
-CutsceneSubCommandEntry_FadeSeq::~CutsceneSubCommandEntry_FadeSeq()
-{
-
-}
 
 std::string CutsceneSubCommandEntry_FadeSeq::GetBodySourceCode() const
 {
@@ -503,14 +453,10 @@ CutsceneSubCommandEntry_SetTime::CutsceneSubCommandEntry_SetTime(const std::vect
     minute = BitConverter::ToUInt8BE(rawData, rawDataIndex + 7);
     unk_08 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 }
-CutsceneSubCommandEntry_SetTime::~CutsceneSubCommandEntry_SetTime()
-{
-
-}
 
 std::string CutsceneSubCommandEntry_SetTime::GetBodySourceCode() const
 {
-    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HBB(0x%04X, 0x%02X, 0x%02X), CMD_W(0x%08X),", base, startFrame, endFrame, hour, minute, unk_08);
+    return StringHelper::Sprintf("CS_TIME(0x%04X, %i, %i, %i, %i, %i),", base, startFrame, endFrame, hour, minute, unk_08);
 }
 
 size_t CutsceneSubCommandEntry_SetTime::GetRawSize()
@@ -535,11 +481,11 @@ CutsceneMMCommand_SetTime::~CutsceneMMCommand_SetTime()
 {
 
 }
-/*
+
 std::string CutsceneMMCommand_SetTime::GetCommandMacro() const
 {
-    return StringHelper::Sprintf("(%i)", numEntries);
-}*/
+    return StringHelper::Sprintf("CS_TIME_LIST(%i)", numEntries);
+}
 
 
 
@@ -560,10 +506,6 @@ CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(const s
 	normalX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x24);
 	normalY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x28);
 	normalZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x2C);
-}
-CutsceneSubCommandEntry_ActorAction::~CutsceneSubCommandEntry_ActorAction()
-{
-
 }
 
 std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
@@ -612,9 +554,6 @@ CutsceneSubCommandEntry_PlaySeq::CutsceneSubCommandEntry_PlaySeq(const std::vect
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
-CutsceneSubCommandEntry_PlaySeq::~CutsceneSubCommandEntry_PlaySeq()
-{
-}
 
 CutsceneMMCommand_PlaySeq::CutsceneMMCommand_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 :CutsceneMMCommand(rawData, rawDataIndex)
@@ -649,9 +588,6 @@ CutsceneSubCommandEntry_Unk130::CutsceneSubCommandEntry_Unk130(const std::vector
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
-CutsceneSubCommandEntry_Unk130::~CutsceneSubCommandEntry_Unk130()
-{
-}
 
 CutsceneMMCommand_Unk130::CutsceneMMCommand_Unk130(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 :CutsceneMMCommand(rawData, rawDataIndex)
@@ -680,9 +616,6 @@ std::string CutsceneMMCommand_Unk130::GetCommandMacro() const
 
 CutsceneSubCommandEntry_Unk131::CutsceneSubCommandEntry_Unk131(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-CutsceneSubCommandEntry_Unk131::~CutsceneSubCommandEntry_Unk131()
 {
 }
 
@@ -717,9 +650,6 @@ CutsceneSubCommandEntry_Unk132::CutsceneSubCommandEntry_Unk132(const std::vector
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
-CutsceneSubCommandEntry_Unk132::~CutsceneSubCommandEntry_Unk132()
-{
-}
 
 CutsceneMMCommand_Unk132::CutsceneMMCommand_Unk132(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 :CutsceneMMCommand(rawData, rawDataIndex)
@@ -748,9 +678,6 @@ std::string CutsceneMMCommand_Unk132::GetCommandMacro() const
 
 CutsceneSubCommandEntry_StopSeq::CutsceneSubCommandEntry_StopSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-CutsceneSubCommandEntry_StopSeq::~CutsceneSubCommandEntry_StopSeq()
 {
 }
 
@@ -783,9 +710,6 @@ CutsceneSubCommandEntry_PlayAmbience::CutsceneSubCommandEntry_PlayAmbience(const
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
-CutsceneSubCommandEntry_PlayAmbience::~CutsceneSubCommandEntry_PlayAmbience()
-{
-}
 
 CutsceneMMCommand_PlayAmbience::CutsceneMMCommand_PlayAmbience(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 :CutsceneMMCommand(rawData, rawDataIndex)
@@ -814,9 +738,6 @@ std::string CutsceneMMCommand_PlayAmbience::GetCommandMacro() const
 
 CutsceneSubCommandEntry_FadeAmbience::CutsceneSubCommandEntry_FadeAmbience(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-CutsceneSubCommandEntry_FadeAmbience::~CutsceneSubCommandEntry_FadeAmbience()
 {
 }
 
@@ -849,9 +770,6 @@ CutsceneSubCommandEntry_Unk15E::CutsceneSubCommandEntry_Unk15E(const std::vector
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
-CutsceneSubCommandEntry_Unk15E::~CutsceneSubCommandEntry_Unk15E()
-{
-}
 
 CutsceneMMCommand_Unk15E::CutsceneMMCommand_Unk15E(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 :CutsceneMMCommand(rawData, rawDataIndex)
@@ -880,9 +798,6 @@ std::string CutsceneMMCommand_Unk15E::GetCommandMacro() const
 
 CutsceneSubCommandEntry_Unk15F::CutsceneSubCommandEntry_Unk15F(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-CutsceneSubCommandEntry_Unk15F::~CutsceneSubCommandEntry_Unk15F()
 {
 }
 
@@ -919,10 +834,6 @@ CutsceneSubCommandEntry_Unk190::CutsceneSubCommandEntry_Unk190(const std::vector
     unk_09 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x09);
     unk_0A = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0A);
     unk_0B = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0B);
-}
-CutsceneSubCommandEntry_Unk190::~CutsceneSubCommandEntry_Unk190()
-{
-
 }
 
 std::string CutsceneSubCommandEntry_Unk190::GetBodySourceCode() const
@@ -963,9 +874,6 @@ std::string CutsceneMMCommand_Unk190::GetCommandMacro() const
 
 CutsceneSubCommandEntry_NonImplemented::CutsceneSubCommandEntry_NonImplemented(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-CutsceneSubCommandEntry_NonImplemented::~CutsceneSubCommandEntry_NonImplemented()
 {
 }
 

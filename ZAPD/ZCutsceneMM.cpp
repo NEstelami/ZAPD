@@ -59,9 +59,8 @@ void ZCutsceneMM::ParseRawData()
 		CutsceneCommand* cmd = nullptr;
 
 		if (((id >= 0x64) && (id < 0x96)) || (id == 0xC9) || ((id >= 0x1C2) && (id < 0x258))) {
-			cmd = new CutsceneCommandActorAction(rawData, currentPtr);
+			cmd = new CutsceneMMCommand_ActorAction(rawData, currentPtr);
 		} else {
-
 			switch (cmdID) {
 				case CutsceneMMCommands::CS_CMD_TEXTBOX:
 					cmd = new CutsceneMMCommand_TextBox(rawData, currentPtr);
