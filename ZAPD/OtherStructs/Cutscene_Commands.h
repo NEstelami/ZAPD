@@ -50,6 +50,8 @@ public:
 	uint16_t endFrame;
 	uint16_t pad;
 
+	uint32_t commandID;
+
 	CutsceneSubCommandEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	virtual ~CutsceneSubCommandEntry() = default;
 
@@ -73,12 +75,14 @@ public:
 	virtual std::string GetCommandMacro() const;
 	virtual std::string GenerateSourceCode() const;
 	virtual size_t GetCommandSize() const;
+
+    virtual void SetCommandID(uint32_t nCommandID);
 };
 
 
 
 
-class CutsceneCameraPoint
+class CutsceneCameraPoint : public CutsceneSubCommandEntry
 {
 public:
 	int8_t continueFlag;
@@ -89,6 +93,10 @@ public:
 	int16_t unused;
 
 	CutsceneCameraPoint(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+    std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
 };
 
 class CutsceneCommandSetCameraPos : public CutsceneCommand
@@ -99,21 +107,16 @@ public:
 	uint16_t endFrame;
 	uint16_t unused;
 
-	std::vector<CutsceneCameraPoint*> entries;
-	~CutsceneCommandSetCameraPos();
 	CutsceneCommandSetCameraPos(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	std::string GenerateSourceCode() const override;
+    std::string GetCommandMacro() const override;
+
 	size_t GetCommandSize() const override;
 };
 
-class SpecialActionEntry
+class SpecialActionEntry : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t base;
-	uint16_t startFrame;
-	uint16_t endFrame;
-	uint16_t unused0;
 	uint32_t unused1;
 	uint32_t unused2;
 	uint32_t unused3;
@@ -140,13 +143,9 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class MusicFadeEntry
+class MusicFadeEntry : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t base;
-	uint16_t startFrame;
-	uint16_t endFrame;
-	uint16_t unknown0;
 	uint32_t unknown1;
 	uint32_t unknown2;
 	uint32_t unknown3;
@@ -159,27 +158,22 @@ public:
 	uint32_t unknown10;
 
 	MusicFadeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+    std::string GetBodySourceCode() const override;
+    size_t GetRawSize() const override;
 };
 
 class CutsceneCommandFadeBGM : public CutsceneCommand
 {
 public:
-	std::vector<MusicFadeEntry*> entries;
-
 	CutsceneCommandFadeBGM(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandFadeBGM();
 
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+    std::string GetCommandMacro() const override;
 };
 
-class MusicChangeEntry
+class MusicChangeEntry : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t sequence;
-	uint16_t startFrame;
-	uint16_t endFrame;
-	uint16_t unknown0;
 	uint32_t unknown1;
 	uint32_t unknown2;
 	uint32_t unknown3;
@@ -215,13 +209,9 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class EnvLightingEntry
+class EnvLightingEntry : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t setting;
-	uint16_t startFrame;
-	uint16_t endFrame;
-	uint16_t unused0;
 	uint32_t unused1;
 	uint32_t unused2;
 	uint32_t unused3;
@@ -258,12 +248,10 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class Unknown9Entry
+class Unknown9Entry : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t base;
-	uint16_t startFrame;
-	uint16_t endFrame;
+    // TODO:check
 	uint16_t unk2;
 	uint16_t unk3;
 	uint16_t unk4;
@@ -285,7 +273,7 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class UnkEntry
+class UnkEntry : public CutsceneSubCommandEntry
 {
 public:
 	uint32_t unused0;
@@ -316,12 +304,9 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class DayTimeEntry
+class DayTimeEntry : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t base;
-	uint16_t startFrame;
-	uint16_t endFrame;
 	uint8_t hour;
 	uint8_t minute;
 	uint8_t unused;
@@ -341,12 +326,9 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class TextboxEntry
+class TextboxEntry : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t base;
-	uint16_t startFrame;
-	uint16_t endFrame;
 	uint16_t type;
 	uint16_t textID1;
 	uint16_t textID2;
@@ -366,12 +348,9 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class ActorAction
+class ActorAction : public CutsceneSubCommandEntry
 {
 public:
-	uint16_t action;
-	uint16_t startFrame;
-	uint16_t endFrame;
 	int16_t rotX, rotY, rotZ;
 	int32_t startPosX, startPosY, startPosZ;
 	int32_t endPosX, endPosY, endPosZ;

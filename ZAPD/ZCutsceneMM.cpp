@@ -34,13 +34,13 @@ void ZCutsceneMM::ParseRawData()
 		if (id == 0xFFFFFFFF)
 			break;
 
-		CutsceneMMCommands cmdID = static_cast<CutsceneMMCommands>(id);
-		currentPtr += 4;
-
 		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		{
-			printf("CutsceneMM Command: 0x%X\n", id);
+			printf("CutsceneMM Command: 0x%X (%i)\n", id, id);
 		}
+
+		CutsceneMMCommands cmdID = static_cast<CutsceneMMCommands>(id);
+		currentPtr += 4;
 
 		CutsceneCommand* cmd = nullptr;
 
@@ -134,9 +134,9 @@ void ZCutsceneMM::ParseRawData()
 			default:
 				HANDLE_WARNING_RESOURCE(
 					WarningType::NotImplemented, parent, this, rawDataIndex,
-					StringHelper::Sprintf("Cutscene command not implemented", cmdID),
+					StringHelper::Sprintf("Cutscene command (0x%X) not implemented", cmdID),
 					StringHelper::Sprintf(
-						"Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", cmdID, i,
+						"Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", id, i,
 						currentPtr - rawDataIndex));
 				cmd = new CutsceneMMCommand_NonImplemented(rawData, currentPtr);
 				break;
@@ -146,8 +146,8 @@ void ZCutsceneMM::ParseRawData()
 		assert(cmd != nullptr);
 
 		cmd->commandIndex = i;
-		cmd->commandID = id;
-		currentPtr += cmd->GetCommandSize();
+		cmd->SetCommandID(id);
+		currentPtr += cmd->GetCommandSize() - 4;
 
 		commands.push_back(cmd);
 	}
@@ -184,7 +184,6 @@ size_t ZCutsceneMM::GetRawDataSize() const
 	{
 		CutsceneCommand* cmd = commands[i];
 		size += cmd->GetCommandSize();
-		size += 4;
 	}
 
 	// End
