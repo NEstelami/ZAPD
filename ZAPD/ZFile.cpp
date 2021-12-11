@@ -1320,7 +1320,9 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 				StringHelper::Sprintf("%s_%s_%06X", name.c_str(), unaccountedPrefix.c_str(),
 			                          unaccountedAddress),
 				diff, src);
+
 			decl->isUnaccounted = true;
+			decl->staticConf = StaticConfig::On;
 
 			if (nonZeroUnaccounted)
 			{
