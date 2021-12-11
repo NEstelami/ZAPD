@@ -64,5 +64,14 @@ std::string CutsceneCommand::GenerateSourceCode() const
 
 size_t CutsceneCommand::GetCommandSize() const
 {
-	return 0x04;
+	size_t size = 0;
+	if (entries.size() > 0)
+	{
+		size = entries.at(0)->GetRawSize() * entries.size();
+	}
+	else
+	{
+		size = 0x08 * numEntries;
+	}
+	return 0x04 + size;
 }

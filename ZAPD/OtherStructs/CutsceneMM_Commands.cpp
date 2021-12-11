@@ -3,27 +3,6 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
-/* CutsceneMMCommand */
-
-CutsceneMMCommand::CutsceneMMCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-}
-
-size_t CutsceneMMCommand::GetCommandSize() const
-{
-	size_t size = 0;
-	if (entries.size() > 0)
-	{
-		size = entries.at(0)->GetRawSize() * entries.size();
-	}
-	else
-	{
-		size = 0x08 * numEntries;
-	}
-	return 0x04 + size;
-}
-
 CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
@@ -47,7 +26,7 @@ size_t CutsceneSubCommandEntry_TextBox::GetRawSize() const
 
 CutsceneMMCommand_TextBox::CutsceneMMCommand_TextBox(const std::vector<uint8_t>& rawData,
                                                      uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -82,7 +61,7 @@ size_t CutsceneSubCommandEntry_Unk5A::GetRawSize() const
 
 CutsceneMMCommand_5A::CutsceneMMCommand_5A(const std::vector<uint8_t>& rawData,
                                            uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -113,7 +92,7 @@ std::string CutsceneSubCommandEntry_Misc::GetBodySourceCode() const
 
 CutsceneMMCommand_Misc::CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData,
                                                uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -144,7 +123,7 @@ std::string CutsceneSubCommandEntry_Lighting::GetBodySourceCode() const
 
 CutsceneMMCommand_Lighting::CutsceneMMCommand_Lighting(const std::vector<uint8_t>& rawData,
                                                        uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -175,7 +154,7 @@ std::string CutsceneSubCommandEntry_SceneTransFx::GetBodySourceCode() const
 
 CutsceneMMCommand_SceneTransFx::CutsceneMMCommand_SceneTransFx(const std::vector<uint8_t>& rawData,
                                                                uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -206,7 +185,7 @@ std::string CutsceneSubCommandEntry_Unk99::GetBodySourceCode() const
 
 CutsceneMMCommand_Unk99::CutsceneMMCommand_Unk99(const std::vector<uint8_t>& rawData,
                                                  uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -236,7 +215,7 @@ std::string CutsceneSubCommandEntry_GiveTatl::GetBodySourceCode() const
 
 CutsceneMMCommand_GiveTatl::CutsceneMMCommand_GiveTatl(const std::vector<uint8_t>& rawData,
                                                        uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -278,7 +257,7 @@ size_t CutsceneSubCommandEntry_Unk9B::GetRawSize() const
 
 CutsceneMMCommand_Unk9B::CutsceneMMCommand_Unk9B(const std::vector<uint8_t>& rawData,
                                                  uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -315,7 +294,7 @@ size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize() const
 
 CutsceneMMCommand_FadeSeq::CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>& rawData,
                                                      uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -354,7 +333,7 @@ size_t CutsceneSubCommandEntry_SetTime::GetRawSize() const
 
 CutsceneMMCommand_SetTime::CutsceneMMCommand_SetTime(const std::vector<uint8_t>& rawData,
                                                      uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -404,7 +383,7 @@ size_t CutsceneSubCommandEntry_ActorAction::GetRawSize() const
 
 CutsceneMMCommand_ActorAction::CutsceneMMCommand_ActorAction(const std::vector<uint8_t>& rawData,
                                                              uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -435,7 +414,7 @@ std::string CutsceneSubCommandEntry_PlaySeq::GetBodySourceCode() const
 
 CutsceneMMCommand_PlaySeq::CutsceneMMCommand_PlaySeq(const std::vector<uint8_t>& rawData,
                                                      uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -466,7 +445,7 @@ std::string CutsceneSubCommandEntry_Unk130::GetBodySourceCode() const
 
 CutsceneMMCommand_Unk130::CutsceneMMCommand_Unk130(const std::vector<uint8_t>& rawData,
                                                    uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -497,7 +476,7 @@ std::string CutsceneSubCommandEntry_Unk131::GetBodySourceCode() const
 
 CutsceneMMCommand_Unk131::CutsceneMMCommand_Unk131(const std::vector<uint8_t>& rawData,
                                                    uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -528,7 +507,7 @@ std::string CutsceneSubCommandEntry_Unk132::GetBodySourceCode() const
 
 CutsceneMMCommand_Unk132::CutsceneMMCommand_Unk132(const std::vector<uint8_t>& rawData,
                                                    uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -559,7 +538,7 @@ std::string CutsceneSubCommandEntry_StopSeq::GetBodySourceCode() const
 
 CutsceneMMCommand_StopSeq::CutsceneMMCommand_StopSeq(const std::vector<uint8_t>& rawData,
                                                      uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -590,7 +569,7 @@ std::string CutsceneSubCommandEntry_PlayAmbience::GetBodySourceCode() const
 
 CutsceneMMCommand_PlayAmbience::CutsceneMMCommand_PlayAmbience(const std::vector<uint8_t>& rawData,
                                                                uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -621,7 +600,7 @@ std::string CutsceneSubCommandEntry_FadeAmbience::GetBodySourceCode() const
 
 CutsceneMMCommand_FadeAmbience::CutsceneMMCommand_FadeAmbience(const std::vector<uint8_t>& rawData,
                                                                uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -652,7 +631,7 @@ std::string CutsceneSubCommandEntry_Unk15E::GetBodySourceCode() const
 
 CutsceneMMCommand_Unk15E::CutsceneMMCommand_Unk15E(const std::vector<uint8_t>& rawData,
                                                    uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -683,7 +662,7 @@ std::string CutsceneSubCommandEntry_Unk15F::GetBodySourceCode() const
 
 CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData,
                                                    uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -725,7 +704,7 @@ size_t CutsceneSubCommandEntry_Unk190::GetRawSize() const
 
 CutsceneMMCommand_Unk190::CutsceneMMCommand_Unk190(const std::vector<uint8_t>& rawData,
                                                    uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -756,7 +735,7 @@ std::string CutsceneSubCommandEntry_UnknownCommand::GetBodySourceCode() const
 
 CutsceneMMCommand_UnknownCommand::CutsceneMMCommand_UnknownCommand(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
@@ -782,7 +761,7 @@ CutsceneSubCommandEntry_NonImplemented::CutsceneSubCommandEntry_NonImplemented(
 
 CutsceneMMCommand_NonImplemented::CutsceneMMCommand_NonImplemented(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneMMCommand(rawData, rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
