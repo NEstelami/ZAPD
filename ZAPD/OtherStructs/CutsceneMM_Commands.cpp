@@ -772,3 +772,75 @@ CutsceneMMCommand_NonImplemented::CutsceneMMCommand_NonImplemented(
 		rawDataIndex += entry->GetRawSize();
 	}
 }
+
+
+CutsceneCommandSetCameraPos::~CutsceneCommandSetCameraPos()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandSpecialAction::~CutsceneCommandSpecialAction()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandFadeBGM::~CutsceneCommandFadeBGM()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandPlayBGM::~CutsceneCommandPlayBGM()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandStopBGM::~CutsceneCommandStopBGM()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandEnvLighting::~CutsceneCommandEnvLighting()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandUnknown9::~CutsceneCommandUnknown9()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandUnknown::~CutsceneCommandUnknown()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandDayTime::~CutsceneCommandDayTime()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandTextbox::~CutsceneCommandTextbox()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandActorAction::~CutsceneCommandActorAction()
+{
+	for (auto e : entries)
+		delete e;
+}
+
+CutsceneCommandSceneTransFX::~CutsceneCommandSceneTransFX()
+{
+}
+
