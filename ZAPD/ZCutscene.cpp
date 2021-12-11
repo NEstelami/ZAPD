@@ -227,8 +227,8 @@ void ZCutscene::ParseRawData()
 				break;
 			case CutsceneCommands::Error:
 				HANDLE_ERROR_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
-				                        StringHelper::Sprintf("cutscene command error %X", cmdID),
-				                        "");
+				                      StringHelper::Sprintf("cutscene command error %X", cmdID),
+				                      "");
 				break;
 			}
 

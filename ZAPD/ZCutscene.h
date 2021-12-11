@@ -5,9 +5,9 @@
 #include <vector>
 #include "tinyxml2.h"
 
+#include "OtherStructs/Cutscene_Commands.h"
 #include "ZFile.h"
 #include "ZResource.h"
-#include "OtherStructs/Cutscene_Commands.h"
 
 enum class CutsceneCommands
 {

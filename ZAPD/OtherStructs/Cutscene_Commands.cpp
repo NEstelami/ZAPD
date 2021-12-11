@@ -3,60 +3,61 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
-
 /* CutsceneSubCommandEntry */
 
-CutsceneSubCommandEntry::CutsceneSubCommandEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+CutsceneSubCommandEntry::CutsceneSubCommandEntry(const std::vector<uint8_t>& rawData,
+                                                 uint32_t rawDataIndex)
 {
-    base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
-    startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
-    endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
-    pad = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
+	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
+	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+	endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
+	pad = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
 }
 
-std::string CutsceneSubCommandEntry::GetBodySourceCode() const {
-    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, pad);
+std::string CutsceneSubCommandEntry::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base,
+	                             startFrame, endFrame, pad);
 }
 
 size_t CutsceneSubCommandEntry::GetRawSize() const
 {
-    return 0x08;
+	return 0x08;
 }
-
 
 /* CutsceneCommand */
 
-CutsceneCommand::CutsceneCommand(const std::vector<uint8_t>& rawData,
-                                 uint32_t rawDataIndex)
+CutsceneCommand::CutsceneCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
-    numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
+	numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 }
 
 CutsceneCommand::~CutsceneCommand()
 {
-    for(auto& entry : entries) {
-        delete entry;
-    }
+	for (auto& entry : entries)
+	{
+		delete entry;
+	}
 }
-
 
 std::string CutsceneCommand::GetCommandMacro() const
 {
-    return StringHelper::Sprintf("CMD_W(0x%08X), CMD_W(0x%08X)", commandID, numEntries);
+	return StringHelper::Sprintf("CMD_W(0x%08X), CMD_W(0x%08X)", commandID, numEntries);
 }
 
 std::string CutsceneCommand::GenerateSourceCode() const
 {
 	std::string result;
 
-    result += GetCommandMacro();
-    result += ",\n";
+	result += GetCommandMacro();
+	result += ",\n";
 
-    for (auto& entry : entries) {
-        result += "        ";
-        result += entry->GetBodySourceCode();
-        result += "\n";
-    }
+	for (auto& entry : entries)
+	{
+		result += "        ";
+		result += entry->GetBodySourceCode();
+		result += "\n";
+	}
 
 	return result;
 }

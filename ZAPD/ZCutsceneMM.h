@@ -5,9 +5,9 @@
 #include <vector>
 #include "tinyxml2.h"
 
-#include "ZFile.h"
-#include "ZCutscene.h"
 #include "OtherStructs/CutsceneMM_Commands.h"
+#include "ZCutscene.h"
+#include "ZFile.h"
 
 class ZCutsceneMM : public ZCutsceneBase
 {
