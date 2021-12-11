@@ -34,6 +34,6 @@ public:
 	virtual ~CutsceneCommand();
 
     virtual std::string GetCommandMacro() const;
-	virtual std::string GenerateSourceCode(uint32_t baseAddress);
+	virtual std::string GenerateSourceCode() const;
 	virtual size_t GetCommandSize() const;
 };

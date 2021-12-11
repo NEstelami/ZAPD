@@ -45,7 +45,6 @@ class CutsceneMMCommand : public CutsceneCommand
 public:
 	CutsceneMMCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	virtual std::string GenerateSourceCode(uint32_t baseAddress) override;
 	virtual size_t GetCommandSize() const override;
 };
 

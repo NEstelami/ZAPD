@@ -26,8 +26,8 @@ size_t CutsceneSubCommandEntry::GetRawSize() const
 
 /* CutsceneCommand */
 
-CutsceneCommand::CutsceneCommand([[maybe_unused]] const std::vector<uint8_t>& rawData,
-                                 [[maybe_unused]] uint32_t rawDataIndex)
+CutsceneCommand::CutsceneCommand(const std::vector<uint8_t>& rawData,
+                                 uint32_t rawDataIndex)
 {
     numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 }
@@ -45,10 +45,20 @@ std::string CutsceneCommand::GetCommandMacro() const
     return StringHelper::Sprintf("CMD_W(0x%08X), CMD_W(0x%08X)", commandID, numEntries);
 }
 
-std::string CutsceneCommand::GenerateSourceCode(uint32_t baseAddress)
+std::string CutsceneCommand::GenerateSourceCode() const
 {
-	return StringHelper::Sprintf("PLACEHOLDER CutsceneData%04XCmd%02X = { 0x%02X,",
-	                             baseAddress, commandIndex, commandID);
+	std::string result;
+
+    result += GetCommandMacro();
+    result += ",\n";
+
+    for (auto& entry : entries) {
+        result += "        ";
+        result += entry->GetBodySourceCode();
+        result += "\n";
+    }
+
+	return result;
 }
 
 size_t CutsceneCommand::GetCommandSize() const

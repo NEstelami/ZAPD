@@ -159,7 +159,7 @@ std::string ZCutsceneMM::GetBodySourceCode() const
 	for (size_t i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
-		output += "    " + cmd->GenerateSourceCode(curPtr);
+		output += "    " + cmd->GenerateSourceCode();
 		curPtr += cmd->GetCommandSize();
 	}
 

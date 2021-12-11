@@ -6,29 +6,11 @@
 
 /* CutsceneMMCommand */
 
-CutsceneMMCommand::CutsceneMMCommand([[maybe_unused]] const std::vector<uint8_t>& rawData,
-                                 [[maybe_unused]] uint32_t rawDataIndex)
+CutsceneMMCommand::CutsceneMMCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneCommand(rawData, rawDataIndex)
 {
 }
 
-
-
-std::string CutsceneMMCommand::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
-{
-	std::string result;
-
-    result += GetCommandMacro();
-    result += ",\n";
-
-    for (auto& entry : entries) {
-        result += "        ";
-        result += entry->GetBodySourceCode();
-        result += "\n";
-    }
-
-	return result;
-}
 
 size_t CutsceneMMCommand::GetCommandSize() const
 {
@@ -36,7 +18,6 @@ size_t CutsceneMMCommand::GetCommandSize() const
     if (entries.size() > 0) {
         size = entries.at(0)->GetRawSize() * entries.size();
     } else {
-        // fallback during development
         size = 0x08 * numEntries;
     }
 	return 0x04 + size;
