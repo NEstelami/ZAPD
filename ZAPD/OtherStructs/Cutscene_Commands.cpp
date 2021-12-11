@@ -29,10 +29,14 @@ size_t CutsceneSubCommandEntry::GetRawSize() const
 CutsceneCommand::CutsceneCommand([[maybe_unused]] const std::vector<uint8_t>& rawData,
                                  [[maybe_unused]] uint32_t rawDataIndex)
 {
+    numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 }
 
 CutsceneCommand::~CutsceneCommand()
 {
+    for(auto& entry : entries) {
+        delete entry;
+    }
 }
 
 

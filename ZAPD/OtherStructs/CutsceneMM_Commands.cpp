@@ -10,15 +10,9 @@ CutsceneMMCommand::CutsceneMMCommand([[maybe_unused]] const std::vector<uint8_t>
                                  [[maybe_unused]] uint32_t rawDataIndex)
 : CutsceneCommand(rawData, rawDataIndex)
 {
-    numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 }
 
-CutsceneMMCommand::~CutsceneMMCommand()
-{
-    for(auto& entry : entries) {
-        delete entry;
-    }
-}
+
 
 std::string CutsceneMMCommand::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
 {
@@ -84,10 +78,7 @@ CutsceneMMCommand_TextBox::CutsceneMMCommand_TextBox(const std::vector<uint8_t>&
     }
 }
 
-CutsceneMMCommand_TextBox::~CutsceneMMCommand_TextBox()
-{
 
-}
 
 std::string CutsceneMMCommand_TextBox::GetCommandMacro() const
 {
@@ -125,10 +116,7 @@ CutsceneMMCommand_5A::CutsceneMMCommand_5A(const std::vector<uint8_t>& rawData, 
         rawDataIndex += entry->GetRawSize();
     }
 }
-CutsceneMMCommand_5A::~CutsceneMMCommand_5A()
-{
 
-}
 
 
 std::string CutsceneMMCommand_5A::GetCommandMacro() const
@@ -162,10 +150,7 @@ CutsceneMMCommand_Misc::CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawDa
     }
 }
 
-CutsceneMMCommand_Misc::~CutsceneMMCommand_Misc()
-{
 
-}
 
 std::string CutsceneMMCommand_Misc::GetCommandMacro() const
 {
@@ -199,10 +184,7 @@ CutsceneMMCommand_Lighting::CutsceneMMCommand_Lighting(const std::vector<uint8_t
     }
 }
 
-CutsceneMMCommand_Lighting::~CutsceneMMCommand_Lighting()
-{
 
-}
 
 std::string CutsceneMMCommand_Lighting::GetCommandMacro() const
 {
@@ -237,10 +219,7 @@ CutsceneMMCommand_SceneTransFx::CutsceneMMCommand_SceneTransFx(const std::vector
     }
 }
 
-CutsceneMMCommand_SceneTransFx::~CutsceneMMCommand_SceneTransFx()
-{
 
-}
 
 std::string CutsceneMMCommand_SceneTransFx::GetCommandMacro() const
 {
@@ -277,10 +256,7 @@ CutsceneMMCommand_Unk99::CutsceneMMCommand_Unk99(const std::vector<uint8_t>& raw
     }
 }
 
-CutsceneMMCommand_Unk99::~CutsceneMMCommand_Unk99()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk99::GetCommandMacro() const
 {
@@ -313,10 +289,7 @@ CutsceneMMCommand_GiveTatl::CutsceneMMCommand_GiveTatl(const std::vector<uint8_t
     }
 }
 
-CutsceneMMCommand_GiveTatl::~CutsceneMMCommand_GiveTatl()
-{
 
-}
 
 std::string CutsceneMMCommand_GiveTatl::GetCommandMacro() const
 {
@@ -359,10 +332,7 @@ CutsceneMMCommand_Unk9B::CutsceneMMCommand_Unk9B(const std::vector<uint8_t>& raw
     }
 }
 
-CutsceneMMCommand_Unk9B::~CutsceneMMCommand_Unk9B()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk9B::GetCommandMacro() const
 {
@@ -405,10 +375,7 @@ CutsceneMMCommand_FadeSeq::CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>&
     }
 }
 
-CutsceneMMCommand_FadeSeq::~CutsceneMMCommand_FadeSeq()
-{
 
-}
 
 std::string CutsceneMMCommand_FadeSeq::GetCommandMacro() const
 {
@@ -449,10 +416,7 @@ CutsceneMMCommand_SetTime::CutsceneMMCommand_SetTime(const std::vector<uint8_t>&
     }
 }
 
-CutsceneMMCommand_SetTime::~CutsceneMMCommand_SetTime()
-{
 
-}
 
 std::string CutsceneMMCommand_SetTime::GetCommandMacro() const
 {
@@ -508,10 +472,7 @@ CutsceneMMCommand_ActorAction::CutsceneMMCommand_ActorAction(const std::vector<u
     }
 }
 
-CutsceneMMCommand_ActorAction::~CutsceneMMCommand_ActorAction()
-{
 
-}
 
 std::string CutsceneMMCommand_ActorAction::GetCommandMacro() const
 {
@@ -544,10 +505,7 @@ CutsceneMMCommand_PlaySeq::CutsceneMMCommand_PlaySeq(const std::vector<uint8_t>&
     }
 }
 
-CutsceneMMCommand_PlaySeq::~CutsceneMMCommand_PlaySeq()
-{
 
-}
 
 std::string CutsceneMMCommand_PlaySeq::GetCommandMacro() const
 {
@@ -583,10 +541,7 @@ CutsceneMMCommand_Unk130::CutsceneMMCommand_Unk130(const std::vector<uint8_t>& r
     }
 }
 
-CutsceneMMCommand_Unk130::~CutsceneMMCommand_Unk130()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk130::GetCommandMacro() const
 {
@@ -618,10 +573,7 @@ CutsceneMMCommand_Unk131::CutsceneMMCommand_Unk131(const std::vector<uint8_t>& r
     }
 }
 
-CutsceneMMCommand_Unk131::~CutsceneMMCommand_Unk131()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk131::GetCommandMacro() const
 {
@@ -655,10 +607,7 @@ CutsceneMMCommand_Unk132::CutsceneMMCommand_Unk132(const std::vector<uint8_t>& r
     }
 }
 
-CutsceneMMCommand_Unk132::~CutsceneMMCommand_Unk132()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk132::GetCommandMacro() const
 {
@@ -690,10 +639,7 @@ CutsceneMMCommand_StopSeq::CutsceneMMCommand_StopSeq(const std::vector<uint8_t>&
     }
 }
 
-CutsceneMMCommand_StopSeq::~CutsceneMMCommand_StopSeq()
-{
 
-}
 
 std::string CutsceneMMCommand_StopSeq::GetCommandMacro() const
 {
@@ -725,10 +671,7 @@ CutsceneMMCommand_PlayAmbience::CutsceneMMCommand_PlayAmbience(const std::vector
     }
 }
 
-CutsceneMMCommand_PlayAmbience::~CutsceneMMCommand_PlayAmbience()
-{
 
-}
 
 std::string CutsceneMMCommand_PlayAmbience::GetCommandMacro() const
 {
@@ -760,10 +703,7 @@ CutsceneMMCommand_FadeAmbience::CutsceneMMCommand_FadeAmbience(const std::vector
     }
 }
 
-CutsceneMMCommand_FadeAmbience::~CutsceneMMCommand_FadeAmbience()
-{
 
-}
 
 std::string CutsceneMMCommand_FadeAmbience::GetCommandMacro() const
 {
@@ -795,10 +735,7 @@ CutsceneMMCommand_Unk15E::CutsceneMMCommand_Unk15E(const std::vector<uint8_t>& r
     }
 }
 
-CutsceneMMCommand_Unk15E::~CutsceneMMCommand_Unk15E()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk15E::GetCommandMacro() const
 {
@@ -830,10 +767,7 @@ CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& r
     }
 }
 
-CutsceneMMCommand_Unk15F::~CutsceneMMCommand_Unk15F()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk15F::GetCommandMacro() const
 {
@@ -878,10 +812,7 @@ CutsceneMMCommand_Unk190::CutsceneMMCommand_Unk190(const std::vector<uint8_t>& r
     }
 }
 
-CutsceneMMCommand_Unk190::~CutsceneMMCommand_Unk190()
-{
 
-}
 
 std::string CutsceneMMCommand_Unk190::GetCommandMacro() const
 {
@@ -913,9 +844,7 @@ CutsceneMMCommand_UnknownCommand::CutsceneMMCommand_UnknownCommand(const std::ve
     }
 }
 
-CutsceneMMCommand_UnknownCommand::~CutsceneMMCommand_UnknownCommand()
-{
-}
+
 
 std::string CutsceneMMCommand_UnknownCommand::GetCommandMacro() const
 {
@@ -943,8 +872,5 @@ CutsceneMMCommand_NonImplemented::CutsceneMMCommand_NonImplemented(const std::ve
     }
 }
 
-CutsceneMMCommand_NonImplemented::~CutsceneMMCommand_NonImplemented()
-{
 
-}
 

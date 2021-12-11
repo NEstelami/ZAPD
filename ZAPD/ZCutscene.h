@@ -70,7 +70,7 @@ public:
 	~CutsceneCommandSetCameraPos();
 	CutsceneCommandSetCameraPos(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -103,7 +103,7 @@ public:
 	CutsceneCommandSpecialAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandSpecialAction();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -136,7 +136,7 @@ public:
 	CutsceneCommandFadeBGM(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandFadeBGM();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -166,7 +166,7 @@ public:
 	CutsceneCommandPlayBGM(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandPlayBGM();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -178,7 +178,7 @@ public:
 	CutsceneCommandStopBGM(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandStopBGM();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -208,7 +208,7 @@ public:
 	CutsceneCommandEnvLighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandEnvLighting();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -221,7 +221,7 @@ public:
 	~CutsceneCommandSceneTransFX();
 	CutsceneCommandSceneTransFX(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -248,7 +248,7 @@ public:
 	CutsceneCommandUnknown9(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandUnknown9();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -279,7 +279,7 @@ public:
 	CutsceneCommandUnknown(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandUnknown();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -304,7 +304,7 @@ public:
 	CutsceneCommandDayTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandDayTime();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -329,7 +329,7 @@ public:
 	CutsceneCommandTextbox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandTextbox();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -355,7 +355,7 @@ public:
 	CutsceneCommandActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	~CutsceneCommandActorAction();
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -369,7 +369,7 @@ public:
 
 	CutsceneCommandTerminator(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
@@ -382,7 +382,7 @@ public:
 
 	CutsceneCommandEnd(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	std::string GenerateSourceCode(uint32_t baseAddress);
+	std::string GenerateSourceCode(uint32_t baseAddress) override;
 	size_t GetCommandSize() const override;
 };
 
