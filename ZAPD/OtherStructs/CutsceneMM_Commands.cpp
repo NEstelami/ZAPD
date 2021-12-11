@@ -311,45 +311,6 @@ std::string CutsceneMMCommand_FadeSeq::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_FADESEQ_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_SetTime::CutsceneSubCommandEntry_SetTime(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-	hour = BitConverter::ToUInt8BE(rawData, rawDataIndex + 6);
-	minute = BitConverter::ToUInt8BE(rawData, rawDataIndex + 7);
-	unk_08 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-}
-
-std::string CutsceneSubCommandEntry_SetTime::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("CS_TIME(0x%04X, %i, %i, %i, %i, %i),", base, startFrame, endFrame,
-	                             hour, minute, unk_08);
-}
-
-size_t CutsceneSubCommandEntry_SetTime::GetRawSize() const
-{
-	return 0x0C;
-}
-
-CutsceneMMCommand_SetTime::CutsceneMMCommand_SetTime(const std::vector<uint8_t>& rawData,
-                                                     uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_SetTime(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_SetTime::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_TIME_LIST(%i)", numEntries);
-}
-
 CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

@@ -80,7 +80,7 @@ void ZCutsceneMM::ParseRawData()
 				cmd = new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_SETTIME:
-				cmd = new CutsceneMMCommand_SetTime(rawData, currentPtr);
+				cmd = new CutsceneCommand_SetTime(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
 				cmd = new CutsceneMMCommand_ActorAction(rawData, currentPtr);

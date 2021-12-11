@@ -491,48 +491,43 @@ size_t CutsceneCommandUnknown::GetCommandSize() const
 	return 8 + (entries.size() * 0x30);
 }
 
-DayTimeEntry::DayTimeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_SetTime::CutsceneSubCommandEntry_SetTime(
+	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	hour = rawData[rawDataIndex + 6];
-	minute = rawData[rawDataIndex + 7];
-	unused = rawData[rawDataIndex + 8];
+	hour = BitConverter::ToUInt8BE(rawData, rawDataIndex + 6);
+	minute = BitConverter::ToUInt8BE(rawData, rawDataIndex + 7);
+	unk_08 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
 }
 
-CutsceneCommandDayTime::CutsceneCommandDayTime(const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
+std::string CutsceneSubCommandEntry_SetTime::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("CS_TIME(%i, %i, %i, %i, %i, %i),", base, startFrame, endFrame,
+	                             hour, minute, unk_08);
+}
+
+size_t CutsceneSubCommandEntry_SetTime::GetRawSize() const
+{
+	return 0x0C;
+}
+
+CutsceneCommand_SetTime::CutsceneCommand_SetTime(const std::vector<uint8_t>& rawData,
+                                                     uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
-
 	rawDataIndex += 4;
 
-	for (int32_t i = 0; i < numEntries; i++)
+	for (size_t i = 0; i < numEntries; i++)
 	{
-		entries.push_back(new DayTimeEntry(rawData, rawDataIndex));
-		rawDataIndex += 12;
+		auto* entry = new CutsceneSubCommandEntry_SetTime(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneCommandDayTime::GenerateSourceCode() const
+std::string CutsceneCommand_SetTime::GetCommandMacro() const
 {
-	std::string result;
-
-	result += StringHelper::Sprintf("CS_TIME_LIST(%i),\n", entries.size());
-
-	for (size_t i = 0; i < entries.size(); i++)
-	{
-		result += StringHelper::Sprintf(
-			"        CS_TIME(%i, %i, %i, %i, %i, %i),\n", entries[i]->base, entries[i]->startFrame,
-			entries[i]->endFrame, entries[i]->hour, entries[i]->minute, entries[i]->unused);
-	}
-
-	return result;
-}
-
-size_t CutsceneCommandDayTime::GetCommandSize() const
-{
-	return 8 + (entries.size() * 12);
+	return StringHelper::Sprintf("CS_TIME_LIST(%i)", numEntries);
 }
 
 TextboxEntry::TextboxEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
@@ -758,19 +753,6 @@ size_t CutsceneCommandSpecialAction::GetCommandSize() const
 	return 8 + (0x30 * entries.size());
 }
 
-CutsceneCommandNop::CutsceneCommandNop(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
-	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
-	endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
-}
-
-size_t CutsceneCommandNop::GetCommandSize() const
-{
-	return 8 + 6;
-}
-
 CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const std::vector<uint8_t>& rawData,
                                                          uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
@@ -825,12 +807,6 @@ CutsceneCommandUnknown9::~CutsceneCommandUnknown9()
 }
 
 CutsceneCommandUnknown::~CutsceneCommandUnknown()
-{
-	for (auto e : entries)
-		delete e;
-}
-
-CutsceneCommandDayTime::~CutsceneCommandDayTime()
 {
 	for (auto e : entries)
 		delete e;

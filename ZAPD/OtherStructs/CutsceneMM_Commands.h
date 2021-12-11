@@ -207,28 +207,6 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_SetTime : public CutsceneSubCommandEntry
-{
-public:
-	uint8_t hour;
-	uint8_t minute;
-	uint32_t unk_08;
-
-	CutsceneSubCommandEntry_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-
-	size_t GetRawSize() const override;
-};
-
-class CutsceneMMCommand_SetTime : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
 class CutsceneSubCommandEntry_ActorAction : public CutsceneSubCommandEntry
 {
 public:

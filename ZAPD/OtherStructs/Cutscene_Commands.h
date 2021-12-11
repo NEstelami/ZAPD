@@ -31,7 +31,6 @@ enum class CutsceneCommands
 	SetActorAction9 = 0x003E,
 	SetActorAction10 = 0x008F,
 	SetSceneTransFX = 0x002D,
-	Nop = 0x000B,
 	PlayBGM = 0x0056,
 	StopBGM = 0x0057,
 	FadeBGM = 0x007C,
@@ -304,26 +303,26 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class DayTimeEntry : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_SetTime : public CutsceneSubCommandEntry
 {
 public:
 	uint8_t hour;
 	uint8_t minute;
-	uint8_t unused;
+	uint32_t unk_08;
 
-	DayTimeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
 };
 
-class CutsceneCommandDayTime : public CutsceneCommand
+class CutsceneCommand_SetTime : public CutsceneCommand
 {
 public:
-	std::vector<DayTimeEntry*> entries;
+	CutsceneCommand_SetTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	CutsceneCommandDayTime(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandDayTime();
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetCommandMacro() const override;
 };
 
 class TextboxEntry : public CutsceneSubCommandEntry
@@ -397,16 +396,3 @@ public:
 	std::string GenerateSourceCode() const override;
 	size_t GetCommandSize() const override;
 };
-
-class CutsceneCommandNop : public CutsceneCommand
-{
-public:
-	uint16_t base;
-	uint16_t startFrame;
-	uint16_t endFrame;
-
-	CutsceneCommandNop(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	size_t GetCommandSize() const override;
-};
-

@@ -136,9 +136,6 @@ void ZCutscene::ParseRawData()
 		case CutsceneCommands::SetSceneTransFX:
 			cmd = new CutsceneCommandSceneTransFX(rawData, currentPtr);
 			break;
-		case CutsceneCommands::Nop:
-			cmd = new CutsceneCommandNop(rawData, currentPtr);
-			break;
 		case CutsceneCommands::PlayBGM:
 			cmd = new CutsceneCommandPlayBGM(rawData, currentPtr);
 			break;
@@ -149,7 +146,7 @@ void ZCutscene::ParseRawData()
 			cmd = new CutsceneCommandFadeBGM(rawData, currentPtr);
 			break;
 		case CutsceneCommands::SetTime:
-			cmd = new CutsceneCommandDayTime(rawData, currentPtr);
+			cmd = new CutsceneCommand_SetTime(rawData, currentPtr);
 			break;
 		case CutsceneCommands::Terminator:
 			cmd = new CutsceneCommandTerminator(rawData, currentPtr);
