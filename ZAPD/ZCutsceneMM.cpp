@@ -1,5 +1,7 @@
 #include "ZCutsceneMM.h"
 
+#include <cassert>
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
@@ -126,6 +128,21 @@ void ZCutsceneMM::ParseRawData()
 					cmd = new CutsceneMMCommand_Unk190(rawData, currentPtr);
 					break;
 
+				case CutsceneMMCommands::CS_CMD_UNK_FA:
+				case CutsceneMMCommands::CS_CMD_UNK_FE:
+				case CutsceneMMCommands::CS_CMD_UNK_FF:
+				case CutsceneMMCommands::CS_CMD_UNK_100:
+				case CutsceneMMCommands::CS_CMD_UNK_101:
+				case CutsceneMMCommands::CS_CMD_UNK_102:
+				case CutsceneMMCommands::CS_CMD_UNK_103:
+				case CutsceneMMCommands::CS_CMD_UNK_104:
+				case CutsceneMMCommands::CS_CMD_UNK_105:
+				case CutsceneMMCommands::CS_CMD_UNK_108:
+				case CutsceneMMCommands::CS_CMD_UNK_109:
+				case CutsceneMMCommands::CS_CMD_UNK_12D:
+					cmd = new CutsceneMMCommand_UnknownCommand(rawData, currentPtr);
+					break;
+
 				default:
 					HANDLE_WARNING_RESOURCE(WarningType::NotImplemented, parent, this, rawDataIndex,
 											StringHelper::Sprintf("Cutscene command not implemented", cmdID),
@@ -134,6 +151,8 @@ void ZCutsceneMM::ParseRawData()
 					break;
 			}
 		}
+
+		assert(cmd != nullptr);
 
 		cmd->commandIndex = i;
 		cmd->commandID = id;

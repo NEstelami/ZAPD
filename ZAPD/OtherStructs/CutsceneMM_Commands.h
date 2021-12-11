@@ -4,19 +4,30 @@
 
 
 enum class CutsceneMMCommands {
-    ///* 0x000 */ CS_CMD_00,
     /* 0x00A */ CS_CMD_TEXTBOX = 0xA,
     /* 0x05A */ CS_CMD_5A = 0x5A,
     /* 0x096 */ CS_CMD_MISC = 0x96,
     /* 0x097 */ CS_CMD_SET_LIGHTING,
     /* 0x098 */ CS_CMD_SCENE_TRANS_FX,
-    /* 0x098 */ CS_CMD_99 = 0x99,
-    /* 0x09A */ CS_CMD_GIVETATL = 0x9A,
-    /* 0x09B */ CS_CMD_9B = 0x9B,
-    /* 0x09C */ CS_CMD_FADESEQ = 0x9C,
-    /* 0x09D */ CS_CMD_SETTIME = 0x9D,
+    /* 0x099 */ CS_CMD_99,
+    /* 0x09A */ CS_CMD_GIVETATL,
+    /* 0x09B */ CS_CMD_9B,
+    /* 0x09C */ CS_CMD_FADESEQ,
+    /* 0x09D */ CS_CMD_SETTIME,
     /* 0x0C8 */ CS_CMD_SET_PLAYER_ACTION = 0xC8,
+    /* 0x0FA */ CS_CMD_UNK_FA = 0xFA,
+    /* 0x0FE */ CS_CMD_UNK_FE = 0xFE,
+    /* 0x0FF */ CS_CMD_UNK_FF,
+    /* 0x100 */ CS_CMD_UNK_100,
+    /* 0x101 */ CS_CMD_UNK_101,
+    /* 0x102 */ CS_CMD_UNK_102,
+    /* 0x103 */ CS_CMD_UNK_103,
+    /* 0x104 */ CS_CMD_UNK_104,
+    /* 0x105 */ CS_CMD_UNK_105,
+    /* 0x108 */ CS_CMD_UNK_108 = 0x108,
+    /* 0x109 */ CS_CMD_UNK_109,
     /* 0x12C */ CS_CMD_PLAYSEQ = 0x12C,
+    /* 0x12D */ CS_CMD_UNK_12D,
     /* 0x130 */ CS_CMD_130 = 0x130,
     /* 0x131 */ CS_CMD_131 = 0x131,
     /* 0x132 */ CS_CMD_132 = 0x132,
@@ -540,6 +551,25 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
+
+
+
+class CutsceneSubCommandEntry_UnknownCommand : public CutsceneSubCommandEntry
+{
+public:
+    CutsceneSubCommandEntry_UnknownCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+};
+
+class CutsceneMMCommand_UnknownCommand : public CutsceneMMCommand
+{
+public:
+    CutsceneMMCommand_UnknownCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+    virtual ~CutsceneMMCommand_UnknownCommand();
+
+	std::string GetCommandMacro() const override;
+};
 
 
 
