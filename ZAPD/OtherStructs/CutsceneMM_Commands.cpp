@@ -4,26 +4,6 @@
 #include "Utils/StringHelper.h"
 
 
-/* CutsceneSubCommandEntry */
-
-CutsceneSubCommandEntry::CutsceneSubCommandEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-{
-    base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
-    startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
-    endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
-    pad = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
-}
-
-std::string CutsceneSubCommandEntry::GetBodySourceCode() const {
-    return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, pad);
-}
-
-size_t CutsceneSubCommandEntry::GetRawSize()
-{
-    return 0x08;
-}
-
-
 /* CutsceneMMCommand */
 
 CutsceneMMCommand::CutsceneMMCommand([[maybe_unused]] const std::vector<uint8_t>& rawData,
@@ -38,16 +18,6 @@ CutsceneMMCommand::~CutsceneMMCommand()
     for(auto& entry : entries) {
         delete entry;
     }
-}
-
-std::string CutsceneMMCommand::GetCName()
-{
-	return "SCmdCutsceneData";
-}
-
-std::string CutsceneMMCommand::GetCommandMacro() const
-{
-    return StringHelper::Sprintf("CMD_W(0x%08X), CMD_W(0x%08X)", commandID, numEntries);
 }
 
 std::string CutsceneMMCommand::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
@@ -66,7 +36,7 @@ std::string CutsceneMMCommand::GenerateSourceCode([[maybe_unused]] uint32_t base
 	return result;
 }
 
-size_t CutsceneMMCommand::GetCommandSize()
+size_t CutsceneMMCommand::GetCommandSize() const
 {
     size_t size = 0;
     if (entries.size() > 0) {
@@ -96,7 +66,7 @@ std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
     return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame, endFrame, type, textId1, textId2);
 }
 
-size_t CutsceneSubCommandEntry_TextBox::GetRawSize()
+size_t CutsceneSubCommandEntry_TextBox::GetRawSize() const
 {
     return 0x0C;
 }
@@ -138,7 +108,7 @@ std::string CutsceneSubCommandEntry_Unk5A::GetBodySourceCode() const
     return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X),", base, startFrame);
 }
 
-size_t CutsceneSubCommandEntry_Unk5A::GetRawSize()
+size_t CutsceneSubCommandEntry_Unk5A::GetRawSize() const
 {
     return 0x04;
 }
@@ -372,7 +342,7 @@ std::string CutsceneSubCommandEntry_Unk9B::GetBodySourceCode() const
     return StringHelper::Sprintf("CS_SCENE_UNK_9B(0x%02X, %i, %i, 0x%02X, 0x%02X, 0x%02X),", base, startFrame, endFrame, unk_06, unk_07, unk_08);
 }
 
-size_t CutsceneSubCommandEntry_Unk9B::GetRawSize()
+size_t CutsceneSubCommandEntry_Unk9B::GetRawSize() const
 {
     return 0x0C;
 }
@@ -417,7 +387,7 @@ std::string CutsceneSubCommandEntry_FadeSeq::GetBodySourceCode() const
     return StringHelper::Sprintf("CS_FADESEQ(0x%02X, %i, %i, 0x%04X, 0x%04X),", base, startFrame, endFrame, pad, unk_08);
 }
 
-size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize()
+size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize() const
 {
     return 0x0C;
 }
@@ -461,7 +431,7 @@ std::string CutsceneSubCommandEntry_SetTime::GetBodySourceCode() const
     return StringHelper::Sprintf("CS_TIME(0x%04X, %i, %i, %i, %i, %i),", base, startFrame, endFrame, hour, minute, unk_08);
 }
 
-size_t CutsceneSubCommandEntry_SetTime::GetRawSize()
+size_t CutsceneSubCommandEntry_SetTime::GetRawSize() const
 {
     return 0x0C;
 }
@@ -520,7 +490,7 @@ std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
 			endPosZ, normalX, normalY, normalZ);
 }
 
-size_t CutsceneSubCommandEntry_ActorAction::GetRawSize()
+size_t CutsceneSubCommandEntry_ActorAction::GetRawSize() const
 {
     return 0x30;
 }
@@ -890,7 +860,7 @@ std::string CutsceneSubCommandEntry_Unk190::GetBodySourceCode() const
     return StringHelper::Sprintf("CS_SCENE_UNK_190(0x%04X, %i, %i, 0x%02X, 0x%02X, 0x%02X),", base, startFrame, endFrame, unk_06, unk_07, unk_08);
 }
 
-size_t CutsceneSubCommandEntry_Unk190::GetRawSize()
+size_t CutsceneSubCommandEntry_Unk190::GetRawSize() const
 {
     return 0x0C;
 }

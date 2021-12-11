@@ -39,36 +39,15 @@ enum class CutsceneMMCommands {
     /* 0x190 */ CS_CMD_190 = 0x190,
 };
 
-class CutsceneSubCommandEntry {
-public:
-    uint16_t base;
-    uint16_t startFrame;
-    uint16_t endFrame;
-    uint16_t pad;
-
-    CutsceneSubCommandEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-    virtual ~CutsceneSubCommandEntry() = default;
-
-	virtual std::string GetBodySourceCode() const;
-
-    virtual size_t GetRawSize();
-};
-
-
 
 class CutsceneMMCommand : public CutsceneCommand
 {
 public:
-    uint32_t numEntries;
-    std::vector<CutsceneSubCommandEntry*> entries;
-
 	CutsceneMMCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	virtual ~CutsceneMMCommand();
 
-	virtual std::string GetCName() override;
-    virtual std::string GetCommandMacro() const;
 	virtual std::string GenerateSourceCode(uint32_t baseAddress) override;
-	virtual size_t GetCommandSize()  override;
+	virtual size_t GetCommandSize() const override;
 };
 
 
@@ -85,7 +64,7 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-    size_t GetRawSize() override;
+    size_t GetRawSize() const override;
 };
 
 class CutsceneMMCommand_TextBox : public CutsceneMMCommand
@@ -108,7 +87,7 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-    size_t GetRawSize() override;
+    size_t GetRawSize() const override;
 };
 
 class CutsceneMMCommand_5A : public CutsceneMMCommand
@@ -242,7 +221,7 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-    size_t GetRawSize() override;
+    size_t GetRawSize() const override;
 };
 
 class CutsceneMMCommand_Unk9B : public CutsceneMMCommand
@@ -265,7 +244,7 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-    size_t GetRawSize() override;
+    size_t GetRawSize() const override;
 };
 
 class CutsceneMMCommand_FadeSeq : public CutsceneMMCommand
@@ -291,7 +270,7 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-    size_t GetRawSize() override;
+    size_t GetRawSize() const override;
 };
 
 class CutsceneMMCommand_SetTime : public CutsceneMMCommand
@@ -317,7 +296,7 @@ public:
     CutsceneSubCommandEntry_ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 	std::string GetBodySourceCode() const override;
 
-    size_t GetRawSize() override;
+    size_t GetRawSize() const override;
 };
 
 class CutsceneMMCommand_ActorAction : public CutsceneMMCommand
@@ -538,7 +517,7 @@ public:
 
 	std::string GetBodySourceCode() const override;
 
-    size_t GetRawSize() override;
+    size_t GetRawSize() const override;
 };
 
 

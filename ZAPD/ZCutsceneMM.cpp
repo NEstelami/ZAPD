@@ -26,20 +26,6 @@ void ZCutsceneMM::ParseRawData()
 
 	endFrame = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
 	uint32_t currentPtr = rawDataIndex + 8;
-	//uint32_t lastData = 0;
-
-	/*
-	
-	// TODO currently cutscenes aren't being parsed, so just consume words until we see an end
-	// marker.
-	do
-	{
-		lastData = BitConverter::ToInt32BE(rawData, currentPtr);
-		data.push_back(lastData);
-		currentPtr += 4;
-	} while (lastData != 0xFFFFFFFF);
-	*/
-
 
 	for (int32_t i = 0; i < numCommands; i++)
 	{
@@ -167,16 +153,6 @@ std::string ZCutsceneMM::GetBodySourceCode() const
 	std::string output;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", numCommands, endFrame);
-/*
-	for (size_t i = 0; i < data.size(); i++)
-	{
-		if ((i % 4) == 0)
-			output += "\n    ";
-		output += StringHelper::Sprintf("0x%08X, ", data[i]);
-	}
-
-	return output;
-*/
 
 	uint32_t curPtr = 0;
 

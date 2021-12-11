@@ -454,12 +454,6 @@ CutsceneCommandSetCameraPos::CutsceneCommandSetCameraPos(const std::vector<uint8
 	}
 }
 
-// TODO
-std::string CutsceneCommandSetCameraPos::GetCName()
-{
-	return "";
-}
-
 std::string CutsceneCommandSetCameraPos::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
 {
 	std::string result;
@@ -505,7 +499,7 @@ std::string CutsceneCommandSetCameraPos::GenerateSourceCode([[maybe_unused]] uin
 	return result;
 }
 
-size_t CutsceneCommandSetCameraPos::GetCommandSize()
+size_t CutsceneCommandSetCameraPos::GetCommandSize() const
 {
 	return 8 + (entries.size() * 16);
 }
@@ -546,11 +540,6 @@ CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const std::vector<uint8_t>& rawDa
 	}
 }
 
-std::string CutsceneCommandFadeBGM::GetCName()
-{
-	return "CsCmdMusicFade";
-}
-
 std::string CutsceneCommandFadeBGM::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
 {
 	std::string result;
@@ -569,7 +558,7 @@ std::string CutsceneCommandFadeBGM::GenerateSourceCode([[maybe_unused]] uint32_t
 	return result;
 }
 
-size_t CutsceneCommandFadeBGM::GetCommandSize()
+size_t CutsceneCommandFadeBGM::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + 0x30 * entries.size();
 }
@@ -622,12 +611,7 @@ std::string CutsceneCommandPlayBGM::GenerateSourceCode([[maybe_unused]] uint32_t
 	return result;
 }
 
-std::string CutsceneCommandPlayBGM::GetCName()
-{
-	return "CsCmdMusicChange";
-}
-
-size_t CutsceneCommandPlayBGM::GetCommandSize()
+size_t CutsceneCommandPlayBGM::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + 0x30;
 }
@@ -665,12 +649,7 @@ std::string CutsceneCommandStopBGM::GenerateSourceCode([[maybe_unused]] uint32_t
 	return result;
 }
 
-std::string CutsceneCommandStopBGM::GetCName()
-{
-	return "CsCmdMusicChange";
-}
-
-size_t CutsceneCommandStopBGM::GetCommandSize()
+size_t CutsceneCommandStopBGM::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + 0x30;
 }
@@ -723,12 +702,7 @@ std::string CutsceneCommandEnvLighting::GenerateSourceCode([[maybe_unused]] uint
 	return result;
 }
 
-std::string CutsceneCommandEnvLighting::GetCName()
-{
-	return "CsCmdEnvLighting";
-}
-
-size_t CutsceneCommandEnvLighting::GetCommandSize()
+size_t CutsceneCommandEnvLighting::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + (0x30 * entries.size());
 }
@@ -778,12 +752,7 @@ std::string CutsceneCommandUnknown9::GenerateSourceCode([[maybe_unused]] uint32_
 	return result;
 }
 
-std::string CutsceneCommandUnknown9::GetCName()
-{
-	return "CsCmdUnknown9";
-}
-
-size_t CutsceneCommandUnknown9::GetCommandSize()
+size_t CutsceneCommandUnknown9::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
@@ -837,12 +806,7 @@ std::string CutsceneCommandUnknown::GenerateSourceCode([[maybe_unused]] uint32_t
 	return result;
 }
 
-std::string CutsceneCommandUnknown::GetCName()
-{
-	return "CsCmdUnknown1A";
-}
-
-size_t CutsceneCommandUnknown::GetCommandSize()
+size_t CutsceneCommandUnknown::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 0x30);
 }
@@ -872,11 +836,6 @@ CutsceneCommandDayTime::CutsceneCommandDayTime(const std::vector<uint8_t>& rawDa
 	}
 }
 
-std::string CutsceneCommandDayTime::GetCName()
-{
-	return "CsCmdDayTime";
-}
-
 std::string CutsceneCommandDayTime::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
 {
 	std::string result;
@@ -893,7 +852,7 @@ std::string CutsceneCommandDayTime::GenerateSourceCode([[maybe_unused]] uint32_t
 	return result;
 }
 
-size_t CutsceneCommandDayTime::GetCommandSize()
+size_t CutsceneCommandDayTime::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
@@ -923,11 +882,6 @@ CutsceneCommandTextbox::CutsceneCommandTextbox(const std::vector<uint8_t>& rawDa
 	}
 }
 
-std::string CutsceneCommandTextbox::GetCName()
-{
-	return "CsCmdTextbox";
-}
-
 std::string CutsceneCommandTextbox::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
 {
 	std::string result;
@@ -953,7 +907,7 @@ std::string CutsceneCommandTextbox::GenerateSourceCode([[maybe_unused]] uint32_t
 	return result;
 }
 
-size_t CutsceneCommandTextbox::GetCommandSize()
+size_t CutsceneCommandTextbox::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 12);
 }
@@ -1022,12 +976,7 @@ std::string CutsceneCommandActorAction::GenerateSourceCode([[maybe_unused]] uint
 	return result;
 }
 
-std::string CutsceneCommandActorAction::GetCName()
-{
-	return "CsCmdBase";
-}
-
-size_t CutsceneCommandActorAction::GetCommandSize()
+size_t CutsceneCommandActorAction::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + (entries.size() * 0x30);
 }
@@ -1044,11 +993,6 @@ CutsceneCommandTerminator::CutsceneCommandTerminator(const std::vector<uint8_t>&
 	unknown = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);  // endFrame duplicate
 }
 
-std::string CutsceneCommandTerminator::GetCName()
-{
-	return "CsCmdBase";
-}
-
 std::string CutsceneCommandTerminator::GenerateSourceCode([[maybe_unused]] uint32_t baseAddress)
 {
 	std::string result;
@@ -1058,7 +1002,7 @@ std::string CutsceneCommandTerminator::GenerateSourceCode([[maybe_unused]] uint3
 	return result;
 }
 
-size_t CutsceneCommandTerminator::GetCommandSize()
+size_t CutsceneCommandTerminator::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + 8;
 }
@@ -1080,12 +1024,7 @@ std::string CutsceneCommandEnd::GenerateSourceCode([[maybe_unused]] uint32_t bas
 	return result;
 }
 
-std::string CutsceneCommandEnd::GetCName()
-{
-	return "CsCmdBase";
-}
-
-size_t CutsceneCommandEnd::GetCommandSize()
+size_t CutsceneCommandEnd::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + 6;
 }
@@ -1143,12 +1082,7 @@ std::string CutsceneCommandSpecialAction::GenerateSourceCode([[maybe_unused]] ui
 	return result;
 }
 
-std::string CutsceneCommandSpecialAction::GetCName()
-{
-	return "CsCmdBase";
-}
-
-size_t CutsceneCommandSpecialAction::GetCommandSize()
+size_t CutsceneCommandSpecialAction::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + (0x30 * entries.size());
 }
@@ -1161,12 +1095,7 @@ CutsceneCommandNop::CutsceneCommandNop(const std::vector<uint8_t>& rawData, uint
 	endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
 }
 
-std::string CutsceneCommandNop::GetCName()
-{
-	return "CsCmdBase";
-}
-
-size_t CutsceneCommandNop::GetCommandSize()
+size_t CutsceneCommandNop::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + 6;
 }
@@ -1187,12 +1116,7 @@ std::string CutsceneCommandSceneTransFX::GenerateSourceCode([[maybe_unused]] uin
 	return StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i),\n", base, startFrame, endFrame);
 }
 
-std::string CutsceneCommandSceneTransFX::GetCName()
-{
-	return "CsCmdBase";
-}
-
-size_t CutsceneCommandSceneTransFX::GetCommandSize()
+size_t CutsceneCommandSceneTransFX::GetCommandSize() const
 {
 	return CutsceneCommand::GetCommandSize() + 8;
 }
