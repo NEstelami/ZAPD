@@ -39,28 +39,6 @@ enum class CutsceneMMCommands
 	/* 0x190 */ CS_CMD_190 = 0x190,
 };
 
-class CutsceneSubCommandEntry_TextBox : public CutsceneSubCommandEntry
-{
-public:
-	uint16_t type;
-	uint16_t textId1;
-	uint16_t textId2;
-
-	CutsceneSubCommandEntry_TextBox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-
-	size_t GetRawSize() const override;
-};
-
-class CutsceneMMCommand_TextBox : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_TextBox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
 class CutsceneSubCommandEntry_Camera : public CutsceneSubCommandEntry
 {
 public:

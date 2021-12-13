@@ -3,46 +3,6 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
-CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-	type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x06);
-	textId1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x08);
-	textId2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x0A);
-}
-
-std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf(
-		"CMD_HH(0x%04X, %i), CMD_HH(%i, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame,
-		endFrame, type, textId1, textId2);
-}
-
-size_t CutsceneSubCommandEntry_TextBox::GetRawSize() const
-{
-	return 0x0C;
-}
-
-CutsceneMMCommand_TextBox::CutsceneMMCommand_TextBox(const std::vector<uint8_t>& rawData,
-                                                     uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_TextBox(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_TextBox::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_TEXT_LIST(%i)", numEntries);
-}
-
 CutsceneSubCommandEntry_Camera::CutsceneSubCommandEntry_Camera(const std::vector<uint8_t>& rawData,
                                                              uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

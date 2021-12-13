@@ -53,7 +53,7 @@ void ZCutsceneMM::ParseRawData()
 			switch (cmdID)
 			{
 			case CutsceneMMCommands::CS_CMD_TEXTBOX:
-				cmd = new CutsceneMMCommand_TextBox(rawData, currentPtr);
+				cmd = new CutsceneCommand_TextBox(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_CAMERA:
 				cmd = new CutsceneMMCommand_Camera(rawData, currentPtr);

@@ -325,26 +325,26 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class TextboxEntry : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_TextBox : public CutsceneSubCommandEntry
 {
 public:
 	uint16_t type;
-	uint16_t textID1;
-	uint16_t textID2;
+	uint16_t textId1;
+	uint16_t textId2;
 
-	TextboxEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_TextBox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
 };
 
-class CutsceneCommandTextbox : public CutsceneCommand
+class CutsceneCommand_TextBox : public CutsceneCommand
 {
 public:
-	std::vector<TextboxEntry*> entries;
+	CutsceneCommand_TextBox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	CutsceneCommandTextbox(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandTextbox();
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetCommandMacro() const override;
 };
 
 class ActorAction : public CutsceneSubCommandEntry

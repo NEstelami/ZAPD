@@ -2,6 +2,7 @@
 
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
+#include "Globals.h"
 
 /* CutsceneSubCommandEntry */
 
@@ -530,64 +531,97 @@ std::string CutsceneCommand_SetTime::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_TIME_LIST(%i)", numEntries);
 }
 
-TextboxEntry::TextboxEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(
+	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
 	textID1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 8);
 	textID2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 10);
 }
 
-CutsceneCommandTextbox::CutsceneCommandTextbox(const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
+std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
+{
+	if (type == 0xFFFF)
+	{
+		return StringHelper::Sprintf("CS_TEXT_NONE(%i, %i),",
+										startFrame, endFrame);
+	}
+	if (type == 2)
+	{
+		return StringHelper::Sprintf(
+			"CS_TEXT_LEARN_SONG(%i, %i, %i, 0x%X),", base,
+			startFrame, endFrame, textId1);
+	}
+
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		if (type == 0)
+		{
+			return StringHelper::Sprintf(
+				"CS_TEXT_DEFAULT(0x%X, %i, %i, 0x%X, 0x%X),", base,
+				startFrame, endFrame, textId1,
+				textId2);
+		}
+		if (type == 1)
+		{
+			return StringHelper::Sprintf(
+				"CS_TEXT_TYPE_1(0x%X, %i, %i, 0x%X, 0x%X),", base,
+				startFrame, endFrame, textId1,
+				textId2);
+		}
+
+		if (type == 3)
+		{
+			return StringHelper::Sprintf(
+				"CS_TEXT_TYPE_3(0x%X, %i, %i, 0x%X, 0x%X),", base,
+				startFrame, endFrame, textId1,
+				textId2);
+		}
+
+		if (type == 4)
+		{
+			return StringHelper::Sprintf(
+				"CS_TEXT_BOSSES_REMAINS(0x%X, %i, %i, 0x%X),", base,
+				startFrame, endFrame, textId1);
+		}
+		if (type == 5)
+		{
+			return StringHelper::Sprintf(
+				"CS_TEXT_ALL_NORMAL_MASKS(0x%X, %i, %i, 0x%X),", base,
+				startFrame, endFrame, textId1);
+		}
+	}
+
+	return StringHelper::Sprintf(
+		"CS_TEXT_DISPLAY_TEXTBOX(0x%X, %i, %i, %i, 0x%X, 0x%X),", base,
+		startFrame, endFrame, type, textId1,
+		textId2);
+}
+
+size_t CutsceneSubCommandEntry_TextBox::GetRawSize() const
+{
+	return 0x0C;
+}
+
+CutsceneCommand_TextBox::CutsceneCommand_TextBox(const std::vector<uint8_t>& rawData,
+                                                     uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
-
 	rawDataIndex += 4;
 
-	for (int32_t i = 0; i < numEntries; i++)
+	for (size_t i = 0; i < numEntries; i++)
 	{
-		entries.push_back(new TextboxEntry(rawData, rawDataIndex));
-		rawDataIndex += 12;
+		auto* entry = new CutsceneSubCommandEntry_TextBox(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneCommandTextbox::GenerateSourceCode() const
+std::string CutsceneCommand_TextBox::GetCommandMacro() const
 {
-	std::string result;
-
-	result += StringHelper::Sprintf("CS_TEXT_LIST(%i),\n", entries.size());
-
-	for (size_t i = 0; i < entries.size(); i++)
-	{
-		if (entries[i]->base == 0xFFFF)
-		{
-			result += StringHelper::Sprintf("        CS_TEXT_NONE(%i, %i),\n",
-			                                entries[i]->startFrame, entries[i]->endFrame);
-		}
-		else if (entries[i]->type == 2)
-		{
-			result += StringHelper::Sprintf(
-				"        CS_TEXT_LEARN_SONG(%i, %i, %i, %i),\n", entries[i]->base,
-				entries[i]->startFrame, entries[i]->endFrame, entries[i]->textID1);
-		}
-		else
-		{
-			result += StringHelper::Sprintf(
-				"        CS_TEXT_DISPLAY_TEXTBOX(%i, %i, %i, %i, %i, %i),\n", entries[i]->base,
-				entries[i]->startFrame, entries[i]->endFrame, entries[i]->type, entries[i]->textID1,
-				entries[i]->textID2);
-		}
-	}
-
-	return result;
+	return StringHelper::Sprintf("CS_TEXT_LIST(%i)", numEntries);
 }
 
-size_t CutsceneCommandTextbox::GetCommandSize() const
-{
-	return 8 + (entries.size() * 12);
-}
 
 ActorAction::ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 : CutsceneSubCommandEntry(rawData, rawDataIndex)
@@ -813,12 +847,6 @@ CutsceneCommandUnknown9::~CutsceneCommandUnknown9()
 }
 
 CutsceneCommandUnknown::~CutsceneCommandUnknown()
-{
-	for (auto e : entries)
-		delete e;
-}
-
-CutsceneCommandTextbox::~CutsceneCommandTextbox()
 {
 	for (auto e : entries)
 		delete e;
