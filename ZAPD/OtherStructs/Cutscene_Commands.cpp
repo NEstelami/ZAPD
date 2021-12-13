@@ -3,6 +3,7 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "Globals.h"
+#include "CutsceneMM_Commands.h"
 
 /* CutsceneSubCommandEntry */
 
@@ -249,18 +250,6 @@ CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const std::vector<uint8_t>& rawDa
 std::string CutsceneCommandFadeBGM::GetCommandMacro() const 
 {
     return StringHelper::Sprintf("CS_FADE_BGM_LIST(%i)", entries.size());
-}
-
-MusicChangeEntry::MusicChangeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-	unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-	unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-	unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
-	unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
-	unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
-	unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
-	unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
 }
 
 CutsceneSubCommandEntry_PlaySeq::CutsceneSubCommandEntry_PlaySeq(
@@ -580,9 +569,9 @@ CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
-	textID1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 8);
-	textID2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 10);
+	type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
+	textId1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x8);
+	textId2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0xA);
 }
 
 std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
@@ -667,73 +656,96 @@ std::string CutsceneCommand_TextBox::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_TEXT_LIST(%i)", numEntries);
 }
 
-
-ActorAction::ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(
+	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
-	rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 8);
-	rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 10);
-	startPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
-	startPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 16);
-	startPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 20);
-	endPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 24);
-	endPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 28);
-	endPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 32);
-	normalX = BitConverter::ToFloatBE(rawData, rawDataIndex + 36);
-	normalY = BitConverter::ToFloatBE(rawData, rawDataIndex + 40);
-	normalZ = BitConverter::ToFloatBE(rawData, rawDataIndex + 44);
+	rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
+	rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x8);
+	rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0xA);
+	startPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0xC);
+	startPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x10);
+	startPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x14);
+	endPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x18);
+	endPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x1C);
+	endPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x20);
+	normalX = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x24);
+	normalY = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x28);
+	normalZ = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x2C);
 }
 
-CutsceneCommandActorAction::CutsceneCommandActorAction(const std::vector<uint8_t>& rawData,
-                                                       uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
-
-	rawDataIndex += 4;
-
-	for (int32_t i = 0; i < numEntries; i++)
-	{
-		entries.push_back(new ActorAction(rawData, rawDataIndex));
-		rawDataIndex += 0x30;
-	}
-}
-
-std::string CutsceneCommandActorAction::GenerateSourceCode() const
+std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
 {
 	std::string result;
-	std::string subCommand;
 
-	if (commandID == 10)
+	if  (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
-		result += StringHelper::Sprintf("CS_PLAYER_ACTION_LIST(%i),\n", entries.size());
-		subCommand = "CS_PLAYER_ACTION";
+		if (static_cast<CutsceneMMCommands>(commandID) == CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
+		{
+			result = "CS_PLAYER_ACTION";
+		}
+		else{
+			result = "CS_ACTOR_ACTION";
+		}
 	}
-	else
+	else 
 	{
-		result += StringHelper::Sprintf("CS_NPC_ACTION_LIST(%i, %i),\n", commandID, entries.size());
-		subCommand = "CS_NPC_ACTION";
+		if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::SetActorAction0)
+		{
+		result = "CS_PLAYER_ACTION";
+		}
+		else {
+
+		result = "CS_NPC_ACTION";
+		}
 	}
 
-	for (size_t i = 0; i < entries.size(); i++)
-	{
-		result += StringHelper::Sprintf(
-			"\t\t%s(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %.11ef, "
-			"%.11ef, %.11ef),\n",
-			subCommand.c_str(), entries[i]->base, entries[i]->startFrame, entries[i]->endFrame,
-			entries[i]->rotX, entries[i]->rotY, entries[i]->rotZ, entries[i]->startPosX,
-			entries[i]->startPosY, entries[i]->startPosZ, entries[i]->endPosX, entries[i]->endPosY,
-			entries[i]->endPosZ, entries[i]->normalX, entries[i]->normalY, entries[i]->normalZ);
-	}
-
+	result += StringHelper::Sprintf("(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
+								"%i, %i, %i, %i, %.11ef, %.11ef, %.11ef),",
+								base, startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
+								startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
 	return result;
 }
 
-size_t CutsceneCommandActorAction::GetCommandSize() const
+size_t CutsceneSubCommandEntry_ActorAction::GetRawSize() const
 {
-	return 8 + (entries.size() * 0x30);
+	return 0x30;
 }
+
+CutsceneCommand_ActorAction::CutsceneCommand_ActorAction(const std::vector<uint8_t>& rawData,
+                                                             uint32_t rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
+{
+	rawDataIndex += 4;
+
+	for (size_t i = 0; i < numEntries; i++)
+	{
+		auto* entry = new CutsceneSubCommandEntry_ActorAction(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
+	}
+}
+
+std::string CutsceneCommand_ActorAction::GetCommandMacro() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		if (static_cast<CutsceneMMCommands>(commandID) == CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
+		{
+			return StringHelper::Sprintf("CS_PLAYER_ACTION_LIST(%i)", numEntries);
+		}
+		return StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(0x%03X, %i)", commandID, numEntries);
+	}
+
+
+	if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::SetActorAction0)
+	{
+		return StringHelper::Sprintf("CS_PLAYER_ACTION_LIST(%i)", entries.size());
+	}
+	return StringHelper::Sprintf("CS_NPC_ACTION_LIST(0x%03X, %i)", commandID, entries.size());
+}
+
+
+
 
 CutsceneCommandTerminator::CutsceneCommandTerminator(const std::vector<uint8_t>& rawData,
                                                      uint32_t rawDataIndex)
@@ -885,10 +897,3 @@ CutsceneCommandUnknown::~CutsceneCommandUnknown()
 	for (auto e : entries)
 		delete e;
 }
-
-CutsceneCommandActorAction::~CutsceneCommandActorAction()
-{
-	for (auto e : entries)
-		delete e;
-}
-

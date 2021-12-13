@@ -46,7 +46,7 @@ void ZCutsceneMM::ParseRawData()
 
 		if (((id >= 0x64) && (id < 0x96)) || (id == 0xC9) || ((id >= 0x1C2) && (id < 0x258)))
 		{
-			cmd = new CutsceneMMCommand_ActorAction(rawData, currentPtr);
+			cmd = new CutsceneCommand_ActorAction(rawData, currentPtr);
 		}
 		else
 		{
@@ -83,7 +83,7 @@ void ZCutsceneMM::ParseRawData()
 				cmd = new CutsceneCommand_SetTime(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
-				cmd = new CutsceneMMCommand_ActorAction(rawData, currentPtr);
+				cmd = new CutsceneCommand_ActorAction(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_PLAYSEQ:
 				cmd = new CutsceneCommand_PlaySeq(rawData, currentPtr);

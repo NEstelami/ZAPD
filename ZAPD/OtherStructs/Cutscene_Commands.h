@@ -361,27 +361,26 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class ActorAction : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_ActorAction : public CutsceneSubCommandEntry
 {
 public:
-	int16_t rotX, rotY, rotZ;
+	uint16_t rotX, rotY, rotZ;
 	int32_t startPosX, startPosY, startPosZ;
 	int32_t endPosX, endPosY, endPosZ;
 	float normalX, normalY, normalZ;
 
-	ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
 };
 
-class CutsceneCommandActorAction : public CutsceneCommand
+class CutsceneCommand_ActorAction : public CutsceneCommand
 {
 public:
-	std::vector<ActorAction*> entries;
+	CutsceneCommand_ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	CutsceneCommandActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandActorAction();
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetCommandMacro() const override;
 };
 
 class CutsceneCommandTerminator : public CutsceneCommand

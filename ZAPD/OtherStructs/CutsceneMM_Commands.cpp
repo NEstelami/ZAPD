@@ -270,56 +270,6 @@ std::string CutsceneMMCommand_FadeSeq::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_FADESEQ_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-	rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
-	rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x8);
-	rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0xA);
-	startPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0xC);
-	startPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x10);
-	startPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x14);
-	endPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x18);
-	endPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x1C);
-	endPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x20);
-	normalX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x24);
-	normalY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x28);
-	normalZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x2C);
-}
-
-std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("CS_ACTOR_ACTION(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
-	                             "%i, %i, %i, %i, %i, %i, %i),",
-	                             base, startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
-	                             startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
-}
-
-size_t CutsceneSubCommandEntry_ActorAction::GetRawSize() const
-{
-	return 0x30;
-}
-
-CutsceneMMCommand_ActorAction::CutsceneMMCommand_ActorAction(const std::vector<uint8_t>& rawData,
-                                                             uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_ActorAction(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_ActorAction::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(0x%04X, %i)", commandID, numEntries);
-}
-
 CutsceneSubCommandEntry_Unk130::CutsceneSubCommandEntry_Unk130(const std::vector<uint8_t>& rawData,
                                                                uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

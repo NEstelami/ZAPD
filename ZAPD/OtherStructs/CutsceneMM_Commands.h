@@ -185,28 +185,6 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_ActorAction : public CutsceneSubCommandEntry
-{
-public:
-	uint16_t rotX, rotY, rotZ;
-	int32_t startPosX, startPosY, startPosZ;
-	int32_t endPosX, endPosY, endPosZ;
-	int32_t normalX, normalY, normalZ;
-
-	CutsceneSubCommandEntry_ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	std::string GetBodySourceCode() const override;
-
-	size_t GetRawSize() const override;
-};
-
-class CutsceneMMCommand_ActorAction : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_ActorAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
 class CutsceneSubCommandEntry_Unk130 : public CutsceneSubCommandEntry
 {
 public:

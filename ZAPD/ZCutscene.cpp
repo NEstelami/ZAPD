@@ -131,7 +131,7 @@ void ZCutscene::ParseRawData()
 		case CutsceneCommands::SetActorAction8:
 		case CutsceneCommands::SetActorAction9:
 		case CutsceneCommands::SetActorAction10:
-			cmd = new CutsceneCommandActorAction(rawData, currentPtr);
+			cmd = new CutsceneCommand_ActorAction(rawData, currentPtr);
 			break;
 		case CutsceneCommands::SetSceneTransFX:
 			cmd = new CutsceneCommandSceneTransFX(rawData, currentPtr);
