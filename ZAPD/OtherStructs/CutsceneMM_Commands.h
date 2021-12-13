@@ -9,7 +9,7 @@ enum class CutsceneMMCommands
 	/* 0x096 */ CS_CMD_MISC = 0x96,
 	/* 0x097 */ CS_CMD_SET_LIGHTING,
 	/* 0x098 */ CS_CMD_SCENE_TRANS_FX,
-	/* 0x099 */ CS_CMD_99,
+	/* 0x099 */ CS_CMD_MOTIONBLUR,
 	/* 0x09A */ CS_CMD_GIVETATL,
 	/* 0x09B */ CS_CMD_9B,
 	/* 0x09C */ CS_CMD_FADESEQ,
@@ -130,18 +130,18 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_Unk99 : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_MotionBlur : public CutsceneSubCommandEntry
 {
 public:
-	CutsceneSubCommandEntry_Unk99(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_MotionBlur(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 };
 
-class CutsceneMMCommand_Unk99 : public CutsceneCommand
+class CutsceneMMCommand_MotionBlur : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_Unk99(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneMMCommand_MotionBlur(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };

@@ -15,7 +15,7 @@ CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(
 std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf(
-		"CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame,
+		"CMD_HH(0x%04X, %i), CMD_HH(%i, 0x%04X), CMD_HH(0x%04X, 0x%04X),", base, startFrame,
 		endFrame, type, textId1, textId2);
 }
 
@@ -171,19 +171,18 @@ std::string CutsceneMMCommand_SceneTransFx::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_SCENE_TRANS_FX_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_Unk99::CutsceneSubCommandEntry_Unk99(const std::vector<uint8_t>& rawData,
+CutsceneSubCommandEntry_MotionBlur::CutsceneSubCommandEntry_MotionBlur(const std::vector<uint8_t>& rawData,
                                                              uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
 
-std::string CutsceneSubCommandEntry_Unk99::GetBodySourceCode() const
+std::string CutsceneSubCommandEntry_MotionBlur::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_99(0x%02X, %i, %i, %i),", base, startFrame, endFrame,
-	                             pad);
+	return StringHelper::Sprintf("CS_MOTIONBLUR(%i, %i, %i),", base, startFrame, endFrame);
 }
 
-CutsceneMMCommand_Unk99::CutsceneMMCommand_Unk99(const std::vector<uint8_t>& rawData,
+CutsceneMMCommand_MotionBlur::CutsceneMMCommand_MotionBlur(const std::vector<uint8_t>& rawData,
                                                  uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
@@ -191,15 +190,15 @@ CutsceneMMCommand_Unk99::CutsceneMMCommand_Unk99(const std::vector<uint8_t>& raw
 
 	for (size_t i = 0; i < numEntries; i++)
 	{
-		auto* entry = new CutsceneSubCommandEntry_Unk99(rawData, rawDataIndex);
+		auto* entry = new CutsceneSubCommandEntry_MotionBlur(rawData, rawDataIndex);
 		entries.push_back(entry);
 		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneMMCommand_Unk99::GetCommandMacro() const
+std::string CutsceneMMCommand_MotionBlur::GetCommandMacro() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_99_LIST(%i)", numEntries);
+	return StringHelper::Sprintf("CS_MOTIONBLUR_LIST(%i)", numEntries);
 }
 
 CutsceneSubCommandEntry_GiveTatl::CutsceneSubCommandEntry_GiveTatl(
@@ -462,8 +461,8 @@ CutsceneSubCommandEntry_Unk132::CutsceneSubCommandEntry_Unk132(const std::vector
 
 std::string CutsceneSubCommandEntry_Unk132::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_132(0x%04X, %i, %i, %i),", base, startFrame,
-	                             endFrame, pad);
+	return StringHelper::Sprintf("CS_SCENE_UNK_132(%i, %i, %i),", base, startFrame,
+	                             endFrame);
 }
 
 CutsceneMMCommand_Unk132::CutsceneMMCommand_Unk132(const std::vector<uint8_t>& rawData,
@@ -617,7 +616,7 @@ CutsceneSubCommandEntry_Unk15F::CutsceneSubCommandEntry_Unk15F(const std::vector
 
 std::string CutsceneSubCommandEntry_Unk15F::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_15F(0x%04X, %i, %i, %i),", base, startFrame,
+	return StringHelper::Sprintf("CS_SCENE_UNK_15F(%i, %i, %i, %i),", base, startFrame,
 	                             endFrame, pad);
 }
 
@@ -654,7 +653,7 @@ CutsceneSubCommandEntry_Unk190::CutsceneSubCommandEntry_Unk190(const std::vector
 
 std::string CutsceneSubCommandEntry_Unk190::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_190(0x%04X, %i, %i, 0x%02X, 0x%02X, 0x%02X),", base,
+	return StringHelper::Sprintf("CS_SCENE_UNK_190(%i, %i, %i, 0x%02X, 0x%02X, 0x%02X),", base,
 	                             startFrame, endFrame, unk_06, unk_07, unk_08);
 }
 

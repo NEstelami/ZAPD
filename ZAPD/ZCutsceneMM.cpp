@@ -67,8 +67,8 @@ void ZCutsceneMM::ParseRawData()
 			case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
 				cmd = new CutsceneMMCommand_SceneTransFx(rawData, currentPtr);
 				break;
-			case CutsceneMMCommands::CS_CMD_99:
-				cmd = new CutsceneMMCommand_Unk99(rawData, currentPtr);
+			case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
+				cmd = new CutsceneMMCommand_MotionBlur(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_GIVETATL:
 				cmd = new CutsceneMMCommand_GiveTatl(rawData, currentPtr);
