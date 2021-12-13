@@ -55,8 +55,8 @@ void ZCutsceneMM::ParseRawData()
 			case CutsceneMMCommands::CS_CMD_TEXTBOX:
 				cmd = new CutsceneMMCommand_TextBox(rawData, currentPtr);
 				break;
-			case CutsceneMMCommands::CS_CMD_5A:
-				cmd = new CutsceneMMCommand_5A(rawData, currentPtr);
+			case CutsceneMMCommands::CS_CMD_CAMERA:
+				cmd = new CutsceneMMCommand_Camera(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_MISC:
 				cmd = new CutsceneMMCommand_Misc(rawData, currentPtr);
@@ -106,8 +106,8 @@ void ZCutsceneMM::ParseRawData()
 			case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
 				cmd = new CutsceneMMCommand_FadeAmbience(rawData, currentPtr);
 				break;
-			case CutsceneMMCommands::CS_CMD_15E:
-				cmd = new CutsceneMMCommand_Unk15E(rawData, currentPtr);
+			case CutsceneMMCommands::CS_CMD_TERMINATOR:
+				cmd = new CutsceneMMCommand_Terminator(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_15F:
 				cmd = new CutsceneMMCommand_Unk15F(rawData, currentPtr);

@@ -5,7 +5,7 @@
 enum class CutsceneMMCommands
 {
 	/* 0x00A */ CS_CMD_TEXTBOX = 0xA,
-	/* 0x05A */ CS_CMD_5A = 0x5A,
+	/* 0x05A */ CS_CMD_CAMERA = 0x5A,
 	/* 0x096 */ CS_CMD_MISC = 0x96,
 	/* 0x097 */ CS_CMD_SET_LIGHTING,
 	/* 0x098 */ CS_CMD_SCENE_TRANS_FX,
@@ -34,7 +34,7 @@ enum class CutsceneMMCommands
 	/* 0x133 */ CS_CMD_STOPSEQ,
 	/* 0x134 */ CS_CMD_PLAYAMBIENCE,
 	/* 0x135 */ CS_CMD_FADEAMBIENCE,
-	/* 0x15E */ CS_CMD_15E = 0x15E,
+	/* 0x15E */ CS_CMD_TERMINATOR = 0x15E,
 	/* 0x15F */ CS_CMD_15F,
 	/* 0x190 */ CS_CMD_190 = 0x190,
 };
@@ -61,22 +61,22 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_Unk5A : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_Camera : public CutsceneSubCommandEntry
 {
 public:
 	uint32_t unk_08;
 
-	CutsceneSubCommandEntry_Unk5A(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_Camera(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneMMCommand_5A : public CutsceneCommand
+class CutsceneMMCommand_Camera : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_5A(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneMMCommand_Camera(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
@@ -343,18 +343,18 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_Unk15E : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_Terminator : public CutsceneSubCommandEntry
 {
 public:
-	CutsceneSubCommandEntry_Unk15E(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_Terminator(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 };
 
-class CutsceneMMCommand_Unk15E : public CutsceneCommand
+class CutsceneMMCommand_Terminator : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_Unk15E(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneMMCommand_Terminator(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
