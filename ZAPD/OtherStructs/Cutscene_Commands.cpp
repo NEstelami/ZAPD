@@ -566,6 +566,12 @@ std::string CutsceneCommandTextbox::GenerateSourceCode() const
 			result += StringHelper::Sprintf("        CS_TEXT_NONE(%i, %i),\n",
 			                                entries[i]->startFrame, entries[i]->endFrame);
 		}
+		else if (entries[i]->type == 2)
+		{
+			result += StringHelper::Sprintf(
+				"        CS_TEXT_LEARN_SONG(%i, %i, %i, %i),\n", entries[i]->base,
+				entries[i]->startFrame, entries[i]->endFrame, entries[i]->textID1);
+		}
 		else
 		{
 			result += StringHelper::Sprintf(
