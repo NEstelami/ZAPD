@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ZCutscene.h"
-#include "ZCutsceneMM.h"
 #include "ZRoom/ZRoomCommand.h"
 
 class CutsceneEntry
@@ -18,7 +17,7 @@ public:
 class SetCutscenes : public ZRoomCommand
 {
 public:
-	std::vector<ZCutsceneBase*> cutscenes;
+	std::vector<ZCutscene*> cutscenes;
 	std::vector<CutsceneEntry> cutsceneEntries;  // (MM Only)
 	uint8_t numCutscenes;                        // (MM Only)
 

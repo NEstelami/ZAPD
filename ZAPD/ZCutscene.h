@@ -9,18 +9,7 @@
 #include "ZFile.h"
 #include "ZResource.h"
 
-class ZCutsceneBase : public ZResource
-{
-public:
-	ZCutsceneBase(ZFile* nParent);
-
-	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
-
-	std::string GetSourceTypeName() const override;
-	ZResourceType GetResourceType() const override;
-};
-
-class ZCutscene : public ZCutsceneBase
+class ZCutscene : public ZResource
 {
 public:
 	ZCutscene(ZFile* nParent);
@@ -28,13 +17,22 @@ public:
 
 	void ParseRawData() override;
 
+	Declaration* DeclareVar(const std::string& prefix, const std::string& bodyStr) override;
+
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawDataSize() const override;
 
-	CutsceneCommands GetCommandFromID(int32_t id);
+	std::string GetSourceTypeName() const override;
+	ZResourceType GetResourceType() const override;
 
 	int32_t numCommands;
 	int32_t endFrame;
 	std::vector<CutsceneCommand*> commands;
+
+protected:
+	CutsceneCommands GetCommandOoTFromID(int32_t id) const;
+
+	CutsceneCommand* GetCommandOoT(uint32_t id, offset_t currentPtr) const;
+	CutsceneCommand* GetCommandMM(uint32_t id, offset_t currentPtr) const;
 };

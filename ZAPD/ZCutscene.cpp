@@ -1,14 +1,17 @@
 #include "ZCutscene.h"
 
+#include <cassert>
+
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "WarningHandler.h"
 #include "ZResource.h"
+#include "OtherStructs/CutsceneMM_Commands.h"
 
 REGISTER_ZFILENODE(Cutscene, ZCutscene);
 
-ZCutscene::ZCutscene(ZFile* nParent) : ZCutsceneBase(nParent)
+ZCutscene::ZCutscene(ZFile* nParent) : ZResource(nParent)
 {
 }
 
@@ -32,7 +35,7 @@ std::string ZCutscene::GetBodySourceCode() const
 		curPtr += cmd->GetCommandSize();
 	}
 
-	output += StringHelper::Sprintf("    CS_END(),\n", commands.size(), endFrame);
+	output += StringHelper::Sprintf("    CS_END(),", commands.size(), endFrame);
 
 	return output;
 }
@@ -51,7 +54,11 @@ size_t ZCutscene::GetRawDataSize() const
 	}
 
 	// End
-	size += 8;
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		size += 4;
+	} else{
+		size += 8;
+	}
 
 	return size;
 }
@@ -66,13 +73,13 @@ void ZCutscene::ParseRawData()
 	commands = std::vector<CutsceneCommand*>();
 
 	endFrame = BitConverter::ToInt32BE(rawData, rawDataIndex + 4);
-	uint32_t currentPtr = rawDataIndex + 8;
+	offset_t currentPtr = rawDataIndex + 8;
 
 	for (int32_t i = 0; i < numCommands; i++)
 	{
-		int32_t id = BitConverter::ToInt32BE(rawData, currentPtr);
+		uint32_t id = BitConverter::ToUInt32BE(rawData, currentPtr);
 
-		if (id == -1)
+		if (id == 0xFFFFFFFF)
 			break;
 
 		if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
@@ -80,89 +87,27 @@ void ZCutscene::ParseRawData()
 			printf("Cutscene Command: 0x%X (%i)\n", id, id);
 		}
 
-		CutsceneCommands cmdID = (CutsceneCommands)GetCommandFromID(id);
 		currentPtr += 4;
 
 		CutsceneCommand* cmd = nullptr;
 
-		switch (cmdID)
-		{
-		case CutsceneCommands::Cmd00:
-			break;
-		case CutsceneCommands::SetCameraPos:
-			cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SetCameraFocus:
-			cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SpecialAction:
-			cmd = new CutsceneCommandSpecialAction(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SetLighting:
-			cmd = new CutsceneCommandEnvLighting(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SetCameraPosLink:
-			cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SetCameraFocusLink:
-			cmd = new CutsceneCommandSetCameraPos(rawData, currentPtr);
-			break;
-		case CutsceneCommands::Cmd07:
-			break;
-		case CutsceneCommands::Cmd08:
-			break;
-		case CutsceneCommands::Cmd09:
-			cmd = new CutsceneCommandUnknown9(rawData, currentPtr);
-			break;
-		case CutsceneCommands::Textbox:
-			cmd = new CutsceneCommand_TextBox(rawData, currentPtr);
-			break;
-		case CutsceneCommands::Unknown:
-			cmd = new CutsceneCommand_UnknownCommand(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SetActorAction0:
-		case CutsceneCommands::SetActorAction1:
-		case CutsceneCommands::SetActorAction2:
-		case CutsceneCommands::SetActorAction3:
-		case CutsceneCommands::SetActorAction4:
-		case CutsceneCommands::SetActorAction5:
-		case CutsceneCommands::SetActorAction6:
-		case CutsceneCommands::SetActorAction7:
-		case CutsceneCommands::SetActorAction8:
-		case CutsceneCommands::SetActorAction9:
-		case CutsceneCommands::SetActorAction10:
-			cmd = new CutsceneCommand_ActorAction(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SetSceneTransFX:
-			cmd = new CutsceneCommandSceneTransFX(rawData, currentPtr);
-			break;
-		case CutsceneCommands::PlayBGM:
-			cmd = new CutsceneCommand_PlaySeq(rawData, currentPtr);
-			break;
-		case CutsceneCommands::StopBGM:
-			cmd = new CutsceneCommand_StopSeq(rawData, currentPtr);
-			break;
-		case CutsceneCommands::FadeBGM:
-			cmd = new CutsceneCommandFadeBGM(rawData, currentPtr);
-			break;
-		case CutsceneCommands::SetTime:
-			cmd = new CutsceneCommand_SetTime(rawData, currentPtr);
-			break;
-		case CutsceneCommands::Terminator:
-			cmd = new CutsceneCommandTerminator(rawData, currentPtr);
-			break;
-		case CutsceneCommands::End:
-			cmd = new CutsceneCommandEnd(rawData, currentPtr);
-			break;
-		case CutsceneCommands::Error:
-			HANDLE_ERROR_RESOURCE(
+		if (Globals::Instance->game == ZGame::MM_RETAIL) {
+			cmd = GetCommandMM(id, currentPtr);
+		} else {
+			cmd = GetCommandOoT(id, currentPtr);
+		}
+
+		if (cmd == nullptr) {
+			HANDLE_WARNING_RESOURCE(
 				WarningType::NotImplemented, parent, this, rawDataIndex,
-				StringHelper::Sprintf("Cutscene command (0x%X) not implemented", cmdID),
+				StringHelper::Sprintf("Cutscene command not implemented"),
 				StringHelper::Sprintf(
 					"Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", id, i,
 					currentPtr - rawDataIndex));
-			break;
+			cmd = new CutsceneMMCommand_NonImplemented(rawData, currentPtr);
 		}
+
+		assert(cmd != nullptr);
 
 		cmd->commandIndex = i;
 		cmd->SetCommandID(id);
@@ -175,10 +120,199 @@ void ZCutscene::ParseRawData()
 
 		commands.push_back(cmd);
 	}
-	
 }
 
-CutsceneCommands ZCutscene::GetCommandFromID(int32_t id)
+CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) const
+{
+	CutsceneCommands cmdID = GetCommandOoTFromID(id);
+
+	const auto& rawData = parent->GetRawData();
+
+	switch (cmdID)
+	{
+	case CutsceneCommands::Cmd00:
+		break;
+	case CutsceneCommands::SetCameraPos:
+		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SetCameraFocus:
+		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SpecialAction:
+		return new CutsceneCommandSpecialAction(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SetLighting:
+		return new CutsceneCommandEnvLighting(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SetCameraPosLink:
+		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SetCameraFocusLink:
+		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
+		break;
+	case CutsceneCommands::Cmd07:
+		break;
+	case CutsceneCommands::Cmd08:
+		break;
+	case CutsceneCommands::Cmd09:
+		return new CutsceneCommandUnknown9(rawData, currentPtr);
+		break;
+	case CutsceneCommands::Textbox:
+		return new CutsceneCommand_TextBox(rawData, currentPtr);
+		break;
+	case CutsceneCommands::Unknown:
+		return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SetActorAction0:
+	case CutsceneCommands::SetActorAction1:
+	case CutsceneCommands::SetActorAction2:
+	case CutsceneCommands::SetActorAction3:
+	case CutsceneCommands::SetActorAction4:
+	case CutsceneCommands::SetActorAction5:
+	case CutsceneCommands::SetActorAction6:
+	case CutsceneCommands::SetActorAction7:
+	case CutsceneCommands::SetActorAction8:
+	case CutsceneCommands::SetActorAction9:
+	case CutsceneCommands::SetActorAction10:
+		return new CutsceneCommand_ActorAction(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SetSceneTransFX:
+		return new CutsceneCommandSceneTransFX(rawData, currentPtr);
+		break;
+	case CutsceneCommands::PlayBGM:
+		return new CutsceneCommand_PlaySeq(rawData, currentPtr);
+		break;
+	case CutsceneCommands::StopBGM:
+		return new CutsceneCommand_StopSeq(rawData, currentPtr);
+		break;
+	case CutsceneCommands::FadeBGM:
+		return new CutsceneCommandFadeBGM(rawData, currentPtr);
+		break;
+	case CutsceneCommands::SetTime:
+		return new CutsceneCommand_SetTime(rawData, currentPtr);
+		break;
+	case CutsceneCommands::Terminator:
+		return new CutsceneCommandTerminator(rawData, currentPtr);
+		break;
+	case CutsceneCommands::End:
+		return new CutsceneCommandEnd(rawData, currentPtr);
+		break;
+	case CutsceneCommands::Error:
+	/*
+		HANDLE_ERROR_RESOURCE(
+			WarningType::NotImplemented, parent, this, rawDataIndex,
+			StringHelper::Sprintf("Cutscene command (0x%X) not implemented", cmdID),
+			StringHelper::Sprintf(
+				"Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", id, i,
+				currentPtr - rawDataIndex));
+				*/
+		break;
+	}
+
+	return nullptr;
+}
+
+CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
+{
+	CutsceneMMCommands cmdID = static_cast<CutsceneMMCommands>(id);
+
+	const auto& rawData = parent->GetRawData();
+
+
+	if (((id >= 0x64) && (id < 0x96)) || (id == 0xC9) || ((id >= 0x1C2) && (id < 0x258)))
+	{
+		return new CutsceneCommand_ActorAction(rawData, currentPtr);
+	}
+	else
+	{
+		switch (cmdID)
+		{
+		case CutsceneMMCommands::CS_CMD_TEXTBOX:
+			return new CutsceneCommand_TextBox(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_CAMERA:
+			return new CutsceneMMCommand_Camera(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_MISC:
+			return new CutsceneMMCommand_Misc(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
+			return new CutsceneMMCommand_Lighting(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
+			return new CutsceneMMCommand_SceneTransFx(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
+			return new CutsceneMMCommand_MotionBlur(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_GIVETATL:
+			return new CutsceneMMCommand_GiveTatl(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_9B:
+			return new CutsceneMMCommand_Unk9B(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_FADESEQ:
+			return new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_SETTIME:
+			return new CutsceneCommand_SetTime(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
+			return new CutsceneCommand_ActorAction(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_PLAYSEQ:
+			return new CutsceneCommand_PlaySeq(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_130:
+			return new CutsceneMMCommand_Unk130(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_131:
+			return new CutsceneMMCommand_Unk131(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_132:
+			return new CutsceneMMCommand_Unk132(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_STOPSEQ:
+			return new CutsceneCommand_StopSeq(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
+			return new CutsceneMMCommand_PlayAmbience(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
+			return new CutsceneMMCommand_FadeAmbience(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_TERMINATOR:
+			return new CutsceneMMCommand_Terminator(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_15F:
+			return new CutsceneMMCommand_Unk15F(rawData, currentPtr);
+			break;
+		case CutsceneMMCommands::CS_CMD_190:
+			return new CutsceneMMCommand_Unk190(rawData, currentPtr);
+			break;
+
+		case CutsceneMMCommands::CS_CMD_UNK_FA:
+		case CutsceneMMCommands::CS_CMD_UNK_FE:
+		case CutsceneMMCommands::CS_CMD_UNK_FF:
+		case CutsceneMMCommands::CS_CMD_UNK_100:
+		case CutsceneMMCommands::CS_CMD_UNK_101:
+		case CutsceneMMCommands::CS_CMD_UNK_102:
+		case CutsceneMMCommands::CS_CMD_UNK_103:
+		case CutsceneMMCommands::CS_CMD_UNK_104:
+		case CutsceneMMCommands::CS_CMD_UNK_105:
+		case CutsceneMMCommands::CS_CMD_UNK_108:
+		case CutsceneMMCommands::CS_CMD_UNK_109:
+		case CutsceneMMCommands::CS_CMD_UNK_12D:
+			return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
+			break;
+
+		}
+	}
+
+	return nullptr;
+}
+
+CutsceneCommands ZCutscene::GetCommandOoTFromID(int32_t id) const
 {
 	switch (id)
 	{
@@ -350,11 +484,7 @@ CutsceneCommands ZCutscene::GetCommandFromID(int32_t id)
 	return CutsceneCommands::Error;
 }
 
-ZCutsceneBase::ZCutsceneBase(ZFile* nParent) : ZResource(nParent)
-{
-}
-
-Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::string& bodyStr)
+Declaration* ZCutscene::DeclareVar(const std::string& prefix, const std::string& bodyStr)
 {
 	std::string auxName = name;
 
@@ -368,12 +498,12 @@ Declaration* ZCutsceneBase::DeclareVar(const std::string& prefix, const std::str
 	return decl;
 }
 
-std::string ZCutsceneBase::GetSourceTypeName() const
+std::string ZCutscene::GetSourceTypeName() const
 {
 	return "CutsceneData";
 }
 
-ZResourceType ZCutsceneBase::GetResourceType() const
+ZResourceType ZCutscene::GetResourceType() const
 {
 	return ZResourceType::Cutscene;
 }

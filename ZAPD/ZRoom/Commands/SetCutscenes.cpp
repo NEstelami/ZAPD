@@ -12,7 +12,7 @@ SetCutscenes::SetCutscenes(ZFile* nParent) : ZRoomCommand(nParent)
 
 SetCutscenes::~SetCutscenes()
 {
-	for (ZCutsceneBase* cutscene : cutscenes)
+	for (auto* cutscene : cutscenes)
 		delete cutscene;
 }
 
@@ -54,7 +54,7 @@ void SetCutscenes::ParseRawData()
 			if (i < numCutscenes - 1)
 				declaration += "\n";
 
-			ZCutsceneMM* cutscene = new ZCutsceneMM(parent);
+			auto* cutscene = new ZCutscene(parent);
 			cutscene->ExtractFromFile(entry.segmentOffset);
 			cutscenes.push_back(cutscene);
 		}
@@ -66,7 +66,7 @@ void SetCutscenes::ParseRawData()
 		                            cutsceneEntries.size(), declaration);
 	}
 
-	for (ZCutsceneBase* cutscene : cutscenes)
+	for (auto* cutscene : cutscenes)
 	{
 		if (cutscene->GetRawDataIndex() != 0)
 		{
