@@ -255,22 +255,6 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_StopSeq : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_StopSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_StopSeq : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_StopSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
 class CutsceneSubCommandEntry_PlayAmbience : public CutsceneSubCommandEntry
 {
 public:

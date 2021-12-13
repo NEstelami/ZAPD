@@ -170,30 +170,16 @@ public:
     std::string GetCommandMacro() const override;
 };
 
-class MusicChangeEntry : public CutsceneSubCommandEntry
-{
-public:
-	uint32_t unknown1;
-	uint32_t unknown2;
-	uint32_t unknown3;
-	uint32_t unknown4;
-	uint32_t unknown5;
-	uint32_t unknown6;
-	uint32_t unknown7;
-
-	MusicChangeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-};
-
 class CutsceneSubCommandEntry_PlaySeq : public CutsceneSubCommandEntry
 {
 public:
-	uint32_t unknown1;
-	uint32_t unknown2;
-	uint32_t unknown3;
-	uint32_t unknown4;
-	uint32_t unknown5;
-	uint32_t unknown6;
-	uint32_t unknown7;
+	uint32_t unknown1 = 0;
+	uint32_t unknown2 = 0;
+	uint32_t unknown3 = 0;
+	uint32_t unknown4 = 0;
+	uint32_t unknown5 = 0;
+	uint32_t unknown6 = 0;
+	uint32_t unknown7 = 0;
 
 	CutsceneSubCommandEntry_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
@@ -210,16 +196,30 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneCommandStopBGM : public CutsceneCommand
+class CutsceneSubCommandEntry_StopSeq : public CutsceneSubCommandEntry
 {
 public:
-	std::vector<MusicChangeEntry*> entries;
+	uint32_t unknown1 = 0;
+	uint32_t unknown2 = 0;
+	uint32_t unknown3 = 0;
+	uint32_t unknown4 = 0;
+	uint32_t unknown5 = 0;
+	uint32_t unknown6 = 0;
+	uint32_t unknown7 = 0;
 
-	CutsceneCommandStopBGM(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandStopBGM();
+	CutsceneSubCommandEntry_StopSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
+};
+
+class CutsceneCommand_StopSeq : public CutsceneCommand
+{
+public:
+	CutsceneCommand_StopSeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetCommandMacro() const override;
 };
 
 class EnvLightingEntry : public CutsceneSubCommandEntry

@@ -413,37 +413,6 @@ std::string CutsceneMMCommand_Unk132::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_SCENE_UNK_132_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_StopSeq::CutsceneSubCommandEntry_StopSeq(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-
-std::string CutsceneSubCommandEntry_StopSeq::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("CS_STOPSEQ(0x%04X, %i, %i, %i),", base, startFrame, endFrame,
-	                             pad);
-}
-
-CutsceneMMCommand_StopSeq::CutsceneMMCommand_StopSeq(const std::vector<uint8_t>& rawData,
-                                                     uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_StopSeq(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_StopSeq::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_STOPSEQ_LIST(%i)", numEntries);
-}
-
 CutsceneSubCommandEntry_PlayAmbience::CutsceneSubCommandEntry_PlayAmbience(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

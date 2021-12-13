@@ -140,7 +140,7 @@ void ZCutscene::ParseRawData()
 			cmd = new CutsceneCommand_PlaySeq(rawData, currentPtr);
 			break;
 		case CutsceneCommands::StopBGM:
-			cmd = new CutsceneCommandStopBGM(rawData, currentPtr);
+			cmd = new CutsceneCommand_StopSeq(rawData, currentPtr);
 			break;
 		case CutsceneCommands::FadeBGM:
 			cmd = new CutsceneCommandFadeBGM(rawData, currentPtr);

@@ -323,43 +323,65 @@ std::string CutsceneCommand_PlaySeq::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_PLAY_BGM_LIST(%i)", numEntries);
 }
 
+CutsceneSubCommandEntry_StopSeq::CutsceneSubCommandEntry_StopSeq(
+	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+	if (Globals::Instance->game != ZGame::MM_RETAIL) {
+		unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+		unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+		unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
+		unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
+		unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
+		unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
+		unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
+	}
+}
 
-CutsceneCommandStopBGM::CutsceneCommandStopBGM(const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
+std::string CutsceneSubCommandEntry_StopSeq::GetBodySourceCode() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return StringHelper::Sprintf("CS_STOPSEQ(0x%04X, %i, %i, %i),", base, startFrame, endFrame,
+									pad);
+	}
+
+	return StringHelper::Sprintf(
+			"CS_STOP_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+			base, startFrame, endFrame,
+			pad, unknown1, unknown2, unknown3,
+			unknown4, unknown5, unknown6, unknown7);
+}
+
+
+size_t CutsceneSubCommandEntry_StopSeq::GetRawSize() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return 0x8;
+	}
+	return 0x30;
+}
+
+CutsceneCommand_StopSeq::CutsceneCommand_StopSeq(const std::vector<uint8_t>& rawData,
+                                                     uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	uint32_t numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
-
 	rawDataIndex += 4;
 
-	for (uint32_t i = 0; i < numEntries; i++)
+	for (size_t i = 0; i < numEntries; i++)
 	{
-		entries.push_back(new MusicChangeEntry(rawData, rawDataIndex));
-		rawDataIndex += 0x30;
+		auto* entry = new CutsceneSubCommandEntry_StopSeq(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneCommandStopBGM::GenerateSourceCode() const
+std::string CutsceneCommand_StopSeq::GetCommandMacro() const
 {
-	std::string result;
-
-	result += StringHelper::Sprintf("CS_STOP_BGM_LIST(%i),\n", entries.size());
-
-	for (size_t i = 0; i < entries.size(); i++)
-	{
-		result += StringHelper::Sprintf(
-			"\t\tCS_STOP_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n", entries[i]->base,
-			entries[i]->startFrame, entries[i]->endFrame, entries[i]->pad,
-			entries[i]->unknown1, entries[i]->unknown2, entries[i]->unknown3, entries[i]->unknown4,
-			entries[i]->unknown5, entries[i]->unknown6, entries[i]->unknown7);
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return StringHelper::Sprintf("CS_STOPSEQ_LIST(%i)", numEntries);
 	}
 
-	return result;
-}
-
-size_t CutsceneCommandStopBGM::GetCommandSize() const
-{
-	return 8 + 0x30;
+	return StringHelper::Sprintf("CS_STOP_BGM_LIST(%i)", numEntries);
 }
 
 EnvLightingEntry::EnvLightingEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
@@ -845,11 +867,6 @@ CutsceneCommandSpecialAction::~CutsceneCommandSpecialAction()
 		delete e;
 }
 
-CutsceneCommandStopBGM::~CutsceneCommandStopBGM()
-{
-	for (auto e : entries)
-		delete e;
-}
 
 CutsceneCommandEnvLighting::~CutsceneCommandEnvLighting()
 {
