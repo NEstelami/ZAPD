@@ -86,7 +86,7 @@ void ZCutsceneMM::ParseRawData()
 				cmd = new CutsceneMMCommand_ActorAction(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_PLAYSEQ:
-				cmd = new CutsceneMMCommand_PlaySeq(rawData, currentPtr);
+				cmd = new CutsceneCommand_PlaySeq(rawData, currentPtr);
 				break;
 			case CutsceneMMCommands::CS_CMD_130:
 				cmd = new CutsceneMMCommand_Unk130(rawData, currentPtr);

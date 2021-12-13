@@ -137,7 +137,7 @@ void ZCutscene::ParseRawData()
 			cmd = new CutsceneCommandSceneTransFX(rawData, currentPtr);
 			break;
 		case CutsceneCommands::PlayBGM:
-			cmd = new CutsceneCommandPlayBGM(rawData, currentPtr);
+			cmd = new CutsceneCommand_PlaySeq(rawData, currentPtr);
 			break;
 		case CutsceneCommands::StopBGM:
 			cmd = new CutsceneCommandStopBGM(rawData, currentPtr);

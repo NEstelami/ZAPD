@@ -184,16 +184,30 @@ public:
 	MusicChangeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 };
 
-class CutsceneCommandPlayBGM : public CutsceneCommand
+class CutsceneSubCommandEntry_PlaySeq : public CutsceneSubCommandEntry
 {
 public:
-	std::vector<MusicChangeEntry*> entries;
+	uint32_t unknown1;
+	uint32_t unknown2;
+	uint32_t unknown3;
+	uint32_t unknown4;
+	uint32_t unknown5;
+	uint32_t unknown6;
+	uint32_t unknown7;
 
-	CutsceneCommandPlayBGM(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandPlayBGM();
+	CutsceneSubCommandEntry_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
+};
+
+class CutsceneCommand_PlaySeq : public CutsceneCommand
+{
+public:
+	CutsceneCommand_PlaySeq(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetCommandMacro() const override;
 };
 
 class CutsceneCommandStopBGM : public CutsceneCommand
@@ -240,7 +254,7 @@ public:
 	uint16_t base;
 	uint16_t startFrame;
 	uint16_t endFrame;
-	~CutsceneCommandSceneTransFX();
+
 	CutsceneCommandSceneTransFX(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GenerateSourceCode() const override;

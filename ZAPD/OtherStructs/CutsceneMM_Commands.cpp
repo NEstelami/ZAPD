@@ -320,37 +320,6 @@ std::string CutsceneMMCommand_ActorAction::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(0x%04X, %i)", commandID, numEntries);
 }
 
-CutsceneSubCommandEntry_PlaySeq::CutsceneSubCommandEntry_PlaySeq(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-
-std::string CutsceneSubCommandEntry_PlaySeq::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("CS_PLAYSEQ(0x%04X, %i, %i, %i),", base, startFrame, endFrame,
-	                             pad);
-}
-
-CutsceneMMCommand_PlaySeq::CutsceneMMCommand_PlaySeq(const std::vector<uint8_t>& rawData,
-                                                     uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_PlaySeq(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_PlaySeq::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_PLAYSEQ_LIST(%i)", numEntries);
-}
-
 CutsceneSubCommandEntry_Unk130::CutsceneSubCommandEntry_Unk130(const std::vector<uint8_t>& rawData,
                                                                uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
