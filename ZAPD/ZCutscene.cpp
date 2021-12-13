@@ -118,7 +118,7 @@ void ZCutscene::ParseRawData()
 			cmd = new CutsceneCommand_TextBox(rawData, currentPtr);
 			break;
 		case CutsceneCommands::Unknown:
-			cmd = new CutsceneCommandUnknown(rawData, currentPtr);
+			cmd = new CutsceneCommand_UnknownCommand(rawData, currentPtr);
 			break;
 		case CutsceneCommands::SetActorAction0:
 		case CutsceneCommands::SetActorAction1:

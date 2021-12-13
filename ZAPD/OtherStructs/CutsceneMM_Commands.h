@@ -324,23 +324,6 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_UnknownCommand : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_UnknownCommand(const std::vector<uint8_t>& rawData,
-	                                       uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_UnknownCommand : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_UnknownCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
 class CutsceneSubCommandEntry_NonImplemented : public CutsceneSubCommandEntry
 {
 public:

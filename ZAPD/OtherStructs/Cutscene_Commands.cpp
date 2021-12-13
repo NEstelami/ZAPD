@@ -471,59 +471,64 @@ size_t CutsceneCommandUnknown9::GetCommandSize() const
 	return 8 + (entries.size() * 12);
 }
 
-UnkEntry::UnkEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_UnknownCommand::CutsceneSubCommandEntry_UnknownCommand(
+	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	unused0 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
-	unused1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
-	unused2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-	unused3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-	unused4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
-	unused5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
-	unused6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
-	unused7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
-	unused8 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
-	unused9 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 36);
-	unused10 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 40);
-	unused11 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 44);
+	unused0 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x0);
+	unused1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x4);
+	unused2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x8);
+	unused3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
+	unused4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x10);
+	unused5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x14);
+	unused6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
+	unused7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
+	unused8 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x20);
+	unused9 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x24);
+	unused10 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x28);
+	unused11 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x2C);
 }
 
-CutsceneCommandUnknown::CutsceneCommandUnknown(const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
+std::string CutsceneSubCommandEntry_UnknownCommand::GetBodySourceCode() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return StringHelper::Sprintf("CS_UNK_DATA(0x%02X, %i, %i, %i),", base, startFrame,
+									endFrame, pad);
+	}
+
+	return StringHelper::Sprintf(
+			"CS_UNK_DATA(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X),",
+			unused0, unused1, unused2, unused3,
+			unused4, unused5, unused6, unused7,
+			unused8, unused9, unused10, unused11);
+}
+
+size_t CutsceneSubCommandEntry_UnknownCommand::GetRawSize() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return 0x08;
+	}
+	return 0x30;
+}
+
+CutsceneCommand_UnknownCommand::CutsceneCommand_UnknownCommand(
+	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
-
 	rawDataIndex += 4;
 
-	for (int32_t i = 0; i < numEntries; i++)
+	for (size_t i = 0; i < numEntries; i++)
 	{
-		entries.push_back(new UnkEntry(rawData, rawDataIndex));
-		rawDataIndex += 0x30;
+		auto* entry = new CutsceneSubCommandEntry_UnknownCommand(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneCommandUnknown::GenerateSourceCode() const
+std::string CutsceneCommand_UnknownCommand::GetCommandMacro() const
 {
-	std::string result;
-
-	result += StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%02X, %i),\n", commandID, entries.size());
-
-	for (size_t i = 0; i < entries.size(); i++)
-	{
-		result += StringHelper::Sprintf(
-			"    CS_UNK_DATA(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),\n",
-			entries[i]->unused0, entries[i]->unused1, entries[i]->unused2, entries[i]->unused3,
-			entries[i]->unused4, entries[i]->unused5, entries[i]->unused6, entries[i]->unused7,
-			entries[i]->unused8, entries[i]->unused9, entries[i]->unused10, entries[i]->unused11);
-	}
-
-	return result;
-}
-
-size_t CutsceneCommandUnknown::GetCommandSize() const
-{
-	return 8 + (entries.size() * 0x30);
+	return StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%X, %i)", commandID,
+	                             numEntries);
 }
 
 CutsceneSubCommandEntry_SetTime::CutsceneSubCommandEntry_SetTime(
@@ -887,12 +892,6 @@ CutsceneCommandEnvLighting::~CutsceneCommandEnvLighting()
 }
 
 CutsceneCommandUnknown9::~CutsceneCommandUnknown9()
-{
-	for (auto e : entries)
-		delete e;
-}
-
-CutsceneCommandUnknown::~CutsceneCommandUnknown()
 {
 	for (auto e : entries)
 		delete e;

@@ -128,7 +128,7 @@ void ZCutsceneMM::ParseRawData()
 			case CutsceneMMCommands::CS_CMD_UNK_108:
 			case CutsceneMMCommands::CS_CMD_UNK_109:
 			case CutsceneMMCommands::CS_CMD_UNK_12D:
-				cmd = new CutsceneMMCommand_UnknownCommand(rawData, currentPtr);
+				cmd = new CutsceneCommand_UnknownCommand(rawData, currentPtr);
 				break;
 
 			default:

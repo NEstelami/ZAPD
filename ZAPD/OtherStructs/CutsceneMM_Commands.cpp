@@ -529,38 +529,6 @@ std::string CutsceneMMCommand_Unk190::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_SCENE_UNK_190_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_UnknownCommand::CutsceneSubCommandEntry_UnknownCommand(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-
-std::string CutsceneSubCommandEntry_UnknownCommand::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("CS_SCENE_UNKNOWN_CMD(0x%02X, %i, %i, %i),", base, startFrame,
-	                             endFrame, pad);
-}
-
-CutsceneMMCommand_UnknownCommand::CutsceneMMCommand_UnknownCommand(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_UnknownCommand(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_UnknownCommand::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_SCENE_UNKNOWN_CMD_LIST(CS_CMD_UNK_%X, %i)", commandID,
-	                             numEntries);
-}
-
 CutsceneSubCommandEntry_NonImplemented::CutsceneSubCommandEntry_NonImplemented(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

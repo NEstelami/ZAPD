@@ -286,7 +286,7 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class UnkEntry : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_UnknownCommand : public CutsceneSubCommandEntry
 {
 public:
 	uint32_t unused0;
@@ -302,19 +302,20 @@ public:
 	uint32_t unused10;
 	uint32_t unused11;
 
-	UnkEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_UnknownCommand(const std::vector<uint8_t>& rawData,
+	                                       uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
 };
 
-class CutsceneCommandUnknown : public CutsceneCommand
+class CutsceneCommand_UnknownCommand : public CutsceneCommand
 {
 public:
-	std::vector<UnkEntry*> entries;
+	CutsceneCommand_UnknownCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	CutsceneCommandUnknown(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandUnknown();
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetCommandMacro() const override;
 };
 
 class CutsceneSubCommandEntry_SetTime : public CutsceneSubCommandEntry
