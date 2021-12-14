@@ -12,6 +12,7 @@
 #include "Utils/File.h"
 #include "Utils/Path.h"
 #include "Utils/StringHelper.h"
+#include "WarningHandler.h"
 #include "gfxd.h"
 
 REGISTER_ZFILENODE(DList, ZDisplayList);
@@ -446,11 +447,12 @@ int32_t ZDisplayList::GetDListLength(const std::vector<uint8_t>& rawData, uint32
 	{
 		if (ptr >= rawDataSize)
 		{
-			throw std::runtime_error(StringHelper::Sprintf(
-				"%s: Fatal error.\n"
-				"\t End of file found when trying to find the end of the "
-				"DisplayList at offset: '0x%X'.\n",
-				"Raw data size: 0x%zX.\n", __PRETTY_FUNCTION__, rawDataIndex, rawDataSize));
+			std::string errorHeader =
+				StringHelper::Sprintf("reached end of file when trying to find the end of the "
+			                          "DisplayList starting at offset 0x%X",
+			                          rawDataIndex);
+			std::string errorBody = StringHelper::Sprintf("Raw data size: 0x%zX.", rawDataSize);
+			HANDLE_ERROR_PROCESS(WarningType::Always, errorHeader, errorBody);
 		}
 
 		uint8_t opcode = rawData.at(ptr);
@@ -1523,11 +1525,6 @@ void ZDisplayList::Opcode_G_ENDDL([[maybe_unused]] const std::string& prefix, ch
 	TextureGenCheck();
 }
 
-std::string ZDisplayList::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
-{
-	return "";
-}
-
 static int32_t GfxdCallback_FormatSingleEntry()
 {
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
@@ -1738,7 +1735,7 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	return 1;
 }
 
-std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
+void ZDisplayList::DeclareReferences(const std::string& prefix)
 {
 	std::string sourceOutput;
 
@@ -1751,7 +1748,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-		                                                                   vertices.end());
+			vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1776,15 +1773,13 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 		// Generate Vertex Declarations
 		for (auto& item : vertices)
 		{
-			std::string declaration;
+			std::string declaration = "";
 
 			offset_t curAddr = item.first;
 			auto& firstVtx = item.second.at(0);
 
 			for (auto vtx : item.second)
-			{
 				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
-			}
 
 			Declaration* decl = parent->AddDeclarationArray(
 				curAddr, firstVtx.GetDeclarationAlignment(),
@@ -1801,7 +1796,7 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-		                                                                   vertices.end());
+			vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1837,14 +1832,8 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 
 			std::string declaration;
 
-			int32_t curAddr = vtxKeys[i];
-
 			for (auto& vtx : item)
-			{
 				declaration += StringHelper::Sprintf("\t%s,\n", vtx.GetBodySourceCode().c_str());
-
-				curAddr += 16;
-			}
 
 			// Ensure there's always a trailing line feed to prevent dumb warnings.
 			// Please don't remove this line, unless you somehow made a way to prevent
@@ -1870,11 +1859,6 @@ std::string ZDisplayList::GetSourceOutputCode(const std::string& prefix)
 			}
 		}
 	}
-
-	if (parent != nullptr)
-		return "";
-
-	return sourceOutput;
 }
 
 std::string ZDisplayList::ProcessLegacy(const std::string& prefix)
