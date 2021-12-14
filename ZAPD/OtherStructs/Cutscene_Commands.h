@@ -222,7 +222,7 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class EnvLightingEntry : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_Lighting : public CutsceneSubCommandEntry
 {
 public:
 	uint32_t unused1;
@@ -233,20 +233,21 @@ public:
 	uint32_t unused6;
 	uint32_t unused7;
 
-	EnvLightingEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
 };
 
-class CutsceneCommandEnvLighting : public CutsceneCommand
+class CutsceneCommand_Lighting : public CutsceneCommand
 {
 public:
-	std::vector<EnvLightingEntry*> entries;
+	CutsceneCommand_Lighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	CutsceneCommandEnvLighting(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandEnvLighting();
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetCommandMacro() const override;
 };
+
 
 class CutsceneCommandSceneTransFX : public CutsceneCommand
 {
