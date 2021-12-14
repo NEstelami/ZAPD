@@ -56,9 +56,22 @@ ifneq ($(LLD),0)
 endif
 
 UNAME := $(shell uname)
+UNAMEM := $(shell uname -m)
 ifneq ($(UNAME), Darwin)
-    LDFLAGS += -Wl,-export-dynamic -lstdc++fs
+  LDFLAGS += -Wl,-export-dynamic -lstdc++fs
+  EXPORTERS := -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive
+else
+  EXPORTERS := -Wl,-force_load ExporterTest/ExporterTest.a
+  ifeq ($(UNAMEM),arm64)
+    ifeq ($(shell brew list libpng > /dev/null 2>&1; echo $$?),0)
+      LDFLAGS += -L $(shell brew --prefix)/lib
+      INC += -I $(shell brew --prefix)/include
+      else
+      $(error Please install libpng via Homebrew)
+    endif
+  endif
 endif
+
 
 ZAPD_SRC_DIRS := $(shell find ZAPD -type d)
 SRC_DIRS = $(ZAPD_SRC_DIRS) lib/tinyxml2
@@ -118,4 +131,4 @@ ZAPDUtils:
 
 # Linking
 ZAPD.out: $(O_FILES) lib/libgfxd/libgfxd.a ExporterTest ZAPDUtils
-	$(CXX) $(CXXFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a -Wl,--whole-archive ExporterTest/ExporterTest.a -Wl,--no-whole-archive $(LDFLAGS) $(OUTPUT_OPTION)
+	$(CXX) $(CXXFLAGS) $(O_FILES) lib/libgfxd/libgfxd.a ZAPDUtils/ZAPDUtils.a $(EXPORTERS) $(LDFLAGS) $(OUTPUT_OPTION)
