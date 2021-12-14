@@ -39,36 +39,6 @@ std::string CutsceneMMCommand_Camera::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_CAMERA_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_Misc::CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData,
-                                                           uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-}
-
-std::string CutsceneSubCommandEntry_Misc::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("CS_MISC(0x%02X, %i, %i, %i),", base, startFrame, endFrame, pad);
-}
-
-CutsceneMMCommand_Misc::CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_Misc(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_Misc::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_MISC_LIST(%i)", numEntries);
-}
-
 CutsceneSubCommandEntry_SceneTransFx::CutsceneSubCommandEntry_SceneTransFx(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

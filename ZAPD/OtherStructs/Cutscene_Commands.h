@@ -113,6 +113,7 @@ public:
 	size_t GetCommandSize() const override;
 };
 
+#if 0
 class SpecialActionEntry : public CutsceneSubCommandEntry
 {
 public:
@@ -141,6 +142,38 @@ public:
 	std::string GenerateSourceCode() const override;
 	size_t GetCommandSize() const override;
 };
+#endif
+
+
+class CutsceneSubCommandEntry_Misc : public CutsceneSubCommandEntry
+{
+public:
+	uint32_t unused1 = 0;
+	uint32_t unused2 = 0;
+	uint32_t unused3 = 0;
+	uint32_t unused4 = 0;
+	uint32_t unused5 = 0;
+	uint32_t unused6 = 0;
+	uint32_t unused7 = 0;
+	uint32_t unused8 = 0;
+	uint32_t unused9 = 0;
+	uint32_t unused10 = 0;
+
+	CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
+};
+
+class CutsceneCommand_Misc : public CutsceneCommand
+{
+public:
+	CutsceneCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetCommandMacro() const override;
+};
+
 
 class MusicFadeEntry : public CutsceneSubCommandEntry
 {

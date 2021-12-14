@@ -804,59 +804,63 @@ size_t CutsceneCommandEnd::GetCommandSize() const
 	return 8 + 6;
 }
 
-SpecialActionEntry::SpecialActionEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_Misc::CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData,
+                                                           uint32_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	unused1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-	unused2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-	unused3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
-	unused4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
-	unused5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
-	unused6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
-	unused7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
-	unused8 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 36);
-	unused9 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 40);
-	unused10 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 44);
+	if (Globals::Instance->game != ZGame::MM_RETAIL) {
+		unused1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x8);
+		unused2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
+		unused3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x10);
+		unused4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x14);
+		unused5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
+		unused6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
+		unused7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x20);
+		unused8 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x24);
+		unused9 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x28);
+		unused10 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x2C);
+	}
 }
 
-CutsceneCommandSpecialAction::CutsceneCommandSpecialAction(const std::vector<uint8_t>& rawData,
-                                                           uint32_t rawDataIndex)
+std::string CutsceneSubCommandEntry_Misc::GetBodySourceCode() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return StringHelper::Sprintf("CS_MISC(0x%02X, %i, %i, %i),", base, startFrame, endFrame, pad);
+	}
+
+	return StringHelper::Sprintf(
+			"CS_MISC(0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
+			base, startFrame, endFrame, pad,
+			unused1, unused2, unused3, unused4,
+			unused5, unused6, unused7, unused8,
+			unused9, unused10);
+}
+
+size_t CutsceneSubCommandEntry_Misc::GetRawSize() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return 0x08;
+	}
+	return 0x30;
+}
+
+CutsceneCommand_Misc::CutsceneCommand_Misc(const std::vector<uint8_t>& rawData,
+                                               uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex + 0);
-
 	rawDataIndex += 4;
 
-	for (int32_t i = 0; i < numEntries; i++)
+	for (size_t i = 0; i < numEntries; i++)
 	{
-		entries.push_back(new SpecialActionEntry(rawData, rawDataIndex));
-		rawDataIndex += 0x30;
+		auto* entry = new CutsceneSubCommandEntry_Misc(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneCommandSpecialAction::GenerateSourceCode() const
+std::string CutsceneCommand_Misc::GetCommandMacro() const
 {
-	std::string result;
-
-	result += StringHelper::Sprintf("CS_MISC_LIST(%i),\n", entries.size());
-
-	for (size_t i = 0; i < entries.size(); i++)
-	{
-		result += StringHelper::Sprintf(
-			"\t\tCS_MISC(0x%04X, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, %i, %i, %i, %i, %i, "
-			"%i),\n",
-			entries[i]->base, entries[i]->startFrame, entries[i]->endFrame, entries[i]->pad,
-			entries[i]->unused1, entries[i]->unused2, entries[i]->unused3, entries[i]->unused4,
-			entries[i]->unused5, entries[i]->unused6, entries[i]->unused7, entries[i]->unused8,
-			entries[i]->unused9, entries[i]->unused10);
-	}
-
-	return result;
-}
-
-size_t CutsceneCommandSpecialAction::GetCommandSize() const
-{
-	return 8 + (0x30 * entries.size());
+	return StringHelper::Sprintf("CS_MISC_LIST(%i)", numEntries);
 }
 
 CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const std::vector<uint8_t>& rawData,
@@ -878,12 +882,6 @@ std::string CutsceneCommandSceneTransFX::GenerateSourceCode() const
 size_t CutsceneCommandSceneTransFX::GetCommandSize() const
 {
 	return 8 + 8;
-}
-
-CutsceneCommandSpecialAction::~CutsceneCommandSpecialAction()
-{
-	for (auto e : entries)
-		delete e;
 }
 
 CutsceneCommandUnknown9::~CutsceneCommandUnknown9()

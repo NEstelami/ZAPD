@@ -139,7 +139,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
 		break;
 	case CutsceneCommands::SpecialAction:
-		return new CutsceneCommandSpecialAction(rawData, currentPtr);
+		return new CutsceneCommand_Misc(rawData, currentPtr);
 		break;
 	case CutsceneCommands::SetLighting:
 		return new CutsceneCommand_Lighting(rawData, currentPtr);
@@ -234,7 +234,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 			return new CutsceneMMCommand_Camera(rawData, currentPtr);
 			break;
 		case CutsceneMMCommands::CS_CMD_MISC:
-			return new CutsceneMMCommand_Misc(rawData, currentPtr);
+			return new CutsceneCommand_Misc(rawData, currentPtr);
 			break;
 		case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
 			return new CutsceneCommand_Lighting(rawData, currentPtr);

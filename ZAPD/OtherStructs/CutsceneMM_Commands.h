@@ -59,22 +59,6 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_Misc : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_Misc : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_Misc(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
 class CutsceneSubCommandEntry_SceneTransFx : public CutsceneSubCommandEntry
 {
 public:
