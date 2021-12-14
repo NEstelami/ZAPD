@@ -155,7 +155,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case CutsceneCommands::Cmd08:
 		break;
 	case CutsceneCommands::Cmd09:
-		return new CutsceneCommandUnknown9(rawData, currentPtr);
+		return new CutsceneCommand_Rumble(rawData, currentPtr);
 		break;
 	case CutsceneCommands::Textbox:
 		return new CutsceneCommand_TextBox(rawData, currentPtr);
@@ -287,8 +287,8 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		case CutsceneMMCommands::CS_CMD_15F:
 			return new CutsceneMMCommand_Unk15F(rawData, currentPtr);
 			break;
-		case CutsceneMMCommands::CS_CMD_190:
-			return new CutsceneMMCommand_Unk190(rawData, currentPtr);
+		case CutsceneMMCommands::CS_CMD_RUMBLE:
+			return new CutsceneCommand_Rumble(rawData, currentPtr);
 			break;
 
 		case CutsceneMMCommands::CS_CMD_UNK_FA:

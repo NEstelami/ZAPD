@@ -426,48 +426,6 @@ std::string CutsceneMMCommand_Unk15F::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_SCENE_UNK_15F_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_Unk190::CutsceneSubCommandEntry_Unk190(const std::vector<uint8_t>& rawData,
-                                                               uint32_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-	unk_06 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x06);
-	unk_07 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x07);
-	unk_08 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x08);
-	unk_09 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x09);
-	unk_0A = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0A);
-	unk_0B = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0B);
-}
-
-std::string CutsceneSubCommandEntry_Unk190::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("CS_SCENE_UNK_190(%i, %i, %i, 0x%02X, 0x%02X, 0x%02X),", base,
-	                             startFrame, endFrame, unk_06, unk_07, unk_08);
-}
-
-size_t CutsceneSubCommandEntry_Unk190::GetRawSize() const
-{
-	return 0x0C;
-}
-
-CutsceneMMCommand_Unk190::CutsceneMMCommand_Unk190(const std::vector<uint8_t>& rawData,
-                                                   uint32_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_Unk190(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneMMCommand_Unk190::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_SCENE_UNK_190_LIST(%i)", numEntries);
-}
-
 CutsceneSubCommandEntry_NonImplemented::CutsceneSubCommandEntry_NonImplemented(
 	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

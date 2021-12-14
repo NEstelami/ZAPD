@@ -113,37 +113,6 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-#if 0
-class SpecialActionEntry : public CutsceneSubCommandEntry
-{
-public:
-	uint32_t unused1;
-	uint32_t unused2;
-	uint32_t unused3;
-	uint32_t unused4;
-	uint32_t unused5;
-	uint32_t unused6;
-	uint32_t unused7;
-	uint32_t unused8;
-	uint32_t unused9;
-	uint32_t unused10;
-
-	SpecialActionEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-};
-
-class CutsceneCommandSpecialAction : public CutsceneCommand
-{
-public:
-	std::vector<SpecialActionEntry*> entries;
-
-	CutsceneCommandSpecialAction(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandSpecialAction();
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
-};
-#endif
-
 
 class CutsceneSubCommandEntry_Misc : public CutsceneSubCommandEntry
 {
@@ -295,29 +264,29 @@ public:
 	size_t GetCommandSize() const override;
 };
 
-class Unknown9Entry : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_Rumble : public CutsceneSubCommandEntry
 {
 public:
-    // TODO:check
-	uint16_t unk2;
-	uint16_t unk3;
-	uint16_t unk4;
-	uint8_t unused0;
-	uint8_t unused1;
+	uint8_t unk_06;
+	uint8_t unk_07;
+	uint8_t unk_08;
+	uint8_t unk_09;
+	uint8_t unk_0A;
+	uint8_t unk_0B;
 
-	Unknown9Entry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
 };
 
-class CutsceneCommandUnknown9 : public CutsceneCommand
+class CutsceneCommand_Rumble : public CutsceneCommand
 {
 public:
-	std::vector<Unknown9Entry*> entries;
+	CutsceneCommand_Rumble(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-	CutsceneCommandUnknown9(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-	~CutsceneCommandUnknown9();
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
+	std::string GetCommandMacro() const override;
 };
 
 class CutsceneSubCommandEntry_UnknownCommand : public CutsceneSubCommandEntry

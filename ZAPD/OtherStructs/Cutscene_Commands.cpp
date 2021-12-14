@@ -427,52 +427,54 @@ std::string CutsceneCommand_Lighting::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_LIGHTING_LIST(%i)", numEntries);
 }
 
-Unknown9Entry::Unknown9Entry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-: CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_Rumble::CutsceneSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData,
+                                                               uint32_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	unk2 = rawData[rawDataIndex + 6];
-	unk3 = rawData[rawDataIndex + 7];
-	unk4 = rawData[rawDataIndex + 8];
-	unused0 = rawData[rawDataIndex + 10];
-	unused1 = rawData[rawDataIndex + 11];
-	;
+	unk_06 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x06);
+	unk_07 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x07);
+	unk_08 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x08);
+	unk_09 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x09);
+	unk_0A = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0A);
+	unk_0B = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0B);
 }
 
-CutsceneCommandUnknown9::CutsceneCommandUnknown9(const std::vector<uint8_t>& rawData,
-                                                 uint32_t rawDataIndex)
+std::string CutsceneSubCommandEntry_Rumble::GetBodySourceCode() const
+{
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return StringHelper::Sprintf("CS_RUMBLE(%i, %i, %i, 0x%02X, 0x%02X, 0x%02X),", base,
+									startFrame, endFrame, unk_06, unk_07, unk_08);
+	}
+
+	return StringHelper::Sprintf("CS_CMD_09(%i, %i, %i, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X),", base, startFrame, endFrame, 
+								  unk_06, unk_07, unk_08, unk_09, unk_0A, unk_0B);
+}
+
+size_t CutsceneSubCommandEntry_Rumble::GetRawSize() const
+{
+	return 0x0C;
+}
+
+CutsceneCommand_Rumble::CutsceneCommand_Rumble(const std::vector<uint8_t>& rawData,
+                                                   uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
-	int32_t numEntries = BitConverter::ToInt32BE(rawData, rawDataIndex);
-
 	rawDataIndex += 4;
 
-	for (int32_t i = 0; i < numEntries; i++)
+	for (size_t i = 0; i < numEntries; i++)
 	{
-		entries.push_back(new Unknown9Entry(rawData, rawDataIndex));
-		rawDataIndex += 0x0C;
+		auto* entry = new CutsceneSubCommandEntry_Rumble(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneCommandUnknown9::GenerateSourceCode() const
+std::string CutsceneCommand_Rumble::GetCommandMacro() const
 {
-	std::string result;
-
-	result += StringHelper::Sprintf("CS_CMD_09_LIST(%i),\n", entries.size());
-
-	for (size_t i = 0; i < entries.size(); i++)
-	{
-		result += StringHelper::Sprintf("\t\tCS_CMD_09(%i, %i, %i, %i, %i, %i, %i, %i),\n",
-		                                entries[i]->base, entries[i]->startFrame,
-		                                entries[i]->endFrame, entries[i]->unk2, entries[i]->unk3,
-		                                entries[i]->unk4, entries[i]->unused0, entries[i]->unused1);
+	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		return StringHelper::Sprintf("CS_RUMBLE_LIST(%i)", numEntries);
 	}
-
-	return result;
-}
-
-size_t CutsceneCommandUnknown9::GetCommandSize() const
-{
-	return 8 + (entries.size() * 12);
+	return StringHelper::Sprintf("CS_CMD_09_LIST(%i)", numEntries);
 }
 
 CutsceneSubCommandEntry_UnknownCommand::CutsceneSubCommandEntry_UnknownCommand(
@@ -882,10 +884,4 @@ std::string CutsceneCommandSceneTransFX::GenerateSourceCode() const
 size_t CutsceneCommandSceneTransFX::GetCommandSize() const
 {
 	return 8 + 8;
-}
-
-CutsceneCommandUnknown9::~CutsceneCommandUnknown9()
-{
-	for (auto e : entries)
-		delete e;
 }

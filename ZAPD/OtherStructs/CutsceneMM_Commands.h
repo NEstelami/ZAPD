@@ -36,7 +36,7 @@ enum class CutsceneMMCommands
 	/* 0x135 */ CS_CMD_FADEAMBIENCE,
 	/* 0x15E */ CS_CMD_TERMINATOR = 0x15E,
 	/* 0x15F */ CS_CMD_15F,
-	/* 0x190 */ CS_CMD_190 = 0x190,
+	/* 0x190 */ CS_CMD_RUMBLE = 0x190,
 };
 
 class CutsceneSubCommandEntry_Camera : public CutsceneSubCommandEntry
@@ -263,31 +263,6 @@ class CutsceneMMCommand_Unk15F : public CutsceneCommand
 {
 public:
 	CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_Unk190 : public CutsceneSubCommandEntry
-{
-public:
-	uint8_t unk_06;
-	uint8_t unk_07;
-	uint8_t unk_08;
-	uint8_t unk_09;
-	uint8_t unk_0A;
-	uint8_t unk_0B;
-
-	CutsceneSubCommandEntry_Unk190(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-
-	size_t GetRawSize() const override;
-};
-
-class CutsceneMMCommand_Unk190 : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_Unk190(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
