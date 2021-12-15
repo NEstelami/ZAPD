@@ -108,7 +108,7 @@ CutsceneSubCommandEntry_GiveTatl::CutsceneSubCommandEntry_GiveTatl(
 
 std::string CutsceneSubCommandEntry_GiveTatl::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_GIVETATL(%i, %i, %i, %i),", base, startFrame, endFrame, pad);
+	return StringHelper::Sprintf("CS_GIVETATL(%i, %i, %i),", base, startFrame, endFrame);
 }
 
 CutsceneMMCommand_GiveTatl::CutsceneMMCommand_GiveTatl(const std::vector<uint8_t>& rawData,
