@@ -11,7 +11,7 @@ enum class CutsceneMMCommands
 	/* 0x098 */ CS_CMD_SCENE_TRANS_FX,
 	/* 0x099 */ CS_CMD_MOTIONBLUR,
 	/* 0x09A */ CS_CMD_GIVETATL,
-	/* 0x09B */ CS_CMD_9B,
+	/* 0x09B */ CS_CMD_FADESCREEN,
 	/* 0x09C */ CS_CMD_FADESEQ,
 	/* 0x09D */ CS_CMD_SETTIME,
 	/* 0x0C8 */ CS_CMD_SET_PLAYER_ACTION = 0xC8,
@@ -108,7 +108,7 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_Unk9B : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_FadeScreen : public CutsceneSubCommandEntry
 {
 public:
 	uint8_t unk_06;
@@ -118,17 +118,17 @@ public:
 	uint8_t unk_0A;
 	uint8_t unk_0B;
 
-	CutsceneSubCommandEntry_Unk9B(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_FadeScreen(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneMMCommand_Unk9B : public CutsceneCommand
+class CutsceneMMCommand_FadeScreen : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_Unk9B(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneMMCommand_FadeScreen(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };

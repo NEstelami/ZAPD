@@ -252,8 +252,8 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	case CutsceneMMCommands::CS_CMD_GIVETATL:
 		return new CutsceneMMCommand_GiveTatl(rawData, currentPtr);
 		break;
-	case CutsceneMMCommands::CS_CMD_9B:
-		return new CutsceneMMCommand_Unk9B(rawData, currentPtr);
+	case CutsceneMMCommands::CS_CMD_FADESCREEN:
+		return new CutsceneMMCommand_FadeScreen(rawData, currentPtr);
 		break;
 	case CutsceneMMCommands::CS_CMD_FADESEQ:
 		return new CutsceneMMCommand_FadeSeq(rawData, currentPtr);

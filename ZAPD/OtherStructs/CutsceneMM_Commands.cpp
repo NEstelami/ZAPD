@@ -130,8 +130,8 @@ std::string CutsceneMMCommand_GiveTatl::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_GIVETATL_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_Unk9B::CutsceneSubCommandEntry_Unk9B(const std::vector<uint8_t>& rawData,
-                                                             uint32_t rawDataIndex)
+CutsceneSubCommandEntry_FadeScreen::CutsceneSubCommandEntry_FadeScreen(
+	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	unk_06 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x06);
@@ -142,34 +142,34 @@ CutsceneSubCommandEntry_Unk9B::CutsceneSubCommandEntry_Unk9B(const std::vector<u
 	unk_0B = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x0B);
 }
 
-std::string CutsceneSubCommandEntry_Unk9B::GetBodySourceCode() const
+std::string CutsceneSubCommandEntry_FadeScreen::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_9B(0x%02X, %i, %i, 0x%02X, 0x%02X, 0x%02X),", base,
-	                             startFrame, endFrame, unk_06, unk_07, unk_08);
+	return StringHelper::Sprintf("CS_FADESCREEN(0x%02X, %i, %i, %i, %i, %i),", base, startFrame,
+	                             endFrame, unk_06, unk_07, unk_08);
 }
 
-size_t CutsceneSubCommandEntry_Unk9B::GetRawSize() const
+size_t CutsceneSubCommandEntry_FadeScreen::GetRawSize() const
 {
 	return 0x0C;
 }
 
-CutsceneMMCommand_Unk9B::CutsceneMMCommand_Unk9B(const std::vector<uint8_t>& rawData,
-                                                 uint32_t rawDataIndex)
+CutsceneMMCommand_FadeScreen::CutsceneMMCommand_FadeScreen(const std::vector<uint8_t>& rawData,
+                                                           uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
 
 	for (size_t i = 0; i < numEntries; i++)
 	{
-		auto* entry = new CutsceneSubCommandEntry_Unk9B(rawData, rawDataIndex);
+		auto* entry = new CutsceneSubCommandEntry_FadeScreen(rawData, rawDataIndex);
 		entries.push_back(entry);
 		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneMMCommand_Unk9B::GetCommandMacro() const
+std::string CutsceneMMCommand_FadeScreen::GetCommandMacro() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_9B_LIST(%i)", numEntries);
+	return StringHelper::Sprintf("CS_FADESCREEN_LIST(%i)", numEntries);
 }
 
 CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(
