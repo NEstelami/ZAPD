@@ -228,89 +228,87 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	{
 		return new CutsceneCommand_ActorAction(rawData, currentPtr);
 	}
-	else
-	{
-		switch (cmdID)
-		{
-		case CutsceneMMCommands::CS_CMD_TEXTBOX:
-			return new CutsceneCommand_TextBox(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_CAMERA:
-			return new CutsceneMMCommand_Camera(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_MISC:
-			return new CutsceneCommand_Misc(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
-			return new CutsceneCommand_Lighting(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
-			return new CutsceneMMCommand_SceneTransFx(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
-			return new CutsceneMMCommand_MotionBlur(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_GIVETATL:
-			return new CutsceneMMCommand_GiveTatl(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_9B:
-			return new CutsceneMMCommand_Unk9B(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_FADESEQ:
-			return new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_SETTIME:
-			return new CutsceneCommand_SetTime(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
-			return new CutsceneCommand_ActorAction(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_PLAYSEQ:
-			return new CutsceneCommand_PlaySeq(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_130:
-			return new CutsceneMMCommand_Unk130(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_131:
-			return new CutsceneMMCommand_Unk131(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_132:
-			return new CutsceneMMCommand_Unk132(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_STOPSEQ:
-			return new CutsceneCommand_StopSeq(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
-			return new CutsceneMMCommand_PlayAmbience(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
-			return new CutsceneMMCommand_FadeAmbience(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_TERMINATOR:
-			return new CutsceneMMCommand_Terminator(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_15F:
-			return new CutsceneMMCommand_Unk15F(rawData, currentPtr);
-			break;
-		case CutsceneMMCommands::CS_CMD_RUMBLE:
-			return new CutsceneCommand_Rumble(rawData, currentPtr);
-			break;
 
-		case CutsceneMMCommands::CS_CMD_UNK_FA:
-		case CutsceneMMCommands::CS_CMD_UNK_FE:
-		case CutsceneMMCommands::CS_CMD_UNK_FF:
-		case CutsceneMMCommands::CS_CMD_UNK_100:
-		case CutsceneMMCommands::CS_CMD_UNK_101:
-		case CutsceneMMCommands::CS_CMD_UNK_102:
-		case CutsceneMMCommands::CS_CMD_UNK_103:
-		case CutsceneMMCommands::CS_CMD_UNK_104:
-		case CutsceneMMCommands::CS_CMD_UNK_105:
-		case CutsceneMMCommands::CS_CMD_UNK_108:
-		case CutsceneMMCommands::CS_CMD_UNK_109:
-		case CutsceneMMCommands::CS_CMD_UNK_12D:
-			return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
-			break;
-		}
+	switch (cmdID)
+	{
+	case CutsceneMMCommands::CS_CMD_TEXTBOX:
+		return new CutsceneCommand_TextBox(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_CAMERA:
+		return new CutsceneMMCommand_Camera(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_MISC:
+		return new CutsceneCommand_Misc(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
+		return new CutsceneCommand_Lighting(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
+		return new CutsceneMMCommand_SceneTransFx(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
+		return new CutsceneMMCommand_MotionBlur(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_GIVETATL:
+		return new CutsceneMMCommand_GiveTatl(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_9B:
+		return new CutsceneMMCommand_Unk9B(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_FADESEQ:
+		return new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_SETTIME:
+		return new CutsceneCommand_SetTime(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
+		return new CutsceneCommand_ActorAction(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_PLAYSEQ:
+		return new CutsceneCommand_PlaySeq(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_130:
+		return new CutsceneMMCommand_Unk130(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_131:
+		return new CutsceneMMCommand_Unk131(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_132:
+		return new CutsceneMMCommand_Unk132(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_STOPSEQ:
+		return new CutsceneCommand_StopSeq(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
+		return new CutsceneMMCommand_PlayAmbience(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
+		return new CutsceneMMCommand_FadeAmbience(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_TERMINATOR:
+		return new CutsceneMMCommand_Terminator(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_15F:
+		return new CutsceneMMCommand_Unk15F(rawData, currentPtr);
+		break;
+	case CutsceneMMCommands::CS_CMD_RUMBLE:
+		return new CutsceneCommand_Rumble(rawData, currentPtr);
+		break;
+
+	case CutsceneMMCommands::CS_CMD_UNK_FA:
+	case CutsceneMMCommands::CS_CMD_UNK_FE:
+	case CutsceneMMCommands::CS_CMD_UNK_FF:
+	case CutsceneMMCommands::CS_CMD_UNK_100:
+	case CutsceneMMCommands::CS_CMD_UNK_101:
+	case CutsceneMMCommands::CS_CMD_UNK_102:
+	case CutsceneMMCommands::CS_CMD_UNK_103:
+	case CutsceneMMCommands::CS_CMD_UNK_104:
+	case CutsceneMMCommands::CS_CMD_UNK_105:
+	case CutsceneMMCommands::CS_CMD_UNK_108:
+	case CutsceneMMCommands::CS_CMD_UNK_109:
+	case CutsceneMMCommands::CS_CMD_UNK_12D:
+		return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
+		break;
 	}
 
 	return nullptr;
