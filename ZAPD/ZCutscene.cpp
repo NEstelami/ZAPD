@@ -3,11 +3,11 @@
 #include <cassert>
 
 #include "Globals.h"
+#include "OtherStructs/CutsceneMM_Commands.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "WarningHandler.h"
 #include "ZResource.h"
-#include "OtherStructs/CutsceneMM_Commands.h"
 
 REGISTER_ZFILENODE(Cutscene, ZCutscene);
 
@@ -54,9 +54,12 @@ size_t ZCutscene::GetRawDataSize() const
 	}
 
 	// End
-	if (Globals::Instance->game == ZGame::MM_RETAIL) {
+	if (Globals::Instance->game == ZGame::MM_RETAIL)
+	{
 		size += 4;
-	} else{
+	}
+	else
+	{
 		size += 8;
 	}
 
@@ -91,19 +94,22 @@ void ZCutscene::ParseRawData()
 
 		CutsceneCommand* cmd = nullptr;
 
-		if (Globals::Instance->game == ZGame::MM_RETAIL) {
+		if (Globals::Instance->game == ZGame::MM_RETAIL)
+		{
 			cmd = GetCommandMM(id, currentPtr);
-		} else {
+		}
+		else
+		{
 			cmd = GetCommandOoT(id, currentPtr);
 		}
 
-		if (cmd == nullptr) {
+		if (cmd == nullptr)
+		{
 			HANDLE_WARNING_RESOURCE(
 				WarningType::NotImplemented, parent, this, rawDataIndex,
 				StringHelper::Sprintf("Cutscene command not implemented"),
-				StringHelper::Sprintf(
-					"Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", id, i,
-					currentPtr - rawDataIndex));
+				StringHelper::Sprintf("Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X",
+			                          id, i, currentPtr - rawDataIndex));
 			cmd = new CutsceneMMCommand_NonImplemented(rawData, currentPtr);
 		}
 
@@ -198,14 +204,14 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 		return new CutsceneCommandEnd(rawData, currentPtr);
 		break;
 	case CutsceneCommands::Error:
-	/*
-		HANDLE_ERROR_RESOURCE(
-			WarningType::NotImplemented, parent, this, rawDataIndex,
-			StringHelper::Sprintf("Cutscene command (0x%X) not implemented", cmdID),
-			StringHelper::Sprintf(
-				"Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", id, i,
-				currentPtr - rawDataIndex));
-				*/
+		/*
+		    HANDLE_ERROR_RESOURCE(
+		        WarningType::NotImplemented, parent, this, rawDataIndex,
+		        StringHelper::Sprintf("Cutscene command (0x%X) not implemented", cmdID),
+		        StringHelper::Sprintf(
+		            "Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", id, i,
+		            currentPtr - rawDataIndex));
+		            */
 		break;
 	}
 
@@ -217,7 +223,6 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	CutsceneMMCommands cmdID = static_cast<CutsceneMMCommands>(id);
 
 	const auto& rawData = parent->GetRawData();
-
 
 	if (((id >= 0x64) && (id < 0x96)) || (id == 0xC9) || ((id >= 0x1C2) && (id < 0x258)))
 	{
@@ -305,7 +310,6 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		case CutsceneMMCommands::CS_CMD_UNK_12D:
 			return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
 			break;
-
 		}
 	}
 

@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-
 enum class CutsceneCommands
 {
 	Cmd00 = 0x0000,
@@ -40,7 +39,6 @@ enum class CutsceneCommands
 	Error = 0xFEAF,
 };
 
-
 class CutsceneSubCommandEntry
 {
 public:
@@ -75,11 +73,8 @@ public:
 	virtual std::string GenerateSourceCode() const;
 	virtual size_t GetCommandSize() const;
 
-    virtual void SetCommandID(uint32_t nCommandID);
+	virtual void SetCommandID(uint32_t nCommandID);
 };
-
-
-
 
 class CutsceneCameraPoint : public CutsceneSubCommandEntry
 {
@@ -93,7 +88,7 @@ public:
 
 	CutsceneCameraPoint(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-    std::string GetBodySourceCode() const override;
+	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
@@ -108,11 +103,10 @@ public:
 
 	CutsceneCommandSetCameraPos(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-    std::string GetCommandMacro() const override;
+	std::string GetCommandMacro() const override;
 
 	size_t GetCommandSize() const override;
 };
-
 
 class CutsceneSubCommandEntry_Misc : public CutsceneSubCommandEntry
 {
@@ -143,7 +137,6 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-
 class MusicFadeEntry : public CutsceneSubCommandEntry
 {
 public:
@@ -160,8 +153,8 @@ public:
 
 	MusicFadeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-    std::string GetBodySourceCode() const override;
-    size_t GetRawSize() const override;
+	std::string GetBodySourceCode() const override;
+	size_t GetRawSize() const override;
 };
 
 class CutsceneCommandFadeBGM : public CutsceneCommand
@@ -169,7 +162,7 @@ class CutsceneCommandFadeBGM : public CutsceneCommand
 public:
 	CutsceneCommandFadeBGM(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
-    std::string GetCommandMacro() const override;
+	std::string GetCommandMacro() const override;
 };
 
 class CutsceneSubCommandEntry_PlaySeq : public CutsceneSubCommandEntry
@@ -249,7 +242,6 @@ public:
 
 	std::string GetCommandMacro() const override;
 };
-
 
 class CutsceneCommandSceneTransFX : public CutsceneCommand
 {

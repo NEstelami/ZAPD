@@ -35,7 +35,6 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 	if (varPrefix == "")
 		varPrefix = prefix;
 
-
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
 		std::string declaration;
@@ -43,7 +42,8 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 
 		for (const auto& entry : cutsceneEntries)
 		{
-			if (entry.segmentPtr != SEGMENTED_NULL && GETSEGNUM(entry.segmentPtr) == parent->segment)
+			if (entry.segmentPtr != SEGMENTED_NULL &&
+			    GETSEGNUM(entry.segmentPtr) == parent->segment)
 			{
 				offset_t csOffset = Seg2Filespace(entry.segmentPtr, parent->baseAddress);
 				if (!parent->HasDeclaration(csOffset))
@@ -58,10 +58,12 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 			}
 
 			std::string csName;
-			Globals::Instance->GetSegmentedPtrName(entry.segmentPtr, parent, "CutsceneData", csName);
+			Globals::Instance->GetSegmentedPtrName(entry.segmentPtr, parent, "CutsceneData",
+			                                       csName);
 
-			declaration += StringHelper::Sprintf(
-				"    { %s, 0x%04X, 0x%02X, 0x%02X },", csName.c_str(), entry.exit, entry.entrance, entry.flag);
+			declaration +=
+				StringHelper::Sprintf("    { %s, 0x%04X, 0x%02X, 0x%02X },", csName.c_str(),
+			                          entry.exit, entry.entrance, entry.flag);
 
 			if (i < numCutscenes - 1)
 				declaration += "\n";
@@ -75,7 +77,8 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 		                                                  zRoom->GetName().c_str(), segmentOffset),
 		                            cutsceneEntries.size(), declaration);
 	}
-	else {
+	else
+	{
 		if (cmdArg2 != SEGMENTED_NULL && GETSEGNUM(cmdArg2) == parent->segment)
 		{
 			offset_t csOffset = Seg2Filespace(cmdArg2, parent->baseAddress);
@@ -89,9 +92,7 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 				parent->AddResource(cutscene);
 			}
 		}
-		
 	}
-
 }
 
 std::string SetCutscenes::GetBodySourceCode() const
