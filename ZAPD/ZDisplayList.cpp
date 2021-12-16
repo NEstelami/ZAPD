@@ -1747,7 +1747,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1795,7 +1795,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{

@@ -192,7 +192,7 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 		rawData = File::ReadAllBytes((basePath / name).string());
 
 		if (reader->Attribute("RangeEnd") == nullptr)
-		rangeEnd = rawData.size();
+			rangeEnd = rawData.size();
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -378,7 +378,7 @@ void ZFile::ExtractResources()
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
 		if (exporter != nullptr)
 		{
-			//exporter->Save(res, Globals::Instance->outputPath.string(), &writerFile);
+			// exporter->Save(res, Globals::Instance->outputPath.string(), &writerFile);
 			exporter->Save(res, Globals::Instance->outputPath.string(), &writerRes);
 		}
 
@@ -391,7 +391,7 @@ void ZFile::ExtractResources()
 		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin",
 		                                          Globals::Instance->outputPath.string().c_str(),
 		                                          GetName().c_str()),
-			memStreamFile->ToVector());
+		                    memStreamFile->ToVector());
 	}
 
 	writerFile.Close();
@@ -1322,7 +1322,8 @@ bool ZFile::HandleUnaccountedAddress(uint32_t currentAddress, uint32_t lastAddr,
 				diff, src);
 
 			decl->isUnaccounted = true;
-			decl->staticConf = StaticConfig::On;
+			if (Globals::Instance->forceUnaccountedStatic)
+				decl->staticConf = StaticConfig::On;
 
 			if (nonZeroUnaccounted)
 			{
