@@ -7,7 +7,7 @@ pipeline {
         // Non-parallel ZAPD stage
         stage('Build ZAPD') {
             steps {
-                sh 'make -j$(nproc) WERROR=1'
+                sh 'make -j WERROR=1'
             }
         }
 
@@ -74,15 +74,15 @@ pipeline {
                 stage('Build oot') {
                     steps {
                         dir('oot') {
-                            sh 'make -j$(nproc)'
+                            sh 'make -j'
                         }
                     }
                 }
                 stage('Build mm') {
                     steps {
                         dir('mm') {
-                            sh 'make -j$(nproc) disasm'
-                            sh 'make -j$(nproc) all'
+                            sh 'make -j disasm'
+                            sh 'make -j all'
                         }
                     }
                 }
