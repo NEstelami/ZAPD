@@ -7,7 +7,7 @@ pipeline {
         // Non-parallel ZAPD stage
         stage('Build ZAPD') {
             steps {
-                sh 'make -j WERROR=1'
+                sh 'make -j$(nproc) WERROR=1'
             }
         }
 
@@ -61,7 +61,7 @@ pipeline {
                             sh 'cp ../ZAPD.out tools/ZAPD/'
                             sh 'python3 tools/fixbaserom.py'
                             sh 'python3 tools/extract_baserom.py'
-                            sh 'python3 extract_assets.py -t 4'
+                            sh 'python3 extract_assets.py -t$(nproc)'
                         }
                     }
                 }
@@ -74,15 +74,15 @@ pipeline {
                 stage('Build oot') {
                     steps {
                         dir('oot') {
-                            sh 'make -j'
+                            sh 'make -j$(nproc)'
                         }
                     }
                 }
                 stage('Build mm') {
                     steps {
                         dir('mm') {
-                            sh 'make -j disasm'
-                                sh 'make -j all'
+                            sh 'make -j$(nproc) disasm'
+                            sh 'make -j$(nproc) all'
                         }
                     }
                 }
