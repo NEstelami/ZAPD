@@ -47,8 +47,7 @@ CutsceneSubCommandEntry_SceneTransFx::CutsceneSubCommandEntry_SceneTransFx(
 
 std::string CutsceneSubCommandEntry_SceneTransFx::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_TRANS_FX(0x%02X, %i, %i, %i),", base, startFrame,
-	                             endFrame, pad);
+	return StringHelper::Sprintf("CS_SCENE_TRANS_FX(%i, %i, %i),", base, startFrame, endFrame);
 }
 
 CutsceneMMCommand_SceneTransFx::CutsceneMMCommand_SceneTransFx(const std::vector<uint8_t>& rawData,
@@ -181,8 +180,8 @@ CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(
 
 std::string CutsceneSubCommandEntry_FadeSeq::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_FADESEQ(0x%02X, %i, %i, 0x%04X, 0x%04X),", base, startFrame,
-	                             endFrame, pad, unk_08);
+	return StringHelper::Sprintf("CS_FADESEQ(%i, %i, %i),", base, startFrame, endFrame, pad,
+	                             unk_08);
 }
 
 size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize() const
@@ -401,8 +400,7 @@ CutsceneSubCommandEntry_Unk15F::CutsceneSubCommandEntry_Unk15F(const std::vector
 
 std::string CutsceneSubCommandEntry_Unk15F::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_15F(%i, %i, %i, %i),", base, startFrame, endFrame,
-	                             pad);
+	return StringHelper::Sprintf("CS_SCENE_UNK_15F(%i, %i, %i),", base, startFrame, endFrame);
 }
 
 CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData,

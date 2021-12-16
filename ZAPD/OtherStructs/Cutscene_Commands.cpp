@@ -266,8 +266,7 @@ std::string CutsceneSubCommandEntry_PlaySeq::GetBodySourceCode() const
 {
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
-		return StringHelper::Sprintf("CS_PLAYSEQ(0x%04X, %i, %i, %i),", base, startFrame, endFrame,
-		                             pad);
+		return StringHelper::Sprintf("CS_PLAYSEQ(0x%04X, %i, %i),", base, startFrame, endFrame);
 	}
 
 	return StringHelper::Sprintf("CS_PLAY_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", base,
