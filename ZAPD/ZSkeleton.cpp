@@ -379,7 +379,7 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 			HANDLE_ERROR_RESOURCE(
 				WarningType::MissingAttribute, parent, this, rawDataIndex,
 				"Skeleton's enum attributes were used but at least one limb is missing its "
-			    "'LimbName' attribute",
+				"'LimbName' attribute",
 				StringHelper::Sprintf("When processing limb %02i, named '%s' at offset '0x%X'",
 			                          i + 1, limb->GetName().c_str(), limb->GetRawDataIndex()));
 		}
@@ -438,9 +438,9 @@ std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
 	}
 	else
 	{
-		// TODO: use warninghandler system
-		fprintf(stderr, "ZLimbTable::GetLimbEnumName: Warning limbIndex '%02i' out of range\n",
-		        limbIndex);
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidExtractedData, parent, this, rawDataIndex,
+		                        StringHelper::Sprintf("Limb index '%02i' out of range", limbIndex),
+		                        "");
 	}
 
 	return StringHelper::Sprintf("0x%02X", limbIndex);
