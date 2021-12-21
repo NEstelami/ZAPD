@@ -19,7 +19,8 @@ class ZLimbTable : public ZResource
 {
 public:
 	std::string enumName;
-	std::string enumPrefix;
+	std::string limbNoneName;
+	std::string limbMaxName;
 
 	ZLimbTable(ZFile* nParent);
 
@@ -40,8 +41,6 @@ public:
 
 	size_t GetRawDataSize() const override;
 
-	std::string GetEnumName() const;
-	std::string GetEnumPrefix() const;
 	std::string GetLimbEnumName(uint8_t limbIndex) const;
 
 protected:
@@ -58,7 +57,8 @@ public:
 	ZSkeletonType type = ZSkeletonType::Normal;
 	ZLimbType limbType = ZLimbType::Standard;
 	std::string enumName;
-	std::string enumPrefix;
+	std::string limbNoneName;
+	std::string limbMaxName;
 
 	segptr_t limbsArrayAddress;
 	uint8_t limbCount = 0;

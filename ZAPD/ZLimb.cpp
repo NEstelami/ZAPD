@@ -377,22 +377,6 @@ ZLimbType ZLimb::GetTypeByAttributeName(const std::string& attrName)
 void ZLimb::SetLimbIndex(uint8_t nLimbIndex)
 {
 	limbIndex = nLimbIndex;
-
-	if (enumName == "")
-	{
-		std::string prefix;
-		if (limbsTable != nullptr)
-		{
-			prefix = limbsTable->GetEnumPrefix();
-		}
-		else
-		{
-			prefix = StringHelper::Split(parent->GetName(), "_").back();
-		}
-
-		enumName =
-			StringHelper::Sprintf("%s_LIMB_%02i", StringHelper::ToUpper(prefix).c_str(), limbIndex);
-	}
 }
 
 void ZLimb::DeclareDList(segptr_t dListSegmentedPtr, const std::string& prefix,

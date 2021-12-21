@@ -15,7 +15,8 @@ ZSkeleton::ZSkeleton(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Type");
 	RegisterRequiredAttribute("LimbType");
 	RegisterOptionalAttribute("EnumName");
-	RegisterOptionalAttribute("EnumPrefix");
+	RegisterOptionalAttribute("LimbNone");
+	RegisterOptionalAttribute("LimbMax");
 }
 
 void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
@@ -46,7 +47,8 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	}
 
 	enumName = registeredAttributes.at("EnumName").value;
-	enumPrefix = registeredAttributes.at("EnumPrefix").value;
+	limbNoneName = registeredAttributes.at("LimbNone").value;
+	limbMaxName = registeredAttributes.at("LimbMax").value;
 }
 
 void ZSkeleton::ParseRawData()
@@ -87,8 +89,15 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 			limbsTable = static_cast<ZLimbTable*>(parent->FindResource(ptr));
 		}
 
-		limbsTable->enumName = enumName;
-		limbsTable->enumPrefix = enumPrefix;
+		if (limbsTable->enumName == "") {
+			limbsTable->enumName = enumName;
+		}
+		if (limbsTable->limbNoneName == "") {
+			limbsTable->limbNoneName = limbNoneName;
+		}
+		if (limbsTable->limbMaxName == "") {
+			limbsTable->limbMaxName = limbMaxName;
+		}
 	}
 }
 
@@ -162,7 +171,8 @@ ZLimbTable::ZLimbTable(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("LimbType");
 	RegisterRequiredAttribute("Count");
 	RegisterOptionalAttribute("EnumName");
-	RegisterOptionalAttribute("EnumPrefix");
+	RegisterOptionalAttribute("LimbNone");
+	RegisterOptionalAttribute("LimbMax");
 }
 
 void ZLimbTable::ExtractFromBinary(uint32_t nRawDataIndex, ZLimbType nLimbType, size_t nCount)
@@ -191,7 +201,8 @@ void ZLimbTable::ParseXML(tinyxml2::XMLElement* reader)
 	count = StringHelper::StrToL(registeredAttributes.at("Count").value);
 
 	enumName = registeredAttributes.at("EnumName").value;
-	enumPrefix = registeredAttributes.at("EnumPrefix").value;
+	limbNoneName = registeredAttributes.at("LimbNone").value;
+	limbMaxName = registeredAttributes.at("LimbMax").value;
 }
 
 void ZLimbTable::ParseRawData()
@@ -283,12 +294,10 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 {
 	std::string limbEnum = "typedef enum {\n";
 
-	std::string limbPrefix = GetEnumPrefix();
-
 	// This assumes there isn't any skeleton with more than 100 limbs
 
-	limbEnum += StringHelper::Sprintf("    /* 00 */ %s_LIMB_NONE,\n",
-	                                  limbPrefix.c_str());
+	limbEnum += StringHelper::Sprintf("    /* 00 */ %s,\n",
+	                                  limbNoneName.c_str());
 
 	size_t i = 0;
 	for (; i < count; i++)
@@ -298,10 +307,10 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i + 1, limbEnumName.c_str());
 	}
 
-	limbEnum += StringHelper::Sprintf("    /* %02i */ %s_LIMB_MAX\n", i + 1,
-	                                  limbPrefix.c_str());
+	limbEnum += StringHelper::Sprintf("    /* %02i */ %s\n", i + 1,
+	                                  limbMaxName.c_str());
 
-	limbEnum += StringHelper::Sprintf("} %s;\n", GetEnumName().c_str());
+	limbEnum += StringHelper::Sprintf("} %s;\n", enumName.c_str());
 
 	return limbEnum;
 }
@@ -337,34 +346,6 @@ size_t ZLimbTable::GetRawDataSize() const
 	return 4 * limbsAddresses.size();
 }
 
-std::string ZLimbTable::GetEnumName() const
-{
-	if (enumName == "") {
-		std::string eName = GetName();
-		if (eName.at(0) == 'g')
-		{
-			eName = eName.substr(1);
-		}
-		return eName + "Enum";
-	}
-
-	return enumName;
-}
-
-std::string ZLimbTable::GetEnumPrefix() const
-{
-	if (enumPrefix == "") {
-		std::string limbPrefix = GetName();
-		if (limbPrefix.at(0) == 'g')
-		{
-			limbPrefix = limbPrefix.substr(1);
-		}
-		return StringHelper::ToUpper(limbPrefix);
-	}
-
-	return enumPrefix;
-}
-
 std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
 {
 	if (limbIndex == 0xFF)
@@ -378,6 +359,7 @@ std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
 	}
 	else
 	{
+		// TODO: use warninghandler system
 		fprintf(stderr, "ZLimbTable::GetLimbEnumName: Warning limbIndex '%02i' out of range\n",
 		        limbIndex);
 	}
