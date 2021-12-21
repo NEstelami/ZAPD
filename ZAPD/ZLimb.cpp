@@ -5,8 +5,8 @@
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
-#include "ZSkeleton.h"
 #include "WarningHandler.h"
+#include "ZSkeleton.h"
 
 REGISTER_ZFILENODE(Limb, ZLimb);
 

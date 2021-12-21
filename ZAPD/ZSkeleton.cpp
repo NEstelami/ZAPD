@@ -50,21 +50,34 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	limbNoneName = registeredAttributes.at("LimbNone").value;
 	limbMaxName = registeredAttributes.at("LimbMax").value;
 
-	if (enumName != "") {
-		if (limbNoneName == "" || limbMaxName == "") {
-			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'EnumName' attribute was used but either 'LimbNone' or 'LimbMax' attribute is missing", "");
+	if (enumName != "")
+	{
+		if (limbNoneName == "" || limbMaxName == "")
+		{
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex,
+			                      "'EnumName' attribute was used but either 'LimbNone' or "
+			                      "'LimbMax' attribute is missing",
+			                      "");
 		}
 	}
 
-	if (limbNoneName != "") {
-		if (limbMaxName == "") {
-			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbNone' attribute was used but 'LimbMax' attribute is missing", "");
+	if (limbNoneName != "")
+	{
+		if (limbMaxName == "")
+		{
+			HANDLE_ERROR_RESOURCE(
+				WarningType::MissingAttribute, parent, this, rawDataIndex,
+				"'LimbNone' attribute was used but 'LimbMax' attribute is missing", "");
 		}
 	}
 
-	if (limbMaxName != "") {
-		if (limbNoneName == "") {
-			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbMax' attribute was used but 'LimbNone' attribute is missing", "");
+	if (limbMaxName != "")
+	{
+		if (limbNoneName == "")
+		{
+			HANDLE_ERROR_RESOURCE(
+				WarningType::MissingAttribute, parent, this, rawDataIndex,
+				"'LimbMax' attribute was used but 'LimbNone' attribute is missing", "");
 		}
 	}
 }
@@ -107,13 +120,16 @@ void ZSkeleton::DeclareReferences(const std::string& prefix)
 			limbsTable = static_cast<ZLimbTable*>(parent->FindResource(ptr));
 		}
 
-		if (limbsTable->enumName == "") {
+		if (limbsTable->enumName == "")
+		{
 			limbsTable->enumName = enumName;
 		}
-		if (limbsTable->limbNoneName == "") {
+		if (limbsTable->limbNoneName == "")
+		{
 			limbsTable->limbNoneName = limbNoneName;
 		}
-		if (limbsTable->limbMaxName == "") {
+		if (limbsTable->limbMaxName == "")
+		{
 			limbsTable->limbMaxName = limbMaxName;
 		}
 	}
@@ -222,21 +238,33 @@ void ZLimbTable::ParseXML(tinyxml2::XMLElement* reader)
 	limbNoneName = registeredAttributes.at("LimbNone").value;
 	limbMaxName = registeredAttributes.at("LimbMax").value;
 
-	if (enumName != "") {
-		if (limbNoneName == "" || limbMaxName == "") {
-			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'EnumName' attribute was used but 'LimbNone'/'LimbMax' attributes is missing", "");
+	if (enumName != "")
+	{
+		if (limbNoneName == "" || limbMaxName == "")
+		{
+			HANDLE_ERROR_RESOURCE(
+				WarningType::MissingAttribute, parent, this, rawDataIndex,
+				"'EnumName' attribute was used but 'LimbNone'/'LimbMax' attributes is missing", "");
 		}
 	}
 
-	if (limbNoneName != "") {
-		if (limbMaxName == "") {
-			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbNone' attribute was used but 'LimbMax' attribute is missing", "");
+	if (limbNoneName != "")
+	{
+		if (limbMaxName == "")
+		{
+			HANDLE_ERROR_RESOURCE(
+				WarningType::MissingAttribute, parent, this, rawDataIndex,
+				"'LimbNone' attribute was used but 'LimbMax' attribute is missing", "");
 		}
 	}
 
-	if (limbMaxName != "") {
-		if (limbNoneName == "") {
-			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbMax' attribute was used but 'LimbNone' attribute is missing", "");
+	if (limbMaxName != "")
+	{
+		if (limbNoneName == "")
+		{
+			HANDLE_ERROR_RESOURCE(
+				WarningType::MissingAttribute, parent, this, rawDataIndex,
+				"'LimbMax' attribute was used but 'LimbNone' attribute is missing", "");
 		}
 	}
 }
@@ -328,7 +356,8 @@ std::string ZLimbTable::GetBodySourceCode() const
 
 std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
-	if (limbNoneName == "" || limbMaxName == "" || enumName == "") {
+	if (limbNoneName == "" || limbMaxName == "" || enumName == "")
+	{
 		// Don't produce a enum of any of those attributes is missing
 		return "";
 	}
@@ -337,8 +366,7 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 
 	// This assumes there isn't any skeleton with more than 100 limbs
 
-	limbEnum += StringHelper::Sprintf("    /* 00 */ %s,\n",
-	                                  limbNoneName.c_str());
+	limbEnum += StringHelper::Sprintf("    /* 00 */ %s,\n", limbNoneName.c_str());
 
 	size_t i = 0;
 	for (; i < count; i++)
@@ -348,16 +376,18 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 
 		if (limbEnumName == "")
 		{
-			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, 
-			                      "Skeleton's enum attributes were used but at least one limb is missing its 'LimbName' attribute", 
-								  StringHelper::Sprintf("When processing limb %02i, named '%s' at offset '0x%X'", i+1, limb->GetName().c_str(), limb->GetRawDataIndex()));
+			HANDLE_ERROR_RESOURCE(
+				WarningType::MissingAttribute, parent, this, rawDataIndex,
+				"Skeleton's enum attributes were used but at least one limb is missing its "
+			    "'LimbName' attribute",
+				StringHelper::Sprintf("When processing limb %02i, named '%s' at offset '0x%X'",
+			                          i + 1, limb->GetName().c_str(), limb->GetRawDataIndex()));
 		}
 
 		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i + 1, limbEnumName.c_str());
 	}
 
-	limbEnum += StringHelper::Sprintf("    /* %02i */ %s\n", i + 1,
-	                                  limbMaxName.c_str());
+	limbEnum += StringHelper::Sprintf("    /* %02i */ %s\n", i + 1, limbMaxName.c_str());
 
 	limbEnum += StringHelper::Sprintf("} %s;\n", enumName.c_str());
 

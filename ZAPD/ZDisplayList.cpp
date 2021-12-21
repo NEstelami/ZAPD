@@ -693,7 +693,8 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, const std::string& prefix, char* l
 		else if (dListDecl != nullptr)
 			sprintf(line, "gsSPBranchList(%s),", dListDecl->varName.c_str());
 		else
-			sprintf(line, "gsSPBranchList(%sDlist0x%06" PRIX64 "),", prefix.c_str(), GETSEGOFFSET(data));
+			sprintf(line, "gsSPBranchList(%sDlist0x%06" PRIX64 "),", prefix.c_str(),
+			        GETSEGOFFSET(data));
 	}
 	else
 	{
@@ -702,7 +703,8 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, const std::string& prefix, char* l
 		else if (dListDecl != nullptr)
 			sprintf(line, "gsSPDisplayList(%s),", dListDecl->varName.c_str());
 		else
-			sprintf(line, "gsSPDisplayList(%sDlist0x%06" PRIX64 "),", prefix.c_str(), GETSEGOFFSET(data));
+			sprintf(line, "gsSPDisplayList(%sDlist0x%06" PRIX64 "),", prefix.c_str(),
+			        GETSEGOFFSET(data));
 	}
 
 	// if (segNum == 8 || segNum == 9 || segNum == 10 || segNum == 11 || segNum == 12 || segNum ==
@@ -1748,7 +1750,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1796,7 +1798,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
