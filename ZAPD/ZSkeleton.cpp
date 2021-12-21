@@ -49,6 +49,24 @@ void ZSkeleton::ParseXML(tinyxml2::XMLElement* reader)
 	enumName = registeredAttributes.at("EnumName").value;
 	limbNoneName = registeredAttributes.at("LimbNone").value;
 	limbMaxName = registeredAttributes.at("LimbMax").value;
+
+	if (enumName != "") {
+		if (limbNoneName == "" || limbMaxName == "") {
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'EnumName' attribute was used but either 'LimbNone' or 'LimbMax' attribute is missing", "");
+		}
+	}
+
+	if (limbNoneName != "") {
+		if (limbMaxName == "") {
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbNone' attribute was used but 'LimbMax' attribute is missing", "");
+		}
+	}
+
+	if (limbMaxName != "") {
+		if (limbNoneName == "") {
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbMax' attribute was used but 'LimbNone' attribute is missing", "");
+		}
+	}
 }
 
 void ZSkeleton::ParseRawData()
@@ -203,6 +221,24 @@ void ZLimbTable::ParseXML(tinyxml2::XMLElement* reader)
 	enumName = registeredAttributes.at("EnumName").value;
 	limbNoneName = registeredAttributes.at("LimbNone").value;
 	limbMaxName = registeredAttributes.at("LimbMax").value;
+
+	if (enumName != "") {
+		if (limbNoneName == "" || limbMaxName == "") {
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'EnumName' attribute was used but 'LimbNone'/'LimbMax' attributes is missing", "");
+		}
+	}
+
+	if (limbNoneName != "") {
+		if (limbMaxName == "") {
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbNone' attribute was used but 'LimbMax' attribute is missing", "");
+		}
+	}
+
+	if (limbMaxName != "") {
+		if (limbNoneName == "") {
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, "'LimbMax' attribute was used but 'LimbNone' attribute is missing", "");
+		}
+	}
 }
 
 void ZLimbTable::ParseRawData()
@@ -292,6 +328,11 @@ std::string ZLimbTable::GetBodySourceCode() const
 
 std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string& prefix)
 {
+	if (limbNoneName == "" || limbMaxName == "" || enumName == "") {
+		// Don't produce a enum of any of those attributes is missing
+		return "";
+	}
+
 	std::string limbEnum = "typedef enum {\n";
 
 	// This assumes there isn't any skeleton with more than 100 limbs
@@ -302,7 +343,15 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 	size_t i = 0;
 	for (; i < count; i++)
 	{
-		std::string limbEnumName = limbsReferences.at(i)->enumName;
+		auto& limb = limbsReferences.at(i);
+		std::string limbEnumName = limb->enumName;
+
+		if (limbEnumName == "")
+		{
+			HANDLE_ERROR_RESOURCE(WarningType::MissingAttribute, parent, this, rawDataIndex, 
+			                      "Skeleton's enum attributes were used but at least one limb is missing its 'LimbName' attribute", 
+								  StringHelper::Sprintf("When processing limb %02i, named '%s' at offset '0x%X'", i+1, limb->GetName().c_str(), limb->GetRawDataIndex()));
+		}
 
 		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i + 1, limbEnumName.c_str());
 	}
