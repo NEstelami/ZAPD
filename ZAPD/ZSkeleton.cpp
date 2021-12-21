@@ -347,6 +347,13 @@ std::string ZLimbTable::GetBodySourceCode() const
 		Globals::Instance->GetSegmentedPtrName(limbsAddresses[i], parent, "", limbName);
 		body += StringHelper::Sprintf("\t%s,", limbName.c_str());
 
+		auto& limb = limbsReferences.at(i);
+		std::string limbEnumName = limb->enumName;
+		if (limbEnumName != "")
+		{
+			body += StringHelper::Sprintf(" /* %s */", limbEnumName.c_str());
+		}
+
 		if (i + 1 < count)
 			body += "\n";
 	}
@@ -362,7 +369,7 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 		return "";
 	}
 
-	std::string limbEnum = "typedef enum {\n";
+	std::string limbEnum = StringHelper::Sprintf("typedef enum %s {\n", enumName.c_str());
 
 	// This assumes there isn't any skeleton with more than 100 limbs
 
@@ -430,6 +437,16 @@ std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
 	if (limbIndex == 0xFF)
 	{
 		return "LIMB_DONE";
+	}
+
+	if (limbIndex == 0)
+	{
+		if (limbNoneName != "")
+		{
+			return limbNoneName;
+		}
+
+		return StringHelper::Sprintf("0x%02X", limbIndex);
 	}
 
 	if (limbIndex - 1 < count)
