@@ -451,7 +451,11 @@ std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
 
 	if (limbIndex - 1 < count)
 	{
-		return limbsReferences.at(limbIndex - 1)->enumName;
+		std::string limbEnumName = limbsReferences.at(limbIndex - 1)->enumName;
+		if (limbEnumName != "")
+		{
+			return limbEnumName;
+		}
 	}
 	else
 	{
