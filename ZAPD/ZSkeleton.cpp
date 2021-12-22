@@ -449,7 +449,7 @@ std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
 		return StringHelper::Sprintf("0x%02X", limbIndex);
 	}
 
-	uint8_t limbIndexMinus1 = limbIndex-1;
+	uint8_t limbIndexMinus1 = limbIndex - 1;
 
 	if (limbIndexMinus1 < count)
 	{
