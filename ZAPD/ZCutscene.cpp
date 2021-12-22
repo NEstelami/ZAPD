@@ -1122,8 +1122,6 @@ size_t CutsceneCommandEnd::GetCommandSize()
 
 SpecialActionEntry::SpecialActionEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
-	const uint8_t* data = rawData.data();
-
 	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
 	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
 	endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
