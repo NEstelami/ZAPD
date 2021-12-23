@@ -1027,11 +1027,6 @@ std::string ZFile::ProcessDeclarations()
 
 				while (curPtr % 8 != 0)
 				{
-					char buffer[2048];
-
-					sprintf(buffer, "u32 %s_align%02zX = 0;\n", name.c_str(), curPtr);
-					item.second->preText = buffer + item.second->preText;
-
 					declarations[lastAddr]->size += 4;
 					curPtr += 4;
 				}
