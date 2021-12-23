@@ -1005,17 +1005,7 @@ std::string ZFile::ProcessDeclarations()
 
 		if (lastAddr != 0)
 		{
-			if (item.second->alignment == DeclarationAlignment::Align16)
-			{
-				int32_t curPtr = lastAddr + declarations[lastAddr]->size;
-
-				while (curPtr % 4 != 0)
-				{
-					declarations[lastAddr]->size++;
-					curPtr++;
-				}
-			}
-			else if (item.second->alignment == DeclarationAlignment::Align8)
+			if (item.second->alignment == DeclarationAlignment::Align8)
 			{
 				size_t curPtr = lastAddr + declarations[lastAddr]->size;
 

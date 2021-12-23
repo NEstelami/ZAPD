@@ -832,7 +832,7 @@ void ZDisplayList::Opcode_G_VTX(uint64_t data, char* line)
 	{
 		segptr_t segmented = data & 0xFFFFFFFF;
 		references.push_back(segmented);
-		parent->AddDeclaration(segmented, DeclarationAlignment::Align16, 16, "Vtx",
+		parent->AddDeclaration(segmented, DeclarationAlignment::Align8, 16, "Vtx",
 		                       StringHelper::Sprintf("0x%08X", segmented), "");
 		return;
 	}
