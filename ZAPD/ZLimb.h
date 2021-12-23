@@ -24,7 +24,7 @@ class ZLimb : public ZResource
 {
 public:
 	std::string enumName;
-	ZLimbTable* limbsTable = nullptr;  // borrowed pointer
+	ZLimbTable* limbsTable = nullptr;  // borrowed pointer, do not delete!
 
 	ZLimbType type = ZLimbType::Standard;
 
