@@ -15,26 +15,10 @@ void SetActorList::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();
 	numActors = cmdArg1;
-}
-
-void SetActorList::DeclareReferences(const std::string& prefix)
-{
-	if (numActors != 0 && cmdArg2 != 0)
-	{
-		std::string varName =
-			StringHelper::Sprintf("%sActorList_%06X", prefix.c_str(), segmentOffset);
-		parent->AddDeclarationPlaceholder(segmentOffset, varName);
-	}
-}
-
-void SetActorList::ParseRawDataLate()
-{
-	ZRoomCommand::ParseRawDataLate();
-	size_t actorsAmount = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 0x10;
 
 	uint32_t currentPtr = segmentOffset;
 
-	for (size_t i = 0; i < actorsAmount; i++)
+	for (size_t i = 0; i < numActors; i++)
 	{
 		ActorSpawnEntry entry(parent->GetRawData(), currentPtr);
 
@@ -43,7 +27,7 @@ void SetActorList::ParseRawDataLate()
 	}
 }
 
-void SetActorList::DeclareReferencesLate(const std::string& prefix)
+void SetActorList::DeclareReferences(const std::string& prefix)
 {
 	if (actors.empty())
 		return;
@@ -82,11 +66,7 @@ std::string SetActorList::GetBodySourceCode() const
 {
 	std::string listName;
 	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "ActorEntry", listName);
-	if (numActors != actors.size())
-	{
-		printf("%s: numActors(%i) ~ actors(%li)\n", parent->GetName().c_str(), numActors,
-		       actors.size());
-	}
+
 	return StringHelper::Sprintf("SCENE_CMD_ACTOR_LIST(%i, %s)", numActors, listName.c_str());
 }
 

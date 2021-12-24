@@ -37,9 +37,6 @@ public:
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
 
-	void ParseRawDataLate() override;
-	void DeclareReferencesLate(const std::string& prefix) override;
-
 	std::string GetBodySourceCode() const override;
 
 	RoomCommand GetRoomCommand() const override;
