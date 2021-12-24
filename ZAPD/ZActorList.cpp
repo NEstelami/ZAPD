@@ -1,10 +1,10 @@
 #include "ZActorList.h"
 
-#include "Utils/BitConverter.h"
 #include "Globals.h"
+#include "Utils/BitConverter.h"
+#include "WarningHandler.h"
 #include "ZFile.h"
 #include "ZRoom/ZNames.h"
-#include "WarningHandler.h"
 
 REGISTER_ZFILENODE(ActorList, ZActorList);
 
@@ -62,7 +62,7 @@ void ZActorList::ParseRawData()
 	for (auto& entry : actors)
 	{
 		entry.SetLargestActorName(largestlength);
-    }
+	}
 }
 
 Declaration* ZActorList::DeclareVar(const std::string& prefix, const std::string& bodyStr)
@@ -95,24 +95,23 @@ std::string ZActorList::GetBodySourceCode() const
 		index++;
 	}
 
-    return declaration;
+	return declaration;
 }
 
 std::string ZActorList::GetSourceTypeName() const
 {
-    return actors.front().GetSourceTypeName();
+	return actors.front().GetSourceTypeName();
 }
 
 ZResourceType ZActorList::GetResourceType() const
 {
-    return ZResourceType::ActorList;
+	return ZResourceType::ActorList;
 }
 
 size_t ZActorList::GetRawDataSize() const
 {
-    return actors.size() * actors.front().GetRawDataSize();
+	return actors.size() * actors.front().GetRawDataSize();
 }
-
 
 size_t ZActorList::GetActorListArraySize() const
 {

@@ -26,7 +26,6 @@ public:
 	void SetLargestActorName(size_t nameSize);
 };
 
-
 class ZActorList : public ZResource
 {
 public:

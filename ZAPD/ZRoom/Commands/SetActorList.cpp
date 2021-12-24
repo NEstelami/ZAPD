@@ -22,7 +22,8 @@ void SetActorList::ParseRawData()
 
 void SetActorList::DeclareReferences(const std::string& prefix)
 {
-	if (parent->HasDeclaration(segmentOffset)) {
+	if (parent->HasDeclaration(segmentOffset))
+	{
 		delete actorList;
 		actorList = static_cast<ZActorList*>(parent->FindResource(segmentOffset));
 		assert(actorList != nullptr);
