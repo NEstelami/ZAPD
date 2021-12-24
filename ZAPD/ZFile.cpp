@@ -950,9 +950,6 @@ std::string ZFile::ProcessDeclarations()
 
 	defines += ProcessTextureIntersections(name);
 
-	// Account for padding/alignment
-	uint32_t lastAddr = 0;
-
 	// printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
 	// Optimization: See if there are any arrays side by side that can be merged...
@@ -1003,8 +1000,6 @@ std::string ZFile::ProcessDeclarations()
 	{
 		while (item.second->size % 4 != 0)
 			item.second->size++;
-
-		lastAddr = item.first;
 	}
 
 	HandleUnaccountedData();
