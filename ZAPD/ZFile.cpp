@@ -193,7 +193,7 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 		rawData = File::ReadAllBytes((basePath / name).string());
 
 		if (reader->Attribute("RangeEnd") == nullptr)
-		rangeEnd = rawData.size();
+			rangeEnd = rawData.size();
 	}
 
 	std::unordered_set<std::string> nameSet;
@@ -379,7 +379,7 @@ void ZFile::ExtractResources()
 		ZResourceExporter* exporter = Globals::Instance->GetExporter(res->GetResourceType());
 		if (exporter != nullptr)
 		{
-			//exporter->Save(res, Globals::Instance->outputPath.string(), &writerFile);
+			// exporter->Save(res, Globals::Instance->outputPath.string(), &writerFile);
 			exporter->Save(res, Globals::Instance->outputPath.string(), &writerRes);
 		}
 
@@ -392,7 +392,7 @@ void ZFile::ExtractResources()
 		File::WriteAllBytes(StringHelper::Sprintf("%s%s.bin",
 		                                          Globals::Instance->outputPath.string().c_str(),
 		                                          GetName().c_str()),
-			memStreamFile->ToVector());
+		                    memStreamFile->ToVector());
 	}
 
 	writerFile.Close();
@@ -1243,11 +1243,14 @@ bool ZFile::HandleUnaccountedAddress(offset_t currentAddress, offset_t lastAddr,
 		}
 
 		// Handle Align8
-		if (currentAddress % 8 == 0 && diff % 8 != 0) {
+		if (currentAddress % 8 == 0 && diff % 8 != 0)
+		{
 			Declaration* currentDecl = GetDeclaration(currentAddress);
 
-			if (currentDecl != nullptr) {
-				if (currentDecl->alignment == DeclarationAlignment::Align8) {
+			if (currentDecl != nullptr)
+			{
+				if (currentDecl->alignment == DeclarationAlignment::Align8)
+				{
 					// Check removed bytes are zeroes
 					if (BitConverter::ToUInt32BE(rawData, unaccountedAddress + diff - 4) == 0)
 					{
@@ -1255,7 +1258,8 @@ bool ZFile::HandleUnaccountedAddress(offset_t currentAddress, offset_t lastAddr,
 					}
 				}
 
-				if (diff == 0) {
+				if (diff == 0)
+				{
 					return false;
 				}
 			}
