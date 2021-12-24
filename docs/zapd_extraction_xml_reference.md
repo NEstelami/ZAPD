@@ -9,6 +9,7 @@ This document aims to be a small reference of how to create a compatible xml fil
   - [Basic XML](#basic-xml)
   - [Resources types](#resources-types)
     - [File](#file)
+    - [ExternalFile](#externalfile)
     - [Texture](#texture)
     - [Background](#background)
     - [Blob](#blob)
@@ -33,6 +34,7 @@ This document aims to be a small reference of how to create a compatible xml fil
     - [Array](#array)
     - [Path](#path)
     - [PlayerAnimationData](#playeranimationdata)
+    - [ActorList](#actorlist)
 
 ## Basic XML
 
@@ -635,5 +637,20 @@ Allows the extraction of the specific data of the player animations which are fo
 
   - `Name`: Required. Suxffixed by `AnimData`.
   - `FrameCount`: Required. The length of the animation in frames. It must be a positive integer.
+
+-------------------------
+
+### ActorList
+
+- Example:
+
+```xml
+<ActorList Name="gSutaruActorList" Count="5" Offset="0x50"/>
+```
+
+- Attributes:
+
+  - `Name`: Required. Suxffixed by `ActorList`.
+  - `Count`: Required. The amount of actors on this list. It must be a positive integer.
 
 -------------------------

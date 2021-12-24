@@ -46,6 +46,7 @@ Reminder that in
   - `<Array>`
   - `<Path>`
   - `<PlayerAnimationData>`
+  - `<ActorList>`
 
 - A `<File>` cannot descend from a `<File>`.
 - All resources must be children of a `<File>`.
