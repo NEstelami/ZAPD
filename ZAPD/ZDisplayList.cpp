@@ -27,8 +27,8 @@ ZDisplayList::ZDisplayList(ZFile* nParent) : ZResource(nParent)
 	lastTexSizTest = F3DZEXTexSizes::G_IM_SIZ_16b;
 	lastTexLoaded = false;
 	lastTexIsPalette = false;
-	name = "";
 	dListType = Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX;
+	RegisterOptionalAttribute("Ucode");
 }
 
 ZDisplayList::~ZDisplayList()
@@ -44,13 +44,29 @@ void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDat
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);
+	// TODO add error handling here
+	bool ucodeSet = registeredAttributes.at("Ucode").wasSet;
+	std::string ucodeValue = registeredAttributes.at("Ucode").value;
+	if ((Globals::Instance->game == ZGame::OOT_SW97) || (ucodeValue == "f3dex"))
+	{
+		dListType = DListType::F3DEX;
+	}
+	else if (!ucodeSet || ucodeValue == "f3dex2")
+	{
+		dListType = DListType::F3DZEX;
+	}
+	else
+	{
+		HANDLE_ERROR_RESOURCE(
+			WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+			StringHelper::Sprintf("Invalid ucode type in node: %s\n", reader->Name()), "");
+	}
 
 	// Don't parse raw data of external files
 	if (parent->GetMode() != ZFileMode::ExternalFile)
 	{
-		int32_t rawDataSize = ZDisplayList::GetDListLength(
-			parent->GetRawData(), rawDataIndex,
-			Globals::Instance->game == ZGame::OOT_SW97 ? DListType::F3DEX : DListType::F3DZEX);
+		int32_t rawDataSize =
+			ZDisplayList::GetDListLength(parent->GetRawData(), rawDataIndex, dListType);
 		numInstructions = rawDataSize / 8;
 		ParseRawData();
 	}
@@ -1748,7 +1764,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
@@ -1796,7 +1812,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 	if (vertices.size() > 0)
 	{
 		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> verticesSorted(vertices.begin(),
-			vertices.end());
+		                                                                   vertices.end());
 
 		for (size_t i = 0; i < verticesSorted.size() - 1; i++)
 		{
