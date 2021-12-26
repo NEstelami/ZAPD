@@ -431,7 +431,7 @@ void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const f
 
 	ZTexture tex(nullptr);
 
-	if (name.find("UNALIGNED") != std::string::npos)
+	if (name.find("u32") != std::string::npos)
 		tex.dWordAligned = false;
 
 	tex.FromPNG(pngFilePath.string(), texType);
