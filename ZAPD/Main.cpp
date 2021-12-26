@@ -49,7 +49,7 @@ void ErrorHandler(int sig)
 		"\tYou've met with a terrible fate, haven't you?",
 		"\tSEA BEARS FOAM. SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY: CRASSSH!",
 		"\tZAPD has fallen and cannot get up.",
-		};
+	};
 
 	srand(time(nullptr));
 	auto easterIndex = rand() % ARRAY_COUNT(crashEasterEgg);
