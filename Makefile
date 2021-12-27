@@ -31,7 +31,7 @@ ifneq ($(WERROR),0)
 endif
 
 ifeq ($(OPTIMIZATION_ON),0)
-  OPTFLAGS := -Og
+  OPTFLAGS := -O0
 else
   OPTFLAGS := -O2
 endif
