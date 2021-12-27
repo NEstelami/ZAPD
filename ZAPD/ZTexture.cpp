@@ -57,10 +57,6 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 	std::string widthXml = registeredAttributes.at("Width").value;
 	std::string heightXml = registeredAttributes.at("Height").value;
 
-	/*if(StringHelper::StrToL(registeredAttributes.at("Offset").value,16) % 8 != 0){
-	    dWordAligned = false;
-	}*/
-
 	if (!StringHelper::HasOnlyDigits(widthXml))
 	{
 		std::string errorHeader = StringHelper::Sprintf(
