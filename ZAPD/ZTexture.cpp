@@ -828,10 +828,7 @@ ZResourceType ZTexture::GetResourceType() const
 
 std::string ZTexture::GetSourceTypeName() const
 {
-	if (dWordAligned)
-		return "u64";
-	else
-		return "u32";
+	return dWordAligned ? "u64" : "u32";
 }
 
 void ZTexture::CalcHash()
