@@ -123,7 +123,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(
 			waterBoxSegmentOffset, DeclarationAlignment::Align4, 16 * waterBoxes.size(), "WaterBox",
-			StringHelper::Sprintf("%s_waterBoxes_%06X", auxName.c_str(), waterBoxSegmentOffset),
+			StringHelper::Sprintf("%sWaterBoxes", auxName.c_str()),
 			waterBoxes.size(), declaration);
 	}
 
@@ -143,7 +143,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(
 			polySegmentOffset, DeclarationAlignment::Align4, polygons.size() * 16, "CollisionPoly",
-			StringHelper::Sprintf("%s_polygons_%08X", auxName.c_str(), polySegmentOffset),
+			StringHelper::Sprintf("%sPolygons", auxName.c_str()),
 			polygons.size(), declaration);
 	}
 
@@ -161,7 +161,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 		parent->AddDeclarationArray(
 			polyTypeDefSegmentOffset, DeclarationAlignment::Align4, polygonTypes.size() * 8,
 			"SurfaceType",
-			StringHelper::Sprintf("%s_surfaceType_%08X", auxName.c_str(), polyTypeDefSegmentOffset),
+			StringHelper::Sprintf("%sSurfaceType", auxName.c_str()),
 			polygonTypes.size(), declaration);
 
 	declaration.clear();
@@ -184,7 +184,7 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 			parent->AddDeclarationArray(
 				vtxSegmentOffset, first.GetDeclarationAlignment(),
 				vertices.size() * first.GetRawDataSize(), first.GetSourceTypeName(),
-				StringHelper::Sprintf("%s_vtx_%08X", auxName.c_str(), vtxSegmentOffset),
+				StringHelper::Sprintf("%sVertices", auxName.c_str()),
 				vertices.size(), declaration);
 	}
 }
@@ -320,8 +320,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		{
 			int32_t index =
 				((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
-			sprintf(camSegLine, "&%s_camPosData_%08X[%i]", prefix.c_str(), cameraPosDataOffset,
-			        index);
+			sprintf(camSegLine, "&%sCamPosData[%i]", prefix.c_str(), index);
 		}
 		else
 			sprintf(camSegLine, "NULL");
@@ -336,7 +335,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 	parent->AddDeclarationArray(
 		rawDataIndex, DeclarationAlignment::Align4, entries.size() * 8, "CamData",
-		StringHelper::Sprintf("%s_camDataList_%08X", prefix.c_str(), rawDataIndex), entries.size(),
+		StringHelper::Sprintf("%sCamDataList", prefix.c_str(), rawDataIndex), entries.size(),
 		declaration);
 
 	uint32_t numDataTotal = (rawDataIndex - cameraPosDataOffset) / 0x6;
@@ -359,7 +358,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		uint32_t entrySize = numDataTotal * 0x6;
 		parent->AddDeclarationArray(
 			cameraPosDataIndex, DeclarationAlignment::Align4, entrySize, "Vec3s",
-			StringHelper::Sprintf("%s_camPosData_%08X", prefix.c_str(), cameraPosDataIndex),
+			StringHelper::Sprintf("%sCamPosData", prefix.c_str()),
 			numDataTotal, declaration);
 	}
 }
