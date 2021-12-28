@@ -77,7 +77,7 @@ void ZCollisionHeader::ParseRawData()
 		polygonTypes.push_back(
 			BitConverter::ToUInt64BE(rawData, polyTypeDefSegmentOffset + (i * 8)));
 
-	if (camDataAddress != 0)
+	if (camDataAddress != SEGMENTED_NULL)
 	{
 		// Try to guess how many elements the CamDataList array has.
 		// The "guessing algorithm" is basically a "best effort" one and it
@@ -86,19 +86,19 @@ void ZCollisionHeader::ParseRawData()
 		// usually ordered. If for some reason the data was in some other funny
 		// order, this would probably break.
 		offset_t upperCameraBoundary = polyTypeDefSegmentOffset;
-		if (upperCameraBoundary == SEGMENTED_NULL)
+		if (upperCameraBoundary == 0)
 		{
 			upperCameraBoundary = polySegmentOffset;
 		}
-		if (upperCameraBoundary == SEGMENTED_NULL)
+		if (upperCameraBoundary == 0)
 		{
 			upperCameraBoundary = vtxSegmentOffset;
 		}
-		if (upperCameraBoundary == SEGMENTED_NULL)
+		if (upperCameraBoundary == 0)
 		{
 			upperCameraBoundary = waterBoxSegmentOffset;
 		}
-		if (upperCameraBoundary == SEGMENTED_NULL)
+		if (upperCameraBoundary == 0)
 		{
 			upperCameraBoundary = rawDataIndex;
 		}
