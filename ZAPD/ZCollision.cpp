@@ -1,5 +1,6 @@
 #include "ZCollision.h"
 
+#include <cassert>
 #include <cstdint>
 #include <string>
 
@@ -76,9 +77,25 @@ void ZCollisionHeader::ParseRawData()
 		polygonTypes.push_back(
 			BitConverter::ToUInt64BE(rawData, polyTypeDefSegmentOffset + (i * 8)));
 
-	if (camDataAddress != 0)
+	if (camDataAddress != 0) {
+		// Try to guess how many elements the CamDataList array has
+		offset_t upperCameraBoundary = polyTypeDefSegmentOffset;
+		if (upperCameraBoundary == SEGMENTED_NULL) {
+			upperCameraBoundary = polySegmentOffset;
+		}
+		if (upperCameraBoundary == SEGMENTED_NULL) {
+			upperCameraBoundary = vtxSegmentOffset;
+		}
+		if (upperCameraBoundary == SEGMENTED_NULL) {
+			upperCameraBoundary = waterBoxSegmentOffset;
+		}
+		if (upperCameraBoundary == SEGMENTED_NULL) {
+			upperCameraBoundary = rawDataIndex;
+		}
+
 		camData = new CameraDataList(parent, name, rawData, camDataSegmentOffset,
-		                             polyTypeDefSegmentOffset, polygonTypes.size());
+		                             upperCameraBoundary);
+	}
 
 	for (uint16_t i = 0; i < numWaterBoxes; i++)
 		waterBoxes.push_back(WaterBoxHeader(
@@ -183,11 +200,11 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 
 	std::string vtxName;
 	Globals::Instance->GetSegmentedPtrName(vtxAddress, parent, "Vec3s", vtxName);
-	declaration += StringHelper::Sprintf("\t%i,\n\t%s,\n", numVerts, vtxName.c_str());
+	declaration += StringHelper::Sprintf("\t%i, %s,\n", numVerts, vtxName.c_str());
 
 	std::string polyName;
 	Globals::Instance->GetSegmentedPtrName(polyAddress, parent, "CollisionPoly", polyName);
-	declaration += StringHelper::Sprintf("\t%i,\n\t%s,\n", numPolygons, polyName.c_str());
+	declaration += StringHelper::Sprintf("\t%i, %s,\n", numPolygons, polyName.c_str());
 
 	std::string surfaceName;
 	Globals::Instance->GetSegmentedPtrName(polyTypeDefAddress, parent, "SurfaceType", surfaceName);
@@ -199,7 +216,7 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 
 	std::string waterBoxName;
 	Globals::Instance->GetSegmentedPtrName(waterBoxAddress, parent, "WaterBox", waterBoxName);
-	declaration += StringHelper::Sprintf("\t%i,\n\t%s\n", numWaterBoxes, waterBoxName.c_str());
+	declaration += StringHelper::Sprintf("\t%i, %s\n", numWaterBoxes, waterBoxName.c_str());
 
 	return declaration;
 }
@@ -261,16 +278,17 @@ std::string WaterBoxHeader::GetBodySourceCode() const
 }
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
-                               const std::vector<uint8_t>& rawData, uint32_t rawDataIndex,
-                               uint32_t polyTypeDefSegmentOffset,
-                               [[maybe_unused]] uint32_t polygonTypesCnt)
+                               const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+                               offset_t upperCameraBoundary)
 {
 	std::string declaration;
 
 	// Parse CameraDataEntries
-	int32_t numElements = (polyTypeDefSegmentOffset - rawDataIndex) / 8;
-	uint32_t cameraPosDataSeg = rawDataIndex;
-	for (int32_t i = 0; i < numElements; i++)
+	size_t numElements = (upperCameraBoundary - rawDataIndex) / 8;
+	assert(numElements < 10000);
+
+	offset_t cameraPosDataSeg = rawDataIndex;
+	for (size_t i = 0; i < numElements; i++)
 	{
 		CameraDataEntry* entry = new CameraDataEntry();
 
