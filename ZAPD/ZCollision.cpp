@@ -78,7 +78,12 @@ void ZCollisionHeader::ParseRawData()
 			BitConverter::ToUInt64BE(rawData, polyTypeDefSegmentOffset + (i * 8)));
 
 	if (camDataAddress != 0) {
-		// Try to guess how many elements the CamDataList array has
+		// Try to guess how many elements the CamDataList array has.
+		// The "guessing algorithm" is basically a "best effort" one and it 
+		// is error-prone.
+		// This is based mostly on observation of how CollisionHeader data is
+		// usually ordered. If for some reason the data was in some other funny
+		// order, this would probably break.
 		offset_t upperCameraBoundary = polyTypeDefSegmentOffset;
 		if (upperCameraBoundary == SEGMENTED_NULL) {
 			upperCameraBoundary = polySegmentOffset;
