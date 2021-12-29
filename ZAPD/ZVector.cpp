@@ -98,7 +98,7 @@ std::string ZVector::GetSourceTypeName() const
 
 std::string ZVector::GetBodySourceCode() const
 {
-	std::string body = "{ ";
+	std::string body = "";
 
 	for (size_t i = 0; i < scalars.size(); i++)
 	{
@@ -107,8 +107,6 @@ std::string ZVector::GetBodySourceCode() const
 		if (i + 1 < scalars.size())
 			body += ", ";
 	}
-
-	body += " }";
 
 	return body;
 }
