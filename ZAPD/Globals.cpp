@@ -160,11 +160,8 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
-	if (warnIfNotFound && ((segment >= 2 && segment <= 6) || segment == 0x80)) {
-		std::string errorHeader = "A hardcoded pointer was found";
-		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
-
-		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, nullptr, -1, errorHeader, errorBody);
+	if (warnIfNotFound) {
+		WarnHardcodedPointer(segAddress, currentFile, nullptr, -1);
 	}
 	return false;
 }
@@ -203,13 +200,22 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
-	if (warnIfNotFound && ((segment >= 2 && segment <= 6) || segment == 0x80)) {
+	if (warnIfNotFound) {
+		WarnHardcodedPointer(segAddress, currentFile, nullptr, -1);
+	}
+	return false;
+}
+
+void Globals::WarnHardcodedPointer(segptr_t segAddress, ZFile* currentFile, ZResource* res, offset_t currentOffset)
+{
+	uint8_t segment = GETSEGNUM(segAddress);
+
+	if ((segment >= 2 && segment <= 6) || segment == 0x80) {
 		std::string errorHeader = "A hardcoded pointer was found";
 		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
 
-		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, nullptr, -1, errorHeader, errorBody);
+		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, res, currentOffset, errorHeader, errorBody);
 	}
-	return false;
 }
 
 ExternalFile::ExternalFile(fs::path nXmlPath, fs::path nOutPath)
