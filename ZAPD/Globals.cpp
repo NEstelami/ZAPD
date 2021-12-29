@@ -83,9 +83,9 @@ ExporterSet* Globals::GetExporterSet()
 }
 
 bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
-                                  const std::string& expectedType, std::string& declName)
+                                  const std::string& expectedType, std::string& declName, bool warnIfNotFound)
 {
-	if (segAddress == 0)
+	if (segAddress == SEGMENTED_NULL)
 	{
 		declName = "NULL";
 		return true;
@@ -160,7 +160,7 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
-	if (segment <= 6 || segment == 0x80) {
+	if (warnIfNotFound && ((segment >= 2 && segment <= 6) || segment == 0x80)) {
 		std::string errorHeader = "A hardcoded pointer was found";
 		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
 
@@ -171,9 +171,9 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 
 bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSize,
                                            ZFile* currentFile, const std::string& expectedType,
-                                           std::string& declName)
+                                           std::string& declName, bool warnIfNotFound)
 {
-	if (segAddress == 0)
+	if (segAddress == SEGMENTED_NULL)
 	{
 		declName = "NULL";
 		return true;
@@ -203,7 +203,7 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
-	if (segment <= 6 || segment == 0x80) {
+	if (warnIfNotFound && ((segment >= 2 && segment <= 6) || segment == 0x80)) {
 		std::string errorHeader = "A hardcoded pointer was found";
 		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
 
