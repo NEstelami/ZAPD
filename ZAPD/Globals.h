@@ -86,11 +86,14 @@ public:
 	 * in which case `declName` will be set to the address formatted as a pointer.
 	 */
 	bool GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
-	                         const std::string& expectedType, std::string& declName, bool warnIfNotFound=true);
+	                         const std::string& expectedType, std::string& declName,
+	                         bool warnIfNotFound = true);
 
 	bool GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSize, ZFile* currentFile,
-	                                  const std::string& expectedType, std::string& declName, bool warnIfNotFound=true);
+	                                  const std::string& expectedType, std::string& declName,
+	                                  bool warnIfNotFound = true);
 
 	// TODO: consider moving to another place
-	void WarnHardcodedPointer(segptr_t segAddress, ZFile* currentFile, ZResource* res, offset_t currentOffset);
+	void WarnHardcodedPointer(segptr_t segAddress, ZFile* currentFile, ZResource* res,
+	                          offset_t currentOffset);
 };
