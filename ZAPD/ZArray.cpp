@@ -101,11 +101,7 @@ std::string ZArray::GetBodySourceCode() const
 		const auto& res = resList[i];
 		output += "\t";
 
-		if (res->GetResourceType() == ZResourceType::Scalar ||
-		    res->GetResourceType() == ZResourceType::Vertex)
-			output += resList.at(i)->GetBodySourceCode();
-		else
-			output += StringHelper::Sprintf("{ %s }", resList.at(i)->GetBodySourceCode().c_str());
+		output += resList.at(i)->GetBodySourceCode();
 
 		if (i < arrayCnt - 1 || res->IsExternalResource())
 			output += ",\n";
