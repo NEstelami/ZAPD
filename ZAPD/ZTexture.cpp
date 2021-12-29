@@ -776,9 +776,8 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 				incStr = StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.c_str(),
 				                               GetExternalExtension().c_str());
 			else
-				incStr =
-					StringHelper::Sprintf("%s.u32.%s.inc.c", poolEntry->second.path.c_str(),
-				                          GetExternalExtension().c_str());
+				incStr = StringHelper::Sprintf("%s.u32.%s.inc.c", poolEntry->second.path.c_str(),
+				                               GetExternalExtension().c_str());
 		}
 	}
 	size_t texSizeDivisor = (dWordAligned) ? 8 : 4;
