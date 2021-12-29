@@ -1707,7 +1707,8 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	uint32_t dListSegNum = GETSEGNUM(seg);
 
 	std::string dListName = "";
-	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Gfx", dListName, false);
+	bool addressFound =
+		Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Gfx", dListName, false);
 
 	if (!addressFound)
 	{
@@ -1723,7 +1724,8 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 		}
 		else
 		{
-			Globals::Instance->WarnHardcodedPointer(seg, self->parent, self, self->GetRawDataIndex());
+			Globals::Instance->WarnHardcodedPointer(seg, self->parent, self,
+			                                        self->GetRawDataIndex());
 		}
 	}
 
@@ -1737,7 +1739,8 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	std::string mtxName;
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 
-	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Mtx", mtxName, false);
+	bool addressFound =
+		Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Mtx", mtxName, false);
 
 	if (!addressFound)
 	{
@@ -1759,7 +1762,8 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 		}
 		else
 		{
-			Globals::Instance->WarnHardcodedPointer(seg, self->parent, self, self->GetRawDataIndex());
+			Globals::Instance->WarnHardcodedPointer(seg, self->parent, self,
+			                                        self->GetRawDataIndex());
 		}
 	}
 

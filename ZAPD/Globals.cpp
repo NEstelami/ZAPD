@@ -83,7 +83,8 @@ ExporterSet* Globals::GetExporterSet()
 }
 
 bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
-                                  const std::string& expectedType, std::string& declName, bool warnIfNotFound)
+                                  const std::string& expectedType, std::string& declName,
+                                  bool warnIfNotFound)
 {
 	if (segAddress == SEGMENTED_NULL)
 	{
@@ -160,7 +161,8 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
-	if (warnIfNotFound) {
+	if (warnIfNotFound)
+	{
 		WarnHardcodedPointer(segAddress, currentFile, nullptr, -1);
 	}
 	return false;
@@ -200,27 +202,33 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
-	if (warnIfNotFound) {
+	if (warnIfNotFound)
+	{
 		WarnHardcodedPointer(segAddress, currentFile, nullptr, -1);
 	}
 	return false;
 }
 
-void Globals::WarnHardcodedPointer(segptr_t segAddress, ZFile* currentFile, ZResource* res, offset_t currentOffset)
+void Globals::WarnHardcodedPointer(segptr_t segAddress, ZFile* currentFile, ZResource* res,
+                                   offset_t currentOffset)
 {
 	uint8_t segment = GETSEGNUM(segAddress);
 
-	if ((segment >= 2 && segment <= 6) || segment == 0x80) {
+	if ((segment >= 2 && segment <= 6) || segment == 0x80)
+	{
 		std::string errorHeader = "A hardcoded pointer was found";
 		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
 
-		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, res, currentOffset, errorHeader, errorBody);
+		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, res, currentOffset,
+		                        errorHeader, errorBody);
 	}
-	else {
+	else
+	{
 		std::string errorHeader = "A general purpose hardcoded pointer was found";
 		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
 
-		HANDLE_WARNING_RESOURCE(WarningType::HardcodedGenericPointer, currentFile, res, currentOffset, errorHeader, errorBody);
+		HANDLE_WARNING_RESOURCE(WarningType::HardcodedGenericPointer, currentFile, res,
+		                        currentOffset, errorHeader, errorBody);
 	}
 }
 

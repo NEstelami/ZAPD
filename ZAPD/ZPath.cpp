@@ -142,8 +142,8 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 		return;
 
 	std::string pointsName;
-	bool addressFound =
-		Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, "Vec3s", pointsName, false);
+	bool addressFound = Globals::Instance->GetSegmentedPtrName(listSegmentAddress, parent, "Vec3s",
+	                                                           pointsName, false);
 	if (addressFound)
 		return;
 
