@@ -160,6 +160,12 @@ bool Globals::GetSegmentedPtrName(segptr_t segAddress, ZFile* currentFile,
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
+	if (segment <= 6 || segment == 0x80) {
+		std::string errorHeader = "A hardcoded pointer was found";
+		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
+
+		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, nullptr, -1, errorHeader, errorBody);
+	}
 	return false;
 }
 
@@ -197,6 +203,12 @@ bool Globals::GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSi
 	}
 
 	declName = StringHelper::Sprintf("0x%08X", segAddress);
+	if (segment <= 6 || segment == 0x80) {
+		std::string errorHeader = "A hardcoded pointer was found";
+		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
+
+		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, nullptr, -1, errorHeader, errorBody);
+	}
 	return false;
 }
 
