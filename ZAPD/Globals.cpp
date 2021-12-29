@@ -216,6 +216,12 @@ void Globals::WarnHardcodedPointer(segptr_t segAddress, ZFile* currentFile, ZRes
 
 		HANDLE_WARNING_RESOURCE(WarningType::HardcodedPointer, currentFile, res, currentOffset, errorHeader, errorBody);
 	}
+	else {
+		std::string errorHeader = "A general purpose hardcoded pointer was found";
+		std::string errorBody = StringHelper::Sprintf("Pointer: 0x%08X", segAddress);
+
+		HANDLE_WARNING_RESOURCE(WarningType::HardcodedGenericPointer, currentFile, res, currentOffset, errorHeader, errorBody);
+	}
 }
 
 ExternalFile::ExternalFile(fs::path nXmlPath, fs::path nOutPath)
