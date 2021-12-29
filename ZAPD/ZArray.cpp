@@ -101,7 +101,10 @@ std::string ZArray::GetBodySourceCode() const
 		const auto& res = resList[i];
 		output += "\t";
 
-		output += resList.at(i)->GetBodySourceCode();
+		if (res->GetResourceType() == ZResourceType::Vector)
+			output += StringHelper::Sprintf("{ %s }", resList.at(i)->GetBodySourceCode().c_str());
+		else
+			output += resList.at(i)->GetBodySourceCode();
 
 		if (i < arrayCnt - 1 || res->IsExternalResource())
 			output += ",\n";
