@@ -5,7 +5,7 @@
 class ZPointer : public ZResource
 {
 public:
-    segptr_t ptr = SEGMENTED_NULL;
+	segptr_t ptr = SEGMENTED_NULL;
 	std::string type;
 
 	ZPointer(ZFile* nParent);
