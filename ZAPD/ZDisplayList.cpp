@@ -1715,15 +1715,22 @@ static int32_t GfxdCallback_DisplayList(uint32_t seg)
 	std::string dListName = "";
 	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Gfx", dListName, false);
 
-	if (!addressFound && self->parent->segment == dListSegNum)
+	if (!addressFound)
 	{
-		ZDisplayList* newDList = new ZDisplayList(self->parent);
-		newDList->ExtractFromBinary(
-			dListOffset,
-			self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
-		newDList->SetName(newDList->GetDefaultName(self->parent->GetName()));
-		self->otherDLists.push_back(newDList);
-		dListName = newDList->GetName();
+		if (self->parent->segment == dListSegNum)
+		{
+			ZDisplayList* newDList = new ZDisplayList(self->parent);
+			newDList->ExtractFromBinary(
+				dListOffset,
+				self->GetDListLength(self->parent->GetRawData(), dListOffset, self->dListType));
+			newDList->SetName(newDList->GetDefaultName(self->parent->GetName()));
+			self->otherDLists.push_back(newDList);
+			dListName = newDList->GetName();
+		}
+		else
+		{
+			Globals::Instance->WarnHardcodedPointer(seg, self->parent, self, self->GetRawDataIndex());
+		}
 	}
 
 	gfxd_puts(dListName.c_str());
@@ -1737,20 +1744,28 @@ static int32_t GfxdCallback_Matrix(uint32_t seg)
 	ZDisplayList* self = static_cast<ZDisplayList*>(gfxd_udata_get());
 
 	bool addressFound = Globals::Instance->GetSegmentedPtrName(seg, self->parent, "Mtx", mtxName, false);
-	if (!addressFound && GETSEGNUM(seg) == self->parent->segment)
-	{
-		Declaration* decl =
-			self->parent->GetDeclaration(Seg2Filespace(seg, self->parent->baseAddress));
-		if (decl == nullptr)
-		{
-			ZMtx mtx(self->parent);
-			mtx.SetName(mtx.GetDefaultName(self->GetName()));
-			mtx.ExtractFromFile(Seg2Filespace(seg, self->parent->baseAddress));
-			mtx.DeclareVar(self->GetName(), "");
 
-			mtx.GetSourceOutputCode(self->GetName());
-			self->mtxList.push_back(mtx);
-			mtxName = "&" + mtx.GetName();
+	if (!addressFound)
+	{
+		if (GETSEGNUM(seg) == self->parent->segment)
+		{
+			Declaration* decl =
+				self->parent->GetDeclaration(Seg2Filespace(seg, self->parent->baseAddress));
+			if (decl == nullptr)
+			{
+				ZMtx mtx(self->parent);
+				mtx.SetName(mtx.GetDefaultName(self->GetName()));
+				mtx.ExtractFromFile(Seg2Filespace(seg, self->parent->baseAddress));
+				mtx.DeclareVar(self->GetName(), "");
+
+				mtx.GetSourceOutputCode(self->GetName());
+				self->mtxList.push_back(mtx);
+				mtxName = "&" + mtx.GetName();
+			}
+		}
+		else
+		{
+			Globals::Instance->WarnHardcodedPointer(seg, self->parent, self, self->GetRawDataIndex());
 		}
 	}
 

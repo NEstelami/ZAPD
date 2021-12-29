@@ -90,4 +90,7 @@ public:
 
 	bool GetSegmentedArrayIndexedName(segptr_t segAddress, size_t elementSize, ZFile* currentFile,
 	                                  const std::string& expectedType, std::string& declName, bool warnIfNotFound=true);
+
+	// TODO: consider moving to another place
+	void WarnHardcodedPointer(segptr_t segAddress, ZFile* currentFile, ZResource* res, offset_t currentOffset);
 };
