@@ -131,6 +131,10 @@ public:
 		case 's':
 			if (skipSP)
 			{
+				// Print it anyway if the next character is lowercase, e.g. "gameplay_keep_...".
+				if (!isupper(ptr[1])) {
+					out.push_back(toupper(ch));
+				}
 				if ((ch = *++ptr) == '\0')
 				{
 				case '\0':
