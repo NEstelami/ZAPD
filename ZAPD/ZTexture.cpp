@@ -770,8 +770,20 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		}
 	}
 
-	Declaration* decl = parent->AddDeclarationIncludeArray(
-		rawDataIndex, incStr, GetRawDataSize(), GetSourceTypeName(), auxName, GetRawDataSize() / 8);
+	Declaration* decl;
+
+	if (parent->makeDefines)
+	{
+		decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
+		                                          GetSourceTypeName(), auxName, GetHeaderDefines(),
+		                                          GetRawDataSize() / 8);
+	}
+	else
+	{
+		decl =
+			parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
+		                                       GetSourceTypeName(), auxName, GetRawDataSize() / 8);
+	}
 	decl->staticConf = staticConf;
 	return decl;
 }
@@ -798,6 +810,17 @@ std::string ZTexture::GetBodySourceCode() const
 	sourceOutput += "\n";
 
 	return sourceOutput;
+}
+
+std::string ZTexture::GetHeaderDefines() const
+{
+	std::string definePrefix = StringHelper::camelCaseTo_SCREAMING_SNAKE_CASE(name.c_str(), true);
+	std::string ret = StringHelper::Sprintf("#define %s_WIDTH %d\n", definePrefix.c_str(), width);
+
+	ret += StringHelper::Sprintf("#define %s_HEIGHT %d\n", definePrefix.c_str(), height);
+	ret += StringHelper::Sprintf("#define %s_SIZE 0x%zX\n", definePrefix.c_str(), GetRawDataSize());
+
+	return ret;
 }
 
 bool ZTexture::IsExternalResource() const

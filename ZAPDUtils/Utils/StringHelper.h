@@ -109,6 +109,62 @@ public:
 	static bool IEquals(const std::string& a, const std::string& b)
 	{
 		return std::equal(a.begin(), a.end(), b.begin(), b.end(),
-			[](char a, char b) { return tolower(a) == tolower(b); });
+		                  [](char a, char b) { return tolower(a) == tolower(b); });
+	}
+
+	/**
+	 * Converts a std::string formatted in camelCase into one in SCREAMING_SNAKE_CASE. Since this
+	 * will mostly be used on symbols that start with either 'g' or 's', an option is included to
+	 * skip these.
+	 */
+	static std::string camelCaseTo_SCREAMING_SNAKE_CASE(const std::string& in, bool skipSP)
+	{
+		std::string out = "";
+		const char* ptr = in.c_str();
+		char ch = *ptr;
+
+		// Switch checks for 'g'/'s'/'\0', looks at next character if skipSP enabled and string is
+		// nonempty.
+		switch (ch)
+		{
+		case 'g':
+		case 's':
+			if (skipSP)
+			{
+				if ((ch = *++ptr) == '\0')
+				{
+				case '\0':
+					// This is reached either by the if or the case label, avoiding duplication.
+					return out;
+				}
+			}
+		default:
+			if (islower(ch))
+			{
+				out.push_back(toupper(ch));
+			}
+			else
+			{
+				out.push_back(ch);
+			}
+			break;
+		}
+
+		while ((ch = *++ptr) != '\0')
+		{
+			if (islower(ch))
+			{
+				out.push_back(toupper(ch));
+			}
+			else
+			{
+				if (isupper(ch) && !(isupper(ptr[1]) && isupper(ptr[-1])))
+				{
+					out.push_back('_');
+				}
+				out.push_back(ch);
+			}
+		}
+		return out;
 	}
 };

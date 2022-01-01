@@ -61,6 +61,14 @@ Declaration::Declaration(offset_t nAddress, const std::string& nIncludePath, siz
 	varName = nVarName;
 }
 
+Declaration::Declaration(offset_t nAddress, const std::string& nIncludePath, size_t nSize,
+                         const std::string& nVarType, const std::string& nVarName,
+                         const std::string& nDefines)
+	: Declaration(nAddress, nIncludePath, nSize, nVarType, nVarName)
+{
+	defines = nDefines;
+}
+
 bool Declaration::IsStatic() const
 {
 	switch (staticConf)
@@ -193,6 +201,15 @@ std::string Declaration::GetExternStr() const
 	}
 
 	return StringHelper::Sprintf("extern %s %s;\n", varType.c_str(), varName.c_str());
+}
+
+std::string Declaration::GetDefinesStr() const
+{
+	if (IsStatic() || (varType == ""))
+	{
+		return "";
+	}
+	return StringHelper::Sprintf("%s", defines.c_str());
 }
 
 std::string Declaration::GetStaticForwardDeclarationStr() const

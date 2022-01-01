@@ -69,6 +69,7 @@ public:
 	void CalcHash() override;
 	void Save(const fs::path& outFolder) override;
 
+	std::string GetHeaderDefines() const;
 	bool IsExternalResource() const override;
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;

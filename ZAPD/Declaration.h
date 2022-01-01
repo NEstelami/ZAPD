@@ -37,6 +37,7 @@ public:
 	std::string postComment;
 	std::string varType;
 	std::string varName;
+	std::string defines = "";  // Defines to be included in the header
 	std::string includePath;
 
 	bool isExternal = false;
@@ -66,12 +67,17 @@ public:
 	Declaration(offset_t nAddress, const std::string& nIncludePath, size_t nSize,
 	            const std::string& nVarType, const std::string& nVarName);
 
+	Declaration(offset_t nAddress, const std::string& nIncludePath, size_t nSize,
+	            const std::string& nVarType, const std::string& nVarName,
+	            const std::string& nDefines);
+
 	bool IsStatic() const;
 
 	std::string GetNormalDeclarationStr() const;
 	std::string GetExternalDeclarationStr() const;
 
 	std::string GetExternStr() const;
+	std::string GetDefinesStr() const;
 
 	std::string GetStaticForwardDeclarationStr() const;
 
