@@ -138,6 +138,7 @@ public:
 					return out;
 				}
 			}
+			[[fallthrough]];
 		default:
 			if (islower(ch))
 			{
