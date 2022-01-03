@@ -85,6 +85,12 @@ void ZCollisionHeader::ParseRawData()
 		// This is based mostly on observation of how CollisionHeader data is
 		// usually ordered. If for some reason the data was in some other funny
 		// order, this would probably break.
+		// The most common ordering is:
+		// - *CamData*
+		// - SurfaceType
+		// - CollisionPoly
+		// - Vertices
+		// - WaterBoxes
 		offset_t upperCameraBoundary = polyTypeDefSegmentOffset;
 		if (upperCameraBoundary == 0)
 		{
