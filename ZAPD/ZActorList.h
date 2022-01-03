@@ -20,7 +20,7 @@ public:
 	std::string GetBodySourceCode() const;
 
 	std::string GetSourceTypeName() const;
-	int32_t GetRawDataSize() const;
+	size_t GetRawDataSize() const;
 
 	uint16_t GetActorId() const;
 	void SetLargestActorName(size_t nameSize);

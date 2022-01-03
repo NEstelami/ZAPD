@@ -178,7 +178,7 @@ std::string ActorSpawnEntry::GetSourceTypeName() const
 	return "ActorEntry";
 }
 
-int32_t ActorSpawnEntry::GetRawDataSize() const
+size_t ActorSpawnEntry::GetRawDataSize() const
 {
 	return 16;
 }
