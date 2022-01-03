@@ -147,7 +147,7 @@ ActorSpawnEntry::ActorSpawnEntry(const std::vector<uint8_t>& rawData, uint32_t r
 	rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 8);
 	rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 10);
 	rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 12);
-	initVar = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
+	params = BitConverter::ToInt16BE(rawData, rawDataIndex + 14);
 }
 
 std::string ActorSpawnEntry::GetBodySourceCode() const
@@ -168,7 +168,7 @@ std::string ActorSpawnEntry::GetBodySourceCode() const
 		                              (rotZ >> 7) & 0b111111111, rotZ & 0b1111111);
 	else
 		body += StringHelper::Sprintf("{ %#6hX, %#6hX, %#6hX }, ", rotX, rotY, rotZ);
-	body += StringHelper::Sprintf("0x%04X", initVar);
+	body += StringHelper::Sprintf("0x%04X", params);
 
 	return body;
 }
