@@ -140,14 +140,26 @@ std::string ZSkeleton::GetBodySourceCode() const
 	std::string limbArrayName;
 	Globals::Instance->GetSegmentedPtrName(limbsArrayAddress, parent, "", limbArrayName);
 
+	std::string countStr;
+	assert(limbsTable != nullptr);
+	// There are some Skeletons with the wrong limb count on them, so this check is necessary.
+	if (limbsTable->count == limbCount)
+	{
+		countStr = StringHelper::Sprintf("ARRAY_COUNT(%s)", limbArrayName.c_str());
+	}
+	else
+	{
+		countStr = StringHelper::Sprintf("%i", limbCount);
+	}
+
 	switch (type)
 	{
 	case ZSkeletonType::Normal:
 	case ZSkeletonType::Curve:
-		return StringHelper::Sprintf("\n\t%s, %i\n", limbArrayName.c_str(), limbCount);
+		return StringHelper::Sprintf("\n\t%s, %s\n", limbArrayName.c_str(), countStr.c_str());
 
 	case ZSkeletonType::Flex:
-		return StringHelper::Sprintf("\n\t{ %s, %i }, %i\n", limbArrayName.c_str(), limbCount,
+		return StringHelper::Sprintf("\n\t{ %s, %s }, %i\n", limbArrayName.c_str(), countStr.c_str(),
 		                             dListCount);
 	}
 

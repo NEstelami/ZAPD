@@ -18,6 +18,13 @@ enum class ZSkeletonType
 class ZLimbTable : public ZResource
 {
 public:
+	ZLimbType limbType = ZLimbType::Standard;
+	size_t count = 0;
+
+	std::vector<segptr_t> limbsAddresses;
+	std::vector<ZLimb*> limbsReferences;  // borrowed pointers, do not delete!
+
+	// XML attributes
 	std::string enumName;
 	std::string limbNoneName;
 	std::string limbMaxName;
@@ -42,13 +49,6 @@ public:
 	size_t GetRawDataSize() const override;
 
 	std::string GetLimbEnumName(uint8_t limbIndex) const;
-
-protected:
-	ZLimbType limbType = ZLimbType::Standard;
-	size_t count = 0;
-
-	std::vector<segptr_t> limbsAddresses;
-	std::vector<ZLimb*> limbsReferences;  // borrowed pointers, do not delete!
 };
 
 class ZSkeleton : public ZResource
