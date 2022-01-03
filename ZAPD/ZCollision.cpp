@@ -91,6 +91,7 @@ void ZCollisionHeader::ParseRawData()
 		// - CollisionPoly
 		// - Vertices
 		// - WaterBoxes
+		// - CollisionHeader
 		offset_t upperCameraBoundary = polyTypeDefSegmentOffset;
 		if (upperCameraBoundary == 0)
 		{
