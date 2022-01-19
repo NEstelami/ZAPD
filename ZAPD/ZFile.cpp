@@ -797,7 +797,7 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	formatter.Write(ProcessExterns());
 
-	formatter.Write(StringHelper::Sprintf("#endif /* %s_H */\n", objectNameUpper.c_str()));
+	formatter.Write("#endif\n");
 
 	fs::path headerFilename = GetSourceOutputFolderPath() / outName.stem().concat(".h");
 
