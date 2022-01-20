@@ -451,24 +451,12 @@ std::string ZLimbTable::GetLimbEnumName(uint8_t limbIndex) const
 		return "LIMB_DONE";
 	}
 
-	if (limbIndex == 0)
+	if (limbIndex < count)
 	{
-		if (limbNoneName != "")
-		{
-			return limbNoneName;
-		}
-
-		return StringHelper::Sprintf("0x%02X", limbIndex);
-	}
-
-	uint8_t limbIndexMinus1 = limbIndex - 1;
-
-	if (limbIndexMinus1 < count)
-	{
-		std::string limbEnumName = limbsReferences.at(limbIndexMinus1)->enumName;
+		std::string limbEnumName = limbsReferences.at(limbIndex)->enumName;
 		if (limbEnumName != "")
 		{
-			return limbEnumName;
+			return StringHelper::Sprintf("%s - 1", limbEnumName.c_str());
 		}
 	}
 	else
