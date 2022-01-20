@@ -350,37 +350,39 @@ void ZTexture::DeclareReferences([[maybe_unused]] const std::string& prefix)
 
 void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 {
+	textureData.ReadPng(pngFilePath);
+
 	textureDataRaw.clear();
 	textureDataRaw.resize(ALIGN8(GetRawDataSize()));
 
 	switch (format)
 	{
 	case TextureType::RGBA16bpp:
-		PrepareRawDataRGBA16(pngFilePath);
+		PrepareRawDataRGBA16();
 		break;
 	case TextureType::RGBA32bpp:
-		PrepareRawDataRGBA32(pngFilePath);
+		PrepareRawDataRGBA32();
 		break;
 	case TextureType::Grayscale4bpp:
-		PrepareRawDataGrayscale4(pngFilePath);
+		PrepareRawDataGrayscale4();
 		break;
 	case TextureType::Grayscale8bpp:
-		PrepareRawDataGrayscale8(pngFilePath);
+		PrepareRawDataGrayscale8();
 		break;
 	case TextureType::GrayscaleAlpha4bpp:
-		PrepareRawDataGrayscaleAlpha4(pngFilePath);
+		PrepareRawDataGrayscaleAlpha4();
 		break;
 	case TextureType::GrayscaleAlpha8bpp:
-		PrepareRawDataGrayscaleAlpha8(pngFilePath);
+		PrepareRawDataGrayscaleAlpha8();
 		break;
 	case TextureType::GrayscaleAlpha16bpp:
-		PrepareRawDataGrayscaleAlpha16(pngFilePath);
+		PrepareRawDataGrayscaleAlpha16();
 		break;
 	case TextureType::Palette4bpp:
-		PrepareRawDataPalette4(pngFilePath);
+		PrepareRawDataPalette4();
 		break;
 	case TextureType::Palette8bpp:
-		PrepareRawDataPalette8(pngFilePath);
+		PrepareRawDataPalette8();
 		break;
 	case TextureType::Error:
 		HANDLE_ERROR_PROCESS(WarningType::InvalidPNG, "Input PNG file has invalid format type", "");
@@ -388,10 +390,8 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 	}
 }
 
-void ZTexture::PrepareRawDataRGBA16(const fs::path& rgbaPath)
+void ZTexture::PrepareRawDataRGBA16()
 {
-	textureData.ReadPng(rgbaPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -416,10 +416,8 @@ void ZTexture::PrepareRawDataRGBA16(const fs::path& rgbaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataRGBA32(const fs::path& rgbaPath)
+void ZTexture::PrepareRawDataRGBA32()
 {
-	textureData.ReadPng(rgbaPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -438,10 +436,8 @@ void ZTexture::PrepareRawDataRGBA32(const fs::path& rgbaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscale4(const fs::path& grayPath)
+void ZTexture::PrepareRawDataGrayscale4()
 {
-	textureData.ReadPng(grayPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -458,10 +454,8 @@ void ZTexture::PrepareRawDataGrayscale4(const fs::path& grayPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscale8(const fs::path& grayPath)
+void ZTexture::PrepareRawDataGrayscale8()
 {
-	textureData.ReadPng(grayPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -476,10 +470,8 @@ void ZTexture::PrepareRawDataGrayscale8(const fs::path& grayPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha4(const fs::path& grayAlphaPath)
+void ZTexture::PrepareRawDataGrayscaleAlpha4()
 {
-	textureData.ReadPng(grayAlphaPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -507,10 +499,8 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4(const fs::path& grayAlphaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha8(const fs::path& grayAlphaPath)
+void ZTexture::PrepareRawDataGrayscaleAlpha8()
 {
-	textureData.ReadPng(grayAlphaPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -529,10 +519,8 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8(const fs::path& grayAlphaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha16(const fs::path& grayAlphaPath)
+void ZTexture::PrepareRawDataGrayscaleAlpha16()
 {
-	textureData.ReadPng(grayAlphaPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -552,10 +540,8 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16(const fs::path& grayAlphaPath)
 	}
 }
 
-void ZTexture::PrepareRawDataPalette4(const fs::path& palPath)
+void ZTexture::PrepareRawDataPalette4()
 {
-	textureData.ReadPng(palPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
@@ -573,10 +559,8 @@ void ZTexture::PrepareRawDataPalette4(const fs::path& palPath)
 	}
 }
 
-void ZTexture::PrepareRawDataPalette8(const fs::path& palPath)
+void ZTexture::PrepareRawDataPalette8()
 {
-	textureData.ReadPng(palPath);
-
 	width = textureData.GetWidth();
 	height = textureData.GetHeight();
 
