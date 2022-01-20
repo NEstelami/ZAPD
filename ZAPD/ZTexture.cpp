@@ -352,6 +352,9 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 {
 	textureData.ReadPng(pngFilePath);
 
+	width = textureData.GetWidth();
+	height = textureData.GetHeight();
+
 	textureDataRaw.clear();
 	textureDataRaw.resize(ALIGN8(GetRawDataSize()));
 
@@ -392,9 +395,6 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 
 void ZTexture::PrepareRawDataRGBA16()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
@@ -418,9 +418,6 @@ void ZTexture::PrepareRawDataRGBA16()
 
 void ZTexture::PrepareRawDataRGBA32()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
@@ -438,9 +435,6 @@ void ZTexture::PrepareRawDataRGBA32()
 
 void ZTexture::PrepareRawDataGrayscale4()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x += 2)
@@ -456,9 +450,6 @@ void ZTexture::PrepareRawDataGrayscale4()
 
 void ZTexture::PrepareRawDataGrayscale8()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
@@ -472,9 +463,6 @@ void ZTexture::PrepareRawDataGrayscale8()
 
 void ZTexture::PrepareRawDataGrayscaleAlpha4()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x += 2)
@@ -501,9 +489,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4()
 
 void ZTexture::PrepareRawDataGrayscaleAlpha8()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
@@ -521,9 +506,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8()
 
 void ZTexture::PrepareRawDataGrayscaleAlpha16()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
@@ -542,9 +524,6 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16()
 
 void ZTexture::PrepareRawDataPalette4()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x += 2)
@@ -561,9 +540,6 @@ void ZTexture::PrepareRawDataPalette4()
 
 void ZTexture::PrepareRawDataPalette8()
 {
-	width = textureData.GetWidth();
-	height = textureData.GetHeight();
-
 	for (uint16_t y = 0; y < height; y++)
 	{
 		for (uint16_t x = 0; x < width; x++)
