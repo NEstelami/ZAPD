@@ -383,9 +383,9 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 
 	std::string limbEnum = StringHelper::Sprintf("typedef enum %s {\n", enumName.c_str());
 
-	// This assumes there isn't any skeleton with more than 100 limbs
+	// This assumes there isn't any skeleton with more than 0x100 limbs
 
-	limbEnum += StringHelper::Sprintf("    /* 00 */ %s,\n", limbNoneName.c_str());
+	limbEnum += StringHelper::Sprintf("    /* 0x00 */ %s,\n", limbNoneName.c_str());
 
 	size_t i = 0;
 	for (; i < count; i++)
@@ -403,10 +403,10 @@ std::string ZLimbTable::GetSourceOutputHeader([[maybe_unused]] const std::string
 			                          i + 1, limb->GetName().c_str(), limb->GetRawDataIndex()));
 		}
 
-		limbEnum += StringHelper::Sprintf("    /* %02i */ %s,\n", i + 1, limbEnumName.c_str());
+		limbEnum += StringHelper::Sprintf("    /* 0x%02X */ %s,\n", i + 1, limbEnumName.c_str());
 	}
 
-	limbEnum += StringHelper::Sprintf("    /* %02i */ %s\n", i + 1, limbMaxName.c_str());
+	limbEnum += StringHelper::Sprintf("    /* 0x%02X */ %s\n", i + 1, limbMaxName.c_str());
 
 	limbEnum += StringHelper::Sprintf("} %s;\n", enumName.c_str());
 
