@@ -1,8 +1,8 @@
 #pragma once
 
+#include <cinttypes>
 #include <cstdint>
 #include <cstdio>
-#include <cinttypes>
 #include <limits>
 #include <vector>
 
@@ -15,7 +15,8 @@ class BitConverter
 public:
 	static inline int8_t ToInt8BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 0 > data.size()) {
+		if (offset + 0 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -26,7 +27,8 @@ public:
 
 	static inline uint8_t ToUInt8BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 0 > data.size()) {
+		if (offset + 0 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying an out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -37,7 +39,8 @@ public:
 
 	static inline int16_t ToInt16BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 1 > data.size()) {
+		if (offset + 1 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -48,7 +51,8 @@ public:
 
 	static inline uint16_t ToUInt16BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 1 > data.size()) {
+		if (offset + 1 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -59,7 +63,8 @@ public:
 
 	static inline int32_t ToInt32BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 3 > data.size()) {
+		if (offset + 3 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -71,7 +76,8 @@ public:
 
 	static inline uint32_t ToUInt32BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 3 > data.size()) {
+		if (offset + 3 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -83,7 +89,8 @@ public:
 
 	static inline int64_t ToInt64BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 7 > data.size()) {
+		if (offset + 7 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -97,7 +104,8 @@ public:
 
 	static inline uint64_t ToUInt64BE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 7 > data.size()) {
+		if (offset + 7 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -111,7 +119,8 @@ public:
 
 	static inline float ToFloatBE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 3 > data.size()) {
+		if (offset + 3 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
@@ -128,7 +137,8 @@ public:
 
 	static inline double ToDoubleBE(const std::vector<uint8_t>& data, size_t offset)
 	{
-		if (offset + 7 > data.size()) {
+		if (offset + 7 > data.size())
+		{
 			fprintf(stderr, "%s\n", __PRETTY_FUNCTION__);
 			fprintf(stderr, "Error: Trying a out-of-bounds reading from a data buffer\n");
 			fprintf(stderr, "\t Buffer size: 0x%zX\n", data.size());
