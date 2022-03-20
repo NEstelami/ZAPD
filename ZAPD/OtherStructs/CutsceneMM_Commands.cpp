@@ -400,7 +400,7 @@ CutsceneSubCommandEntry_Unk15F::CutsceneSubCommandEntry_Unk15F(const std::vector
 
 std::string CutsceneSubCommandEntry_Unk15F::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_15F(%i, %i, %i),", base, startFrame, endFrame);
+	return StringHelper::Sprintf("CS_CHOOSE_CREDITS_SCENES(%i, %i, %i),", base, startFrame, endFrame);
 }
 
 CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData,
@@ -419,7 +419,7 @@ CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& r
 
 std::string CutsceneMMCommand_Unk15F::GetCommandMacro() const
 {
-	return StringHelper::Sprintf("CS_SCENE_UNK_15F_LIST(%i)", numEntries);
+	return StringHelper::Sprintf("CS_CHOOSE_CREDITS_SCENES_LIST(%i)", numEntries);
 }
 
 CutsceneSubCommandEntry_NonImplemented::CutsceneSubCommandEntry_NonImplemented(

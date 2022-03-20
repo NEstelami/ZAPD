@@ -24,7 +24,6 @@ ZCutscene::~ZCutscene()
 std::string ZCutscene::GetBodySourceCode() const
 {
 	std::string output = "";
-	uint32_t curPtr = 0;
 
 	output += StringHelper::Sprintf("    CS_BEGIN_CUTSCENE(%i, %i),\n", commands.size(), endFrame);
 
@@ -32,7 +31,6 @@ std::string ZCutscene::GetBodySourceCode() const
 	{
 		CutsceneCommand* cmd = commands[i];
 		output += "    " + cmd->GenerateSourceCode();
-		curPtr += cmd->GetCommandSize();
 	}
 
 	output += StringHelper::Sprintf("    CS_END(),", commands.size(), endFrame);
