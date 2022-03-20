@@ -392,19 +392,19 @@ std::string CutsceneMMCommand_Terminator::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_TERMINATOR_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_Unk15F::CutsceneSubCommandEntry_Unk15F(const std::vector<uint8_t>& rawData,
+CutsceneSubCommandEntry_ChooseCredits::CutsceneSubCommandEntry_ChooseCredits(const std::vector<uint8_t>& rawData,
                                                                uint32_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 }
 
-std::string CutsceneSubCommandEntry_Unk15F::GetBodySourceCode() const
+std::string CutsceneSubCommandEntry_ChooseCredits::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("CS_CHOOSE_CREDITS_SCENES(%i, %i, %i),", base, startFrame,
 	                             endFrame);
 }
 
-CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData,
+CutsceneMMCommand_ChooseCredits::CutsceneMMCommand_ChooseCredits(const std::vector<uint8_t>& rawData,
                                                    uint32_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
@@ -412,13 +412,13 @@ CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& r
 
 	for (size_t i = 0; i < numEntries; i++)
 	{
-		auto* entry = new CutsceneSubCommandEntry_Unk15F(rawData, rawDataIndex);
+		auto* entry = new CutsceneSubCommandEntry_ChooseCredits(rawData, rawDataIndex);
 		entries.push_back(entry);
 		rawDataIndex += entry->GetRawSize();
 	}
 }
 
-std::string CutsceneMMCommand_Unk15F::GetCommandMacro() const
+std::string CutsceneMMCommand_ChooseCredits::GetCommandMacro() const
 {
 	return StringHelper::Sprintf("CS_CHOOSE_CREDITS_SCENES_LIST(%i)", numEntries);
 }

@@ -287,7 +287,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		return new CutsceneMMCommand_Terminator(rawData, currentPtr);
 		break;
 	case CutsceneMMCommands::CS_CMD_15F:
-		return new CutsceneMMCommand_Unk15F(rawData, currentPtr);
+		return new CutsceneMMCommand_ChooseCredits(rawData, currentPtr);
 		break;
 	case CutsceneMMCommands::CS_CMD_RUMBLE:
 		return new CutsceneCommand_Rumble(rawData, currentPtr);

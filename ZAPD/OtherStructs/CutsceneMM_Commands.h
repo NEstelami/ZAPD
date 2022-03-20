@@ -251,18 +251,18 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_Unk15F : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_ChooseCredits : public CutsceneSubCommandEntry
 {
 public:
-	CutsceneSubCommandEntry_Unk15F(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneSubCommandEntry_ChooseCredits(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 };
 
-class CutsceneMMCommand_Unk15F : public CutsceneCommand
+class CutsceneMMCommand_ChooseCredits : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
+	CutsceneMMCommand_ChooseCredits(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
