@@ -48,6 +48,7 @@ size_t ZCutscene::GetRawDataSize() const
 	for (size_t i = 0; i < commands.size(); i++)
 	{
 		CutsceneCommand* cmd = commands[i];
+
 		size += cmd->GetCommandSize();
 	}
 
@@ -202,14 +203,6 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 		return new CutsceneCommandEnd(rawData, currentPtr);
 		break;
 	case CutsceneCommands::Error:
-		/*
-		    HANDLE_ERROR_RESOURCE(
-		        WarningType::NotImplemented, parent, this, rawDataIndex,
-		        StringHelper::Sprintf("Cutscene command (0x%X) not implemented", cmdID),
-		        StringHelper::Sprintf(
-		            "Command ID: 0x%X\nIndex: %d\ncurrentPtr-rawDataIndex: 0x%X", id, i,
-		            currentPtr - rawDataIndex));
-		            */
 		break;
 	}
 
@@ -222,7 +215,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 
 	const auto& rawData = parent->GetRawData();
 
-	if (((id >= 0x64) && (id < 0x96)) || (id == 0xC9) || ((id >= 0x1C2) && (id < 0x258)))
+	if (((id >= 100) && (id < 150)) || (id == 201) || ((id >= 450) && (id < 600)))
 	{
 		return new CutsceneCommand_ActorAction(rawData, currentPtr);
 	}
@@ -286,7 +279,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	case CutsceneMMCommands::CS_CMD_TERMINATOR:
 		return new CutsceneMMCommand_Terminator(rawData, currentPtr);
 		break;
-	case CutsceneMMCommands::CS_CMD_15F:
+	case CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES:
 		return new CutsceneMMCommand_ChooseCredits(rawData, currentPtr);
 		break;
 	case CutsceneMMCommands::CS_CMD_RUMBLE:

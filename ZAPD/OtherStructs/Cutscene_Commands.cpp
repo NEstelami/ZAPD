@@ -8,7 +8,7 @@
 /* CutsceneSubCommandEntry */
 
 CutsceneSubCommandEntry::CutsceneSubCommandEntry(const std::vector<uint8_t>& rawData,
-                                                 uint32_t rawDataIndex)
+                                                 offset_t rawDataIndex)
 {
 	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
 	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
@@ -29,7 +29,7 @@ size_t CutsceneSubCommandEntry::GetRawSize() const
 
 /* CutsceneCommand */
 
-CutsceneCommand::CutsceneCommand(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+CutsceneCommand::CutsceneCommand(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 {
 	numEntries = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0);
 }
@@ -88,7 +88,7 @@ void CutsceneCommand::SetCommandID(uint32_t nCommandID)
 	}
 }
 
-CutsceneCameraPoint::CutsceneCameraPoint(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+CutsceneCameraPoint::CutsceneCameraPoint(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	continueFlag = BitConverter::ToInt8BE(rawData, rawDataIndex + 0);
@@ -140,7 +140,7 @@ size_t CutsceneCameraPoint::GetRawSize() const
 }
 
 CutsceneCommandSetCameraPos::CutsceneCommandSetCameraPos(const std::vector<uint8_t>& rawData,
-                                                         uint32_t rawDataIndex)
+                                                         offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
@@ -197,7 +197,7 @@ size_t CutsceneCommandSetCameraPos::GetCommandSize() const
 	return 0x0C + entries.at(0)->GetRawSize() * entries.size();
 }
 
-MusicFadeEntry::MusicFadeEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+MusicFadeEntry::MusicFadeEntry(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
@@ -228,7 +228,7 @@ size_t MusicFadeEntry::GetRawSize() const
 }
 
 CutsceneCommandFadeBGM::CutsceneCommandFadeBGM(const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
+                                               offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -247,7 +247,7 @@ std::string CutsceneCommandFadeBGM::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_PlaySeq::CutsceneSubCommandEntry_PlaySeq(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	if (Globals::Instance->game != ZGame::MM_RETAIL)
@@ -284,7 +284,7 @@ size_t CutsceneSubCommandEntry_PlaySeq::GetRawSize() const
 }
 
 CutsceneCommand_PlaySeq::CutsceneCommand_PlaySeq(const std::vector<uint8_t>& rawData,
-                                                 uint32_t rawDataIndex)
+                                                 offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -308,7 +308,7 @@ std::string CutsceneCommand_PlaySeq::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_StopSeq::CutsceneSubCommandEntry_StopSeq(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	if (Globals::Instance->game != ZGame::MM_RETAIL)
@@ -346,7 +346,7 @@ size_t CutsceneSubCommandEntry_StopSeq::GetRawSize() const
 }
 
 CutsceneCommand_StopSeq::CutsceneCommand_StopSeq(const std::vector<uint8_t>& rawData,
-                                                 uint32_t rawDataIndex)
+                                                 offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -370,7 +370,7 @@ std::string CutsceneCommand_StopSeq::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_Lighting::CutsceneSubCommandEntry_Lighting(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	if (Globals::Instance->game != ZGame::MM_RETAIL)
@@ -407,7 +407,7 @@ size_t CutsceneSubCommandEntry_Lighting::GetRawSize() const
 }
 
 CutsceneCommand_Lighting::CutsceneCommand_Lighting(const std::vector<uint8_t>& rawData,
-                                                   uint32_t rawDataIndex)
+                                                   offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -426,7 +426,7 @@ std::string CutsceneCommand_Lighting::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_Rumble::CutsceneSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData,
-                                                               uint32_t rawDataIndex)
+                                                               offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	unk_06 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x06);
@@ -456,7 +456,7 @@ size_t CutsceneSubCommandEntry_Rumble::GetRawSize() const
 }
 
 CutsceneCommand_Rumble::CutsceneCommand_Rumble(const std::vector<uint8_t>& rawData,
-                                               uint32_t rawDataIndex)
+                                               offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -479,7 +479,7 @@ std::string CutsceneCommand_Rumble::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_UnknownCommand::CutsceneSubCommandEntry_UnknownCommand(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	unused0 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x0);
@@ -520,7 +520,7 @@ size_t CutsceneSubCommandEntry_UnknownCommand::GetRawSize() const
 }
 
 CutsceneCommand_UnknownCommand::CutsceneCommand_UnknownCommand(const std::vector<uint8_t>& rawData,
-                                                               uint32_t rawDataIndex)
+                                                               offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -539,7 +539,7 @@ std::string CutsceneCommand_UnknownCommand::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_SetTime::CutsceneSubCommandEntry_SetTime(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	hour = BitConverter::ToUInt8BE(rawData, rawDataIndex + 6);
@@ -559,7 +559,7 @@ size_t CutsceneSubCommandEntry_SetTime::GetRawSize() const
 }
 
 CutsceneCommand_SetTime::CutsceneCommand_SetTime(const std::vector<uint8_t>& rawData,
-                                                 uint32_t rawDataIndex)
+                                                 offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -578,7 +578,7 @@ std::string CutsceneCommand_SetTime::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
@@ -639,7 +639,7 @@ size_t CutsceneSubCommandEntry_TextBox::GetRawSize() const
 }
 
 CutsceneCommand_TextBox::CutsceneCommand_TextBox(const std::vector<uint8_t>& rawData,
-                                                 uint32_t rawDataIndex)
+                                                 offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -658,7 +658,7 @@ std::string CutsceneCommand_TextBox::GetCommandMacro() const
 }
 
 CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(
-	const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
@@ -717,7 +717,7 @@ size_t CutsceneSubCommandEntry_ActorAction::GetRawSize() const
 }
 
 CutsceneCommand_ActorAction::CutsceneCommand_ActorAction(const std::vector<uint8_t>& rawData,
-                                                         uint32_t rawDataIndex)
+                                                         offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -750,7 +750,7 @@ std::string CutsceneCommand_ActorAction::GetCommandMacro() const
 }
 
 CutsceneCommandTerminator::CutsceneCommandTerminator(const std::vector<uint8_t>& rawData,
-                                                     uint32_t rawDataIndex)
+                                                     offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -775,7 +775,7 @@ size_t CutsceneCommandTerminator::GetCommandSize() const
 	return 8 + 8;
 }
 
-CutsceneCommandEnd::CutsceneCommandEnd(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+CutsceneCommandEnd::CutsceneCommandEnd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
@@ -798,7 +798,7 @@ size_t CutsceneCommandEnd::GetCommandSize() const
 }
 
 CutsceneSubCommandEntry_Misc::CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData,
-                                                           uint32_t rawDataIndex)
+                                                           offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	if (Globals::Instance->game != ZGame::MM_RETAIL)
@@ -840,7 +840,7 @@ size_t CutsceneSubCommandEntry_Misc::GetRawSize() const
 }
 
 CutsceneCommand_Misc::CutsceneCommand_Misc(const std::vector<uint8_t>& rawData,
-                                           uint32_t rawDataIndex)
+                                           offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -859,7 +859,7 @@ std::string CutsceneCommand_Misc::GetCommandMacro() const
 }
 
 CutsceneCommandSceneTransFX::CutsceneCommandSceneTransFX(const std::vector<uint8_t>& rawData,
-                                                         uint32_t rawDataIndex)
+                                                         offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
