@@ -400,7 +400,8 @@ CutsceneSubCommandEntry_Unk15F::CutsceneSubCommandEntry_Unk15F(const std::vector
 
 std::string CutsceneSubCommandEntry_Unk15F::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_CHOOSE_CREDITS_SCENES(%i, %i, %i),", base, startFrame, endFrame);
+	return StringHelper::Sprintf("CS_CHOOSE_CREDITS_SCENES(%i, %i, %i),", base, startFrame,
+	                             endFrame);
 }
 
 CutsceneMMCommand_Unk15F::CutsceneMMCommand_Unk15F(const std::vector<uint8_t>& rawData,
