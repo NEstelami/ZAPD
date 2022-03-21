@@ -39,6 +39,26 @@ enum class CutsceneMMCommands
 	/* 0x190 */ CS_CMD_RUMBLE = 0x190,
 };
 
+class CutsceneSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
+{
+public:
+	CutsceneMMCommands commandId;
+
+	CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneMMCommands cmdId);
+
+	std::string GetBodySourceCode() const override;
+};
+
+class CutsceneMMCommand_GenericCmd : public CutsceneCommand
+{
+public:
+	CutsceneMMCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneMMCommands cmdId);
+
+	std::string GetCommandMacro() const override;
+};
+
+
+// TODO: MM cutscene camera command is implemented as a placeholder until we better understand how it works
 class CutsceneSubCommandEntry_Camera : public CutsceneSubCommandEntry
 {
 public:
@@ -55,55 +75,6 @@ class CutsceneMMCommand_Camera : public CutsceneCommand
 {
 public:
 	CutsceneMMCommand_Camera(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_SceneTransFx : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_SceneTransFx(const std::vector<uint8_t>& rawData,
-	                                     offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_SceneTransFx : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_SceneTransFx(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_MotionBlur : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_MotionBlur(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_MotionBlur : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_MotionBlur(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_GiveTatl : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_GiveTatl(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_GiveTatl : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_GiveTatl(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
@@ -149,120 +120,6 @@ class CutsceneMMCommand_FadeSeq : public CutsceneCommand
 {
 public:
 	CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_Unk130 : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_Unk130(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_Unk130 : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_Unk130(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_Unk131 : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_Unk131(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_Unk131 : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_Unk131(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_Unk132 : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_Unk132(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_Unk132 : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_Unk132(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_PlayAmbience : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_PlayAmbience(const std::vector<uint8_t>& rawData,
-	                                     offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_PlayAmbience : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_PlayAmbience(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_FadeAmbience : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_FadeAmbience(const std::vector<uint8_t>& rawData,
-	                                     offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_FadeAmbience : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_FadeAmbience(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_Terminator : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_Terminator(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_Terminator : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_Terminator(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_ChooseCredits : public CutsceneSubCommandEntry
-{
-public:
-	CutsceneSubCommandEntry_ChooseCredits(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-};
-
-class CutsceneMMCommand_ChooseCredits : public CutsceneCommand
-{
-public:
-	CutsceneMMCommand_ChooseCredits(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };

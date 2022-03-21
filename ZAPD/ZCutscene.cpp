@@ -222,6 +222,19 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 
 	switch (cmdID)
 	{
+	case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
+	case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
+	case CutsceneMMCommands::CS_CMD_GIVETATL:
+	case CutsceneMMCommands::CS_CMD_130:
+	case CutsceneMMCommands::CS_CMD_131:
+	case CutsceneMMCommands::CS_CMD_132:
+	case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
+	case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
+	case CutsceneMMCommands::CS_CMD_TERMINATOR:
+	case CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES:
+		return new CutsceneMMCommand_GenericCmd(rawData, currentPtr, cmdID);
+		break;
+
 	case CutsceneMMCommands::CS_CMD_TEXTBOX:
 		return new CutsceneCommand_TextBox(rawData, currentPtr);
 		break;
@@ -233,15 +246,6 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		break;
 	case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
 		return new CutsceneCommand_Lighting(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
-		return new CutsceneMMCommand_SceneTransFx(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
-		return new CutsceneMMCommand_MotionBlur(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_GIVETATL:
-		return new CutsceneMMCommand_GiveTatl(rawData, currentPtr);
 		break;
 	case CutsceneMMCommands::CS_CMD_FADESCREEN:
 		return new CutsceneMMCommand_FadeScreen(rawData, currentPtr);
@@ -258,29 +262,8 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	case CutsceneMMCommands::CS_CMD_PLAYSEQ:
 		return new CutsceneCommand_PlaySeq(rawData, currentPtr);
 		break;
-	case CutsceneMMCommands::CS_CMD_130:
-		return new CutsceneMMCommand_Unk130(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_131:
-		return new CutsceneMMCommand_Unk131(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_132:
-		return new CutsceneMMCommand_Unk132(rawData, currentPtr);
-		break;
 	case CutsceneMMCommands::CS_CMD_STOPSEQ:
 		return new CutsceneCommand_StopSeq(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
-		return new CutsceneMMCommand_PlayAmbience(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
-		return new CutsceneMMCommand_FadeAmbience(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_TERMINATOR:
-		return new CutsceneMMCommand_Terminator(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES:
-		return new CutsceneMMCommand_ChooseCredits(rawData, currentPtr);
 		break;
 	case CutsceneMMCommands::CS_CMD_RUMBLE:
 		return new CutsceneCommand_Rumble(rawData, currentPtr);
