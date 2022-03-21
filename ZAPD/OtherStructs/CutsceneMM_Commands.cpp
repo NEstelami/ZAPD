@@ -7,24 +7,25 @@
 
 // Specific for command lists where each entry has size 8 bytes
 const std::unordered_map<CutsceneMMCommands, CsCommandListDescriptor> csCommandsDescMM = {
-	{ CutsceneMMCommands::CS_CMD_MISC, {  "CS_MISC", "(0x%02X, %i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_SET_LIGHTING, {  "CS_LIGHTING", "(0x%02X, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX, {  "CS_SCENE_TRANS_FX", "(%i, %i, %i)" } },
-	{ CutsceneMMCommands::CS_CMD_MOTIONBLUR, { "CS_MOTIONBLUR", "(%i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_GIVETATL, { "CS_GIVETATL", "(%i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_PLAYSEQ, { "CS_PLAYSEQ", "(0x%04X, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_130, { "CS_SCENE_UNK_130", "(0x%04X, %i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_131, { "CS_SCENE_UNK_131", "(0x%04X, %i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_132, { "CS_SCENE_UNK_132", "(%i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_STOPSEQ, { "CS_STOPSEQ", "(0x%04X, %i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_PLAYAMBIENCE, { "CS_PLAYAMBIENCE", "(0x%04X, %i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_FADEAMBIENCE, { "CS_FADEAMBIENCE", "(0x%04X, %i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_TERMINATOR, { "CS_TERMINATOR", "(%i, %i, %i)", } },
-	{ CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES, { "CS_CHOOSE_CREDITS_SCENES", "(%i, %i, %i)", } },
+	{CutsceneMMCommands::CS_CMD_MISC, {"CS_MISC", "(0x%02X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_SET_LIGHTING, {"CS_LIGHTING", "(0x%02X, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX, {"CS_SCENE_TRANS_FX", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_MOTIONBLUR, {"CS_MOTIONBLUR", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_GIVETATL, {"CS_GIVETATL", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_PLAYSEQ, {"CS_PLAYSEQ", "(0x%04X, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_130, {"CS_SCENE_UNK_130", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_131, {"CS_SCENE_UNK_131", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_132, {"CS_SCENE_UNK_132", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_STOPSEQ, {"CS_STOPSEQ", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_PLAYAMBIENCE, {"CS_PLAYAMBIENCE", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_FADEAMBIENCE, {"CS_FADEAMBIENCE", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_TERMINATOR, {"CS_TERMINATOR", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES,
+     {"CS_CHOOSE_CREDITS_SCENES", "(%i, %i, %i)"}},
 };
 
-CutsceneSubCommandEntry_GenericMMCmd::CutsceneSubCommandEntry_GenericMMCmd(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex, CutsceneMMCommands cmdId)
+CutsceneSubCommandEntry_GenericMMCmd::CutsceneSubCommandEntry_GenericMMCmd(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneMMCommands cmdId)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex), commandId(cmdId)
 {
 }
@@ -34,7 +35,8 @@ std::string CutsceneSubCommandEntry_GenericMMCmd::GetBodySourceCode() const
 	const auto& element = csCommandsDescMM.find(commandId);
 	std::string entryFmt = "CS_UNK_DATA(0x%02X, %i, %i, %i)";
 
-	if (element != csCommandsDescMM.end()) {
+	if (element != csCommandsDescMM.end())
+	{
 		entryFmt = element->second.cmdMacro;
 		entryFmt += element->second.args;
 	}
@@ -43,7 +45,8 @@ std::string CutsceneSubCommandEntry_GenericMMCmd::GetBodySourceCode() const
 }
 
 CutsceneMMCommand_GenericCmd::CutsceneMMCommand_GenericCmd(const std::vector<uint8_t>& rawData,
-                                                   offset_t rawDataIndex, CutsceneMMCommands cmdId)
+                                                           offset_t rawDataIndex,
+                                                           CutsceneMMCommands cmdId)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -62,13 +65,13 @@ std::string CutsceneMMCommand_GenericCmd::GetCommandMacro() const
 {
 	const auto& element = csCommandsDescMM.find(static_cast<CutsceneMMCommands>(commandID));
 
-	if (element != csCommandsDescMM.end()) {
+	if (element != csCommandsDescMM.end())
+	{
 		return StringHelper::Sprintf("%s_LIST(%i)", element->second.cmdMacro, numEntries);
 	}
 
 	return StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%X, %i)", commandID, numEntries);
 }
-
 
 CutsceneSubCommandEntry_Camera::CutsceneSubCommandEntry_Camera(const std::vector<uint8_t>& rawData,
                                                                offset_t rawDataIndex)

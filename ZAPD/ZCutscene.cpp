@@ -135,8 +135,8 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 
 	switch (id)
 	{
-	case 10: // CutsceneCommands::SetPlayerAction
-	case 15: // CutsceneCommands::SetActorAction1
+	case 10:  // CutsceneCommands::SetPlayerAction
+	case 15:  // CutsceneCommands::SetActorAction1
 	case 17:
 	case 18:
 	case 23:
@@ -154,7 +154,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case 138:
 	case 139:
 	case 144:
-	case 14: // CutsceneCommands::SetActorAction2
+	case 14:  // CutsceneCommands::SetActorAction2
 	case 16:
 	case 24:
 	case 35:
@@ -172,7 +172,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case 125:
 	case 131:
 	case 141:
-	case 25: // CutsceneCommands::SetActorAction3
+	case 25:  // CutsceneCommands::SetActorAction3
 	case 36:
 	case 41:
 	case 50:
@@ -185,7 +185,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case 121:
 	case 126:
 	case 132:
-	case 29: // CutsceneCommands::SetActorAction4
+	case 29:  // CutsceneCommands::SetActorAction4
 	case 37:
 	case 42:
 	case 51:
@@ -198,7 +198,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case 108:
 	case 127:
 	case 133:
-	case 30: // CutsceneCommands::SetActorAction5
+	case 30:  // CutsceneCommands::SetActorAction5
 	case 38:
 	case 43:
 	case 47:
@@ -207,14 +207,14 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case 83:
 	case 128:
 	case 135:
-	case 44: // CutsceneCommands::SetActorAction6
+	case 44:  // CutsceneCommands::SetActorAction6
 	case 55:
 	case 77:
 	case 84:
 	case 90:
 	case 129:
 	case 136:
-	case 31: // CutsceneCommands::SetActorAction7
+	case 31:  // CutsceneCommands::SetActorAction7
 	case 52:
 	case 57:
 	case 58:
@@ -222,17 +222,16 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case 115:
 	case 130:
 	case 137:
-	case 49: // CutsceneCommands::SetActorAction8
+	case 49:  // CutsceneCommands::SetActorAction8
 	case 60:
 	case 89:
 	case 111:
 	case 114:
 	case 134:
 	case 142:
-	case 62: // CutsceneCommands::SetActorAction9
-	case 143: // CutsceneCommands::SetActorAction10
+	case 62:   // CutsceneCommands::SetActorAction9
+	case 143:  // CutsceneCommands::SetActorAction10
 		return new CutsceneCommand_ActorAction(rawData, currentPtr);
-
 
 	case 0x0B:
 	case 0x0D:

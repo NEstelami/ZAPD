@@ -16,7 +16,7 @@ enum class CutsceneCommands
 	SetCameraFocusLink = 0x0006,
 	Cmd07 = 0x0007,
 	Cmd08 = 0x0008,
-	Cmd09 = 0x0009, // Rumble
+	Cmd09 = 0x0009,  // Rumble
 	Textbox = 0x0013,
 	SetPlayerAction = 0x000A,
 	SetActorAction1 = 0x000F,
@@ -37,7 +37,8 @@ enum class CutsceneCommands
 	Terminator = 0x03E8,
 };
 
-typedef struct CsCommandListDescriptor {
+typedef struct CsCommandListDescriptor
+{
 	const char* cmdMacro;
 	const char* args;
 } CsCommandListDescriptor;
@@ -79,7 +80,6 @@ public:
 	virtual void SetCommandID(uint32_t nCommandID);
 };
 
-
 class CutsceneSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
 {
 public:
@@ -99,7 +99,8 @@ public:
 	uint32_t unused9 = 0;
 	uint32_t unused10 = 0;
 
-	CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneCommands cmdId);
+	CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+	                                   CutsceneCommands cmdId);
 
 	std::string GetBodySourceCode() const override;
 
@@ -109,11 +110,11 @@ public:
 class CutsceneCommand_GenericCmd : public CutsceneCommand
 {
 public:
-	CutsceneCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneCommands cmdId);
+	CutsceneCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+	                           CutsceneCommands cmdId);
 
 	std::string GetCommandMacro() const override;
 };
-
 
 class CutsceneCameraPoint : public CutsceneSubCommandEntry
 {

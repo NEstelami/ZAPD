@@ -20,8 +20,8 @@ CutsceneSubCommandEntry::CutsceneSubCommandEntry(const std::vector<uint8_t>& raw
 
 std::string CutsceneSubCommandEntry::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X)", base,
-	                             startFrame, endFrame, pad);
+	return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X), CMD_HH(0x%04X, 0x%04X)", base, startFrame,
+	                             endFrame, pad);
 }
 
 size_t CutsceneSubCommandEntry::GetRawSize() const
@@ -90,18 +90,19 @@ void CutsceneCommand::SetCommandID(uint32_t nCommandID)
 	}
 }
 
-
 // Specific for command lists where each entry has size 0x30 bytes
 const std::unordered_map<CutsceneCommands, CsCommandListDescriptor> csCommandsDesc = {
-	{ CutsceneCommands::Misc, { "CS_MISC", "(0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)", } },
-	{ CutsceneCommands::SetLighting, { "CS_LIGHTING", "(0x%02X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)", } },
-	{ CutsceneCommands::PlayBGM, { "CS_PLAY_BGM", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)", } },
-	{ CutsceneCommands::StopBGM, { "CS_STOP_BGM", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)", } },
-	{ CutsceneCommands::FadeBGM, { "CS_FADE_BGM", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)", } },
+	{CutsceneCommands::Misc,
+     {"CS_MISC", "(0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
+	{CutsceneCommands::SetLighting,
+     {"CS_LIGHTING", "(0x%02X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
+	{CutsceneCommands::PlayBGM, {"CS_PLAY_BGM", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
+	{CutsceneCommands::StopBGM, {"CS_STOP_BGM", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
+	{CutsceneCommands::FadeBGM, {"CS_FADE_BGM", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
 };
 
-CutsceneSubCommandEntry_GenericCmd::CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex, CutsceneCommands cmdId)
+CutsceneSubCommandEntry_GenericCmd::CutsceneSubCommandEntry_GenericCmd(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneCommands cmdId)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex), commandId(cmdId)
 {
 	word0 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x0);
@@ -123,16 +124,20 @@ std::string CutsceneSubCommandEntry_GenericCmd::GetBodySourceCode() const
 {
 	const auto& element = csCommandsDesc.find(commandId);
 
-	if (element != csCommandsDesc.end()) {
+	if (element != csCommandsDesc.end())
+	{
 		std::string entryFmt = element->second.cmdMacro;
 		entryFmt += element->second.args;
 
-		return StringHelper::Sprintf(entryFmt.c_str(), base, startFrame,
-	                             endFrame, pad, unused1, unused2, unused3, unused4, unused5, unused6, unused7, unused8, unused9, unused10);
+		return StringHelper::Sprintf(entryFmt.c_str(), base, startFrame, endFrame, pad, unused1,
+		                             unused2, unused3, unused4, unused5, unused6, unused7, unused8,
+		                             unused9, unused10);
 	}
 
-	return StringHelper::Sprintf("CS_UNK_DATA(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", word0, word1, unused1, unused2, unused3, unused4, unused5, unused6, unused7, unused8, unused9, unused10);
-
+	return StringHelper::Sprintf("CS_UNK_DATA(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, "
+	                             "0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)",
+	                             word0, word1, unused1, unused2, unused3, unused4, unused5, unused6,
+	                             unused7, unused8, unused9, unused10);
 }
 
 size_t CutsceneSubCommandEntry_GenericCmd::GetRawSize() const
@@ -141,7 +146,8 @@ size_t CutsceneSubCommandEntry_GenericCmd::GetRawSize() const
 }
 
 CutsceneCommand_GenericCmd::CutsceneCommand_GenericCmd(const std::vector<uint8_t>& rawData,
-                                                   offset_t rawDataIndex, CutsceneCommands cmdId)
+                                                       offset_t rawDataIndex,
+                                                       CutsceneCommands cmdId)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -160,13 +166,13 @@ std::string CutsceneCommand_GenericCmd::GetCommandMacro() const
 {
 	const auto& element = csCommandsDesc.find(static_cast<CutsceneCommands>(commandID));
 
-	if (element != csCommandsDesc.end()) {
+	if (element != csCommandsDesc.end())
+	{
 		return StringHelper::Sprintf("%s_LIST(%i)", element->second.cmdMacro, numEntries);
 	}
 
 	return StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%X, %i)", commandID, numEntries);
 }
-
 
 CutsceneCameraPoint::CutsceneCameraPoint(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
@@ -394,23 +400,23 @@ std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
 	{
 		switch (type)
 		{
-			case 0:
+		case 0:
 			return StringHelper::Sprintf("CS_TEXT_DEFAULT(0x%X, %i, %i, 0x%X, 0x%X)", base,
 			                             startFrame, endFrame, textId1, textId2);
 
-			case 1:
+		case 1:
 			return StringHelper::Sprintf("CS_TEXT_TYPE_1(0x%X, %i, %i, 0x%X, 0x%X)", base,
 			                             startFrame, endFrame, textId1, textId2);
 
-			case 3:
+		case 3:
 			return StringHelper::Sprintf("CS_TEXT_TYPE_3(0x%X, %i, %i, 0x%X, 0x%X)", base,
 			                             startFrame, endFrame, textId1, textId2);
 
-			case 4:
+		case 4:
 			return StringHelper::Sprintf("CS_TEXT_BOSSES_REMAINS(0x%X, %i, %i, 0x%X)", base,
 			                             startFrame, endFrame, textId1);
 
-			case 5:
+		case 5:
 			return StringHelper::Sprintf("CS_TEXT_ALL_NORMAL_MASKS(0x%X, %i, %i, 0x%X)", base,
 			                             startFrame, endFrame, textId1);
 		}
@@ -537,7 +543,7 @@ std::string CutsceneCommand_ActorAction::GetCommandMacro() const
 }
 
 CutsceneCommand_Terminator::CutsceneCommand_Terminator(const std::vector<uint8_t>& rawData,
-                                                     offset_t rawDataIndex)
+                                                       offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;

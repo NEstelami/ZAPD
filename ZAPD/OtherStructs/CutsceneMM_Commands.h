@@ -44,7 +44,8 @@ class CutsceneSubCommandEntry_GenericMMCmd : public CutsceneSubCommandEntry
 public:
 	CutsceneMMCommands commandId;
 
-	CutsceneSubCommandEntry_GenericMMCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneMMCommands cmdId);
+	CutsceneSubCommandEntry_GenericMMCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+	                                     CutsceneMMCommands cmdId);
 
 	std::string GetBodySourceCode() const override;
 };
@@ -52,13 +53,14 @@ public:
 class CutsceneMMCommand_GenericCmd : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneMMCommands cmdId);
+	CutsceneMMCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+	                             CutsceneMMCommands cmdId);
 
 	std::string GetCommandMacro() const override;
 };
 
-
-// TODO: MM cutscene camera command is implemented as a placeholder until we better understand how it works
+// TODO: MM cutscene camera command is implemented as a placeholder until we better understand how
+// it works
 class CutsceneSubCommandEntry_Camera : public CutsceneSubCommandEntry
 {
 public:
