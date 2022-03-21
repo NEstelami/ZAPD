@@ -65,7 +65,7 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 				StringHelper::Sprintf("    { %s, 0x%04X, 0x%02X, 0x%02X },", csName.c_str(),
 			                          entry.exit, entry.entrance, entry.flag);
 
-			if (i < numCutscenes - 1)
+			if (i + 1 < numCutscenes)
 				declaration += "\n";
 
 			i++;
