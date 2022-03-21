@@ -728,28 +728,6 @@ size_t CutsceneCommandTerminator::GetCommandSize() const
 	return 8 + 8;
 }
 
-CutsceneCommandEnd::CutsceneCommandEnd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	base = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
-	startFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
-	endFrame = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
-}
-
-std::string CutsceneCommandEnd::GenerateSourceCode() const
-{
-	std::string result;
-
-	result += StringHelper::Sprintf("CS_END(),\n");
-
-	return result;
-}
-
-size_t CutsceneCommandEnd::GetCommandSize() const
-{
-	return 8 + 6;
-}
-
 CutsceneSubCommandEntry_Misc::CutsceneSubCommandEntry_Misc(const std::vector<uint8_t>& rawData,
                                                            offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)

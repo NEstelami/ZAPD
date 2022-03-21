@@ -31,8 +31,6 @@ public:
 	std::vector<CutsceneCommand*> commands;
 
 protected:
-	CutsceneCommands GetCommandOoTFromID(int32_t id) const;
-
 	CutsceneCommand* GetCommandOoT(uint32_t id, offset_t currentPtr) const;
 	CutsceneCommand* GetCommandMM(uint32_t id, offset_t currentPtr) const;
 };

@@ -37,7 +37,6 @@ enum class CutsceneCommands
 	FadeBGM = 0x007C,
 	SetTime = 0x008C,
 	Terminator = 0x03E8,
-	End = 0xFFFF,
 	Error = 0xFEAF,
 };
 
@@ -390,19 +389,6 @@ public:
 	uint16_t unknown;
 
 	CutsceneCommandTerminator(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GenerateSourceCode() const override;
-	size_t GetCommandSize() const override;
-};
-
-class CutsceneCommandEnd : public CutsceneCommand
-{
-public:
-	uint16_t base;
-	uint16_t startFrame;
-	uint16_t endFrame;
-
-	CutsceneCommandEnd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GenerateSourceCode() const override;
 	size_t GetCommandSize() const override;
