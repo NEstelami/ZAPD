@@ -39,12 +39,12 @@ enum class CutsceneMMCommands
 	/* 0x190 */ CS_CMD_RUMBLE = 0x190,
 };
 
-class CutsceneSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
+class CutsceneSubCommandEntry_GenericMMCmd : public CutsceneSubCommandEntry
 {
 public:
 	CutsceneMMCommands commandId;
 
-	CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneMMCommands cmdId);
+	CutsceneSubCommandEntry_GenericMMCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneMMCommands cmdId);
 
 	std::string GetBodySourceCode() const override;
 };

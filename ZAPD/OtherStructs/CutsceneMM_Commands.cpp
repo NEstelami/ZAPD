@@ -6,11 +6,6 @@
 #include "Utils/StringHelper.h"
 
 // Specific for command lists where each entry has size 8 bytes
-typedef struct CsCommandListDescriptor {
-	const char* commandListFmt;
-	const char* commandEntryFmt;
-} CsCommandListDescriptor;
-
 const std::unordered_map<CutsceneMMCommands, CsCommandListDescriptor> csCommandsDescMM = {
 	// { CutsceneMMCommands::CS_CMD_TEXTBOX, { "" } }, // OoT cmd re use
 	// { CutsceneMMCommands::CS_CMD_CAMERA, { "" } }, // A bit special..
@@ -48,13 +43,13 @@ const std::unordered_map<CutsceneMMCommands, CsCommandListDescriptor> csCommands
 };
 
 
-CutsceneSubCommandEntry_GenericCmd::CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData,
+CutsceneSubCommandEntry_GenericMMCmd::CutsceneSubCommandEntry_GenericMMCmd(const std::vector<uint8_t>& rawData,
                                                                offset_t rawDataIndex, CutsceneMMCommands cmdId)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex), commandId(cmdId)
 {
 }
 
-std::string CutsceneSubCommandEntry_GenericCmd::GetBodySourceCode() const
+std::string CutsceneSubCommandEntry_GenericMMCmd::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf(csCommandsDescMM.at(commandId).commandEntryFmt, base, startFrame,
 	                             endFrame, pad);
@@ -72,7 +67,7 @@ CutsceneMMCommand_GenericCmd::CutsceneMMCommand_GenericCmd(const std::vector<uin
 
 	for (size_t i = 0; i < numEntries; i++)
 	{
-		auto* entry = new CutsceneSubCommandEntry_GenericCmd(rawData, rawDataIndex, cmdId);
+		auto* entry = new CutsceneSubCommandEntry_GenericMMCmd(rawData, rawDataIndex, cmdId);
 		entries.push_back(entry);
 		rawDataIndex += entry->GetRawSize();
 	}

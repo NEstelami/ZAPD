@@ -256,20 +256,19 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 
 	switch (cmdID)
 	{
-	case CutsceneCommands::Cmd00:
-		break;
-	case CutsceneCommands::SetCameraPos:
-		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
-	case CutsceneCommands::SetCameraFocus:
-		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
-	case CutsceneCommands::SpecialAction:
-		return new CutsceneCommand_Misc(rawData, currentPtr);
+	case CutsceneCommands::Misc:
 	case CutsceneCommands::SetLighting:
-		return new CutsceneCommand_Lighting(rawData, currentPtr);
+	case CutsceneCommands::PlayBGM:
+	case CutsceneCommands::StopBGM:
+	case CutsceneCommands::FadeBGM:
+		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
+
+	case CutsceneCommands::SetCameraPos:
+	case CutsceneCommands::SetCameraFocus:
 	case CutsceneCommands::SetCameraPosLink:
-		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
 	case CutsceneCommands::SetCameraFocusLink:
 		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
+
 	case CutsceneCommands::Cmd07:
 		break;
 	case CutsceneCommands::Cmd08:
@@ -295,18 +294,11 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 
 	case CutsceneCommands::SetSceneTransFX:
 		return new CutsceneCommandSceneTransFX(rawData, currentPtr);
-	case CutsceneCommands::PlayBGM:
-		return new CutsceneCommand_PlaySeq(rawData, currentPtr);
-	case CutsceneCommands::StopBGM:
-		return new CutsceneCommand_StopSeq(rawData, currentPtr);
-	case CutsceneCommands::FadeBGM:
-		return new CutsceneCommandFadeBGM(rawData, currentPtr);
+
 	case CutsceneCommands::SetTime:
 		return new CutsceneCommand_SetTime(rawData, currentPtr);
 	case CutsceneCommands::Terminator:
 		return new CutsceneCommandTerminator(rawData, currentPtr);
-	case CutsceneCommands::Error:
-		break;
 	}
 
 	return nullptr;
