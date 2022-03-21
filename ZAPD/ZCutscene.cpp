@@ -168,7 +168,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case CutsceneCommands::Unknown:
 		return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
 		break;
-	case CutsceneCommands::SetActorAction0:
+	case CutsceneCommands::SetPlayerAction:
 	case CutsceneCommands::SetActorAction1:
 	case CutsceneCommands::SetActorAction2:
 	case CutsceneCommands::SetActorAction3:
@@ -222,12 +222,16 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 
 	switch (cmdID)
 	{
+	case CutsceneMMCommands::CS_CMD_MISC:
+	case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
 	case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
 	case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
 	case CutsceneMMCommands::CS_CMD_GIVETATL:
+	case CutsceneMMCommands::CS_CMD_PLAYSEQ:
 	case CutsceneMMCommands::CS_CMD_130:
 	case CutsceneMMCommands::CS_CMD_131:
 	case CutsceneMMCommands::CS_CMD_132:
+	case CutsceneMMCommands::CS_CMD_STOPSEQ:
 	case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
 	case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
 	case CutsceneMMCommands::CS_CMD_TERMINATOR:
@@ -241,12 +245,6 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	case CutsceneMMCommands::CS_CMD_CAMERA:
 		return new CutsceneMMCommand_Camera(rawData, currentPtr);
 		break;
-	case CutsceneMMCommands::CS_CMD_MISC:
-		return new CutsceneCommand_Misc(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
-		return new CutsceneCommand_Lighting(rawData, currentPtr);
-		break;
 	case CutsceneMMCommands::CS_CMD_FADESCREEN:
 		return new CutsceneMMCommand_FadeScreen(rawData, currentPtr);
 		break;
@@ -258,12 +256,6 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		break;
 	case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
 		return new CutsceneCommand_ActorAction(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_PLAYSEQ:
-		return new CutsceneCommand_PlaySeq(rawData, currentPtr);
-		break;
-	case CutsceneMMCommands::CS_CMD_STOPSEQ:
-		return new CutsceneCommand_StopSeq(rawData, currentPtr);
 		break;
 	case CutsceneMMCommands::CS_CMD_RUMBLE:
 		return new CutsceneCommand_Rumble(rawData, currentPtr);
@@ -327,7 +319,7 @@ CutsceneCommands ZCutscene::GetCommandOoTFromID(int32_t id) const
 	case 0x002D:
 		return CutsceneCommands::SetSceneTransFX;
 	case 10:
-		return CutsceneCommands::SetActorAction0;
+		return CutsceneCommands::SetPlayerAction;
 	case 15:
 	case 17:
 	case 18:

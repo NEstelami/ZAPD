@@ -6,16 +6,16 @@
 #include "Utils/StringHelper.h"
 
 // Specific for command lists where each entry has size 8 bytes
-typedef struct CsCommandDescriptorMM {
+typedef struct CsCommandListDescriptor {
 	const char* commandListFmt;
 	const char* commandEntryFmt;
-} CsCommandDescriptorMM;
+} CsCommandListDescriptor;
 
-const std::unordered_map<CutsceneMMCommands, CsCommandDescriptorMM> csCommandsDescMM = {
+const std::unordered_map<CutsceneMMCommands, CsCommandListDescriptor> csCommandsDescMM = {
 	// { CutsceneMMCommands::CS_CMD_TEXTBOX, { "" } }, // OoT cmd re use
 	// { CutsceneMMCommands::CS_CMD_CAMERA, { "" } }, // A bit special..
-	// { CutsceneMMCommands::CS_CMD_MISC, { "" } }, // OoT cmd re use
-	// { CutsceneMMCommands::CS_CMD_SET_LIGHTING, { "" } }, // OoT cmd re use
+	{ CutsceneMMCommands::CS_CMD_MISC, { "CS_MISC_LIST(%i)", "CS_MISC(0x%02X, %i, %i, %i),", } }, // OoT cmd re use
+	{ CutsceneMMCommands::CS_CMD_SET_LIGHTING, { "CS_LIGHTING_LIST(%i)", "CS_LIGHTING(0x%02X, %i, %i),", } },
 	{ CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX, { "CS_SCENE_TRANS_FX_LIST(%i)", "CS_SCENE_TRANS_FX(%i, %i, %i)," } },
 	{ CutsceneMMCommands::CS_CMD_MOTIONBLUR, {"CS_MOTIONBLUR_LIST(%i)", "CS_MOTIONBLUR(%i, %i, %i),", } } ,
 	{ CutsceneMMCommands::CS_CMD_GIVETATL, {"CS_GIVETATL_LIST(%i)", "CS_GIVETATL(%i, %i, %i),", } } ,
@@ -34,12 +34,12 @@ const std::unordered_map<CutsceneMMCommands, CsCommandDescriptorMM> csCommandsDe
 	// { CutsceneMMCommands::CS_CMD_UNK_105, {"", "", } } , // unknown cmds
 	// { CutsceneMMCommands::CS_CMD_UNK_108, {"", "", } } , // unknown cmds
 	// { CutsceneMMCommands::CS_CMD_UNK_109, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_PLAYSEQ, {"", "", } } , // OoT cmd re use
+	{ CutsceneMMCommands::CS_CMD_PLAYSEQ, {"CS_PLAYSEQ_LIST(%i)", "CS_PLAYSEQ(0x%04X, %i, %i),", } } ,
 	// { CutsceneMMCommands::CS_CMD_UNK_12D, {"", "", } } , // unknown cmds
 	{ CutsceneMMCommands::CS_CMD_130, {"CS_SCENE_UNK_130_LIST(%i)", "CS_SCENE_UNK_130(0x%04X, %i, %i, %i),", } } ,
 	{ CutsceneMMCommands::CS_CMD_131, {"CS_SCENE_UNK_131_LIST(%i)", "CS_SCENE_UNK_131(0x%04X, %i, %i, %i),", } } ,
 	{ CutsceneMMCommands::CS_CMD_132, {"CS_SCENE_UNK_132_LIST(%i)", "CS_SCENE_UNK_132(%i, %i, %i),", } } ,
-	// { CutsceneMMCommands::CS_CMD_STOPSEQ, {"", "", } } , // OoT cmd re use
+	{ CutsceneMMCommands::CS_CMD_STOPSEQ, {"CS_STOPSEQ_LIST(%i)", "CS_STOPSEQ(0x%04X, %i, %i, %i),", } } ,
 	{ CutsceneMMCommands::CS_CMD_PLAYAMBIENCE, {"CS_PLAYAMBIENCE_LIST(%i)", "CS_PLAYAMBIENCE(0x%04X, %i, %i, %i),", } } ,
 	{ CutsceneMMCommands::CS_CMD_FADEAMBIENCE, {"CS_FADEAMBIENCE_LIST(%i)", "CS_FADEAMBIENCE(0x%04X, %i, %i, %i),", } } ,
 	{ CutsceneMMCommands::CS_CMD_TERMINATOR, {"CS_TERMINATOR_LIST(%i)", "CS_TERMINATOR(%i, %i, %i),", } } ,

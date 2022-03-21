@@ -250,25 +250,17 @@ CutsceneSubCommandEntry_PlaySeq::CutsceneSubCommandEntry_PlaySeq(
 	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	if (Globals::Instance->game != ZGame::MM_RETAIL)
-	{
-		unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-		unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
-		unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
-		unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
-		unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
-		unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
-	}
+	unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+	unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+	unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
+	unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
+	unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
+	unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
+	unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
 }
 
 std::string CutsceneSubCommandEntry_PlaySeq::GetBodySourceCode() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf("CS_PLAYSEQ(0x%04X, %i, %i),", base, startFrame, endFrame);
-	}
-
 	return StringHelper::Sprintf("CS_PLAY_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", base,
 	                             startFrame, endFrame, pad, unknown1, unknown2, unknown3, unknown4,
 	                             unknown5, unknown6, unknown7);
@@ -276,10 +268,6 @@ std::string CutsceneSubCommandEntry_PlaySeq::GetBodySourceCode() const
 
 size_t CutsceneSubCommandEntry_PlaySeq::GetRawSize() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return 0x8;
-	}
 	return 0x30;
 }
 
@@ -299,11 +287,6 @@ CutsceneCommand_PlaySeq::CutsceneCommand_PlaySeq(const std::vector<uint8_t>& raw
 
 std::string CutsceneCommand_PlaySeq::GetCommandMacro() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf("CS_PLAYSEQ_LIST(%i)", numEntries);
-	}
-
 	return StringHelper::Sprintf("CS_PLAY_BGM_LIST(%i)", numEntries);
 }
 
@@ -311,26 +294,17 @@ CutsceneSubCommandEntry_StopSeq::CutsceneSubCommandEntry_StopSeq(
 	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	if (Globals::Instance->game != ZGame::MM_RETAIL)
-	{
-		unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
-		unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
-		unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
-		unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
-		unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
-		unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
-		unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
-	}
+	unknown1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 8);
+	unknown2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 12);
+	unknown3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 16);
+	unknown4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 20);
+	unknown5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 24);
+	unknown6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 28);
+	unknown7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 32);
 }
 
 std::string CutsceneSubCommandEntry_StopSeq::GetBodySourceCode() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf("CS_STOPSEQ(0x%04X, %i, %i, %i),", base, startFrame, endFrame,
-		                             pad);
-	}
-
 	return StringHelper::Sprintf("CS_STOP_BGM(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", base,
 	                             startFrame, endFrame, pad, unknown1, unknown2, unknown3, unknown4,
 	                             unknown5, unknown6, unknown7);
@@ -338,10 +312,6 @@ std::string CutsceneSubCommandEntry_StopSeq::GetBodySourceCode() const
 
 size_t CutsceneSubCommandEntry_StopSeq::GetRawSize() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return 0x8;
-	}
 	return 0x30;
 }
 
@@ -361,11 +331,6 @@ CutsceneCommand_StopSeq::CutsceneCommand_StopSeq(const std::vector<uint8_t>& raw
 
 std::string CutsceneCommand_StopSeq::GetCommandMacro() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf("CS_STOPSEQ_LIST(%i)", numEntries);
-	}
-
 	return StringHelper::Sprintf("CS_STOP_BGM_LIST(%i)", numEntries);
 }
 
@@ -373,8 +338,6 @@ CutsceneSubCommandEntry_Lighting::CutsceneSubCommandEntry_Lighting(
 	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	if (Globals::Instance->game != ZGame::MM_RETAIL)
-	{
 		unused1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x8);
 		unused2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
 		unused3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x10);
@@ -382,16 +345,10 @@ CutsceneSubCommandEntry_Lighting::CutsceneSubCommandEntry_Lighting(
 		unused5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
 		unused6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
 		unused7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x20);
-	}
 }
 
 std::string CutsceneSubCommandEntry_Lighting::GetBodySourceCode() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf("CS_LIGHTING(0x%02X, %i, %i),", base, startFrame, endFrame);
-	}
-
 	return StringHelper::Sprintf("CS_LIGHTING(0x%02X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),",
 	                             base, startFrame, endFrame, pad, unused1, unused2, unused3,
 	                             unused4, unused5, unused6, unused7);
@@ -399,10 +356,6 @@ std::string CutsceneSubCommandEntry_Lighting::GetBodySourceCode() const
 
 size_t CutsceneSubCommandEntry_Lighting::GetRawSize() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return 0x8;
-	}
 	return 0x30;
 }
 
@@ -693,7 +646,7 @@ std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
 	}
 	else
 	{
-		if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::SetActorAction0)
+		if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::SetPlayerAction)
 		{
 			result = "CS_PLAYER_ACTION";
 		}
@@ -742,7 +695,7 @@ std::string CutsceneCommand_ActorAction::GetCommandMacro() const
 		return StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(0x%03X, %i)", commandID, numEntries);
 	}
 
-	if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::SetActorAction0)
+	if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::SetPlayerAction)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_ACTION_LIST(%i)", entries.size());
 	}
@@ -801,29 +754,20 @@ CutsceneSubCommandEntry_Misc::CutsceneSubCommandEntry_Misc(const std::vector<uin
                                                            offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	if (Globals::Instance->game != ZGame::MM_RETAIL)
-	{
-		unused1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x8);
-		unused2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
-		unused3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x10);
-		unused4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x14);
-		unused5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
-		unused6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
-		unused7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x20);
-		unused8 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x24);
-		unused9 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x28);
-		unused10 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x2C);
-	}
+	unused1 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x8);
+	unused2 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0xC);
+	unused3 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x10);
+	unused4 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x14);
+	unused5 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x18);
+	unused6 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x1C);
+	unused7 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x20);
+	unused8 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x24);
+	unused9 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x28);
+	unused10 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x2C);
 }
 
 std::string CutsceneSubCommandEntry_Misc::GetBodySourceCode() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf("CS_MISC(0x%02X, %i, %i, %i),", base, startFrame, endFrame,
-		                             pad);
-	}
-
 	return StringHelper::Sprintf(
 		"CS_MISC(0x%04X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i),", base, startFrame,
 		endFrame, pad, unused1, unused2, unused3, unused4, unused5, unused6, unused7, unused8,
@@ -832,10 +776,6 @@ std::string CutsceneSubCommandEntry_Misc::GetBodySourceCode() const
 
 size_t CutsceneSubCommandEntry_Misc::GetRawSize() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return 0x08;
-	}
 	return 0x30;
 }
 

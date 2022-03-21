@@ -20,7 +20,7 @@ enum class CutsceneCommands
 	Cmd09 = 0x0009,
 	Unknown = 0x001A,
 	Textbox = 0x0013,
-	SetActorAction0 = 0x000A,
+	SetPlayerAction = 0x000A,
 	SetActorAction1 = 0x000F,
 	SetActorAction2 = 0x000E,
 	SetActorAction3 = 0x0019,
