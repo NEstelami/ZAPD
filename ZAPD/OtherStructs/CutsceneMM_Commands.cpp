@@ -51,8 +51,14 @@ CutsceneSubCommandEntry_GenericMMCmd::CutsceneSubCommandEntry_GenericMMCmd(const
 
 std::string CutsceneSubCommandEntry_GenericMMCmd::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf(csCommandsDescMM.at(commandId).commandEntryFmt, base, startFrame,
-	                             endFrame, pad);
+	const auto& element = csCommandsDescMM.find(commandId);
+	const char* entryFmt = "CS_UNK_DATA(0x%02X, %i, %i, %i),";
+
+	if (element != csCommandsDescMM.end()) {
+		entryFmt = element->second.commandEntryFmt;
+	}
+
+	return StringHelper::Sprintf(entryFmt, base, startFrame, endFrame, pad);
 }
 
 CutsceneMMCommand_GenericCmd::CutsceneMMCommand_GenericCmd(const std::vector<uint8_t>& rawData,
@@ -62,8 +68,6 @@ CutsceneMMCommand_GenericCmd::CutsceneMMCommand_GenericCmd(const std::vector<uin
 	rawDataIndex += 4;
 
 	commandID = static_cast<uint32_t>(cmdId);
-
-	assert(csCommandsDescMM.find(cmdId) != csCommandsDescMM.end());
 
 	for (size_t i = 0; i < numEntries; i++)
 	{
@@ -75,7 +79,13 @@ CutsceneMMCommand_GenericCmd::CutsceneMMCommand_GenericCmd(const std::vector<uin
 
 std::string CutsceneMMCommand_GenericCmd::GetCommandMacro() const
 {
-	return StringHelper::Sprintf(csCommandsDescMM.at(static_cast<CutsceneMMCommands>(commandID)).commandListFmt, numEntries);
+	const auto& element = csCommandsDescMM.find(static_cast<CutsceneMMCommands>(commandID));
+
+	if (element != csCommandsDescMM.end()) {
+		return StringHelper::Sprintf( element->second.commandListFmt, numEntries);
+	}
+
+	return StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%X, %i)", commandID, numEntries);
 }
 
 

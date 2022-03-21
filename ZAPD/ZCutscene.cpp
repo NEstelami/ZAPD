@@ -251,7 +251,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case 0x70:
 	case 0x71:
 	case 0x4A:
-		return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
+		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
 	}
 
 	switch (cmdID)
@@ -331,6 +331,19 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
 	case CutsceneMMCommands::CS_CMD_TERMINATOR:
 	case CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES:
+
+	case CutsceneMMCommands::CS_CMD_UNK_FA:
+	case CutsceneMMCommands::CS_CMD_UNK_FE:
+	case CutsceneMMCommands::CS_CMD_UNK_FF:
+	case CutsceneMMCommands::CS_CMD_UNK_100:
+	case CutsceneMMCommands::CS_CMD_UNK_101:
+	case CutsceneMMCommands::CS_CMD_UNK_102:
+	case CutsceneMMCommands::CS_CMD_UNK_103:
+	case CutsceneMMCommands::CS_CMD_UNK_104:
+	case CutsceneMMCommands::CS_CMD_UNK_105:
+	case CutsceneMMCommands::CS_CMD_UNK_108:
+	case CutsceneMMCommands::CS_CMD_UNK_109:
+	case CutsceneMMCommands::CS_CMD_UNK_12D:
 		return new CutsceneMMCommand_GenericCmd(rawData, currentPtr, cmdID);
 
 	case CutsceneMMCommands::CS_CMD_TEXTBOX:
@@ -347,20 +360,6 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		return new CutsceneCommand_ActorAction(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_RUMBLE:
 		return new CutsceneCommand_Rumble(rawData, currentPtr);
-
-	case CutsceneMMCommands::CS_CMD_UNK_FA:
-	case CutsceneMMCommands::CS_CMD_UNK_FE:
-	case CutsceneMMCommands::CS_CMD_UNK_FF:
-	case CutsceneMMCommands::CS_CMD_UNK_100:
-	case CutsceneMMCommands::CS_CMD_UNK_101:
-	case CutsceneMMCommands::CS_CMD_UNK_102:
-	case CutsceneMMCommands::CS_CMD_UNK_103:
-	case CutsceneMMCommands::CS_CMD_UNK_104:
-	case CutsceneMMCommands::CS_CMD_UNK_105:
-	case CutsceneMMCommands::CS_CMD_UNK_108:
-	case CutsceneMMCommands::CS_CMD_UNK_109:
-	case CutsceneMMCommands::CS_CMD_UNK_12D:
-		return new CutsceneCommand_UnknownCommand(rawData, currentPtr);
 	}
 
 	return nullptr;

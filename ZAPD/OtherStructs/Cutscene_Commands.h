@@ -86,6 +86,9 @@ class CutsceneSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
 public:
 	CutsceneCommands commandId;
 
+	uint32_t word0 = 0;
+	uint32_t word1 = 0;
+
 	uint32_t unused1 = 0;
 	uint32_t unused2 = 0;
 	uint32_t unused3 = 0;
@@ -179,38 +182,6 @@ class CutsceneCommand_Rumble : public CutsceneCommand
 {
 public:
 	CutsceneCommand_Rumble(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
-
-	std::string GetCommandMacro() const override;
-};
-
-class CutsceneSubCommandEntry_UnknownCommand : public CutsceneSubCommandEntry
-{
-public:
-	uint32_t unused0;
-	uint32_t unused1;
-	uint32_t unused2;
-	uint32_t unused3;
-	uint32_t unused4;
-	uint32_t unused5;
-	uint32_t unused6;
-	uint32_t unused7;
-	uint32_t unused8;
-	uint32_t unused9;
-	uint32_t unused10;
-	uint32_t unused11;
-
-	CutsceneSubCommandEntry_UnknownCommand(const std::vector<uint8_t>& rawData,
-	                                       offset_t rawDataIndex);
-
-	std::string GetBodySourceCode() const override;
-
-	size_t GetRawSize() const override;
-};
-
-class CutsceneCommand_UnknownCommand : public CutsceneCommand
-{
-public:
-	CutsceneCommand_UnknownCommand(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
