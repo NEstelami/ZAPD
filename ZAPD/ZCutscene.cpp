@@ -278,7 +278,6 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case CutsceneCommands::Textbox:
 		return new CutsceneCommand_TextBox(rawData, currentPtr);
 
-	case CutsceneCommands::Unknown:
 	case CutsceneCommands::SetPlayerAction:
 	case CutsceneCommands::SetActorAction1:
 	case CutsceneCommands::SetActorAction2:
@@ -298,7 +297,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case CutsceneCommands::SetTime:
 		return new CutsceneCommand_SetTime(rawData, currentPtr);
 	case CutsceneCommands::Terminator:
-		return new CutsceneCommandTerminator(rawData, currentPtr);
+		return new CutsceneCommand_Terminator(rawData, currentPtr);
 	}
 
 	return nullptr;

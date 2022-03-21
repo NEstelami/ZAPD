@@ -7,41 +7,21 @@
 
 // Specific for command lists where each entry has size 8 bytes
 const std::unordered_map<CutsceneMMCommands, CsCommandListDescriptor> csCommandsDescMM = {
-	// { CutsceneMMCommands::CS_CMD_TEXTBOX, { "" } }, // OoT cmd re use
-	// { CutsceneMMCommands::CS_CMD_CAMERA, { "" } }, // A bit special..
-	{ CutsceneMMCommands::CS_CMD_MISC, { "CS_MISC_LIST(%i)", "CS_MISC(0x%02X, %i, %i, %i),", } }, // OoT cmd re use
-	{ CutsceneMMCommands::CS_CMD_SET_LIGHTING, { "CS_LIGHTING_LIST(%i)", "CS_LIGHTING(0x%02X, %i, %i),", } },
-	{ CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX, { "CS_SCENE_TRANS_FX_LIST(%i)", "CS_SCENE_TRANS_FX(%i, %i, %i)," } },
-	{ CutsceneMMCommands::CS_CMD_MOTIONBLUR, {"CS_MOTIONBLUR_LIST(%i)", "CS_MOTIONBLUR(%i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_GIVETATL, {"CS_GIVETATL_LIST(%i)", "CS_GIVETATL(%i, %i, %i),", } } ,
-	// { CutsceneMMCommands::CS_CMD_FADESCREEN, {"", "", } } ,
-	// { CutsceneMMCommands::CS_CMD_FADESEQ, {"", "", } } ,
-	// { CutsceneMMCommands::CS_CMD_SETTIME, {"", "", } } , // OoT cmd re use
-	// { CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION, {"", "", } } , // OoT cmd re use
-	// { CutsceneMMCommands::CS_CMD_UNK_FA, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_FE, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_FF, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_100, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_101, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_102, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_103, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_104, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_105, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_108, {"", "", } } , // unknown cmds
-	// { CutsceneMMCommands::CS_CMD_UNK_109, {"", "", } } , // unknown cmds
-	{ CutsceneMMCommands::CS_CMD_PLAYSEQ, {"CS_PLAYSEQ_LIST(%i)", "CS_PLAYSEQ(0x%04X, %i, %i),", } } ,
-	// { CutsceneMMCommands::CS_CMD_UNK_12D, {"", "", } } , // unknown cmds
-	{ CutsceneMMCommands::CS_CMD_130, {"CS_SCENE_UNK_130_LIST(%i)", "CS_SCENE_UNK_130(0x%04X, %i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_131, {"CS_SCENE_UNK_131_LIST(%i)", "CS_SCENE_UNK_131(0x%04X, %i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_132, {"CS_SCENE_UNK_132_LIST(%i)", "CS_SCENE_UNK_132(%i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_STOPSEQ, {"CS_STOPSEQ_LIST(%i)", "CS_STOPSEQ(0x%04X, %i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_PLAYAMBIENCE, {"CS_PLAYAMBIENCE_LIST(%i)", "CS_PLAYAMBIENCE(0x%04X, %i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_FADEAMBIENCE, {"CS_FADEAMBIENCE_LIST(%i)", "CS_FADEAMBIENCE(0x%04X, %i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_TERMINATOR, {"CS_TERMINATOR_LIST(%i)", "CS_TERMINATOR(%i, %i, %i),", } } ,
-	{ CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES, {"CS_CHOOSE_CREDITS_SCENES_LIST(%i)", "CS_CHOOSE_CREDITS_SCENES(%i, %i, %i),", } } ,
-	//{ CutsceneMMCommands::CS_CMD_RUMBLE, {"", "", } } , // OoT cmd re use
+	{ CutsceneMMCommands::CS_CMD_MISC, {  "CS_MISC", "(0x%02X, %i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_SET_LIGHTING, {  "CS_LIGHTING", "(0x%02X, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX, {  "CS_SCENE_TRANS_FX", "(%i, %i, %i)" } },
+	{ CutsceneMMCommands::CS_CMD_MOTIONBLUR, { "CS_MOTIONBLUR", "(%i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_GIVETATL, { "CS_GIVETATL", "(%i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_PLAYSEQ, { "CS_PLAYSEQ", "(0x%04X, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_130, { "CS_SCENE_UNK_130", "(0x%04X, %i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_131, { "CS_SCENE_UNK_131", "(0x%04X, %i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_132, { "CS_SCENE_UNK_132", "(%i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_STOPSEQ, { "CS_STOPSEQ", "(0x%04X, %i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_PLAYAMBIENCE, { "CS_PLAYAMBIENCE", "(0x%04X, %i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_FADEAMBIENCE, { "CS_FADEAMBIENCE", "(0x%04X, %i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_TERMINATOR, { "CS_TERMINATOR", "(%i, %i, %i)", } },
+	{ CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES, { "CS_CHOOSE_CREDITS_SCENES", "(%i, %i, %i)", } },
 };
-
 
 CutsceneSubCommandEntry_GenericMMCmd::CutsceneSubCommandEntry_GenericMMCmd(const std::vector<uint8_t>& rawData,
                                                                offset_t rawDataIndex, CutsceneMMCommands cmdId)
@@ -52,13 +32,14 @@ CutsceneSubCommandEntry_GenericMMCmd::CutsceneSubCommandEntry_GenericMMCmd(const
 std::string CutsceneSubCommandEntry_GenericMMCmd::GetBodySourceCode() const
 {
 	const auto& element = csCommandsDescMM.find(commandId);
-	const char* entryFmt = "CS_UNK_DATA(0x%02X, %i, %i, %i),";
+	std::string entryFmt = "CS_UNK_DATA(0x%02X, %i, %i, %i)";
 
 	if (element != csCommandsDescMM.end()) {
-		entryFmt = element->second.commandEntryFmt;
+		entryFmt = element->second.cmdMacro;
+		entryFmt += element->second.args;
 	}
 
-	return StringHelper::Sprintf(entryFmt, base, startFrame, endFrame, pad);
+	return StringHelper::Sprintf(entryFmt.c_str(), base, startFrame, endFrame, pad);
 }
 
 CutsceneMMCommand_GenericCmd::CutsceneMMCommand_GenericCmd(const std::vector<uint8_t>& rawData,
@@ -82,7 +63,7 @@ std::string CutsceneMMCommand_GenericCmd::GetCommandMacro() const
 	const auto& element = csCommandsDescMM.find(static_cast<CutsceneMMCommands>(commandID));
 
 	if (element != csCommandsDescMM.end()) {
-		return StringHelper::Sprintf( element->second.commandListFmt, numEntries);
+		return StringHelper::Sprintf("%s_LIST(%i)", element->second.cmdMacro, numEntries);
 	}
 
 	return StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%X, %i)", commandID, numEntries);
@@ -97,7 +78,7 @@ CutsceneSubCommandEntry_Camera::CutsceneSubCommandEntry_Camera(const std::vector
 
 std::string CutsceneSubCommandEntry_Camera::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X),", base, startFrame);
+	return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X)", base, startFrame);
 }
 
 size_t CutsceneSubCommandEntry_Camera::GetRawSize() const
@@ -138,7 +119,7 @@ CutsceneSubCommandEntry_FadeScreen::CutsceneSubCommandEntry_FadeScreen(
 
 std::string CutsceneSubCommandEntry_FadeScreen::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_FADESCREEN(0x%02X, %i, %i, %i, %i, %i),", base, startFrame,
+	return StringHelper::Sprintf("CS_FADESCREEN(0x%02X, %i, %i, %i, %i, %i)", base, startFrame,
 	                             endFrame, unk_06, unk_07, unk_08);
 }
 
@@ -175,7 +156,7 @@ CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(
 
 std::string CutsceneSubCommandEntry_FadeSeq::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_FADESEQ(%i, %i, %i),", base, startFrame, endFrame);
+	return StringHelper::Sprintf("CS_FADESEQ(%i, %i, %i)", base, startFrame, endFrame);
 }
 
 size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize() const

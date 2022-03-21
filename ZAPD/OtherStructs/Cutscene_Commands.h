@@ -17,7 +17,6 @@ enum class CutsceneCommands
 	Cmd07 = 0x0007,
 	Cmd08 = 0x0008,
 	Cmd09 = 0x0009, // Rumble
-	Unknown = 0x001A,
 	Textbox = 0x0013,
 	SetPlayerAction = 0x000A,
 	SetActorAction1 = 0x000F,
@@ -39,8 +38,8 @@ enum class CutsceneCommands
 };
 
 typedef struct CsCommandListDescriptor {
-	const char* commandListFmt;
-	const char* commandEntryFmt;
+	const char* cmdMacro;
+	const char* args;
 } CsCommandListDescriptor;
 
 class CutsceneSubCommandEntry
@@ -252,7 +251,7 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneCommandTerminator : public CutsceneCommand
+class CutsceneCommand_Terminator : public CutsceneCommand
 {
 public:
 	uint16_t base;
@@ -260,7 +259,7 @@ public:
 	uint16_t endFrame;
 	uint16_t unknown;
 
-	CutsceneCommandTerminator(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneCommand_Terminator(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GenerateSourceCode() const override;
 	size_t GetCommandSize() const override;
