@@ -39,6 +39,7 @@ enum class ZResourceType
 	Mtx,
 	Path,
 	PlayerAnimationData,
+	Pointer,
 	Room,
 	RoomCommand,
 	Scalar,
