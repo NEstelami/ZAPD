@@ -22,10 +22,12 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("Height");
 	RegisterRequiredAttribute("Format");
 	RegisterOptionalAttribute("TlutOffset");
+	RegisterOptionalAttribute("ExternalPalette");
+	RegisterOptionalAttribute("ExternalPaletteOffset");
 }
 
 void ZTexture::ExtractFromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
-                                 TextureType nType, bool nIsPalette)
+								 TextureType nType, bool nIsPalette)
 {
 	width = nWidth;
 	height = nHeight;
@@ -62,14 +64,14 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 		std::string errorHeader = StringHelper::Sprintf(
 			"value of 'Width' attribute has non-decimal digits: '%s'", widthXml.c_str());
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-		                      errorHeader, "");
+							  errorHeader, "");
 	}
 	if (!StringHelper::HasOnlyDigits(heightXml))
 	{
 		std::string errorHeader = StringHelper::Sprintf(
 			"value of 'Height' attribute has non-decimal digits: '%s'", heightXml.c_str());
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-		                      errorHeader, "");
+							  errorHeader, "");
 	}
 
 	width = StringHelper::StrToL(widthXml);
@@ -81,7 +83,7 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 	if (format == TextureType::Error)
 	{
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-		                      "invalid value found for 'Format' attribute", "");
+							  "invalid value found for 'Format' attribute", "");
 	}
 
 	const auto& tlutOffsetAttr = registeredAttributes.at("TlutOffset");
@@ -96,8 +98,8 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 		default:
 			HANDLE_ERROR_RESOURCE(WarningType::InvalidXML, parent, this, rawDataIndex,
-			                      "'TlutOffset' declared in non color-indexed (ci4 or ci8) texture",
-			                      "");
+								  "'TlutOffset' declared in non color-indexed (ci4 or ci8) texture",
+								  "");
 			break;
 		}
 	}
@@ -139,9 +141,71 @@ void ZTexture::ParseRawData()
 		break;
 	case TextureType::Error:
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
-		                      StringHelper::Sprintf("Invalid texture format", format), "");
+							  StringHelper::Sprintf("Invalid texture format", format), "");
 		assert(!"TODO");
 		break;
+	}
+}
+
+void ZTexture::ParseRawDataLate()
+{
+	if (registeredAttributes["ExternalPalette"].wasSet)
+	{
+		const std::string externPalette = registeredAttributes["ExternalPalette"].value;
+		for (const auto& file : Globals::Instance->files)
+		{
+			if (file->GetName() == externPalette)
+			{
+				offset_t palOffset = 0;
+				if (registeredAttributes["ExternalPaletteOffset"].wasSet)
+				{
+					palOffset = StringHelper::StrToL(registeredAttributes["ExternalPaletteOffset"].value, 16);
+				}
+				else
+				{
+					HANDLE_WARNING_RESOURCE(
+						WarningType::MissingOffsets, parent, this, rawDataIndex,
+						StringHelper::Sprintf(
+							"No ExternalPaletteOffset Given. Assuming offset of 0x0"),
+						"");
+				}
+				for (const auto& res : file->resources)
+				{
+					if (res->GetRawDataIndex() == palOffset)
+					{
+//						ZTexture* palTex = (ZTexture*)res;
+//						palTex->isPalette = true;
+//						tlut = palTex;
+
+						tlut = new ZTexture(file);
+						tlut->ExtractFromBinary(palOffset, 16, 8,
+						                        TextureType::RGBA16bpp, true);
+						//parent->AddTextureResource(palOffset, tlut);
+						tlut->DeclareVar("", "");
+						SetTlut(tlut);
+						//PrepareBitmapPalette8_2();
+					}
+				}
+			}
+		}
+	}
+}
+
+void ZTexture::PrepareBitmapPalette8_2()
+{
+	textureData.InitEmptyPaletteImage(width, height);
+	auto parentRawData = parent->GetRawData();
+	for (size_t y = 0; y < height; y++)
+	{
+		for (size_t x = 0; x < width; x++)
+		{
+			size_t pos = rawDataIndex + ((y * width) + x) * 1;
+			uint8_t grayscale = parentRawData.at(pos) - 128;
+			RGBAPixel pixel = tlut->textureData.GetPixel(grayscale / 16, grayscale % 16);
+
+
+			textureData.SetIndexedPixel(y,x,pos,pixel);
+		}
 	}
 }
 
@@ -659,7 +723,7 @@ void ZTexture::Save(const fs::path& outFolder)
 	if (Globals::Instance->outputCrc)
 	{
 		File::WriteAllText((Globals::Instance->outputPath / (outName + ".txt")).string(),
-		                   StringHelper::Sprintf("%08lX", hash));
+						   StringHelper::Sprintf("%08lX", hash));
 	}
 
 	auto outPath = GetPoolOutPath(outFolder);
@@ -689,7 +753,7 @@ void ZTexture::Save(const fs::path& outFolder)
 }
 
 Declaration* ZTexture::DeclareVar(const std::string& prefix,
-                                  [[maybe_unused]] const std::string& bodyStr)
+								  [[maybe_unused]] const std::string& bodyStr)
 {
 	std::string auxName = name;
 	std::string auxOutName = outName;
@@ -707,7 +771,7 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 			StringHelper::Sprintf("%s.%s.inc.c", filepath.c_str(), GetExternalExtension().c_str());
 	else
 		incStr = StringHelper::Sprintf("%s.u32.%s.inc.c", filepath.c_str(),
-		                               GetExternalExtension().c_str());
+									   GetExternalExtension().c_str());
 
 	if (!Globals::Instance->cfg.texturePool.empty())
 	{
@@ -719,17 +783,17 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		{
 			if (dWordAligned)
 				incStr = StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.c_str(),
-				                               GetExternalExtension().c_str());
+											   GetExternalExtension().c_str());
 			else
 				incStr = StringHelper::Sprintf("%s.u32.%s.inc.c", poolEntry->second.path.c_str(),
-				                               GetExternalExtension().c_str());
+											   GetExternalExtension().c_str());
 		}
 	}
 	size_t texSizeDivisor = (dWordAligned) ? 8 : 4;
 
 	Declaration* decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
-	                                                       GetSourceTypeName(), auxName,
-	                                                       GetRawDataSize() / texSizeDivisor);
+														   GetSourceTypeName(), auxName,
+														   GetRawDataSize() / texSizeDivisor);
 	decl->staticConf = staticConf;
 	return decl;
 }
@@ -828,8 +892,8 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 	{
 		texType = TextureType::RGBA16bpp;
 		HANDLE_WARNING(WarningType::Deprecated,
-		               "the texture format 'rgb5a1' is currently deprecated",
-		               "It will be removed in a future version. Use the format 'rgba16' instead.");
+					   "the texture format 'rgb5a1' is currently deprecated",
+					   "It will be removed in a future version. Use the format 'rgba16' instead.");
 	}
 	else if (str == "i4")
 		texType = TextureType::Grayscale4bpp;
@@ -848,7 +912,7 @@ TextureType ZTexture::GetTextureTypeFromString(const std::string& str)
 	else
 		// TODO: handle this case in a more coherent way
 		HANDLE_WARNING(WarningType::InvalidAttributeValue,
-		               "invalid value found for 'Type' attribute", "Defaulting to ''.");
+					   "invalid value found for 'Type' attribute", "Defaulting to ''.");
 	return texType;
 }
 

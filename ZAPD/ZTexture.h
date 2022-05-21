@@ -38,6 +38,7 @@ protected:
 	void PrepareBitmapGrayscaleAlpha16();
 	void PrepareBitmapPalette4();
 	void PrepareBitmapPalette8();
+	void PrepareBitmapPalette8_2();
 
 	void PrepareRawDataFromFile(const fs::path& inFolder);
 	void PrepareRawDataRGBA16();
@@ -88,4 +89,5 @@ public:
 	bool IsColorIndexed() const;
 	void SetTlut(ZTexture* nTlut);
 	bool HasTlut() const;
+	void ParseRawDataLate() override;
 };
