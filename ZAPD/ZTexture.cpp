@@ -207,7 +207,7 @@ void ZTexture::ParseRawDataLate()
 						tlut = new ZTexture(file);
 						tlut->ExtractFromBinary(palOffset, 16, 8,
 						                        TextureType::RGBA16bpp, true);
-						tlut->DeclareVar("", "");
+						//tlut->DeclareVar("", "");
 						SetTlut(tlut);
 					}
 				}
