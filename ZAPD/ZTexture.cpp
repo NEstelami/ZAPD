@@ -60,7 +60,6 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 	std::string widthXml = registeredAttributes.at("Width").value;
 	std::string heightXml = registeredAttributes.at("Height").value;
 	std::string splitPaletteXml = registeredAttributes.at("SplitPalette").value;
-	registeredAttributes.at("ExternalPalette").wasSet
 
 	if (!StringHelper::HasOnlyDigits(widthXml))
 	{
