@@ -24,6 +24,7 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	RegisterOptionalAttribute("TlutOffset");
 	RegisterOptionalAttribute("ExternalPalette");
 	RegisterOptionalAttribute("ExternalPaletteOffset");
+	RegisterOptionalAttribute("SplitPalette");
 }
 
 void ZTexture::ExtractFromBinary(uint32_t nRawDataIndex, int32_t nWidth, int32_t nHeight,
@@ -58,6 +59,8 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	std::string widthXml = registeredAttributes.at("Width").value;
 	std::string heightXml = registeredAttributes.at("Height").value;
+	std::string splitPaletteXml = registeredAttributes.at("SplitPalette").value;
+	registeredAttributes.at("ExternalPalette").wasSet
 
 	if (!StringHelper::HasOnlyDigits(widthXml))
 	{
@@ -72,6 +75,38 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 			"value of 'Height' attribute has non-decimal digits: '%s'", heightXml.c_str());
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
 							  errorHeader, "");
+	}
+
+	if (!registeredAttributes.at("ExternalPalette").wasSet &&
+	    registeredAttributes.at("SplitPalette").wasSet)
+	{
+		std::string errorHeader =
+			StringHelper::Sprintf("SplitPalette set without using an external palette");
+		HANDLE_WARNING_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+		                        errorHeader, "");
+	}
+
+	if (!splitPaletteXml.empty())
+	{
+		if (splitPaletteXml == "True")
+		{
+			splitPalette = true;
+		}
+		else if (splitPaletteXml == "False")
+		{
+			splitPalette = false;
+		}
+		else
+		{
+			std::string errorHeader = StringHelper::Sprintf(
+				"Invalid value passed to SplitPalette: '%s'. Valid values are True, False", splitPaletteXml);
+			HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
+			                      errorHeader, "");
+		}
+	}
+	else
+	{
+		splitPalette = false;
 	}
 
 	width = StringHelper::StrToL(widthXml);
@@ -173,17 +208,11 @@ void ZTexture::ParseRawDataLate()
 				{
 					if (res->GetRawDataIndex() == palOffset)
 					{
-//						ZTexture* palTex = (ZTexture*)res;
-//						palTex->isPalette = true;
-//						tlut = palTex;
-
 						tlut = new ZTexture(file);
 						tlut->ExtractFromBinary(palOffset, 16, 8,
 						                        TextureType::RGBA16bpp, true);
-						//parent->AddTextureResource(palOffset, tlut);
 						tlut->DeclareVar("", "");
 						SetTlut(tlut);
-						//PrepareBitmapPalette8_2();
 					}
 				}
 			}
@@ -935,7 +964,7 @@ void ZTexture::SetTlut(ZTexture* nTlut)
 	assert(nTlut->isPalette);
 	tlut = nTlut;
 
-	textureData.SetPalette(tlut->textureData);
+	textureData.SetPalette(tlut->textureData, splitPalette ? 128 : 0);
 }
 
 bool ZTexture::HasTlut() const

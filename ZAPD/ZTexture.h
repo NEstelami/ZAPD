@@ -28,6 +28,7 @@ protected:
 	std::vector<uint8_t> textureDataRaw;  // When reading from a PNG file.
 	uint32_t tlutOffset = static_cast<uint32_t>(-1);
 	ZTexture* tlut = nullptr;
+	bool splitPalette;
 
 	void PrepareBitmapRGBA16();
 	void PrepareBitmapRGBA32();
