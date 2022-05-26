@@ -386,23 +386,6 @@ void ImageBackend::SetIndexedPixel(size_t y, size_t x, uint8_t index, uint8_t gr
 	alphaPalette[index] = 255;
 }
 
-void ImageBackend::SetIndexedPixel(size_t y, size_t x, uint8_t index, RGBAPixel pixel)
-{
-	assert(hasImageData);
-	assert(y < height);
-	assert(x < width);
-
-	size_t bytePerPixel = GetBytesPerPixel();
-	pixelMatrix[y][x * bytePerPixel + 0] = index;
-
-	assert(index < paletteSize);
-	png_color* pal = static_cast<png_color*>(colorPalette);
-	pal[index].red = pixel.r;
-	pal[index].green = pixel.g;
-	pal[index].blue = pixel.b;
-	alphaPalette[index] = 255;
-}
-
 void ImageBackend::SetPaletteIndex(size_t index, uint8_t nR, uint8_t nG, uint8_t nB, uint8_t nA)
 {
 	assert(isColorIndexed);

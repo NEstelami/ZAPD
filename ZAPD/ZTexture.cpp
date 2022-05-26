@@ -17,6 +17,7 @@ ZTexture::ZTexture(ZFile* nParent) : ZResource(nParent)
 	width = 0;
 	height = 0;
 	dWordAligned = true;
+	splitPalette = false;
 
 	RegisterRequiredAttribute("Width");
 	RegisterRequiredAttribute("Height");
@@ -98,14 +99,10 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 		else
 		{
 			std::string errorHeader = StringHelper::Sprintf(
-				"Invalid value passed to SplitPalette: '%s'. Valid values are True, False", splitPaletteXml);
+				"Invalid value passed to SplitPalette: '%s'. Valid values are True, False", splitPaletteXml.c_str());
 			HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
 			                      errorHeader, "");
 		}
-	}
-	else
-	{
-		splitPalette = false;
 	}
 
 	width = StringHelper::StrToL(widthXml);
@@ -215,24 +212,6 @@ void ZTexture::ParseRawDataLate()
 					}
 				}
 			}
-		}
-	}
-}
-
-void ZTexture::PrepareBitmapPalette8_2()
-{
-	textureData.InitEmptyPaletteImage(width, height);
-	auto parentRawData = parent->GetRawData();
-	for (size_t y = 0; y < height; y++)
-	{
-		for (size_t x = 0; x < width; x++)
-		{
-			size_t pos = rawDataIndex + ((y * width) + x) * 1;
-			uint8_t grayscale = parentRawData.at(pos) - 128;
-			RGBAPixel pixel = tlut->textureData.GetPixel(grayscale / 16, grayscale % 16);
-
-
-			textureData.SetIndexedPixel(y,x,pos,pixel);
 		}
 	}
 }
