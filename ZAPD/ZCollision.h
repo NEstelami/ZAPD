@@ -1,10 +1,10 @@
 #pragma once
 
+#include "ZCollisionPoly.h"
 #include "ZFile.h"
 #include "ZResource.h"
 #include "ZRoom/ZRoom.h"
 #include "ZVector.h"
-#include "ZCollisionPoly.h"
 
 #if 0
 class PolygonEntry

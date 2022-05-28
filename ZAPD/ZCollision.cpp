@@ -61,7 +61,7 @@ void ZCollisionHeader::ParseRawData()
 		currentPtr += vec.GetRawDataSize();
 		vertices.push_back(vec);
 	}
-	
+
 	for (uint16_t i = 0; i < numPolygons; i++)
 	{
 		ZCollisionPoly poly(parent);
@@ -158,9 +158,10 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 				declaration += "\n";
 		}
 
-		parent->AddDeclarationArray(
-			polySegmentOffset, DeclarationAlignment::Align4, polygons.size() * 16, polygons[0].GetSourceTypeName().c_str(),
-			StringHelper::Sprintf("%sPolygons", auxName.c_str()), polygons.size(), declaration);
+		parent->AddDeclarationArray(polySegmentOffset, DeclarationAlignment::Align4,
+		                            polygons.size() * 16, polygons[0].GetSourceTypeName().c_str(),
+		                            StringHelper::Sprintf("%sPolygons", auxName.c_str()),
+		                            polygons.size(), declaration);
 	}
 
 	declaration.clear();
