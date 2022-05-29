@@ -88,18 +88,10 @@ void ZTexture::ParseXML(tinyxml2::XMLElement* reader)
 
 	if (!SplitTlutXml.empty())
 	{
-		if (SplitTlutXml == "True")
-		{
-			splitTlut = true;
-		}
-		else if (SplitTlutXml == "False")
-		{
-			splitTlut = false;
-		}
-		else
+		if (!tinyxml2::XMLUtil::ToBool(SplitTlutXml.c_str(), &splitTlut))
 		{
 			std::string errorHeader = StringHelper::Sprintf(
-				"Invalid value passed to SplitTlut: '%s'. Valid values are True, False",
+				"Invalid value passed to SplitTlut: '%s'. Valid values are true, false, 1, 0",
 				SplitTlutXml.c_str());
 			HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
 			                      errorHeader, "");
