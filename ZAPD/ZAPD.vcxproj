@@ -236,11 +236,13 @@ mkdir build\ZAPD
     <ClCompile Include="ZRoom\ZRoom.cpp" />
     <ClCompile Include="ZRoom\ZRoomCommand.cpp" />
     <ClCompile Include="ZString.cpp" />
+    <ClCompile Include="ZSurfaceType.cpp" />
     <ClCompile Include="ZSymbol.cpp" />
     <ClCompile Include="ZTexture.cpp" />
     <ClCompile Include="ZTextureAnimation.cpp" />
     <ClCompile Include="ZVector.cpp" />
     <ClCompile Include="ZVtx.cpp" />
+    <ClCompile Include="ZWaterbox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\lib\elfio\elfio\elfio.hpp" />
@@ -324,11 +326,13 @@ mkdir build\ZAPD
     <ClInclude Include="ZRoom\ZRoom.h" />
     <ClInclude Include="ZRoom\ZRoomCommand.h" />
     <ClInclude Include="ZString.h" />
+    <ClInclude Include="ZSurfaceType.h" />
     <ClInclude Include="ZSymbol.h" />
     <ClInclude Include="ZTexture.h" />
     <ClInclude Include="ZTextureAnimation.h" />
     <ClInclude Include="ZVector.h" />
     <ClInclude Include="ZVtx.h" />
+    <ClInclude Include="ZWaterbox.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\SymbolMap_OoTMqDbg.txt">

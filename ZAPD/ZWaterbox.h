@@ -3,16 +3,19 @@
 #include "ZFile.h"
 #include "ZResource.h"
 
-class ZCollisionPoly : public ZResource
+class ZWaterbox : public ZResource
 {
 public:
-	uint16_t type;
-	uint16_t vtxA, vtxB, vtxC;
-	uint16_t normX, normY, normZ;
-	uint16_t dist;
+	int16_t xMin;
+	int16_t ySurface;
+	int16_t zMin;
+	int16_t xLength;
+	int16_t zLength;
+	int16_t pad;
+	int32_t properties;
 
-	ZCollisionPoly(ZFile* nParent);
-	~ZCollisionPoly();
+	ZWaterbox(ZFile* nParent);
+	~ZWaterbox();
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

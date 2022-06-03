@@ -46,10 +46,12 @@ enum class ZResourceType
 	Scene,
 	Skeleton,
 	String,
+	SurfaceType,
 	Symbol,
 	Texture,
 	TextureAnimation,
 	TextureAnimationParams,
+	Waterbox,
 	Vector,
 	Vertex,
 };

@@ -59,7 +59,10 @@ void ExporterExample_Collision::Save(ZResource* res, [[maybe_unused]] fs::path o
 	writer->Seek(col->polyTypeDefSegmentOffset, SeekOffsetType::Start);
 
 	for (uint16_t i = 0; i < col->polygonTypes.size(); i++)
-		writer->Write(col->polygonTypes[i]);
+	{
+		writer->Write(col->polygonTypes[i].data[0]);
+		writer->Write(col->polygonTypes[i].data[1]);
+	}
 
 	writer->Seek(col->camDataSegmentOffset, SeekOffsetType::Start);
 

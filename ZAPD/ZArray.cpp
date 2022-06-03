@@ -107,6 +107,8 @@ std::string ZArray::GetBodySourceCode() const
 		case ZResourceType::Scalar:
 		case ZResourceType::Vertex:
 		case ZResourceType::CollisionPoly:
+		case ZResourceType::SurfaceType:
+		case ZResourceType::Waterbox:
 			output += resList.at(i)->GetBodySourceCode();
 			break;
 

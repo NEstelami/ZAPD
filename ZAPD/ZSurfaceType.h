@@ -1,18 +1,16 @@
 #pragma once
 
+#include <array>
 #include "ZFile.h"
 #include "ZResource.h"
 
-class ZCollisionPoly : public ZResource
+class ZSurfaceType : public ZResource
 {
 public:
-	uint16_t type;
-	uint16_t vtxA, vtxB, vtxC;
-	uint16_t normX, normY, normZ;
-	uint16_t dist;
+	std::array<uint32_t, 2> data;
 
-	ZCollisionPoly(ZFile* nParent);
-	~ZCollisionPoly();
+	ZSurfaceType(ZFile* nParent);
+	~ZSurfaceType();
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
