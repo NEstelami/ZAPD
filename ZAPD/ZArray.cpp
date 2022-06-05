@@ -109,6 +109,7 @@ std::string ZArray::GetBodySourceCode() const
 		case ZResourceType::CollisionPoly:
 		case ZResourceType::SurfaceType:
 		case ZResourceType::Waterbox:
+		case ZResourceType::CamData:
 			output += resList.at(i)->GetBodySourceCode();
 			break;
 
@@ -127,7 +128,7 @@ std::string ZArray::GetBodySourceCode() const
 size_t ZArray::GetRawDataSize() const
 {
 	size_t size = 0;
-	for (auto res : resList)
+	for (const auto& res : resList)
 		size += res->GetRawDataSize();
 	return size;
 }

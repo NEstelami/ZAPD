@@ -4,7 +4,7 @@ void ExporterExample_Collision::Save(ZResource* res, [[maybe_unused]] fs::path o
                                      BinaryWriter* writer)
 {
 	ZCollisionHeader* col = (ZCollisionHeader*)res;
-
+	#if 0
 	writer->Write(col->absMinX);
 	writer->Write(col->absMinY);
 	writer->Write(col->absMinZ);
@@ -74,4 +74,5 @@ void ExporterExample_Collision::Save(ZResource* res, [[maybe_unused]] fs::path o
 	}
 
 	writer->Seek(oldOffset, SeekOffsetType::Start);
+	#endif
 }

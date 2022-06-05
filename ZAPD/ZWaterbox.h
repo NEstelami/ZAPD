@@ -11,7 +11,6 @@ public:
 	int16_t zMin;
 	int16_t xLength;
 	int16_t zLength;
-	int16_t pad;
 	int32_t properties;
 
 	ZWaterbox(ZFile* nParent);

@@ -4,27 +4,12 @@
 #include "ZFile.h"
 #include "ZResource.h"
 #include "ZRoom/ZRoom.h"
+#include "ZCamData.h"
 #include "ZSurfaceType.h"
 #include "ZWaterbox.h"
 #include "ZVector.h"
 
-class WaterBoxHeader
-{
-public:
-	WaterBoxHeader(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex);
-
-	std::string GetBodySourceCode() const;
-
-protected:
-	int16_t xMin;
-	int16_t ySurface;
-	int16_t zMin;
-	int16_t xLength;
-	int16_t zLength;
-	int16_t pad;
-	int32_t properties;
-};
-
+#if 0
 class CameraPositionData
 {
 public:
@@ -51,6 +36,7 @@ public:
 	               offset_t rawDataIndex, offset_t upperCameraBoundary);
 	~CameraDataList();
 };
+#endif
 
 class ZCollisionHeader : public ZResource
 {
@@ -63,18 +49,20 @@ public:
 	segptr_t polyAddress;
 	segptr_t polyTypeDefAddress;
 	segptr_t camDataAddress;
+	offset_t upperCameraBoundary;
 
 	int32_t numWaterBoxes;
 	segptr_t waterBoxAddress;
 
-	uint32_t vtxSegmentOffset, polySegmentOffset, polyTypeDefSegmentOffset, camDataSegmentOffset,
+	offset_t vtxSegmentOffset, polySegmentOffset, polyTypeDefSegmentOffset, camDataSegmentOffset,
 		waterBoxSegmentOffset;
 
 	std::vector<ZVector> vertices;
 	std::vector<ZCollisionPoly> polygons;
 	std::vector<ZSurfaceType> polygonTypes;
 	std::vector<ZWaterbox> waterBoxes;
-	CameraDataList* camData = nullptr;
+	std::vector<ZCamData> camData;
+	//CameraDataList* camData = nullptr;
 
 	ZCollisionHeader(ZFile* nParent);
 	~ZCollisionHeader();

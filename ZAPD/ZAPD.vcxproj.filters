@@ -294,6 +294,9 @@
     <ClCompile Include="ZWaterbox.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
+    <ClCompile Include="ZCamData.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZRoom\ZRoom.h">
@@ -558,6 +561,9 @@
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
     <ClInclude Include="ZWaterbox.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCamData.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>
