@@ -10,37 +10,55 @@ REGISTER_ZFILENODE(CamData, ZCamData);
 ZCamData::ZCamData(ZFile* nParent) : ZResource(nParent)
 {
 	collisionParent = nullptr;
+	RegisterRequiredAttribute("Count");
 }
 
-ZCamData::ZCamData(ZFile* nParent, ZCollisionHeader* collisionParent)
+ZCamData::ZCamData(ZFile* nParent, ZCollisionHeader* collisionParent, size_t numElements)
 	: ZResource(nParent), collisionParent(collisionParent)
 {
+	count = numElements;
 }
 
 ZCamData::~ZCamData()
 {
 }
 
+void ZCamData::ParseXML(tinyxml2::XMLElement* reader)
+{
+	ZResource::ParseXML(reader);
+	count = reader->IntAttribute("Count", 0);
+}
+
 void ZCamData::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 
-	cameraSType = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
-	numCameras = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	camDataList = BitConverter::ToUInt32BE(rawData, rawDataIndex + 4);
+	dataList.reserve(count);
 
-	segptr_t camDataListPtr = GETSEGOFFSET(camDataList);
-	if (camDataListPtr == SEGMENTED_NULL)
+	for (size_t i = 0; i < count; i++)
 	{
-		return;
-	}
-	for (size_t i = 0; i < numCameras; i++)
-	{
-		Vec3s entry;
-		entry.x = BitConverter::ToUInt16BE(rawData, camDataListPtr + ((i* 6) + 0));
-		entry.y = BitConverter::ToUInt16BE(rawData, camDataListPtr + ((i* 6) + 2));
-		entry.z = BitConverter::ToUInt16BE(rawData, camDataListPtr + ((i* 6) + 4));
-		camPosData.push_back(entry);
+		CamDataList element;
+		element.cameraSType = BitConverter::ToUInt16BE(rawData, (rawDataIndex + 0) + (i * 8));
+		element.numCameras = BitConverter::ToUInt16BE(rawData, (rawDataIndex + 2) + (i * 8));
+		element.camDataListPtr = BitConverter::ToUInt32BE(rawData, (rawDataIndex + 4) + (i * 8));
+		dataList.push_back(element);
+
+		totalCamPoints += element.numCameras;
+
+		segptr_t camDataListPtr = GETSEGOFFSET(element.camDataListPtr);
+
+		if (camDataListPtr == SEGMENTED_NULL)
+		{
+			continue;
+		}
+		for (size_t i = 0; i < element.numCameras; i++)
+		{
+			Vec3s entry;
+			entry.x = BitConverter::ToUInt16BE(rawData, camDataListPtr + ((i * 6) + 0));
+			entry.y = BitConverter::ToUInt16BE(rawData, camDataListPtr + ((i * 6) + 2));
+			entry.z = BitConverter::ToUInt16BE(rawData, camDataListPtr + ((i * 6) + 4));
+			camPosData.push_back(entry);
+		}
 	}
 }
 
@@ -54,53 +72,72 @@ void ZCamData::DeclareReferences(const std::string& prefix)
 	if (name == "")
 		name = GetDefaultName(prefix);
 
-	//parent->AddDeclaration(rawDataIndex, DeclarationAlignment::Align4, GetRawDataSize(),
-	//                       GetSourceTypeName(), name.c_str(), GetBodySourceCode());
 	if (collisionParent != nullptr)
 	{
-		name = StringHelper::Sprintf("%s%s", collisionParent->GetName().c_str(),
-		                          "CamData");
-		arrayName =
-			StringHelper::Sprintf("%sCamDataPos_0x%06X", collisionParent->GetName().c_str(), GETSEGOFFSET(camDataList));
-
-	} 
-
-	if (camDataList == SEGMENTED_NULL)
-	{
-		return;
+		name = StringHelper::Sprintf("%s%s", collisionParent->GetName().c_str(), "CamData");
+		arrayName = StringHelper::Sprintf("%sCamDataPos_0x%06X", collisionParent->GetName().c_str(),
+		                                  GETSEGOFFSET(dataList[0].camDataListPtr));
 	}
-
-	for (const auto& data : camPosData)
+	else
 	{
-		declaration += StringHelper::Sprintf("\t{%i, %i, %i},\n", data.x, data.y, data.z);
+		arrayName = name;  // GetDefaultName(prefix);
 	}
+	if (totalCamPoints != 0)
+	{
+		for (const auto& data : camPosData)
+		{
+			declaration += StringHelper::Sprintf("\t{%i, %i, %i},\n", data.x, data.y, data.z);
+		}
 
-	
-
-	//enrui_sceneCollisionHeader_0003B4CamPosData
-	parent->AddDeclarationArray(GETSEGOFFSET(camDataList), DeclarationAlignment::Align4, numCameras * 6, "Vec3s", arrayName.c_str(), numCameras,
-	                            declaration);
+		// enrui_sceneCollisionHeader_0003B4CamPosData
+		parent->AddDeclarationArray(GETSEGOFFSET(dataList[0].camDataListPtr),
+		                            DeclarationAlignment::Align4, totalCamPoints * 6, "Vec3s",
+		                            arrayName.c_str(), totalCamPoints, declaration);
+	}
 }
 
 std::string ZCamData::GetBodySourceCode() const
 {
 	std::string camPosDataString;
+	std::string body;
 
-	if (camDataList == SEGMENTED_NULL)
+	for (const auto& element : dataList)
 	{
-		camPosDataString = "NULL";
-	}
-	else
-	{
-		Globals::Instance->GetSegmentedPtrName(camDataList, parent, "Vec3s", camPosDataString);
-	}
+		if (element.camDataListPtr == SEGMENTED_NULL)
+		{
+			camPosDataString = "NULL";
+		}
+		else
+		{
+			if (collisionParent != nullptr)
+			{
+				camPosDataString = StringHelper::Sprintf(
+					"&%sCamDataPos_0x%06X[%i]", collisionParent->GetName().c_str(),
+					GETSEGOFFSET(dataList[0].camDataListPtr),
+					((element.camDataListPtr) - (dataList[0].camDataListPtr)) / 0x6);
+			}
+			else
+			{
+				std::string temp;
 
-	return StringHelper::Sprintf("{0x%04X, %i, %s}", cameraSType, numCameras, camPosDataString.c_str());
+				Globals::Instance->GetSegmentedPtrName(dataList[0].camDataListPtr, parent, "Vec3s",
+				                                       temp);
+
+				camPosDataString = StringHelper::Sprintf(
+					"&%s[%i]", temp.c_str(),
+					((element.camDataListPtr) - (dataList[0].camDataListPtr)) / 0x06);
+			}
+		}
+
+		body += StringHelper::Sprintf("{0x%04X, %i, %s},", element.cameraSType, element.numCameras,
+		                              camPosDataString.c_str());
+	}
+	return body;
 }
 
 std::string ZCamData::GetDefaultName(const std::string& prefix) const
 {
-	return StringHelper::Sprintf("%sCamData_%_06X", prefix.c_str(), rawDataIndex);
+	return StringHelper::Sprintf("%sCamData_%06X", prefix.c_str(), rawDataIndex);
 }
 
 ZResourceType ZCamData::GetResourceType() const
@@ -110,7 +147,7 @@ ZResourceType ZCamData::GetResourceType() const
 
 size_t ZCamData::GetRawDataSize() const
 {
-	return 8;
+	return 8 * count;
 }
 
 std::string ZCamData::GetSourceTypeName() const
@@ -120,5 +157,5 @@ std::string ZCamData::GetSourceTypeName() const
 
 bool ZCamData::DoesSupportArray() const
 {
-	return true;
+	return false;
 }
