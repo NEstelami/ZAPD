@@ -155,6 +155,9 @@ u64 gCraterSmokeConeTex[] = {
   - `Width`: Required. Width in pixels of the image.
   - `Height`: Required. Height in pixels of the image.
   - `TlutOffset`: Optional. Specifies the tlut's offset used by this texture. This attribute is only valid if `Format` is either `ci4` or `ci8`, otherwise an exception would be thrown.
+  - `ExternalTlut`: Optional. Specifies that the texture's tlut is in a different file. Takes the filename of the file that contains the tlut.
+  - `ExternalTlutOffset`: Optional. Specifies the offset in the `ExternalTlut` of the tlut for the given texture.
+  - `SplitTlut`: Optional. Specifies that the given texture should take from the upper half of the tlut. Takes a bool, i.e. one of `true`, `false`, `1`, `0`.
 
 The following is a list of the texture formats the Nintendo 64 supports, with their gfxdis names and ZAPD format names.
 
