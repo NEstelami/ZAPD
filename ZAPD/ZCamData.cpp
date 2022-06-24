@@ -43,7 +43,7 @@ void ZCamData::ParseRawData()
 		element.camDataListPtr = BitConverter::ToUInt32BE(rawData, (rawDataIndex + 4) + (i * 8));
 		dataList.push_back(element);
 
-		totalCamPoints += element.numCameras;
+		//totalCamPoints += element.numCameras;
 
 		segptr_t camDataListPtr = GETSEGOFFSET(element.camDataListPtr);
 
@@ -59,6 +59,13 @@ void ZCamData::ParseRawData()
 			entry.z = BitConverter::ToUInt16BE(rawData, camDataListPtr + ((i * 6) + 4));
 			camPosData.push_back(entry);
 		}
+	}
+	if (count != 0)
+	{	//Get the total number of cam points not including the last cam and then add the final number of points
+
+		totalCamPoints =
+			((dataList.back().camDataListPtr - dataList.front().camDataListPtr) / 0x06) +
+			dataList.back().numCameras;
 	}
 }
 
