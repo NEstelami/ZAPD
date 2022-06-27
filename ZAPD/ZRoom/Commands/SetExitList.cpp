@@ -23,10 +23,11 @@ void SetExitList::DeclareReferences([[maybe_unused]] const std::string& prefix)
 void SetExitList::ParseRawDataLate()
 {
 	// Parse Entrances and Generate Declaration
-	int numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
+	uint32_t numEntrances = zRoom->GetDeclarationSizeFromNeighbor(segmentOffset) / 2;
 	uint32_t currentPtr = segmentOffset;
 
-	for (int32_t i = 0; i < numEntrances; i++)
+	exits.reserve(numEntrances);
+	for (uint32_t i = 0; i < numEntrances; i++)
 	{
 		uint16_t exit = BitConverter::ToUInt16BE(parent->GetRawData(), currentPtr);
 		exits.push_back(exit);

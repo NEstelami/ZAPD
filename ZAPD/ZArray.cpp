@@ -43,6 +43,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 
 	auto nodeMap = ZFile::GetNodeMap();
 	size_t childIndex = rawDataIndex;
+	resList.reserve(arrayCnt);
 	for (size_t i = 0; i < arrayCnt; i++)
 	{
 		ZResource* res = nodeMap->at(childName)(parent);

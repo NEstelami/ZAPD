@@ -34,6 +34,7 @@ void SetActorList::ParseRawDataLate()
 
 	uint32_t currentPtr = segmentOffset;
 
+	actors.reserve(actorsAmount);
 	for (size_t i = 0; i < actorsAmount; i++)
 	{
 		ActorSpawnEntry entry(parent->GetRawData(), currentPtr);

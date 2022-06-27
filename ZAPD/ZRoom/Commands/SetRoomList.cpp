@@ -69,6 +69,7 @@ void RomFile::ParseRawData()
 
 	uint32_t currentPtr = rawDataIndex;
 
+	rooms.reserve(numRooms);
 	for (int32_t i = 0; i < numRooms; i++)
 	{
 		RoomEntry entry(parent->GetRawData(), currentPtr);
