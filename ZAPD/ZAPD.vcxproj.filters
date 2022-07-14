@@ -288,6 +288,9 @@
     <ClCompile Include="OtherStructs\CutsceneMM_Commands.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
+    <ClCompile Include="CrashHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZRoom\ZRoom.h">
@@ -547,6 +550,9 @@
     </ClInclude>
     <ClInclude Include="OtherStructs\CutsceneMM_Commands.h">
       <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="CrashHandler.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
