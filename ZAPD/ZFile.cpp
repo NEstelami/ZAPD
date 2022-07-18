@@ -98,6 +98,14 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 	if (outNameXml != nullptr)
 		outName = outNameXml;
 
+	const char* customHeaderGuard = reader->Attribute("CustomGuard");
+
+	if (customHeaderGuard != nullptr)
+	{
+		useCustomHeaderGuard = true;
+		customGuard = customHeaderGuard;
+	}
+
 	// TODO: This should be a variable on the ZFile, but it is a large change in order to force all
 	// ZResource types to have a parent ZFile.
 	const char* gameStr = reader->Attribute("Game");
@@ -778,8 +786,13 @@ void ZFile::GenerateSourceHeaderFiles()
 
 	std::string objectNameUpper = StringHelper::ToUpper(GetName());
 
-	formatter.Write(StringHelper::Sprintf("#ifndef %s_H\n#define %s_H 1\n\n",
+	if (!useCustomHeaderGuard)
+		formatter.Write(StringHelper::Sprintf("#ifndef %s_H\n#define %s_H 1\n\n",
 	                                      objectNameUpper.c_str(), objectNameUpper.c_str()));
+	else
+		formatter.Write(StringHelper::Sprintf("#ifndef %s_H\n#define %s_H 1\n\n",
+		                                      customGuard.c_str(), customGuard.c_str()));
+
 
 	for (ZResource* res : resources)
 	{
