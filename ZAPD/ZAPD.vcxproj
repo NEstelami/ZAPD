@@ -119,6 +119,7 @@ mkdir build\ZAPD
       <Profile>true</Profile>
       <AdditionalDependencies>ZAPDUtils.lib;/WHOLEARCHIVE:ExporterExample.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
       <Command>cd ..
