@@ -33,7 +33,6 @@ public:
 	std::map<offset_t, Declaration*> declarations;
 	std::vector<ZResource*> resources;
 	std::string defines;
-	std::string customGuard;
 
 	// Default to using virtual addresses
 	uint32_t segment = 0x80;
