@@ -38,7 +38,6 @@ public:
 	uint32_t segment = 0x80;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 	bool isExternalFile = false;
-	bool useCustomHeaderGuard = false;
 
 	ZFile(const fs::path& nOutPath, const std::string& nName);
 	ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
