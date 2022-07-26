@@ -1,7 +1,8 @@
 #include "CrashHandler.h"
 #include "Utils/StringHelper.h"
 
-#if defined(__linux__)
+
+#if HAS_POSIX == 1
 void ErrorHandler(int sig)
 {
 	std::array<void*, 4096> arr;
