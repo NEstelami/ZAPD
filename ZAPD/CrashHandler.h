@@ -1,10 +1,17 @@
+#if __has_include(<unistd.h>)
+#define HAS_POSIX 1
+#else
+#define HAS_POSIX 0
+#endif
+
+
 #include <array>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
 
-#if defined(__linux__)
+#if HAS_POSIX == 1
 #include <cxxabi.h>  // for __cxa_demangle
 #include <dlfcn.h>   // for dladdr
 #include <execinfo.h>
