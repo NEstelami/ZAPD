@@ -1,3 +1,5 @@
+#ifndef CRASH_HANDLER_H
+#define CRASH_HANDLER_H
 #if __has_include(<unistd.h>)
 #define HAS_POSIX 1
 #else
@@ -6,12 +8,12 @@
 
 
 #include <array>
-#include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
 
 #if HAS_POSIX == 1
+#include <csignal>
 #include <cxxabi.h>  // for __cxa_demangle
 #include <dlfcn.h>   // for dladdr
 #include <execinfo.h>
@@ -25,4 +27,6 @@ void ErrorHandler(int sig);
 LONG seh_filter(_EXCEPTION_POINTERS* ex);
 
 #pragma comment(lib, "Dbghelp.lib")
+#endif
+
 #endif
