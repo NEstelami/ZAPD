@@ -70,8 +70,10 @@ pipeline {
 
         // INSTALL PYTHON DEPENDENCIES, currently MM only
         stage('Install Python dependencies') {
-            dir('mm') {
-                sh 'python3 -m pip install -r requirements.txt'
+            steps {
+                dir('mm') {
+                    sh 'python3 -m pip install -r requirements.txt'
+                }
             }
         }
 
