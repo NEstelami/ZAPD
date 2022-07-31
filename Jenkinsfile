@@ -68,6 +68,13 @@ pipeline {
             }
         }
 
+        // INSTALL PYTHON DEPENDENCIES, currently MM only
+        stage('Install Python dependencies') {
+            dir('mm') {
+                sh 'python3 -m pip install -r requirements.txt'
+            }
+        }
+
         // BUILD THE REPOS
         stage('Build repos') {
             parallel {
