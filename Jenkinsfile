@@ -91,7 +91,7 @@ pipeline {
                     steps {
                         dir('mm') {
                             sh 'make -j disasm'
-                            sh 'make -j all'
+                            sh 'make -j'
                         }
                     }
                 }
