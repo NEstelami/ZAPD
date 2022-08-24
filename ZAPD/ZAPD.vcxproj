@@ -189,7 +189,6 @@ mkdir build\ZAPD
     <ClCompile Include="OtherStructs\Cutscene_Commands.cpp" />
     <ClCompile Include="OtherStructs\SkinLimbStructs.cpp" />
     <ClCompile Include="OutputFormatter.cpp" />
-    <ClCompile Include="Overlays\ZOverlay.cpp" />
     <ClCompile Include="WarningHandler.cpp" />
     <ClCompile Include="ZArray.cpp" />
     <ClCompile Include="ZBackground.cpp" />
@@ -279,7 +278,6 @@ mkdir build\ZAPD
     <ClInclude Include="OtherStructs\Cutscene_Commands.h" />
     <ClInclude Include="OtherStructs\SkinLimbStructs.h" />
     <ClInclude Include="OutputFormatter.h" />
-    <ClInclude Include="Overlays\ZOverlay.h" />
     <ClInclude Include="WarningHandler.h" />
     <ClInclude Include="ZAnimation.h" />
     <ClInclude Include="ZArray.h" />
