@@ -55,7 +55,7 @@ pipeline {
                     steps {
                         dir('mm') {
                             sh 'cp /usr/local/etc/roms/mm.us.rev1.z64 baserom.mm.us.rev1.z64'
-
+                            sh 'python3 -m pip install -r requirements.txt'
                             // Identical to `make setup` except for copying our newer ZAPD.out into mm
                             sh 'make -C tools'
                             sh 'cp ../ZAPD.out tools/ZAPD/'
