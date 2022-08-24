@@ -777,10 +777,10 @@ void ZFile::GenerateSourceHeaderFiles()
 {
 	OutputFormatter formatter;
 
-	std::string objectNameUpper = StringHelper::ToUpper(GetName());
+	std::string guard = StringHelper::ToUpper(outName.stem().string());
 
-	formatter.Write(StringHelper::Sprintf("#ifndef %s_H\n#define %s_H 1\n\n",
-	                                      objectNameUpper.c_str(), objectNameUpper.c_str()));
+	formatter.Write(
+		StringHelper::Sprintf("#ifndef %s_H\n#define %s_H 1\n\n", guard.c_str(), guard.c_str()));
 
 	for (ZResource* res : resources)
 	{
