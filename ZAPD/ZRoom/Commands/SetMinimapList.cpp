@@ -15,7 +15,7 @@ void SetMinimapList::ParseRawData()
 	ZRoomCommand::ParseRawData();
 	listSegmentAddr = BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset);
 	listSegmentOffset = GETSEGOFFSET(listSegmentAddr);
-	unk4 = BitConverter::ToInt32BE(parent->GetRawData(), segmentOffset + 4);
+	unk4 = BitConverter::ToInt16BE(parent->GetRawData(), segmentOffset + 4);
 
 	uint32_t currentPtr = listSegmentOffset;
 
