@@ -11,12 +11,6 @@ SetActorList::SetActorList(ZFile* nParent) : ZRoomCommand(nParent)
 {
 }
 
-SetActorList::~SetActorList()
-{
-	if (actorList != nullptr)
-		delete actorList;
-}
-
 void SetActorList::ParseRawData()
 {
 	ZRoomCommand::ParseRawData();

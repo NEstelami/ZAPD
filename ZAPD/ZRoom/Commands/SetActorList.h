@@ -10,7 +10,6 @@ public:
 	ZActorList* actorList = nullptr;
 
 	SetActorList(ZFile* nParent);
-	~SetActorList();
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
