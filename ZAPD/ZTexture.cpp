@@ -227,7 +227,8 @@ void ZTexture::PrepareBitmapRGBA16()
 			uint8_t b = (data & 0x003E) >> 1;
 			uint8_t alpha = data & 0x01;
 
-			textureData.SetRGBPixel(y, x, r * 8, g * 8, b * 8, alpha * 255);
+			textureData.SetRGBPixel(y, x, (r << 3) | (r >> 2), (g << 3) | (g >> 2), (b << 3) | (b >> 2),
+			                        alpha * 255);
 		}
 	}
 }
@@ -269,7 +270,7 @@ void ZTexture::PrepareBitmapGrayscale4()
 				else
 					grayscale = (parentRawData.at(pos) & 0x0F) << 4;
 
-				textureData.SetGrayscalePixel(y, x + i, grayscale);
+				textureData.SetGrayscalePixel(y, x + i, (grayscale << 4) | grayscale);
 			}
 		}
 	}
