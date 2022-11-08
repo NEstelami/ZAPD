@@ -308,8 +308,9 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 				else
 					data = parentRawData.at(pos) & 0x0F;
 
-				uint8_t grayscale = ((data & 0x0E) >> 1) * 32;
-				uint8_t alpha = (data & 0x01) * 255;
+				uint8_t grayscale = data & 0b1110;
+				grayscale = (grayscale << 4) | (grayscale << 1) | (grayscale >> 2); 
+				uint8_t alpha = (data & 0x01) ? 255 : 0;
 
 				textureData.SetGrayscalePixel(y, x + i, grayscale, alpha);
 			}
@@ -326,8 +327,13 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 		for (size_t x = 0; x < width; x++)
 		{
 			size_t pos = rawDataIndex + ((y * width) + x) * 1;
-			uint8_t grayscale = parentRawData.at(pos) & 0xF0;
-			uint8_t alpha = (parentRawData.at(pos) & 0x0F) << 4;
+			uint8_t pixel = parentRawData.at(pos);
+			uint8_t data = (pixel >> 4) & 0xF;
+
+			data = (data << 4) | data;
+			uint8_t grayscale = data;
+			uint8_t alpha = (pixel & 0xF);
+			alpha = (alpha << 4) | alpha;
 
 			textureData.SetGrayscalePixel(y, x, grayscale, alpha);
 		}
@@ -469,13 +475,13 @@ void ZTexture::PrepareRawDataRGBA16()
 			size_t pos = ((y * width) + x) * 2;
 			RGBAPixel pixel = textureData.GetPixel(y, x);
 
-			uint8_t r = pixel.r / 8;
-			uint8_t g = pixel.g / 8;
-			uint8_t b = pixel.b / 8;
+			uint8_t r = pixel.r >> 3;
+			uint8_t g = pixel.g >> 3;
+			uint8_t b = pixel.b >> 3;
 
 			uint8_t alphaBit = pixel.a != 0;
 
-			uint16_t data = (r << 11) + (g << 6) + (b << 1) + alphaBit;
+			uint16_t data = (r << 11) | (g << 6) | (b << 1) | alphaBit;
 
 			textureDataRaw[pos + 0] = (data & 0xFF00) >> 8;
 			textureDataRaw[pos + 1] = (data & 0x00FF);
@@ -544,9 +550,9 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4()
 				uint8_t alphaBit = pixel.a != 0;
 
 				if (i == 0)
-					data |= (((cR / 32) << 1) + alphaBit) << 4;
+					data = (((cR >> 5) << 1) | alphaBit) << 4;
 				else
-					data |= ((cR / 32) << 1) + alphaBit;
+					data |= ((cR >> 5) << 1) | alphaBit;
 			}
 
 			textureDataRaw[pos] = data;
@@ -563,10 +569,10 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8()
 			size_t pos = ((y * width) + x) * 1;
 			RGBAPixel pixel = textureData.GetPixel(y, x);
 
-			uint8_t r = pixel.r;
-			uint8_t a = pixel.a;
+			uint8_t r = (pixel.r >> 4) &0xF;
+			uint8_t a = (pixel.a >> 4) &0xF;
 
-			textureDataRaw[pos] = ((r / 16) << 4) + (a / 16);
+			textureDataRaw[pos] = (r << 4) | a;
 		}
 	}
 }
