@@ -24,7 +24,7 @@ void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
 
 extern const char gBuildHash[];
 
-int Main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	// Syntax: ZAPD.out [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
 
@@ -116,14 +116,7 @@ int Main(int argc, char* argv[])
 		}
 		else if (arg == "-eh")  // Enable Error Handler
 		{
-#if HAS_POSIX == 1
-			signal(SIGSEGV, ErrorHandler);
-			signal(SIGABRT, ErrorHandler);
-#elif !defined(_MSC_VER)
-			HANDLE_WARNING(WarningType::Always,
-			               "tried to set error handler, but this ZAPD build lacks support for one",
-			               "");
-#endif
+			CrashHandler_Init();
 		}
 		else if (arg == "-v")  // Verbose
 		{
@@ -244,23 +237,6 @@ int Main(int argc, char* argv[])
 
 	delete g;
 	return 0;
-}
-
-// Windows doesn't make it easy to get a stack trace from just a signal. So we need to do this messy
-// stuff for just windows.
-int main(int argc, char* argv[])
-{
-#ifdef _MSC_VER
-	__try
-	{
-		return Main(argc, argv);
-	}
-	__except (seh_filter(GetExceptionInformation()))
-	{
-	}
-#else
-	return Main(argc, argv);
-#endif
 }
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
