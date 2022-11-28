@@ -50,19 +50,12 @@ public:
 		if (ZNames::GetNumEntrances() == 0 || ZNames::GetNumSpecialEntrances() == 0)
 			return StringHelper::Sprintf("0x%04X", id);	
 			
-		switch (Globals::Instance->game)
-		{
-		case ZGame::OOT_RETAIL:
-		{
-			if (id < ZNames::GetNumEntrances())
-				return Globals::Instance->cfg.entranceList[id];
-			else if (id >= 0x7FF9 && id <= 0x7FFF)  // Special entrances
-				return Globals::Instance->cfg.specialEntranceList[id - 0x7FF9];
-			else
-				return StringHelper::Sprintf("0x%04X", id);
-			break;
-		}
-		}
+		if (id < ZNames::GetNumEntrances())
+			return Globals::Instance->cfg.entranceList[id];
+		else if (id >= 0x7FF9 && id <= 0x7FFF)  // Special entrances
+			return Globals::Instance->cfg.specialEntranceList[id - 0x7FF9];
+		else
+			return StringHelper::Sprintf("0x%04X", id);
 	}
 
 	static int32_t GetNumActors() { return Globals::Instance->cfg.actorList.size(); }
