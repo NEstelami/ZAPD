@@ -12,7 +12,7 @@ public:
 	{
 		if (id >= Globals::Instance->cfg.objectList.size())
 			return StringHelper::Sprintf("0x%04X", id);
-		return Globals::Instance->cfg.objectList.at(id);
+		return Globals::Instance->cfg.objectList[id];
 	}
 
 	static std::string GetActorName(int32_t id)
@@ -22,7 +22,7 @@ public:
 		case ZGame::OOT_RETAIL:
 		case ZGame::OOT_SW97:
 			if (id < ZNames::GetNumActors())
-				return Globals::Instance->cfg.actorList.at(id);
+				return Globals::Instance->cfg.actorList[id];
 			else
 				return StringHelper::Sprintf("0x%04X", id);
 		case ZGame::MM_RETAIL:
@@ -31,7 +31,7 @@ public:
 			id &= 0xFFF;
 			std::string name;
 			if (id < ZNames::GetNumActors())
-				name = Globals::Instance->cfg.actorList.at(id);
+				name = Globals::Instance->cfg.actorList[id];
 			else
 				name = StringHelper::Sprintf("0x%04X", id);
 
@@ -45,5 +45,30 @@ public:
 		return "";
 	}
 
+	static std::string GetEntranceName(uint16_t id)
+	{
+		if (ZNames::GetNumEntrances() == 0 || ZNames::GetNumSpecialEntrances() == 0)
+			return StringHelper::Sprintf("0x%04X", id);	
+			
+		switch (Globals::Instance->game)
+		{
+		case ZGame::OOT_RETAIL:
+		{
+			if (id < ZNames::GetNumEntrances())
+				return Globals::Instance->cfg.entranceList[id];
+			else if (id >= 0x7FF9 && id <= 0x7FFF)  // Special entrances
+				return Globals::Instance->cfg.specialEntranceList[id - 0x7FF9];
+			else
+				return StringHelper::Sprintf("0x%04X", id);
+			break;
+		}
+		}
+	}
+
 	static int32_t GetNumActors() { return Globals::Instance->cfg.actorList.size(); }
+	static size_t GetNumEntrances() { return Globals::Instance->cfg.entranceList.size(); }
+	static size_t GetNumSpecialEntrances()
+	{
+		return Globals::Instance->cfg.specialEntranceList.size();
+	}
 };
