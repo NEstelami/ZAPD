@@ -27,28 +27,27 @@
 #pragma comment(lib, "Dbghelp.lib")
 #endif
 
-
 // Feel free to add more crash messages.
 static std::array<const char* const, 14> crashEasterEgg = {
 	"\tYou've met with a terrible fate, haven't you?",
 	"\tSEA BEARS FOAM. SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY: CRASSSH!",
 	"\tZAPD has fallen and cannot get up.",
 	"\tIT'S A SECRET TO EVERYBODY. \n\tBut it shouldn't be, you'd better ask about it!",
-    "\tI AM ERROR.",
-    "\tGRUMBLE,GRUMBLE...",
-    "\tDODONGO DISLIKES SMOKE \n\tAnd ZAPD dislikes whatever you fed it.",
-    "\tMay the way of the Hero lead \n\tto the debugger.",
-    "\tTHE WIND FISH SLUMBERS LONG... \n\tTHE HERO'S LIFE GONE... ",
-    "\tSEA BEARS FOAM, SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY CRASSSH!",
-    "\tYou've met with a terrible fate, haven't you?",
-    "\tMaster, I calculate a 100% probability that ZAPD has crashed. \n\tAdditionally, the "
-    "batteries in your Wii Remote are nearly depleted.",
-    "\t    CONGRATURATIONS!    \n"
-    "\tAll Pages are displayed.\n"
-    "\t       THANK YOU!       \n"
-    "\t You are great debugger!",
-    "\tRCP is HUNG UP!!\n"
-    "\tOh! MY GOD!!",
+	"\tI AM ERROR.",
+	"\tGRUMBLE,GRUMBLE...",
+	"\tDODONGO DISLIKES SMOKE \n\tAnd ZAPD dislikes whatever you fed it.",
+	"\tMay the way of the Hero lead \n\tto the debugger.",
+	"\tTHE WIND FISH SLUMBERS LONG... \n\tTHE HERO'S LIFE GONE... ",
+	"\tSEA BEARS FOAM, SLEEP BEARS DREAMS. \n\tBOTH END IN THE SAME WAY CRASSSH!",
+	"\tYou've met with a terrible fate, haven't you?",
+	"\tMaster, I calculate a 100% probability that ZAPD has crashed. \n\tAdditionally, the "
+	"batteries in your Wii Remote are nearly depleted.",
+	"\t    CONGRATURATIONS!    \n"
+	"\tAll Pages are displayed.\n"
+	"\t       THANK YOU!       \n"
+	"\t You are great debugger!",
+	"\tRCP is HUNG UP!!\n"
+	"\tOh! MY GOD!!",
 };
 
 #if HAS_POSIX == 1
@@ -204,5 +203,3 @@ void CrashHandler_Init()
 	               "tried to set error handler, but this ZAPD build lacks support for one", "");
 #endif
 }
-
-

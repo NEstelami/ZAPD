@@ -105,8 +105,9 @@ std::string RomFile::GetBodySourceCode() const
 				if (!isFirst)
 					declaration += "\n";
 
-				declaration += StringHelper::Sprintf("\t{ (uintptr_t)_%sSegmentRomStart, (uintptr_t)_%sSegmentRomEnd },",
-				                                     roomName.c_str(), roomName.c_str());
+				declaration += StringHelper::Sprintf(
+					"\t{ (uintptr_t)_%sSegmentRomStart, (uintptr_t)_%sSegmentRomEnd },",
+					roomName.c_str(), roomName.c_str());
 				isFirst = false;
 			}
 		}

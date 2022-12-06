@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ZRoom/ZRoomCommand.h"
 #include "ZActorList.h"
+#include "ZRoom/ZRoomCommand.h"
 
 class SetActorList : public ZRoomCommand
 {
@@ -13,7 +13,6 @@ public:
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
-
 
 	std::string GetBodySourceCode() const override;
 

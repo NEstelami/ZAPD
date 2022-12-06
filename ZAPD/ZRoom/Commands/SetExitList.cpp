@@ -4,6 +4,7 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "ZFile.h"
+#include "ZRoom/ZNames.h"
 #include "ZRoom/ZRoom.h"
 
 SetExitList::SetExitList(ZFile* nParent) : ZRoomCommand(nParent)
@@ -44,7 +45,8 @@ void SetExitList::DeclareReferencesLate([[maybe_unused]] const std::string& pref
 
 		for (size_t i = 0; i < exits.size(); i++)
 		{
-			declaration += StringHelper::Sprintf("    0x%04X,", exits.at(i));
+			declaration +=
+				StringHelper::Sprintf("    %s,", ZNames::GetEntranceName(exits[i]).c_str());
 			if (i + 1 < exits.size())
 				declaration += "\n";
 		}
