@@ -5,12 +5,6 @@
 #include "Globals.h"
 #include "Utils/StringHelper.h"
 
-// This is better than the alternative. Trust me.
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-compare"
-#endif
-
 class ZNames
 {
 public:
@@ -58,7 +52,7 @@ public:
 			
 		if (id < ZNames::GetNumEntrances())
 			return Globals::Instance->cfg.entranceList[id];
-		else if ((id >= 0x7FF9 && id <= 0x7FFF) && !((id - 0x7FF9) > GetNumSpecialEntrances()))  // Special entrances
+		else if ((id >= 0x7FF9 && id <= 0x7FFF) && !((id - 0x7FF9U) > GetNumSpecialEntrances()))  // Special entrances
 			return Globals::Instance->cfg.specialEntranceList[id - 0x7FF9];
 		else
 			return StringHelper::Sprintf("0x%04X", id);
@@ -68,8 +62,3 @@ public:
 	static size_t GetNumEntrances() { return Globals::Instance->cfg.entranceList.size(); }
 	static size_t GetNumSpecialEntrances() { return Globals::Instance->cfg.specialEntranceList.size(); }
 };
-
-
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
