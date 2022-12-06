@@ -15,7 +15,7 @@ public:
 		return Globals::Instance->cfg.objectList[id];
 	}
 
-	static std::string GetActorName(int32_t id)
+	static std::string GetActorName(uint16_t id)
 	{
 		switch (Globals::Instance->game)
 		{
@@ -52,16 +52,13 @@ public:
 			
 		if (id < ZNames::GetNumEntrances())
 			return Globals::Instance->cfg.entranceList[id];
-		else if (id >= 0x7FF9 && id <= 0x7FFF)  // Special entrances
+		else if ((id >= 0x7FF9 && id <= 0x7FFF) && !(id - 0x7FF9 > GetNumSpecialEntrances()))  // Special entrances
 			return Globals::Instance->cfg.specialEntranceList[id - 0x7FF9];
 		else
 			return StringHelper::Sprintf("0x%04X", id);
 	}
 
-	static int32_t GetNumActors() { return Globals::Instance->cfg.actorList.size(); }
+	static size_t GetNumActors() { return Globals::Instance->cfg.actorList.size(); }
 	static size_t GetNumEntrances() { return Globals::Instance->cfg.entranceList.size(); }
-	static size_t GetNumSpecialEntrances()
-	{
-		return Globals::Instance->cfg.specialEntranceList.size();
-	}
+	static size_t GetNumSpecialEntrances() { return Globals::Instance->cfg.specialEntranceList.size(); }
 };
