@@ -569,6 +569,7 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 						count = 2;
 					}
 					params = new TextureScrollingParams(parent);
+					params->type = entry.type;
 					params->ExtractFromBinary(paramsOffset, count);
 					break;
 
@@ -576,11 +577,13 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 				case TextureAnimationParamsType::ColorChangeLERP:
 				case TextureAnimationParamsType::ColorChangeLagrange:
 					params = new TextureColorChangingParams(parent);
+					params->type = entry.type;
 					params->ExtractFromBinary(paramsOffset);
 					break;
 
 				case TextureAnimationParamsType::TextureCycle:
 					params = new TextureCyclingParams(parent);
+					params->type = entry.type;
 					params->ExtractFromBinary(paramsOffset);
 					break;
 
@@ -598,7 +601,6 @@ void ZTextureAnimation::DeclareReferences(const std::string& prefix)
 					       entry.type > TextureAnimationParamsType::Empty);
 					return;
 				}
-				params->type = entry.type;
 
 				params->SetName(params->GetDefaultName(varPrefix));
 				params->DeclareVar(varPrefix, "");
