@@ -106,9 +106,47 @@ public:
 		return std::all_of(str.begin(), str.end(), ::isdigit);
 	}
 
-	static bool HasOnlyHexDigits(const std::string& str)
+	static bool HasOnlyHexDigits(std::string_view str)
 	{
-		return std::all_of(str.begin(), str.end(), ::isxdigit);
+		if (str.length() == 0)
+		{
+			return false;
+		}
+		else if (str.length() == 1)
+		{
+			return ::isdigit(str[0]);
+		}
+		else if (str.length() == 2)
+		{
+			if (str[1] == 'x' || str[1] == 'X')
+			{
+				return false;
+			}
+			else
+			{
+				return std::all_of(str.begin(), str.end(), ::isdigit);
+			}
+		}
+		else if (str.length() >= 3)
+		{
+			if (str[1] == 'x' || str[1] == 'X')
+			{
+				return std::all_of(str.begin() + 2, str.end(), ::isxdigit);
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;  // ??
+		}
+	}
+
+	static bool HasOnlyHexDigits(const std::string& str) 
+	{
+		return HasOnlyHexDigits(std::string_view(str.c_str()));
 	}
 
 	static std::string ToUpper(const std::string& str)
