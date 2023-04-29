@@ -108,26 +108,22 @@ public:
 
 	/* Validates a hex string based on the following conditions:
 	 * If string is empty fail.
-	 * If string has one or two digits allow it to only be decimal.
-	 * If string is longer than two digits check the second position for 'x' or 'X' and then check
-	 * the rest for hex digits.
+	 * If string has one make sure its decimal
+	 * If string has two digits fail
+	 * If string is longer than two digits check the first position for '0', the second position for
+	 * 'x' or 'X' and then check the rest for hex digits.
 	 */
 	static bool HasOnlyHexDigits(std::string_view str)
 	{
-		if (str.length() == 0)
+		switch (str.length())
 		{
+		case 0:
 			return false;
-		}
-		else if (str.length() == 1)
-		{
-			return ::isdigit(str[0]);
-		}
-		else if (str.length() == 2)
-		{
-			return std::all_of(str.begin(), str.end(), ::isdigit);
-		}
-		else if (str.length() >= 3)
-		{
+		case 1:
+			return ::isxdigit(str[0]);
+		case 2:
+			return false;
+		default:
 			if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
 			{
 				return std::all_of(str.begin() + 2, str.end(), ::isxdigit);
@@ -137,10 +133,7 @@ public:
 				return false;
 			}
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 
 	static bool HasOnlyHexDigits(const std::string& str)
