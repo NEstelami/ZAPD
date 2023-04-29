@@ -37,6 +37,7 @@ public:
 
 	// ZBackground
 	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
+	bool useScreenWidthHeightConstants = true; // If true, ZBackground's will be declared with SCREEN_WIDTH * SCREEN_HEIGHT in the C file
 
 	// ExternalFile
 	fs::path externalXmlFolder;
