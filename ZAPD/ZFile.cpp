@@ -216,8 +216,7 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 			if (!StringHelper::HasOnlyHexDigits(std::string_view(offsetXml)))
 			{
 				HANDLE_ERROR(WarningType::InvalidXML,
-				             StringHelper::Sprintf("Invalid offset %s entered", offsetXml),
-				             "");
+				             StringHelper::Sprintf("Invalid offset %s entered", offsetXml), "");
 			}
 			rawDataIndex = strtol(offsetXml, NULL, 16);
 
