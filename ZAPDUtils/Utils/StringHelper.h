@@ -106,9 +106,35 @@ public:
 		return std::all_of(str.begin(), str.end(), ::isdigit);
 	}
 
-	static bool HasOnlyHexDigits(const std::string& str)
+	static bool IsValidHex(std::string_view str)
 	{
-		return std::all_of(str.begin(), str.end(), ::isxdigit);
+		if (str.length() < 3)
+		{
+			return false;
+		}
+
+		if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+		{
+			return std::all_of(str.begin() + 2, str.end(), ::isxdigit);
+		}
+
+		return false;
+	}
+
+	static bool IsValidOffset(std::string_view str)
+	{
+		if (str.length() == 1)
+		{
+			// 0 is a valid offset
+			return isdigit(str[0]);
+		}
+
+		return IsValidHex(str);
+	}
+
+	static bool IsValidHex(const std::string& str)
+	{
+		return IsValidHex(std::string_view(str.c_str()));
 	}
 
 	static std::string ToUpper(const std::string& str)

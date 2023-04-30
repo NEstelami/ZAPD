@@ -213,14 +213,12 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 		// Check for repeated attributes.
 		if (offsetXml != nullptr)
 		{
-			std::string offsetStr = StringHelper::Split(offsetXml, "0x")[1];
-			if (!StringHelper::HasOnlyHexDigits(offsetStr))
+			if (!StringHelper::IsValidOffset(std::string_view(offsetXml)))
 			{
 				HANDLE_ERROR(WarningType::InvalidXML,
-				             StringHelper::Sprintf("Invalid offset %s entered", offsetStr.c_str()),
-				             "");
+				             StringHelper::Sprintf("Invalid offset %s entered", offsetXml), "");
 			}
-			rawDataIndex = strtol(offsetStr.c_str(), NULL, 16);
+			rawDataIndex = strtol(offsetXml, NULL, 16);
 
 			if (offsetSet.find(offsetXml) != offsetSet.end())
 			{
