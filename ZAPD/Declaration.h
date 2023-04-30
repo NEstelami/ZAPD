@@ -42,7 +42,7 @@ public:
 	bool isArray = false;
 	bool forceArrayCnt = false;
 	size_t arrayItemCnt = 0;
-	std::string arrayItemCntStr = "";
+	std::string arrayItemCntStr = ""; // Can be used to put a specific string inside an array declaration's brackets
 	std::vector<segptr_t> references;
 	bool isUnaccounted = false;
 	bool isPlaceholder = false;
