@@ -112,15 +112,16 @@ public:
 	 * If string has two digits fail
 	 * If string is longer than two digits check the first position for '0', the second position for
 	 * 'x' or 'X' and then check the rest for hex digits.
+	 * https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Integer-Constants
 	 */
-	static bool HasOnlyHexDigits(std::string_view str)
+	static bool IsValidHex(std::string_view str)
 	{
 		switch (str.length())
 		{
 		case 0:
 			return false;
 		case 1:
-			return ::isxdigit(str[0]);
+			return ::isdigit(str[0]);
 		case 2:
 			return false;
 		default:
@@ -136,9 +137,9 @@ public:
 		return false;
 	}
 
-	static bool HasOnlyHexDigits(const std::string& str)
+	static bool IsValidHex(const std::string& str)
 	{
-		return HasOnlyHexDigits(std::string_view(str.c_str()));
+		return IsValidHex(std::string_view(str.c_str()));
 	}
 
 	static std::string ToUpper(const std::string& str)
