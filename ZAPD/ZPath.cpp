@@ -6,7 +6,8 @@
 #include "WarningHandler.h"
 #include "ZFile.h"
 
-REGISTER_ZFILENODE(Path, ZPath);
+REGISTER_ZFILENODE(Path, ZPath); // Old name that is being kept for backwards compatability
+REGISTER_ZFILENODE(PathList, ZPath); // New name that may be used in future XMLs
 
 ZPath::ZPath(ZFile* nParent) : ZResource(nParent)
 {
