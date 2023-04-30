@@ -1,18 +1,10 @@
 #pragma once
 
-#include <cstdio>
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 #include "Directory.h"
 #include "Utils/StringHelper.h"
-
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-
 
 class File
 {
