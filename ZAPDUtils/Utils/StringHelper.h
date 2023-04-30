@@ -106,35 +106,30 @@ public:
 		return std::all_of(str.begin(), str.end(), ::isdigit);
 	}
 
-	/* Validates a hex string based on the following conditions:
-	 * If string is empty fail.
-	 * If string has one make sure its decimal
-	 * If string has two digits fail
-	 * If string is longer than two digits check the first position for '0', the second position for
-	 * 'x' or 'X' and then check the rest for hex digits.
-	 * https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Integer-Constants
-	 */
 	static bool IsValidHex(std::string_view str)
 	{
-		switch (str.length())
+		if (str.length() < 3)
 		{
-		case 0:
 			return false;
-		case 1:
-			return ::isdigit(str[0]);
-		case 2:
-			return false;
-		default:
-			if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
-			{
-				return std::all_of(str.begin() + 2, str.end(), ::isxdigit);
-			}
-			else
-			{
-				return false;
-			}
 		}
+
+		if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+		{
+			return std::all_of(str.begin() + 2, str.end(), ::isxdigit);
+		}
+
 		return false;
+	}
+
+	static bool IsValidOffset(std::string_view str)
+	{
+		if (str.length() == 1)
+		{
+			// 0 is a valid offset
+			return isdigit(str[0]);
+		}
+
+		return IsValidHex(str);
 	}
 
 	static bool IsValidHex(const std::string& str)
