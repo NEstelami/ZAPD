@@ -367,6 +367,9 @@ public:
 	std::string ProcessLegacy(const std::string& prefix);
 	std::string ProcessGfxDis(const std::string& prefix);
 
+	// Combines vertex lists from the vertices map which touch or intersect
+	void MergeConnectingVertexLists();
+
 	bool IsExternalResource() const override;
 	std::string GetExternalExtension() const override;
 	std::string GetSourceTypeName() const override;
