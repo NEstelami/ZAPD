@@ -75,7 +75,7 @@ Declaration* ZArray::DeclareVar(const std::string& prefix, const std::string& bo
 	if (res->IsExternalResource())
 	{
 		auto filepath = Globals::Instance->outputPath / name;
-		std::string includePath = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(),
+		std::string includePath = StringHelper::Sprintf("%s.%s.inc", filepath.string().c_str(),
 		                                                res->GetExternalExtension().c_str());
 		decl = parent->AddDeclarationIncludeArray(rawDataIndex, includePath, GetRawDataSize(),
 		                                          GetSourceTypeName(), name, arrayCnt);
