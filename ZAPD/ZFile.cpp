@@ -1046,7 +1046,7 @@ std::string ZFile::ProcessDeclarations()
 
 				auto filepath = outputPath / item.second->varName;
 				File::WriteAllText(
-					StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), extType.c_str()),
+					StringHelper::Sprintf("%s.%s.inc", filepath.string().c_str(), extType.c_str()),
 					item.second->text);
 			}
 
