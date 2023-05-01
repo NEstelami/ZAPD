@@ -1875,7 +1875,7 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 					vtxName = StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), vtxKeys[i]);
 
 				auto filepath = Globals::Instance->outputPath / vtxName;
-				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.c_str(), "vtx");
+				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.string().c_str(), "vtx");
 
 				Declaration* vtxDecl = parent->AddDeclarationIncludeArray(
 					vtxKeys[i], incStr, item.size() * 16, "Vtx", vtxName, item.size());
