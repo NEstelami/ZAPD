@@ -1642,7 +1642,12 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 				vtxList.push_back(vtx);
 				currentPtr += 16;
 			}
-			self->vertices[vtxOffset] = vtxList;
+
+			bool keyAlreadyOccupied = self->vertices.find(vtxOffset) != self->vertices.end();
+
+			// In some cases a vtxList already exists at vtxOffset. Only override the existing list if the new one is bigger.
+			if (!keyAlreadyOccupied || (keyAlreadyOccupied && vtxList.size() > self->vertices[vtxOffset].size()))
+				self->vertices[vtxOffset] = vtxList;
 		}
 	}
 
@@ -1954,7 +1959,44 @@ std::string ZDisplayList::ProcessGfxDis([[maybe_unused]] const std::string& pref
 	gfxd_execute();                               // generate display list
 	sourceOutput += outputformatter.GetOutput();  // write formatted display list
 
+	MergeConnectingVertexLists();
+
 	return sourceOutput;
+}
+
+void ZDisplayList::MergeConnectingVertexLists()
+{
+	if (vertices.size() > 0)
+	{
+		std::vector<std::pair<uint32_t, std::vector<ZVtx>>> vertexKeys(vertices.begin(),
+		                                                               vertices.end());
+		std::pair<uint32_t, std::vector<ZVtx>> lastItem = vertexKeys.at(0);
+
+		for (size_t i = 1; i < vertexKeys.size(); i++)
+		{
+			std::pair<uint32_t, std::vector<ZVtx>> curItem = vertexKeys[i];
+
+			size_t lastItemEnd = lastItem.first + (lastItem.second.size() * 16);
+			bool lastItemIntersects = lastItemEnd >= curItem.first;
+
+			if (lastItemIntersects)
+			{
+				int intersectedVtxStart = (lastItemEnd - curItem.first) / 16;
+
+				for (size_t j = intersectedVtxStart; j < curItem.second.size(); j++)
+					vertices[lastItem.first].push_back(curItem.second[j]);
+
+				vertices.erase(curItem.first);
+				vertexKeys.erase(vertexKeys.begin() + i);
+
+				lastItem.second = vertices[lastItem.first];
+
+				i--;
+			}
+			else
+				lastItem = curItem;
+		}
+	}
 }
 
 void ZDisplayList::TextureGenCheck()
