@@ -219,11 +219,19 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 
 	std::string vtxName;
 	Globals::Instance->GetSegmentedPtrName(vtxAddress, parent, "Vec3s", vtxName);
-	declaration += StringHelper::Sprintf("\t%i, %s,\n", numVerts, vtxName.c_str());
+
+	if (numVerts > 0)
+		declaration += StringHelper::Sprintf("\tARRAY_COUNT(%s), %s,\n", vtxName.c_str(), vtxName.c_str());
+	else
+		declaration += StringHelper::Sprintf("\t%i, %s,\n", numVerts, vtxName.c_str());
 
 	std::string polyName;
 	Globals::Instance->GetSegmentedPtrName(polyAddress, parent, "CollisionPoly", polyName);
-	declaration += StringHelper::Sprintf("\t%i, %s,\n", numPolygons, polyName.c_str());
+
+	if (numPolygons > 0)
+		declaration += StringHelper::Sprintf("\tARRAY_COUNT(%s), %s,\n", polyName.c_str(), polyName.c_str());
+	else
+		declaration += StringHelper::Sprintf("\t%i, %s,\n", numPolygons, polyName.c_str());
 
 	std::string surfaceName;
 	Globals::Instance->GetSegmentedPtrName(polyTypeDefAddress, parent, "SurfaceType", surfaceName);
@@ -235,7 +243,11 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 
 	std::string waterBoxName;
 	Globals::Instance->GetSegmentedPtrName(waterBoxAddress, parent, "WaterBox", waterBoxName);
-	declaration += StringHelper::Sprintf("\t%i, %s\n", numWaterBoxes, waterBoxName.c_str());
+
+	if (numWaterBoxes > 0)
+		declaration += StringHelper::Sprintf("\tARRAY_COUNT(%s), %s\n", waterBoxName.c_str(), waterBoxName.c_str());
+	else
+		declaration += StringHelper::Sprintf("\t%i, %s\n", numWaterBoxes, waterBoxName.c_str());
 
 	return declaration;
 }

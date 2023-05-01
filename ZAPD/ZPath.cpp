@@ -186,7 +186,13 @@ std::string PathwayEntry::GetBodySourceCode() const
 		declaration +=
 			StringHelper::Sprintf("%i, %i, %i, %s", numPoints, unk1, unk2, listName.c_str());
 	else
-		declaration += StringHelper::Sprintf("%i, %s", numPoints, listName.c_str());
+	{
+		if (numPoints > 0)
+		declaration +=
+			StringHelper::Sprintf("ARRAY_COUNT(%s), %s", listName.c_str(), listName.c_str());
+		else
+			declaration += StringHelper::Sprintf("%i, %s", numPoints, listName.c_str());
+	}
 
 	return declaration;
 }
