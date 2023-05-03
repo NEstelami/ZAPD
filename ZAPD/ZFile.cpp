@@ -181,6 +181,12 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 		}
 	}
 
+	const char* segmentDefines = reader->Attribute("Defines");
+	if (segmentDefines != NULL)
+	{
+		makeDefines = true;
+	}
+
 	if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
 	{
 		if (!File::Exists((basePath / name).string()))
@@ -592,6 +598,43 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
 		decl->includePath = includePath;
 		decl->varType = varType;
 		decl->varName = varName;
+		decl->size = size;
+		decl->isArray = true;
+		decl->arrayItemCnt = arrayItemCnt;
+	}
+	return decl;
+}
+
+Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& includePath,
+                                               size_t size, const std::string& varType,
+                                               const std::string& varName,
+                                               const std::string& defines, size_t arrayItemCnt)
+{
+	bool validOffset = AddDeclarationChecks(address, varName);
+	if (!validOffset)
+		return nullptr;
+
+	if (StringHelper::StartsWith(includePath, "assets/extracted/"))
+		includePath = "assets/" + StringHelper::Split(includePath, "assets/extracted/")[1];
+	if (StringHelper::StartsWith(includePath, "assets/custom/"))
+		includePath = "assets/" + StringHelper::Split(includePath, "assets/custom/")[1];
+
+	Declaration* decl = GetDeclaration(address);
+	if (decl == nullptr)
+	{
+		decl = new Declaration(address, includePath, size, varType, varName, defines);
+
+		decl->isArray = true;
+		decl->arrayItemCnt = arrayItemCnt;
+
+		declarations[address] = decl;
+	}
+	else
+	{
+		decl->includePath = includePath;
+		decl->varType = varType;
+		decl->varName = varName;
+		decl->defines = defines;
 		decl->size = size;
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
@@ -1090,7 +1133,8 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 
 std::string ZFile::ProcessExterns()
 {
-	std::string output;
+	std::string output = "";
+	bool hadDefines = true; // Previous declaration included defines.
 
 	for (const auto& item : declarations)
 	{
@@ -1099,10 +1143,21 @@ std::string ZFile::ProcessExterns()
 			continue;
 		}
 
+		std::string itemDefines = item.second->GetDefinesStr();
+		// Add a newline above if previous has no defines and this one does.
+		if (!hadDefines && (itemDefines.length() > 0))
+		{
+			output.push_back('\n');
+		}
 		output += item.second->GetExternStr();
-	}
+		output += itemDefines;
 
-	output += "\n";
+		// Newline below if this one has defines.
+		if ((hadDefines = (itemDefines.length() > 0)))
+		{
+			output.push_back('\n');
+		}
+	}
 
 	output += defines;
 

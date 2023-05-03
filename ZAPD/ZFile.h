@@ -38,6 +38,8 @@ public:
 	uint32_t segment = 0x80;
 	uint32_t baseAddress, rangeStart, rangeEnd;
 	bool isExternalFile = false;
+	// Whether to make defines for texture dimensions, and possibly more in future
+	bool makeDefines = false;
 
 	ZFile(const fs::path& nOutPath, const std::string& nName);
 	ZFile(ZFileMode nMode, tinyxml2::XMLElement* reader, const fs::path& nBasePath,
@@ -74,6 +76,9 @@ public:
 	Declaration* AddDeclarationIncludeArray(offset_t address, std::string& includePath, size_t size,
 	                                        const std::string& varType, const std::string& varName,
 	                                        size_t arrayItemCnt);
+	Declaration* AddDeclarationIncludeArray(offset_t address, std::string& includePath, size_t size,
+	                                        const std::string& varType, const std::string& varName,
+	                                        const std::string& defines, size_t arrayItemCnt);
 
 	bool GetDeclarationPtrName(segptr_t segAddress, const std::string& expectedType,
 	                           std::string& declName) const;
