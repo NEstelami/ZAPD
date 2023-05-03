@@ -133,7 +133,7 @@ void ZCollisionHeader::ParseRawData()
 		waterbox.SetRawDataIndex(waterBoxSegmentOffset +
 		                         (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16)));
 		waterbox.ParseRawData();
-		waterBoxes.push_back(waterbox);
+		waterBoxes.emplace_back(waterbox);
 	}
 }
 
