@@ -1,4 +1,5 @@
 #include "ZCollision.h"
+#include "ZWaterbox.h"
 
 #include <cassert>
 #include <cstdint>
@@ -50,6 +51,7 @@ void ZCollisionHeader::ParseRawData()
 
 	vertices.reserve(numVerts);
 	polygons.reserve(numPolygons);
+	waterBoxes.reserve(numWaterBoxes);
 
 	offset_t currentPtr = vtxSegmentOffset;
 
@@ -125,10 +127,14 @@ void ZCollisionHeader::ParseRawData()
 			new CameraDataList(parent, name, rawData, camDataSegmentOffset, upperCameraBoundary);
 	}
 
-	for (uint16_t i = 0; i < numWaterBoxes; i++)
-		waterBoxes.push_back(WaterBoxHeader(
-			rawData,
-			waterBoxSegmentOffset + (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16))));
+	for (int32_t i = 0; i < numWaterBoxes; i++) {
+		ZWaterbox waterbox(parent);
+
+		waterbox.SetRawDataIndex(waterBoxSegmentOffset +
+		                         (i * (Globals::Instance->game == ZGame::OOT_SW97 ? 12 : 16)));
+		waterbox.ParseRawData();
+		waterBoxes.push_back(waterbox);
+	}
 }
 
 void ZCollisionHeader::DeclareReferences(const std::string& prefix)
@@ -149,9 +155,11 @@ void ZCollisionHeader::DeclareReferences(const std::string& prefix)
 				declaration += "\n";
 		}
 
-		parent->AddDeclarationArray(
-			waterBoxSegmentOffset, DeclarationAlignment::Align4, 16 * waterBoxes.size(), "WaterBox",
-			StringHelper::Sprintf("%sWaterBoxes", auxName.c_str()), waterBoxes.size(), declaration);
+		parent->AddDeclarationArray(waterBoxSegmentOffset, DeclarationAlignment::Align4,
+		                            waterBoxes[0].GetRawDataSize() * waterBoxes.size(),
+		                            waterBoxes[0].GetSourceTypeName().c_str(),
+		                            StringHelper::Sprintf("%sWaterBoxes", auxName.c_str()),
+		                            waterBoxes.size(), declaration);
 	}
 
 	if (polygons.size() > 0)
@@ -270,26 +278,6 @@ ZResourceType ZCollisionHeader::GetResourceType() const
 size_t ZCollisionHeader::GetRawDataSize() const
 {
 	return 44;
-}
-
-WaterBoxHeader::WaterBoxHeader(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
-{
-	xMin = BitConverter::ToInt16BE(rawData, rawDataIndex + 0);
-	ySurface = BitConverter::ToInt16BE(rawData, rawDataIndex + 2);
-	zMin = BitConverter::ToInt16BE(rawData, rawDataIndex + 4);
-	xLength = BitConverter::ToInt16BE(rawData, rawDataIndex + 6);
-	zLength = BitConverter::ToInt16BE(rawData, rawDataIndex + 8);
-
-	if (Globals::Instance->game == ZGame::OOT_SW97)
-		properties = BitConverter::ToInt16BE(rawData, rawDataIndex + 10);
-	else
-		properties = BitConverter::ToInt32BE(rawData, rawDataIndex + 12);
-}
-
-std::string WaterBoxHeader::GetBodySourceCode() const
-{
-	return StringHelper::Sprintf("%i, %i, %i, %i, %i, 0x%08X", xMin, ySurface, zMin, xLength,
-	                             zLength, properties);
 }
 
 CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
