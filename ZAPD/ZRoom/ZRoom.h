@@ -46,5 +46,5 @@ public:
 	ZResourceType GetResourceType() const override;
 
 protected:
-	void SyotesRoomHack();
+	void SyotesRoomFix();
 };
