@@ -173,7 +173,7 @@ void PathwayEntry::DeclareReferences(const std::string& prefix)
 		                            points.size(), declaration);
 	}
 	else
-		decl->text = declaration;
+		decl->declBody = declaration;
 }
 
 std::string PathwayEntry::GetBodySourceCode() const
