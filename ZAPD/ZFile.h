@@ -133,6 +133,7 @@ protected:
 	void GenerateSourceHeaderFiles();
 	bool DeclarationSanityChecks(uint32_t address, const std::string& varName);
 	std::string ProcessDeclarations();
+	void MergeNeighboringDeclarations();
 	void ProcessDeclarationText(Declaration* decl);
 	std::string ProcessExterns();
 
