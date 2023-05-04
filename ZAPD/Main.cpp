@@ -322,7 +322,7 @@ void ParseArgs(int& argc, char* argv[])
 	}
 }
 
-void Arg_SetOutputPath(int& i, char* argv[])
+void Arg_SetOutputPath(int& i, [[maybe_unused]] char* argv[])
 {
 	Globals::Instance->outputPath = argv[++i];
 
@@ -384,7 +384,7 @@ void Arg_ReadConfigFile(int& i, char* argv[])
 	Globals::Instance->cfg.ReadConfigFile(argv[++i]);
 }
 
-void Arg_EnableErrorHandler(int& i, char* argv[])
+void Arg_EnableErrorHandler([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 {
 	CrashHandler_Init();
 }
@@ -394,7 +394,7 @@ void Arg_SetVerbosity(int& i, char* argv[])
 	Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
 }
 
-void Arg_VerboseUnaccounted(int& i, char* argv[])
+void Arg_VerboseUnaccounted([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 {
 	Globals::Instance->verboseUnaccounted = true;
 }
@@ -404,17 +404,17 @@ void Arg_SetExporter(int& i, char* argv[])
 	Globals::Instance->currentExporter = argv[++i];
 }
 
-void Arg_EnableGCCCompat(int& i, char* argv[])
+void Arg_EnableGCCCompat([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 {
 	Globals::Instance->gccCompat = true;
 }
 
-void Arg_ForceStatic(int& i, char* argv[])
+void Arg_ForceStatic([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 {
 	Globals::Instance->forceStatic = true;
 }
 
-void Arg_ForceUnaccountedStatic(int& i, char* argv[])
+void Arg_ForceUnaccountedStatic([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 {
 	Globals::Instance->forceUnaccountedStatic = true;
 }
