@@ -69,13 +69,9 @@ void ZRoom::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 	ZResource::ExtractFromXML(reader, nRawDataIndex);
 
 	if (hackMode == "syotes_room")
-	{
-		SyotesRoomHack();
-	}
+		SyotesRoomFix();
 	else
-	{
 		DeclareVar(name, "");
-	}
 }
 
 void ZRoom::ExtractFromBinary(uint32_t nRawDataIndex, ZResourceType parentType)
@@ -338,7 +334,7 @@ std::string ZRoom::GetDefaultName(const std::string& prefix) const
  * back to very early in the game's development. Since this room is a special case,
  * declare automatically the data its contains whitout the need of a header.
  */
-void ZRoom::SyotesRoomHack()
+void ZRoom::SyotesRoomFix()
 {
 	PolygonType2 poly(parent, 0, this);
 

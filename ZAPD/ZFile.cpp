@@ -1011,46 +1011,7 @@ std::string ZFile::ProcessDeclarations()
 
 	// printf("RANGE START: 0x%06X - RANGE END: 0x%06X\n", rangeStart, rangeEnd);
 
-	// Optimization: See if there are any arrays side by side that can be merged...
-	std::vector<std::pair<int32_t, Declaration*>> declarationKeys(declarations.begin(),
-	                                                              declarations.end());
-
-	std::pair<int32_t, Declaration*> lastItem = declarationKeys.at(0);
-
-	for (size_t i = 1; i < declarationKeys.size(); i++)
-	{
-		std::pair<int32_t, Declaration*> curItem = declarationKeys[i];
-
-		if (curItem.second->isArray && lastItem.second->isArray)
-		{
-			if (curItem.second->declType == lastItem.second->declType)
-			{
-				if (!curItem.second->declaredInXml && !lastItem.second->declaredInXml)
-				{
-					// TEST: For now just do Vtx declarations...
-					if (lastItem.second->declType == "Vtx")
-					{
-						int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
-
-						// Make sure there isn't an unaccounted inbetween these two
-						if (sizeDiff == 0)
-						{
-							lastItem.second->size += curItem.second->size;
-							lastItem.second->arrayItemCnt += curItem.second->arrayItemCnt;
-							lastItem.second->declBody += "\n" + curItem.second->declBody;
-							declarations.erase(curItem.first);
-							declarationKeys.erase(declarationKeys.begin() + i);
-							delete curItem.second;
-							i--;
-							continue;
-						}
-					}
-				}
-			}
-		}
-
-		lastItem = curItem;
-	}
+	MergeNeighboringDeclarations();
 
 	for (std::pair<uint32_t, Declaration*> item : declarations)
 		ProcessDeclarationText(item.second);
@@ -1105,6 +1066,50 @@ std::string ZFile::ProcessDeclarations()
 	}
 
 	return output;
+}
+
+void ZFile::MergeNeighboringDeclarations()
+{
+	// Optimization: See if there are any arrays side by side that can be merged...
+	std::vector<std::pair<int32_t, Declaration*>> declarationKeys(declarations.begin(),
+	                                                              declarations.end());
+
+	std::pair<int32_t, Declaration*> lastItem = declarationKeys.at(0);
+
+	for (size_t i = 1; i < declarationKeys.size(); i++)
+	{
+		std::pair<int32_t, Declaration*> curItem = declarationKeys[i];
+
+		if (curItem.second->isArray && lastItem.second->isArray)
+		{
+			if (curItem.second->declType == lastItem.second->declType)
+			{
+				if (!curItem.second->declaredInXml && !lastItem.second->declaredInXml)
+				{
+					// TEST: For now just do Vtx declarations...
+					if (lastItem.second->declType == "Vtx")
+					{
+						int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
+
+						// Make sure there isn't an unaccounted inbetween these two
+						if (sizeDiff == 0)
+						{
+							lastItem.second->size += curItem.second->size;
+							lastItem.second->arrayItemCnt += curItem.second->arrayItemCnt;
+							lastItem.second->declBody += "\n" + curItem.second->declBody;
+							declarations.erase(curItem.first);
+							declarationKeys.erase(declarationKeys.begin() + i);
+							delete curItem.second;
+							i--;
+							continue;
+						}
+					}
+				}
+			}
+		}
+
+		lastItem = curItem;
+	}
 }
 
 void ZFile::ProcessDeclarationText(Declaration* decl)

@@ -10,13 +10,40 @@
 #include "ZTexture.h"
 
 #include "CrashHandler.h"
+#include <functional>
 
 #include <string>
 #include <string_view>
 #include "tinyxml2.h"
 
+using ArgFunc = void (*)(int&, char**);
+
+void Arg_SetOutputPath(int& i, char* argv[]);
+void Arg_SetInputPath(int& i, char* argv[]);
+void Arg_SetBaseromPath(int& i, char* argv[]);
+void Arg_SetSourceOutputPath(int& i, char* argv[]);
+void Arg_GenerateSourceFile(int& i, char* argv[]);
+void Arg_TestMode(int& i, char* argv[]);
+void Arg_LegacyDList(int& i, char* argv[]);
+void Arg_EnableProfiling(int& i, char* argv[]);
+void Arg_UseExternalResources(int& i, char* argv[]);
+void Arg_SetTextureType(int& i, char* argv[]);
+void Arg_ReadConfigFile(int& i, char* argv[]);
+void Arg_EnableErrorHandler(int& i, char* argv[]);
+void Arg_SetVerbosity(int& i, char* argv[]);
+void Arg_VerboseUnaccounted(int& i, char* argv[]);
+void Arg_SetExporter(int& i, char* argv[]);
+void Arg_EnableGCCCompat(int& i, char* argv[]);
+void Arg_ForceStatic(int& i, char* argv[]);
+void Arg_ForceUnaccountedStatic(int& i, char* argv[]);
+
+
+int main(int argc, char* argv[]);
+
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
            ZFileMode fileMode);
+
+void ParseArgs(int& argc, char* argv[]);
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath);
@@ -55,94 +82,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	// Parse other "commands"
-	for (int32_t i = 2; i < argc; i++)
-	{
-		std::string arg = argv[i];
-
-		if (arg == "-o" || arg == "--outputpath")  // Set output path
-		{
-			Globals::Instance->outputPath = argv[++i];
-
-			if (Globals::Instance->sourceOutputPath == "")
-				Globals::Instance->sourceOutputPath = Globals::Instance->outputPath;
-		}
-		else if (arg == "-i" || arg == "--inputpath")  // Set input path
-		{
-			Globals::Instance->inputPath = argv[++i];
-		}
-		else if (arg == "-b" || arg == "--baserompath")  // Set baserom path
-		{
-			Globals::Instance->baseRomPath = argv[++i];
-		}
-		else if (arg == "-osf")  // Set source output path
-		{
-			Globals::Instance->sourceOutputPath = argv[++i];
-		}
-		else if (arg == "-gsf")  // Generate source file during extraction
-		{
-			Globals::Instance->genSourceFile = std::string_view(argv[++i]) == "1";
-		}
-		else if (arg == "-tm")  // Test Mode (enables certain experimental features)
-		{
-			Globals::Instance->testMode = std::string_view(argv[++i]) == "1";
-		}
-		else if (arg == "-crc" ||
-		         arg == "--output-crc")  // Outputs a CRC file for each extracted texture.
-		{
-			Globals::Instance->testMode = std::string_view(argv[++i]) == "1";
-		}
-		else if (arg == "-ulzdl")  // Use Legacy ZDisplay List
-		{
-			Globals::Instance->useLegacyZDList = std::string_view(argv[++i]) == "1";
-		}
-		else if (arg == "-profile")  // Enable profiling
-		{
-			Globals::Instance->profile = std::string_view(argv[++i]) == "1";
-		}
-		else if (arg ==
-		         "-uer")  // Split resources into their individual components (enabled by default)
-		                  // TODO: We may wish to make this a part of the config file...
-		{
-			Globals::Instance->useExternalResources = std::string_view(argv[++i]) == "1";
-		}
-		else if (arg == "-tt")  // Set texture type
-		{
-			Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[++i]);
-		}
-		else if (arg == "-rconf")  // Read Config File
-		{
-			Globals::Instance->cfg.ReadConfigFile(argv[++i]);
-		}
-		else if (arg == "-eh")  // Enable Error Handler
-		{
-			CrashHandler_Init();
-		}
-		else if (arg == "-v")  // Verbose
-		{
-			Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
-		}
-		else if (arg == "-vu" || arg == "--verbose-unaccounted")  // Verbose unaccounted
-		{
-			Globals::Instance->verboseUnaccounted = true;
-		}
-		else if (arg == "-se" || arg == "--set-exporter")  // Set Current Exporter
-		{
-			Globals::Instance->currentExporter = argv[++i];
-		}
-		else if (arg == "--gcc-compat")  // GCC compatibility
-		{
-			Globals::Instance->gccCompat = true;
-		}
-		else if (arg == "-s" || arg == "--static")
-		{
-			Globals::Instance->forceStatic = true;
-		}
-		else if (arg == "-us" || arg == "--unaccounted-static")
-		{
-			Globals::Instance->forceUnaccountedStatic = true;
-		}
-	}
+	ParseArgs(argc, argv);
 
 	// Parse File Mode
 	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
@@ -181,9 +121,7 @@ int main(int argc, char* argv[])
 		printf("ZAPD: Zelda Asset Processor For Decomp: %s\n", gBuildHash);
 
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
-	{
 		WarningHandler::PrintWarningsDebugInfo();
-	}
 
 	// TODO: switch
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
@@ -337,6 +275,148 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	}
 
 	return true;
+}
+
+void ParseArgs(int& argc, char* argv[])
+{
+	static const std::unordered_map<std::string, ArgFunc> ArgFuncDictionary = {
+		{"-o", &Arg_SetOutputPath},
+		{"--outputpath", &Arg_SetOutputPath},
+		{"-i", &Arg_SetInputPath},
+		{"--inputpath", &Arg_SetInputPath},
+		{"-b", &Arg_SetBaseromPath},
+		{"--baserompath", &Arg_SetBaseromPath},
+		{"-osf", &Arg_SetSourceOutputPath},
+		{"-gsf", &Arg_GenerateSourceFile},
+		{"-tm", &Arg_TestMode},
+		{"-ulzdl", &Arg_LegacyDList},
+		{"-profile", &Arg_EnableProfiling},
+		{"-uer", &Arg_UseExternalResources},
+		{"-tt", &Arg_SetTextureType},
+		{"-rconf", &Arg_ReadConfigFile},
+		{"-eh", &Arg_EnableErrorHandler},
+		{"-v", &Arg_SetVerbosity},
+		{"-vu", &Arg_VerboseUnaccounted},
+		{"--verbose-unaccounted", &Arg_VerboseUnaccounted},
+		{"-se", &Arg_SetExporter},
+		{"--set-exporter", &Arg_SetExporter},
+		{"--gcc-compat", &Arg_EnableGCCCompat},
+		{"-s", &Arg_ForceStatic},
+		{"--static", &Arg_ForceStatic},
+		{"-us", &Arg_ForceUnaccountedStatic},
+		{"--unaccounted-static", &Arg_ForceUnaccountedStatic},
+	};
+
+	for (int32_t i = 2; i < argc; i++)
+	{
+		std::string arg = argv[i];
+
+		auto it = ArgFuncDictionary.find(arg);
+		if (it == ArgFuncDictionary.end())
+		{
+			fprintf(stderr, "Unsupported argument: %s\n", arg.c_str());
+			continue;
+		}
+
+		std::invoke(it->second, i, argv);
+	}
+}
+
+void Arg_SetOutputPath(int& i, [[maybe_unused]] char* argv[])
+{
+	Globals::Instance->outputPath = argv[++i];
+
+	if (Globals::Instance->sourceOutputPath == "")
+		Globals::Instance->sourceOutputPath = Globals::Instance->outputPath;
+}
+
+void Arg_SetInputPath(int& i, char* argv[])
+{
+	Globals::Instance->inputPath = argv[++i];
+}
+
+void Arg_SetBaseromPath(int& i, char* argv[])
+{
+	Globals::Instance->baseRomPath = argv[++i];
+}
+
+void Arg_SetSourceOutputPath(int& i, char* argv[])
+{
+	Globals::Instance->sourceOutputPath = argv[++i];
+}
+
+void Arg_GenerateSourceFile(int& i, char* argv[])
+{
+	// Generate source file during extraction
+	Globals::Instance->genSourceFile = std::string_view(argv[++i]) == "1";
+}
+
+void Arg_TestMode(int& i, char* argv[])
+{
+	// Test Mode (enables certain experimental features)
+	Globals::Instance->testMode = std::string_view(argv[++i]) == "1";
+}
+
+void Arg_LegacyDList(int& i, char* argv[])
+{
+	Globals::Instance->useLegacyZDList = std::string_view(argv[++i]) == "1";
+}
+
+void Arg_EnableProfiling(int& i, char* argv[])
+{
+	Globals::Instance->profile = std::string_view(argv[++i]) == "1";
+}
+
+void Arg_UseExternalResources(int& i, char* argv[])
+{
+	// Split resources into their individual components(enabled by default)
+	// TODO: We may wish to make this a part of the config file...
+	Globals::Instance->useExternalResources = std::string_view(argv[++i]) == "1";
+}
+
+void Arg_SetTextureType(int& i, char* argv[])
+{
+	Globals::Instance->texType = ZTexture::GetTextureTypeFromString(argv[++i]);
+}
+
+void Arg_ReadConfigFile(int& i, char* argv[])
+{
+	Globals::Instance->cfg.ReadConfigFile(argv[++i]);
+}
+
+void Arg_EnableErrorHandler([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
+{
+	CrashHandler_Init();
+}
+
+void Arg_SetVerbosity(int& i, char* argv[])
+{
+	Globals::Instance->verbosity = static_cast<VerbosityLevel>(strtol(argv[++i], NULL, 16));
+}
+
+void Arg_VerboseUnaccounted([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
+{
+	Globals::Instance->verboseUnaccounted = true;
+}
+
+void Arg_SetExporter(int& i, char* argv[])
+{
+	Globals::Instance->currentExporter = argv[++i];
+}
+
+void Arg_EnableGCCCompat([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
+{
+	Globals::Instance->gccCompat = true;
+}
+
+void Arg_ForceStatic([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
+{
+	Globals::Instance->forceStatic = true;
+}
+
+void Arg_ForceUnaccountedStatic([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
+{
+	Globals::Instance->forceUnaccountedStatic = true;
 }
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath)

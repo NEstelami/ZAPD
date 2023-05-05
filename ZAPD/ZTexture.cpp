@@ -137,31 +137,31 @@ void ZTexture::ParseRawData()
 	switch (format)
 	{
 	case TextureType::RGBA16bpp:
-		PrepareBitmapRGBA16();
+		ConvertN64ToBitmap_RGBA16();
 		break;
 	case TextureType::RGBA32bpp:
-		PrepareBitmapRGBA32();
+		ConvertN64ToBitmap_RGBA32();
 		break;
 	case TextureType::Grayscale4bpp:
-		PrepareBitmapGrayscale4();
+		ConvertN64ToBitmap_Grayscale4();
 		break;
 	case TextureType::Grayscale8bpp:
-		PrepareBitmapGrayscale8();
+		ConvertN64ToBitmap_Grayscale8();
 		break;
 	case TextureType::GrayscaleAlpha4bpp:
-		PrepareBitmapGrayscaleAlpha4();
+		ConvertN64ToBitmap_GrayscaleAlpha4();
 		break;
 	case TextureType::GrayscaleAlpha8bpp:
-		PrepareBitmapGrayscaleAlpha8();
+		ConvertN64ToBitmap_GrayscaleAlpha8();
 		break;
 	case TextureType::GrayscaleAlpha16bpp:
-		PrepareBitmapGrayscaleAlpha16();
+		ConvertN64ToBitmap_GrayscaleAlpha16();
 		break;
 	case TextureType::Palette4bpp:
-		PrepareBitmapPalette4();
+		ConvertN64ToBitmap_Palette4();
 		break;
 	case TextureType::Palette8bpp:
-		PrepareBitmapPalette8();
+		ConvertN64ToBitmap_Palette8();
 		break;
 	case TextureType::Error:
 		HANDLE_ERROR_RESOURCE(WarningType::InvalidAttributeValue, parent, this, rawDataIndex,
@@ -212,7 +212,7 @@ void ZTexture::ParseRawDataLate()
 	}
 }
 
-void ZTexture::PrepareBitmapRGBA16()
+void ZTexture::ConvertN64ToBitmap_RGBA16()
 {
 	textureData.InitEmptyRGBImage(width, height, true);
 	const auto& parentRawData = parent->GetRawData();
@@ -233,7 +233,7 @@ void ZTexture::PrepareBitmapRGBA16()
 	}
 }
 
-void ZTexture::PrepareBitmapRGBA32()
+void ZTexture::ConvertN64ToBitmap_RGBA32()
 {
 	textureData.InitEmptyRGBImage(width, height, true);
 	const auto& parentRawData = parent->GetRawData();
@@ -252,7 +252,7 @@ void ZTexture::PrepareBitmapRGBA32()
 	}
 }
 
-void ZTexture::PrepareBitmapGrayscale4()
+void ZTexture::ConvertN64ToBitmap_Grayscale4()
 {
 	textureData.InitEmptyRGBImage(width, height, false);
 	const auto& parentRawData = parent->GetRawData();
@@ -276,7 +276,7 @@ void ZTexture::PrepareBitmapGrayscale4()
 	}
 }
 
-void ZTexture::PrepareBitmapGrayscale8()
+void ZTexture::ConvertN64ToBitmap_Grayscale8()
 {
 	textureData.InitEmptyRGBImage(width, height, false);
 	const auto& parentRawData = parent->GetRawData();
@@ -291,7 +291,7 @@ void ZTexture::PrepareBitmapGrayscale8()
 	}
 }
 
-void ZTexture::PrepareBitmapGrayscaleAlpha4()
+void ZTexture::ConvertN64ToBitmap_GrayscaleAlpha4()
 {
 	textureData.InitEmptyRGBImage(width, height, true);
 	const auto& parentRawData = parent->GetRawData();
@@ -319,7 +319,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha4()
 	}
 }
 
-void ZTexture::PrepareBitmapGrayscaleAlpha8()
+void ZTexture::ConvertN64ToBitmap_GrayscaleAlpha8()
 {
 	textureData.InitEmptyRGBImage(width, height, true);
 	const auto& parentRawData = parent->GetRawData();
@@ -341,7 +341,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha8()
 	}
 }
 
-void ZTexture::PrepareBitmapGrayscaleAlpha16()
+void ZTexture::ConvertN64ToBitmap_GrayscaleAlpha16()
 {
 	textureData.InitEmptyRGBImage(width, height, true);
 	const auto& parentRawData = parent->GetRawData();
@@ -358,7 +358,7 @@ void ZTexture::PrepareBitmapGrayscaleAlpha16()
 	}
 }
 
-void ZTexture::PrepareBitmapPalette4()
+void ZTexture::ConvertN64ToBitmap_Palette4()
 {
 	textureData.InitEmptyPaletteImage(width, height);
 	const auto& parentRawData = parent->GetRawData();
@@ -382,7 +382,7 @@ void ZTexture::PrepareBitmapPalette4()
 	}
 }
 
-void ZTexture::PrepareBitmapPalette8()
+void ZTexture::ConvertN64ToBitmap_Palette8()
 {
 	textureData.InitEmptyPaletteImage(width, height);
 	const auto& parentRawData = parent->GetRawData();
@@ -435,31 +435,31 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 	switch (format)
 	{
 	case TextureType::RGBA16bpp:
-		PrepareRawDataRGBA16();
+		ConvertBitmapToN64_RGBA16();
 		break;
 	case TextureType::RGBA32bpp:
-		PrepareRawDataRGBA32();
+		ConvertBitmapToN64_RGBA32();
 		break;
 	case TextureType::Grayscale4bpp:
-		PrepareRawDataGrayscale4();
+		ConvertBitmapToN64_Grayscale4();
 		break;
 	case TextureType::Grayscale8bpp:
-		PrepareRawDataGrayscale8();
+		ConvertBitmapToN64_Grayscale8();
 		break;
 	case TextureType::GrayscaleAlpha4bpp:
-		PrepareRawDataGrayscaleAlpha4();
+		ConvertBitmapToN64_GrayscaleAlpha4();
 		break;
 	case TextureType::GrayscaleAlpha8bpp:
-		PrepareRawDataGrayscaleAlpha8();
+		ConvertBitmapToN64_GrayscaleAlpha8();
 		break;
 	case TextureType::GrayscaleAlpha16bpp:
-		PrepareRawDataGrayscaleAlpha16();
+		ConvertBitmapToN64_GrayscaleAlpha16();
 		break;
 	case TextureType::Palette4bpp:
-		PrepareRawDataPalette4();
+		ConvertBitmapToN64_Palette4();
 		break;
 	case TextureType::Palette8bpp:
-		PrepareRawDataPalette8();
+		ConvertBitmapToN64_Palette8();
 		break;
 	case TextureType::Error:
 		HANDLE_ERROR_PROCESS(WarningType::InvalidPNG, "Input PNG file has invalid format type", "");
@@ -467,7 +467,7 @@ void ZTexture::PrepareRawDataFromFile(const fs::path& pngFilePath)
 	}
 }
 
-void ZTexture::PrepareRawDataRGBA16()
+void ZTexture::ConvertBitmapToN64_RGBA16()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -490,7 +490,7 @@ void ZTexture::PrepareRawDataRGBA16()
 	}
 }
 
-void ZTexture::PrepareRawDataRGBA32()
+void ZTexture::ConvertBitmapToN64_RGBA32()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -507,7 +507,7 @@ void ZTexture::PrepareRawDataRGBA32()
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscale4()
+void ZTexture::ConvertBitmapToN64_Grayscale4()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -522,7 +522,7 @@ void ZTexture::PrepareRawDataGrayscale4()
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscale8()
+void ZTexture::ConvertBitmapToN64_Grayscale8()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -535,7 +535,7 @@ void ZTexture::PrepareRawDataGrayscale8()
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha4()
+void ZTexture::ConvertBitmapToN64_GrayscaleAlpha4()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -561,7 +561,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha4()
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha8()
+void ZTexture::ConvertBitmapToN64_GrayscaleAlpha8()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -578,7 +578,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha8()
 	}
 }
 
-void ZTexture::PrepareRawDataGrayscaleAlpha16()
+void ZTexture::ConvertBitmapToN64_GrayscaleAlpha16()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -596,7 +596,7 @@ void ZTexture::PrepareRawDataGrayscaleAlpha16()
 	}
 }
 
-void ZTexture::PrepareRawDataPalette4()
+void ZTexture::ConvertBitmapToN64_Palette4()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
@@ -612,7 +612,7 @@ void ZTexture::PrepareRawDataPalette4()
 	}
 }
 
-void ZTexture::PrepareRawDataPalette8()
+void ZTexture::ConvertBitmapToN64_Palette8()
 {
 	for (uint16_t y = 0; y < height; y++)
 	{
