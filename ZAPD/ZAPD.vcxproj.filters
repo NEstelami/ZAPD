@@ -291,6 +291,12 @@
     <ClCompile Include="ZSurfaceType.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
+    <ClCompile Include="ZActorList.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
+    <ClCompile Include="ZWaterbox.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZRoom\ZRoom.h">
@@ -553,6 +559,12 @@
     </ClInclude>
     <ClInclude Include="ZSurfaceType.h">
       <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="ZActorList.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="ZWaterbox.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
