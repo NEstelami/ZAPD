@@ -274,7 +274,7 @@ void ZResource::GetSourceOutputCode([[maybe_unused]] const std::string& prefix)
 		if (decl == nullptr || decl->isPlaceholder)
 			decl = DeclareVar(prefix, bodyStr);
 		else
-			decl->text = bodyStr;
+			decl->declBody = bodyStr;
 
 		decl->staticConf = staticConf;
 	}

@@ -131,7 +131,7 @@ protected:
 	void DeclareResourceSubReferences();
 	void GenerateSourceFiles();
 	void GenerateSourceHeaderFiles();
-	bool AddDeclarationChecks(uint32_t address, const std::string& varName);
+	bool DeclarationSanityChecks(uint32_t address, const std::string& varName);
 	std::string ProcessDeclarations();
 	void ProcessDeclarationText(Declaration* decl);
 	std::string ProcessExterns();

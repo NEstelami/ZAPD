@@ -708,7 +708,7 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, const std::string& prefix, char* l
 		if (!Globals::Instance->HasSegment(segNum))
 			sprintf(line, "gsSPBranchList(0x%08" PRIX64 "),", data & 0xFFFFFFFF);
 		else if (dListDecl != nullptr)
-			sprintf(line, "gsSPBranchList(%s),", dListDecl->varName.c_str());
+			sprintf(line, "gsSPBranchList(%s),", dListDecl->declName.c_str());
 		else
 			sprintf(line, "gsSPBranchList(%sDlist0x%06" PRIX64 "),", prefix.c_str(),
 			        GETSEGOFFSET(data));
@@ -718,7 +718,7 @@ void ZDisplayList::Opcode_G_DL(uint64_t data, const std::string& prefix, char* l
 		if (!Globals::Instance->HasSegment(segNum))
 			sprintf(line, "gsSPDisplayList(0x%08" PRIX64 "),", data & 0xFFFFFFFF);
 		else if (dListDecl != nullptr)
-			sprintf(line, "gsSPDisplayList(%s),", dListDecl->varName.c_str());
+			sprintf(line, "gsSPDisplayList(%s),", dListDecl->declName.c_str());
 		else
 			sprintf(line, "gsSPDisplayList(%sDlist0x%06" PRIX64 "),", prefix.c_str(),
 			        GETSEGOFFSET(data));
@@ -958,7 +958,7 @@ void ZDisplayList::Opcode_G_SETTIMG(uint64_t data, const std::string& prefix, ch
 		}
 
 		if (texDecl != nullptr)
-			sprintf(texStr, "%s", texDecl->varName.c_str());
+			sprintf(texStr, "%s", texDecl->declName.c_str());
 		else if (data != 0 && Globals::Instance->HasSegment(segmentNumber))
 			sprintf(texStr, "%sTex_%06X", prefix.c_str(), texAddress);
 		else

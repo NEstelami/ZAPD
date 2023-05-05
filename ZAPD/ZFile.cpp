@@ -446,24 +446,25 @@ Declaration* ZFile::AddDeclaration(offset_t address, DeclarationAlignment alignm
                                    const std::string& varType, const std::string& varName,
                                    const std::string& body)
 {
-	bool validOffset = AddDeclarationChecks(address, varName);
+	bool validOffset = DeclarationSanityChecks(address, varName);
 	if (!validOffset)
 		return nullptr;
 
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, alignment, size, varType, varName, false, body);
+		decl = Declaration::Create(address, alignment, size, varType, varName, body);
 		declarations[address] = decl;
 	}
 	else
 	{
 		decl->alignment = alignment;
 		decl->size = size;
-		decl->varType = varType;
-		decl->varName = varName;
-		decl->text = body;
+		decl->declType = varType;
+		decl->declName = varName;
+		decl->declBody = body;
 	}
+
 	return decl;
 }
 
@@ -472,27 +473,29 @@ Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment a
                                         const std::string& varName, size_t arrayItemCnt,
                                         const std::string& body)
 {
-	bool validOffset = AddDeclarationChecks(address, varName);
+	bool validOffset = DeclarationSanityChecks(address, varName);
 	if (!validOffset)
 		return nullptr;
 
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl =
-			new Declaration(address, alignment, size, varType, varName, true, arrayItemCnt, body);
+		decl = Declaration::CreateArray(address, alignment, size, varType, varName, body,
+		                                arrayItemCnt);
+
 		declarations[address] = decl;
 	}
 	else
 	{
 		if (decl->isPlaceholder)
-			decl->varName = varName;
+			decl->declName = varName;
+
 		decl->alignment = alignment;
 		decl->size = size;
-		decl->varType = varType;
+		decl->declType = varType;
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
-		decl->text = body;
+		decl->declBody = body;
 	}
 
 	return decl;
@@ -503,41 +506,41 @@ Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment a
                                         const std::string& varName,
                                         const std::string& arrayItemCntStr, const std::string& body)
 {
-	bool validOffset = AddDeclarationChecks(address, varName);
+	bool validOffset = DeclarationSanityChecks(address, varName);
 	if (!validOffset)
 		return nullptr;
 
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, alignment, size, varType, varName, true, arrayItemCntStr,
-		                       body);
+		decl = Declaration::CreateArray(address, alignment, size, varType, varName,
+		                                body, arrayItemCntStr);
+
 		declarations[address] = decl;
 	}
 	else
 	{
 		decl->alignment = alignment;
 		decl->size = size;
-		decl->varType = varType;
-		decl->varName = varName;
+		decl->declType = varType;
+		decl->declName = varName;
 		decl->isArray = true;
 		decl->arrayItemCntStr = arrayItemCntStr;
-		decl->text = body;
+		decl->declBody = body;
 	}
 	return decl;
 }
 
 Declaration* ZFile::AddDeclarationPlaceholder(offset_t address, const std::string& varName)
 {
-	bool validOffset = AddDeclarationChecks(address, varName);
+	bool validOffset = DeclarationSanityChecks(address, varName);
 	if (!validOffset)
 		return nullptr;
 
 	Declaration* decl;
 	if (declarations.find(address) == declarations.end())
 	{
-		decl = new Declaration(address, DeclarationAlignment::Align4, 0, "", varName, false, "");
-		decl->isPlaceholder = true;
+		decl = Declaration::CreatePlaceholder(address, varName);
 		declarations[address] = decl;
 	}
 	else
@@ -550,22 +553,22 @@ Declaration* ZFile::AddDeclarationInclude(offset_t address, const std::string& i
                                           size_t size, const std::string& varType,
                                           const std::string& varName)
 {
-	bool validOffset = AddDeclarationChecks(address, varName);
+	bool validOffset = DeclarationSanityChecks(address, varName);
 	if (!validOffset)
 		return nullptr;
 
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, includePath, size, varType, varName);
+		decl = Declaration::CreateInclude(address, includePath, size, varType, varName);
 		declarations[address] = decl;
 	}
 	else
 	{
 		decl->includePath = includePath;
 		decl->size = size;
-		decl->varType = varType;
-		decl->varName = varName;
+		decl->declType = varType;
+		decl->declName = varName;
 	}
 	return decl;
 }
@@ -574,7 +577,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
                                                size_t size, const std::string& varType,
                                                const std::string& varName, size_t arrayItemCnt)
 {
-	bool validOffset = AddDeclarationChecks(address, varName);
+	bool validOffset = DeclarationSanityChecks(address, varName);
 	if (!validOffset)
 		return nullptr;
 
@@ -586,7 +589,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, includePath, size, varType, varName);
+		decl = Declaration::CreateInclude(address, includePath, size, varType, varName);
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
@@ -596,8 +599,8 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
 	else
 	{
 		decl->includePath = includePath;
-		decl->varType = varType;
-		decl->varName = varName;
+		decl->declType = varType;
+		decl->declName = varName;
 		decl->size = size;
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
@@ -610,7 +613,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
                                                const std::string& varName,
                                                const std::string& defines, size_t arrayItemCnt)
 {
-	bool validOffset = AddDeclarationChecks(address, varName);
+	bool validOffset = DeclarationSanityChecks(address, varName);
 	if (!validOffset)
 		return nullptr;
 
@@ -622,7 +625,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = new Declaration(address, includePath, size, varType, varName, defines);
+		decl = Declaration::CreateInclude(address, includePath, size, varType, varName, defines);
 
 		decl->isArray = true;
 		decl->arrayItemCnt = arrayItemCnt;
@@ -632,8 +635,8 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
 	else
 	{
 		decl->includePath = includePath;
-		decl->varType = varType;
-		decl->varName = varName;
+		decl->declType = varType;
+		decl->declName = varName;
 		decl->defines = defines;
 		decl->size = size;
 		decl->isArray = true;
@@ -642,7 +645,7 @@ Declaration* ZFile::AddDeclarationIncludeArray(offset_t address, std::string& in
 	return decl;
 }
 
-bool ZFile::AddDeclarationChecks(uint32_t address, const std::string& varName)
+bool ZFile::DeclarationSanityChecks(uint32_t address, const std::string& varName)
 {
 	assert(GETSEGNUM(address) == 0);
 	assert(varName != "");
@@ -686,7 +689,7 @@ bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expect
 
 	if (expectedType != "" && expectedType != "void*")
 	{
-		if (expectedType != decl->varType && "static " + expectedType != decl->varType)
+		if (expectedType != decl->declType && "static " + expectedType != decl->declType)
 		{
 			declName = StringHelper::Sprintf("0x%08X", segAddress);
 			return false;
@@ -694,9 +697,9 @@ bool ZFile::GetDeclarationPtrName(segptr_t segAddress, const std::string& expect
 	}
 
 	if (!decl->isArray)
-		declName = "&" + decl->varName;
+		declName = "&" + decl->declName;
 	else
-		declName = decl->varName;
+		declName = decl->declName;
 	return true;
 }
 
@@ -720,7 +723,7 @@ bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSi
 
 	if (expectedType != "" && expectedType != "void*")
 	{
-		if (expectedType != decl->varType && "static " + expectedType != decl->varType)
+		if (expectedType != decl->declType && "static " + expectedType != decl->declType)
 		{
 			declName = StringHelper::Sprintf("0x%08X", segAddress);
 			return false;
@@ -729,7 +732,7 @@ bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSi
 
 	if (decl->address == address)
 	{
-		declName = decl->varName;
+		declName = decl->declName;
 		return true;
 	}
 
@@ -740,7 +743,7 @@ bool ZFile::GetDeclarationArrayIndexedName(segptr_t segAddress, size_t elementSi
 	}
 
 	uint32_t index = (address - decl->address) / elementSize;
-	declName = StringHelper::Sprintf("&%s[%u]", decl->varName.c_str(), index);
+	declName = StringHelper::Sprintf("&%s[%u]", decl->declName.c_str(), index);
 	return true;
 }
 
@@ -1020,12 +1023,12 @@ std::string ZFile::ProcessDeclarations()
 
 		if (curItem.second->isArray && lastItem.second->isArray)
 		{
-			if (curItem.second->varType == lastItem.second->varType)
+			if (curItem.second->declType == lastItem.second->declType)
 			{
 				if (!curItem.second->declaredInXml && !lastItem.second->declaredInXml)
 				{
 					// TEST: For now just do Vtx declarations...
-					if (lastItem.second->varType == "Vtx")
+					if (lastItem.second->declType == "Vtx")
 					{
 						int32_t sizeDiff = curItem.first - (lastItem.first + lastItem.second->size);
 
@@ -1034,7 +1037,7 @@ std::string ZFile::ProcessDeclarations()
 						{
 							lastItem.second->size += curItem.second->size;
 							lastItem.second->arrayItemCnt += curItem.second->arrayItemCnt;
-							lastItem.second->text += "\n" + curItem.second->text;
+							lastItem.second->declBody += "\n" + curItem.second->declBody;
 							declarations.erase(curItem.first);
 							declarationKeys.erase(declarationKeys.begin() + i);
 							delete curItem.second;
@@ -1082,20 +1085,20 @@ std::string ZFile::ProcessDeclarations()
 				// HACK
 				std::string extType;
 
-				if (item.second->varType == "Gfx")
+				if (item.second->declType == "Gfx")
 					extType = "dlist";
-				else if (item.second->varType == "Vtx")
+				else if (item.second->declType == "Vtx")
 					extType = "vtx";
 
-				auto filepath = outputPath / item.second->varName;
+				auto filepath = outputPath / item.second->declName;
 				File::WriteAllText(
 					StringHelper::Sprintf("%s.%s.inc", filepath.string().c_str(), extType.c_str()),
-					item.second->text);
+					item.second->declBody);
 			}
 
 			output += item.second->GetExternalDeclarationStr();
 		}
-		else if (item.second->varType != "")
+		else if (item.second->declType != "")
 		{
 			output += item.second->GetNormalDeclarationStr();
 		}
@@ -1111,17 +1114,17 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 	if (!(decl->references.size() > 0))
 		return;
 
-	for (size_t i = 0; i < decl->text.size() - 1; i++)
+	for (size_t i = 0; i < decl->declBody.size() - 1; i++)
 	{
-		char c = decl->text[i];
-		char c2 = decl->text[i + 1];
+		char c = decl->declBody[i];
+		char c2 = decl->declBody[i + 1];
 
 		if (c == '@' && c2 == 'r')
 		{
 			std::string vtxName;
 			Globals::Instance->GetSegmentedArrayIndexedName(decl->references[refIndex], 0x10, this,
 			                                                "Vtx", vtxName);
-			decl->text.replace(i, 2, vtxName);
+			decl->declBody.replace(i, 2, vtxName);
 
 			refIndex++;
 
@@ -1206,7 +1209,7 @@ std::string ZFile::ProcessTextureIntersections([[maybe_unused]] const std::strin
 				if (nextDecl == nullptr)
 					texNextName = texturesResources.at(nextOffset)->GetName();
 				else
-					texNextName = nextDecl->varName;
+					texNextName = nextDecl->declName;
 
 				defines += StringHelper::Sprintf("#define %s ((u32)%s + 0x%06X)\n",
 				                                 texNextName.c_str(), texName.c_str(), offsetDiff);
@@ -1279,8 +1282,8 @@ bool ZFile::HandleUnaccountedAddress(offset_t currentAddress, offset_t lastAddr,
 
 			std::string intersectionInfo = StringHelper::Sprintf(
 				"Resource from 0x%06X:0x%06X (%s) conflicts with 0x%06X (%s).", lastAddr,
-				lastAddr + lastSize, lastDecl->varName.c_str(), currentAddress,
-				currentDecl->varName.c_str());
+				lastAddr + lastSize, lastDecl->declName.c_str(), currentAddress,
+				currentDecl->declName.c_str());
 			HANDLE_WARNING_RESOURCE(WarningType::Intersection, this, nullptr, currentAddress,
 			                        "intersection detected", intersectionInfo);
 		}
