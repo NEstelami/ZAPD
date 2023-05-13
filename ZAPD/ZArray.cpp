@@ -56,7 +56,7 @@ void ZArray::ParseXML(tinyxml2::XMLElement* reader)
 		}
 		res->parent = parent;
 		res->SetInnerNode(true);
-		res->ExtractFromXML(child, childIndex);
+		res->ExtractWithXML(child, childIndex);
 
 		childIndex += res->GetRawDataSize();
 		resList.push_back(res);

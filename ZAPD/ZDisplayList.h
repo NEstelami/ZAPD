@@ -346,7 +346,7 @@ public:
 	ZDisplayList(ZFile* nParent);
 	~ZDisplayList();
 
-	void ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
+	void ExtractWithXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex) override;
 	void ExtractFromBinary(uint32_t nRawDataIndex, int32_t rawDataSize);
 
 	void ParseRawData() override;

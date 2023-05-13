@@ -48,12 +48,14 @@ void ParseArgs(int& argc, char* argv[]);
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath);
 void BuildAssetBackground(const fs::path& imageFilePath, const fs::path& outPath);
 void BuildAssetBlob(const fs::path& blobFilePath, const fs::path& outPath);
+ZFileMode ParseFileMode(const std::string& buildMode, ExporterSet* exporterSet);
+int HandleExtract(ZFileMode fileMode, ExporterSet* exporterSet);
 
 extern const char gBuildHash[];
 
 int main(int argc, char* argv[])
 {
-	// Syntax: ZAPD.out [mode (btex/bovl/e)] (Arbritrary Number of Arguments)
+	int returnCode = 0;
 
 	if (argc < 2)
 	{
@@ -87,20 +89,7 @@ int main(int argc, char* argv[])
 	// Parse File Mode
 	ExporterSet* exporterSet = Globals::Instance->GetExporterSet();
 	std::string buildMode = argv[1];
-	ZFileMode fileMode = ZFileMode::Invalid;
-
-	if (buildMode == "btex")
-		fileMode = ZFileMode::BuildTexture;
-	else if (buildMode == "bren")
-		fileMode = ZFileMode::BuildBackground;
-	else if (buildMode == "bsf")
-		fileMode = ZFileMode::BuildSourceFile;
-	else if (buildMode == "bblb")
-		fileMode = ZFileMode::BuildBlob;
-	else if (buildMode == "e")
-		fileMode = ZFileMode::Extract;
-	else if (exporterSet != nullptr && exporterSet->parseFileModeFunc != nullptr)
-		exporterSet->parseFileModeFunc(buildMode, fileMode);
+	ZFileMode fileMode = ParseFileMode(buildMode, exporterSet);
 
 	if (fileMode == ZFileMode::Invalid)
 	{
@@ -110,7 +99,6 @@ int main(int argc, char* argv[])
 
 	// We've parsed through our commands once. If an exporter exists, it's been set by now.
 	// Now we'll parse through them again but pass them on to our exporter if one is available.
-
 	if (exporterSet != nullptr && exporterSet->parseArgsFunc != nullptr)
 	{
 		for (int32_t i = 2; i < argc; i++)
@@ -123,58 +111,18 @@ int main(int argc, char* argv[])
 	if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_DEBUG)
 		WarningHandler::PrintWarningsDebugInfo();
 
-	// TODO: switch
 	if (fileMode == ZFileMode::Extract || fileMode == ZFileMode::BuildSourceFile)
-	{
-		bool procFileModeSuccess = false;
-
-		if (exporterSet != nullptr && exporterSet->processFileModeFunc != nullptr)
-			procFileModeSuccess = exporterSet->processFileModeFunc(fileMode);
-
-		if (!procFileModeSuccess)
-		{
-			bool parseSuccessful;
-
-			for (auto& extFile : Globals::Instance->cfg.externalFiles)
-			{
-				fs::path externalXmlFilePath =
-					Globals::Instance->cfg.externalXmlFolder / extFile.xmlPath;
-
-				if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
-				{
-					printf("Parsing external file from config: '%s'\n",
-					       externalXmlFilePath.c_str());
-				}
-
-				parseSuccessful = Parse(externalXmlFilePath, Globals::Instance->baseRomPath,
-				                        extFile.outPath, ZFileMode::ExternalFile);
-
-				if (!parseSuccessful)
-					return 1;
-			}
-
-			parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-			                        Globals::Instance->outputPath, fileMode);
-			if (!parseSuccessful)
-				return 1;
-		}
-	}
+		returnCode = HandleExtract(fileMode, exporterSet);
 	else if (fileMode == ZFileMode::BuildTexture)
-	{
-		TextureType texType = Globals::Instance->texType;
-		BuildAssetTexture(Globals::Instance->inputPath, texType, Globals::Instance->outputPath);
-	}
+		BuildAssetTexture(Globals::Instance->inputPath, Globals::Instance->texType,
+		                  Globals::Instance->outputPath);
 	else if (fileMode == ZFileMode::BuildBackground)
-	{
 		BuildAssetBackground(Globals::Instance->inputPath, Globals::Instance->outputPath);
-	}
 	else if (fileMode == ZFileMode::BuildBlob)
-	{
 		BuildAssetBlob(Globals::Instance->inputPath, Globals::Instance->outputPath);
-	}
 
 	delete g;
-	return 0;
+	return returnCode;
 }
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
@@ -322,6 +270,27 @@ void ParseArgs(int& argc, char* argv[])
 	}
 }
 
+
+ZFileMode ParseFileMode(const std::string& buildMode, ExporterSet* exporterSet)
+{
+	ZFileMode fileMode = ZFileMode::Invalid;
+
+	if (buildMode == "btex")
+		fileMode = ZFileMode::BuildTexture;
+	else if (buildMode == "bren")
+		fileMode = ZFileMode::BuildBackground;
+	else if (buildMode == "bsf")
+		fileMode = ZFileMode::BuildSourceFile;
+	else if (buildMode == "bblb")
+		fileMode = ZFileMode::BuildBlob;
+	else if (buildMode == "e")
+		fileMode = ZFileMode::Extract;
+	else if (exporterSet != nullptr && exporterSet->parseFileModeFunc != nullptr)
+		exporterSet->parseFileModeFunc(buildMode, fileMode);
+
+	return fileMode;
+}
+
 void Arg_SetOutputPath(int& i, [[maybe_unused]] char* argv[])
 {
 	Globals::Instance->outputPath = argv[++i];
@@ -417,6 +386,39 @@ void Arg_ForceStatic([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 void Arg_ForceUnaccountedStatic([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 {
 	Globals::Instance->forceUnaccountedStatic = true;
+}
+
+int HandleExtract(ZFileMode fileMode, ExporterSet* exporterSet)
+{
+	bool procFileModeSuccess = false;
+
+	if (exporterSet != nullptr && exporterSet->processFileModeFunc != nullptr)
+		procFileModeSuccess = exporterSet->processFileModeFunc(fileMode);
+
+	if (!procFileModeSuccess)
+	{
+		bool parseSuccessful;
+
+		for (auto& extFile : Globals::Instance->cfg.externalFiles)
+		{
+			fs::path externalXmlFilePath =
+				Globals::Instance->cfg.externalXmlFolder / extFile.xmlPath;
+
+			if (Globals::Instance->verbosity >= VerbosityLevel::VERBOSITY_INFO)
+				printf("Parsing external file from config: '%s'\n", externalXmlFilePath.c_str());
+
+			parseSuccessful = Parse(externalXmlFilePath, Globals::Instance->baseRomPath,
+			                        extFile.outPath, ZFileMode::ExternalFile);
+
+			if (!parseSuccessful)
+				return 1;
+		}
+
+		parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
+		                        Globals::Instance->outputPath, fileMode);
+		if (!parseSuccessful)
+			return 1;
+	}
 }
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath)

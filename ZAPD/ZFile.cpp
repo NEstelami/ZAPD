@@ -272,7 +272,7 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 			ZResource* nRes = nodeMap[nodeName](this);
 
 			if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
-				nRes->ExtractFromXML(child, rawDataIndex);
+				nRes->ExtractWithXML(child, rawDataIndex);
 
 			switch (nRes->GetResourceType())
 			{
@@ -887,13 +887,9 @@ std::string ZFile::GetExternalFileHeaderInclude() const
 		{
 			fs::path outputFolderPath = externalFile->GetSourceOutputFolderPath();
 			if (outputFolderPath == this->GetSourceOutputFolderPath())
-			{
 				outputFolderPath = externalFile->outName.stem();
-			}
 			else
-			{
 				outputFolderPath /= externalFile->outName.stem();
-			}
 
 			externalFilesIncludes +=
 				StringHelper::Sprintf("#include \"%s.h\"\n", outputFolderPath.string().c_str());
