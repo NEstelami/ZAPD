@@ -37,7 +37,6 @@ public:
 	void GetSourceOutputCode(const std::string& prefix) override;
 
 	std::string GetDefaultName(const std::string& prefix) const override;
-	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);
 	size_t GetCommandSizeFromNeighbor(ZRoomCommand* cmd);
 	ZRoomCommand* FindCommandOfType(RoomCommand cmdType);
 

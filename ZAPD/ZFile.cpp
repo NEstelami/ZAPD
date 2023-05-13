@@ -772,6 +772,21 @@ bool ZFile::HasDeclaration(offset_t address)
 	return declarations.find(address) != declarations.end();
 }
 
+
+size_t ZFile::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
+{
+	auto currentDecl = declarations.find(declarationAddress);
+	if (currentDecl == declarations.end())
+		return 0;
+
+	auto nextDecl = currentDecl;
+	std::advance(nextDecl, 1);
+	if (nextDecl == declarations.end())
+		return GetRawData().size() - currentDecl->first;
+
+	return nextDecl->first - currentDecl->first;
+}
+
 void ZFile::GenerateSourceFiles()
 {
 	std::string sourceOutput;

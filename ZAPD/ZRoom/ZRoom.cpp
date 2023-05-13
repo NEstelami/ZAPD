@@ -356,20 +356,6 @@ ZRoomCommand* ZRoom::FindCommandOfType(RoomCommand cmdType)
 	return nullptr;
 }
 
-size_t ZRoom::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
-{
-	auto currentDecl = parent->declarations.find(declarationAddress);
-	if (currentDecl == parent->declarations.end())
-		return 0;
-
-	auto nextDecl = currentDecl;
-	std::advance(nextDecl, 1);
-	if (nextDecl == parent->declarations.end())
-		return parent->GetRawData().size() - currentDecl->first;
-
-	return nextDecl->first - currentDecl->first;
-}
-
 size_t ZRoom::GetCommandSizeFromNeighbor(ZRoomCommand* cmd)
 {
 	int32_t cmdIndex = -1;
