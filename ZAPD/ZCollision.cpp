@@ -123,6 +123,16 @@ void ZCollisionHeader::ParseRawData()
 			upperCameraBoundary = rawDataIndex;
 		}
 
+		if (upperCameraBoundary == polyTypeDefSegmentOffset)
+		{
+			size_t offset = camDataSegmentOffset;
+			while (rawData[offset] == 0x00 && rawData[offset + 0x4] == 0x02)
+			{
+				offset += 0x08;
+			}
+			upperCameraBoundary = offset;
+		}
+
 		camData =
 			new CameraDataList(parent, name, rawData, camDataSegmentOffset, upperCameraBoundary);
 	}
