@@ -322,13 +322,13 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 			break;
 		}
 
-		if (rawDataIndex > entry->cameraPosDataSeg)
+		if (rawDataIndex > GETSEGNUM(entry->cameraPosDataSeg))
 		{
 			if (entry->cameraPosDataSeg != 0 &&
-			    cameraPosDataSeg < (entry->cameraPosDataSeg & 0xFFFFFF))
+			    cameraPosDataSeg > (entry->cameraPosDataSeg & 0xFFFFFF))
 				cameraPosDataSeg = (entry->cameraPosDataSeg & 0xFFFFFF);
 		}
-		else // Sharp Ocarina
+		else  // Sharp Ocarina
 		{
 			isSharpOcarina = true;
 			cameraPosDataOffset2 = rawDataIndex + (numElements * 0x8);
