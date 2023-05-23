@@ -303,7 +303,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	offset_t cameraPosDataSeg = rawDataIndex;
 	uint32_t numDataTotal;
 	uint32_t cameraPosDataOffset2;
-	uint32_t cameraPosDataSeg2 = rawDataIndex;
+	uint32_t cameraPosDataSegEnd = rawDataIndex;
 	bool isSharpOcarina = false;
 
 	for (size_t i = 0; i < numElements; i++)
@@ -325,23 +325,23 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		if (rawDataIndex > GETSEGNUM(entry->cameraPosDataSeg))
 		{
 			if (entry->cameraPosDataSeg != 0 &&
-			    cameraPosDataSeg > (entry->cameraPosDataSeg & 0xFFFFFF))
-				cameraPosDataSeg = (entry->cameraPosDataSeg & 0xFFFFFF);
+			    cameraPosDataSeg > GETSEGOFFSET(entry->cameraPosDataSeg))
+				cameraPosDataSeg = GETSEGOFFSET(entry->cameraPosDataSeg);
 		}
 		else  // Sharp Ocarina
 		{
 			isSharpOcarina = true;
 			cameraPosDataOffset2 = rawDataIndex + (numElements * 0x8);
 			cameraPosDataSeg = cameraPosDataOffset2;
-			if (cameraPosDataSeg2 < (entry->cameraPosDataSeg & 0xFFFFFF))
-				cameraPosDataSeg2 = (entry->cameraPosDataSeg & 0xFFFFFF);
+			if (cameraPosDataSegEnd < GETSEGOFFSET(entry->cameraPosDataSeg))
+				cameraPosDataSegEnd = GETSEGOFFSET(entry->cameraPosDataSeg);
 		}
 
 		entries.push_back(entry);
 	}
 
 	// Setting cameraPosDataAddr to rawDataIndex give a pos list length of 0
-	uint32_t cameraPosDataOffset = cameraPosDataSeg & 0xFFFFFF;
+	uint32_t cameraPosDataOffset = GETSEGOFFSET(cameraPosDataSeg);
 	for (size_t i = 0; i < entries.size(); i++)
 	{
 		char camSegLine[2048];
@@ -349,11 +349,12 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		if (entries[i]->cameraPosDataSeg != 0)
 		{
 			int32_t index =
-				((entries[i]->cameraPosDataSeg & 0x00FFFFFF) - cameraPosDataOffset) / 0x6;
-			sprintf(camSegLine, "&%sCamPosData[%i]", prefix.c_str(), index);
+				(GETSEGOFFSET(entries[i]->cameraPosDataSeg) - cameraPosDataOffset) /
+				0x6;
+			snprintf(camSegLine, 2048, "&%sCamPosData[%i]", prefix.c_str(), index);
 		}
 		else
-			sprintf(camSegLine, "NULL");
+			snprintf(camSegLine, 2048, "NULL");
 
 		declaration +=
 			StringHelper::Sprintf("    { 0x%04X, %i, %s },", entries[i]->cameraSType,
@@ -371,7 +372,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	if (!isSharpOcarina)
 		numDataTotal = (rawDataIndex - cameraPosDataOffset) / 0x6;
 	else
-		numDataTotal = ((cameraPosDataSeg2 - cameraPosDataOffset2) + 18) / 0x6;
+		numDataTotal = ((cameraPosDataSegEnd - cameraPosDataOffset2) + 18) / 0x6;
 
 	if (numDataTotal > 0)
 	{
