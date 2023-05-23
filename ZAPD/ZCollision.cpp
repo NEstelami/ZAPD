@@ -123,7 +123,7 @@ void ZCollisionHeader::ParseRawData()
 			upperCameraBoundary = rawDataIndex;
 		}
 
-		if (upperCameraBoundary == polyTypeDefSegmentOffset)
+		if (upperCameraBoundary < camDataSegmentOffset)
 		{
 			size_t offset = camDataSegmentOffset;
 			while (rawData[offset] == 0x00 && rawData[offset + 0x4] == 0x02)
@@ -301,6 +301,11 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	assert(numElements < 10000);
 
 	offset_t cameraPosDataSeg = rawDataIndex;
+	uint32_t numDataTotal;
+	uint32_t cameraPosDataOffset2;
+	uint32_t cameraPosDataSeg2 = rawDataIndex;
+	bool isSharpOcarina = false;
+
 	for (size_t i = 0; i < numElements; i++)
 	{
 		CameraDataEntry* entry = new CameraDataEntry();
@@ -317,8 +322,20 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 			break;
 		}
 
-		if (entry->cameraPosDataSeg != 0 && cameraPosDataSeg > (entry->cameraPosDataSeg & 0xFFFFFF))
-			cameraPosDataSeg = (entry->cameraPosDataSeg & 0xFFFFFF);
+		if (rawDataIndex > entry->cameraPosDataSeg)
+		{
+			if (entry->cameraPosDataSeg != 0 &&
+			    cameraPosDataSeg < (entry->cameraPosDataSeg & 0xFFFFFF))
+				cameraPosDataSeg = (entry->cameraPosDataSeg & 0xFFFFFF);
+		}
+		else // Sharp Ocarina
+		{
+			isSharpOcarina = true;
+			cameraPosDataOffset2 = rawDataIndex + (numElements * 0x8);
+			cameraPosDataSeg = cameraPosDataOffset2;
+			if (cameraPosDataSeg2 < (entry->cameraPosDataSeg & 0xFFFFFF))
+				cameraPosDataSeg2 = (entry->cameraPosDataSeg & 0xFFFFFF);
+		}
 
 		entries.push_back(entry);
 	}
@@ -351,7 +368,10 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		StringHelper::Sprintf("%sCamDataList", prefix.c_str(), rawDataIndex), entries.size(),
 		declaration);
 
-	uint32_t numDataTotal = (rawDataIndex - cameraPosDataOffset) / 0x6;
+	if (!isSharpOcarina)
+		numDataTotal = (rawDataIndex - cameraPosDataOffset) / 0x6;
+	else
+		numDataTotal = ((cameraPosDataSeg2 - cameraPosDataOffset2) + 18) / 0x6;
 
 	if (numDataTotal > 0)
 	{
