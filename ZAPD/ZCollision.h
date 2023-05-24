@@ -27,8 +27,8 @@ public:
 class CameraDataList
 {
 public:
-	std::vector<CameraDataEntry*> entries;
-	std::vector<CameraPositionData*> cameraPositionData;
+	std::vector<CameraDataEntry> entries;
+	std::vector<CameraPositionData> cameraPositionData;
 
 	CameraDataList(ZFile* parent, const std::string& prefix, const std::vector<uint8_t>& rawData,
 	               offset_t rawDataIndex, offset_t upperCameraBoundary);

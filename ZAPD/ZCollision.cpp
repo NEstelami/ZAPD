@@ -106,23 +106,24 @@ void ZCollisionHeader::ParseRawData()
 		// - WaterBoxes
 		// - CollisionHeader
 		offset_t upperCameraBoundary = polyTypeDefSegmentOffset;
-		if (upperCameraBoundary == 0)
+		if (upperCameraBoundary == SEGMENTED_NULL)
 		{
 			upperCameraBoundary = polySegmentOffset;
 		}
-		if (upperCameraBoundary == 0)
+		if (upperCameraBoundary == SEGMENTED_NULL)
 		{
 			upperCameraBoundary = vtxSegmentOffset;
 		}
-		if (upperCameraBoundary == 0)
+		if (upperCameraBoundary == SEGMENTED_NULL)
 		{
 			upperCameraBoundary = waterBoxSegmentOffset;
 		}
-		if (upperCameraBoundary == 0)
+		if (upperCameraBoundary == SEGMENTED_NULL)
 		{
 			upperCameraBoundary = rawDataIndex;
 		}
 
+		// Sharp Ocarina places the CamDataEntries above the list so we need to calculate the number of cameras differently.
 		if (upperCameraBoundary < camDataSegmentOffset)
 		{
 			size_t offset = camDataSegmentOffset;
@@ -308,36 +309,36 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 	for (size_t i = 0; i < numElements; i++)
 	{
-		CameraDataEntry* entry = new CameraDataEntry();
+		CameraDataEntry entry;
 
-		entry->cameraSType =
+		entry.cameraSType =
 			BitConverter::ToInt16BE(rawData, rawDataIndex + (entries.size() * 8) + 0);
-		entry->numData = BitConverter::ToInt16BE(rawData, rawDataIndex + (entries.size() * 8) + 2);
-		entry->cameraPosDataSeg =
+		entry.numData = BitConverter::ToInt16BE(rawData, rawDataIndex + (entries.size() * 8) + 2);
+		entry.cameraPosDataSeg =
 			BitConverter::ToInt32BE(rawData, rawDataIndex + (entries.size() * 8) + 4);
 
-		if (entry->cameraPosDataSeg != 0 && GETSEGNUM(entry->cameraPosDataSeg) != SEGMENT_SCENE)
+		if (entry.cameraPosDataSeg != 0 && GETSEGNUM(entry.cameraPosDataSeg) != SEGMENT_SCENE)
 		{
 			cameraPosDataSeg = rawDataIndex + (entries.size() * 8);
 			break;
 		}
 
-		if (rawDataIndex > GETSEGNUM(entry->cameraPosDataSeg))
+		if (rawDataIndex > GETSEGOFFSET(entry.cameraPosDataSeg))
 		{
-			if (entry->cameraPosDataSeg != 0 &&
-			    cameraPosDataSeg > GETSEGOFFSET(entry->cameraPosDataSeg))
-				cameraPosDataSeg = GETSEGOFFSET(entry->cameraPosDataSeg);
+			if (entry.cameraPosDataSeg != 0 &&
+			    cameraPosDataSeg > GETSEGOFFSET(entry.cameraPosDataSeg))
+				cameraPosDataSeg = GETSEGOFFSET(entry.cameraPosDataSeg);
 		}
 		else  // Sharp Ocarina
 		{
 			isSharpOcarina = true;
 			cameraPosDataOffset2 = rawDataIndex + (numElements * 0x8);
 			cameraPosDataSeg = cameraPosDataOffset2;
-			if (cameraPosDataSegEnd < GETSEGOFFSET(entry->cameraPosDataSeg))
-				cameraPosDataSegEnd = GETSEGOFFSET(entry->cameraPosDataSeg);
+			if (cameraPosDataSegEnd < GETSEGOFFSET(entry.cameraPosDataSeg))
+				cameraPosDataSegEnd = GETSEGOFFSET(entry.cameraPosDataSeg);
 		}
 
-		entries.push_back(entry);
+		entries.emplace_back(entry);
 	}
 
 	// Setting cameraPosDataAddr to rawDataIndex give a pos list length of 0
@@ -346,10 +347,10 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	{
 		char camSegLine[2048];
 
-		if (entries[i]->cameraPosDataSeg != 0)
+		if (entries[i].cameraPosDataSeg != 0)
 		{
 			int32_t index =
-				(GETSEGOFFSET(entries[i]->cameraPosDataSeg) - cameraPosDataOffset) /
+				(GETSEGOFFSET(entries[i].cameraPosDataSeg) - cameraPosDataOffset) /
 				0x6;
 			snprintf(camSegLine, 2048, "&%sCamPosData[%i]", prefix.c_str(), index);
 		}
@@ -357,8 +358,8 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 			snprintf(camSegLine, 2048, "NULL");
 
 		declaration +=
-			StringHelper::Sprintf("    { 0x%04X, %i, %s },", entries[i]->cameraSType,
-		                          entries[i]->numData, camSegLine, rawDataIndex + (i * 8));
+			StringHelper::Sprintf("    { 0x%04X, %i, %s },", entries[i].cameraSType,
+		                          entries[i].numData, camSegLine, rawDataIndex + (i * 8));
 
 		if (i < entries.size() - 1)
 			declaration += "\n";
@@ -377,13 +378,13 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	if (numDataTotal > 0)
 	{
 		declaration.clear();
+		cameraPositionData.reserve(numDataTotal);
 		for (uint32_t i = 0; i < numDataTotal; i++)
 		{
-			CameraPositionData* data =
-				new CameraPositionData(rawData, cameraPosDataOffset + (i * 6));
-			cameraPositionData.push_back(data);
+			CameraPositionData data = CameraPositionData(rawData, cameraPosDataOffset + (i * 6));
 
-			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i },", data->x, data->y, data->z);
+			declaration += StringHelper::Sprintf("\t{ %6i, %6i, %6i },", data.x, data.y, data.z);
+			cameraPositionData.emplace_back(data);
 			if (i + 1 < numDataTotal)
 				declaration += "\n";
 		}
@@ -398,11 +399,6 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 CameraDataList::~CameraDataList()
 {
-	for (auto entry : entries)
-		delete entry;
-
-	for (auto camPosData : cameraPositionData)
-		delete camPosData;
 }
 
 CameraPositionData::CameraPositionData(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
