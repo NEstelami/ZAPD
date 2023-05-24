@@ -126,7 +126,7 @@ void ZCollisionHeader::ParseRawData()
 		// Sharp Ocarina places the CamDataEntries above the list so we need to calculate the number of cameras differently.
 		if (upperCameraBoundary < camDataSegmentOffset)
 		{
-			size_t offset = camDataSegmentOffset;
+			offset_t offset = camDataSegmentOffset;
 			while (rawData[offset] == 0x00 && rawData[offset + 0x4] == 0x02)
 			{
 				offset += 0x08;
@@ -303,7 +303,6 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 	offset_t cameraPosDataSeg = rawDataIndex;
 	uint32_t numDataTotal;
-	uint32_t cameraPosDataOffset2;
 	uint32_t cameraPosDataSegEnd = rawDataIndex;
 	bool isSharpOcarina = false;
 
@@ -329,11 +328,11 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 			    cameraPosDataSeg > GETSEGOFFSET(entry.cameraPosDataSeg))
 				cameraPosDataSeg = GETSEGOFFSET(entry.cameraPosDataSeg);
 		}
-		else  // Sharp Ocarina
+		else  
 		{
+			// Sharp Ocarina will place the cam data after the list as opposed to the original maps which have it before.
 			isSharpOcarina = true;
-			cameraPosDataOffset2 = rawDataIndex + (numElements * 0x8);
-			cameraPosDataSeg = cameraPosDataOffset2;
+			cameraPosDataSeg = rawDataIndex + (numElements * 0x8);
 			if (cameraPosDataSegEnd < GETSEGOFFSET(entry.cameraPosDataSeg))
 				cameraPosDataSegEnd = GETSEGOFFSET(entry.cameraPosDataSeg);
 		}
@@ -349,7 +348,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 
 		if (entries[i].cameraPosDataSeg != 0)
 		{
-			int32_t index =
+			uint32_t index =
 				(GETSEGOFFSET(entries[i].cameraPosDataSeg) - cameraPosDataOffset) /
 				0x6;
 			snprintf(camSegLine, 2048, "&%sCamPosData[%i]", prefix.c_str(), index);
@@ -364,7 +363,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		if (i < entries.size() - 1)
 			declaration += "\n";
 	}
-
+	
 	parent->AddDeclarationArray(
 		rawDataIndex, DeclarationAlignment::Align4, entries.size() * 8, "CamData",
 		StringHelper::Sprintf("%sCamDataList", prefix.c_str(), rawDataIndex), entries.size(),
@@ -373,7 +372,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 	if (!isSharpOcarina)
 		numDataTotal = (rawDataIndex - cameraPosDataOffset) / 0x6;
 	else
-		numDataTotal = ((cameraPosDataSegEnd - cameraPosDataOffset2) + 18) / 0x6;
+		numDataTotal = ((cameraPosDataSegEnd - cameraPosDataSeg) + 18) / 0x6;
 
 	if (numDataTotal > 0)
 	{
@@ -389,7 +388,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 				declaration += "\n";
 		}
 
-		int32_t cameraPosDataIndex = GETSEGOFFSET(cameraPosDataSeg);
+		uint32_t cameraPosDataIndex = GETSEGOFFSET(cameraPosDataSeg);
 		uint32_t entrySize = numDataTotal * 0x6;
 		parent->AddDeclarationArray(cameraPosDataIndex, DeclarationAlignment::Align4, entrySize,
 		                            "Vec3s", StringHelper::Sprintf("%sCamPosData", prefix.c_str()),
