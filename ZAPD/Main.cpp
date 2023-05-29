@@ -419,6 +419,8 @@ int HandleExtract(ZFileMode fileMode, ExporterSet* exporterSet)
 		if (!parseSuccessful)
 			return 1;
 	}
+
+	return 0;
 }
 
 void BuildAssetTexture(const fs::path& pngFilePath, TextureType texType, const fs::path& outPath)
