@@ -89,6 +89,7 @@ public:
 	Declaration* GetDeclaration(offset_t address) const;
 	Declaration* GetDeclarationRanged(offset_t address) const;
 	bool HasDeclaration(offset_t address);
+	size_t GetDeclarationSizeFromNeighbor(uint32_t declarationAddress);
 
 	std::string GetHeaderInclude() const;
 	std::string GetZRoomHeaderInclude() const;

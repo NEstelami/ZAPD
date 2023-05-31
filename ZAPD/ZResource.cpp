@@ -24,7 +24,7 @@ ZResource::ZResource(ZFile* nParent)
 	RegisterOptionalAttribute("Static", "Global");
 }
 
-void ZResource::ExtractFromXML(tinyxml2::XMLElement* reader, offset_t nRawDataIndex)
+void ZResource::ExtractWithXML(tinyxml2::XMLElement* reader, offset_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 	declaredInXml = true;

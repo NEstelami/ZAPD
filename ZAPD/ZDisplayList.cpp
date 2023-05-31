@@ -40,7 +40,7 @@ ZDisplayList::~ZDisplayList()
 }
 
 // EXTRACT MODE
-void ZDisplayList::ExtractFromXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
+void ZDisplayList::ExtractWithXML(tinyxml2::XMLElement* reader, uint32_t nRawDataIndex)
 {
 	rawDataIndex = nRawDataIndex;
 	ParseXML(reader);

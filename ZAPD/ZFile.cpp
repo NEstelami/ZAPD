@@ -272,7 +272,7 @@ void ZFile::ParseXML(tinyxml2::XMLElement* reader, const std::string& filename)
 			ZResource* nRes = nodeMap[nodeName](this);
 
 			if (mode == ZFileMode::Extract || mode == ZFileMode::ExternalFile)
-				nRes->ExtractFromXML(child, rawDataIndex);
+				nRes->ExtractWithXML(child, rawDataIndex);
 
 			switch (nRes->GetResourceType())
 			{
@@ -772,6 +772,21 @@ bool ZFile::HasDeclaration(offset_t address)
 	return declarations.find(address) != declarations.end();
 }
 
+
+size_t ZFile::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
+{
+	auto currentDecl = declarations.find(declarationAddress);
+	if (currentDecl == declarations.end())
+		return 0;
+
+	auto nextDecl = currentDecl;
+	std::advance(nextDecl, 1);
+	if (nextDecl == declarations.end())
+		return GetRawData().size() - currentDecl->first;
+
+	return nextDecl->first - currentDecl->first;
+}
+
 void ZFile::GenerateSourceFiles()
 {
 	std::string sourceOutput;
@@ -887,13 +902,9 @@ std::string ZFile::GetExternalFileHeaderInclude() const
 		{
 			fs::path outputFolderPath = externalFile->GetSourceOutputFolderPath();
 			if (outputFolderPath == this->GetSourceOutputFolderPath())
-			{
 				outputFolderPath = externalFile->outName.stem();
-			}
 			else
-			{
 				outputFolderPath /= externalFile->outName.stem();
-			}
 
 			externalFilesIncludes +=
 				StringHelper::Sprintf("#include \"%s.h\"\n", outputFolderPath.string().c_str());
