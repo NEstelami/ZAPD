@@ -50,19 +50,37 @@ Declaration* ZPlayerAnimationData::DeclareVar(const std::string& prefix, const s
 	return decl;
 }
 
+int16_t ZPlayerAnimationData::GetTwosComplement(const uint16_t src) const
+{
+	int16_t num = ~src;
+	return ++num;
+}
+
 std::string ZPlayerAnimationData::GetBodySourceCode() const
 {
 	std::string declaration = "";
 
 	size_t index = 0;
-	for (const auto& entry : limbRotData)
+	for (const auto entry : limbRotData)
 	{
 		if (index % 8 == 0)
 		{
 			declaration += "\t";
 		}
 
-		declaration += StringHelper::Sprintf("0x%04X, ", entry);
+		if (entry > 0x8000)
+		{
+			int16_t value = GetTwosComplement(entry);
+			declaration += StringHelper::Sprintf("-0x%04X, ", value);
+		}
+		else if (entry == 0x8000)
+		{
+			declaration += StringHelper::Sprintf("-0x%04X, ", entry);
+		}
+		else
+		{
+			declaration += StringHelper::Sprintf("0x%04X, ", entry);
+		}
 
 		if ((index + 1) % 8 == 0)
 		{

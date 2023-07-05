@@ -25,4 +25,7 @@ public:
 	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() const override;
+
+private:
+	int16_t GetTwosComplement(const uint16_t src) const;
 };
