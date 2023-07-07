@@ -9,7 +9,7 @@ class ZPlayerAnimationData : public ZResource
 {
 public:
 	int16_t frameCount = 0;
-	std::vector<uint16_t> limbRotData;
+	std::vector<int16_t> limbRotData;
 
 	ZPlayerAnimationData(ZFile* nParent);
 
@@ -25,7 +25,4 @@ public:
 	ZResourceType GetResourceType() const override;
 
 	size_t GetRawDataSize() const override;
-
-private:
-	int16_t GetTwosComplement(const uint16_t src) const;
 };

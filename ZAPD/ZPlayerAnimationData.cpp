@@ -32,7 +32,7 @@ void ZPlayerAnimationData::ParseRawData()
 
 	for (size_t i = 0; i < totalSize; i += 2)
 	{
-		limbRotData.push_back(BitConverter::ToUInt16BE(rawData, rawDataIndex + i));
+		limbRotData.push_back(BitConverter::ToInt16BE(rawData, rawDataIndex + i));
 	}
 }
 
@@ -50,12 +50,6 @@ Declaration* ZPlayerAnimationData::DeclareVar(const std::string& prefix, const s
 	return decl;
 }
 
-int16_t ZPlayerAnimationData::GetTwosComplement(const uint16_t src) const
-{
-	int16_t num = ~src;
-	return ++num;
-}
-
 std::string ZPlayerAnimationData::GetBodySourceCode() const
 {
 	std::string declaration = "";
@@ -68,17 +62,9 @@ std::string ZPlayerAnimationData::GetBodySourceCode() const
 			declaration += "\t";
 		}
 
-		// We want to print this data as signed hex, but there is no way to do that with `Sprintf`.
-		// So we get the Two's complement of the number and put a negative sign in front. This
-		// prevents warnings when using both '-Woverflow' and '-pedantic'
-		if (entry > 0x8000)
+		if (entry < 0)
 		{
-			const int16_t value = GetTwosComplement(entry);
-			declaration += StringHelper::Sprintf("-0x%04X, ", value);
-		}
-		else if (entry == 0x8000)
-		{
-			declaration += StringHelper::Sprintf("-0x%04X, ", entry);
+			declaration += StringHelper::Sprintf("-0x%04X, ", -entry);
 		}
 		else
 		{
