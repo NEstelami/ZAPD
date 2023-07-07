@@ -68,9 +68,12 @@ std::string ZPlayerAnimationData::GetBodySourceCode() const
 			declaration += "\t";
 		}
 
+		// We want to print this data as signed hex, but there is no way to do that with `Sprintf`.
+		// So we get the Two's complement of the number and put a negative sign in front. This
+		// prevents warnings when using both '-Woverflow' and '-pedantic'
 		if (entry > 0x8000)
 		{
-			int16_t value = GetTwosComplement(entry);
+			const int16_t value = GetTwosComplement(entry);
 			declaration += StringHelper::Sprintf("-0x%04X, ", value);
 		}
 		else if (entry == 0x8000)
