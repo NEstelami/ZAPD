@@ -227,8 +227,8 @@ void ZTexture::ConvertN64ToBitmap_RGBA16()
 			uint8_t b = (data & 0x003E) >> 1;
 			uint8_t alpha = data & 0x01;
 
-			textureData.SetRGBPixel(y, x, (r << 3) | (r >> 2), (g << 3) | (g >> 2), (b << 3) | (b >> 2),
-			                        alpha * 255);
+			textureData.SetRGBPixel(y, x, (r << 3) | (r >> 2), (g << 3) | (g >> 2),
+			                        (b << 3) | (b >> 2), alpha * 255);
 		}
 	}
 }
@@ -310,7 +310,7 @@ void ZTexture::ConvertN64ToBitmap_GrayscaleAlpha4()
 					data = parentRawData.at(pos) & 0x0F;
 
 				uint8_t grayscale = data & 0b1110;
-				grayscale = (grayscale << 4) | (grayscale << 1) | (grayscale >> 2); 
+				grayscale = (grayscale << 4) | (grayscale << 1) | (grayscale >> 2);
 				uint8_t alpha = (data & 0x01) ? 255 : 0;
 
 				textureData.SetGrayscalePixel(y, x + i, grayscale, alpha);
@@ -570,8 +570,8 @@ void ZTexture::ConvertBitmapToN64_GrayscaleAlpha8()
 			size_t pos = ((y * width) + x) * 1;
 			RGBAPixel pixel = textureData.GetPixel(y, x);
 
-			uint8_t r = (pixel.r >> 4) &0xF;
-			uint8_t a = (pixel.a >> 4) &0xF;
+			uint8_t r = (pixel.r >> 4) & 0xF;
+			uint8_t a = (pixel.a >> 4) & 0xF;
 
 			textureDataRaw[pos] = (r << 4) | a;
 		}
@@ -777,8 +777,8 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 	auto filepath = Globals::Instance->outputPath / fs::path(auxOutName).stem();
 
 	if (dWordAligned)
-		incStr =
-			StringHelper::Sprintf("%s.%s.inc.c", filepath.string().c_str(), GetExternalExtension().c_str());
+		incStr = StringHelper::Sprintf("%s.%s.inc.c", filepath.string().c_str(),
+		                               GetExternalExtension().c_str());
 	else
 		incStr = StringHelper::Sprintf("%s.u32.%s.inc.c", filepath.string().c_str(),
 		                               GetExternalExtension().c_str());
@@ -792,10 +792,12 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 		if (poolEntry != Globals::Instance->cfg.texturePool.end())
 		{
 			if (dWordAligned)
-				incStr = StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.string().c_str(),
-				                               GetExternalExtension().c_str());
+				incStr =
+					StringHelper::Sprintf("%s.%s.inc.c", poolEntry->second.path.string().c_str(),
+				                          GetExternalExtension().c_str());
 			else
-				incStr = StringHelper::Sprintf("%s.u32.%s.inc.c", poolEntry->second.path.string().c_str(),
+				incStr = StringHelper::Sprintf("%s.u32.%s.inc.c",
+				                               poolEntry->second.path.string().c_str(),
 				                               GetExternalExtension().c_str());
 		}
 	}
@@ -811,9 +813,9 @@ Declaration* ZTexture::DeclareVar(const std::string& prefix,
 	}
 	else
 	{
-		decl =
-			parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
-		                                       GetSourceTypeName(), auxName, GetRawDataSize() / texSizeDivisor);
+		decl = parent->AddDeclarationIncludeArray(rawDataIndex, incStr, GetRawDataSize(),
+		                                          GetSourceTypeName(), auxName,
+		                                          GetRawDataSize() / texSizeDivisor);
 	}
 	decl->staticConf = staticConf;
 	return decl;

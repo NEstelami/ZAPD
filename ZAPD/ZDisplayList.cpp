@@ -1645,8 +1645,10 @@ static int32_t GfxdCallback_Vtx(uint32_t seg, int32_t count)
 
 			bool keyAlreadyOccupied = self->vertices.find(vtxOffset) != self->vertices.end();
 
-			// In some cases a vtxList already exists at vtxOffset. Only override the existing list if the new one is bigger.
-			if (!keyAlreadyOccupied || (keyAlreadyOccupied && vtxList.size() > self->vertices[vtxOffset].size()))
+			// In some cases a vtxList already exists at vtxOffset. Only override the existing list
+			// if the new one is bigger.
+			if (!keyAlreadyOccupied ||
+			    (keyAlreadyOccupied && vtxList.size() > self->vertices[vtxOffset].size()))
 				self->vertices[vtxOffset] = vtxList;
 		}
 	}
@@ -1894,7 +1896,8 @@ void ZDisplayList::DeclareReferences(const std::string& prefix)
 					vtxName = StringHelper::Sprintf("%sVtx_%06X", prefix.c_str(), vtxKeys[i]);
 
 				auto filepath = Globals::Instance->outputPath / vtxName;
-				std::string incStr = StringHelper::Sprintf("%s.%s.inc", filepath.string().c_str(), "vtx");
+				std::string incStr =
+					StringHelper::Sprintf("%s.%s.inc", filepath.string().c_str(), "vtx");
 
 				Declaration* vtxDecl = parent->AddDeclarationIncludeArray(
 					vtxKeys[i], incStr, item.size() * 16, "Vtx", vtxName, item.size());

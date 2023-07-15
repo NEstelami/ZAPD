@@ -8,9 +8,9 @@
 #endif
 
 #include <array>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdint>
 #include <ctime>
 
 #if HAS_POSIX == 1

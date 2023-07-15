@@ -513,8 +513,8 @@ Declaration* ZFile::AddDeclarationArray(offset_t address, DeclarationAlignment a
 	Declaration* decl = GetDeclaration(address);
 	if (decl == nullptr)
 	{
-		decl = Declaration::CreateArray(address, alignment, size, varType, varName,
-		                                body, arrayItemCntStr);
+		decl = Declaration::CreateArray(address, alignment, size, varType, varName, body,
+		                                arrayItemCntStr);
 
 		declarations[address] = decl;
 	}
@@ -772,7 +772,6 @@ bool ZFile::HasDeclaration(offset_t address)
 	return declarations.find(address) != declarations.end();
 }
 
-
 size_t ZFile::GetDeclarationSizeFromNeighbor(uint32_t declarationAddress)
 {
 	auto currentDecl = declarations.find(declarationAddress);
@@ -876,8 +875,8 @@ void ZFile::GenerateSourceHeaderFiles()
 
 std::string ZFile::GetHeaderInclude() const
 {
-	std::string headers = StringHelper::Sprintf("#include \"%s.h\"\n",
-	                                            (outName.parent_path() / outName.stem()).string().c_str());
+	std::string headers = StringHelper::Sprintf(
+		"#include \"%s.h\"\n", (outName.parent_path() / outName.stem()).string().c_str());
 
 	return headers;
 }
@@ -1153,7 +1152,7 @@ void ZFile::ProcessDeclarationText(Declaration* decl)
 std::string ZFile::ProcessExterns()
 {
 	std::string output = "";
-	bool hadDefines = true; // Previous declaration included defines.
+	bool hadDefines = true;  // Previous declaration included defines.
 
 	for (const auto& item : declarations)
 	{

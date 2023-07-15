@@ -13,7 +13,8 @@ Declaration::Declaration(offset_t nAddress, DeclarationAlignment nAlignment, siz
 }
 
 Declaration* Declaration::Create(offset_t declAddr, DeclarationAlignment declAlign, size_t declSize,
-                                 const std::string& declType, const std::string& declName, const std::string& declBody)
+                                 const std::string& declType, const std::string& declName,
+                                 const std::string& declBody)
 {
 	Declaration* decl = new Declaration(declAddr, declAlign, declSize, declBody);
 
@@ -25,12 +26,11 @@ Declaration* Declaration::Create(offset_t declAddr, DeclarationAlignment declAli
 }
 
 Declaration* Declaration::CreateArray(offset_t declAddr, DeclarationAlignment declAlign,
-                                      size_t declSize, const std::string& declType, const std::string& declName,
-                                      const std::string& declBody, size_t declArrayItemCnt,
-                                      bool isDeclExternal)
+                                      size_t declSize, const std::string& declType,
+                                      const std::string& declName, const std::string& declBody,
+                                      size_t declArrayItemCnt, bool isDeclExternal)
 {
 	Declaration* decl = new Declaration(declAddr, declAlign, declSize, declBody);
-
 
 	decl->declName = declName;
 	decl->declType = declType;
@@ -42,9 +42,9 @@ Declaration* Declaration::CreateArray(offset_t declAddr, DeclarationAlignment de
 }
 
 Declaration* Declaration::CreateArray(offset_t declAddr, DeclarationAlignment declAlign,
-                                      size_t declSize, const std::string& declType, const std::string& declName,
-                                      const std::string& declBody, const std::string& declArrayItemCntStr,
-                                      bool isDeclExternal)
+                                      size_t declSize, const std::string& declType,
+                                      const std::string& declName, const std::string& declBody,
+                                      const std::string& declArrayItemCntStr, bool isDeclExternal)
 {
 	Declaration* decl = new Declaration(declAddr, declAlign, declSize, declBody);
 
@@ -57,9 +57,9 @@ Declaration* Declaration::CreateArray(offset_t declAddr, DeclarationAlignment de
 	return decl;
 }
 
-Declaration* Declaration::CreateInclude(offset_t declAddr, const std::string& includePath, size_t declSize,
-                                        const std::string& declType, const std::string& declName,
-                                        const std::string& defines)
+Declaration* Declaration::CreateInclude(offset_t declAddr, const std::string& includePath,
+                                        size_t declSize, const std::string& declType,
+                                        const std::string& declName, const std::string& defines)
 {
 	Declaration* decl = new Declaration(declAddr, DeclarationAlignment::Align4, declSize, "");
 	decl->includePath = includePath;
@@ -67,14 +67,12 @@ Declaration* Declaration::CreateInclude(offset_t declAddr, const std::string& in
 	decl->declName = declName;
 	decl->defines = defines;
 
-
 	return decl;
 }
 
 Declaration* Declaration::CreatePlaceholder(offset_t declAddr, const std::string& declName)
 {
-	Declaration* decl =
-		new Declaration(declAddr, DeclarationAlignment::Align4, 0, "");
+	Declaration* decl = new Declaration(declAddr, DeclarationAlignment::Align4, 0, "");
 	decl->declName = declName;
 	decl->isPlaceholder = true;
 
@@ -117,8 +115,8 @@ std::string Declaration::GetNormalDeclarationStr() const
 				output += StringHelper::Sprintf("%s %s[%s];\n", declType.c_str(), declName.c_str(),
 				                                arrayItemCntStr.c_str());
 			else
-				output += StringHelper::Sprintf("%s %s[%i] = {\n", declType.c_str(), declName.c_str(),
-				                                arrayItemCnt);
+				output += StringHelper::Sprintf("%s %s[%i] = {\n", declType.c_str(),
+				                                declName.c_str(), arrayItemCnt);
 		}
 		else
 		{
