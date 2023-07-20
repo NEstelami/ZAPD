@@ -123,7 +123,8 @@ void ZCollisionHeader::ParseRawData()
 			upperCameraBoundary = rawDataIndex;
 		}
 
-		// Sharp Ocarina places the CamDataEntries above the list so we need to calculate the number of cameras differently.
+		// Sharp Ocarina places the CamDataEntries above the list so we need to calculate the number
+		// of cameras differently.
 		if (upperCameraBoundary < camDataSegmentOffset)
 		{
 			offset_t offset = camDataSegmentOffset;
@@ -138,7 +139,8 @@ void ZCollisionHeader::ParseRawData()
 			new CameraDataList(parent, name, rawData, camDataSegmentOffset, upperCameraBoundary);
 	}
 
-	for (int32_t i = 0; i < numWaterBoxes; i++) {
+	for (int32_t i = 0; i < numWaterBoxes; i++)
+	{
 		ZWaterbox waterbox(parent);
 
 		waterbox.SetRawDataIndex(waterBoxSegmentOffset +
@@ -240,7 +242,8 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(vtxAddress, parent, "Vec3s", vtxName);
 
 	if (numVerts > 0)
-		declaration += StringHelper::Sprintf("\tARRAY_COUNT(%s), %s,\n", vtxName.c_str(), vtxName.c_str());
+		declaration +=
+			StringHelper::Sprintf("\tARRAY_COUNT(%s), %s,\n", vtxName.c_str(), vtxName.c_str());
 	else
 		declaration += StringHelper::Sprintf("\t%i, %s,\n", numVerts, vtxName.c_str());
 
@@ -248,7 +251,8 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(polyAddress, parent, "CollisionPoly", polyName);
 
 	if (numPolygons > 0)
-		declaration += StringHelper::Sprintf("\tARRAY_COUNT(%s), %s,\n", polyName.c_str(), polyName.c_str());
+		declaration +=
+			StringHelper::Sprintf("\tARRAY_COUNT(%s), %s,\n", polyName.c_str(), polyName.c_str());
 	else
 		declaration += StringHelper::Sprintf("\t%i, %s,\n", numPolygons, polyName.c_str());
 
@@ -264,7 +268,8 @@ std::string ZCollisionHeader::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(waterBoxAddress, parent, "WaterBox", waterBoxName);
 
 	if (numWaterBoxes > 0)
-		declaration += StringHelper::Sprintf("\tARRAY_COUNT(%s), %s\n", waterBoxName.c_str(), waterBoxName.c_str());
+		declaration += StringHelper::Sprintf("\tARRAY_COUNT(%s), %s\n", waterBoxName.c_str(),
+		                                     waterBoxName.c_str());
 	else
 		declaration += StringHelper::Sprintf("\t%i, %s\n", numWaterBoxes, waterBoxName.c_str());
 
@@ -328,9 +333,10 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 			    cameraPosDataSeg > GETSEGOFFSET(entry.cameraPosDataSeg))
 				cameraPosDataSeg = GETSEGOFFSET(entry.cameraPosDataSeg);
 		}
-		else  
+		else
 		{
-			// Sharp Ocarina will place the cam data after the list as opposed to the original maps which have it before.
+			// Sharp Ocarina will place the cam data after the list as opposed to the original maps
+			// which have it before.
 			isSharpOcarina = true;
 			cameraPosDataSeg = rawDataIndex + (numElements * 0x8);
 			if (cameraPosDataSegEnd < GETSEGOFFSET(entry.cameraPosDataSeg))
@@ -349,8 +355,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		if (entries[i].cameraPosDataSeg != 0)
 		{
 			uint32_t index =
-				(GETSEGOFFSET(entries[i].cameraPosDataSeg) - cameraPosDataOffset) /
-				0x6;
+				(GETSEGOFFSET(entries[i].cameraPosDataSeg) - cameraPosDataOffset) / 0x6;
 			snprintf(camSegLine, 2048, "&%sCamPosData[%i]", prefix.c_str(), index);
 		}
 		else
@@ -363,7 +368,7 @@ CameraDataList::CameraDataList(ZFile* parent, const std::string& prefix,
 		if (i < entries.size() - 1)
 			declaration += "\n";
 	}
-	
+
 	parent->AddDeclarationArray(
 		rawDataIndex, DeclarationAlignment::Align4, entries.size() * 8, "CamData",
 		StringHelper::Sprintf("%sCamDataList", prefix.c_str(), rawDataIndex), entries.size(),

@@ -97,7 +97,7 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	float GetPixelMultiplyer() const;
-	
+
 	TextureType GetTextureType() const;
 
 	/// <summary>
@@ -112,7 +112,7 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool IsColorIndexed() const;
-	
+
 	void SetTlut(ZTexture* nTlut);
 	bool HasTlut() const;
 	void ParseRawDataLate() override;

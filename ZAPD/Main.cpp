@@ -9,8 +9,8 @@
 #include "ZFile.h"
 #include "ZTexture.h"
 
-#include "CrashHandler.h"
 #include <functional>
+#include "CrashHandler.h"
 
 #include <string>
 #include <string_view>
@@ -36,7 +36,6 @@ void Arg_SetExporter(int& i, char* argv[]);
 void Arg_EnableGCCCompat(int& i, char* argv[]);
 void Arg_ForceStatic(int& i, char* argv[]);
 void Arg_ForceUnaccountedStatic(int& i, char* argv[]);
-
 
 int main(int argc, char* argv[]);
 
@@ -269,7 +268,6 @@ void ParseArgs(int& argc, char* argv[])
 		std::invoke(it->second, i, argv);
 	}
 }
-
 
 ZFileMode ParseFileMode(const std::string& buildMode, ExporterSet* exporterSet)
 {

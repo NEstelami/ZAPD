@@ -80,12 +80,12 @@ public:
 	ZResource(ZFile* nParent);
 	virtual ~ZResource() = default;
 
-
 	/// <summary>
 	/// Extracts/Parsees data from binary file using an XML to provide the needed metadata.
 	/// </summary>
 	/// <param name="reader">XML Node we wish to parse from.</param>
-	/// <param name="nRawDataIndex">The offset within the binary file we are going to parse from as indicated by the "Offset" parameter in the XML.</param>
+	/// <param name="nRawDataIndex">The offset within the binary file we are going to parse from as
+	/// indicated by the "Offset" parameter in the XML.</param>
 	virtual void ExtractWithXML(tinyxml2::XMLElement* reader, offset_t nRawDataIndex);
 
 	/// <summary>

@@ -6,8 +6,8 @@
 #include "WarningHandler.h"
 #include "ZFile.h"
 
-REGISTER_ZFILENODE(Path, ZPath); // Old name that is being kept for backwards compatability
-REGISTER_ZFILENODE(PathList, ZPath); // New name that may be used in future XMLs
+REGISTER_ZFILENODE(Path, ZPath);      // Old name that is being kept for backwards compatability
+REGISTER_ZFILENODE(PathList, ZPath);  // New name that may be used in future XMLs
 
 ZPath::ZPath(ZFile* nParent) : ZResource(nParent)
 {
@@ -188,8 +188,8 @@ std::string PathwayEntry::GetBodySourceCode() const
 	else
 	{
 		if (numPoints > 0)
-		declaration +=
-			StringHelper::Sprintf("ARRAY_COUNT(%s), %s", listName.c_str(), listName.c_str());
+			declaration +=
+				StringHelper::Sprintf("ARRAY_COUNT(%s), %s", listName.c_str(), listName.c_str());
 		else
 			declaration += StringHelper::Sprintf("%i, %s", numPoints, listName.c_str());
 	}
