@@ -430,7 +430,7 @@ std::string CutsceneMMSubCommandEntry_ActorCue::GetBodySourceCode() const
 
 	result +=
 		StringHelper::Sprintf("(%i, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
-	                          "%i, %i, %i, %i, %.11ef, %.11ef, %.11ef)",
+	                          "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
 	                          base, startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
 	                          startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
 	return result;
