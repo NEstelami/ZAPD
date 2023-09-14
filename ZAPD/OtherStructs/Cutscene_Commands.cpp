@@ -8,6 +8,7 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "WarningHandler.h"
+#include "Cutscene_CommandSubTypes.h"
 
 /* CutsceneSubCommandEntry */
 
