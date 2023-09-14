@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include "Globals.h"
-#include "OtherStructs/CutsceneMM_Commands.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 #include "WarningHandler.h"

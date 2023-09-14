@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <cstdint>
 #include <string>
-#include "Cutscene_Commands.h"
+#include "CutsceneOoT_Commands.h"
 
 #define ENUM_TO_STRING(name)                                                                       \
 	{                                                                                              \
