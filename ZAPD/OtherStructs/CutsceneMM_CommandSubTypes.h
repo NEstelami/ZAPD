@@ -1,0 +1,103 @@
+#pragma once
+
+#include <string>
+
+// see https://github.com/zeldaret/mm/blob/0c7b90cf97f26483c8b6a98ae099a295f61e72ab/include/z64cutscene.h#L109-118
+const std::string csMMModifySeqTypes[] = {
+    "CS_MOD_SEQ_0", // = 1
+    "CS_MOD_SEQ_1",
+    "CS_MOD_SEQ_2",
+    "CS_MOD_AMBIENCE_0",
+    "CS_MOD_AMBIENCE_1",
+    "CS_MOD_AMBIENCE_2",
+    "CS_MOD_SEQ_STORE",
+    "CS_MOD_SEQ_RESTORE",
+};
+
+// see https://github.com/zeldaret/mm/blob/0c7b90cf97f26483c8b6a98ae099a295f61e72ab/include/z64cutscene.h#L143-155
+const std::string csMMCreditsSceneTypes[] = {
+    "CS_CREDITS_DESTINATION" // = CS_DESTINATION_DEFAULT (1),
+    "CS_CREDITS_MASK_KAMARO",
+    "CS_CREDITS_MASK_GREAT_FAIRY",
+    "CS_CREDITS_MASK_ROMANI",
+    "CS_CREDITS_MASK_BLAST",
+    "CS_CREDITS_MASK_CIRCUS_LEADER",
+    "CS_CREDITS_MASK_BREMEN",
+    "CS_CREDITS_IKANA",
+    "CS_CREDITS_MASK_COUPLE",
+    "CS_CREDITS_MASK_BUNNY",
+    "CS_CREDITS_MASK_POSTMAN",
+};
+
+// see https://github.com/zeldaret/mm/blob/0c7b90cf97f26483c8b6a98ae099a295f61e72ab/include/z64cutscene.h#L198-212
+const std::string csMMTransitionTypes[] = {
+    "CS_TRANS_GRAY_FILL_IN", // = 1, // has hardcoded sounds for some scenes
+    "CS_TRANS_BLUE_FILL_IN",
+    "CS_TRANS_RED_FILL_OUT",
+    "CS_TRANS_GREEN_FILL_OUT",
+    "CS_TRANS_GRAY_FILL_OUT",
+    "CS_TRANS_BLUE_FILL_OUT",
+    "CS_TRANS_RED_FILL_IN",
+    "CS_TRANS_GREEN_FILL_IN",
+    "CS_TRANS_TRIGGER_INSTANCE",
+    "CS_TRANS_BLACK_FILL_OUT",
+    "CS_TRANS_BLACK_FILL_IN",
+    "CS_TRANS_GRAY_TO_BLACK",
+    "CS_TRANS_BLACK_TO_GRAY",
+};
+
+// see https://github.com/zeldaret/mm/blob/0c7b90cf97f26483c8b6a98ae099a295f61e72ab/include/z64cutscene.h#L226-234
+const std::string csMMTextypes[] = {
+    "CS_TEXT_TYPE_NONE", // = -1,
+    "CS_TEXT_TYPE_DEFAULT",
+    "CS_TEXT_TYPE_1",
+    "CS_TEXT_OCARINA_ACTION",
+    "CS_TEXT_TYPE_3",
+    "CS_TEXT_TYPE_BOSSES_REMAINS",
+    "CS_TEXT_TYPE_ALL_NORMAL_MASKS",
+};
+
+// see https://github.com/zeldaret/mm/blob/0c7b90cf97f26483c8b6a98ae099a295f61e72ab/include/z64cutscene.h#L532-574
+const std::string csMMMiscTypes[] = {
+    "CS_MISC_UNIMPLEMENTED_0",
+    "CS_MISC_RAIN",
+    "CS_MISC_LIGHTNING",
+    "CS_MISC_LIFT_FOG",
+    "CS_MISC_CLOUDY_SKY",
+    "CS_MISC_STOP_CUTSCENE",
+    "CS_MISC_UNIMPLEMENTED_6",
+    "CS_MISC_SHOW_TITLE_CARD",
+    "CS_MISC_EARTHQUAKE_MEDIUM",
+    "CS_MISC_EARTHQUAKE_STOP",
+    "CS_MISC_VISMONO_BLACK_AND_WHITE",
+    "CS_MISC_VISMONO_SEPIA",
+    "CS_MISC_HIDE_ROOM",
+    "CS_MISC_RED_PULSATING_LIGHTS",
+    "CS_MISC_HALT_ALL_ACTORS",
+    "CS_MISC_RESUME_ALL_ACTORS",
+    "CS_MISC_SANDSTORM_FILL",
+    "CS_MISC_SUNSSONG_START",
+    "CS_MISC_FREEZE_TIME",
+    "CS_MISC_LONG_SCARECROW_SONG",
+    "CS_MISC_SET_CSFLAG_3",
+    "CS_MISC_SET_CSFLAG_4",
+    "CS_MISC_PLAYER_FORM_DEKU",
+    "CS_MISC_ENABLE_PLAYER_REFLECTION",
+    "CS_MISC_DISABLE_PLAYER_REFLECTION",
+    "CS_MISC_PLAYER_FORM_HUMAN",
+    "CS_MISC_EARTHQUAKE_STRONG",
+    "CS_MISC_DEST_MOON_CRASH_FIRE_WALL",
+    "CS_MISC_MOON_CRASH_SKYBOX",
+    "CS_MISC_PLAYER_FORM_RESTORED",
+    "CS_MISC_DISABLE_PLAYER_CSMODE_START_POS",
+    "CS_MISC_ENABLE_PLAYER_CSMODE_START_POS",
+    "CS_MISC_UNIMPLEMENTED_20",
+    "CS_MISC_SAVE_ENTER_CLOCK_TOWN",
+    "CS_MISC_RESET_SAVE_FROM_MOON_CRASH",
+    "CS_MISC_TIME_ADVANCE",
+    "CS_MISC_EARTHQUAKE_WEAK",
+    "CS_MISC_UNIMPLEMENTED_25",
+    "CS_MISC_DAWN_OF_A_NEW_DAY",
+    "CS_MISC_PLAYER_FORM_ZORA",
+    "CS_MISC_FINALE"
+};

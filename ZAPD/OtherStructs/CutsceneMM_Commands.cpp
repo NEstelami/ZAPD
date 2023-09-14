@@ -7,18 +7,18 @@
 // Specific for command lists where each entry has size 8 bytes
 const std::unordered_map<CutsceneMMCommands, CsCommandListDescriptor> csCommandsDescMM = {
 	{CutsceneMMCommands::CS_CMD_MISC, {"CS_MISC", "(0x%02X, %i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_SET_LIGHTING, {"CS_LIGHTING", "(0x%02X, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX, {"CS_SCENE_TRANS_FX", "(%i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_MOTIONBLUR, {"CS_MOTIONBLUR", "(%i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_GIVETATL, {"CS_GIVETATL", "(%i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_PLAYSEQ, {"CS_PLAYSEQ", "(0x%04X, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_130, {"CS_SCENE_UNK_130", "(0x%04X, %i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_131, {"CS_SCENE_UNK_131", "(0x%04X, %i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_132, {"CS_SCENE_UNK_132", "(%i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_STOPSEQ, {"CS_STOPSEQ", "(0x%04X, %i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_PLAYAMBIENCE, {"CS_PLAYAMBIENCE", "(0x%04X, %i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_FADEAMBIENCE, {"CS_FADEAMBIENCE", "(0x%04X, %i, %i, %i)"}},
-	{CutsceneMMCommands::CS_CMD_TERMINATOR, {"CS_TERMINATOR", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_LIGHT_SETTING, {"CS_LIGHT_SETTING", "(0x%02X, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_TRANSITION, {"CS_TRANSITION", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_MOTION_BLUR, {"CS_MOTION_BLUR", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_GIVE_TATL, {"CS_GIVE_TATL", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_START_SEQ, {"CS_START_SEQ", "(0x%04X, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_SFX_REVERB_INDEX_2, {"CS_SFX_REVERB_INDEX_2", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_SFX_REVERB_INDEX_1, {"CS_SFX_REVERB_INDEX_1", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_MODIFY_SEQ, {"CS_MODIFY_SEQ", "(%i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_STOP_SEQ, {"CS_STOP_SEQ", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_START_AMBIENCE, {"CS_START_AMBIENCE", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_FADE_OUT_AMBIENCE, {"CS_FADE_OUT_AMBIENCE", "(0x%04X, %i, %i, %i)"}},
+	{CutsceneMMCommands::CS_CMD_DESTINATION, {"CS_DESTINATION", "(%i, %i, %i)"}},
 	{CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES,
      {"CS_CHOOSE_CREDITS_SCENES", "(%i, %i, %i)"}},
 };
@@ -38,6 +38,12 @@ std::string CutsceneSubCommandEntry_GenericMMCmd::GetBodySourceCode() const
 	{
 		entryFmt = element->second.cmdMacro;
 		entryFmt += element->second.args;
+	}
+
+	if (commandId == CutsceneMMCommands::CS_CMD_LIGHT_SETTING || commandId == CutsceneMMCommands::CS_CMD_START_SEQ ||
+		commandId == CutsceneMMCommands::CS_CMD_STOP_SEQ)
+	{
+		return StringHelper::Sprintf(entryFmt.c_str(), base - 1, startFrame, endFrame, pad);
 	}
 
 	return StringHelper::Sprintf(entryFmt.c_str(), base, startFrame, endFrame, pad);
@@ -106,7 +112,7 @@ CutsceneMMCommand_Camera::CutsceneMMCommand_Camera(const std::vector<uint8_t>& r
 
 std::string CutsceneMMCommand_Camera::GetCommandMacro() const
 {
-	return StringHelper::Sprintf("CS_CAMERA_LIST(%i)", numEntries);
+	return StringHelper::Sprintf("CS_CAM_SPLINE_LIST(%i)", numEntries);
 }
 
 CutsceneSubCommandEntry_FadeScreen::CutsceneSubCommandEntry_FadeScreen(
@@ -123,7 +129,7 @@ CutsceneSubCommandEntry_FadeScreen::CutsceneSubCommandEntry_FadeScreen(
 
 std::string CutsceneSubCommandEntry_FadeScreen::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_FADESCREEN(0x%02X, %i, %i, %i, %i, %i)", base, startFrame,
+	return StringHelper::Sprintf("CS_TRANSITION_GENERAL(0x%02X, %i, %i, %i, %i, %i)", base, startFrame,
 	                             endFrame, unk_06, unk_07, unk_08);
 }
 
@@ -149,7 +155,7 @@ CutsceneMMCommand_FadeScreen::CutsceneMMCommand_FadeScreen(const std::vector<uin
 
 std::string CutsceneMMCommand_FadeScreen::GetCommandMacro() const
 {
-	return StringHelper::Sprintf("CS_FADESCREEN_LIST(%i)", numEntries);
+	return StringHelper::Sprintf("CS_TRANSITION_GENERAL_LIST(%i)", numEntries);
 }
 
 CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(
@@ -161,7 +167,7 @@ CutsceneSubCommandEntry_FadeSeq::CutsceneSubCommandEntry_FadeSeq(
 
 std::string CutsceneSubCommandEntry_FadeSeq::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_FADESEQ(%i, %i, %i)", base, startFrame, endFrame);
+	return StringHelper::Sprintf("CS_FADE_OUT_SEQ(%i, %i, %i)", base, startFrame, endFrame);
 }
 
 size_t CutsceneSubCommandEntry_FadeSeq::GetRawSize() const
@@ -186,7 +192,7 @@ CutsceneMMCommand_FadeSeq::CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>&
 
 std::string CutsceneMMCommand_FadeSeq::GetCommandMacro() const
 {
-	return StringHelper::Sprintf("CS_FADESEQ_LIST(%i)", numEntries);
+	return StringHelper::Sprintf("CS_FADE_OUT_SEQ_LIST(%i)", numEntries);
 }
 
 CutsceneSubCommandEntry_NonImplemented::CutsceneSubCommandEntry_NonImplemented(
@@ -350,13 +356,13 @@ std::string CutsceneMMSubCommandEntry_ActorCue::GetBodySourceCode() const
 	std::string result;
 
 	if (static_cast<CutsceneMMCommands>(commandID) ==
-		CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
+		CutsceneMMCommands::CS_CMD_PLAYER_CUE)
 	{
-		result = "CS_PLAYER_ACTION";
+		result = "CS_PLAYER_CUE";
 	}
 	else
 	{
-		result = "CS_ACTOR_ACTION";
+		result = "CS_ACTOR_CUE";
 	}
 
 	result +=
@@ -390,9 +396,9 @@ CutsceneMMCommand_ActorCue::CutsceneMMCommand_ActorCue(const std::vector<uint8_t
 std::string CutsceneMMCommand_ActorCue::GetCommandMacro() const
 {
 	if (static_cast<CutsceneMMCommands>(commandID) ==
-		CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
+		CutsceneMMCommands::CS_CMD_PLAYER_CUE)
 	{
-		return StringHelper::Sprintf("CS_PLAYER_ACTION_LIST(%i)", numEntries);
+		return StringHelper::Sprintf("CS_PLAYER_CUE_LIST(%i)", numEntries);
 	}
-	return StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(0x%03X, %i)", commandID, numEntries);
+	return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(0x%03X, %i)", commandID, numEntries);
 }

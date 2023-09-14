@@ -280,7 +280,9 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 
 	const auto& rawData = parent->GetRawData();
 
-	if (((id >= 100) && (id < 150)) || (id == 201) || ((id >= 450) && (id < 600)))
+	if (((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_100) && (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_149)) || 
+		(id == (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_201) || 
+		((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_450) && (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_599)))
 	{
 		return new CutsceneMMCommand_ActorCue(rawData, currentPtr);
 	}
@@ -288,48 +290,58 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	switch (cmdID)
 	{
 	case CutsceneMMCommands::CS_CMD_MISC:
-	case CutsceneMMCommands::CS_CMD_SET_LIGHTING:
-	case CutsceneMMCommands::CS_CMD_SCENE_TRANS_FX:
-	case CutsceneMMCommands::CS_CMD_MOTIONBLUR:
-	case CutsceneMMCommands::CS_CMD_GIVETATL:
-	case CutsceneMMCommands::CS_CMD_PLAYSEQ:
-	case CutsceneMMCommands::CS_CMD_130:
-	case CutsceneMMCommands::CS_CMD_131:
-	case CutsceneMMCommands::CS_CMD_132:
-	case CutsceneMMCommands::CS_CMD_STOPSEQ:
-	case CutsceneMMCommands::CS_CMD_PLAYAMBIENCE:
-	case CutsceneMMCommands::CS_CMD_FADEAMBIENCE:
-	case CutsceneMMCommands::CS_CMD_TERMINATOR:
+	case CutsceneMMCommands::CS_CMD_LIGHT_SETTING:
+	case CutsceneMMCommands::CS_CMD_TRANSITION:
+	case CutsceneMMCommands::CS_CMD_MOTION_BLUR:
+	case CutsceneMMCommands::CS_CMD_GIVE_TATL:
+	case CutsceneMMCommands::CS_CMD_START_SEQ:
+	case CutsceneMMCommands::CS_CMD_SFX_REVERB_INDEX_2:
+	case CutsceneMMCommands::CS_CMD_SFX_REVERB_INDEX_1:
+	case CutsceneMMCommands::CS_CMD_MODIFY_SEQ:
+	case CutsceneMMCommands::CS_CMD_STOP_SEQ:
+	case CutsceneMMCommands::CS_CMD_START_AMBIENCE:
+	case CutsceneMMCommands::CS_CMD_FADE_OUT_AMBIENCE:
+	case CutsceneMMCommands::CS_CMD_DESTINATION:
 	case CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES:
 
-	case CutsceneMMCommands::CS_CMD_UNK_FA:
-	case CutsceneMMCommands::CS_CMD_UNK_FE:
-	case CutsceneMMCommands::CS_CMD_UNK_FF:
-	case CutsceneMMCommands::CS_CMD_UNK_100:
-	case CutsceneMMCommands::CS_CMD_UNK_101:
-	case CutsceneMMCommands::CS_CMD_UNK_102:
-	case CutsceneMMCommands::CS_CMD_UNK_103:
-	case CutsceneMMCommands::CS_CMD_UNK_104:
-	case CutsceneMMCommands::CS_CMD_UNK_105:
-	case CutsceneMMCommands::CS_CMD_UNK_108:
-	case CutsceneMMCommands::CS_CMD_UNK_109:
-	case CutsceneMMCommands::CS_CMD_UNK_12D:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_FA:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_FE:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_FF:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_100:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_101:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_102:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_103:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_104:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_105:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_108:
+	case CutsceneMMCommands::CS_CMD_UNK_DATA_109:
 		return new CutsceneMMCommand_GenericCmd(rawData, currentPtr, cmdID);
 
-	case CutsceneMMCommands::CS_CMD_TEXTBOX:
+	case CutsceneMMCommands::CS_CMD_TEXT:
 		return new CutsceneMMCommand_Text(rawData, currentPtr);
-	case CutsceneMMCommands::CS_CMD_CAMERA:
+
+	case CutsceneMMCommands::CS_CMD_CAMERA_SPLINE:
 		return new CutsceneMMCommand_Camera(rawData, currentPtr);
-	case CutsceneMMCommands::CS_CMD_FADESCREEN:
+
+	case CutsceneMMCommands::CS_CMD_TRANSITION_GENERAL:
 		return new CutsceneMMCommand_FadeScreen(rawData, currentPtr);
-	case CutsceneMMCommands::CS_CMD_FADESEQ:
+
+	case CutsceneMMCommands::CS_CMD_FADE_OUT_SEQ:
 		return new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
-	case CutsceneMMCommands::CS_CMD_SETTIME:
+
+	case CutsceneMMCommands::CS_CMD_TIME:
 		return new CutsceneCommand_Time(rawData, currentPtr);
-	case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
+
+	case CutsceneMMCommands::CS_CMD_PLAYER_CUE:
 		return new CutsceneMMCommand_ActorCue(rawData, currentPtr);
+
 	case CutsceneMMCommands::CS_CMD_RUMBLE:
 		return new CutsceneMMCommand_Rumble(rawData, currentPtr);
+
+	default:
+		std::string errorHeader =
+			StringHelper::Sprintf("Warning: Invalid cutscene command ID: '0x%04X'", cmdID);
+		return new CutsceneMMCommand_GenericCmd(rawData, currentPtr, cmdID);
 	}
 
 	return nullptr;
