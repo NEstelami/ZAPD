@@ -247,10 +247,6 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case CutsceneCommands::CS_CMD_CAM_AT_SPLINE_REL_TO_PLAYER:
 		return new CutsceneCommand_GenericCameraCmd(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_CAM_EYE:
-	case CutsceneCommands::CS_CMD_CAM_AT:
-		break;
-
 	case CutsceneCommands::CS_CMD_RUMBLE_CONTROLLER:
 		return new CutsceneCommand_Rumble(rawData, currentPtr);
 
@@ -265,6 +261,10 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 
 	case CutsceneCommands::CS_CMD_DESTINATION:
 		return new CutsceneCommand_Destination(rawData, currentPtr);
+
+	case CutsceneCommands::CS_CMD_CAM_EYE:
+	case CutsceneCommands::CS_CMD_CAM_AT:
+		break;
 
 	default:
 		std::string errorHeader =
@@ -283,7 +283,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 
 	if (((id >= 100) && (id < 150)) || (id == 201) || ((id >= 450) && (id < 600)))
 	{
-		return new CutsceneCommand_ActorCue(rawData, currentPtr);
+		return new CutsceneMMCommand_ActorCue(rawData, currentPtr);
 	}
 
 	switch (cmdID)
@@ -318,7 +318,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		return new CutsceneMMCommand_GenericCmd(rawData, currentPtr, cmdID);
 
 	case CutsceneMMCommands::CS_CMD_TEXTBOX:
-		return new CutsceneCommand_Text(rawData, currentPtr);
+		return new CutsceneMMCommand_Text(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_CAMERA:
 		return new CutsceneMMCommand_Camera(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_FADESCREEN:
@@ -328,9 +328,9 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	case CutsceneMMCommands::CS_CMD_SETTIME:
 		return new CutsceneCommand_Time(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
-		return new CutsceneCommand_ActorCue(rawData, currentPtr);
+		return new CutsceneMMCommand_ActorCue(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_RUMBLE:
-		return new CutsceneCommand_Rumble(rawData, currentPtr);
+		return new CutsceneMMCommand_Rumble(rawData, currentPtr);
 	}
 
 	return nullptr;

@@ -1,3 +1,5 @@
+#pragma once
+
 // TODO: find a better name for this file
 
 #include <unordered_map>

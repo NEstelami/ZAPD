@@ -1,8 +1,6 @@
 #include "CutsceneMM_Commands.h"
 
-#include <cassert>
 #include <unordered_map>
-
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
@@ -210,4 +208,191 @@ CutsceneMMCommand_NonImplemented::CutsceneMMCommand_NonImplemented(
 		entries.push_back(entry);
 		rawDataIndex += entry->GetRawSize();
 	}
+}
+
+CutsceneMMSubCommandEntry_Rumble::CutsceneMMSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData,
+                                                               offset_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+	intensity = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x06);
+	decayTimer = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x07);
+	decayStep = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x08);
+}
+
+std::string CutsceneMMSubCommandEntry_Rumble::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("CS_RUMBLE(%i, %i, %i, 0x%02X, 0x%02X, 0x%02X)", base,
+									startFrame, endFrame, intensity, decayTimer, decayStep);
+}
+
+size_t CutsceneMMSubCommandEntry_Rumble::GetRawSize() const
+{
+	return 0x0C;
+}
+
+CutsceneMMCommand_Rumble::CutsceneMMCommand_Rumble(const std::vector<uint8_t>& rawData,
+                                               offset_t rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
+{
+	rawDataIndex += 4;
+
+	entries.reserve(numEntries);
+	for (size_t i = 0; i < numEntries; i++)
+	{
+		auto* entry = new CutsceneMMSubCommandEntry_Rumble(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
+	}
+}
+
+std::string CutsceneMMCommand_Rumble::GetCommandMacro() const
+{
+	return StringHelper::Sprintf("CS_RUMBLE_LIST(%i)", numEntries);
+}
+
+/**** TEXT ****/
+
+CutsceneMMSubCommandEntry_TextBox::CutsceneMMSubCommandEntry_TextBox(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+	type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
+	textId1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x8);
+	textId2 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0xA);
+}
+
+std::string CutsceneMMSubCommandEntry_TextBox::GetBodySourceCode() const
+{
+	if (type == 0xFFFF)
+	{
+		return StringHelper::Sprintf("CS_TEXT_NONE(%i, %i)", startFrame, endFrame);
+	}
+
+	if (type == 2)
+	{
+		return StringHelper::Sprintf("CS_TEXT_OCARINA_ACTION(%i, %i, %i, 0x%X)", base, startFrame,
+		                             endFrame, textId1);
+	}
+
+	switch (type)
+	{
+	case 0:
+		return StringHelper::Sprintf("CS_TEXT_DEFAULT(0x%X, %i, %i, 0x%X, 0x%X)", base,
+										startFrame, endFrame, textId1, textId2);
+
+	case 1:
+		return StringHelper::Sprintf("CS_TEXT_TYPE_1(0x%X, %i, %i, 0x%X, 0x%X)", base,
+										startFrame, endFrame, textId1, textId2);
+
+	case 3:
+		return StringHelper::Sprintf("CS_TEXT_TYPE_3(0x%X, %i, %i, 0x%X, 0x%X)", base,
+										startFrame, endFrame, textId1, textId2);
+
+	case 4:
+		return StringHelper::Sprintf("CS_TEXT_BOSSES_REMAINS(0x%X, %i, %i, 0x%X)", base,
+										startFrame, endFrame, textId1);
+
+	case 5:
+		return StringHelper::Sprintf("CS_TEXT_ALL_NORMAL_MASKS(0x%X, %i, %i, 0x%X)", base,
+										startFrame, endFrame, textId1);
+	}
+
+	return nullptr;
+}
+
+size_t CutsceneMMSubCommandEntry_TextBox::GetRawSize() const
+{
+	return 0x0C;
+}
+
+CutsceneMMCommand_Text::CutsceneMMCommand_Text(const std::vector<uint8_t>& rawData,
+                                           offset_t rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
+{
+	rawDataIndex += 4;
+
+	entries.reserve(numEntries);
+	for (size_t i = 0; i < numEntries; i++)
+	{
+		auto* entry = new CutsceneMMSubCommandEntry_TextBox(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
+	}
+}
+
+std::string CutsceneMMCommand_Text::GetCommandMacro() const
+{
+	return StringHelper::Sprintf("CS_TEXT_LIST(%i)", numEntries);
+}
+
+/**** ACTOR CUE ****/
+
+CutsceneMMSubCommandEntry_ActorCue::CutsceneMMSubCommandEntry_ActorCue(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+	rotX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
+	rotY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x8);
+	rotZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0xA);
+	startPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0xC);
+	startPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x10);
+	startPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x14);
+	endPosX = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x18);
+	endPosY = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x1C);
+	endPosZ = BitConverter::ToInt32BE(rawData, rawDataIndex + 0x20);
+	normalX = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x24);
+	normalY = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x28);
+	normalZ = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x2C);
+}
+
+std::string CutsceneMMSubCommandEntry_ActorCue::GetBodySourceCode() const
+{
+	std::string result;
+
+	if (static_cast<CutsceneMMCommands>(commandID) ==
+		CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
+	{
+		result = "CS_PLAYER_ACTION";
+	}
+	else
+	{
+		result = "CS_ACTOR_ACTION";
+	}
+
+	result +=
+		StringHelper::Sprintf("(%i, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
+	                          "%i, %i, %i, %i, %.11ef, %.11ef, %.11ef)",
+	                          base, startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
+	                          startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
+	return result;
+}
+
+size_t CutsceneMMSubCommandEntry_ActorCue::GetRawSize() const
+{
+	return 0x30;
+}
+
+CutsceneMMCommand_ActorCue::CutsceneMMCommand_ActorCue(const std::vector<uint8_t>& rawData,
+                                                   offset_t rawDataIndex)
+	: CutsceneCommand(rawData, rawDataIndex)
+{
+	rawDataIndex += 4;
+
+	entries.reserve(numEntries);
+	for (size_t i = 0; i < numEntries; i++)
+	{
+		auto* entry = new CutsceneMMSubCommandEntry_ActorCue(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
+	}
+}
+
+std::string CutsceneMMCommand_ActorCue::GetCommandMacro() const
+{
+	if (static_cast<CutsceneMMCommands>(commandID) ==
+		CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
+	{
+		return StringHelper::Sprintf("CS_PLAYER_ACTION_LIST(%i)", numEntries);
+	}
+	return StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(0x%03X, %i)", commandID, numEntries);
 }

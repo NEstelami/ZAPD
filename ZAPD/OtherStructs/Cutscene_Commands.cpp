@@ -1,14 +1,11 @@
 #include "Cutscene_Commands.h"
+#include "Cutscene_CommandSubTypes.h"
 
 #include <cassert>
 #include <unordered_map>
-
-#include "CutsceneMM_Commands.h"
-#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
-#include "WarningHandler.h"
-#include "Cutscene_CommandSubTypes.h"
+
 
 /* CutsceneSubCommandEntry */
 
@@ -92,6 +89,8 @@ void CutsceneCommand::SetCommandID(uint32_t nCommandID)
 		entry->commandID = commandID;
 	}
 }
+
+/*** GENERIC ****/
 
 // Specific for command lists where each entry has size 0x30 bytes
 const std::unordered_map<CutsceneCommands, CsCommandListDescriptor> csCommandsDesc = {
@@ -206,6 +205,8 @@ std::string CutsceneCommand_GenericCmd::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_UNK_DATA_LIST(0x%X, %i)", commandID, numEntries);
 }
 
+/*** CAMERA ****/
+
 CutsceneCameraPoint::CutsceneCameraPoint(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
@@ -294,6 +295,8 @@ size_t CutsceneCommand_GenericCameraCmd::GetCommandSize() const
 	return 0x0C + entries.at(0)->GetRawSize() * entries.size();
 }
 
+/*** RUMBLE ****/
+
 CutsceneSubCommandEntry_Rumble::CutsceneSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData,
                                                                offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
@@ -307,15 +310,7 @@ CutsceneSubCommandEntry_Rumble::CutsceneSubCommandEntry_Rumble(const std::vector
 
 std::string CutsceneSubCommandEntry_Rumble::GetBodySourceCode() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		// Note: in MM decomp "sourceStrength, duration and decreaseRate" are named "intensity,
-		// decayTimer and decayStep"
-		return StringHelper::Sprintf("CS_RUMBLE(%i, %i, %i, 0x%02X, 0x%02X, 0x%02X)", base,
-		                             startFrame, endFrame, sourceStrength, duration, decreaseRate);
-	}
-
-	// Note: on OoT the first argument is unused
+	// Note: the first argument is unused
 	return StringHelper::Sprintf("CS_RUMBLE_CONTROLLER(%i, %i, %i, %i, %i, %i, 0x%02X, 0x%02X)",
 	                             base, startFrame, endFrame, sourceStrength, duration, decreaseRate,
 	                             unk_09, unk_0A);
@@ -343,52 +338,10 @@ CutsceneCommand_Rumble::CutsceneCommand_Rumble(const std::vector<uint8_t>& rawDa
 
 std::string CutsceneCommand_Rumble::GetCommandMacro() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		return StringHelper::Sprintf("CS_RUMBLE_LIST(%i)", numEntries);
-	}
 	return StringHelper::Sprintf("CS_RUMBLE_CONTROLLER_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_SetTime::CutsceneSubCommandEntry_SetTime(
-	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
-{
-	hour = BitConverter::ToUInt8BE(rawData, rawDataIndex + 6);
-	minute = BitConverter::ToUInt8BE(rawData, rawDataIndex + 7);
-}
-
-std::string CutsceneSubCommandEntry_SetTime::GetBodySourceCode() const
-{
-	// Note: Both OoT and MM have the first argument unused
-	return StringHelper::Sprintf("CS_TIME(%i, %i, %i, %i, %i)", base, startFrame, endFrame, hour,
-	                             minute);
-}
-
-size_t CutsceneSubCommandEntry_SetTime::GetRawSize() const
-{
-	return 0x0C;
-}
-
-CutsceneCommand_Time::CutsceneCommand_Time(const std::vector<uint8_t>& rawData,
-                                           offset_t rawDataIndex)
-	: CutsceneCommand(rawData, rawDataIndex)
-{
-	rawDataIndex += 4;
-
-	entries.reserve(numEntries);
-	for (size_t i = 0; i < numEntries; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_SetTime(rawData, rawDataIndex);
-		entries.push_back(entry);
-		rawDataIndex += entry->GetRawSize();
-	}
-}
-
-std::string CutsceneCommand_Time::GetCommandMacro() const
-{
-	return StringHelper::Sprintf("CS_TIME_LIST(%i)", numEntries);
-}
+/*** TEXT ****/
 
 CutsceneSubCommandEntry_TextBox::CutsceneSubCommandEntry_TextBox(
 	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
@@ -409,32 +362,6 @@ std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
 	{
 		return StringHelper::Sprintf("CS_TEXT_OCARINA_ACTION(%i, %i, %i, 0x%X)", base, startFrame,
 		                             endFrame, textId1);
-	}
-
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		switch (type)
-		{
-		case 0:
-			return StringHelper::Sprintf("CS_TEXT_DEFAULT(0x%X, %i, %i, 0x%X, 0x%X)", base,
-			                             startFrame, endFrame, textId1, textId2);
-
-		case 1:
-			return StringHelper::Sprintf("CS_TEXT_TYPE_1(0x%X, %i, %i, 0x%X, 0x%X)", base,
-			                             startFrame, endFrame, textId1, textId2);
-
-		case 3:
-			return StringHelper::Sprintf("CS_TEXT_TYPE_3(0x%X, %i, %i, 0x%X, 0x%X)", base,
-			                             startFrame, endFrame, textId1, textId2);
-
-		case 4:
-			return StringHelper::Sprintf("CS_TEXT_BOSSES_REMAINS(0x%X, %i, %i, 0x%X)", base,
-			                             startFrame, endFrame, textId1);
-
-		case 5:
-			return StringHelper::Sprintf("CS_TEXT_ALL_NORMAL_MASKS(0x%X, %i, %i, 0x%X)", base,
-			                             startFrame, endFrame, textId1);
-		}
 	}
 
 	if (type < sizeof(csOoTTextTypes))
@@ -472,6 +399,8 @@ std::string CutsceneCommand_Text::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_TEXT_LIST(%i)", numEntries);
 }
 
+/*** ACTOR CUE ****/
+
 CutsceneSubCommandEntry_ActorCue::CutsceneSubCommandEntry_ActorCue(
 	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
@@ -494,28 +423,13 @@ std::string CutsceneSubCommandEntry_ActorCue::GetBodySourceCode() const
 {
 	std::string result;
 
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
+	if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::CS_CMD_PLAYER_CUE)
 	{
-		if (static_cast<CutsceneMMCommands>(commandID) ==
-		    CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
-		{
-			result = "CS_PLAYER_ACTION";
-		}
-		else
-		{
-			result = "CS_ACTOR_ACTION";
-		}
+		result = "CS_PLAYER_CUE";
 	}
 	else
 	{
-		if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::CS_CMD_PLAYER_CUE)
-		{
-			result = "CS_PLAYER_CUE";
-		}
-		else
-		{
-			result = "CS_ACTOR_CUE";
-		}
+		result = "CS_ACTOR_CUE";
 	}
 
 	result +=
@@ -548,16 +462,6 @@ CutsceneCommand_ActorCue::CutsceneCommand_ActorCue(const std::vector<uint8_t>& r
 
 std::string CutsceneCommand_ActorCue::GetCommandMacro() const
 {
-	if (Globals::Instance->game == ZGame::MM_RETAIL)
-	{
-		if (static_cast<CutsceneMMCommands>(commandID) ==
-		    CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION)
-		{
-			return StringHelper::Sprintf("CS_PLAYER_ACTION_LIST(%i)", numEntries);
-		}
-		return StringHelper::Sprintf("CS_ACTOR_ACTION_LIST(0x%03X, %i)", commandID, numEntries);
-	}
-
 	if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE_LIST(%i)", entries.size());
@@ -572,6 +476,8 @@ std::string CutsceneCommand_ActorCue::GetCommandMacro() const
 	}
 	return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%04X, %i)", commandID, entries.size());
 }
+
+/*** DESTINATION ****/
 
 CutsceneCommand_Destination::CutsceneCommand_Destination(const std::vector<uint8_t>& rawData,
                                                          offset_t rawDataIndex)
@@ -599,6 +505,8 @@ size_t CutsceneCommand_Destination::GetCommandSize() const
 {
 	return 0x10;
 }
+
+/*** TRANSITION ****/
 
 CutsceneCommand_Transition::CutsceneCommand_Transition(const std::vector<uint8_t>& rawData,
                                                        offset_t rawDataIndex)

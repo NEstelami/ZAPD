@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Cutscene_Commands.h"
+#include "Cutscene_Common.h"
 
 enum class CutsceneMMCommands
 {
@@ -137,4 +137,74 @@ class CutsceneMMCommand_NonImplemented : public CutsceneCommand
 {
 public:
 	CutsceneMMCommand_NonImplemented(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+};
+
+class CutsceneMMSubCommandEntry_Rumble : public CutsceneSubCommandEntry
+{
+public:
+	uint8_t intensity;
+	uint8_t decayTimer;
+	uint8_t decayStep;
+
+	CutsceneMMSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
+};
+
+class CutsceneMMCommand_Rumble : public CutsceneCommand
+{
+public:
+	CutsceneMMCommand_Rumble(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+
+	std::string GetCommandMacro() const override;
+};
+
+/**** TEXT ****/
+
+class CutsceneMMSubCommandEntry_TextBox : public CutsceneSubCommandEntry
+{
+public:
+	uint16_t type;
+	uint16_t textId1;
+	uint16_t textId2;
+
+	CutsceneMMSubCommandEntry_TextBox(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
+};
+
+class CutsceneMMCommand_Text : public CutsceneCommand
+{
+public:
+	CutsceneMMCommand_Text(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+
+	std::string GetCommandMacro() const override;
+};
+
+/**** ACTOR CUE ****/
+
+class CutsceneMMSubCommandEntry_ActorCue : public CutsceneSubCommandEntry
+{
+public:
+	uint16_t rotX, rotY, rotZ;
+	int32_t startPosX, startPosY, startPosZ;
+	int32_t endPosX, endPosY, endPosZ;
+	float normalX, normalY, normalZ;
+
+	CutsceneMMSubCommandEntry_ActorCue(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	std::string GetBodySourceCode() const override;
+
+	size_t GetRawSize() const override;
+};
+
+class CutsceneMMCommand_ActorCue : public CutsceneCommand
+{
+public:
+	CutsceneMMCommand_ActorCue(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+
+	std::string GetCommandMacro() const override;
 };
