@@ -267,8 +267,8 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 		return new CutsceneCommand_Destination(rawData, currentPtr);
 
 	default:
-		std::string errorHeader = StringHelper::Sprintf(
-			"Warning: Invalid cutscene command ID: '0x%04X'", cmdID);
+		std::string errorHeader =
+			StringHelper::Sprintf("Warning: Invalid cutscene command ID: '0x%04X'", cmdID);
 		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
 	}
 

@@ -6,7 +6,8 @@
 
 #include "Declaration.h"
 
-// see https://github.com/zeldaret/oot/blob/7235af2249843fb68740111b70089bad827a4730/include/z64cutscene.h#L35-L165
+// see
+// https://github.com/zeldaret/oot/blob/7235af2249843fb68740111b70089bad827a4730/include/z64cutscene.h#L35-L165
 enum class CutsceneCommands
 {
 	CS_CMD_CAM_EYE_SPLINE = 0x01,
@@ -203,7 +204,7 @@ public:
 	uint32_t unused10 = 0;
 
 	CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-									   CutsceneCommands cmdId);
+	                                   CutsceneCommands cmdId);
 
 	std::string GetBodySourceCode() const override;
 
@@ -214,7 +215,7 @@ class CutsceneCommand_GenericCmd : public CutsceneCommand
 {
 public:
 	CutsceneCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-							   CutsceneCommands cmdId);
+	                           CutsceneCommands cmdId);
 
 	std::string GetCommandMacro() const override;
 };
