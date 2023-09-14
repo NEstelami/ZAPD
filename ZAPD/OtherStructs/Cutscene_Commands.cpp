@@ -100,7 +100,7 @@ const std::unordered_map<CutsceneCommands, CsCommandListDescriptor> csCommandsDe
      {"CS_LIGHT_SETTING", "(0x%02X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
 	{CutsceneCommands::CS_CMD_START_SEQ, {"CS_START_SEQ", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
 	{CutsceneCommands::CS_CMD_STOP_SEQ, {"CS_STOP_SEQ", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
-	{CutsceneCommands::CS_CMD_FADE_OUT_SEQ, {"CS_FADE_OUT_SEQ", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
+	{CutsceneCommands::CS_CMD_FADE_OUT_SEQ, {"CS_FADE_OUT_SEQ", "(%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
 };
 
 CutsceneSubCommandEntry_GenericCmd::CutsceneSubCommandEntry_GenericCmd(
@@ -128,16 +128,15 @@ std::string CutsceneSubCommandEntry_GenericCmd::GetBodySourceCode() const
 
 	if (element != csCommandsDesc.end())
 	{
-		bool baseOne = 
-			(commandId == CutsceneCommands::CS_CMD_LIGHT_SETTING || commandId == CutsceneCommands::CS_CMD_START_SEQ ||
-			commandId == CutsceneCommands::CS_CMD_STOP_SEQ);
-
 		std::string entryFmt = element->second.cmdMacro;
 		entryFmt += element->second.args;
 
 		if (((commandId != CutsceneCommands::CS_CMD_MISC) && (commandId != CutsceneCommands::CS_CMD_FADE_OUT_SEQ)) || 
 				(base >= sizeof(csOoTMiscTypes))) 
 		{
+			bool baseOne = 
+				(commandId == CutsceneCommands::CS_CMD_LIGHT_SETTING || commandId == CutsceneCommands::CS_CMD_START_SEQ ||
+				commandId == CutsceneCommands::CS_CMD_STOP_SEQ);
 			return StringHelper::Sprintf(entryFmt.c_str(), baseOne ? base - 1 : base, startFrame, endFrame, pad, unused1,
 										unused2, unused3, unused4, unused5, unused6, unused7, unused8,
 										unused9, unused10);
@@ -430,10 +429,10 @@ std::string CutsceneSubCommandEntry_TextBox::GetBodySourceCode() const
 		}
 	}
 
-	if (base < sizeof(csOoTTextTypes))
+	if (type < sizeof(csOoTTextTypes))
 	{
-		return StringHelper::Sprintf("CS_TEXT(%s, %i, %i, %i, 0x%X, 0x%X)", csOoTTextTypes[base].c_str(),
-									startFrame, endFrame, type, textId1, textId2);
+		return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %s, 0x%X, 0x%X)", base,
+									startFrame, endFrame, csOoTTextTypes[type].c_str(), textId1, textId2);
 	}
 
 	return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %i, 0x%X, 0x%X)", base,
@@ -465,7 +464,7 @@ std::string CutsceneCommand_Text::GetCommandMacro() const
 	return StringHelper::Sprintf("CS_TEXT_LIST(%i)", numEntries);
 }
 
-CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(
+CutsceneSubCommandEntry_ActorCue::CutsceneSubCommandEntry_ActorCue(
 	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
@@ -483,7 +482,7 @@ CutsceneSubCommandEntry_ActorAction::CutsceneSubCommandEntry_ActorAction(
 	normalZ = BitConverter::ToFloatBE(rawData, rawDataIndex + 0x2C);
 }
 
-std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
+std::string CutsceneSubCommandEntry_ActorCue::GetBodySourceCode() const
 {
 	std::string result;
 
@@ -519,7 +518,7 @@ std::string CutsceneSubCommandEntry_ActorAction::GetBodySourceCode() const
 	return result;
 }
 
-size_t CutsceneSubCommandEntry_ActorAction::GetRawSize() const
+size_t CutsceneSubCommandEntry_ActorCue::GetRawSize() const
 {
 	return 0x30;
 }
@@ -533,7 +532,7 @@ CutsceneCommand_ActorCue::CutsceneCommand_ActorCue(const std::vector<uint8_t>& r
 	entries.reserve(numEntries);
 	for (size_t i = 0; i < numEntries; i++)
 	{
-		auto* entry = new CutsceneSubCommandEntry_ActorAction(rawData, rawDataIndex);
+		auto* entry = new CutsceneSubCommandEntry_ActorCue(rawData, rawDataIndex);
 		entries.push_back(entry);
 		rawDataIndex += entry->GetRawSize();
 	}
@@ -604,9 +603,11 @@ CutsceneCommand_Transition::CutsceneCommand_Transition(const std::vector<uint8_t
 
 std::string CutsceneCommand_Transition::GenerateSourceCode() const
 {
-	if ((base - 1) < sizeof(csOoTTransitionType))
+	size_t index = base - 1;
+
+	if (index < sizeof(csOoTTransitionType))
 	{
-		return StringHelper::Sprintf("CS_TRANSITION(%s, %i, %i),\n", csOoTTransitionType[base - 1].c_str(), startFrame, endFrame);
+		return StringHelper::Sprintf("CS_TRANSITION(%s, %i, %i),\n", csOoTTransitionType[index].c_str(), startFrame, endFrame);
 	}
 
 	return StringHelper::Sprintf("CS_TRANSITION(%i, %i, %i),\n", base, startFrame, endFrame);
