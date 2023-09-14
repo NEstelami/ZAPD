@@ -128,141 +128,141 @@ void ZCutscene::ParseRawData()
 
 CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) const
 {
-	CutsceneCommands cmdID = static_cast<CutsceneCommands>(id);
+	CutsceneOoT_CommandType cmdID = static_cast<CutsceneOoT_CommandType>(id);
 
 	const auto& rawData = parent->GetRawData();
 
 	switch (cmdID)
 	{
-	case CutsceneCommands::CS_CMD_PLAYER_CUE:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_1:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_8_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_7:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_7:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_8:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_7:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_8:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_7:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_9:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_10:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_8:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_9:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_8:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_2:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_9:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_11:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_10:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_9:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_11:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_10:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_12:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_3:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_4:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_12:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_10:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_13:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_13:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_14:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_11:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_14:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_15:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_12:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_11:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_7:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_16:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_13:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_12:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_5:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_8:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_7:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_15:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_16:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_17:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_6:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_9_0:
-	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_17:
+	case CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_5_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_7_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_5_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_7_1:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_8_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_7:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_7:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_8:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_7:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_8:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_7:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_5_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_9:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_10:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_8:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_9:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_5_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_8:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_7_2:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_5_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_9:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_11:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_10:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_9:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_11:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_10:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_12:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_7_3:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_7_4:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_12:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_10:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_13:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_13:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_14:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_11:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_14:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_15:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_12:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_11:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_7:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_5_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_16:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_2_13:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_3_12:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_7_5:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_4_8:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_5_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_6_7:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_15:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_16:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_1_17:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_7_6:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_9_0:
+	case CutsceneOoT_CommandType::CS_CMD_ACTOR_CUE_0_17:
 		return new CutsceneOoTCommand_ActorCue(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_MISC:
-	case CutsceneCommands::CS_CMD_LIGHT_SETTING:
-	case CutsceneCommands::CS_CMD_START_SEQ:
-	case CutsceneCommands::CS_CMD_STOP_SEQ:
-	case CutsceneCommands::CS_CMD_FADE_OUT_SEQ:
+	case CutsceneOoT_CommandType::CS_CMD_MISC:
+	case CutsceneOoT_CommandType::CS_CMD_LIGHT_SETTING:
+	case CutsceneOoT_CommandType::CS_CMD_START_SEQ:
+	case CutsceneOoT_CommandType::CS_CMD_STOP_SEQ:
+	case CutsceneOoT_CommandType::CS_CMD_FADE_OUT_SEQ:
 		return new CutsceneOoTCommand_GenericCmd(rawData, currentPtr, cmdID);
 
-	case CutsceneCommands::CS_CMD_CAM_EYE_SPLINE:
-	case CutsceneCommands::CS_CMD_CAM_AT_SPLINE:
-	case CutsceneCommands::CS_CMD_CAM_EYE_SPLINE_REL_TO_PLAYER:
-	case CutsceneCommands::CS_CMD_CAM_AT_SPLINE_REL_TO_PLAYER:
+	case CutsceneOoT_CommandType::CS_CMD_CAM_EYE_SPLINE:
+	case CutsceneOoT_CommandType::CS_CMD_CAM_AT_SPLINE:
+	case CutsceneOoT_CommandType::CS_CMD_CAM_EYE_SPLINE_REL_TO_PLAYER:
+	case CutsceneOoT_CommandType::CS_CMD_CAM_AT_SPLINE_REL_TO_PLAYER:
 		return new CutsceneOoTCommand_GenericCameraCmd(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_RUMBLE_CONTROLLER:
+	case CutsceneOoT_CommandType::CS_CMD_RUMBLE_CONTROLLER:
 		return new CutsceneOoTCommand_Rumble(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_TEXT:
+	case CutsceneOoT_CommandType::CS_CMD_TEXT:
 		return new CutsceneOoTCommand_Text(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_TRANSITION:
+	case CutsceneOoT_CommandType::CS_CMD_TRANSITION:
 		return new CutsceneOoTCommand_Transition(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_TIME:
+	case CutsceneOoT_CommandType::CS_CMD_TIME:
 		return new CutsceneCommand_Time(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_DESTINATION:
+	case CutsceneOoT_CommandType::CS_CMD_DESTINATION:
 		return new CutsceneOoTCommand_Destination(rawData, currentPtr);
 
-	case CutsceneCommands::CS_CMD_CAM_EYE:
-	case CutsceneCommands::CS_CMD_CAM_AT:
+	case CutsceneOoT_CommandType::CS_CMD_CAM_EYE:
+	case CutsceneOoT_CommandType::CS_CMD_CAM_AT:
 		break;
 
 	default:
@@ -276,68 +276,68 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 
 CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 {
-	CutsceneMMCommands cmdID = static_cast<CutsceneMMCommands>(id);
+	CutsceneMM_CommandType cmdID = static_cast<CutsceneMM_CommandType>(id);
 
 	const auto& rawData = parent->GetRawData();
 
-	if (((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_100) &&
-	     (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_149)) ||
-	    (id == (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_201) ||
-	    ((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_450) &&
-	     (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_599)))
+	if (((id >= (uint32_t)CutsceneMM_CommandType::CS_CMD_ACTOR_CUE_100) &&
+	     (id <= (uint32_t)CutsceneMM_CommandType::CS_CMD_ACTOR_CUE_149)) ||
+	    (id == (uint32_t)CutsceneMM_CommandType::CS_CMD_ACTOR_CUE_201) ||
+	    ((id >= (uint32_t)CutsceneMM_CommandType::CS_CMD_ACTOR_CUE_450) &&
+	     (id <= (uint32_t)CutsceneMM_CommandType::CS_CMD_ACTOR_CUE_599)))
 	{
 		return new CutsceneMMCommand_ActorCue(rawData, currentPtr);
 	}
 
 	switch (cmdID)
 	{
-	case CutsceneMMCommands::CS_CMD_MISC:
-	case CutsceneMMCommands::CS_CMD_LIGHT_SETTING:
-	case CutsceneMMCommands::CS_CMD_TRANSITION:
-	case CutsceneMMCommands::CS_CMD_MOTION_BLUR:
-	case CutsceneMMCommands::CS_CMD_GIVE_TATL:
-	case CutsceneMMCommands::CS_CMD_START_SEQ:
-	case CutsceneMMCommands::CS_CMD_SFX_REVERB_INDEX_2:
-	case CutsceneMMCommands::CS_CMD_SFX_REVERB_INDEX_1:
-	case CutsceneMMCommands::CS_CMD_MODIFY_SEQ:
-	case CutsceneMMCommands::CS_CMD_STOP_SEQ:
-	case CutsceneMMCommands::CS_CMD_START_AMBIENCE:
-	case CutsceneMMCommands::CS_CMD_FADE_OUT_AMBIENCE:
-	case CutsceneMMCommands::CS_CMD_DESTINATION:
-	case CutsceneMMCommands::CS_CMD_CHOOSE_CREDITS_SCENES:
+	case CutsceneMM_CommandType::CS_CMD_MISC:
+	case CutsceneMM_CommandType::CS_CMD_LIGHT_SETTING:
+	case CutsceneMM_CommandType::CS_CMD_TRANSITION:
+	case CutsceneMM_CommandType::CS_CMD_MOTION_BLUR:
+	case CutsceneMM_CommandType::CS_CMD_GIVE_TATL:
+	case CutsceneMM_CommandType::CS_CMD_START_SEQ:
+	case CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_2:
+	case CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_1:
+	case CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ:
+	case CutsceneMM_CommandType::CS_CMD_STOP_SEQ:
+	case CutsceneMM_CommandType::CS_CMD_START_AMBIENCE:
+	case CutsceneMM_CommandType::CS_CMD_FADE_OUT_AMBIENCE:
+	case CutsceneMM_CommandType::CS_CMD_DESTINATION:
+	case CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES:
 
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_FA:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_FE:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_FF:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_100:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_101:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_102:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_103:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_104:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_105:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_108:
-	case CutsceneMMCommands::CS_CMD_UNK_DATA_109:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_FA:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_FE:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_FF:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_100:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_101:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_102:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_103:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_104:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_105:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_108:
+	case CutsceneMM_CommandType::CS_CMD_UNK_DATA_109:
 		return new CutsceneMMCommand_GenericCmd(rawData, currentPtr, cmdID);
 
-	case CutsceneMMCommands::CS_CMD_TEXT:
+	case CutsceneMM_CommandType::CS_CMD_TEXT:
 		return new CutsceneMMCommand_Text(rawData, currentPtr);
 
-	case CutsceneMMCommands::CS_CMD_CAMERA_SPLINE:
+	case CutsceneMM_CommandType::CS_CMD_CAMERA_SPLINE:
 		return new CutsceneMMCommand_Camera(rawData, currentPtr);
 
-	case CutsceneMMCommands::CS_CMD_TRANSITION_GENERAL:
+	case CutsceneMM_CommandType::CS_CMD_TRANSITION_GENERAL:
 		return new CutsceneMMCommand_TransitionGeneral(rawData, currentPtr);
 
-	case CutsceneMMCommands::CS_CMD_FADE_OUT_SEQ:
+	case CutsceneMM_CommandType::CS_CMD_FADE_OUT_SEQ:
 		return new CutsceneMMCommand_FadeOutSeq(rawData, currentPtr);
 
-	case CutsceneMMCommands::CS_CMD_TIME:
+	case CutsceneMM_CommandType::CS_CMD_TIME:
 		return new CutsceneCommand_Time(rawData, currentPtr);
 
-	case CutsceneMMCommands::CS_CMD_PLAYER_CUE:
+	case CutsceneMM_CommandType::CS_CMD_PLAYER_CUE:
 		return new CutsceneMMCommand_ActorCue(rawData, currentPtr);
 
-	case CutsceneMMCommands::CS_CMD_RUMBLE:
+	case CutsceneMM_CommandType::CS_CMD_RUMBLE:
 		return new CutsceneMMCommand_Rumble(rawData, currentPtr);
 
 	default:

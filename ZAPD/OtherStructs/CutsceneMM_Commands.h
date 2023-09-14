@@ -4,7 +4,7 @@
 
 // see
 // https://github.com/zeldaret/mm/blob/0c7b90cf97f26483c8b6a98ae099a295f61e72ab/include/z64cutscene.h#L294-530
-enum class CutsceneMMCommands
+enum class CutsceneMM_CommandType
 {
 	/*    -2 */ CS_CMD_ACTOR_CUE_POST_PROCESS = -2,
 	/*    -1 */ CS_CAM_STOP,
@@ -248,10 +248,10 @@ enum class CutsceneMMCommands
 class CutsceneMMSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
 {
 public:
-	CutsceneMMCommands commandId;
+	CutsceneMM_CommandType commandId;
 
 	CutsceneMMSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-	                                     CutsceneMMCommands cmdId);
+	                                     CutsceneMM_CommandType cmdId);
 
 	std::string GetBodySourceCode() const override;
 };
@@ -260,7 +260,7 @@ class CutsceneMMCommand_GenericCmd : public CutsceneCommand
 {
 public:
 	CutsceneMMCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-	                             CutsceneMMCommands cmdId);
+	                             CutsceneMM_CommandType cmdId);
 
 	std::string GetCommandMacro() const override;
 };

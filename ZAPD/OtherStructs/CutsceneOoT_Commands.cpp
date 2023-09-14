@@ -1,5 +1,5 @@
 #include "CutsceneOoT_Commands.h"
-#include "CutsceneOoT_CommandSubTypes.h"
+#include "CutsceneOoT_EnumData.h"
 
 #include <cassert>
 #include <unordered_map>
@@ -9,21 +9,21 @@
 /**** GENERIC ****/
 
 // Specific for command lists where each entry has size 0x30 bytes
-const std::unordered_map<CutsceneCommands, CsCommandListDescriptor> csCommandsDesc = {
-	{CutsceneCommands::CS_CMD_MISC,
+const std::unordered_map<CutsceneOoT_CommandType, CsCommandListDescriptor> csCommandsDesc = {
+	{CutsceneOoT_CommandType::CS_CMD_MISC,
      {"CS_MISC", "(%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
-	{CutsceneCommands::CS_CMD_LIGHT_SETTING,
+	{CutsceneOoT_CommandType::CS_CMD_LIGHT_SETTING,
      {"CS_LIGHT_SETTING", "(0x%02X, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
-	{CutsceneCommands::CS_CMD_START_SEQ,
+	{CutsceneOoT_CommandType::CS_CMD_START_SEQ,
      {"CS_START_SEQ", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
-	{CutsceneCommands::CS_CMD_STOP_SEQ,
+	{CutsceneOoT_CommandType::CS_CMD_STOP_SEQ,
      {"CS_STOP_SEQ", "(%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
-	{CutsceneCommands::CS_CMD_FADE_OUT_SEQ,
+	{CutsceneOoT_CommandType::CS_CMD_FADE_OUT_SEQ,
      {"CS_FADE_OUT_SEQ", "(%s, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)"}},
 };
 
 CutsceneOoTSubCommandEntry_GenericCmd::CutsceneOoTSubCommandEntry_GenericCmd(
-	const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneCommands cmdId)
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex, CutsceneOoT_CommandType cmdId)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex), commandId(cmdId)
 {
 	word0 = BitConverter::ToUInt32BE(rawData, rawDataIndex + 0x0);
@@ -50,13 +50,13 @@ std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 		std::string entryFmt = element->second.cmdMacro;
 		entryFmt += element->second.args;
 
-		if (((commandId != CutsceneCommands::CS_CMD_MISC) &&
-		     (commandId != CutsceneCommands::CS_CMD_FADE_OUT_SEQ)) ||
+		if (((commandId != CutsceneOoT_CommandType::CS_CMD_MISC) &&
+		     (commandId != CutsceneOoT_CommandType::CS_CMD_FADE_OUT_SEQ)) ||
 		    (base >= sizeof(csOoTMiscTypes)))
 		{
-			bool baseOne = (commandId == CutsceneCommands::CS_CMD_LIGHT_SETTING ||
-			                commandId == CutsceneCommands::CS_CMD_START_SEQ ||
-			                commandId == CutsceneCommands::CS_CMD_STOP_SEQ);
+			bool baseOne = (commandId == CutsceneOoT_CommandType::CS_CMD_LIGHT_SETTING ||
+			                commandId == CutsceneOoT_CommandType::CS_CMD_START_SEQ ||
+			                commandId == CutsceneOoT_CommandType::CS_CMD_STOP_SEQ);
 			return StringHelper::Sprintf(entryFmt.c_str(), baseOne ? base - 1 : base, startFrame,
 			                             endFrame, pad, unused1, unused2, unused3, unused4, unused5,
 			                             unused6, unused7, unused8, unused9, unused10);
@@ -65,7 +65,7 @@ std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 		{
 			std::string firstArg;
 
-			if (commandId == CutsceneCommands::CS_CMD_MISC)
+			if (commandId == CutsceneOoT_CommandType::CS_CMD_MISC)
 			{
 				firstArg = csOoTMiscTypes[base];
 			}
@@ -93,7 +93,7 @@ size_t CutsceneOoTSubCommandEntry_GenericCmd::GetRawSize() const
 
 CutsceneOoTCommand_GenericCmd::CutsceneOoTCommand_GenericCmd(const std::vector<uint8_t>& rawData,
                                                        offset_t rawDataIndex,
-                                                       CutsceneCommands cmdId)
+                                                       CutsceneOoT_CommandType cmdId)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -111,7 +111,7 @@ CutsceneOoTCommand_GenericCmd::CutsceneOoTCommand_GenericCmd(const std::vector<u
 
 std::string CutsceneOoTCommand_GenericCmd::GetCommandMacro() const
 {
-	const auto& element = csCommandsDesc.find(static_cast<CutsceneCommands>(commandID));
+	const auto& element = csCommandsDesc.find(static_cast<CutsceneOoT_CommandType>(commandID));
 
 	if (element != csCommandsDesc.end())
 	{
@@ -184,15 +184,15 @@ std::string CutsceneOoTCommand_GenericCameraCmd::GetCommandMacro() const
 	std::string result;
 	std::string listStr;
 
-	if (commandID == (uint32_t)CutsceneCommands::CS_CMD_CAM_AT_SPLINE)
+	if (commandID == (uint32_t)CutsceneOoT_CommandType::CS_CMD_CAM_AT_SPLINE)
 	{
 		listStr = "CS_CAM_AT_SPLINE";
 	}
-	else if (commandID == (uint32_t)CutsceneCommands::CS_CMD_CAM_AT_SPLINE_REL_TO_PLAYER)
+	else if (commandID == (uint32_t)CutsceneOoT_CommandType::CS_CMD_CAM_AT_SPLINE_REL_TO_PLAYER)
 	{
 		listStr = "CS_CAM_AT_SPLINE_REL_TO_PLAYER";
 	}
-	else if (commandID == (uint32_t)CutsceneCommands::CS_CMD_CAM_EYE_SPLINE_REL_TO_PLAYER)
+	else if (commandID == (uint32_t)CutsceneOoT_CommandType::CS_CMD_CAM_EYE_SPLINE_REL_TO_PLAYER)
 	{
 		listStr = "CS_CAM_EYE_SPLINE_REL_TO_PLAYER";
 	}
@@ -339,7 +339,7 @@ std::string CutsceneOoTSubCommandEntry_ActorCue::GetBodySourceCode() const
 {
 	std::string result;
 
-	if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::CS_CMD_PLAYER_CUE)
+	if (static_cast<CutsceneOoT_CommandType>(commandID) == CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		result = "CS_PLAYER_CUE";
 	}
@@ -378,7 +378,7 @@ CutsceneOoTCommand_ActorCue::CutsceneOoTCommand_ActorCue(const std::vector<uint8
 
 std::string CutsceneOoTCommand_ActorCue::GetCommandMacro() const
 {
-	if (static_cast<CutsceneCommands>(commandID) == CutsceneCommands::CS_CMD_PLAYER_CUE)
+	if (static_cast<CutsceneOoT_CommandType>(commandID) == CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE_LIST(%i)", entries.size());
 	}

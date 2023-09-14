@@ -4,7 +4,7 @@
 
 // see
 // https://github.com/zeldaret/oot/blob/7235af2249843fb68740111b70089bad827a4730/include/z64cutscene.h#L35-L165
-enum class CutsceneCommands
+enum class CutsceneOoT_CommandType
 {
 	CS_CMD_CAM_EYE_SPLINE = 0x01,
 	CS_CMD_CAM_AT_SPLINE,
@@ -142,7 +142,7 @@ enum class CutsceneCommands
 class CutsceneOoTSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
 {
 public:
-	CutsceneCommands commandId;
+	CutsceneOoT_CommandType commandId;
 
 	uint32_t word0 = 0;
 	uint32_t word1 = 0;
@@ -159,7 +159,7 @@ public:
 	uint32_t unused10 = 0;
 
 	CutsceneOoTSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-	                                   CutsceneCommands cmdId);
+	                                   CutsceneOoT_CommandType cmdId);
 
 	std::string GetBodySourceCode() const override;
 
@@ -170,7 +170,7 @@ class CutsceneOoTCommand_GenericCmd : public CutsceneCommand
 {
 public:
 	CutsceneOoTCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-	                           CutsceneCommands cmdId);
+	                           CutsceneOoT_CommandType cmdId);
 
 	std::string GetCommandMacro() const override;
 };
