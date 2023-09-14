@@ -280,9 +280,11 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 
 	const auto& rawData = parent->GetRawData();
 
-	if (((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_100) && (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_149)) || 
-		(id == (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_201) || 
-		((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_450) && (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_599)))
+	if (((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_100) &&
+	     (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_149)) ||
+	    (id == (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_201) ||
+	    ((id >= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_450) &&
+	     (id <= (uint32_t)CutsceneMMCommands::CS_CMD_ACTOR_CUE_599)))
 	{
 		return new CutsceneMMCommand_ActorCue(rawData, currentPtr);
 	}

@@ -6,7 +6,6 @@
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
-
 /*** GENERIC ****/
 
 // Specific for command lists where each entry has size 0x30 bytes
