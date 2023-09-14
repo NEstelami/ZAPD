@@ -133,170 +133,143 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 
 	const auto& rawData = parent->GetRawData();
 
-	switch (id)
-	{
-	case 10:  // CutsceneCommands::SetPlayerAction
-	case 15:  // CutsceneCommands::SetActorAction1
-	case 17:
-	case 18:
-	case 23:
-	case 34:
-	case 39:
-	case 46:
-	case 76:
-	case 85:
-	case 93:
-	case 105:
-	case 107:
-	case 110:
-	case 119:
-	case 123:
-	case 138:
-	case 139:
-	case 144:
-	case 14:  // CutsceneCommands::SetActorAction2
-	case 16:
-	case 24:
-	case 35:
-	case 40:
-	case 48:
-	case 64:
-	case 68:
-	case 70:
-	case 78:
-	case 80:
-	case 94:
-	case 116:
-	case 118:
-	case 120:
-	case 125:
-	case 131:
-	case 141:
-	case 25:  // CutsceneCommands::SetActorAction3
-	case 36:
-	case 41:
-	case 50:
-	case 67:
-	case 69:
-	case 72:
-	case 81:
-	case 106:
-	case 117:
-	case 121:
-	case 126:
-	case 132:
-	case 29:  // CutsceneCommands::SetActorAction4
-	case 37:
-	case 42:
-	case 51:
-	case 53:
-	case 63:
-	case 65:
-	case 66:
-	case 75:
-	case 82:
-	case 108:
-	case 127:
-	case 133:
-	case 30:  // CutsceneCommands::SetActorAction5
-	case 38:
-	case 43:
-	case 47:
-	case 54:
-	case 79:
-	case 83:
-	case 128:
-	case 135:
-	case 44:  // CutsceneCommands::SetActorAction6
-	case 55:
-	case 77:
-	case 84:
-	case 90:
-	case 129:
-	case 136:
-	case 31:  // CutsceneCommands::SetActorAction7
-	case 52:
-	case 57:
-	case 58:
-	case 88:
-	case 115:
-	case 130:
-	case 137:
-	case 49:  // CutsceneCommands::SetActorAction8
-	case 60:
-	case 89:
-	case 111:
-	case 114:
-	case 134:
-	case 142:
-	case 62:   // CutsceneCommands::SetActorAction9
-	case 143:  // CutsceneCommands::SetActorAction10
-	case 74:
-		return new CutsceneCommand_ActorAction(rawData, currentPtr);
-
-	case 0x0B:
-	case 0x0D:
-	case 0x1A:
-	case 0x1B:
-	case 0x1C:
-	case 0x20:
-	case 0x21:
-	case 0x3B:
-	case 0x3D:
-	case 0x47:
-	case 0x49:
-	case 0x6D:
-	case 0x15:
-	case 0x16:
-	case 0x70:
-	case 0x71:
-		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
-	}
-
 	switch (cmdID)
 	{
-	case CutsceneCommands::Misc:
-	case CutsceneCommands::SetLighting:
-	case CutsceneCommands::PlayBGM:
-	case CutsceneCommands::StopBGM:
-	case CutsceneCommands::FadeBGM:
+	case CutsceneCommands::CS_CMD_PLAYER_CUE:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_1:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_8_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_7:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_7:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_8:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_7:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_8:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_7:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_9:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_10:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_8:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_9:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_8:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_2:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_9:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_11:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_10:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_9:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_11:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_10:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_12:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_3:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_4:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_12:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_10:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_13:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_13:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_14:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_11:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_14:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_15:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_12:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_11:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_7:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_16:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_2_13:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_3_12:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_5:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_4_8:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_5_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_6_7:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_15:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_16:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_1_17:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_6:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_9_0:
+	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_17:
+		return new CutsceneCommand_ActorCue(rawData, currentPtr);
+
+	case CutsceneCommands::CS_CMD_MISC:
+	case CutsceneCommands::CS_CMD_LIGHT_SETTING:
+	case CutsceneCommands::CS_CMD_START_SEQ:
+	case CutsceneCommands::CS_CMD_STOP_SEQ:
+	case CutsceneCommands::CS_CMD_FADE_OUT_SEQ:
 		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
 
-	case CutsceneCommands::SetCameraPos:
-	case CutsceneCommands::SetCameraFocus:
-	case CutsceneCommands::SetCameraPosLink:
-	case CutsceneCommands::SetCameraFocusLink:
-		return new CutsceneCommandSetCameraPos(rawData, currentPtr);
+	case CutsceneCommands::CS_CMD_CAM_EYE_SPLINE:
+	case CutsceneCommands::CS_CMD_CAM_AT_SPLINE:
+	case CutsceneCommands::CS_CMD_CAM_EYE_SPLINE_REL_TO_PLAYER:
+	case CutsceneCommands::CS_CMD_CAM_AT_SPLINE_REL_TO_PLAYER:
+		return new CutsceneCommand_GenericCameraCmd(rawData, currentPtr);
 
-	case CutsceneCommands::Cmd07:
+	case CutsceneCommands::CS_CMD_CAM_EYE:
+	case CutsceneCommands::CS_CMD_CAM_AT:
 		break;
-	case CutsceneCommands::Cmd08:
-		break;
-	case CutsceneCommands::Cmd09:
+
+	case CutsceneCommands::CS_CMD_RUMBLE_CONTROLLER:
 		return new CutsceneCommand_Rumble(rawData, currentPtr);
-	case CutsceneCommands::Textbox:
-		return new CutsceneCommand_TextBox(rawData, currentPtr);
 
-	case CutsceneCommands::SetPlayerAction:
-	case CutsceneCommands::SetActorAction1:
-	case CutsceneCommands::SetActorAction2:
-	case CutsceneCommands::SetActorAction3:
-	case CutsceneCommands::SetActorAction4:
-	case CutsceneCommands::SetActorAction5:
-	case CutsceneCommands::SetActorAction6:
-	case CutsceneCommands::SetActorAction7:
-	case CutsceneCommands::SetActorAction8:
-	case CutsceneCommands::SetActorAction9:
-	case CutsceneCommands::SetActorAction10:
-		break;
+	case CutsceneCommands::CS_CMD_TEXT:
+		return new CutsceneCommand_Text(rawData, currentPtr);
 
-	case CutsceneCommands::SetSceneTransFX:
-		return new CutsceneCommandSceneTransFX(rawData, currentPtr);
+	case CutsceneCommands::CS_CMD_TRANSITION:
+		return new CutsceneCommand_Transition(rawData, currentPtr);
 
-	case CutsceneCommands::SetTime:
-		return new CutsceneCommand_SetTime(rawData, currentPtr);
-	case CutsceneCommands::Terminator:
-		return new CutsceneCommand_Terminator(rawData, currentPtr);
+	case CutsceneCommands::CS_CMD_TIME:
+		return new CutsceneCommand_Time(rawData, currentPtr);
+
+	case CutsceneCommands::CS_CMD_DESTINATION:
+		return new CutsceneCommand_Destination(rawData, currentPtr);
+
+	default:
+		std::string errorHeader = StringHelper::Sprintf(
+			"Warning: Invalid cutscene command ID: '0x%04X'", cmdID);
+		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
 	}
 
 	return nullptr;
@@ -310,7 +283,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 
 	if (((id >= 100) && (id < 150)) || (id == 201) || ((id >= 450) && (id < 600)))
 	{
-		return new CutsceneCommand_ActorAction(rawData, currentPtr);
+		return new CutsceneCommand_ActorCue(rawData, currentPtr);
 	}
 
 	switch (cmdID)
@@ -345,7 +318,7 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		return new CutsceneMMCommand_GenericCmd(rawData, currentPtr, cmdID);
 
 	case CutsceneMMCommands::CS_CMD_TEXTBOX:
-		return new CutsceneCommand_TextBox(rawData, currentPtr);
+		return new CutsceneCommand_Text(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_CAMERA:
 		return new CutsceneMMCommand_Camera(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_FADESCREEN:
@@ -353,9 +326,9 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 	case CutsceneMMCommands::CS_CMD_FADESEQ:
 		return new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_SETTIME:
-		return new CutsceneCommand_SetTime(rawData, currentPtr);
+		return new CutsceneCommand_Time(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_SET_PLAYER_ACTION:
-		return new CutsceneCommand_ActorAction(rawData, currentPtr);
+		return new CutsceneCommand_ActorCue(rawData, currentPtr);
 	case CutsceneMMCommands::CS_CMD_RUMBLE:
 		return new CutsceneCommand_Rumble(rawData, currentPtr);
 	}
