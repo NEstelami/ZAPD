@@ -92,8 +92,8 @@ size_t CutsceneOoTSubCommandEntry_GenericCmd::GetRawSize() const
 }
 
 CutsceneOoTCommand_GenericCmd::CutsceneOoTCommand_GenericCmd(const std::vector<uint8_t>& rawData,
-                                                       offset_t rawDataIndex,
-                                                       CutsceneOoT_CommandType cmdId)
+                                                             offset_t rawDataIndex,
+                                                             CutsceneOoT_CommandType cmdId)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -123,7 +123,8 @@ std::string CutsceneOoTCommand_GenericCmd::GetCommandMacro() const
 
 /**** CAMERA ****/
 
-CutsceneOoTCommand_CameraPoint::CutsceneOoTCommand_CameraPoint(const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+CutsceneOoTCommand_CameraPoint::CutsceneOoTCommand_CameraPoint(const std::vector<uint8_t>& rawData,
+                                                               offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	continueFlag = BitConverter::ToInt8BE(rawData, rawDataIndex + 0);
@@ -169,7 +170,8 @@ CutsceneOoTCommand_GenericCameraCmd::CutsceneOoTCommand_GenericCameraCmd(
 
 	while (shouldContinue)
 	{
-		CutsceneOoTCommand_CameraPoint* camPoint = new CutsceneOoTCommand_CameraPoint(rawData, currentPtr);
+		CutsceneOoTCommand_CameraPoint* camPoint =
+			new CutsceneOoTCommand_CameraPoint(rawData, currentPtr);
 		entries.push_back(camPoint);
 
 		if (camPoint->continueFlag == -1)
@@ -213,8 +215,8 @@ size_t CutsceneOoTCommand_GenericCameraCmd::GetCommandSize() const
 
 /**** RUMBLE ****/
 
-CutsceneOoTSubCommandEntry_Rumble::CutsceneOoTSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex)
+CutsceneOoTSubCommandEntry_Rumble::CutsceneOoTSubCommandEntry_Rumble(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	sourceStrength = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x06);
@@ -238,7 +240,7 @@ size_t CutsceneOoTSubCommandEntry_Rumble::GetRawSize() const
 }
 
 CutsceneOoTCommand_Rumble::CutsceneOoTCommand_Rumble(const std::vector<uint8_t>& rawData,
-                                               offset_t rawDataIndex)
+                                                     offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -296,7 +298,7 @@ size_t CutsceneOoTSubCommandEntry_Text::GetRawSize() const
 }
 
 CutsceneOoTCommand_Text::CutsceneOoTCommand_Text(const std::vector<uint8_t>& rawData,
-                                           offset_t rawDataIndex)
+                                                 offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -339,7 +341,8 @@ std::string CutsceneOoTSubCommandEntry_ActorCue::GetBodySourceCode() const
 {
 	std::string result;
 
-	if (static_cast<CutsceneOoT_CommandType>(commandID) == CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
+	if (static_cast<CutsceneOoT_CommandType>(commandID) ==
+	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		result = "CS_PLAYER_CUE";
 	}
@@ -362,7 +365,7 @@ size_t CutsceneOoTSubCommandEntry_ActorCue::GetRawSize() const
 }
 
 CutsceneOoTCommand_ActorCue::CutsceneOoTCommand_ActorCue(const std::vector<uint8_t>& rawData,
-                                                   offset_t rawDataIndex)
+                                                         offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -378,7 +381,8 @@ CutsceneOoTCommand_ActorCue::CutsceneOoTCommand_ActorCue(const std::vector<uint8
 
 std::string CutsceneOoTCommand_ActorCue::GetCommandMacro() const
 {
-	if (static_cast<CutsceneOoT_CommandType>(commandID) == CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
+	if (static_cast<CutsceneOoT_CommandType>(commandID) ==
+	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE_LIST(%i)", entries.size());
 	}
@@ -396,7 +400,7 @@ std::string CutsceneOoTCommand_ActorCue::GetCommandMacro() const
 /**** DESTINATION ****/
 
 CutsceneOoTCommand_Destination::CutsceneOoTCommand_Destination(const std::vector<uint8_t>& rawData,
-                                                         offset_t rawDataIndex)
+                                                               offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -425,7 +429,7 @@ size_t CutsceneOoTCommand_Destination::GetCommandSize() const
 /**** TRANSITION ****/
 
 CutsceneOoTCommand_Transition::CutsceneOoTCommand_Transition(const std::vector<uint8_t>& rawData,
-                                                       offset_t rawDataIndex)
+                                                             offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;

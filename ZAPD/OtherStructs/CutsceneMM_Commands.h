@@ -301,7 +301,8 @@ public:
 	uint8_t unk_0A;
 	uint8_t unk_0B;
 
-	CutsceneSubCommandEntry_TransitionGeneral(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneSubCommandEntry_TransitionGeneral(const std::vector<uint8_t>& rawData,
+	                                          offset_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 

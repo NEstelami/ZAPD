@@ -6,7 +6,7 @@
 
 #define ENUM_TO_STRING(name)                                                                       \
 	{                                                                                              \
-		(uint32_t) CutsceneMM_CommandType::name, #name                                                 \
+		(uint32_t) CutsceneMM_CommandType::name, #name                                             \
 	}
 
 const std::unordered_map<uint32_t, std::string> csMMEnumNameToString = {

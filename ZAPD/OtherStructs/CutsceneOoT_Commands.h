@@ -158,8 +158,8 @@ public:
 	uint32_t unused9 = 0;
 	uint32_t unused10 = 0;
 
-	CutsceneOoTSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-	                                   CutsceneOoT_CommandType cmdId);
+	CutsceneOoTSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData,
+	                                      offset_t rawDataIndex, CutsceneOoT_CommandType cmdId);
 
 	std::string GetBodySourceCode() const override;
 
@@ -170,7 +170,7 @@ class CutsceneOoTCommand_GenericCmd : public CutsceneCommand
 {
 public:
 	CutsceneOoTCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
-	                           CutsceneOoT_CommandType cmdId);
+	                              CutsceneOoT_CommandType cmdId);
 
 	std::string GetCommandMacro() const override;
 };

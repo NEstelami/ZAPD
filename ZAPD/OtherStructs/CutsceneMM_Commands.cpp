@@ -16,12 +16,15 @@ const std::unordered_map<CutsceneMM_CommandType, CsCommandListDescriptor> csComm
 	{CutsceneMM_CommandType::CS_CMD_GIVE_TATL,
      {"CS_GIVE_TATL", "(%i, %i, %i)"}},  // TODO: use true/false?
 	{CutsceneMM_CommandType::CS_CMD_START_SEQ, {"CS_START_SEQ", "(0x%04X, %i, %i)"}},
-	{CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_2, {"CS_SFX_REVERB_INDEX_2", "(0x%04X, %i, %i)"}},
-	{CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_1, {"CS_SFX_REVERB_INDEX_1", "(0x%04X, %i, %i)"}},
+	{CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_2,
+     {"CS_SFX_REVERB_INDEX_2", "(0x%04X, %i, %i)"}},
+	{CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_1,
+     {"CS_SFX_REVERB_INDEX_1", "(0x%04X, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ, {"CS_MODIFY_SEQ", "(%s, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_STOP_SEQ, {"CS_STOP_SEQ", "(0x%04X, %i, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_START_AMBIENCE, {"CS_START_AMBIENCE", "(0x%04X, %i, %i)"}},
-	{CutsceneMM_CommandType::CS_CMD_FADE_OUT_AMBIENCE, {"CS_FADE_OUT_AMBIENCE", "(0x%04X, %i, %i)"}},
+	{CutsceneMM_CommandType::CS_CMD_FADE_OUT_AMBIENCE,
+     {"CS_FADE_OUT_AMBIENCE", "(0x%04X, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_DESTINATION, {"CS_DESTINATION", "(%s, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES,
      {"CS_CHOOSE_CREDITS_SCENES", "(%s, %i, %i)"}},
@@ -191,8 +194,8 @@ size_t CutsceneSubCommandEntry_TransitionGeneral::GetRawSize() const
 	return 0x0C;
 }
 
-CutsceneMMCommand_TransitionGeneral::CutsceneMMCommand_TransitionGeneral(const std::vector<uint8_t>& rawData,
-                                                           offset_t rawDataIndex)
+CutsceneMMCommand_TransitionGeneral::CutsceneMMCommand_TransitionGeneral(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -233,7 +236,7 @@ size_t CutsceneSubCommandEntry_FadeOutSeq::GetRawSize() const
 }
 
 CutsceneMMCommand_FadeOutSeq::CutsceneMMCommand_FadeOutSeq(const std::vector<uint8_t>& rawData,
-                                                     offset_t rawDataIndex)
+                                                           offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
@@ -320,8 +323,8 @@ std::string CutsceneMMCommand_Rumble::GetCommandMacro() const
 
 /**** TEXT ****/
 
-CutsceneMMSubCommandEntry_Text::CutsceneMMSubCommandEntry_Text(
-	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+CutsceneMMSubCommandEntry_Text::CutsceneMMSubCommandEntry_Text(const std::vector<uint8_t>& rawData,
+                                                               offset_t rawDataIndex)
 	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	type = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0x6);
