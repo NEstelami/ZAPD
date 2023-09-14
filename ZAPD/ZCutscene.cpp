@@ -231,35 +231,35 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	case CutsceneCommands::CS_CMD_ACTOR_CUE_7_6:
 	case CutsceneCommands::CS_CMD_ACTOR_CUE_9_0:
 	case CutsceneCommands::CS_CMD_ACTOR_CUE_0_17:
-		return new CutsceneCommand_ActorCue(rawData, currentPtr);
+		return new CutsceneOoTCommand_ActorCue(rawData, currentPtr);
 
 	case CutsceneCommands::CS_CMD_MISC:
 	case CutsceneCommands::CS_CMD_LIGHT_SETTING:
 	case CutsceneCommands::CS_CMD_START_SEQ:
 	case CutsceneCommands::CS_CMD_STOP_SEQ:
 	case CutsceneCommands::CS_CMD_FADE_OUT_SEQ:
-		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
+		return new CutsceneOoTCommand_GenericCmd(rawData, currentPtr, cmdID);
 
 	case CutsceneCommands::CS_CMD_CAM_EYE_SPLINE:
 	case CutsceneCommands::CS_CMD_CAM_AT_SPLINE:
 	case CutsceneCommands::CS_CMD_CAM_EYE_SPLINE_REL_TO_PLAYER:
 	case CutsceneCommands::CS_CMD_CAM_AT_SPLINE_REL_TO_PLAYER:
-		return new CutsceneCommand_GenericCameraCmd(rawData, currentPtr);
+		return new CutsceneOoTCommand_GenericCameraCmd(rawData, currentPtr);
 
 	case CutsceneCommands::CS_CMD_RUMBLE_CONTROLLER:
-		return new CutsceneCommand_Rumble(rawData, currentPtr);
+		return new CutsceneOoTCommand_Rumble(rawData, currentPtr);
 
 	case CutsceneCommands::CS_CMD_TEXT:
-		return new CutsceneCommand_Text(rawData, currentPtr);
+		return new CutsceneOoTCommand_Text(rawData, currentPtr);
 
 	case CutsceneCommands::CS_CMD_TRANSITION:
-		return new CutsceneCommand_Transition(rawData, currentPtr);
+		return new CutsceneOoTCommand_Transition(rawData, currentPtr);
 
 	case CutsceneCommands::CS_CMD_TIME:
 		return new CutsceneCommand_Time(rawData, currentPtr);
 
 	case CutsceneCommands::CS_CMD_DESTINATION:
-		return new CutsceneCommand_Destination(rawData, currentPtr);
+		return new CutsceneOoTCommand_Destination(rawData, currentPtr);
 
 	case CutsceneCommands::CS_CMD_CAM_EYE:
 	case CutsceneCommands::CS_CMD_CAM_AT:
@@ -268,7 +268,7 @@ CutsceneCommand* ZCutscene::GetCommandOoT(uint32_t id, offset_t currentPtr) cons
 	default:
 		std::string errorHeader =
 			StringHelper::Sprintf("Warning: Invalid cutscene command ID: '0x%04X'", cmdID);
-		return new CutsceneCommand_GenericCmd(rawData, currentPtr, cmdID);
+		return new CutsceneOoTCommand_GenericCmd(rawData, currentPtr, cmdID);
 	}
 
 	return nullptr;
@@ -326,10 +326,10 @@ CutsceneCommand* ZCutscene::GetCommandMM(uint32_t id, offset_t currentPtr) const
 		return new CutsceneMMCommand_Camera(rawData, currentPtr);
 
 	case CutsceneMMCommands::CS_CMD_TRANSITION_GENERAL:
-		return new CutsceneMMCommand_FadeScreen(rawData, currentPtr);
+		return new CutsceneMMCommand_TransitionGeneral(rawData, currentPtr);
 
 	case CutsceneMMCommands::CS_CMD_FADE_OUT_SEQ:
-		return new CutsceneMMCommand_FadeSeq(rawData, currentPtr);
+		return new CutsceneMMCommand_FadeOutSeq(rawData, currentPtr);
 
 	case CutsceneMMCommands::CS_CMD_TIME:
 		return new CutsceneCommand_Time(rawData, currentPtr);

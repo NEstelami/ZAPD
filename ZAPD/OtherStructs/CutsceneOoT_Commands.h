@@ -139,7 +139,7 @@ enum class CutsceneCommands
 
 /**** GENERIC ****/
 
-class CutsceneSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
+class CutsceneOoTSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
 {
 public:
 	CutsceneCommands commandId;
@@ -158,7 +158,7 @@ public:
 	uint32_t unused9 = 0;
 	uint32_t unused10 = 0;
 
-	CutsceneSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+	CutsceneOoTSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
 	                                   CutsceneCommands cmdId);
 
 	std::string GetBodySourceCode() const override;
@@ -166,10 +166,10 @@ public:
 	size_t GetRawSize() const override;
 };
 
-class CutsceneCommand_GenericCmd : public CutsceneCommand
+class CutsceneOoTCommand_GenericCmd : public CutsceneCommand
 {
 public:
-	CutsceneCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+	CutsceneOoTCommand_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
 	                           CutsceneCommands cmdId);
 
 	std::string GetCommandMacro() const override;
@@ -177,7 +177,7 @@ public:
 
 /**** CAMERA ****/
 
-class CutsceneCameraPoint : public CutsceneSubCommandEntry
+class CutsceneOoTCommand_CameraPoint : public CutsceneSubCommandEntry
 {
 public:
 	int8_t continueFlag;
@@ -187,14 +187,14 @@ public:
 	int16_t posX, posY, posZ;
 	int16_t unused;
 
-	CutsceneCameraPoint(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTCommand_CameraPoint(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneCommand_GenericCameraCmd : public CutsceneCommand
+class CutsceneOoTCommand_GenericCameraCmd : public CutsceneCommand
 {
 public:
 	uint16_t base;
@@ -202,7 +202,7 @@ public:
 	uint16_t endFrame;
 	uint16_t unused;
 
-	CutsceneCommand_GenericCameraCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTCommand_GenericCameraCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 
@@ -211,14 +211,14 @@ public:
 
 /**** TRANSITION ****/
 
-class CutsceneCommand_Transition : public CutsceneCommand
+class CutsceneOoTCommand_Transition : public CutsceneCommand
 {
 public:
 	uint16_t base;
 	uint16_t startFrame;
 	uint16_t endFrame;
 
-	CutsceneCommand_Transition(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTCommand_Transition(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GenerateSourceCode() const override;
 	size_t GetCommandSize() const override;
@@ -226,7 +226,7 @@ public:
 
 /**** RUMBLE ****/
 
-class CutsceneSubCommandEntry_Rumble : public CutsceneSubCommandEntry
+class CutsceneOoTSubCommandEntry_Rumble : public CutsceneSubCommandEntry
 {
 public:
 	uint8_t sourceStrength;
@@ -235,48 +235,48 @@ public:
 	uint8_t unk_09;
 	uint8_t unk_0A;
 
-	CutsceneSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTSubCommandEntry_Rumble(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneCommand_Rumble : public CutsceneCommand
+class CutsceneOoTCommand_Rumble : public CutsceneCommand
 {
 public:
-	CutsceneCommand_Rumble(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTCommand_Rumble(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
 
 /**** TEXT ****/
 
-class CutsceneSubCommandEntry_TextBox : public CutsceneSubCommandEntry
+class CutsceneOoTSubCommandEntry_Text : public CutsceneSubCommandEntry
 {
 public:
 	uint16_t type;
 	uint16_t textId1;
 	uint16_t textId2;
 
-	CutsceneSubCommandEntry_TextBox(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTSubCommandEntry_Text(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneCommand_Text : public CutsceneCommand
+class CutsceneOoTCommand_Text : public CutsceneCommand
 {
 public:
-	CutsceneCommand_Text(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTCommand_Text(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
 
 /**** ACTOR CUE ****/
 
-class CutsceneSubCommandEntry_ActorCue : public CutsceneSubCommandEntry
+class CutsceneOoTSubCommandEntry_ActorCue : public CutsceneSubCommandEntry
 {
 public:
 	uint16_t rotX, rotY, rotZ;
@@ -284,23 +284,23 @@ public:
 	int32_t endPosX, endPosY, endPosZ;
 	float normalX, normalY, normalZ;
 
-	CutsceneSubCommandEntry_ActorCue(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTSubCommandEntry_ActorCue(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneCommand_ActorCue : public CutsceneCommand
+class CutsceneOoTCommand_ActorCue : public CutsceneCommand
 {
 public:
-	CutsceneCommand_ActorCue(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTCommand_ActorCue(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
 
 /**** DESTINATION ****/
 
-class CutsceneCommand_Destination : public CutsceneCommand
+class CutsceneOoTCommand_Destination : public CutsceneCommand
 {
 public:
 	uint16_t base;
@@ -308,7 +308,7 @@ public:
 	uint16_t endFrame;
 	uint16_t unknown;
 
-	CutsceneCommand_Destination(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneOoTCommand_Destination(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GenerateSourceCode() const override;
 	size_t GetCommandSize() const override;

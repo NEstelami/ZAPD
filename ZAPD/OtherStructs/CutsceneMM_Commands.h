@@ -7,7 +7,7 @@
 enum class CutsceneMMCommands
 {
 	/*    -2 */ CS_CMD_ACTOR_CUE_POST_PROCESS = -2,
-	/*    -1 */ CS_CAM_STOP,  // OoT Remnant
+	/*    -1 */ CS_CAM_STOP,
 	/* 0x00A */ CS_CMD_TEXT = 10,
 	/* 0x05A */ CS_CMD_CAMERA_SPLINE = 90,
 	/* 0x064 */ CS_CMD_ACTOR_CUE_100 = 100,
@@ -146,7 +146,7 @@ enum class CutsceneMMCommands
 	/* 0x1F6 */ CS_CMD_ACTOR_CUE_502,
 	/* 0x1F7 */ CS_CMD_ACTOR_CUE_503,
 	/* 0x1F8 */ CS_CMD_ACTOR_CUE_504,
-	/* 0x1F9 */ CS_CMD_ACTOR_CUE_SOTCS,  // Song of Time Cutscenes (Double SoT, Three-Day Reset SoT)
+	/* 0x1F9 */ CS_CMD_ACTOR_CUE_SOTCS,
 	/* 0x1FA */ CS_CMD_ACTOR_CUE_506,
 	/* 0x1FB */ CS_CMD_ACTOR_CUE_507,
 	/* 0x1FC */ CS_CMD_ACTOR_CUE_508,
@@ -243,12 +243,14 @@ enum class CutsceneMMCommands
 	/* 0x257 */ CS_CMD_ACTOR_CUE_599
 };
 
-class CutsceneSubCommandEntry_GenericMMCmd : public CutsceneSubCommandEntry
+/**** GENERIC ****/
+
+class CutsceneMMSubCommandEntry_GenericCmd : public CutsceneSubCommandEntry
 {
 public:
 	CutsceneMMCommands commandId;
 
-	CutsceneSubCommandEntry_GenericMMCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
+	CutsceneMMSubCommandEntry_GenericCmd(const std::vector<uint8_t>& rawData, offset_t rawDataIndex,
 	                                     CutsceneMMCommands cmdId);
 
 	std::string GetBodySourceCode() const override;
@@ -262,6 +264,8 @@ public:
 
 	std::string GetCommandMacro() const override;
 };
+
+/**** CAMERA ****/
 
 // TODO: MM cutscene camera command is implemented as a placeholder until we better understand how
 // it works
@@ -285,7 +289,9 @@ public:
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_FadeScreen : public CutsceneSubCommandEntry
+/**** TRANSITION GENERAL ****/
+
+class CutsceneSubCommandEntry_TransitionGeneral : public CutsceneSubCommandEntry
 {
 public:
 	uint8_t unk_06;
@@ -295,40 +301,44 @@ public:
 	uint8_t unk_0A;
 	uint8_t unk_0B;
 
-	CutsceneSubCommandEntry_FadeScreen(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneSubCommandEntry_TransitionGeneral(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneMMCommand_FadeScreen : public CutsceneCommand
+class CutsceneMMCommand_TransitionGeneral : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_FadeScreen(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneMMCommand_TransitionGeneral(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
 
-class CutsceneSubCommandEntry_FadeSeq : public CutsceneSubCommandEntry
+/**** FADE OUT SEQUENCE ****/
+
+class CutsceneSubCommandEntry_FadeOutSeq : public CutsceneSubCommandEntry
 {
 public:
 	uint32_t unk_08;
 
-	CutsceneSubCommandEntry_FadeSeq(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneSubCommandEntry_FadeOutSeq(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
 	size_t GetRawSize() const override;
 };
 
-class CutsceneMMCommand_FadeSeq : public CutsceneCommand
+class CutsceneMMCommand_FadeOutSeq : public CutsceneCommand
 {
 public:
-	CutsceneMMCommand_FadeSeq(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneMMCommand_FadeOutSeq(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
 };
+
+/**** NON IMPLEMENTED ****/
 
 class CutsceneSubCommandEntry_NonImplemented : public CutsceneSubCommandEntry
 {
@@ -342,6 +352,8 @@ class CutsceneMMCommand_NonImplemented : public CutsceneCommand
 public:
 	CutsceneMMCommand_NonImplemented(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 };
+
+/**** RUMBLE ****/
 
 class CutsceneMMSubCommandEntry_Rumble : public CutsceneSubCommandEntry
 {
@@ -367,14 +379,14 @@ public:
 
 /**** TEXT ****/
 
-class CutsceneMMSubCommandEntry_TextBox : public CutsceneSubCommandEntry
+class CutsceneMMSubCommandEntry_Text : public CutsceneSubCommandEntry
 {
 public:
 	uint16_t type;
 	uint16_t textId1;
 	uint16_t textId2;
 
-	CutsceneMMSubCommandEntry_TextBox(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
+	CutsceneMMSubCommandEntry_Text(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetBodySourceCode() const override;
 
