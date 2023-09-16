@@ -21,6 +21,18 @@ public:
 	ExternalFile(fs::path nXmlPath, fs::path nOutPath);
 };
 
+// Stores data from the XML file, the integer is the index (via ATOI) and the string is the value
+class CutsceneData
+{
+public:
+	std::map<uint16_t, std::string> cutsceneCmd;
+	std::map<uint16_t, std::string> miscType;
+	std::map<uint16_t, std::string> textType;
+	std::map<uint16_t, std::string> fadeOutSeqPlayer;
+	std::map<uint16_t, std::string> transitionType;
+	std::map<uint16_t, std::string> destination;
+};
+
 class ZFile;
 
 class GameConfig
@@ -34,6 +46,7 @@ public:
 	std::vector<std::string> entranceList;
 	std::vector<std::string> specialEntranceList;
 	std::map<uint32_t, TexturePoolEntry> texturePool;  // Key = CRC
+	CutsceneData cutsceneData;
 
 	// ZBackground
 	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
@@ -59,6 +72,7 @@ public:
 	void ConfigFunc_BGConfig(const tinyxml2::XMLElement& element);
 	void ConfigFunc_ExternalXMLFolder(const tinyxml2::XMLElement& element);
 	void ConfigFunc_ExternalFile(const tinyxml2::XMLElement& element);
+	void ConfigFunc_CutsceneData(const tinyxml2::XMLElement& element);
 
 	void ReadConfigFile(const fs::path& configFilePath);
 };

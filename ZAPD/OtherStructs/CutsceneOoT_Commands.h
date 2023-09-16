@@ -2,7 +2,6 @@
 
 #include "Cutscene_Common.h"
 
-// see
 // https://github.com/zeldaret/oot/blob/7235af2249843fb68740111b70089bad827a4730/include/z64cutscene.h#L35-L165
 enum class CutsceneOoT_CommandType
 {

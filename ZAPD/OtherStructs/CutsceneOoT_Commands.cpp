@@ -1,8 +1,8 @@
 #include "CutsceneOoT_Commands.h"
-#include "CutsceneOoT_EnumData.h"
 
 #include <cassert>
 #include <unordered_map>
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
@@ -43,43 +43,34 @@ CutsceneOoTSubCommandEntry_GenericCmd::CutsceneOoTSubCommandEntry_GenericCmd(
 
 std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 {
+	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 	const auto& element = csCommandsDesc.find(commandId);
 
 	if (element != csCommandsDesc.end())
 	{
+		bool isIndexInMisc = cutsceneData->miscType.find(base) != cutsceneData->miscType.end();
+		bool isIndexInFade = cutsceneData->fadeOutSeqPlayer.find(base) != cutsceneData->fadeOutSeqPlayer.end();
 		std::string entryFmt = element->second.cmdMacro;
+		std::string firstArg;
 		entryFmt += element->second.args;
 
-		if (((commandId != CutsceneOoT_CommandType::CS_CMD_MISC) &&
-		     (commandId != CutsceneOoT_CommandType::CS_CMD_FADE_OUT_SEQ)) ||
-		    (base >= sizeof(csOoTMiscTypes)))
+		if (commandId == CutsceneOoT_CommandType::CS_CMD_MISC && isIndexInMisc)
+			firstArg = cutsceneData->miscType[base];
+		else if (commandId == CutsceneOoT_CommandType::CS_CMD_FADE_OUT_SEQ && isIndexInFade)
+			firstArg = cutsceneData->fadeOutSeqPlayer[base];
+		else
 		{
 			bool baseOne = (commandId == CutsceneOoT_CommandType::CS_CMD_LIGHT_SETTING ||
 			                commandId == CutsceneOoT_CommandType::CS_CMD_START_SEQ ||
 			                commandId == CutsceneOoT_CommandType::CS_CMD_STOP_SEQ);
-			return StringHelper::Sprintf(entryFmt.c_str(), baseOne ? base - 1 : base, startFrame,
-			                             endFrame, pad, unused1, unused2, unused3, unused4, unused5,
-			                             unused6, unused7, unused8, unused9, unused10);
+			return StringHelper::Sprintf(entryFmt.c_str(), baseOne ? base - 1 : base, startFrame, endFrame,
+											pad, unused1, unused2, unused3, unused4, unused5, unused6,
+											unused7, unused8, unused9, unused10);
 		}
-		else
-		{
-			std::string firstArg;
-
-			if (commandId == CutsceneOoT_CommandType::CS_CMD_MISC)
-			{
-				firstArg = csOoTMiscTypes[base];
-			}
-			else
-			{
-				firstArg = base == 3 ? "CS_FADE_OUT_FANFARE" : "CS_FADE_OUT_BGM_MAIN";
-			}
-
-			return StringHelper::Sprintf(entryFmt.c_str(), firstArg.c_str(), startFrame, endFrame,
-			                             pad, unused1, unused2, unused3, unused4, unused5, unused6,
-			                             unused7, unused8, unused9, unused10);
-		}
+		return StringHelper::Sprintf(entryFmt.c_str(), firstArg.c_str(), startFrame, endFrame,
+										pad, unused1, unused2, unused3, unused4, unused5, unused6,
+										unused7, unused8, unused9, unused10);
 	}
-
 	return StringHelper::Sprintf("CS_UNK_DATA(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, "
 	                             "0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)",
 	                             word0, word1, unused1, unused2, unused3, unused4, unused5, unused6,
@@ -272,6 +263,8 @@ CutsceneOoTSubCommandEntry_Text::CutsceneOoTSubCommandEntry_Text(
 
 std::string CutsceneOoTSubCommandEntry_Text::GetBodySourceCode() const
 {
+	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+
 	if (type == 0xFFFF)
 	{
 		return StringHelper::Sprintf("CS_TEXT_NONE(%i, %i)", startFrame, endFrame);
@@ -282,10 +275,10 @@ std::string CutsceneOoTSubCommandEntry_Text::GetBodySourceCode() const
 		                             endFrame, textId1);
 	}
 
-	if (type < sizeof(csOoTTextTypes))
+	if (cutsceneData->textType.find(type) != cutsceneData->textType.end())
 	{
 		return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %s, 0x%X, 0x%X)", base, startFrame,
-		                             endFrame, csOoTTextTypes[type].c_str(), textId1, textId2);
+		                             endFrame, cutsceneData->textType[type].c_str(), textId1, textId2);
 	}
 
 	return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %i, 0x%X, 0x%X)", base, startFrame,
@@ -381,20 +374,21 @@ CutsceneOoTCommand_ActorCue::CutsceneOoTCommand_ActorCue(const std::vector<uint8
 
 std::string CutsceneOoTCommand_ActorCue::GetCommandMacro() const
 {
+	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+
 	if (static_cast<CutsceneOoT_CommandType>(commandID) ==
 	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE_LIST(%i)", entries.size());
 	}
 
-	const auto& element = csOoTEnumNameToString.find(commandID);
-
-	if (element != csOoTEnumNameToString.end())
+	if (cutsceneData->cutsceneCmd.find(commandID) != cutsceneData->cutsceneCmd.end())
 	{
-		return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%s, %i)", element->second.c_str(),
+		return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%s, %i)", cutsceneData->cutsceneCmd[commandID].c_str(),
 		                             entries.size());
 	}
-	return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%04X, %i)", commandID, entries.size());
+
+	return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(0x%04X, %i)", commandID, entries.size());
 }
 
 /**** DESTINATION ****/
@@ -413,11 +407,14 @@ CutsceneOoTCommand_Destination::CutsceneOoTCommand_Destination(const std::vector
 
 std::string CutsceneOoTCommand_Destination::GenerateSourceCode() const
 {
-	if (base < sizeof(csOoTDestinationType))
+	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+
+	if (cutsceneData->destination.find(base) != cutsceneData->destination.end())
 	{
 		return StringHelper::Sprintf("CS_DESTINATION(%s, %i, %i),\n",
-		                             csOoTDestinationType[base].c_str(), startFrame, endFrame);
+		                             cutsceneData->destination[base].c_str(), startFrame, endFrame);
 	}
+
 	return StringHelper::Sprintf("CS_DESTINATION(%i, %i, %i),\n", base, startFrame, endFrame);
 }
 
@@ -441,12 +438,12 @@ CutsceneOoTCommand_Transition::CutsceneOoTCommand_Transition(const std::vector<u
 
 std::string CutsceneOoTCommand_Transition::GenerateSourceCode() const
 {
-	size_t index = base - 1;
+	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 
-	if (index < sizeof(csOoTTransitionType))
+	if (cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
 	{
 		return StringHelper::Sprintf("CS_TRANSITION(%s, %i, %i),\n",
-		                             csOoTTransitionType[index].c_str(), startFrame, endFrame);
+		                             cutsceneData->transitionType[base].c_str(), startFrame, endFrame);
 	}
 
 	return StringHelper::Sprintf("CS_TRANSITION(%i, %i, %i),\n", base, startFrame, endFrame);
