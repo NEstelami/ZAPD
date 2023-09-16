@@ -34,7 +34,7 @@ public:
 	// OoT
 	std::map<uint16_t, std::string> textType;
 	std::map<uint16_t, std::string> destination;
-	
+
 	// MM
 	std::map<uint16_t, std::string> modifySeqType;
 	std::map<uint16_t, std::string> chooseCreditsSceneType;

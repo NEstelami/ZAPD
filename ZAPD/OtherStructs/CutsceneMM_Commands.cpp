@@ -13,8 +13,7 @@ const std::unordered_map<CutsceneMM_CommandType, CsCommandListDescriptor> csComm
 	{CutsceneMM_CommandType::CS_CMD_LIGHT_SETTING, {"CS_LIGHT_SETTING", "(0x%02X, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_TRANSITION, {"CS_TRANSITION", "(%s, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_MOTION_BLUR, {"CS_MOTION_BLUR", "(%s, %i, %i)"}},
-	{CutsceneMM_CommandType::CS_CMD_GIVE_TATL,
-     {"CS_GIVE_TATL", "(%s, %i, %i)"}},
+	{CutsceneMM_CommandType::CS_CMD_GIVE_TATL, {"CS_GIVE_TATL", "(%s, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_START_SEQ, {"CS_START_SEQ", "(0x%04X, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_2,
      {"CS_SFX_REVERB_INDEX_2", "(0x%04X, %i, %i)"}},
@@ -50,27 +49,28 @@ std::string CutsceneMMSubCommandEntry_GenericCmd::GetBodySourceCode() const
 	}
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_MISC &&
-		cutsceneData->miscType.find(base) != cutsceneData->miscType.end())
+	    cutsceneData->miscType.find(base) != cutsceneData->miscType.end())
 		type = cutsceneData->miscType[base];
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION &&
-		cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
+	    cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
 		type = cutsceneData->transitionType[base];
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR &&
-		cutsceneData->motionBlurType.find(base) != cutsceneData->motionBlurType.end())
+	    cutsceneData->motionBlurType.find(base) != cutsceneData->motionBlurType.end())
 		type = cutsceneData->motionBlurType[base];
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ &&
-		cutsceneData->modifySeqType.find(base) != cutsceneData->modifySeqType.end())
+	    cutsceneData->modifySeqType.find(base) != cutsceneData->modifySeqType.end())
 		type = cutsceneData->modifySeqType[base];
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION &&
-		cutsceneData->destinationType.find(base) != cutsceneData->destinationType.end())
+	    cutsceneData->destinationType.find(base) != cutsceneData->destinationType.end())
 		type = cutsceneData->destinationType[base];
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES &&
-		cutsceneData->chooseCreditsSceneType.find(base) != cutsceneData->chooseCreditsSceneType.end())
+	    cutsceneData->chooseCreditsSceneType.find(base) !=
+	        cutsceneData->chooseCreditsSceneType.end())
 		type = cutsceneData->chooseCreditsSceneType[base];
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_GIVE_TATL)
@@ -177,11 +177,11 @@ std::string CutsceneSubCommandEntry_TransitionGeneral::GetBodySourceCode() const
 
 	if (cutsceneData->transitionGeneralType.find(base) != cutsceneData->transitionGeneralType.end())
 		return StringHelper::Sprintf("CS_TRANSITION_GENERAL(%s, %i, %i, %i, %i, %i)",
-									cutsceneData->transitionGeneralType[base].c_str(),
-									startFrame, endFrame, unk_06, unk_07, unk_08);
+		                             cutsceneData->transitionGeneralType[base].c_str(), startFrame,
+		                             endFrame, unk_06, unk_07, unk_08);
 
-	return StringHelper::Sprintf("CS_TRANSITION_GENERAL(0x%02X, %i, %i, %i, %i, %i)",
-								base, startFrame, endFrame, unk_06, unk_07, unk_08);
+	return StringHelper::Sprintf("CS_TRANSITION_GENERAL(0x%02X, %i, %i, %i, %i, %i)", base,
+	                             startFrame, endFrame, unk_06, unk_07, unk_08);
 }
 
 size_t CutsceneSubCommandEntry_TransitionGeneral::GetRawSize() const
@@ -224,7 +224,8 @@ std::string CutsceneSubCommandEntry_FadeOutSeq::GetBodySourceCode() const
 
 	if (cutsceneData->fadeOutSeqPlayer.find(base) != cutsceneData->fadeOutSeqPlayer.end())
 		return StringHelper::Sprintf("CS_FADE_OUT_SEQ(%s, %i, %i)",
-				cutsceneData->fadeOutSeqPlayer[base].c_str(), startFrame, endFrame);
+		                             cutsceneData->fadeOutSeqPlayer[base].c_str(), startFrame,
+		                             endFrame);
 
 	return StringHelper::Sprintf("CS_FADE_OUT_SEQ(%i, %i, %i)", base, startFrame, endFrame);
 }
@@ -294,11 +295,11 @@ std::string CutsceneMMSubCommandEntry_Rumble::GetBodySourceCode() const
 
 	if (cutsceneData->rumbleType.find(base) != cutsceneData->rumbleType.end())
 		return StringHelper::Sprintf("CS_RUMBLE(%s, %i, %i, 0x%02X, 0x%02X, 0x%02X)",
-									cutsceneData->rumbleType[base].c_str(), startFrame,
-									endFrame, intensity, decayTimer, decayStep);
+		                             cutsceneData->rumbleType[base].c_str(), startFrame, endFrame,
+		                             intensity, decayTimer, decayStep);
 
-	return StringHelper::Sprintf("CS_RUMBLE(0x%04X, %i, %i, 0x%02X, 0x%02X, 0x%02X)",
-	                             base, startFrame, endFrame, intensity, decayTimer, decayStep);
+	return StringHelper::Sprintf("CS_RUMBLE(0x%04X, %i, %i, 0x%02X, 0x%02X, 0x%02X)", base,
+	                             startFrame, endFrame, intensity, decayTimer, decayStep);
 }
 
 size_t CutsceneMMSubCommandEntry_Rumble::GetRawSize() const
@@ -475,8 +476,8 @@ std::string CutsceneMMCommand_ActorCue::GetCommandMacro() const
 
 	if (cutsceneData->cutsceneCmd.find(commandID) != cutsceneData->cutsceneCmd.end())
 	{
-		return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%s, %i)", cutsceneData->cutsceneCmd[commandID].c_str(),
-		                             numEntries);
+		return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%s, %i)",
+		                             cutsceneData->cutsceneCmd[commandID].c_str(), numEntries);
 	}
 	return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(0x%03X, %i)", commandID, numEntries);
 }

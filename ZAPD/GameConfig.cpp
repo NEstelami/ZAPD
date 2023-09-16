@@ -186,7 +186,7 @@ void GameConfig::ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element
 	     csEnum = csEnum->NextSiblingElement())
 	{
 		for (tinyxml2::XMLElement* item = csEnum->FirstChildElement(); item != nullptr;
-				item = item->NextSiblingElement())
+		     item = item->NextSiblingElement())
 		{
 			std::string enumKey = csEnum->Attribute("Key");
 			uint16_t itemIndex = atoi(item->Attribute("Index"));
@@ -210,7 +210,7 @@ void GameConfig::ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element
 
 			if (enumKey == "destination")
 				cutsceneData.destination[itemIndex] = itemID;
-			
+
 			// MM
 			if (enumKey == "modifySeqType")
 				cutsceneData.modifySeqType[itemIndex] = itemID;
