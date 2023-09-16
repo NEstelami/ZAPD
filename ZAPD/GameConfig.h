@@ -25,12 +25,23 @@ public:
 class CutsceneEnumData
 {
 public:
+	// Common
 	std::map<uint16_t, std::string> cutsceneCmd;
 	std::map<uint16_t, std::string> miscType;
-	std::map<uint16_t, std::string> textType;
 	std::map<uint16_t, std::string> fadeOutSeqPlayer;
 	std::map<uint16_t, std::string> transitionType;
+
+	// OoT
+	std::map<uint16_t, std::string> textType;
 	std::map<uint16_t, std::string> destination;
+	
+	// MM
+	std::map<uint16_t, std::string> modifySeqType;
+	std::map<uint16_t, std::string> chooseCreditsSceneType;
+	std::map<uint16_t, std::string> destinationType;
+	std::map<uint16_t, std::string> motionBlurType;
+	std::map<uint16_t, std::string> transitionGeneralType;
+	std::map<uint16_t, std::string> rumbleType;
 };
 
 class ZFile;

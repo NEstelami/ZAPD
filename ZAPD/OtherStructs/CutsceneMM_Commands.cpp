@@ -1,7 +1,7 @@
 #include "CutsceneMM_Commands.h"
-#include "CutsceneMM_EnumData.h"
 
 #include <unordered_map>
+#include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
 
@@ -14,7 +14,7 @@ const std::unordered_map<CutsceneMM_CommandType, CsCommandListDescriptor> csComm
 	{CutsceneMM_CommandType::CS_CMD_TRANSITION, {"CS_TRANSITION", "(%s, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_MOTION_BLUR, {"CS_MOTION_BLUR", "(%s, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_GIVE_TATL,
-     {"CS_GIVE_TATL", "(%i, %i, %i)"}},  // TODO: use true/false?
+     {"CS_GIVE_TATL", "(%s, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_START_SEQ, {"CS_START_SEQ", "(0x%04X, %i, %i)"}},
 	{CutsceneMM_CommandType::CS_CMD_SFX_REVERB_INDEX_2,
      {"CS_SFX_REVERB_INDEX_2", "(0x%04X, %i, %i)"}},
@@ -38,8 +38,10 @@ CutsceneMMSubCommandEntry_GenericCmd::CutsceneMMSubCommandEntry_GenericCmd(
 
 std::string CutsceneMMSubCommandEntry_GenericCmd::GetBodySourceCode() const
 {
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 	const auto& element = csCommandsDescMM.find(commandId);
 	std::string entryFmt = "CS_UNK_DATA(0x%02X, %i, %i, %i)";
+	std::string type = "";
 
 	if (element != csCommandsDescMM.end())
 	{
@@ -47,47 +49,35 @@ std::string CutsceneMMSubCommandEntry_GenericCmd::GetBodySourceCode() const
 		entryFmt += element->second.args;
 	}
 
-	if (commandId == CutsceneMM_CommandType::CS_CMD_MISC ||
-	    commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION ||
-	    commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR ||
-	    commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ ||
-	    commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION ||
-	    commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES)
-	{
-		std::string type;
+	if (commandId == CutsceneMM_CommandType::CS_CMD_MISC &&
+		cutsceneData->miscType.find(base) != cutsceneData->miscType.end())
+		type = cutsceneData->miscType[base];
 
-		if (commandId == CutsceneMM_CommandType::CS_CMD_MISC)
-		{
-			type = csMMMiscTypes[base];
-		}
+	if (commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION &&
+		cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
+		type = cutsceneData->transitionType[base];
 
-		if (commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION)
-		{
-			type = csMMTransitionTypes[base - 1];
-		}
+	if (commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR &&
+		cutsceneData->motionBlurType.find(base) != cutsceneData->motionBlurType.end())
+		type = cutsceneData->motionBlurType[base];
 
-		if (commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR)
-		{
-			type = base == 1 ? "CS_MOTION_BLUR_ENABLE" : "CS_MOTION_BLUR_DISABLE";
-		}
+	if (commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ &&
+		cutsceneData->modifySeqType.find(base) != cutsceneData->modifySeqType.end())
+		type = cutsceneData->modifySeqType[base];
 
-		if (commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ)
-		{
-			type = csMMModifySeqTypes[base - 1];
-		}
+	if (commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION &&
+		cutsceneData->destinationType.find(base) != cutsceneData->destinationType.end())
+		type = cutsceneData->destinationType[base];
 
-		if (commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION)
-		{
-			type = base == 1 ? "CS_DESTINATION_DEFAULT" : "CS_DESTINATION_BOSS_WARP";
-		}
+	if (commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES &&
+		cutsceneData->chooseCreditsSceneType.find(base) != cutsceneData->chooseCreditsSceneType.end())
+		type = cutsceneData->chooseCreditsSceneType[base];
 
-		if (commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES)
-		{
-			type = csMMCreditsSceneTypes[base - 1];
-		}
+	if (commandId == CutsceneMM_CommandType::CS_CMD_GIVE_TATL)
+		type = base ? "true" : "false";
 
+	if (type != "")
 		return StringHelper::Sprintf(entryFmt.c_str(), type.c_str(), startFrame, endFrame, pad);
-	}
 
 	if (commandId == CutsceneMM_CommandType::CS_CMD_LIGHT_SETTING ||
 	    commandId == CutsceneMM_CommandType::CS_CMD_START_SEQ ||
@@ -183,10 +173,15 @@ CutsceneSubCommandEntry_TransitionGeneral::CutsceneSubCommandEntry_TransitionGen
 
 std::string CutsceneSubCommandEntry_TransitionGeneral::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_TRANSITION_GENERAL(%s, %i, %i, %i, %i, %i)",
-	                             base == 1 ? "CS_TRANS_GENERAL_FILL_IN" :
-	                                         "CS_TRANS_GENERAL_FILL_OUT",
-	                             startFrame, endFrame, unk_06, unk_07, unk_08);
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+
+	if (cutsceneData->transitionGeneralType.find(base) != cutsceneData->transitionGeneralType.end())
+		return StringHelper::Sprintf("CS_TRANSITION_GENERAL(%s, %i, %i, %i, %i, %i)",
+									cutsceneData->transitionGeneralType[base].c_str(),
+									startFrame, endFrame, unk_06, unk_07, unk_08);
+
+	return StringHelper::Sprintf("CS_TRANSITION_GENERAL(0x%02X, %i, %i, %i, %i, %i)",
+								base, startFrame, endFrame, unk_06, unk_07, unk_08);
 }
 
 size_t CutsceneSubCommandEntry_TransitionGeneral::GetRawSize() const
@@ -225,9 +220,13 @@ CutsceneSubCommandEntry_FadeOutSeq::CutsceneSubCommandEntry_FadeOutSeq(
 
 std::string CutsceneSubCommandEntry_FadeOutSeq::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_FADE_OUT_SEQ(%s, %i, %i)",
-	                             base == 1 ? "CS_FADE_OUT_BGM_MAIN" : "CS_FADE_OUT_FANFARE",
-	                             startFrame, endFrame);
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+
+	if (cutsceneData->fadeOutSeqPlayer.find(base) != cutsceneData->fadeOutSeqPlayer.end())
+		return StringHelper::Sprintf("CS_FADE_OUT_SEQ(%s, %i, %i)",
+				cutsceneData->fadeOutSeqPlayer[base].c_str(), startFrame, endFrame);
+
+	return StringHelper::Sprintf("CS_FADE_OUT_SEQ(%i, %i, %i)", base, startFrame, endFrame);
 }
 
 size_t CutsceneSubCommandEntry_FadeOutSeq::GetRawSize() const
@@ -291,9 +290,15 @@ CutsceneMMSubCommandEntry_Rumble::CutsceneMMSubCommandEntry_Rumble(
 
 std::string CutsceneMMSubCommandEntry_Rumble::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_RUMBLE(%s, %i, %i, 0x%02X, 0x%02X, 0x%02X)",
-	                             base == 1 ? "CS_RUMBLE_ONCE" : "CS_RUMBLE_PULSE", startFrame,
-	                             endFrame, intensity, decayTimer, decayStep);
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+
+	if (cutsceneData->rumbleType.find(base) != cutsceneData->rumbleType.end())
+		return StringHelper::Sprintf("CS_RUMBLE(%s, %i, %i, 0x%02X, 0x%02X, 0x%02X)",
+									cutsceneData->rumbleType[base].c_str(), startFrame,
+									endFrame, intensity, decayTimer, decayStep);
+
+	return StringHelper::Sprintf("CS_RUMBLE(0x%04X, %i, %i, 0x%02X, 0x%02X, 0x%02X)",
+	                             base, startFrame, endFrame, intensity, decayTimer, decayStep);
 }
 
 size_t CutsceneMMSubCommandEntry_Rumble::GetRawSize() const
@@ -461,16 +466,16 @@ CutsceneMMCommand_ActorCue::CutsceneMMCommand_ActorCue(const std::vector<uint8_t
 
 std::string CutsceneMMCommand_ActorCue::GetCommandMacro() const
 {
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+
 	if (static_cast<CutsceneMM_CommandType>(commandID) == CutsceneMM_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE_LIST(%i)", numEntries);
 	}
 
-	const auto& element = csMMEnumNameToString.find(commandID);
-
-	if (element != csMMEnumNameToString.end())
+	if (cutsceneData->cutsceneCmd.find(commandID) != cutsceneData->cutsceneCmd.end())
 	{
-		return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%s, %i)", element->second.c_str(),
+		return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%s, %i)", cutsceneData->cutsceneCmd[commandID].c_str(),
 		                             numEntries);
 	}
 	return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(0x%03X, %i)", commandID, numEntries);

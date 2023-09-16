@@ -189,9 +189,10 @@ void GameConfig::ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element
 				item = item->NextSiblingElement())
 		{
 			std::string enumKey = csEnum->Attribute("Key");
-			std::string itemID = item->Attribute("ID");
 			uint16_t itemIndex = atoi(item->Attribute("Index"));
+			const char* itemID = item->Attribute("ID");
 
+			// Common
 			if (enumKey == "cmd")
 				cutsceneData.cutsceneCmd[itemIndex] = itemID;
 
@@ -209,6 +210,25 @@ void GameConfig::ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element
 
 			if (enumKey == "destination")
 				cutsceneData.destination[itemIndex] = itemID;
+			
+			// MM
+			if (enumKey == "modifySeqType")
+				cutsceneData.modifySeqType[itemIndex] = itemID;
+
+			if (enumKey == "chooseCreditsSceneType")
+				cutsceneData.chooseCreditsSceneType[itemIndex] = itemID;
+
+			if (enumKey == "destinationType")
+				cutsceneData.destinationType[itemIndex] = itemID;
+
+			if (enumKey == "motionBlurType")
+				cutsceneData.motionBlurType[itemIndex] = itemID;
+
+			if (enumKey == "transitionGeneralType")
+				cutsceneData.transitionGeneralType[itemIndex] = itemID;
+
+			if (enumKey == "rumbleType")
+				cutsceneData.rumbleType[itemIndex] = itemID;
 		}
 	}
 }

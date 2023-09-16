@@ -2,7 +2,6 @@
 
 #include "Cutscene_Common.h"
 
-// see
 // https://github.com/zeldaret/mm/blob/0c7b90cf97f26483c8b6a98ae099a295f61e72ab/include/z64cutscene.h#L294-530
 enum class CutsceneMM_CommandType
 {
