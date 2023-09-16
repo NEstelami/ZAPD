@@ -43,7 +43,7 @@ CutsceneOoTSubCommandEntry_GenericCmd::CutsceneOoTSubCommandEntry_GenericCmd(
 
 std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 {
-	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 	const auto& element = csCommandsDesc.find(commandId);
 
 	if (element != csCommandsDesc.end())
@@ -175,7 +175,7 @@ CutsceneOoTCommand_GenericCameraCmd::CutsceneOoTCommand_GenericCameraCmd(
 std::string CutsceneOoTCommand_GenericCameraCmd::GetCommandMacro() const
 {
 	std::string result;
-	std::string listStr;
+	const char* listStr;
 
 	if (commandID == (uint32_t)CutsceneOoT_CommandType::CS_CMD_CAM_AT_SPLINE)
 	{
@@ -194,7 +194,7 @@ std::string CutsceneOoTCommand_GenericCameraCmd::GetCommandMacro() const
 		listStr = "CS_CAM_EYE_SPLINE";
 	}
 
-	result += StringHelper::Sprintf("%s(%i, %i)", listStr.c_str(), startFrame, endFrame);
+	result += StringHelper::Sprintf("%s(%i, %i)", listStr, startFrame, endFrame);
 
 	return result;
 }
@@ -263,7 +263,7 @@ CutsceneOoTSubCommandEntry_Text::CutsceneOoTSubCommandEntry_Text(
 
 std::string CutsceneOoTSubCommandEntry_Text::GetBodySourceCode() const
 {
-	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 
 	if (type == 0xFFFF)
 	{
@@ -374,7 +374,7 @@ CutsceneOoTCommand_ActorCue::CutsceneOoTCommand_ActorCue(const std::vector<uint8
 
 std::string CutsceneOoTCommand_ActorCue::GetCommandMacro() const
 {
-	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 
 	if (static_cast<CutsceneOoT_CommandType>(commandID) ==
 	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
@@ -407,7 +407,7 @@ CutsceneOoTCommand_Destination::CutsceneOoTCommand_Destination(const std::vector
 
 std::string CutsceneOoTCommand_Destination::GenerateSourceCode() const
 {
-	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 
 	if (cutsceneData->destination.find(base) != cutsceneData->destination.end())
 	{
@@ -438,7 +438,7 @@ CutsceneOoTCommand_Transition::CutsceneOoTCommand_Transition(const std::vector<u
 
 std::string CutsceneOoTCommand_Transition::GenerateSourceCode() const
 {
-	CutsceneData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 
 	if (cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
 	{

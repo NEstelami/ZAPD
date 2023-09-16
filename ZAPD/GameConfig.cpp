@@ -165,7 +165,7 @@ void GameConfig::ConfigFunc_ExternalFile(const tinyxml2::XMLElement& element)
 	externalFiles.push_back(ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
 }
 
-void GameConfig::ConfigFunc_CutsceneData(const tinyxml2::XMLElement& element)
+void GameConfig::ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element)
 {
 	std::string path = Path::GetDirectoryName(configFilePath);
 	path = path.append("/").append(element.Attribute("File"));
@@ -192,22 +192,22 @@ void GameConfig::ConfigFunc_CutsceneData(const tinyxml2::XMLElement& element)
 			std::string itemID = item->Attribute("ID");
 			uint16_t itemIndex = atoi(item->Attribute("Index"));
 
-			if (!strcmp(enumKey.c_str(), "cmd"))
+			if (enumKey == "cmd")
 				cutsceneData.cutsceneCmd[itemIndex] = itemID;
 
-			if (!strcmp(enumKey.c_str(), "miscType"))
+			if (enumKey == "miscType")
 				cutsceneData.miscType[itemIndex] = itemID;
 
-			if (!strcmp(enumKey.c_str(), "textType"))
+			if (enumKey == "textType")
 				cutsceneData.textType[itemIndex] = itemID;
 
-			if (!strcmp(enumKey.c_str(), "fadeOutSeqPlayer"))
+			if (enumKey == "fadeOutSeqPlayer")
 				cutsceneData.fadeOutSeqPlayer[itemIndex] = itemID;
 
-			if (!strcmp(enumKey.c_str(), "transitionType"))
+			if (enumKey == "transitionType")
 				cutsceneData.transitionType[itemIndex] = itemID;
 
-			if (!strcmp(enumKey.c_str(), "destination"))
+			if (enumKey == "destination")
 				cutsceneData.destination[itemIndex] = itemID;
 		}
 	}
@@ -223,7 +223,7 @@ void GameConfig::ReadConfigFile(const fs::path& argConfigFilePath)
 		{"SpecialEntranceList", &GameConfig::ConfigFunc_specialEntranceList},
 		{"TexturePool", &GameConfig::ConfigFunc_TexturePool},
 		{"BGConfig", &GameConfig::ConfigFunc_BGConfig},
-		{"CutsceneData", &GameConfig::ConfigFunc_CutsceneData},
+		{"CutsceneEnumData", &GameConfig::ConfigFunc_CutsceneEnumData},
 		{"ExternalXMLFolder", &GameConfig::ConfigFunc_ExternalXMLFolder},
 		{"ExternalFile", &GameConfig::ConfigFunc_ExternalFile},
 	};
