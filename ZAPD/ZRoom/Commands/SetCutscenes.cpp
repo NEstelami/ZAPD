@@ -32,6 +32,7 @@ void SetCutscenes::ParseRawData()
 
 void SetCutscenes::DeclareReferences(const std::string& prefix)
 {
+	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
 	std::string varPrefix = name;
 	if (varPrefix == "")
 		varPrefix = prefix;
@@ -62,10 +63,14 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 			Globals::Instance->GetSegmentedPtrName(entry.segmentPtr, parent, "CutsceneData",
 			                                       csName);
 
-			declaration +=
-				StringHelper::Sprintf("    { %s, 0x%04X, 0x%02X, 0x%02X },", csName.c_str(),
-			                          entry.exit, entry.entrance, entry.flag);
-
+			if (cutsceneData->spawnFlag.find(entry.flag) != cutsceneData->spawnFlag.end())
+				declaration += StringHelper::Sprintf("    { %s, 0x%04X, 0x%02X, %s },",
+				                                     csName.c_str(), entry.exit, entry.entrance,
+				                                     cutsceneData->spawnFlag[entry.flag].c_str());
+			else
+				declaration +=
+					StringHelper::Sprintf("    { %s, 0x%04X, 0x%02X, 0x%02X },", csName.c_str(),
+				                          entry.exit, entry.entrance, entry.flag);
 			if (i + 1 < numCutscenes)
 				declaration += "\n";
 

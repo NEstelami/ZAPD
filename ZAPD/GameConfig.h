@@ -42,6 +42,8 @@ public:
 	std::map<uint16_t, std::string> motionBlurType;
 	std::map<uint16_t, std::string> transitionGeneralType;
 	std::map<uint16_t, std::string> rumbleType;
+	std::map<uint8_t, std::string> spawnFlag;
+	std::map<uint8_t, std::string> endSfx;
 };
 
 class ZFile;

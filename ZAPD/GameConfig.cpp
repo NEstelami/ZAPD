@@ -229,6 +229,12 @@ void GameConfig::ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element
 
 			if (enumKey == "rumbleType")
 				cutsceneData.rumbleType[itemIndex] = itemID;
+
+			if (enumKey == "spawnFlag")
+				cutsceneData.spawnFlag[itemIndex] = itemID;
+
+			if (enumKey == "endSfx")
+				cutsceneData.endSfx[itemIndex] = itemID;
 		}
 	}
 }
