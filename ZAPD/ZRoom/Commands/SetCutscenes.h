@@ -18,7 +18,7 @@ class SetCutscenes : public ZRoomCommand
 {
 public:
 	std::vector<CutsceneScriptEntry> cutsceneEntries;  // (MM Only)
-	uint8_t numCutscenes;                        // (MM Only)
+	uint8_t numCutscenes;                              // (MM Only)
 
 	SetCutscenes(ZFile* nParent);
 
