@@ -23,7 +23,7 @@ void SetCutscenes::ParseRawData()
 		cutsceneEntries.reserve(numCutscenes);
 		for (uint8_t i = 0; i < numCutscenes; i++)
 		{
-			CutsceneEntry entry(parent->GetRawData(), currentPtr);
+			CutsceneScriptEntry entry(parent->GetRawData(), currentPtr);
 			cutsceneEntries.push_back(entry);
 			currentPtr += 8;
 		}
@@ -73,8 +73,8 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 		}
 
 		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
-		                            cutsceneEntries.size() * 8, "CutsceneEntry",
-		                            StringHelper::Sprintf("%sCutsceneEntryList_%06X",
+		                            cutsceneEntries.size() * 8, "CutsceneScriptEntry",
+		                            StringHelper::Sprintf("%sCutsceneScriptEntryList_%06X",
 		                                                  zRoom->GetName().c_str(), segmentOffset),
 		                            cutsceneEntries.size(), declaration);
 	}
@@ -102,7 +102,7 @@ std::string SetCutscenes::GetBodySourceCode() const
 
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
-		Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "CutsceneEntry", listName);
+		Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "CutsceneScriptEntry", listName);
 		return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_LIST(%i, %s)", numCutscenes,
 		                             listName.c_str());
 	}
@@ -121,7 +121,7 @@ RoomCommand SetCutscenes::GetRoomCommand() const
 	return RoomCommand::SetCutscenes;
 }
 
-CutsceneEntry::CutsceneEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+CutsceneScriptEntry::CutsceneScriptEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 	: segmentPtr(BitConverter::ToInt32BE(rawData, rawDataIndex + 0)),
 	  exit(BitConverter::ToInt16BE(rawData, rawDataIndex + 4)), entrance(rawData[rawDataIndex + 6]),
 	  flag(rawData[rawDataIndex + 7])
