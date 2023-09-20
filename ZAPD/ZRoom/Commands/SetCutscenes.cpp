@@ -103,7 +103,7 @@ std::string SetCutscenes::GetBodySourceCode() const
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
 		Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "CutsceneEntry", listName);
-		return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_LIST(%i, %s)", numCutscenes,
+		return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_SCRIPT_LIST(%i, %s)", numCutscenes,
 		                             listName.c_str());
 	}
 
