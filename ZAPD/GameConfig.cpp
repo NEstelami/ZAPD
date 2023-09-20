@@ -192,7 +192,6 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 			uint16_t itemIndex = atoi(item->Attribute("Index"));
 			const char* itemID = item->Attribute("ID");
 
-			// OoT
 			if (enumKey == "naviQuestHintType")
 				enumData.naviQuestHintType[itemIndex] = itemID;
 		}

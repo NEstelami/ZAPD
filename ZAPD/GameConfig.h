@@ -24,7 +24,6 @@ public:
 class EnumData
 {
 public:
-	// OoT
 	std::map<uint16_t, std::string> naviQuestHintType;
 };
 
