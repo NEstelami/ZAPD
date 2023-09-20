@@ -55,15 +55,15 @@ void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& 
 
 		std::string varName =
 			StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
-		
+
 		if (Globals::Instance->game != ZGame::MM_RETAIL)
 			parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
-										entrances.size() * 2, "Spawn", varName,
-										entrances.size(), declaration);
+			                            entrances.size() * 2, "Spawn", varName, entrances.size(),
+			                            declaration);
 		else
 			parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
-										entrances.size() * 2, "EntranceEntry", varName,
-										entrances.size(), declaration);
+			                            entrances.size() * 2, "EntranceEntry", varName,
+			                            entrances.size(), declaration);
 	}
 }
 

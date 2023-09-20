@@ -61,7 +61,8 @@ public:
 	bool isSubStruct;
 
 	RoomShapeImageMultiBgEntry(ZFile* nParent);
-	RoomShapeImageMultiBgEntry(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
+	RoomShapeImageMultiBgEntry(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex,
+	                           ZFile* nParent);
 
 	void ParseRawData() override;
 

@@ -30,7 +30,7 @@ public:
 
 	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
 	segptr_t skinSegment = 0;                                   // Skin only
-	SkinAnimatedLimbData segmentStruct;                              // Skin only
+	SkinAnimatedLimbData segmentStruct;                         // Skin only
 
 	// Legacy only
 	float legTransX, legTransY, legTransZ;  // Vec3f

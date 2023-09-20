@@ -178,7 +178,7 @@ std::string ZLinkAnimation::GetBodySourceCode() const
 /* ZCurveAnimation */
 
 CurveInterpKnot::CurveInterpKnot(ZFile* parent, const std::vector<uint8_t>& rawData,
-                             uint32_t fileOffset)
+                                 uint32_t fileOffset)
 	: parent(parent)
 {
 	unk_00 = BitConverter::ToUInt16BE(rawData, fileOffset + 0);
@@ -189,7 +189,7 @@ CurveInterpKnot::CurveInterpKnot(ZFile* parent, const std::vector<uint8_t>& rawD
 }
 
 CurveInterpKnot::CurveInterpKnot(ZFile* parent, const std::vector<uint8_t>& rawData,
-                             uint32_t fileOffset, size_t index)
+                                 uint32_t fileOffset, size_t index)
 	: CurveInterpKnot(parent, rawData, fileOffset + index * GetRawDataSize())
 {
 }

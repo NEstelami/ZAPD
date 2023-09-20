@@ -19,10 +19,10 @@ std::string SetCameraSettings::GetBodySourceCode() const
 {
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 		return StringHelper::Sprintf("SCENE_CMD_SET_REGION_VISITED(0x%02X, 0x%08X)", cameraMovement,
-									mapHighlight);
+		                             mapHighlight);
 	else
 		return StringHelper::Sprintf("SCENE_CMD_MISC_SETTINGS(0x%02X, 0x%08X)", cameraMovement,
-									mapHighlight);
+		                             mapHighlight);
 }
 
 std::string SetCameraSettings::GetCommandCName() const

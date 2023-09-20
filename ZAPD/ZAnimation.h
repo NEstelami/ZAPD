@@ -87,7 +87,7 @@ public:
 	CurveInterpKnot() = default;
 	CurveInterpKnot(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset);
 	CurveInterpKnot(ZFile* parent, const std::vector<uint8_t>& rawData, uint32_t fileOffset,
-	              size_t index);
+	                size_t index);
 
 	[[nodiscard]] std::string GetBody(const std::string& prefix) const;
 

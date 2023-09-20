@@ -189,7 +189,8 @@ void RoomShapeDListsEntry::SetPolyType(uint8_t nPolyType)
 	polyType = nPolyType;
 }
 
-ZDisplayList* RoomShapeDListsEntry::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::string& prefix)
+ZDisplayList* RoomShapeDListsEntry::MakeDlist(segptr_t ptr,
+                                              [[maybe_unused]] const std::string& prefix)
 {
 	if (ptr == 0)
 	{
@@ -216,8 +217,8 @@ RoomShapeImageMultiBgEntry::RoomShapeImageMultiBgEntry(ZFile* nParent) : ZResour
 {
 }
 
-RoomShapeImageMultiBgEntry::RoomShapeImageMultiBgEntry(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex,
-                 ZFile* nParent)
+RoomShapeImageMultiBgEntry::RoomShapeImageMultiBgEntry(bool nIsSubStruct, const std::string& prefix,
+                                                       uint32_t nRawDataIndex, ZFile* nParent)
 	: RoomShapeImageMultiBgEntry(nParent)
 {
 	rawDataIndex = nRawDataIndex;
