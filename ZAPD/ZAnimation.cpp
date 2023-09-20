@@ -390,7 +390,7 @@ DeclarationAlignment ZCurveAnimation::GetDeclarationAlignment() const
 
 std::string ZCurveAnimation::GetSourceTypeName() const
 {
-	return "TransformUpdateIndex";
+	return "CurveAnimationHeader";
 }
 
 /* ZLegacyAnimation */

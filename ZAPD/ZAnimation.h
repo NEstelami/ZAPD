@@ -132,7 +132,7 @@ public:
 
 	std::string GetSourceTypeName() const override;
 };
-// TransformUpdateIndex
+// CurveAnimationHeader
 
 /* ZLegacyAnimation */
 
