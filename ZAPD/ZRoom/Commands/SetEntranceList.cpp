@@ -55,16 +55,25 @@ void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& 
 
 		std::string varName =
 			StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
-		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
-		                            entrances.size() * 2, "Spawn", varName,
-		                            entrances.size(), declaration);
+		
+		if (Globals::Instance->game != ZGame::MM_RETAIL)
+			parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
+										entrances.size() * 2, "Spawn", varName,
+										entrances.size(), declaration);
+		else
+			parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
+										entrances.size() * 2, "EntranceEntry", varName,
+										entrances.size(), declaration);
 	}
 }
 
 std::string SetEntranceList::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "Spawn", listName);
+	if (Globals::Instance->game != ZGame::MM_RETAIL)
+		Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "Spawn", listName);
+	else
+		Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "EntranceEntry", listName);
 	return StringHelper::Sprintf("SCENE_CMD_ENTRANCE_LIST(%s)", listName.c_str());
 }
 
