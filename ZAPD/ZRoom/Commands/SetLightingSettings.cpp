@@ -36,7 +36,7 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 
 		parent->AddDeclarationArray(
 			segmentOffset, DeclarationAlignment::Align4,
-			settings.size() * settings.front().GetRawDataSize(), "LightSettings",
+			settings.size() * settings.front().GetRawDataSize(), "EnvLightSettings",
 			StringHelper::Sprintf("%sLightSettings0x%06X", prefix.c_str(), segmentOffset),
 			settings.size(), declaration);
 	}
@@ -45,7 +45,7 @@ void SetLightingSettings::DeclareReferences(const std::string& prefix)
 std::string SetLightingSettings::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "LightSettings", listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "EnvLightSettings", listName);
 	return StringHelper::Sprintf("SCENE_CMD_ENV_LIGHT_SETTINGS(%i, %s)", settings.size(),
 	                             listName.c_str());
 }
