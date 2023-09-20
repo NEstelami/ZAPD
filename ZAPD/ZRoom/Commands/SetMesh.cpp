@@ -92,11 +92,11 @@ RoomCommand SetMesh::GetRoomCommand() const
 	return RoomCommand::SetMesh;
 }
 
-PolygonDlist::PolygonDlist(ZFile* nParent) : ZResource(nParent)
+RoomShapeDListsEntry::RoomShapeDListsEntry(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-void PolygonDlist::ParseRawData()
+void RoomShapeDListsEntry::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 	switch (polyType)
@@ -118,13 +118,13 @@ void PolygonDlist::ParseRawData()
 	}
 }
 
-void PolygonDlist::DeclareReferences(const std::string& prefix)
+void RoomShapeDListsEntry::DeclareReferences(const std::string& prefix)
 {
 	opaDList = MakeDlist(opa, prefix);
 	xluDList = MakeDlist(xlu, prefix);
 }
 
-std::string PolygonDlist::GetBodySourceCode() const
+std::string RoomShapeDListsEntry::GetBodySourceCode() const
 {
 	std::string bodyStr;
 	std::string opaStr;
@@ -142,7 +142,7 @@ std::string PolygonDlist::GetBodySourceCode() const
 	return bodyStr;
 }
 
-void PolygonDlist::GetSourceOutputCode(const std::string& prefix)
+void RoomShapeDListsEntry::GetSourceOutputCode(const std::string& prefix)
 {
 	std::string bodyStr = StringHelper::Sprintf("\n\t%s\n", GetBodySourceCode().c_str());
 
@@ -154,7 +154,7 @@ void PolygonDlist::GetSourceOutputCode(const std::string& prefix)
 		decl->declBody = bodyStr;
 }
 
-std::string PolygonDlist::GetSourceTypeName() const
+std::string RoomShapeDListsEntry::GetSourceTypeName() const
 {
 	switch (polyType)
 	{
@@ -162,17 +162,17 @@ std::string PolygonDlist::GetSourceTypeName() const
 		return "PolygonDlist2";
 
 	default:
-		return "PolygonDlist";
+		return "RoomShapeDListsEntry";
 	}
 }
 
-ZResourceType PolygonDlist::GetResourceType() const
+ZResourceType RoomShapeDListsEntry::GetResourceType() const
 {
 	// TODO
 	return ZResourceType::Error;
 }
 
-size_t PolygonDlist::GetRawDataSize() const
+size_t RoomShapeDListsEntry::GetRawDataSize() const
 {
 	switch (polyType)
 	{
@@ -184,12 +184,12 @@ size_t PolygonDlist::GetRawDataSize() const
 	}
 }
 
-void PolygonDlist::SetPolyType(uint8_t nPolyType)
+void RoomShapeDListsEntry::SetPolyType(uint8_t nPolyType)
 {
 	polyType = nPolyType;
 }
 
-ZDisplayList* PolygonDlist::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::string& prefix)
+ZDisplayList* RoomShapeDListsEntry::MakeDlist(segptr_t ptr, [[maybe_unused]] const std::string& prefix)
 {
 	if (ptr == 0)
 	{
@@ -416,7 +416,7 @@ void PolygonType1::ParseRawData()
 
 	if (dlist != 0)
 	{
-		PolygonDlist polyGfxList(parent);
+		RoomShapeDListsEntry polyGfxList(parent);
 		polyGfxList.zRoom = zRoom;
 		polyGfxList.SetPolyType(type);
 		polyGfxList.ExtractFromFile(Seg2Filespace(dlist, parent->baseAddress));
@@ -551,7 +551,7 @@ void PolygonType2::ParseRawData()
 	polyDLists.reserve(num);
 	for (size_t i = 0; i < num; i++)
 	{
-		PolygonDlist entry(parent);
+		RoomShapeDListsEntry entry(parent);
 		entry.zRoom = zRoom;
 		entry.SetPolyType(type);
 		entry.ExtractFromFile(currentPtr);

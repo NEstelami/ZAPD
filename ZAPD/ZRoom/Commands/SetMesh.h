@@ -5,7 +5,7 @@
 #include "ZDisplayList.h"
 #include "ZRoom/ZRoomCommand.h"
 
-class PolygonDlist : public ZResource
+class RoomShapeDListsEntry : public ZResource
 {
 public:
 	ZRoom* zRoom;
@@ -21,7 +21,7 @@ public:
 	ZDisplayList* opaDList = nullptr;  // Gfx*
 	ZDisplayList* xluDList = nullptr;  // Gfx*
 
-	PolygonDlist(ZFile* nParent);
+	RoomShapeDListsEntry(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -80,7 +80,7 @@ class PolygonTypeBase : public ZResource
 {
 public:
 	uint8_t type;
-	std::vector<PolygonDlist> polyDLists;
+	std::vector<RoomShapeDListsEntry> polyDLists;
 
 	PolygonTypeBase(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom);
 
