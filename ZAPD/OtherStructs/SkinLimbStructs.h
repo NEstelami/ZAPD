@@ -61,10 +61,10 @@ protected:
 	uint8_t unk_8;
 };
 
-class Struct_800A598C : public ZResource
+class SkinLimbModif : public ZResource
 {
 public:
-	Struct_800A598C(ZFile* nParent);
+	SkinLimbModif(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;
@@ -105,9 +105,9 @@ public:
 protected:
 	uint16_t unk_0;  // Vtx count
 	uint16_t unk_2;  // Length of unk_4
-	segptr_t unk_4;  // Struct_800A598C*
+	segptr_t unk_4;  // SkinLimbModif*
 	segptr_t unk_8;  // Gfx*
 
-	std::vector<Struct_800A598C> unk_4_arr;
+	std::vector<SkinLimbModif> unk_4_arr;
 	// ZDisplayList* unk_8_dlist = nullptr;
 };

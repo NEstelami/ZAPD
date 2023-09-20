@@ -85,13 +85,13 @@ size_t SkinTransformation::GetRawDataSize() const
 	return 0x0A;
 }
 
-/* Struct_800A598C */
+/* SkinLimbModif */
 
-Struct_800A598C::Struct_800A598C(ZFile* nParent) : ZResource(nParent)
+SkinLimbModif::SkinLimbModif(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-void Struct_800A598C::ParseRawData()
+void SkinLimbModif::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 
@@ -132,7 +132,7 @@ void Struct_800A598C::ParseRawData()
 	}
 }
 
-void Struct_800A598C::DeclareReferences(const std::string& prefix)
+void SkinLimbModif::DeclareReferences(const std::string& prefix)
 {
 	std::string varPrefix = prefix;
 	if (name != "")
@@ -199,7 +199,7 @@ void Struct_800A598C::DeclareReferences(const std::string& prefix)
 	}
 }
 
-std::string Struct_800A598C::GetBodySourceCode() const
+std::string SkinLimbModif::GetBodySourceCode() const
 {
 	std::string unk_8_Str;
 	std::string unk_C_Str;
@@ -214,18 +214,18 @@ std::string Struct_800A598C::GetBodySourceCode() const
 	return entryStr;
 }
 
-std::string Struct_800A598C::GetSourceTypeName() const
+std::string SkinLimbModif::GetSourceTypeName() const
 {
-	return "Struct_800A598C";
+	return "SkinLimbModif";
 }
 
-ZResourceType Struct_800A598C::GetResourceType() const
+ZResourceType SkinLimbModif::GetResourceType() const
 {
 	// TODO
 	return ZResourceType::Error;
 }
 
-size_t Struct_800A598C::GetRawDataSize() const
+size_t SkinLimbModif::GetRawDataSize() const
 {
 	return 0x10;
 }
@@ -252,7 +252,7 @@ void SkinAnimatedLimbData::ParseRawData()
 		unk_4_arr.reserve(unk_2);
 		for (size_t i = 0; i < unk_2; i++)
 		{
-			Struct_800A598C unk_4_data(parent);
+			SkinLimbModif unk_4_data(parent);
 			unk_4_data.ExtractFromFile(unk_4_Offset);
 			unk_4_arr.push_back(unk_4_data);
 
@@ -322,7 +322,7 @@ std::string SkinAnimatedLimbData::GetBodySourceCode() const
 {
 	std::string unk_4_Str;
 	std::string unk_8_Str;
-	Globals::Instance->GetSegmentedPtrName(unk_4, parent, "Struct_800A598C", unk_4_Str);
+	Globals::Instance->GetSegmentedPtrName(unk_4, parent, "SkinLimbModif", unk_4_Str);
 	Globals::Instance->GetSegmentedPtrName(unk_8, parent, "Gfx", unk_8_Str);
 
 	std::string entryStr = "\n";
