@@ -386,7 +386,7 @@ std::string PolygonTypeBase::GetSourceTypeName() const
 		return "PolygonType1";
 
 	default:
-		return "PolygonType0";
+		return "RoomShapeNormal";
 	}
 }
 
@@ -523,7 +523,7 @@ std::string PolygonType1::GetSourceTypeName() const
 	switch (format)
 	{
 	case 1:
-		return "MeshHeader1Single";
+		return "RoomShapeImageSingle";
 
 	case 2:
 		return "MeshHeader1Multi";
