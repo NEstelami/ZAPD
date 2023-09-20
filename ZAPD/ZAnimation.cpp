@@ -153,7 +153,10 @@ size_t ZLinkAnimation::GetRawDataSize() const
 
 std::string ZLinkAnimation::GetSourceTypeName() const
 {
-	return "LinkAnimationHeader";
+	if (Globals::Instance->game == ZGame::MM_RETAIL)
+		return "PlayerAnimationHeader";
+	else
+		return "LinkAnimationHeader";
 }
 
 void ZLinkAnimation::ParseRawData()
