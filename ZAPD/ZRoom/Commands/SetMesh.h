@@ -41,7 +41,7 @@ protected:
 	ZDisplayList* MakeDlist(segptr_t ptr, const std::string& prefix);
 };
 
-class BgImage : public ZResource
+class RoomShapeImageMultiBgEntry : public ZResource
 {
 public:
 	uint16_t unk_00;
@@ -60,8 +60,8 @@ public:
 
 	bool isSubStruct;
 
-	BgImage(ZFile* nParent);
-	BgImage(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
+	RoomShapeImageMultiBgEntry(ZFile* nParent);
+	RoomShapeImageMultiBgEntry(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex, ZFile* nParent);
 
 	void ParseRawData() override;
 
@@ -100,12 +100,12 @@ public:
 	segptr_t dlist;
 
 	// single
-	BgImage single;
+	RoomShapeImageMultiBgEntry single;
 
 	// multi
 	uint8_t count;
-	segptr_t list;  // BgImage*
-	std::vector<BgImage> multiList;
+	segptr_t list;  // RoomShapeImageMultiBgEntry*
+	std::vector<RoomShapeImageMultiBgEntry> multiList;
 
 	PolygonType1(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom);
 

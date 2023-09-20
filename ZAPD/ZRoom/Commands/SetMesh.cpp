@@ -210,15 +210,15 @@ ZDisplayList* RoomShapeDListsEntry::MakeDlist(segptr_t ptr, [[maybe_unused]] con
 	return dlist;
 }
 
-/* BgImage */
+/* RoomShapeImageMultiBgEntry */
 
-BgImage::BgImage(ZFile* nParent) : ZResource(nParent)
+RoomShapeImageMultiBgEntry::RoomShapeImageMultiBgEntry(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex,
+RoomShapeImageMultiBgEntry::RoomShapeImageMultiBgEntry(bool nIsSubStruct, const std::string& prefix, uint32_t nRawDataIndex,
                  ZFile* nParent)
-	: BgImage(nParent)
+	: RoomShapeImageMultiBgEntry(nParent)
 {
 	rawDataIndex = nRawDataIndex;
 	parent = nParent;
@@ -230,7 +230,7 @@ BgImage::BgImage(bool nIsSubStruct, const std::string& prefix, uint32_t nRawData
 	sourceBackground = MakeBackground(source, prefix);
 }
 
-void BgImage::ParseRawData()
+void RoomShapeImageMultiBgEntry::ParseRawData()
 {
 	size_t pad = 0x00;
 	const auto& rawData = parent->GetRawData();
@@ -252,7 +252,7 @@ void BgImage::ParseRawData()
 	tlutCount = BitConverter::ToUInt16BE(rawData, rawDataIndex + pad + 0x14);
 }
 
-ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
+ZBackground* RoomShapeImageMultiBgEntry::MakeBackground(segptr_t ptr, const std::string& prefix)
 {
 	if (ptr == 0)
 		return nullptr;
@@ -272,12 +272,12 @@ ZBackground* BgImage::MakeBackground(segptr_t ptr, const std::string& prefix)
 	return background;
 }
 
-size_t BgImage::GetRawDataSize() const
+size_t RoomShapeImageMultiBgEntry::GetRawDataSize() const
 {
 	return 0x1C;
 }
 
-std::string BgImage::GetBodySourceCode() const
+std::string RoomShapeImageMultiBgEntry::GetBodySourceCode() const
 {
 	std::string bodyStr = "    ";
 	if (!isSubStruct)
@@ -340,12 +340,12 @@ std::string BgImage::GetBodySourceCode() const
 	return bodyStr;
 }
 
-std::string BgImage::GetSourceTypeName() const
+std::string RoomShapeImageMultiBgEntry::GetSourceTypeName() const
 {
-	return "BgImage";
+	return "RoomShapeImageMultiBgEntry";
 }
 
-ZResourceType BgImage::GetResourceType() const
+ZResourceType RoomShapeImageMultiBgEntry::GetResourceType() const
 {
 	// TODO
 	return ZResourceType::Error;
@@ -434,7 +434,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 	switch (format)
 	{
 	case 1:
-		single = BgImage(true, prefix, rawDataIndex + 0x08, parent);
+		single = RoomShapeImageMultiBgEntry(true, prefix, rawDataIndex + 0x08, parent);
 		break;
 
 	case 2:
@@ -446,7 +446,7 @@ void PolygonType1::DeclareReferences(const std::string& prefix)
 			multiList.reserve(count);
 			for (size_t i = 0; i < count; ++i)
 			{
-				BgImage bg(false, prefix, auxPtr, parent);
+				RoomShapeImageMultiBgEntry bg(false, prefix, auxPtr, parent);
 				multiList.push_back(bg);
 				auxPtr += bg.GetRawDataSize();
 				bgImageArrayBody += bg.GetBodySourceCode();
@@ -507,7 +507,7 @@ std::string PolygonType1::GetBodySourceCode() const
 		bodyStr += single.GetBodySourceCode();
 		break;
 	case 2:
-		Globals::Instance->GetSegmentedPtrName(list, parent, "BgImage", listStr);
+		Globals::Instance->GetSegmentedPtrName(list, parent, "RoomShapeImageMultiBgEntry", listStr);
 		bodyStr += StringHelper::Sprintf("    %i, %s, \n", count, listStr.c_str());
 		break;
 
