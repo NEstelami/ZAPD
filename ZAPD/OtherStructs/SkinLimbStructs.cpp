@@ -6,13 +6,13 @@
 #include "ZDisplayList.h"
 #include "ZFile.h"
 
-/* Struct_800A57C0 */
+/* SkinVertex */
 
-Struct_800A57C0::Struct_800A57C0(ZFile* nParent) : ZResource(nParent)
+SkinVertex::SkinVertex(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-void Struct_800A57C0::ParseRawData()
+void SkinVertex::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 
@@ -25,24 +25,24 @@ void Struct_800A57C0::ParseRawData()
 	unk_9 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x09);
 }
 
-std::string Struct_800A57C0::GetBodySourceCode() const
+std::string SkinVertex::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("0x%02X, %i, %i, %i, %i, %i, 0x%02X", unk_0, unk_2, unk_4, unk_6,
 	                             unk_7, unk_8, unk_9);
 }
 
-std::string Struct_800A57C0::GetSourceTypeName() const
+std::string SkinVertex::GetSourceTypeName() const
 {
-	return "Struct_800A57C0";
+	return "SkinVertex";
 }
 
-ZResourceType Struct_800A57C0::GetResourceType() const
+ZResourceType SkinVertex::GetResourceType() const
 {
 	// TODO
 	return ZResourceType::Error;
 }
 
-size_t Struct_800A57C0::GetRawDataSize() const
+size_t SkinVertex::GetRawDataSize() const
 {
 	return 0x0A;
 }
@@ -108,7 +108,7 @@ void Struct_800A598C::ParseRawData()
 		unk_8_arr.reserve(unk_0);
 		for (size_t i = 0; i < unk_0; i++)
 		{
-			Struct_800A57C0 unk8_data(parent);
+			SkinVertex unk8_data(parent);
 			unk8_data.ExtractFromFile(unk_8_Offset);
 			unk_8_arr.push_back(unk8_data);
 
@@ -203,7 +203,7 @@ std::string Struct_800A598C::GetBodySourceCode() const
 {
 	std::string unk_8_Str;
 	std::string unk_C_Str;
-	Globals::Instance->GetSegmentedPtrName(unk_8, parent, "Struct_800A57C0", unk_8_Str);
+	Globals::Instance->GetSegmentedPtrName(unk_8, parent, "SkinVertex", unk_8_Str);
 	Globals::Instance->GetSegmentedPtrName(unk_C, parent, "Struct_800A598C_2", unk_C_Str);
 
 	std::string entryStr = StringHelper::Sprintf("\n\t\tARRAY_COUNTU(%s), ARRAY_COUNTU(%s),\n",

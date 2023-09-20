@@ -15,10 +15,10 @@ enum class ZLimbSkinType
 	SkinType_DList = 11,  // Segment = DList address
 };
 
-class Struct_800A57C0 : public ZResource
+class SkinVertex : public ZResource
 {
 public:
-	Struct_800A57C0(ZFile* nParent);
+	SkinVertex(ZFile* nParent);
 
 	void ParseRawData() override;
 
@@ -80,10 +80,10 @@ protected:
 	uint16_t unk_0;  // Length of unk_8
 	uint16_t unk_2;  // Length of unk_C
 	uint16_t unk_4;  // 0 or 1 // Used as an index for unk_C
-	segptr_t unk_8;  // Struct_800A57C0*
+	segptr_t unk_8;  // SkinVertex*
 	segptr_t unk_C;  // Struct_800A598C_2*
 
-	std::vector<Struct_800A57C0> unk_8_arr;
+	std::vector<SkinVertex> unk_8_arr;
 	std::vector<Struct_800A598C_2> unk_C_arr;
 };
 
