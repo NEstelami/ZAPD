@@ -423,7 +423,7 @@ void ZLegacyAnimation::ParseRawData()
 		ptr = jointKeyOffset;
 		for (int32_t i = 0; i < limbCount + 1; i++)
 		{
-			JointKey key(parent);
+			LegacyJointKey key(parent);
 			key.ExtractFromFile(ptr);
 
 			jointKeyArray.push_back(key);
@@ -495,7 +495,7 @@ std::string ZLegacyAnimation::GetBodySourceCode() const
 	std::string frameDataName;
 	std::string jointKeyName;
 	Globals::Instance->GetSegmentedPtrName(frameData, parent, "s16", frameDataName);
-	Globals::Instance->GetSegmentedPtrName(jointKey, parent, "JointKey", jointKeyName);
+	Globals::Instance->GetSegmentedPtrName(jointKey, parent, "LegacyJointKey", jointKeyName);
 
 	body += StringHelper::Sprintf("\t%i, %i,\n", frameCount, limbCount);
 	body += StringHelper::Sprintf("\t%s,\n", frameDataName.c_str());
@@ -514,11 +514,11 @@ size_t ZLegacyAnimation::GetRawDataSize() const
 	return 0x0C;
 }
 
-JointKey::JointKey(ZFile* nParent) : ZResource(nParent)
+LegacyJointKey::LegacyJointKey(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-void JointKey::ParseRawData()
+void LegacyJointKey::ParseRawData()
 {
 	ZResource::ParseRawData();
 
@@ -531,23 +531,23 @@ void JointKey::ParseRawData()
 	z = BitConverter::ToInt16BE(rawData, rawDataIndex + 0x0A);
 }
 
-std::string JointKey::GetBodySourceCode() const
+std::string LegacyJointKey::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("%6i, %6i, %6i, %6i, %6i, %6i", xMax, x, yMax, y, zMax, z);
 }
 
-std::string JointKey::GetSourceTypeName() const
+std::string LegacyJointKey::GetSourceTypeName() const
 {
-	return "JointKey";
+	return "LegacyJointKey";
 }
 
-ZResourceType JointKey::GetResourceType() const
+ZResourceType LegacyJointKey::GetResourceType() const
 {
 	// TODO
 	return ZResourceType::Error;
 }
 
-size_t JointKey::GetRawDataSize() const
+size_t LegacyJointKey::GetRawDataSize() const
 {
 	return 0x0C;
 }

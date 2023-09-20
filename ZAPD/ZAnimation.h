@@ -136,10 +136,10 @@ public:
 
 /* ZLegacyAnimation */
 
-class JointKey : public ZResource
+class LegacyJointKey : public ZResource
 {
 public:
-	JointKey(ZFile* nParent);
+	LegacyJointKey(ZFile* nParent);
 
 	void ParseRawData() override;
 	std::string GetBodySourceCode() const override;
@@ -172,8 +172,8 @@ public:
 protected:
 	int16_t limbCount;
 	segptr_t frameData;  // s16*
-	segptr_t jointKey;   // JointKey*
+	segptr_t jointKey;   // LegacyJointKey*
 
 	std::vector<uint16_t> frameDataArray;
-	std::vector<JointKey> jointKeyArray;
+	std::vector<LegacyJointKey> jointKeyArray;
 };
