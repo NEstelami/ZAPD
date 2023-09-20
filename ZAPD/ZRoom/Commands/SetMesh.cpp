@@ -79,7 +79,7 @@ std::string SetMesh::GetBodySourceCode() const
 {
 	std::string list;
 	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "", list);
-	return StringHelper::Sprintf("SCENE_CMD_MESH(%s)", list.c_str());
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_SHAPE(%s)", list.c_str());
 }
 
 std::string SetMesh::GetCommandCName() const
