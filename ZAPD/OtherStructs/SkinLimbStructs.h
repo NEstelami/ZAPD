@@ -10,7 +10,7 @@
 enum class ZLimbSkinType
 {
 	SkinType_0,           // Segment = 0
-	SkinType_4 = 4,       // Segment = segmented address // Struct_800A5E28
+	SkinType_4 = 4,       // Segment = segmented address // SkinAnimatedLimbData
 	SkinType_5 = 5,       // Segment = 0
 	SkinType_DList = 11,  // Segment = DList address
 };
@@ -87,10 +87,10 @@ protected:
 	std::vector<SkinTransformation> unk_C_arr;
 };
 
-class Struct_800A5E28 : public ZResource
+class SkinAnimatedLimbData : public ZResource
 {
 public:
-	Struct_800A5E28(ZFile* nParent);
+	SkinAnimatedLimbData(ZFile* nParent);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

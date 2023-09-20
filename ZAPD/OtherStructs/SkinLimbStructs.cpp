@@ -230,13 +230,13 @@ size_t Struct_800A598C::GetRawDataSize() const
 	return 0x10;
 }
 
-/* Struct_800A5E28 */
+/* SkinAnimatedLimbData */
 
-Struct_800A5E28::Struct_800A5E28(ZFile* nParent) : ZResource(nParent)
+SkinAnimatedLimbData::SkinAnimatedLimbData(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-void Struct_800A5E28::ParseRawData()
+void SkinAnimatedLimbData::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 
@@ -261,7 +261,7 @@ void Struct_800A5E28::ParseRawData()
 	}
 }
 
-void Struct_800A5E28::DeclareReferences(const std::string& prefix)
+void SkinAnimatedLimbData::DeclareReferences(const std::string& prefix)
 {
 	std::string varPrefix = prefix;
 	if (name != "")
@@ -318,7 +318,7 @@ void Struct_800A5E28::DeclareReferences(const std::string& prefix)
 	}
 }
 
-std::string Struct_800A5E28::GetBodySourceCode() const
+std::string SkinAnimatedLimbData::GetBodySourceCode() const
 {
 	std::string unk_4_Str;
 	std::string unk_8_Str;
@@ -332,18 +332,18 @@ std::string Struct_800A5E28::GetBodySourceCode() const
 	return entryStr;
 }
 
-std::string Struct_800A5E28::GetSourceTypeName() const
+std::string SkinAnimatedLimbData::GetSourceTypeName() const
 {
-	return "Struct_800A5E28";
+	return "SkinAnimatedLimbData";
 }
 
-ZResourceType Struct_800A5E28::GetResourceType() const
+ZResourceType SkinAnimatedLimbData::GetResourceType() const
 {
 	// TODO
 	return ZResourceType::Error;
 }
 
-size_t Struct_800A5E28::GetRawDataSize() const
+size_t SkinAnimatedLimbData::GetRawDataSize() const
 {
 	return 0x0C;
 }
