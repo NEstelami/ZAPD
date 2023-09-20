@@ -85,7 +85,7 @@ public:
 	void ConfigFunc_BGConfig(const tinyxml2::XMLElement& element);
 	void ConfigFunc_ExternalXMLFolder(const tinyxml2::XMLElement& element);
 	void ConfigFunc_ExternalFile(const tinyxml2::XMLElement& element);
-	void ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element);
+	void ConfigFunc_EnumData(const tinyxml2::XMLElement& element);
 
 	void ReadConfigFile(const fs::path& configFilePath);
 };

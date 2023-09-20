@@ -165,7 +165,7 @@ void GameConfig::ConfigFunc_ExternalFile(const tinyxml2::XMLElement& element)
 	externalFiles.push_back(ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
 }
 
-void GameConfig::ConfigFunc_CutsceneEnumData(const tinyxml2::XMLElement& element)
+void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 {
 	std::string path = Path::GetDirectoryName(configFilePath);
 	path = path.append("/").append(element.Attribute("File"));
@@ -249,7 +249,7 @@ void GameConfig::ReadConfigFile(const fs::path& argConfigFilePath)
 		{"SpecialEntranceList", &GameConfig::ConfigFunc_specialEntranceList},
 		{"TexturePool", &GameConfig::ConfigFunc_TexturePool},
 		{"BGConfig", &GameConfig::ConfigFunc_BGConfig},
-		{"CutsceneEnumData", &GameConfig::ConfigFunc_CutsceneEnumData},
+		{"EnumData", &GameConfig::ConfigFunc_EnumData},
 		{"ExternalXMLFolder", &GameConfig::ConfigFunc_ExternalXMLFolder},
 		{"ExternalFile", &GameConfig::ConfigFunc_ExternalFile},
 	};
