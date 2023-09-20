@@ -30,7 +30,7 @@ void SetEntranceList::ParseRawDataLate()
 	entrances.reserve(numEntrances);
 	for (uint32_t i = 0; i < numEntrances; i++)
 	{
-		EntranceEntry entry(parent->GetRawData(), currentPtr);
+		Spawn entry(parent->GetRawData(), currentPtr);
 		entrances.push_back(entry);
 
 		currentPtr += 2;
@@ -56,7 +56,7 @@ void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& 
 		std::string varName =
 			StringHelper::Sprintf("%sEntranceList0x%06X", prefix.c_str(), segmentOffset);
 		parent->AddDeclarationArray(segmentOffset, DeclarationAlignment::Align4,
-		                            entrances.size() * 2, "EntranceEntry", varName,
+		                            entrances.size() * 2, "Spawn", varName,
 		                            entrances.size(), declaration);
 	}
 }
@@ -64,7 +64,7 @@ void SetEntranceList::DeclareReferencesLate([[maybe_unused]] const std::string& 
 std::string SetEntranceList::GetBodySourceCode() const
 {
 	std::string listName;
-	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "EntranceEntry", listName);
+	Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "Spawn", listName);
 	return StringHelper::Sprintf("SCENE_CMD_ENTRANCE_LIST(%s)", listName.c_str());
 }
 
@@ -78,13 +78,13 @@ RoomCommand SetEntranceList::GetRoomCommand() const
 	return RoomCommand::SetEntranceList;
 }
 
-EntranceEntry::EntranceEntry(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
+Spawn::Spawn(const std::vector<uint8_t>& rawData, uint32_t rawDataIndex)
 {
 	startPositionIndex = rawData.at(rawDataIndex + 0);
 	roomToLoad = rawData.at(rawDataIndex + 1);
 }
 
-std::string EntranceEntry::GetBodySourceCode() const
+std::string Spawn::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("0x%02X, 0x%02X", startPositionIndex, roomToLoad);
 }
