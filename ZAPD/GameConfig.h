@@ -21,6 +21,13 @@ public:
 	ExternalFile(fs::path nXmlPath, fs::path nOutPath);
 };
 
+class EnumData
+{
+public:
+	// OoT
+	std::map<uint16_t, std::string> naviQuestHintType;
+};
+
 class ZFile;
 
 class GameConfig
@@ -34,6 +41,7 @@ public:
 	std::vector<std::string> entranceList;
 	std::vector<std::string> specialEntranceList;
 	std::map<uint32_t, TexturePoolEntry> texturePool;  // Key = CRC
+	EnumData enumData;
 
 	// ZBackground
 	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
@@ -59,6 +67,7 @@ public:
 	void ConfigFunc_BGConfig(const tinyxml2::XMLElement& element);
 	void ConfigFunc_ExternalXMLFolder(const tinyxml2::XMLElement& element);
 	void ConfigFunc_ExternalFile(const tinyxml2::XMLElement& element);
+	void ConfigFunc_EnumData(const tinyxml2::XMLElement& element);
 
 	void ReadConfigFile(const fs::path& configFilePath);
 };
