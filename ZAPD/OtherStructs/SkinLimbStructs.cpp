@@ -47,13 +47,13 @@ size_t SkinVertex::GetRawDataSize() const
 	return 0x0A;
 }
 
-/* Struct_800A598C_2 */
+/* SkinTransformation */
 
-Struct_800A598C_2::Struct_800A598C_2(ZFile* nParent) : ZResource(nParent)
+SkinTransformation::SkinTransformation(ZFile* nParent) : ZResource(nParent)
 {
 }
 
-void Struct_800A598C_2::ParseRawData()
+void SkinTransformation::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 
@@ -64,23 +64,23 @@ void Struct_800A598C_2::ParseRawData()
 	unk_8 = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0x08);
 }
 
-std::string Struct_800A598C_2::GetBodySourceCode() const
+std::string SkinTransformation::GetBodySourceCode() const
 {
 	return StringHelper::Sprintf("0x%02X, %i, %i, %i, 0x%02X", unk_0, x, y, z, unk_8);
 }
 
-std::string Struct_800A598C_2::GetSourceTypeName() const
+std::string SkinTransformation::GetSourceTypeName() const
 {
-	return "Struct_800A598C_2";
+	return "SkinTransformation";
 }
 
-ZResourceType Struct_800A598C_2::GetResourceType() const
+ZResourceType SkinTransformation::GetResourceType() const
 {
 	// TODO
 	return ZResourceType::Error;
 }
 
-size_t Struct_800A598C_2::GetRawDataSize() const
+size_t SkinTransformation::GetRawDataSize() const
 {
 	return 0x0A;
 }
@@ -123,7 +123,7 @@ void Struct_800A598C::ParseRawData()
 		unk_C_arr.reserve(unk_2);
 		for (size_t i = 0; i < unk_2; i++)
 		{
-			Struct_800A598C_2 unkC_data(parent);
+			SkinTransformation unkC_data(parent);
 			unkC_data.ExtractFromFile(unk_C_Offset);
 			unk_C_arr.push_back(unkC_data);
 
@@ -204,7 +204,7 @@ std::string Struct_800A598C::GetBodySourceCode() const
 	std::string unk_8_Str;
 	std::string unk_C_Str;
 	Globals::Instance->GetSegmentedPtrName(unk_8, parent, "SkinVertex", unk_8_Str);
-	Globals::Instance->GetSegmentedPtrName(unk_C, parent, "Struct_800A598C_2", unk_C_Str);
+	Globals::Instance->GetSegmentedPtrName(unk_C, parent, "SkinTransformation", unk_C_Str);
 
 	std::string entryStr = StringHelper::Sprintf("\n\t\tARRAY_COUNTU(%s), ARRAY_COUNTU(%s),\n",
 	                                             unk_8_Str.c_str(), unk_C_Str.c_str());

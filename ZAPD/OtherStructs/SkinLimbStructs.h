@@ -39,10 +39,10 @@ protected:
 	uint8_t unk_9;
 };
 
-class Struct_800A598C_2 : public ZResource
+class SkinTransformation : public ZResource
 {
 public:
-	Struct_800A598C_2(ZFile* nParent);
+	SkinTransformation(ZFile* nParent);
 
 	void ParseRawData() override;
 
@@ -81,10 +81,10 @@ protected:
 	uint16_t unk_2;  // Length of unk_C
 	uint16_t unk_4;  // 0 or 1 // Used as an index for unk_C
 	segptr_t unk_8;  // SkinVertex*
-	segptr_t unk_C;  // Struct_800A598C_2*
+	segptr_t unk_C;  // SkinTransformation*
 
 	std::vector<SkinVertex> unk_8_arr;
-	std::vector<Struct_800A598C_2> unk_C_arr;
+	std::vector<SkinTransformation> unk_C_arr;
 };
 
 class Struct_800A5E28 : public ZResource
