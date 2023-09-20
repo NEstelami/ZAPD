@@ -174,7 +174,7 @@ std::string ZLinkAnimation::GetBodySourceCode() const
 
 /* ZCurveAnimation */
 
-TransformData::TransformData(ZFile* parent, const std::vector<uint8_t>& rawData,
+CurveInterpKnot::CurveInterpKnot(ZFile* parent, const std::vector<uint8_t>& rawData,
                              uint32_t fileOffset)
 	: parent(parent)
 {
@@ -185,26 +185,26 @@ TransformData::TransformData(ZFile* parent, const std::vector<uint8_t>& rawData,
 	unk_08 = BitConverter::ToFloatBE(rawData, fileOffset + 8);
 }
 
-TransformData::TransformData(ZFile* parent, const std::vector<uint8_t>& rawData,
+CurveInterpKnot::CurveInterpKnot(ZFile* parent, const std::vector<uint8_t>& rawData,
                              uint32_t fileOffset, size_t index)
-	: TransformData(parent, rawData, fileOffset + index * GetRawDataSize())
+	: CurveInterpKnot(parent, rawData, fileOffset + index * GetRawDataSize())
 {
 }
 
-std::string TransformData::GetBody([[maybe_unused]] const std::string& prefix) const
+std::string CurveInterpKnot::GetBody([[maybe_unused]] const std::string& prefix) const
 {
 	return StringHelper::Sprintf("0x%04X, 0x%04X, %i, %i, %ff", unk_00, unk_02, unk_04, unk_06,
 	                             unk_08);
 }
 
-size_t TransformData::GetRawDataSize() const
+size_t CurveInterpKnot::GetRawDataSize() const
 {
 	return 0x0C;
 }
 
-std::string TransformData::GetSourceTypeName()
+std::string CurveInterpKnot::GetSourceTypeName()
 {
-	return "TransformData";
+	return "CurveInterpKnot";
 }
 
 ZCurveAnimation::ZCurveAnimation(ZFile* nParent) : ZAnimation(nParent)
@@ -369,7 +369,7 @@ std::string ZCurveAnimation::GetBodySourceCode() const
 	std::string refIndexStr;
 	Globals::Instance->GetSegmentedPtrName(refIndex, parent, "u8", refIndexStr);
 	std::string transformDataStr;
-	Globals::Instance->GetSegmentedPtrName(transformData, parent, "TransformData",
+	Globals::Instance->GetSegmentedPtrName(transformData, parent, "CurveInterpKnot",
 	                                       transformDataStr);
 	std::string copyValuesStr;
 	Globals::Instance->GetSegmentedPtrName(copyValues, parent, "s16", copyValuesStr);
