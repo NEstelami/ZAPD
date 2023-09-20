@@ -119,14 +119,14 @@ public:
 	size_t GetRawDataSize() const override;
 };
 
-class PolygonType2 : public PolygonTypeBase
+class RoomShapeCullable : public PolygonTypeBase
 {
 public:
 	uint8_t num;
 	segptr_t start;
 	segptr_t end;
 
-	PolygonType2(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom);
+	RoomShapeCullable(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom);
 
 	void ParseRawData() override;
 	void DeclareReferences(const std::string& prefix) override;

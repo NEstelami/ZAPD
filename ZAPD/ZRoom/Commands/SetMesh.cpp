@@ -24,7 +24,7 @@ void SetMesh::ParseRawData()
 	switch (meshHeaderType)
 	{
 	case 0:
-		polyType = std::make_shared<PolygonType2>(parent, segmentOffset, zRoom);
+		polyType = std::make_shared<RoomShapeCullable>(parent, segmentOffset, zRoom);
 		break;
 
 	case 1:
@@ -32,7 +32,7 @@ void SetMesh::ParseRawData()
 		break;
 
 	case 2:
-		polyType = std::make_shared<PolygonType2>(parent, segmentOffset, zRoom);
+		polyType = std::make_shared<RoomShapeCullable>(parent, segmentOffset, zRoom);
 		break;
 
 	default:
@@ -380,7 +380,7 @@ std::string PolygonTypeBase::GetSourceTypeName() const
 	switch (type)
 	{
 	case 2:
-		return "PolygonType2";
+		return "RoomShapeCullable";
 
 	case 1:
 		return "PolygonType1";
@@ -532,12 +532,12 @@ std::string PolygonType1::GetSourceTypeName() const
 	// return "PolygonType1";
 }
 
-PolygonType2::PolygonType2(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom)
+RoomShapeCullable::RoomShapeCullable(ZFile* nParent, uint32_t nRawDataIndex, ZRoom* nRoom)
 	: PolygonTypeBase(nParent, nRawDataIndex, nRoom)
 {
 }
 
-void PolygonType2::ParseRawData()
+void RoomShapeCullable::ParseRawData()
 {
 	const auto& rawData = parent->GetRawData();
 
@@ -561,7 +561,7 @@ void PolygonType2::ParseRawData()
 	}
 }
 
-void PolygonType2::DeclareReferences(const std::string& prefix)
+void RoomShapeCullable::DeclareReferences(const std::string& prefix)
 {
 	if (num > 0)
 	{
@@ -593,7 +593,7 @@ void PolygonType2::DeclareReferences(const std::string& prefix)
 	                       "0x01000000");
 }
 
-std::string PolygonType2::GetBodySourceCode() const
+std::string RoomShapeCullable::GetBodySourceCode() const
 {
 	std::string listName;
 	Globals::Instance->GetSegmentedPtrName(start, parent, "", listName);
@@ -605,12 +605,12 @@ std::string PolygonType2::GetBodySourceCode() const
 	return body;
 }
 
-size_t PolygonType2::GetRawDataSize() const
+size_t RoomShapeCullable::GetRawDataSize() const
 {
 	return 0x0C;
 }
 
-DeclarationAlignment PolygonType2::GetDeclarationAlignment() const
+DeclarationAlignment RoomShapeCullable::GetDeclarationAlignment() const
 {
 	return DeclarationAlignment::Align4;
 }

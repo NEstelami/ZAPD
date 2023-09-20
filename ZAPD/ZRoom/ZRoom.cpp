@@ -336,7 +336,7 @@ std::string ZRoom::GetDefaultName(const std::string& prefix) const
  */
 void ZRoom::SyotesRoomFix()
 {
-	PolygonType2 poly(parent, 0, this);
+	RoomShapeCullable poly(parent, 0, this);
 
 	poly.ParseRawData();
 	poly.DeclareReferences(GetName());
