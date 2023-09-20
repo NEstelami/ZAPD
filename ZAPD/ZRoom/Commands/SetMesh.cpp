@@ -159,7 +159,7 @@ std::string RoomShapeDListsEntry::GetSourceTypeName() const
 	switch (polyType)
 	{
 	case 2:
-		return "PolygonDlist2";
+		return "RoomShapeCullableEntry";
 
 	default:
 		return "RoomShapeDListsEntry";
@@ -526,7 +526,7 @@ std::string PolygonType1::GetSourceTypeName() const
 		return "RoomShapeImageSingle";
 
 	case 2:
-		return "MeshHeader1Multi";
+		return "RoomShapeImageMulti";
 	}
 	return "ERROR";
 	// return "PolygonType1";
