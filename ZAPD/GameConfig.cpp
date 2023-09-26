@@ -196,44 +196,44 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 			if (enumKey == "cmd")
 				cutsceneData.cutsceneCmd[itemIndex] = itemID;
 
-			if (enumKey == "miscType")
+			else if (enumKey == "miscType")
 				cutsceneData.miscType[itemIndex] = itemID;
 
-			if (enumKey == "textType")
+			else if (enumKey == "textType")
 				cutsceneData.textType[itemIndex] = itemID;
 
-			if (enumKey == "fadeOutSeqPlayer")
+			else if (enumKey == "fadeOutSeqPlayer")
 				cutsceneData.fadeOutSeqPlayer[itemIndex] = itemID;
 
-			if (enumKey == "transitionType")
+			else if (enumKey == "transitionType")
 				cutsceneData.transitionType[itemIndex] = itemID;
 
-			if (enumKey == "destination")
+			else if (enumKey == "destination")
 				cutsceneData.destination[itemIndex] = itemID;
 
 			// MM
-			if (enumKey == "modifySeqType")
+			else if (enumKey == "modifySeqType")
 				cutsceneData.modifySeqType[itemIndex] = itemID;
 
-			if (enumKey == "chooseCreditsSceneType")
+			else if (enumKey == "chooseCreditsSceneType")
 				cutsceneData.chooseCreditsSceneType[itemIndex] = itemID;
 
-			if (enumKey == "destinationType")
+			else if (enumKey == "destinationType")
 				cutsceneData.destinationType[itemIndex] = itemID;
 
-			if (enumKey == "motionBlurType")
+			else if (enumKey == "motionBlurType")
 				cutsceneData.motionBlurType[itemIndex] = itemID;
 
-			if (enumKey == "transitionGeneralType")
+			else if (enumKey == "transitionGeneralType")
 				cutsceneData.transitionGeneralType[itemIndex] = itemID;
 
-			if (enumKey == "rumbleType")
+			else if (enumKey == "rumbleType")
 				cutsceneData.rumbleType[itemIndex] = itemID;
 
-			if (enumKey == "spawnFlag")
+			else if (enumKey == "spawnFlag")
 				cutsceneData.spawnFlag[itemIndex] = itemID;
 
-			if (enumKey == "endSfx")
+			else if (enumKey == "endSfx")
 				cutsceneData.endSfx[itemIndex] = itemID;
 		}
 	}
