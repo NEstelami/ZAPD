@@ -33,7 +33,7 @@ CutsceneCommand::CutsceneCommand(const std::vector<uint8_t>& rawData, offset_t r
 
 CutsceneCommand::~CutsceneCommand()
 {
-	for (auto& entry : entries)
+	for (auto entry : entries)
 	{
 		delete entry;
 	}
