@@ -52,28 +52,28 @@ std::string CutsceneMMSubCommandEntry_GenericCmd::GetBodySourceCode() const
 	    cutsceneData->miscType.find(base) != cutsceneData->miscType.end())
 		type = cutsceneData->miscType[base];
 
-	if (commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION &&
+	else if (commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION &&
 	    cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
 		type = cutsceneData->transitionType[base];
 
-	if (commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR &&
+	else if (commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR &&
 	    cutsceneData->motionBlurType.find(base) != cutsceneData->motionBlurType.end())
 		type = cutsceneData->motionBlurType[base];
 
-	if (commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ &&
+	else if (commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ &&
 	    cutsceneData->modifySeqType.find(base) != cutsceneData->modifySeqType.end())
 		type = cutsceneData->modifySeqType[base];
 
-	if (commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION &&
+	else if (commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION &&
 	    cutsceneData->destinationType.find(base) != cutsceneData->destinationType.end())
 		type = cutsceneData->destinationType[base];
 
-	if (commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES &&
+	else if (commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES &&
 	    cutsceneData->chooseCreditsSceneType.find(base) !=
 	        cutsceneData->chooseCreditsSceneType.end())
 		type = cutsceneData->chooseCreditsSceneType[base];
 
-	if (commandId == CutsceneMM_CommandType::CS_CMD_GIVE_TATL)
+	else if (commandId == CutsceneMM_CommandType::CS_CMD_GIVE_TATL)
 		type = base ? "true" : "false";
 
 	if (type != "")
