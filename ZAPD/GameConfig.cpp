@@ -165,6 +165,80 @@ void GameConfig::ConfigFunc_ExternalFile(const tinyxml2::XMLElement& element)
 	externalFiles.push_back(ExternalFile(fs::path(xmlPathValue), fs::path(outPathValue)));
 }
 
+void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
+{
+	std::string path = Path::GetDirectoryName(configFilePath);
+	path = path.append("/").append(element.Attribute("File"));
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLError eResult = doc.LoadFile(path.c_str());
+
+	if (eResult != tinyxml2::XML_SUCCESS)
+	{
+		throw std::runtime_error("Error: Unable to read cutscene data.");
+	}
+
+	tinyxml2::XMLNode* root = doc.FirstChild();
+
+	if (root == nullptr)
+		return;
+
+	for (tinyxml2::XMLElement* csEnum = root->FirstChildElement(); csEnum != nullptr;
+	     csEnum = csEnum->NextSiblingElement())
+	{
+		for (tinyxml2::XMLElement* item = csEnum->FirstChildElement(); item != nullptr;
+		     item = item->NextSiblingElement())
+		{
+			std::string enumKey = csEnum->Attribute("Key");
+			uint16_t itemIndex = atoi(item->Attribute("Index"));
+			const char* itemID = item->Attribute("ID");
+
+			// Common
+			if (enumKey == "cmd")
+				cutsceneData.cutsceneCmd[itemIndex] = itemID;
+
+			else if (enumKey == "miscType")
+				cutsceneData.miscType[itemIndex] = itemID;
+
+			else if (enumKey == "textType")
+				cutsceneData.textType[itemIndex] = itemID;
+
+			else if (enumKey == "fadeOutSeqPlayer")
+				cutsceneData.fadeOutSeqPlayer[itemIndex] = itemID;
+
+			else if (enumKey == "transitionType")
+				cutsceneData.transitionType[itemIndex] = itemID;
+
+			else if (enumKey == "destination")
+				cutsceneData.destination[itemIndex] = itemID;
+
+			// MM
+			else if (enumKey == "modifySeqType")
+				cutsceneData.modifySeqType[itemIndex] = itemID;
+
+			else if (enumKey == "chooseCreditsSceneType")
+				cutsceneData.chooseCreditsSceneType[itemIndex] = itemID;
+
+			else if (enumKey == "destinationType")
+				cutsceneData.destinationType[itemIndex] = itemID;
+
+			else if (enumKey == "motionBlurType")
+				cutsceneData.motionBlurType[itemIndex] = itemID;
+
+			else if (enumKey == "transitionGeneralType")
+				cutsceneData.transitionGeneralType[itemIndex] = itemID;
+
+			else if (enumKey == "rumbleType")
+				cutsceneData.rumbleType[itemIndex] = itemID;
+
+			else if (enumKey == "spawnFlag")
+				cutsceneData.spawnFlag[itemIndex] = itemID;
+
+			else if (enumKey == "endSfx")
+				cutsceneData.endSfx[itemIndex] = itemID;
+		}
+	}
+}
+
 void GameConfig::ReadConfigFile(const fs::path& argConfigFilePath)
 {
 	static const std::unordered_map<std::string, ConfigFunc> ConfigFuncDictionary = {
@@ -175,6 +249,7 @@ void GameConfig::ReadConfigFile(const fs::path& argConfigFilePath)
 		{"SpecialEntranceList", &GameConfig::ConfigFunc_specialEntranceList},
 		{"TexturePool", &GameConfig::ConfigFunc_TexturePool},
 		{"BGConfig", &GameConfig::ConfigFunc_BGConfig},
+		{"EnumData", &GameConfig::ConfigFunc_EnumData},
 		{"ExternalXMLFolder", &GameConfig::ConfigFunc_ExternalXMLFolder},
 		{"ExternalFile", &GameConfig::ConfigFunc_ExternalFile},
 	};
