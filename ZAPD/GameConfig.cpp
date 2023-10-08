@@ -211,6 +211,9 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 			else if (enumKey == "destination")
 				cutsceneData.destination[itemIndex] = itemID;
 
+			else if (enumKey == "playerCueId")
+				cutsceneData.playerCueId[itemIndex] = itemID;
+
 			// MM
 			else if (enumKey == "modifySeqType")
 				cutsceneData.modifySeqType[itemIndex] = itemID;
