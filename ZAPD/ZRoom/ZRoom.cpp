@@ -6,7 +6,7 @@
 #include <string_view>
 
 #include "Commands/EndMarker.h"
-#include "Commands/SetActorCutsceneList.h"
+#include "Commands/SetCutsceneEntryList.h"
 #include "Commands/SetActorList.h"
 #include "Commands/SetAlternateHeaders.h"
 #include "Commands/SetAnimatedMaterialList.h"

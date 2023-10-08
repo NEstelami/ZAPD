@@ -192,8 +192,52 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 			uint16_t itemIndex = atoi(item->Attribute("Index"));
 			const char* itemID = item->Attribute("ID");
 
-			if (enumKey == "naviQuestHintType")
+			// Common
+			if (enumKey == "cmd")
+				enumData.cutsceneCmd[itemIndex] = itemID;
+
+			else if (enumKey == "miscType")
+				enumData.miscType[itemIndex] = itemID;
+
+			else if (enumKey == "textType")
+				enumData.textType[itemIndex] = itemID;
+
+			else if (enumKey == "fadeOutSeqPlayer")
+				enumData.fadeOutSeqPlayer[itemIndex] = itemID;
+
+			else if (enumKey == "transitionType")
+				enumData.transitionType[itemIndex] = itemID;
+
+			else if (enumKey == "destination")
+				enumData.destination[itemIndex] = itemID;
+
+			else if (enumKey == "naviQuestHintType")
 				enumData.naviQuestHintType[itemIndex] = itemID;
+
+			// MM
+			else if (enumKey == "modifySeqType")
+				enumData.modifySeqType[itemIndex] = itemID;
+
+			else if (enumKey == "chooseCreditsSceneType")
+				enumData.chooseCreditsSceneType[itemIndex] = itemID;
+
+			else if (enumKey == "destinationType")
+				enumData.destinationType[itemIndex] = itemID;
+
+			else if (enumKey == "motionBlurType")
+				enumData.motionBlurType[itemIndex] = itemID;
+
+			else if (enumKey == "transitionGeneralType")
+				enumData.transitionGeneralType[itemIndex] = itemID;
+
+			else if (enumKey == "rumbleType")
+				enumData.rumbleType[itemIndex] = itemID;
+
+			else if (enumKey == "spawnFlag")
+				enumData.spawnFlag[itemIndex] = itemID;
+
+			else if (enumKey == "endSfx")
+				enumData.endSfx[itemIndex] = itemID;
 		}
 	}
 }
