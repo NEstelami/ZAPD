@@ -340,16 +340,18 @@ std::string CutsceneOoTSubCommandEntry_ActorCue::GetBodySourceCode() const
 	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE(%s, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
-	                          "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
-	                          cutsceneData->playerCueId[base].c_str(), startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
-	                          startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
+		                             "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
+		                             cutsceneData->playerCueId[base].c_str(), startFrame, endFrame,
+		                             rotX, rotY, rotZ, startPosX, startPosY, startPosZ, endPosX,
+		                             endPosY, endPosZ, normalX, normalY, normalZ);
 	}
 	else
 	{
 		return StringHelper::Sprintf("CS_ACTOR_CUE(%i, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
-	                          "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
-	                          base, startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
-	                          startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
+		                             "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
+		                             base, startFrame, endFrame, rotX, rotY, rotZ, startPosX,
+		                             startPosY, startPosZ, endPosX, endPosY, endPosZ, normalX,
+		                             normalY, normalZ);
 	}
 }
 

@@ -53,24 +53,24 @@ std::string CutsceneMMSubCommandEntry_GenericCmd::GetBodySourceCode() const
 		type = cutsceneData->miscType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION &&
-	    cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
+	         cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
 		type = cutsceneData->transitionType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR &&
-	    cutsceneData->motionBlurType.find(base) != cutsceneData->motionBlurType.end())
+	         cutsceneData->motionBlurType.find(base) != cutsceneData->motionBlurType.end())
 		type = cutsceneData->motionBlurType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ &&
-	    cutsceneData->modifySeqType.find(base) != cutsceneData->modifySeqType.end())
+	         cutsceneData->modifySeqType.find(base) != cutsceneData->modifySeqType.end())
 		type = cutsceneData->modifySeqType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION &&
-	    cutsceneData->destinationType.find(base) != cutsceneData->destinationType.end())
+	         cutsceneData->destinationType.find(base) != cutsceneData->destinationType.end())
 		type = cutsceneData->destinationType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES &&
-	    cutsceneData->chooseCreditsSceneType.find(base) !=
-	        cutsceneData->chooseCreditsSceneType.end())
+	         cutsceneData->chooseCreditsSceneType.find(base) !=
+	             cutsceneData->chooseCreditsSceneType.end())
 		type = cutsceneData->chooseCreditsSceneType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_GIVE_TATL)
@@ -431,16 +431,18 @@ std::string CutsceneMMSubCommandEntry_ActorCue::GetBodySourceCode() const
 	if (static_cast<CutsceneMM_CommandType>(commandID) == CutsceneMM_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE(%s, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
-	                          "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
-	                          cutsceneData->playerCueId[base].c_str(), startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
-	                          startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
+		                             "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
+		                             cutsceneData->playerCueId[base].c_str(), startFrame, endFrame,
+		                             rotX, rotY, rotZ, startPosX, startPosY, startPosZ, endPosX,
+		                             endPosY, endPosZ, normalX, normalY, normalZ);
 	}
 	else
 	{
 		return StringHelper::Sprintf("CS_ACTOR_CUE(%i, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
-	                          "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
-	                          base, startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
-	                          startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
+		                             "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
+		                             base, startFrame, endFrame, rotX, rotY, rotZ, startPosX,
+		                             startPosY, startPosZ, endPosX, endPosY, endPosZ, normalX,
+		                             normalY, normalZ);
 	}
 }
 
