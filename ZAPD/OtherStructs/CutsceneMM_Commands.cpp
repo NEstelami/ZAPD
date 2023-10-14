@@ -53,24 +53,23 @@ std::string CutsceneMMSubCommandEntry_GenericCmd::GetBodySourceCode() const
 		type = enumData->miscType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_TRANSITION &&
-	    enumData->transitionType.find(base) != enumData->transitionType.end())
+	         enumData->transitionType.find(base) != enumData->transitionType.end())
 		type = enumData->transitionType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_MOTION_BLUR &&
-	    enumData->motionBlurType.find(base) != enumData->motionBlurType.end())
+	         enumData->motionBlurType.find(base) != enumData->motionBlurType.end())
 		type = enumData->motionBlurType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_MODIFY_SEQ &&
-	    enumData->modifySeqType.find(base) != enumData->modifySeqType.end())
+	         enumData->modifySeqType.find(base) != enumData->modifySeqType.end())
 		type = enumData->modifySeqType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_DESTINATION &&
-	    enumData->destinationType.find(base) != enumData->destinationType.end())
+	         enumData->destinationType.find(base) != enumData->destinationType.end())
 		type = enumData->destinationType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_CHOOSE_CREDITS_SCENES &&
-	    enumData->chooseCreditsSceneType.find(base) !=
-	        enumData->chooseCreditsSceneType.end())
+	         enumData->chooseCreditsSceneType.find(base) != enumData->chooseCreditsSceneType.end())
 		type = enumData->chooseCreditsSceneType[base];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_GIVE_TATL)

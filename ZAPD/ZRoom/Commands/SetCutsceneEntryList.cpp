@@ -89,8 +89,8 @@ std::string CutsceneEntry::GetBodySourceCode() const
 	if (enumData->endSfx.find(endSfx) != enumData->endSfx.end())
 		return StringHelper::Sprintf("%i, %i, %i, %i, %i, %s, %i, %i, %i, %i", priority, length,
 		                             csCamId, scriptIndex, additionalCsId,
-		                             enumData->endSfx[endSfx].c_str(), customValue,
-		                             hudVisibility, endCam, letterboxSize);
+		                             enumData->endSfx[endSfx].c_str(), customValue, hudVisibility,
+		                             endCam, letterboxSize);
 	else
 		return StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %i", priority, length,
 		                             csCamId, scriptIndex, additionalCsId, endSfx, customValue,

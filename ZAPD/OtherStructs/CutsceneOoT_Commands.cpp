@@ -279,8 +279,7 @@ std::string CutsceneOoTSubCommandEntry_Text::GetBodySourceCode() const
 	if (enumData->textType.find(type) != enumData->textType.end())
 	{
 		return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %s, 0x%X, 0x%X)", base, startFrame,
-		                             endFrame, enumData->textType[type].c_str(), textId1,
-		                             textId2);
+		                             endFrame, enumData->textType[type].c_str(), textId1, textId2);
 	}
 
 	return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %i, 0x%X, 0x%X)", base, startFrame,
@@ -445,8 +444,7 @@ std::string CutsceneOoTCommand_Transition::GenerateSourceCode() const
 	if (enumData->transitionType.find(base) != enumData->transitionType.end())
 	{
 		return StringHelper::Sprintf("CS_TRANSITION(%s, %i, %i),\n",
-		                             enumData->transitionType[base].c_str(), startFrame,
-		                             endFrame);
+		                             enumData->transitionType[base].c_str(), startFrame, endFrame);
 	}
 
 	return StringHelper::Sprintf("CS_TRANSITION(%i, %i, %i),\n", base, startFrame, endFrame);

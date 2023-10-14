@@ -27,8 +27,8 @@ void SkinVertex::ParseRawData()
 
 std::string SkinVertex::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("0x%02X, %i, %i, %i, %i, %i, 0x%02X", index, s, t, normX,
-	                             normY, normZ, alpha);
+	return StringHelper::Sprintf("0x%02X, %i, %i, %i, %i, %i, 0x%02X", index, s, t, normX, normY,
+	                             normZ, alpha);
 }
 
 std::string SkinVertex::GetSourceTypeName() const
@@ -204,12 +204,13 @@ std::string SkinLimbModif::GetBodySourceCode() const
 	std::string skinVertices_Str;
 	std::string unk_C_Str;
 	Globals::Instance->GetSegmentedPtrName(skinVertices, parent, "SkinVertex", skinVertices_Str);
-	Globals::Instance->GetSegmentedPtrName(limbTransformations, parent, "SkinTransformation", unk_C_Str);
+	Globals::Instance->GetSegmentedPtrName(limbTransformations, parent, "SkinTransformation",
+	                                       unk_C_Str);
 
 	std::string entryStr = StringHelper::Sprintf("\n\t\tARRAY_COUNTU(%s), ARRAY_COUNTU(%s),\n",
 	                                             skinVertices_Str.c_str(), unk_C_Str.c_str());
-	entryStr +=
-		StringHelper::Sprintf("\t\t%i, %s, %s\n\t", unk_4, skinVertices_Str.c_str(), unk_C_Str.c_str());
+	entryStr += StringHelper::Sprintf("\t\t%i, %s, %s\n\t", unk_4, skinVertices_Str.c_str(),
+	                                  unk_C_Str.c_str());
 
 	return entryStr;
 }
@@ -293,7 +294,8 @@ void SkinAnimatedLimbData::DeclareReferences(const std::string& prefix)
 		{
 			parent->AddDeclarationArray(limbModifications_Offset, res.GetDeclarationAlignment(),
 			                            arrayItemCnt * res.GetRawDataSize(),
-			                            res.GetSourceTypeName(), limbModifications_Str, arrayItemCnt, entryStr);
+			                            res.GetSourceTypeName(), limbModifications_Str,
+			                            arrayItemCnt, entryStr);
 		}
 		else
 			decl->declBody = entryStr;
@@ -322,12 +324,15 @@ std::string SkinAnimatedLimbData::GetBodySourceCode() const
 {
 	std::string limbModifications_Str;
 	std::string dlist_Str;
-	Globals::Instance->GetSegmentedPtrName(limbModifications, parent, "SkinLimbModif", limbModifications_Str);
+	Globals::Instance->GetSegmentedPtrName(limbModifications, parent, "SkinLimbModif",
+	                                       limbModifications_Str);
 	Globals::Instance->GetSegmentedPtrName(dlist, parent, "Gfx", dlist_Str);
 
 	std::string entryStr = "\n";
-	entryStr += StringHelper::Sprintf("\t%i, ARRAY_COUNTU(%s),\n", totalVtxCount, limbModifications_Str.c_str());
-	entryStr += StringHelper::Sprintf("\t%s, %s\n", limbModifications_Str.c_str(), dlist_Str.c_str());
+	entryStr += StringHelper::Sprintf("\t%i, ARRAY_COUNTU(%s),\n", totalVtxCount,
+	                                  limbModifications_Str.c_str());
+	entryStr +=
+		StringHelper::Sprintf("\t%s, %s\n", limbModifications_Str.c_str(), dlist_Str.c_str());
 
 	return entryStr;
 }
