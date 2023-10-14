@@ -28,7 +28,7 @@ public:
 
 	ZLimbType type = ZLimbType::Standard;
 
-	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_0;  // Skin only
+	ZLimbSkinType skinSegmentType = ZLimbSkinType::SkinType_Null;  // Skin only
 	segptr_t skinSegment = 0;                                   // Skin only
 	SkinAnimatedLimbData segmentStruct;                         // Skin only
 
