@@ -43,22 +43,22 @@ CutsceneOoTSubCommandEntry_GenericCmd::CutsceneOoTSubCommandEntry_GenericCmd(
 
 std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 	const auto& element = csCommandsDesc.find(commandId);
 
 	if (element != csCommandsDesc.end())
 	{
-		bool isIndexInMisc = cutsceneData->miscType.find(base) != cutsceneData->miscType.end();
+		bool isIndexInMisc = enumData->miscType.find(base) != enumData->miscType.end();
 		bool isIndexInFade =
-			cutsceneData->fadeOutSeqPlayer.find(base) != cutsceneData->fadeOutSeqPlayer.end();
+			enumData->fadeOutSeqPlayer.find(base) != enumData->fadeOutSeqPlayer.end();
 		std::string entryFmt = element->second.cmdMacro;
 		std::string firstArg;
 		entryFmt += element->second.args;
 
 		if (commandId == CutsceneOoT_CommandType::CS_CMD_MISC && isIndexInMisc)
-			firstArg = cutsceneData->miscType[base];
+			firstArg = enumData->miscType[base];
 		else if (commandId == CutsceneOoT_CommandType::CS_CMD_FADE_OUT_SEQ && isIndexInFade)
-			firstArg = cutsceneData->fadeOutSeqPlayer[base];
+			firstArg = enumData->fadeOutSeqPlayer[base];
 		else
 		{
 			bool baseOne = (commandId == CutsceneOoT_CommandType::CS_CMD_LIGHT_SETTING ||
@@ -264,7 +264,7 @@ CutsceneOoTSubCommandEntry_Text::CutsceneOoTSubCommandEntry_Text(
 
 std::string CutsceneOoTSubCommandEntry_Text::GetBodySourceCode() const
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 
 	if (type == 0xFFFF)
 	{
@@ -276,11 +276,10 @@ std::string CutsceneOoTSubCommandEntry_Text::GetBodySourceCode() const
 		                             endFrame, textId1);
 	}
 
-	if (cutsceneData->textType.find(type) != cutsceneData->textType.end())
+	if (enumData->textType.find(type) != enumData->textType.end())
 	{
 		return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %s, 0x%X, 0x%X)", base, startFrame,
-		                             endFrame, cutsceneData->textType[type].c_str(), textId1,
-		                             textId2);
+		                             endFrame, enumData->textType[type].c_str(), textId1, textId2);
 	}
 
 	return StringHelper::Sprintf("CS_TEXT(0x%X, %i, %i, %i, 0x%X, 0x%X)", base, startFrame,
@@ -334,14 +333,14 @@ CutsceneOoTSubCommandEntry_ActorCue::CutsceneOoTSubCommandEntry_ActorCue(
 
 std::string CutsceneOoTSubCommandEntry_ActorCue::GetBodySourceCode() const
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 
 	if (static_cast<CutsceneOoT_CommandType>(commandID) ==
 	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
 		return StringHelper::Sprintf("CS_PLAYER_CUE(%s, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
 		                             "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
-		                             cutsceneData->playerCueId[base].c_str(), startFrame, endFrame,
+		                             enumData->playerCueId[base].c_str(), startFrame, endFrame,
 		                             rotX, rotY, rotZ, startPosX, startPosY, startPosZ, endPosX,
 		                             endPosY, endPosZ, normalX, normalY, normalZ);
 	}
@@ -377,7 +376,7 @@ CutsceneOoTCommand_ActorCue::CutsceneOoTCommand_ActorCue(const std::vector<uint8
 
 std::string CutsceneOoTCommand_ActorCue::GetCommandMacro() const
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 
 	if (static_cast<CutsceneOoT_CommandType>(commandID) ==
 	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
@@ -385,10 +384,10 @@ std::string CutsceneOoTCommand_ActorCue::GetCommandMacro() const
 		return StringHelper::Sprintf("CS_PLAYER_CUE_LIST(%i)", entries.size());
 	}
 
-	if (cutsceneData->cutsceneCmd.find(commandID) != cutsceneData->cutsceneCmd.end())
+	if (enumData->cutsceneCmd.find(commandID) != enumData->cutsceneCmd.end())
 	{
 		return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(%s, %i)",
-		                             cutsceneData->cutsceneCmd[commandID].c_str(), entries.size());
+		                             enumData->cutsceneCmd[commandID].c_str(), entries.size());
 	}
 
 	return StringHelper::Sprintf("CS_ACTOR_CUE_LIST(0x%04X, %i)", commandID, entries.size());
@@ -410,12 +409,12 @@ CutsceneOoTCommand_Destination::CutsceneOoTCommand_Destination(const std::vector
 
 std::string CutsceneOoTCommand_Destination::GenerateSourceCode() const
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 
-	if (cutsceneData->destination.find(base) != cutsceneData->destination.end())
+	if (enumData->destination.find(base) != enumData->destination.end())
 	{
 		return StringHelper::Sprintf("CS_DESTINATION(%s, %i, %i),\n",
-		                             cutsceneData->destination[base].c_str(), startFrame, endFrame);
+		                             enumData->destination[base].c_str(), startFrame, endFrame);
 	}
 
 	return StringHelper::Sprintf("CS_DESTINATION(%i, %i, %i),\n", base, startFrame, endFrame);
@@ -441,13 +440,12 @@ CutsceneOoTCommand_Transition::CutsceneOoTCommand_Transition(const std::vector<u
 
 std::string CutsceneOoTCommand_Transition::GenerateSourceCode() const
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 
-	if (cutsceneData->transitionType.find(base) != cutsceneData->transitionType.end())
+	if (enumData->transitionType.find(base) != enumData->transitionType.end())
 	{
 		return StringHelper::Sprintf("CS_TRANSITION(%s, %i, %i),\n",
-		                             cutsceneData->transitionType[base].c_str(), startFrame,
-		                             endFrame);
+		                             enumData->transitionType[base].c_str(), startFrame, endFrame);
 	}
 
 	return StringHelper::Sprintf("CS_TRANSITION(%i, %i, %i),\n", base, startFrame, endFrame);

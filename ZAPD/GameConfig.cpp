@@ -174,7 +174,7 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 
 	if (eResult != tinyxml2::XML_SUCCESS)
 	{
-		throw std::runtime_error("Error: Unable to read cutscene data.");
+		throw std::runtime_error("Error: Unable to read enum data.");
 	}
 
 	tinyxml2::XMLNode* root = doc.FirstChild();
@@ -194,50 +194,53 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 
 			// Common
 			if (enumKey == "cmd")
-				cutsceneData.cutsceneCmd[itemIndex] = itemID;
+				enumData.cutsceneCmd[itemIndex] = itemID;
 
 			else if (enumKey == "miscType")
-				cutsceneData.miscType[itemIndex] = itemID;
+				enumData.miscType[itemIndex] = itemID;
 
 			else if (enumKey == "textType")
-				cutsceneData.textType[itemIndex] = itemID;
+				enumData.textType[itemIndex] = itemID;
 
 			else if (enumKey == "fadeOutSeqPlayer")
-				cutsceneData.fadeOutSeqPlayer[itemIndex] = itemID;
+				enumData.fadeOutSeqPlayer[itemIndex] = itemID;
 
 			else if (enumKey == "transitionType")
-				cutsceneData.transitionType[itemIndex] = itemID;
+				enumData.transitionType[itemIndex] = itemID;
 
 			else if (enumKey == "destination")
-				cutsceneData.destination[itemIndex] = itemID;
+				enumData.destination[itemIndex] = itemID;
+
+			else if (enumKey == "naviQuestHintType")
+				enumData.naviQuestHintType[itemIndex] = itemID;
 
 			else if (enumKey == "playerCueId")
-				cutsceneData.playerCueId[itemIndex] = itemID;
+				enumData.playerCueId[itemIndex] = itemID;
 
 			// MM
 			else if (enumKey == "modifySeqType")
-				cutsceneData.modifySeqType[itemIndex] = itemID;
+				enumData.modifySeqType[itemIndex] = itemID;
 
 			else if (enumKey == "chooseCreditsSceneType")
-				cutsceneData.chooseCreditsSceneType[itemIndex] = itemID;
+				enumData.chooseCreditsSceneType[itemIndex] = itemID;
 
 			else if (enumKey == "destinationType")
-				cutsceneData.destinationType[itemIndex] = itemID;
+				enumData.destinationType[itemIndex] = itemID;
 
 			else if (enumKey == "motionBlurType")
-				cutsceneData.motionBlurType[itemIndex] = itemID;
+				enumData.motionBlurType[itemIndex] = itemID;
 
 			else if (enumKey == "transitionGeneralType")
-				cutsceneData.transitionGeneralType[itemIndex] = itemID;
+				enumData.transitionGeneralType[itemIndex] = itemID;
 
 			else if (enumKey == "rumbleType")
-				cutsceneData.rumbleType[itemIndex] = itemID;
+				enumData.rumbleType[itemIndex] = itemID;
 
 			else if (enumKey == "spawnFlag")
-				cutsceneData.spawnFlag[itemIndex] = itemID;
+				enumData.spawnFlag[itemIndex] = itemID;
 
 			else if (enumKey == "endSfx")
-				cutsceneData.endSfx[itemIndex] = itemID;
+				enumData.endSfx[itemIndex] = itemID;
 		}
 	}
 }

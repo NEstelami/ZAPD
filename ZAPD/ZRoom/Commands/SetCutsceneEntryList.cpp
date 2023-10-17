@@ -84,13 +84,13 @@ CutsceneEntry::CutsceneEntry(const std::vector<uint8_t>& rawData, uint32_t rawDa
 
 std::string CutsceneEntry::GetBodySourceCode() const
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 
-	if (cutsceneData->endSfx.find(endSfx) != cutsceneData->endSfx.end())
+	if (enumData->endSfx.find(endSfx) != enumData->endSfx.end())
 		return StringHelper::Sprintf("%i, %i, %i, %i, %i, %s, %i, %i, %i, %i", priority, length,
 		                             csCamId, scriptIndex, additionalCsId,
-		                             cutsceneData->endSfx[endSfx].c_str(), customValue,
-		                             hudVisibility, endCam, letterboxSize);
+		                             enumData->endSfx[endSfx].c_str(), customValue, hudVisibility,
+		                             endCam, letterboxSize);
 	else
 		return StringHelper::Sprintf("%i, %i, %i, %i, %i, %i, %i, %i, %i, %i", priority, length,
 		                             csCamId, scriptIndex, additionalCsId, endSfx, customValue,

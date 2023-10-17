@@ -32,7 +32,7 @@ void SetCutscenes::ParseRawData()
 
 void SetCutscenes::DeclareReferences(const std::string& prefix)
 {
-	CutsceneEnumData* cutsceneData = &Globals::Instance->cfg.cutsceneData;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 	std::string varPrefix = name;
 	if (varPrefix == "")
 		varPrefix = prefix;
@@ -63,10 +63,10 @@ void SetCutscenes::DeclareReferences(const std::string& prefix)
 			Globals::Instance->GetSegmentedPtrName(entry.segmentPtr, parent, "CutsceneData",
 			                                       csName);
 
-			if (cutsceneData->spawnFlag.find(entry.flag) != cutsceneData->spawnFlag.end())
+			if (enumData->spawnFlag.find(entry.flag) != enumData->spawnFlag.end())
 				declaration += StringHelper::Sprintf("    { %s, 0x%04X, 0x%02X, %s },",
 				                                     csName.c_str(), entry.exit, entry.entrance,
-				                                     cutsceneData->spawnFlag[entry.flag].c_str());
+				                                     enumData->spawnFlag[entry.flag].c_str());
 			else
 				declaration +=
 					StringHelper::Sprintf("    { %s, 0x%04X, 0x%02X, 0x%02X },", csName.c_str(),
@@ -108,7 +108,7 @@ std::string SetCutscenes::GetBodySourceCode() const
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
 		Globals::Instance->GetSegmentedPtrName(cmdArg2, parent, "CutsceneScriptEntry", listName);
-		return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_LIST(%i, %s)", numCutscenes,
+		return StringHelper::Sprintf("SCENE_CMD_CUTSCENE_SCRIPT_LIST(%i, %s)", numCutscenes,
 		                             listName.c_str());
 	}
 
