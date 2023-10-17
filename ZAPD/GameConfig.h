@@ -22,7 +22,7 @@ public:
 };
 
 // Stores data from the XML file, the integer is the index (via ATOI) and the string is the value
-class CutsceneEnumData
+class EnumData
 {
 public:
 	// Common
@@ -30,6 +30,7 @@ public:
 	std::map<uint16_t, std::string> miscType;
 	std::map<uint16_t, std::string> fadeOutSeqPlayer;
 	std::map<uint16_t, std::string> transitionType;
+	std::map<uint16_t, std::string> naviQuestHintType;
 
 	// OoT
 	std::map<uint16_t, std::string> textType;
@@ -59,7 +60,7 @@ public:
 	std::vector<std::string> entranceList;
 	std::vector<std::string> specialEntranceList;
 	std::map<uint32_t, TexturePoolEntry> texturePool;  // Key = CRC
-	CutsceneEnumData cutsceneData;
+	EnumData enumData;
 
 	// ZBackground
 	uint32_t bgScreenWidth = 320, bgScreenHeight = 240;
