@@ -51,8 +51,7 @@ std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 		bool isIndexInMisc = enumData->miscType.find(base) != enumData->miscType.end();
 		bool isIndexInFade =
 			enumData->fadeOutSeqPlayer.find(base) != enumData->fadeOutSeqPlayer.end();
-		bool isIndexInSeqId =
-			enumData->seqId.find(base - 1) != enumData->seqId.end();
+		bool isIndexInSeqId = enumData->seqId.find(base - 1) != enumData->seqId.end();
 		std::string entryFmt = element->second.cmdMacro;
 		std::string firstArg;
 		entryFmt += element->second.args;
@@ -67,9 +66,9 @@ std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 			firstArg = enumData->seqId[base - 1];
 		else
 		{
-			return StringHelper::Sprintf(entryFmt.c_str(), base - 1, startFrame,
-			                             endFrame, pad, unused1, unused2, unused3, unused4, unused5,
-			                             unused6, unused7, unused8, unused9, unused10);
+			return StringHelper::Sprintf(entryFmt.c_str(), base - 1, startFrame, endFrame, pad,
+			                             unused1, unused2, unused3, unused4, unused5, unused6,
+			                             unused7, unused8, unused9, unused10);
 		}
 		return StringHelper::Sprintf(entryFmt.c_str(), firstArg.c_str(), startFrame, endFrame, pad,
 		                             unused1, unused2, unused3, unused4, unused5, unused6, unused7,
@@ -273,9 +272,11 @@ std::string CutsceneOoTSubCommandEntry_Text::GetBodySourceCode() const
 	{
 		return StringHelper::Sprintf("CS_TEXT_NONE(%i, %i)", startFrame, endFrame);
 	}
-	if (type == 2 && enumData->ocarinaSongActionId.find(base) != enumData->ocarinaSongActionId.end())
+	if (type == 2 &&
+	    enumData->ocarinaSongActionId.find(base) != enumData->ocarinaSongActionId.end())
 	{
-		return StringHelper::Sprintf("CS_TEXT_OCARINA_ACTION(%s, %i, %i, 0x%X)", enumData->ocarinaSongActionId[base].c_str(), startFrame,
+		return StringHelper::Sprintf("CS_TEXT_OCARINA_ACTION(%s, %i, %i, 0x%X)",
+		                             enumData->ocarinaSongActionId[base].c_str(), startFrame,
 		                             endFrame, textId1);
 	}
 
