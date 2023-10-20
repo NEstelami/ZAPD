@@ -52,7 +52,7 @@ std::string CutsceneOoTSubCommandEntry_GenericCmd::GetBodySourceCode() const
 		bool isIndexInFade =
 			enumData->fadeOutSeqPlayer.find(base) != enumData->fadeOutSeqPlayer.end();
 		bool isIndexInSeqId =
-			enumData->seqId.find(base) != enumData->seqId.end();
+			enumData->seqId.find(base - 1) != enumData->seqId.end();
 		std::string entryFmt = element->second.cmdMacro;
 		std::string firstArg;
 		entryFmt += element->second.args;
