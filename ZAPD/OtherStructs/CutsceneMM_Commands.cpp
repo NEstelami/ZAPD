@@ -73,21 +73,10 @@ std::string CutsceneMMSubCommandEntry_GenericCmd::GetBodySourceCode() const
 	         enumData->chooseCreditsSceneType.find(base) != enumData->chooseCreditsSceneType.end())
 		type = enumData->chooseCreditsSceneType[base];
 
-	else if (commandId == CutsceneMM_CommandType::CS_CMD_START_SEQ)
-	{
-		if (isIndexInSeqId)
-			type = enumData->seqId[base - 1];
-		else
-			entryFmt = "CS_START_SEQ(0x%04X, %i, %i)";
-	}
-
-	else if (commandId == CutsceneMM_CommandType::CS_CMD_STOP_SEQ)
-	{
-		if (isIndexInSeqId)
-			type = enumData->seqId[base - 1];
-		else
-			entryFmt = "CS_STOP_SEQ(0x%04X, %i, %i, %i)";
-	}
+	else if ((commandId == CutsceneMM_CommandType::CS_CMD_START_SEQ ||
+	          commandId == CutsceneMM_CommandType::CS_CMD_STOP_SEQ) &&
+	         isIndexInSeqId)
+		type = enumData->seqId[base - 1];
 
 	else if (commandId == CutsceneMM_CommandType::CS_CMD_GIVE_TATL)
 		type = base ? "true" : "false";
@@ -363,15 +352,12 @@ std::string CutsceneMMSubCommandEntry_Text::GetBodySourceCode() const
 		return StringHelper::Sprintf("CS_TEXT_NONE(%i, %i)", startFrame, endFrame);
 	}
 
-	if (type == 2)
+	if (type == 2 &&
+	    enumData->ocarinaSongActionId.find(base) != enumData->ocarinaSongActionId.end())
 	{
-		if (enumData->ocarinaSongActionId.find(base) != enumData->ocarinaSongActionId.end())
-			return StringHelper::Sprintf("CS_TEXT_OCARINA_ACTION(%s, %i, %i, 0x%X)",
-			                             enumData->ocarinaSongActionId[base].c_str(), startFrame,
-			                             endFrame, textId1);
-		else
-			return StringHelper::Sprintf("CS_TEXT_OCARINA_ACTION(%i, %i, %i, 0x%X)", base,
-			                             startFrame, endFrame, textId1);
+		return StringHelper::Sprintf("CS_TEXT_OCARINA_ACTION(%s, %i, %i, 0x%X)",
+		                             enumData->ocarinaSongActionId[base].c_str(), startFrame,
+		                             endFrame, textId1);
 	}
 
 	switch (type)
