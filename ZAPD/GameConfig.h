@@ -31,6 +31,8 @@ public:
 	std::map<uint16_t, std::string> fadeOutSeqPlayer;
 	std::map<uint16_t, std::string> transitionType;
 	std::map<uint16_t, std::string> naviQuestHintType;
+	std::map<uint16_t, std::string> ocarinaSongActionId;
+	std::map<uint16_t, std::string> seqId;
 
 	// OoT
 	std::map<uint16_t, std::string> textType;
