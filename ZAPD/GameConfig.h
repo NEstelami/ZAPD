@@ -37,6 +37,7 @@ public:
 	// OoT
 	std::map<uint16_t, std::string> textType;
 	std::map<uint16_t, std::string> destination;
+	std::map<uint16_t, std::string> playerCueId;
 
 	// MM
 	std::map<uint16_t, std::string> modifySeqType;

@@ -337,24 +337,25 @@ CutsceneOoTSubCommandEntry_ActorCue::CutsceneOoTSubCommandEntry_ActorCue(
 
 std::string CutsceneOoTSubCommandEntry_ActorCue::GetBodySourceCode() const
 {
-	std::string result;
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 
 	if (static_cast<CutsceneOoT_CommandType>(commandID) ==
 	    CutsceneOoT_CommandType::CS_CMD_PLAYER_CUE)
 	{
-		result = "CS_PLAYER_CUE";
+		return StringHelper::Sprintf("CS_PLAYER_CUE(%s, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
+		                             "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
+		                             enumData->playerCueId[base].c_str(), startFrame, endFrame,
+		                             rotX, rotY, rotZ, startPosX, startPosY, startPosZ, endPosX,
+		                             endPosY, endPosZ, normalX, normalY, normalZ);
 	}
 	else
 	{
-		result = "CS_ACTOR_CUE";
+		return StringHelper::Sprintf("CS_ACTOR_CUE(%i, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
+		                             "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
+		                             base, startFrame, endFrame, rotX, rotY, rotZ, startPosX,
+		                             startPosY, startPosZ, endPosX, endPosY, endPosZ, normalX,
+		                             normalY, normalZ);
 	}
-
-	result +=
-		StringHelper::Sprintf("(%i, %i, %i, 0x%04X, 0x%04X, 0x%04X, %i, %i, "
-	                          "%i, %i, %i, %i, %.8ef, %.8ef, %.8ef)",
-	                          base, startFrame, endFrame, rotX, rotY, rotZ, startPosX, startPosY,
-	                          startPosZ, endPosX, endPosY, endPosZ, normalX, normalY, normalZ);
-	return result;
 }
 
 size_t CutsceneOoTSubCommandEntry_ActorCue::GetRawSize() const
