@@ -160,7 +160,6 @@ CutsceneSubCommandEntry_SplineMiscPoint::CutsceneSubCommandEntry_SplineMiscPoint
 	roll = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
 	fov = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
 	unused1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
-	printf("%s\n", GetBodySourceCode().c_str());
 }
 
 /*#define CS_CAM_MISC(unused0, roll, fov, unused1) \
