@@ -331,9 +331,12 @@ public:
 class CutsceneMMCommand_Spline : public CutsceneCommand
 {
 public:
+	uint32_t numHeaders;
+	uint32_t totalCommands;
 	CutsceneMMCommand_Spline(const std::vector<uint8_t>& rawData, offset_t rawDataIndex);
 
 	std::string GetCommandMacro() const override;
+	size_t GetCommandSize() const override;
 };
 
 /**** TRANSITION GENERAL ****/
