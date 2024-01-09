@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Utils/BitConverter.h"
 #include "Utils/StringHelper.h"
+#include <cassert>
 
 /**** GENERIC ****/
 
@@ -126,38 +127,144 @@ std::string CutsceneMMCommand_GenericCmd::GetCommandMacro() const
 
 /**** CAMERA ****/
 
-CutsceneSubCommandEntry_Camera::CutsceneSubCommandEntry_Camera(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex)
-	: CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_SplineCamPoint::CutsceneSubCommandEntry_SplineCamPoint(const std::vector<uint8_t>& rawData,
+                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
+	interpType = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0);
+	weight = BitConverter::ToUInt8BE(rawData, rawDataIndex + 1);
+	duration = BitConverter::ToUInt8BE(rawData, rawDataIndex + 2);
+	posX = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
+	posY = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
+	posZ = BitConverter::ToUInt16BE(rawData, rawDataIndex + 8);
+	relTo = BitConverter::ToUInt16BE(rawData, rawDataIndex + 10);
+	printf("%s\n", GetBodySourceCode().c_str());
+
+}
+/*#define CS_CAM_POINT(interpType, weight, duration, posX, posY, posZ, relativeTo) \
+    { CMD_BBH(interpType, weight, duration) }, { CMD_HH(posX, posY) }, { CMD_HH(posZ, relativeTo) }*/
+std::string CutsceneSubCommandEntry_SplineCamPoint::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("CS_CAM_POINT(0x%02X, 0x%02X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X)", interpType, weight, duration, posX, posY, posZ, relTo);
 }
 
-std::string CutsceneSubCommandEntry_Camera::GetBodySourceCode() const
+size_t CutsceneSubCommandEntry_SplineCamPoint::GetRawSize() const
 {
-	return StringHelper::Sprintf("CMD_HH(0x%04X, 0x%04X)", base, startFrame);
+	return 0x0C;
 }
 
-size_t CutsceneSubCommandEntry_Camera::GetRawSize() const
+
+CutsceneSubCommandEntry_SplineMiscPoint::CutsceneSubCommandEntry_SplineMiscPoint(const std::vector<uint8_t>& rawData,
+                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
-	return 0x04;
+	unused0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
+	roll = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+	fov = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
+	unused1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
+	printf("%s\n", GetBodySourceCode().c_str());
 }
 
-CutsceneMMCommand_Camera::CutsceneMMCommand_Camera(const std::vector<uint8_t>& rawData,
+/*#define CS_CAM_MISC(unused0, roll, fov, unused1) \
+    { CMD_HH(unused0, roll) }, { CMD_HH(fov, unused1) }*/
+
+std::string CutsceneSubCommandEntry_SplineMiscPoint::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("CS_CAM_MISC(0x%04X, 0x%04X, 0x%04X, 0x%04X, )", unused0, roll, fov, unused1);
+}
+
+size_t CutsceneSubCommandEntry_SplineMiscPoint::GetRawSize() const
+{
+	return 0x08;
+}
+
+CutsceneSubCommandEntry_SplineHeader::CutsceneSubCommandEntry_SplineHeader(const std::vector<uint8_t>& rawData,
+                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+	numEntries = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
+	unused0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+	unused1 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 4);
+	duration = BitConverter::ToUInt16BE(rawData, rawDataIndex + 6);
+	printf("%s\n", GetBodySourceCode().c_str());
+}
+/*#define CS_CAM_SPLINE(numEntries, unused0, unused1, duration) \
+    { CMD_HH(numEntries, unused0) }, { CMD_HH(unused1, duration) }*/
+std::string CutsceneSubCommandEntry_SplineHeader::GetBodySourceCode() const
+{
+	return StringHelper::Sprintf("CS_CAM_SPLINE(0x%04X, 0x%04X, 0x%04X, 0x%04X)", numEntries, unused0, unused1, duration);
+	
+}
+
+size_t CutsceneSubCommandEntry_SplineHeader::GetRawSize() const
+{
+	return 0x08;
+}
+
+CutsceneSubCommandEntry_SplineFooter::CutsceneSubCommandEntry_SplineFooter(const std::vector<uint8_t>& rawData,
+                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
+{
+	uint16_t firstHalfWord = BitConverter::ToUInt16BE(rawData, rawDataIndex);
+	uint16_t secondHalfWord = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
+	// TODO use the warning/error handler
+	if (firstHalfWord != 0xFFFF || secondHalfWord != 4) {
+		printf("%04X %04X\n", firstHalfWord, secondHalfWord);
+		assert(firstHalfWord == 0xFFFF && secondHalfWord == 4);
+	}
+}
+/*#define CS_CAM_END() */
+std::string CutsceneSubCommandEntry_SplineFooter::GetBodySourceCode() const
+{
+	return "CS_CAM_END()";
+}
+
+size_t CutsceneSubCommandEntry_SplineFooter::GetRawSize() const
+{
+	return 0x08;
+}
+
+CutsceneMMCommand_Spline::CutsceneMMCommand_Spline(const std::vector<uint8_t>& rawData,
                                                    offset_t rawDataIndex)
 	: CutsceneCommand(rawData, rawDataIndex)
 {
 	rawDataIndex += 4;
+	offset_t oldIndex = rawDataIndex;
 
-	entries.reserve(numEntries);
-	for (size_t i = 0; i < numEntries / 4; i++)
-	{
-		auto* entry = new CutsceneSubCommandEntry_Camera(rawData, rawDataIndex);
+	while(1) {
+		if (BitConverter::ToUInt16BE(rawData, rawDataIndex) == 0xFFFF) {
+			break;
+		}
+		auto* header = new CutsceneSubCommandEntry_SplineHeader(rawData, rawDataIndex);
+		rawDataIndex += header->GetRawSize();
+		printf("bytes %d : HDR Size %zu : num entries: %d\n",numEntries, header->GetRawSize(), header->numEntries);
+		entries.push_back(header);
+		uint32_t numCommands = header->numEntries;
+
+
+	printf("1\n");
+	for (uint32_t i = 0; i < numCommands; i++) {
+		auto* entry = new CutsceneSubCommandEntry_SplineCamPoint(rawData, rawDataIndex);
 		entries.push_back(entry);
 		rawDataIndex += entry->GetRawSize();
 	}
+printf("2\n");
+	for (uint32_t i = 0; i < numCommands; i++) {
+		auto* entry = new CutsceneSubCommandEntry_SplineCamPoint(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
+	}
+printf("3\n");
+	for (uint32_t i = 0; i < numCommands; i++) {
+		auto* entry = new CutsceneSubCommandEntry_SplineMiscPoint(rawData, rawDataIndex);
+		entries.push_back(entry);
+		rawDataIndex += entry->GetRawSize();
+	}
+	}
+		printf("4\n");
+	printf("Total %d\n", rawDataIndex - oldIndex);
+	auto* footer = new CutsceneSubCommandEntry_SplineFooter(rawData, rawDataIndex);
+	entries.push_back(footer);
+	rawDataIndex += footer->GetRawSize();
 }
 
-std::string CutsceneMMCommand_Camera::GetCommandMacro() const
+std::string CutsceneMMCommand_Spline::GetCommandMacro() const
 {
 	return StringHelper::Sprintf("CS_CAM_SPLINE_LIST(%i)", numEntries);
 }
