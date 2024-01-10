@@ -144,7 +144,10 @@ CutsceneSubCommandEntry_SplineCamPoint::CutsceneSubCommandEntry_SplineCamPoint(c
     { CMD_BBH(interpType, weight, duration) }, { CMD_HH(posX, posY) }, { CMD_HH(posZ, relativeTo) }*/
 std::string CutsceneSubCommandEntry_SplineCamPoint::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_CAM_POINT(0x%02X, 0x%02X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X)", interpType, weight, duration, posX, posY, posZ, relTo);
+	const auto interpTypeMap = &Globals::Instance->cfg.enumData.interpType;
+	const auto relToMap = &Globals::Instance->cfg.enumData.relTo;
+
+	return StringHelper::Sprintf("CS_CAM_POINT(%s, 0x%02X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, %s)", interpTypeMap->at(interpType).c_str(), weight, duration, posX, posY, posZ, relToMap->at(relTo).c_str());
 }
 
 size_t CutsceneSubCommandEntry_SplineCamPoint::GetRawSize() const
