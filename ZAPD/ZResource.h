@@ -58,6 +58,7 @@ enum class ZResourceType
 	KeyFrameFlexLimb,
 	KeyFrameStandardLimb,
 	KeyFrameSkel,
+	KeyFrameAnimation,
 };
 
 class ResourceAttribute

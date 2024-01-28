@@ -303,6 +303,9 @@
     <ClCompile Include="ZCKeyFrame.cpp">
       <Filter>Source Files\Z64</Filter>
     </ClCompile>
+    <ClCompile Include="ZCKeyFrameAnim.cpp">
+      <Filter>Source Files\Z64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZRoom\ZRoom.h">
@@ -579,6 +582,9 @@
       <Filter>Header Files\Z64\ZRoom\Commands</Filter>
     </ClInclude>
     <ClInclude Include="ZCKeyFrame.h">
+      <Filter>Header Files\Z64</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCkeyFrameAnim.h">
       <Filter>Header Files\Z64</Filter>
     </ClInclude>
   </ItemGroup>

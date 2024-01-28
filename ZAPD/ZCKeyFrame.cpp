@@ -13,6 +13,10 @@ ZKeyFrameSkel::ZKeyFrameSkel(ZFile* nParent) : ZResource(nParent)
 	RegisterRequiredAttribute("LimbType");
 }
 
+ZKeyFrameSkel::~ZKeyFrameSkel()
+{
+}
+
 ZKeyFrameLimb::ZKeyFrameLimb(ZFile* nParent) : ZResource(nParent)
 {
 }
@@ -56,7 +60,7 @@ void ZKeyFrameSkel::ParseXML(tinyxml2::XMLElement* reader)
 		HANDLE_ERROR_RESOURCE(
 			WarningType::InvalidXML, parent, this, rawDataIndex, "Invalid limb type",
 			StringHelper::Sprintf("Invalid limb type. Was expecting 'Flex' or 'Normal'. Got %s.",
-		                          limbTypeStr));
+		                          limbTypeStr.c_str()));
 
 
 }
@@ -73,7 +77,7 @@ void ZKeyFrameLimbList::ParseXML(tinyxml2::XMLElement* reader)
 		HANDLE_ERROR_RESOURCE(
 			WarningType::InvalidXML, parent, this, rawDataIndex, "Invalid limb type",
 			StringHelper::Sprintf("Invalid limb type. Was expecting 'Flex' or 'Normal'. Got %s.",
-	                          limbTypeStr));
+	                          limbTypeStr.c_str()));
 
 	numLimbs = (uint8_t)StringHelper::StrToL(numLimbStr);
 }
@@ -212,9 +216,9 @@ void ZKeyFrameLimbList::ParseRawData()
 		else
 			limb = new ZKeyFrameStandardLimb(parent);
 
-			limb->SetRawDataIndex(rawDataIndex + (offset_t)(i * limb->GetRawDataSize()));
-			limb->ParseRawData();
-			limbs.push_back(limb);
+		limb->SetRawDataIndex(rawDataIndex + (offset_t)(i * limb->GetRawDataSize()));
+		limb->ParseRawData();
+		limbs.push_back(limb);
 	}
 }
 
@@ -235,7 +239,7 @@ std::string ZKeyFrameStandardLimb::GetBodySourceCode() const
 
 	Globals::Instance->GetSegmentedArrayIndexedName(dlist, 8, parent, "Gfx", dlString);
 
-	declaration += StringHelper::Sprintf("%s, 0x%02X, 0x%02X, { 0x%04X, 0x%04X, 0x%04X},", dlString, numChildren, flags, translation.x, translation.y, translation.z);
+	declaration += StringHelper::Sprintf("%s, 0x%02X, 0x%02X, { 0x%04X, 0x%04X, 0x%04X},", dlString.c_str(), numChildren, flags, translation.x, translation.y, translation.z);
 	return declaration;
 }
 

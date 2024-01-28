@@ -29,6 +29,8 @@ public:
 	ZKeyFrameLimbList();
 	ZKeyFrameLimbList(ZFile* nParent);
 	ZKeyFrameLimbList(ZFile* nParent, uint32_t limbCount, ZKeyframeSkelType type);
+	
+	~ZKeyFrameLimbList();
 
 	void ParseRawData() override;
 
