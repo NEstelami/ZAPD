@@ -19,8 +19,8 @@ class ZKeyFrameAnim : public ZResource
 {
 public:
 	ZKeyFrameSkel* skel;
-	std::vector<uint8_t> bitFlags; // Standard only
-	std::vector<uint16_t> bitFlagsFLex; // Flex only
+	std::vector<uint8_t> bitFlags;       // Standard only
+	std::vector<uint16_t> bitFlagsFLex;  // Flex only
 
 	std::vector<KeyFrame> keyFrames;
 	std::vector<int16_t> kfNums;
@@ -47,6 +47,6 @@ private:
 	segptr_t keyFramesAddr;
 	segptr_t kfNumsAddr;
 	segptr_t presentValuesAddr;
-	template<typename T>
+	template <typename T>
 	uint32_t GetSetBits(T data) const;
 };

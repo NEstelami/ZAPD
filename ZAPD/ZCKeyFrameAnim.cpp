@@ -58,12 +58,11 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 		}
 	}
 	declaration.clear();
-	
 
 	for (const auto kf : keyFrames)
 	{
-		declaration += StringHelper::Sprintf(" \t { %i, %i, %i, },\n", kf.frame, kf.value,
-		                                     kf.velocity);
+		declaration +=
+			StringHelper::Sprintf(" \t { %i, %i, %i, },\n", kf.frame, kf.value, kf.velocity);
 	}
 	declaration = declaration.substr(0, declaration.length() - 1);
 	parent->AddDeclarationArray(
@@ -72,7 +71,6 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 		declaration);
 
 	declaration.clear();
-
 
 	declaration += "\t";
 
@@ -88,7 +86,7 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 	declaration += "\n";
 
 	declaration.clear();
-	
+
 	declaration += "\t";
 
 	for (const auto pv : presentValues)
@@ -97,17 +95,16 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 	}
 	declaration += "\n";
 	parent->AddDeclarationArray(
-	GETSEGOFFSET(presentValuesAddr), DeclarationAlignment::Align4, presentValues.size() * 2,
-	"s16", StringHelper::Sprintf("%s_presetValues_%06X", prefix.c_str(), rawDataIndex),
-	presentValues.size(), declaration);
-
+		GETSEGOFFSET(presentValuesAddr), DeclarationAlignment::Align4, presentValues.size() * 2,
+		"s16", StringHelper::Sprintf("%s_presetValues_%06X", prefix.c_str(), rawDataIndex),
+		presentValues.size(), declaration);
 }
 
 // ParseRawDataLate is used because we need to make sure the flex skel has been processed first.
 void ZKeyFrameAnim::ParseRawDataLate()
 {
 	const auto& rawData = parent->GetRawData();
-	
+
 	skel = static_cast<ZKeyFrameSkel*>(parent->FindResource(skelOffset));
 	size_t numLimbs = skel->limbCount;
 
@@ -129,7 +126,6 @@ void ZKeyFrameAnim::ParseRawDataLate()
 			kfNumsSize += GetSetBits((uint8_t)(e & 0b111111));
 			presetValuesSize += GetSetBits((uint8_t)((e ^ 0xFF) & 0b111111));
 		}
-
 	}
 	else
 	{
@@ -146,7 +142,7 @@ void ZKeyFrameAnim::ParseRawDataLate()
 	for (uint32_t i = 0; i < kfNumsSize; i++)
 	{
 		int16_t kfNum = BitConverter::ToUInt16BE(rawData, GETSEGOFFSET(kfNumsAddr) + (i * 2));
-		keyFramesCount += kfNum;//		std::max(keyFramesCount, (uint32_t)kfNum);
+		keyFramesCount += kfNum;  //		std::max(keyFramesCount, (uint32_t)kfNum);
 		kfNums.push_back(kfNum);
 	}
 
@@ -184,9 +180,9 @@ std::string ZKeyFrameAnim::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(kfNumsAddr, parent, "", kfNumsStr);
 	Globals::Instance->GetSegmentedPtrName(presentValuesAddr, parent, "", presetValuesStr);
 
-	return StringHelper::Sprintf("\n\t%s, %s, %s, %s, 0x%04X, 0x%04X\n", bitFlagsStr.c_str(), keyFrameStr.c_str(),
-	                             kfNumsStr.c_str(), presetValuesStr.c_str(), unk_10, duration);
-
+	return StringHelper::Sprintf("\n\t%s, %s, %s, %s, 0x%04X, 0x%04X\n", bitFlagsStr.c_str(),
+	                             keyFrameStr.c_str(), kfNumsStr.c_str(), presetValuesStr.c_str(),
+	                             unk_10, duration);
 }
 
 std::string ZKeyFrameAnim::GetSourceTypeName() const
