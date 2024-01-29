@@ -37,12 +37,14 @@ jobs:
     - name: Setup OOT
       run: |
         cd oot
-        cp ~/baserom_original.z64 ./baserom_original.z64
+        mkdir -p baseroms/gc-eu-mq-dbg
+        cp ~/baserom_original.z64 ./baseroms/gc-eu-mq-dbg/baserom.z64
+        make venv
         make -C tools -j
         cp ../ZAPD.out tools/ZAPD/
-        python3 fixbaserom.py
-        python3 extract_baserom.py
-        python3 extract_assets.py
+        .venv/bin/python3 tools/decompress_baserom.py gc-eu-mq-dbg
+        .venv/bin/python3 extract_baserom.py
+        .venv/bin/python3 extract_assets.py -j 4
 
     - name: Install Python dependencies
       run: |
@@ -68,6 +70,7 @@ jobs:
     - name: Build oot
       run: |
         cd oot
+        make venv
         make -j
 
     - name: Build mm
