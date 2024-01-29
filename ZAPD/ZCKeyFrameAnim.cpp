@@ -59,19 +59,20 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 	}
 	declaration.clear();
 	
-	declaration += "\t";
 
 	for (const auto kf : keyFrames)
 	{
 		declaration += StringHelper::Sprintf(" \t { %i, %i, %i, },\n", kf.frame, kf.value,
 		                                     kf.velocity);
 	}
+	declaration = declaration.substr(0, declaration.length() - 1);
 	parent->AddDeclarationArray(
 		GETSEGOFFSET(keyFramesAddr), DeclarationAlignment::Align4, keyFrames.size() * 6, "KeyFrame",
 		StringHelper::Sprintf("%s_KeyFrame_%06X", prefix.c_str(), rawDataIndex), keyFrames.size(),
 		declaration);
 
 	declaration.clear();
+
 
 	declaration += "\t";
 
@@ -84,6 +85,7 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 		GETSEGOFFSET(kfNumsAddr), DeclarationAlignment::Align4, kfNums.size() * 2, "s16",
 		StringHelper::Sprintf("%s_kfNums_%06X", prefix.c_str(), rawDataIndex), kfNums.size(),
 		declaration);
+	declaration += "\n";
 
 	declaration.clear();
 	
@@ -93,7 +95,7 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 	{
 		declaration += StringHelper::Sprintf("0x%04X, ", pv);
 	}
-
+	declaration += "\n";
 	parent->AddDeclarationArray(
 	GETSEGOFFSET(presentValuesAddr), DeclarationAlignment::Align4, presentValues.size() * 2,
 	"s16", StringHelper::Sprintf("%s_presetValues_%06X", prefix.c_str(), rawDataIndex),

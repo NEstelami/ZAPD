@@ -123,7 +123,7 @@ std::string ZKeyFrameSkel::GetBodySourceCode() const
 		Globals::Instance->GetSegmentedPtrName(limbsPtr, parent, "KeyFrameFlexLimb", limbStr);
 	
 
-	return StringHelper::Sprintf("0x%02X, 0x%02X, %s,", limbCount, dListCount, limbStr.c_str());
+	return StringHelper::Sprintf("\n\t0x%02X, 0x%02X, %s\n", limbCount, dListCount, limbStr.c_str());
 
 }
 
@@ -227,9 +227,9 @@ std::string ZKeyFrameLimbList::GetBodySourceCode() const
 	std::string declaration;
 
 	for (const auto l : limbs)
-		declaration += StringHelper::Sprintf("\t{ %s },", l->GetBodySourceCode().c_str());
-
-	return declaration;
+		declaration += StringHelper::Sprintf("\t{ %s },\n", l->GetBodySourceCode().c_str());
+	// Remove last newline
+	return declaration.substr(0, declaration.length() - 1);
 }
 
 std::string ZKeyFrameStandardLimb::GetBodySourceCode() const
