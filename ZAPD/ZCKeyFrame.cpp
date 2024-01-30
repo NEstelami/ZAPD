@@ -158,7 +158,7 @@ size_t ZKeyFrameLimbList::GetRawDataSize() const
 {
 	size_t limbSize;
 	if (limbType == ZKeyframeSkelType::Flex)
-		limbSize = 8;
+		limbSize = 0x8;
 	else
 		limbSize = 0xC;
 	

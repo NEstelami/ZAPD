@@ -36,7 +36,6 @@ public:
 
 	std::string GetBodySourceCode() const override;
 	void ParseXML(tinyxml2::XMLElement* reader) override;
-	// std::string GetSourceOutputHeader(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
@@ -67,12 +66,10 @@ public:
 	Vec3s translation;
 
 	ZKeyFrameStandardLimb(ZFile* nParent);
-	//void ParseXML(tinyxml2::XMLElement* reader) override;
 	void ParseRawData() override;
 
 	std::string GetBodySourceCode() const override;
 
-	//std::string GetSourceOutputHeader(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;
@@ -116,8 +113,6 @@ public:
 	void DeclareReferences(const std::string& prefix) override;
 
 	std::string GetBodySourceCode() const override;
-
-	//std::string GetSourceOutputHeader(const std::string& prefix) override;
 
 	std::string GetSourceTypeName() const override;
 	ZResourceType GetResourceType() const override;

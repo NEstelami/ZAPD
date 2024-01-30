@@ -20,11 +20,11 @@ class ZKeyFrameAnim : public ZResource
 public:
 	ZKeyFrameSkel* skel;
 	std::vector<uint8_t> bitFlags; // Standard only
-	std::vector<uint16_t> bitFlagsFLex; // Flex only
+	std::vector<uint16_t> bitFlagsFlex; // Flex only
 
 	std::vector<KeyFrame> keyFrames;
 	std::vector<int16_t> kfNums;
-	std::vector<int16_t> presentValues;
+	std::vector<int16_t> presetValues;
 
 	uint16_t unk_10;
 	int16_t duration;

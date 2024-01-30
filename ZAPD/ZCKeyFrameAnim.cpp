@@ -48,13 +48,13 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 	}
 	else
 	{
-		for (const auto b : bitFlagsFLex)
+		for (const auto b : bitFlagsFlex)
 		{
 			declaration += StringHelper::Sprintf("0x%04X, ", b);
 			parent->AddDeclarationArray(
-				GETSEGOFFSET(bitFlagsAddr), DeclarationAlignment::Align4, bitFlagsFLex.size() * 2,
+				GETSEGOFFSET(bitFlagsAddr), DeclarationAlignment::Align4, bitFlagsFlex.size() * 2,
 				"u16", StringHelper::Sprintf("%s_flexBitFlags_%06X", prefix.c_str(), rawDataIndex),
-				bitFlagsFLex.size(), declaration);
+				bitFlagsFlex.size(), declaration);
 		}
 	}
 	declaration.clear();
@@ -65,6 +65,7 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 		declaration += StringHelper::Sprintf(" \t { %i, %i, %i, },\n", kf.frame, kf.value,
 		                                     kf.velocity);
 	}
+	// Remove last new line to prevent an extra line after the last element
 	declaration = declaration.substr(0, declaration.length() - 1);
 	parent->AddDeclarationArray(
 		GETSEGOFFSET(keyFramesAddr), DeclarationAlignment::Align4, keyFrames.size() * 6, "KeyFrame",
@@ -91,15 +92,15 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 	
 	declaration += "\t";
 
-	for (const auto pv : presentValues)
+	for (const auto pv : presetValues)
 	{
 		declaration += StringHelper::Sprintf("0x%04X, ", pv);
 	}
 	declaration += "\n";
 	parent->AddDeclarationArray(
-	GETSEGOFFSET(presentValuesAddr), DeclarationAlignment::Align4, presentValues.size() * 2,
+	GETSEGOFFSET(presentValuesAddr), DeclarationAlignment::Align4, presetValues.size() * 2,
 	"s16", StringHelper::Sprintf("%s_presetValues_%06X", prefix.c_str(), rawDataIndex),
-	presentValues.size(), declaration);
+	presetValues.size(), declaration);
 
 }
 
@@ -133,20 +134,21 @@ void ZKeyFrameAnim::ParseRawDataLate()
 	}
 	else
 	{
-		bitFlagsFLex.reserve(numLimbs);
+		bitFlagsFlex.reserve(numLimbs);
 		for (size_t i = 0; i < numLimbs; i++)
 		{
 			uint16_t e = BitConverter::ToUInt16BE(rawData, GETSEGOFFSET(bitFlagsAddr) + (i * 2));
-			bitFlagsFLex.push_back(e);
+			bitFlagsFlex.push_back(e);
 			kfNumsSize += GetSetBits((uint16_t)(e & 0b111111111));
 			presetValuesSize += GetSetBits((uint16_t)((e ^ 0xFFFF) & 0b111111111));
 		}
 	}
 
+	kfNums.reserve(kfNumsSize);
 	for (uint32_t i = 0; i < kfNumsSize; i++)
 	{
 		int16_t kfNum = BitConverter::ToUInt16BE(rawData, GETSEGOFFSET(kfNumsAddr) + (i * 2));
-		keyFramesCount += kfNum;//		std::max(keyFramesCount, (uint32_t)kfNum);
+		keyFramesCount += kfNum;
 		kfNums.push_back(kfNum);
 	}
 
@@ -160,9 +162,10 @@ void ZKeyFrameAnim::ParseRawDataLate()
 		keyFrames.push_back(kf);
 	}
 
+	presetValues.reserve(presetValuesSize);
 	for (uint32_t i = 0; i < presetValuesSize; i++)
 	{
-		presentValues.push_back(
+		presetValues.push_back(
 			BitConverter::ToInt16BE(rawData, GETSEGOFFSET(presentValuesAddr) + (i * 2)));
 	}
 
@@ -209,7 +212,7 @@ uint32_t ZKeyFrameAnim::GetSetBits(T data) const
 {
 	uint32_t num = 0;
 
-	for (uint32_t i = 0; i < sizeof(T) * 8; i++)
+	for (size_t i = 0; i < sizeof(T) * 8; i++)
 	{
 		if ((data >> i) & 1)
 			num++;
