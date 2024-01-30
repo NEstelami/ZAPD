@@ -127,8 +127,9 @@ std::string CutsceneMMCommand_GenericCmd::GetCommandMacro() const
 
 /**** CAMERA ****/
 
-CutsceneSubCommandEntry_SplineCamPoint::CutsceneSubCommandEntry_SplineCamPoint(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_SplineCamPoint::CutsceneSubCommandEntry_SplineCamPoint(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	interpType = BitConverter::ToUInt8BE(rawData, rawDataIndex + 0);
 	weight = BitConverter::ToUInt8BE(rawData, rawDataIndex + 1);
@@ -144,7 +145,9 @@ std::string CutsceneSubCommandEntry_SplineCamPoint::GetBodySourceCode() const
 	const auto interpTypeMap = &Globals::Instance->cfg.enumData.interpType;
 	const auto relToMap = &Globals::Instance->cfg.enumData.relTo;
 
-	return StringHelper::Sprintf("CS_CAM_POINT(%s, 0x%02X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, %s)", interpTypeMap->at(interpType).c_str(), weight, duration, posX, posY, posZ, relToMap->at(relTo).c_str());
+	return StringHelper::Sprintf("CS_CAM_POINT(%s, 0x%02X, 0x%04X, 0x%04X, 0x%04X, 0x%04X, %s)",
+	                             interpTypeMap->at(interpType).c_str(), weight, duration, posX,
+	                             posY, posZ, relToMap->at(relTo).c_str());
 }
 
 size_t CutsceneSubCommandEntry_SplineCamPoint::GetRawSize() const
@@ -152,9 +155,9 @@ size_t CutsceneSubCommandEntry_SplineCamPoint::GetRawSize() const
 	return 0x0C;
 }
 
-
-CutsceneSubCommandEntry_SplineMiscPoint::CutsceneSubCommandEntry_SplineMiscPoint(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_SplineMiscPoint::CutsceneSubCommandEntry_SplineMiscPoint(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	unused0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
 	roll = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
@@ -164,7 +167,8 @@ CutsceneSubCommandEntry_SplineMiscPoint::CutsceneSubCommandEntry_SplineMiscPoint
 
 std::string CutsceneSubCommandEntry_SplineMiscPoint::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_CAM_MISC(0x%04X, 0x%04X, 0x%04X, 0x%04X)", unused0, roll, fov, unused1);
+	return StringHelper::Sprintf("CS_CAM_MISC(0x%04X, 0x%04X, 0x%04X, 0x%04X)", unused0, roll, fov,
+	                             unused1);
 }
 
 size_t CutsceneSubCommandEntry_SplineMiscPoint::GetRawSize() const
@@ -172,8 +176,9 @@ size_t CutsceneSubCommandEntry_SplineMiscPoint::GetRawSize() const
 	return 0x08;
 }
 
-CutsceneSubCommandEntry_SplineHeader::CutsceneSubCommandEntry_SplineHeader(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_SplineHeader::CutsceneSubCommandEntry_SplineHeader(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	numEntries = BitConverter::ToUInt16BE(rawData, rawDataIndex + 0);
 	unused0 = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
@@ -183,8 +188,8 @@ CutsceneSubCommandEntry_SplineHeader::CutsceneSubCommandEntry_SplineHeader(const
 
 std::string CutsceneSubCommandEntry_SplineHeader::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("CS_CAM_SPLINE(0x%04X, 0x%04X, 0x%04X, 0x%04X)", numEntries, unused0, unused1, duration);
-	
+	return StringHelper::Sprintf("CS_CAM_SPLINE(0x%04X, 0x%04X, 0x%04X, 0x%04X)", numEntries,
+	                             unused0, unused1, duration);
 }
 
 size_t CutsceneSubCommandEntry_SplineHeader::GetRawSize() const
@@ -192,16 +197,19 @@ size_t CutsceneSubCommandEntry_SplineHeader::GetRawSize() const
 	return 0x08;
 }
 
-CutsceneSubCommandEntry_SplineFooter::CutsceneSubCommandEntry_SplineFooter(const std::vector<uint8_t>& rawData,
-                                                               offset_t rawDataIndex): CutsceneSubCommandEntry(rawData, rawDataIndex)
+CutsceneSubCommandEntry_SplineFooter::CutsceneSubCommandEntry_SplineFooter(
+	const std::vector<uint8_t>& rawData, offset_t rawDataIndex)
+	: CutsceneSubCommandEntry(rawData, rawDataIndex)
 {
 	uint16_t firstHalfWord = BitConverter::ToUInt16BE(rawData, rawDataIndex);
 	uint16_t secondHalfWord = BitConverter::ToUInt16BE(rawData, rawDataIndex + 2);
 
-	if (firstHalfWord != 0xFFFF || secondHalfWord != 4) {
+	if (firstHalfWord != 0xFFFF || secondHalfWord != 4)
+	{
 		HANDLE_ERROR(WarningType::InvalidExtractedData, "Invalid Spline Footer",
-		             StringHelper::Sprintf("Invalid Spline footer. Was expecting 0xFFFF, 0x0004. Got 0x%04X, 0x%04X",
-		             firstHalfWord, secondHalfWord));
+		             StringHelper::Sprintf(
+						 "Invalid Spline footer. Was expecting 0xFFFF, 0x0004. Got 0x%04X, 0x%04X",
+						 firstHalfWord, secondHalfWord));
 	}
 }
 
@@ -223,8 +231,10 @@ CutsceneMMCommand_Spline::CutsceneMMCommand_Spline(const std::vector<uint8_t>& r
 	totalCommands = 0;
 	rawDataIndex += 4;
 
-	while(1) {
-		if (BitConverter::ToUInt16BE(rawData, rawDataIndex) == 0xFFFF) {
+	while (1)
+	{
+		if (BitConverter::ToUInt16BE(rawData, rawDataIndex) == 0xFFFF)
+		{
 			break;
 		}
 		numHeaders++;
@@ -232,7 +242,7 @@ CutsceneMMCommand_Spline::CutsceneMMCommand_Spline(const std::vector<uint8_t>& r
 		auto* header = new CutsceneSubCommandEntry_SplineHeader(rawData, rawDataIndex);
 		rawDataIndex += header->GetRawSize();
 		entries.push_back(header);
-			
+
 		totalCommands += header->numEntries;
 
 		for (uint32_t i = 0; i < header->numEntries; i++)
@@ -269,7 +279,8 @@ std::string CutsceneMMCommand_Spline::GetCommandMacro() const
 
 size_t CutsceneMMCommand_Spline::GetCommandSize() const
 {
-	// 8 Bytes once for the spline command, 8 Bytes per spline the header, two groups of size 12, 1 group of size 8, 4 bytes for the footer.
+	// 8 Bytes once for the spline command, 8 Bytes per spline the header, two groups of size 12, 1
+	// group of size 8, 4 bytes for the footer.
 	return 8 + (8 * numHeaders) + ((totalCommands * 2) * 0xC) + (totalCommands * 8) + 4;
 }
 

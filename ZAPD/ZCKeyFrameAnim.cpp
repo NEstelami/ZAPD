@@ -58,12 +58,11 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 		}
 	}
 	declaration.clear();
-	
 
 	for (const auto kf : keyFrames)
 	{
-		declaration += StringHelper::Sprintf(" \t { %i, %i, %i, },\n", kf.frame, kf.value,
-		                                     kf.velocity);
+		declaration +=
+			StringHelper::Sprintf(" \t { %i, %i, %i, },\n", kf.frame, kf.value, kf.velocity);
 	}
 	// Remove last new line to prevent an extra line after the last element
 	declaration = declaration.substr(0, declaration.length() - 1);
@@ -73,7 +72,6 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 		declaration);
 
 	declaration.clear();
-
 
 	declaration += "\t";
 
@@ -89,7 +87,7 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 	declaration += "\n";
 
 	declaration.clear();
-	
+
 	declaration += "\t";
 
 	for (const auto pv : presetValues)
@@ -108,7 +106,7 @@ void ZKeyFrameAnim::DeclareReferencesLate(const std::string& prefix)
 void ZKeyFrameAnim::ParseRawDataLate()
 {
 	const auto& rawData = parent->GetRawData();
-	
+
 	skel = static_cast<ZKeyFrameSkel*>(parent->FindResource(skelOffset));
 	size_t numLimbs = skel->limbCount;
 
@@ -130,7 +128,6 @@ void ZKeyFrameAnim::ParseRawDataLate()
 			kfNumsSize += GetSetBits((uint8_t)(e & 0b111111));
 			presetValuesSize += GetSetBits((uint8_t)((e ^ 0xFF) & 0b111111));
 		}
-
 	}
 	else
 	{
@@ -187,9 +184,9 @@ std::string ZKeyFrameAnim::GetBodySourceCode() const
 	Globals::Instance->GetSegmentedPtrName(kfNumsAddr, parent, "", kfNumsStr);
 	Globals::Instance->GetSegmentedPtrName(presentValuesAddr, parent, "", presetValuesStr);
 
-	return StringHelper::Sprintf("\n\t%s, %s, %s, %s, 0x%04X, 0x%04X\n", bitFlagsStr.c_str(), keyFrameStr.c_str(),
-	                             kfNumsStr.c_str(), presetValuesStr.c_str(), unk_10, duration);
-
+	return StringHelper::Sprintf("\n\t%s, %s, %s, %s, 0x%04X, 0x%04X\n", bitFlagsStr.c_str(),
+	                             keyFrameStr.c_str(), kfNumsStr.c_str(), presetValuesStr.c_str(),
+	                             unk_10, duration);
 }
 
 std::string ZKeyFrameAnim::GetSourceTypeName() const

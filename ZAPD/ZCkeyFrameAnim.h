@@ -47,6 +47,6 @@ private:
 	segptr_t keyFramesAddr;
 	segptr_t kfNumsAddr;
 	segptr_t presentValuesAddr;
-	template<typename T>
+	template <typename T>
 	uint32_t GetSetBits(T data) const;
 };
