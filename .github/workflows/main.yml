@@ -45,6 +45,7 @@ jobs:
         .venv/bin/python3 tools/decompress_baserom.py gc-eu-mq-dbg
         .venv/bin/python3 tools/extract_baserom.py baseroms/gc-eu-mq-dbg/baserom-decompressed.z64 -o baseroms/gc-eu-mq-dbg/segments --dmadata-start 0x12f70 --dmadata-names baseroms/gc-eu-mq-dbg/dmadata_names.txt
         .venv/bin/python3 extract_assets.py -j 4
+        .venv/bin/python3 tools/msgdis.py --text-out assets/text/message_data.h --staff-text-out assets/text/message_data_staff.h
 
     - name: Setup MM
       run: |
