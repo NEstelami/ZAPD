@@ -399,22 +399,18 @@ void Arg_CsFloatMode([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 	i++;
 	if (std::strcmp(argv[i], "hex") == 0)
 	{
-		printf("HEX\n");
 		Globals::Instance->floatType = CsFloatType::HexOnly;
 	}
 	else if (std::strcmp(argv[i], "float") == 0)
 	{
-		printf("FLOAT\n");
 		Globals::Instance->floatType = CsFloatType::FloatOnly;
 	}
 	else if (std::strcmp(argv[i], "both") == 0)
 	{
-		printf("BOTH\n");
 		Globals::Instance->floatType = CsFloatType::HexAndFloat;
 	}
 	else
 	{
-		printf("ERR\n");
 		Globals::Instance->floatType = CsFloatType::FloatOnly;
 		HANDLE_WARNING(
 			WarningType::Always, "Invalid CS Float Type",
