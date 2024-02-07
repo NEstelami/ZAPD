@@ -377,6 +377,8 @@ std::string ZCutscene::GetCsEncodedFloat(float f, CsFloatType type, bool useSciN
 {
 	switch (type)
 	{
+	default:
+	// This default case will NEVER be reached, but GCC still gives a warning.
 	case CsFloatType::HexOnly:
 	{
 		uint32_t i;
