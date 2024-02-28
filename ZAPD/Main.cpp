@@ -41,7 +41,7 @@ void Arg_CsFloatMode(int& i, char* argv[]);
 int main(int argc, char* argv[]);
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
-           ZFileMode fileMode);
+		   ZFileMode fileMode);
 
 void ParseArgs(int& argc, char* argv[]);
 
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 		returnCode = HandleExtract(fileMode, exporterSet);
 	else if (fileMode == ZFileMode::BuildTexture)
 		BuildAssetTexture(Globals::Instance->inputPath, Globals::Instance->texType,
-		                  Globals::Instance->outputPath);
+						  Globals::Instance->outputPath);
 	else if (fileMode == ZFileMode::BuildBackground)
 		BuildAssetBackground(Globals::Instance->inputPath, Globals::Instance->outputPath);
 	else if (fileMode == ZFileMode::BuildBlob)
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
 }
 
 bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path& outPath,
-           ZFileMode fileMode)
+		   ZFileMode fileMode)
 {
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLError eResult = doc.LoadFile(xmlFilePath.string().c_str());
@@ -135,7 +135,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	{
 		// TODO: use XMLDocument::ErrorIDToName to get more specific error messages here
 		HANDLE_ERROR(WarningType::InvalidXML,
-		             StringHelper::Sprintf("invalid XML file: '%s'", xmlFilePath.c_str()), "");
+					 StringHelper::Sprintf("invalid XML file: '%s'", xmlFilePath.c_str()), "");
 		return false;
 	}
 
@@ -150,7 +150,7 @@ bool Parse(const fs::path& xmlFilePath, const fs::path& basePath, const fs::path
 	}
 
 	for (tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL;
-	     child = child->NextSiblingElement())
+		 child = child->NextSiblingElement())
 	{
 		if (std::string_view(child->Name()) == "File")
 		{
@@ -409,14 +409,23 @@ void Arg_CsFloatMode([[maybe_unused]] int& i, [[maybe_unused]] char* argv[])
 	{
 		Globals::Instance->floatType = CsFloatType::HexAndFloat;
 	}
+	else if (std::strcmp(argv[i], "hex-commented-left") == 0)
+	{
+		Globals::Instance->floatType = CsFloatType::HexAndCommentedFloatLeft;
+	}
+	else if (std::strcmp(argv[i], "hex-commented-right") == 0)
+	{
+		Globals::Instance->floatType = CsFloatType::HexAndCommentedFloatRight;
+	}
 	else
 	{
 		Globals::Instance->floatType = CsFloatType::FloatOnly;
 		HANDLE_WARNING(
 			WarningType::Always, "Invalid CS Float Type",
-			StringHelper::Sprintf("Invalid CS float type entered. Expected \"hex\", \"float\", or "
-		                          "\"both\". Got %s.\n Defaulting to \"float\".",
-		                          argv[i]));
+			StringHelper::Sprintf("Invalid CS float type entered. Expected \"hex\", \"float\", "
+								  "\"both\", \"hex-commented-left\" or \"hex-commented-right\". "
+								  "Got %s.\n Defaulting to \"float\".",
+								  argv[i]));
 	}
 }
 
@@ -440,14 +449,14 @@ int HandleExtract(ZFileMode fileMode, ExporterSet* exporterSet)
 				printf("Parsing external file from config: '%s'\n", externalXmlFilePath.c_str());
 
 			parseSuccessful = Parse(externalXmlFilePath, Globals::Instance->baseRomPath,
-			                        extFile.outPath, ZFileMode::ExternalFile);
+									extFile.outPath, ZFileMode::ExternalFile);
 
 			if (!parseSuccessful)
 				return 1;
 		}
 
 		parseSuccessful = Parse(Globals::Instance->inputPath, Globals::Instance->baseRomPath,
-		                        Globals::Instance->outputPath, fileMode);
+								Globals::Instance->outputPath, fileMode);
 		if (!parseSuccessful)
 			return 1;
 	}

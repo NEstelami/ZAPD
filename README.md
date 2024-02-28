@@ -119,9 +119,11 @@ ZAPD also accepts the following list of extra parameters:
   - This behaviour can be overridden per asset using `Static=` in the respective XML node.
 - `--cs-float` : How cutscene floats should be extracted. 
 - Valid values:
-  - `hex`
-  - `float`
-  - `both`
+  - `hex`: `0x42280000`
+  - `float`: `42.0f`
+  - `both`: `CS_FLOAT(0x42280000, 42.0f)`
+  - `hex-commented-left`: `/* 42.0f */ 0x42280000`
+  - `hex-commented-right`: `0x42280000 /* 42.0f */`
 - `-W...`: warning flags, see below
 
 Additionally, you can pass the flag `--version` to see the current ZAPD version. If that flag is passed, ZAPD will ignore any other parameter passed.
