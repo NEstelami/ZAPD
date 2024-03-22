@@ -23,15 +23,19 @@ jobs:
     - name: Checkout oot
       run: |
         cd ../
+        rm -rf oot/
         git clone https://github.com/zeldaret/oot.git
         cd oot
+        echo $(pwd)
         git submodule update --init --recursive
 
     - name: Checkout mm
       run: |
         cd ../
+        rm -rf mm/
         git clone https://github.com/zeldaret/mm.git
         cd mm
+        echo $(pwd)
 
     - name: Set up repos
       run: echo "Set up repos"
@@ -40,6 +44,7 @@ jobs:
       run: |
         cd ../
         cd oot
+        echo $(pwd)
         mkdir -p baseroms/gc-eu-mq-dbg/segments
         cp ~/baserom_original.z64 ./baseroms/gc-eu-mq-dbg/baserom.z64
         cd tools
@@ -52,6 +57,7 @@ jobs:
       run: |
         cd ../
         cd mm
+        echo $(pwd)
         python3 -m venv .mm-env
         source .mm-env/bin/activate 
         python3 -m pip install -r requirements.txt
@@ -73,6 +79,7 @@ jobs:
       run: |
         cd ../
         cd oot
+        echo $(pwd)
         make venv
         make -j
 
@@ -80,6 +87,7 @@ jobs:
       run: |
         cd ../
         cd mm
+        echo $(pwd)
         python3 -m venv .mm-env
         source .mm-env/bin/activate 
         python3 -m pip install -r requirements.txt
