@@ -43,6 +43,7 @@ jobs:
         mkdir -p baseroms/gc-eu-mq-dbg/segments
         cp ~/baserom_original.z64 ./baseroms/gc-eu-mq-dbg/baserom.z64
         cd tools
+        rm -rf ZAPD/
         ln -s ../../ZAPD 
         cd ../
         make -j $(nproc) setup
@@ -56,6 +57,7 @@ jobs:
         python3 -m pip install -r requirements.txt
         cp ~/baserom.mm.us.rev1.z64 ./baserom.mm.us.rev1.z64
         cd tools
+        rm -rf ZAPD/
         ln -s ../../ZAPD
         cd ../
         make -C tools -j
