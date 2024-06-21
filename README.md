@@ -124,6 +124,9 @@ ZAPD also accepts the following list of extra parameters:
   - `both`: `CS_FLOAT(0x42280000, 42.0f)`
   - `hex-commented-left`: `/* 42.0f */ 0x42280000`
   - `hex-commented-right`: `0x42280000 /* 42.0f */`
+- `--base-address ADDRESS`: Override base virtual address for input files.
+- `--start-offset OFFSET`: Override start offset for input files.
+- `--end-offset OFFSET`: Override end offset for input files.
 - `-W...`: warning flags, see below
 
 Additionally, you can pass the flag `--version` to see the current ZAPD version. If that flag is passed, ZAPD will ignore any other parameter passed.
