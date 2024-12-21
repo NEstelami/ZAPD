@@ -17,12 +17,17 @@ void SetSkyboxSettings::ParseRawData()
 
 std::string SetSkyboxSettings::GetBodySourceCode() const
 {
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
 	std::string indoors = StringHelper::BoolStr(isIndoors);
+
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
-		return StringHelper::Sprintf("SCENE_CMD_SKYBOX_SETTINGS(0x%02X, %i, %i, %s)", unk1,
-		                             skyboxNumber, cloudsType, indoors.c_str());
-	return StringHelper::Sprintf("SCENE_CMD_SKYBOX_SETTINGS(%i, %i, %s)", skyboxNumber, cloudsType,
-	                             indoors.c_str());
+		return StringHelper::Sprintf("SCENE_CMD_SKYBOX_SETTINGS(0x%02X, %s, %s, %s)", unk1,
+		                             enumData->skyboxId[skyboxNumber].c_str(),
+		                             enumData->skyboxConfig[cloudsType].c_str(), indoors.c_str());
+
+	return StringHelper::Sprintf("SCENE_CMD_SKYBOX_SETTINGS(%s, %s, %s)",
+	                             enumData->skyboxId[skyboxNumber].c_str(),
+	                             enumData->skyboxConfig[cloudsType].c_str(), indoors.c_str());
 }
 
 std::string SetSkyboxSettings::GetCommandCName() const

@@ -32,7 +32,13 @@ public:
 	std::map<uint16_t, std::string> transitionType;
 	std::map<uint16_t, std::string> naviQuestHintType;
 	std::map<uint16_t, std::string> ocarinaSongActionId;
+	std::map<uint16_t, std::string> ambienceId;
 	std::map<uint16_t, std::string> seqId;
+	std::map<uint16_t, std::string> skyboxId;
+	std::map<uint16_t, std::string> skyboxConfig;
+	std::map<uint16_t, std::string> roomType;
+	std::map<uint16_t, std::string> environmentType;
+	std::map<uint16_t, std::string> lensMode;
 
 	// OoT
 	std::map<uint16_t, std::string> textType;
@@ -48,6 +54,7 @@ public:
 	std::map<uint16_t, std::string> rumbleType;
 	std::map<uint8_t, std::string> spawnFlag;
 	std::map<uint8_t, std::string> endSfx;
+	std::map<uint8_t, std::string> stormState;
 	std::map<uint8_t, std::string> interpType;
 	std::map<uint16_t, std::string> relTo;
 };
