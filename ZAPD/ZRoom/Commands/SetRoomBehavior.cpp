@@ -26,17 +26,25 @@ void SetRoomBehavior::ParseRawData()
 
 std::string SetRoomBehavior::GetBodySourceCode() const
 {
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
+
 	if (Globals::Instance->game == ZGame::MM_RETAIL)
 	{
 		std::string enableLights = StringHelper::BoolStr(enablePosLights);
-		return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %i, %i, %s, %i)",
-		                             gameplayFlags, currRoomUnk2, currRoomUnk5, msgCtxUnk,
-		                             enableLights.c_str(), kankyoContextUnkE2);
+		return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(%s, %s, %s, %i, %s, %s)",
+		                             enumData->roomType[gameplayFlags].c_str(),
+		                             enumData->environmentType[currRoomUnk2].c_str(),
+		                             enumData->lensMode[currRoomUnk5].c_str(), msgCtxUnk,
+		                             enableLights.c_str(),
+		                             enumData->stormState[kankyoContextUnkE2].c_str());
 	}
-	std::string showInvisible = StringHelper::BoolStr(showInvisActors);
+
 	std::string disableWarps = StringHelper::BoolStr(msgCtxUnk);
-	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(0x%02X, 0x%02X, %s, %s)", gameplayFlags,
-	                             currRoomUnk2, showInvisible.c_str(), disableWarps.c_str());
+
+	return StringHelper::Sprintf("SCENE_CMD_ROOM_BEHAVIOR(%s, %s, %s, %s)",
+	                             enumData->roomType[gameplayFlags].c_str(),
+	                             enumData->environmentType[currRoomUnk2].c_str(),
+	                             enumData->lensMode[showInvisActors].c_str(), disableWarps.c_str());
 }
 
 std::string SetRoomBehavior::GetCommandCName() const

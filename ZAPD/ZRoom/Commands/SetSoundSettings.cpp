@@ -1,3 +1,4 @@
+#include "Globals.h"
 #include "SetSoundSettings.h"
 #include "Utils/StringHelper.h"
 
@@ -15,8 +16,11 @@ void SetSoundSettings::ParseRawData()
 
 std::string SetSoundSettings::GetBodySourceCode() const
 {
-	return StringHelper::Sprintf("SCENE_CMD_SOUND_SETTINGS(%i, %i, %i)", reverb, nightTimeSFX,
-	                             musicSequence);
+	EnumData* enumData = &Globals::Instance->cfg.enumData;
+
+	return StringHelper::Sprintf("SCENE_CMD_SOUND_SETTINGS(%i, %s, %s)", reverb,
+	                             enumData->ambienceId[nightTimeSFX].c_str(),
+	                             enumData->seqId[musicSequence].c_str());
 }
 
 std::string SetSoundSettings::GetCommandCName() const

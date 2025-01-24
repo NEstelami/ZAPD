@@ -223,6 +223,27 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 			else if (enumKey == "playerCueId")
 				enumData.playerCueId[itemIndex] = itemID;
 
+			else if (enumKey == "ambienceId")
+				enumData.ambienceId[itemIndex] = itemID;
+
+			else if (enumKey == "seqId")
+				enumData.seqId[itemIndex] = itemID;
+
+			else if (enumKey == "skyboxId")
+				enumData.skyboxId[itemIndex] = itemID;
+
+			else if (enumKey == "skyboxConfig")
+				enumData.skyboxConfig[itemIndex] = itemID;
+
+			else if (enumKey == "roomType")
+				enumData.roomType[itemIndex] = itemID;
+
+			else if (enumKey == "environmentType")
+				enumData.environmentType[itemIndex] = itemID;
+
+			else if (enumKey == "lensMode")
+				enumData.lensMode[itemIndex] = itemID;
+
 			// MM
 			else if (enumKey == "modifySeqType")
 				enumData.modifySeqType[itemIndex] = itemID;
@@ -247,6 +268,9 @@ void GameConfig::ConfigFunc_EnumData(const tinyxml2::XMLElement& element)
 
 			else if (enumKey == "endSfx")
 				enumData.endSfx[itemIndex] = itemID;
+
+			else if (enumKey == "stormState")
+				enumData.stormState[itemIndex] = itemID;
 
 			else if (enumKey == "csSplineInterpType")
 				enumData.interpType[itemIndex] = itemID;
